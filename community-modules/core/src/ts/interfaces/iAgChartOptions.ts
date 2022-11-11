@@ -995,16 +995,6 @@ export interface AgScatterSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     labelName?: string;
     /** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not.  */
     title?: string;
-    /** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.fill} instead. */
-    fill?: CssColor;
-    /** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.stroke} instead. */
-    stroke?: CssColor;
-    /** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.strokeWidth} instead. */
-    strokeWidth?: PixelSize;
-    /** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.fillOpacity} instead. */
-    fillOpacity?: Opacity;
-    /** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.strokeOpacity} instead. */
-    strokeOpacity?: Opacity;
     /** Series-specific tooltip configuration.  */
     tooltip?: AgScatterSeriesTooltip;
     /** A map of event names to event listeners. */

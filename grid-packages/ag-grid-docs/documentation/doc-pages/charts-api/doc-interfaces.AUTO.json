@@ -2738,26 +2738,6 @@
       "description": "/** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not.  */",
       "type": { "returnType": "string", "optional": true }
     },
-    "fill": {
-      "description": "/** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.fill} instead. */",
-      "type": { "returnType": "CssColor", "optional": true }
-    },
-    "stroke": {
-      "description": "/** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.stroke} instead. */",
-      "type": { "returnType": "CssColor", "optional": true }
-    },
-    "strokeWidth": {
-      "description": "/** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.strokeWidth} instead. */",
-      "type": { "returnType": "PixelSize", "optional": true }
-    },
-    "fillOpacity": {
-      "description": "/** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.fillOpacity} instead. */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
-    "strokeOpacity": {
-      "description": "/** @deprecated since v5.1.0 (ag-grid v27.1.0) Use {@link marker.strokeOpacity} instead. */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
     "tooltip": {
       "description": "/** Series-specific tooltip configuration.  */",
       "type": { "returnType": "AgScatterSeriesTooltip", "optional": true }

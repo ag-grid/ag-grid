@@ -1825,7 +1825,6 @@ Object {
   "series": Array [
     Object {
       "cursor": "default",
-      "fillOpacity": 1,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1860,8 +1859,6 @@ Object {
       "showInLegend": true,
       "sizeKey": "magnitude",
       "sizeName": "Magnitude",
-      "strokeOpacity": 1,
-      "strokeWidth": 2,
       "title": undefined,
       "tooltip": Object {
         "enabled": true,
@@ -3557,7 +3554,6 @@ Object {
   "series": Array [
     Object {
       "cursor": "default",
-      "fillOpacity": 1,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -3592,8 +3588,6 @@ Object {
       "showInLegend": true,
       "sizeKey": "size",
       "sizeName": "Commits",
-      "strokeOpacity": 1,
-      "strokeWidth": 2,
       "title": "Punch Card",
       "tooltip": Object {
         "enabled": true,
@@ -3799,7 +3793,6 @@ Object {
   "series": Array [
     Object {
       "cursor": "default",
-      "fillOpacity": 1,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -3834,8 +3827,6 @@ Object {
       "showInLegend": true,
       "sizeKey": "population",
       "sizeName": "Population",
-      "strokeOpacity": 1,
-      "strokeWidth": 2,
       "title": "Most populous cities",
       "tooltip": Object {
         "enabled": true,
@@ -9153,7 +9144,6 @@ Object {
   "series": Array [
     Object {
       "cursor": "default",
-      "fillOpacity": 1,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -9188,8 +9178,6 @@ Object {
       "showInLegend": true,
       "sizeKey": undefined,
       "sizeName": "Size",
-      "strokeOpacity": 1,
-      "strokeWidth": 2,
       "title": undefined,
       "tooltip": Object {
         "enabled": true,
