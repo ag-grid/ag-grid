@@ -259,7 +259,7 @@ export class PopupService extends BeanStub {
         const { x, y, ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver } = params;
 
         let currentX = x!;
-        let currentY = y!
+        let currentY = y!;
 
         if (nudgeX) {
             currentX += nudgeX;

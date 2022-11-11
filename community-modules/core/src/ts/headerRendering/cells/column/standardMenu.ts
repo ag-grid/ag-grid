@@ -46,7 +46,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 eventSource,
                 ePopup: eMenu,
                 keepWithinBounds: true,
-                position:'under',
+                position: 'under',
                 column
             });
         }, eventSource);
