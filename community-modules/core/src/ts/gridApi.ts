@@ -78,7 +78,7 @@ import { IImmutableService } from "./interfaces/iImmutableService";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
-import { IRowModel } from "./interfaces/iRowModel";
+import { IRowModel, RowModelType } from "./interfaces/iRowModel";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import {
     IServerSideRowModel,
@@ -344,13 +344,16 @@ export class GridApi<TData = any> {
 
     }
 
+    private assertRowModel(apiMethod: keyof GridApi, ...requiredRowModels: RowModelType[]) {
+        console.error(`AG Grid: api.${apiMethod} can only be called when gridOptions.rowModelType is ${requiredRowModels.join(' or ')}`);
+    }
+
     /** Set new datasource for Server-Side Row Model. */
     public setServerSideDatasource(datasource: IServerSideDatasource) {
         if (this.serverSideRowModel) {
-            // should really have an IEnterpriseRowModel interface, so we are not casting to any
             this.serverSideRowModel.setDatasource(datasource);
         } else {
-            console.warn(`AG Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_SERVER_SIDE}'`);
+            this.assertRowModel('setServerSideDatasource', 'serverSide');
         }
     }
 
@@ -361,7 +364,7 @@ export class GridApi<TData = any> {
      * */
     public setCacheBlockSize(blockSize: number) {
         if (!this.serverSideRowModel) {
-            console.warn(`AG Grid: you can only set cacheBlockSize with gridOptions.rowModelType '${Constants.ROW_MODEL_TYPE_SERVER_SIDE}'`);
+            this.assertRowModel('setCacheBlockSize', 'serverSide');
             return;
         }
         this.gridOptionsWrapper.setProperty('cacheBlockSize', blockSize);
@@ -373,7 +376,7 @@ export class GridApi<TData = any> {
         if (this.gridOptionsWrapper.isRowModelInfinite()) {
             (this.rowModel as IInfiniteRowModel).setDatasource(datasource);
         } else {
-            console.warn(`AG Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_INFINITE}'`);
+            this.assertRowModel('setDatasource', 'infinite');
         }
     }
 
@@ -385,7 +388,7 @@ export class GridApi<TData = any> {
             // the enterprise implement it, rather than casting to 'any' here
             (this.rowModel as any).setViewportDatasource(viewportDatasource);
         } else {
-            console.warn(`AG Grid: you can only use a viewport datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`);
+            this.assertRowModel('setViewportDatasource', 'viewport');
         }
     }
 
@@ -395,7 +398,7 @@ export class GridApi<TData = any> {
         const missingImmutableService = this.immutableService == null;
 
         if (missingImmutableService) {
-            console.warn('AG Grid: you can only set rowData when using the Client Side Row Model');
+            this.assertRowModel('setRowData', 'clientSide');
             return;
         }
 
@@ -495,11 +498,6 @@ export class GridApi<TData = any> {
 
     /** Performs change detection on all cells, refreshing cells where required. */
     public refreshCells(params: RefreshCellsParams<TData> = {}): void {
-        if (Array.isArray(params)) {
-            // the old version of refreshCells() took an array of rowNodes for the first argument
-            console.warn('since AG Grid v11.1, refreshCells() now takes parameters, please see the documentation.');
-            return;
-        }
         this.rowRenderer.refreshCells(params);
     }
 
@@ -558,9 +556,10 @@ export class GridApi<TData = any> {
      *  If after getting the model, you expand or collapse a group, call this method to inform the grid.
      *  It will work out the final set of 'to be displayed' rows again (i.e. expand or collapse the group visually).
      */
-    public onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any) {
-        if (missing(this.clientSideRowModel)) { console.warn('AG Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model'); }
-        if (exists(deprecated_refreshFromIndex)) { console.warn('AG Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows'); }
+    public onGroupExpandedOrCollapsed() {
+        if (missing(this.clientSideRowModel)) {
+            this.assertRowModel('onGroupExpandedOrCollapsed', 'clientSide');
+        }
         // we don't really want the user calling this if only one rowNode was expanded, instead they should be
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
@@ -573,7 +572,9 @@ export class GridApi<TData = any> {
      * Optionally provide the step you wish the refresh to apply from. Defaults to `everything`.
      */
     public refreshClientSideRowModel(step?: 'everything' | 'group' | 'filter' | 'pivot' | 'aggregate' | 'sort' | 'map'): any {
-        if (missing(this.clientSideRowModel)) { console.warn('cannot call refreshClientSideRowModel unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) {
+            this.assertRowModel('refreshClientSideRowModel', 'clientSide');
+        }
 
         let paramsStep = ClientSideRowModelSteps.EVERYTHING;
         const stepsMapped: any = {
@@ -641,7 +642,7 @@ export class GridApi<TData = any> {
         } else if (this.serverSideRowModel) {
             this.serverSideRowModel.expandAll(true);
         } else {
-            console.warn('AG Grid: expandAll only works with Client Side Row Model and Server Side Row Model');
+            this.assertRowModel('expandAll', 'clientSide', 'serverSide');
         }
     }
 
@@ -652,7 +653,7 @@ export class GridApi<TData = any> {
         } else if (this.serverSideRowModel) {
             this.serverSideRowModel.expandAll(false);
         } else {
-            console.warn('AG Grid: collapseAll only works with Client Side Row Model and Server Side Row Model');
+            this.assertRowModel('expandAll', 'clientSide', 'serverSide');
         }
     }
 
@@ -685,10 +686,6 @@ export class GridApi<TData = any> {
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
-        if (eventName === 'virtualRowSelected') {
-            console.warn(`AG Grid: event virtualRowSelected is deprecated, to register for individual row
-                selection events, add a listener directly to the row node.`);
-        }
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
@@ -810,7 +807,9 @@ export class GridApi<TData = any> {
      * but excluding groups the grid created where gaps were missing in the hierarchy.
      */
     public forEachLeafNode(callback: (rowNode: RowNode<TData>) => void) {
-        if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNode unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) {
+            this.assertRowModel('forEachLeafNode', 'clientSide');
+        }
         this.clientSideRowModel.forEachLeafNode(callback);
     }
 
@@ -826,13 +825,17 @@ export class GridApi<TData = any> {
 
     /** Similar to `forEachNode`, except skips any filtered out data. */
     public forEachNodeAfterFilter(callback: (rowNode: RowNode<TData>, index: number) => void) {
-        if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilter unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) {
+            this.assertRowModel('forEachNodeAfterFilter', 'clientSide');
+        }
         this.clientSideRowModel.forEachNodeAfterFilter(callback);
     }
 
     /** Similar to `forEachNodeAfterFilter`, except the callbacks are called in the order the rows are displayed in the grid. */
     public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode<TData>, index: number) => void) {
-        if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilterAndSort unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) {
+            this.assertRowModel('forEachNodeAfterFilterAndSort', 'clientSide');
+        }
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }
 
@@ -1635,7 +1638,7 @@ export class GridApi<TData = any> {
     /** Apply transactions to the server side row model. */
     public applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
         if (!this.serverSideTransactionManager) {
-            console.warn('AG Grid: Cannot apply Server Side Transaction if not using the Server Side Row Model.');
+            this.assertRowModel('applyServerSideTransaction', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.applyTransaction(transaction);
@@ -1643,7 +1646,7 @@ export class GridApi<TData = any> {
 
     public applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
         if (!this.serverSideTransactionManager) {
-            console.warn('AG Grid: Cannot apply Server Side Transaction if not using the Server Side Row Model.');
+            this.assertRowModel('applyServerSideTransactionAsync', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
@@ -1652,7 +1655,7 @@ export class GridApi<TData = any> {
     /** Gets all failed server side loads to retry. */
     public retryServerSideLoads(): void {
         if (!this.serverSideRowModel) {
-            console.warn('AG Grid: API retryServerSideLoads() can only be used when using Server-Side Row Model.');
+            this.assertRowModel('retryServerSideLoads', 'serverSide');
             return;
         }
         this.serverSideRowModel.retryLoads();
@@ -1660,7 +1663,7 @@ export class GridApi<TData = any> {
 
     public flushServerSideAsyncTransactions(): void {
         if (!this.serverSideTransactionManager) {
-            console.warn('AG Grid: Cannot flush Server Side Transaction if not using the Server Side Row Model.');
+            this.assertRowModel('flushServerSideAsyncTransactions', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.flushAsyncTransactions();
@@ -1669,7 +1672,7 @@ export class GridApi<TData = any> {
     /** Update row data. Pass a transaction object with lists for `add`, `remove` and `update`. */
     public applyTransaction(rowDataTransaction: RowDataTransaction<TData>): RowNodeTransaction<TData> | null | undefined {
         if (!this.clientSideRowModel) {
-            console.error('AG Grid: applyTransaction() only works with ClientSideRowModel. Working with InfiniteRowModel was deprecated in v23.1 and removed in v24.1');
+            this.assertRowModel('applyTransaction', 'clientSide');
             return;
         }
 
@@ -1694,7 +1697,7 @@ export class GridApi<TData = any> {
     /** Same as `applyTransaction` except executes asynchronously for efficiency. */
     public applyTransactionAsync(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void {
         if (!this.clientSideRowModel) {
-            console.error('AG Grid: api.applyTransactionAsync() only works with ClientSideRowModel.');
+            this.assertRowModel('applyTransactionAsync', 'clientSide');
             return;
         }
         this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
@@ -1703,7 +1706,7 @@ export class GridApi<TData = any> {
     /** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */
     public flushAsyncTransactions(): void {
         if (!this.clientSideRowModel) {
-            console.error('AG Grid: api.flushAsyncTransactions() only works with ClientSideRowModel.');
+            this.assertRowModel('flushAsyncTransactions', 'clientSide');
             return;
         }
         this.clientSideRowModel.flushAsyncTransactions();
@@ -1718,7 +1721,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             this.infiniteRowModel.refreshCache();
         } else {
-            console.warn(`AG Grid: api.refreshInfiniteCache is only available when rowModelType='infinite'.`);
+            this.assertRowModel('refreshInfiniteCache', 'infinite');
         }
     }
 
@@ -1732,7 +1735,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             this.infiniteRowModel.purgeCache();
         } else {
-            console.warn(`AG Grid: api.purgeInfiniteCache is only available when rowModelType='infinite'.`);
+            this.assertRowModel('purgeInfiniteCache', 'infinite');
         }
     }
 
@@ -1743,7 +1746,7 @@ export class GridApi<TData = any> {
      */
     public refreshServerSide(params?: RefreshServerSideParams): void {
         if (!this.serverSideRowModel) {
-            console.warn(`AG Grid: api.refreshServerSide is only available when rowModelType='serverSide'.`);
+            this.assertRowModel('refreshServerSide', 'serverSide');
             return;
         }
         this.serverSideRowModel.refreshStore(params);
@@ -1766,7 +1769,7 @@ export class GridApi<TData = any> {
     /** Returns info on all server side group levels. */
     public getServerSideGroupLevelState(): ServerSideGroupLevelState[] {
         if (!this.serverSideRowModel) {
-            console.warn(`AG Grid: api.getServerSideGroupLevelState is only available when rowModelType='serverSide'.`);
+            this.assertRowModel('getServerSideGroupLevelState', 'serverSide')
             return [];
         }
         return this.serverSideRowModel.getStoreState();
@@ -1777,7 +1780,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             return this.infiniteRowModel.getRowCount();
         } else {
-            console.warn(`AG Grid: api.getInfiniteRowCount is only available when rowModelType='infinite'.`);
+            this.assertRowModel('getInfiniteRowCount', 'infinite')
         }
     }
 
@@ -1786,7 +1789,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             return this.infiniteRowModel.isLastRowIndexKnown();
         } else {
-            console.warn(`AG Grid: api.isLastRowIndexKnown is only available when rowModelType='infinite'.`);
+            this.assertRowModel('isLastRowIndexKnown', 'infinite');
         }
     }
 
@@ -1801,7 +1804,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
         } else {
-            console.warn(`AG Grid: api.setRowCount is only available for Infinite Row Model.`);
+            this.assertRowModel('setRowCount', 'infinite');
         }
     }
 
