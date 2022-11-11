@@ -10,7 +10,7 @@ import {
     GridApi,
     WithoutGridCommon
 } from "@ag-grid-community/core";
-import { AgChartInstance } from "ag-charts-community";
+import { AgCartesianAxisType, AgChartInstance } from "ag-charts-community";
 import { ChartController } from "../chartController";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 
@@ -122,17 +122,28 @@ export class ChartOptionsService extends BeanStub {
         return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
     }
 
+    private getAxisOptionExpression({ optionsType, axisType, expression }: {
+        optionsType: ChartSeriesType,
+        axisType: AgCartesianAxisType,
+        expression: string
+    }): string {
+        return `${optionsType}.axes.${axisType}.${expression}`
+    }
+
     private updateAxisOptions<T = string>(chartAxis: ChartAxis, expression: string, value: T) {
         const optionsType = getSeriesType(this.getChartType());
-        const axisOptions = this.getChartOptions()[optionsType].axes;
-        if (chartAxis.type === 'number') {
-            _.set(axisOptions.number, expression, value);
-        } else if (chartAxis.type === 'category') {
-            _.set(axisOptions.category, expression, value);
-        } else if (chartAxis.type === 'time') {
-            _.set(axisOptions.time, expression, value);
-        } else if (chartAxis.type === 'groupedCategory') {
-            _.set(axisOptions.groupedCategory, expression, value);
+        const validAxisTypes: AgCartesianAxisType[] = ['number', 'category', 'time', 'groupedCategory'];
+
+        if (validAxisTypes.includes(chartAxis.type)) {
+            _.set(
+                this.getChartOptions(),
+                this.getAxisOptionExpression({
+                    optionsType,
+                    axisType: chartAxis.type,
+                    expression
+                }), 
+                value
+            );
         }
     }
 
