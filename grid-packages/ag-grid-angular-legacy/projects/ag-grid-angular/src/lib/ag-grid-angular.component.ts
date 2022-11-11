@@ -347,8 +347,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
     @Input() public suppressFieldDotNotation: boolean | undefined = undefined;
-    /** @deprecated v24     */
-    @Input() public suppressColumnStateEvents: boolean | undefined = undefined;
     /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.     */
     @Input() public headerHeight: number | undefined = undefined;
     /** The height in pixels for the rows containing header column groups. If not specified, it uses `headerHeight`.     */
@@ -1215,7 +1213,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressRowTransform: boolean | null | '';
     static ngAcceptInputType_suppressClipboardPaste: boolean | null | '';
     static ngAcceptInputType_suppressLastEmptyLineOnPaste: boolean | null | '';
-    static ngAcceptInputType_suppressColumnStateEvents: boolean | null | '';
     static ngAcceptInputType_enableCharts: boolean | null | '';
     static ngAcceptInputType_enableChartToolPanelsButton: boolean | null | '';
     static ngAcceptInputType_suppressChartToolPanelsButton: boolean | null | '';

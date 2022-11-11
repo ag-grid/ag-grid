@@ -165,8 +165,6 @@ export interface GridOptions<TData = any> {
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */
     suppressFieldDotNotation?: boolean;
 
-    /** @deprecated v24 */
-    suppressColumnStateEvents?: boolean;
     // *** Column Headers *** //
     /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */
     headerHeight?: number;

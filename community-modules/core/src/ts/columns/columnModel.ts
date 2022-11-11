@@ -2164,7 +2164,6 @@ export class ColumnModel extends BeanStub {
         });
 
         return () => {
-            if (this.gridOptionsWrapper.isSuppressColumnStateEvents()) { return; }
 
             const colsForState = this.getPrimaryAndSecondaryAndAutoColumns();
 
@@ -3930,7 +3929,7 @@ export class ColumnModel extends BeanStub {
             const existingCols = this.groupAutoColumns || [];
             const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(existingCols, this.rowGroupColumns);
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
-            // we force recreate when suppressColumnStateEvents changes, so new group cols pick up the new
+            // we force recreate so new group cols pick up the new
             // definitions. otherwise we could ignore the new cols because they appear to be the same.
             if (autoColsDifferent || this.forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;

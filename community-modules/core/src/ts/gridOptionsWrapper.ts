@@ -470,10 +470,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressRowTransform);
     }
 
-    public isSuppressColumnStateEvents() {
-        return isTrue(this.gridOptions.suppressColumnStateEvents);
-    }
-
     public isAllowDragFromColumnsToolPanel() {
         return isTrue(this.gridOptions.allowDragFromColumnsToolPanel);
     }

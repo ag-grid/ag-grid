@@ -103,10 +103,6 @@
     "description": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
-  "suppressColumnStateEvents": {
-    "description": "/** @deprecated v24 */",
-    "type": { "returnType": "boolean" }
-  },
   "headerHeight": {
     "description": "/** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */",
     "type": { "returnType": "number" }

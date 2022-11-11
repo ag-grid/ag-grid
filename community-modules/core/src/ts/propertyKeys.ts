@@ -87,7 +87,7 @@ export class PropertyKeys {
         'suppressCsvExport', 'treeData', 'masterDetail', 'suppressMultiRangeSelection', 'enterMovesDownAfterEdit', 'enterMovesDown',
         'suppressPropertyNamesCheck', 'rowMultiSelectWithClick',
         'suppressRowHoverHighlight', 'suppressRowTransform', 'suppressClipboardPaste', 'suppressLastEmptyLineOnPaste',
-        'suppressColumnStateEvents', 'enableCharts', 'enableChartToolPanelsButton', 'suppressChartToolPanelsButton',
+        'enableCharts', 'enableChartToolPanelsButton', 'suppressChartToolPanelsButton',
         'suppressMaintainUnsortedOrder', 'enableCellTextSelection', 'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction',
         'excludeChildrenWhenTreeDataFiltering', 'tooltipMouseTrack', 'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu',
         'undoRedoCellEditing', 'allowDragFromColumnsToolPanel', 'immutableData', 'pivotSuppressAutoColumn',
