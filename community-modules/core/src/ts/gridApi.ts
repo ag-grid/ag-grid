@@ -671,13 +671,6 @@ export class GridApi<TData = any> {
         return unwrapUserComp(comp) as any;
     }
 
-    public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
-        if (typeof eventName !== 'string') {
-            console.warn('AG Grid: addVirtualRowListener is deprecated, please use addRenderedRowListener.');
-        }
-        this.addRenderedRowListener(eventName, rowIndex, callback);
-    }
-
     /**
      * Registers a callback to a virtual row.
      * A virtual row is a row that is visually rendered on the screen (rows that are not visible because of the scroll position are not rendered).
