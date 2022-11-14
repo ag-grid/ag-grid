@@ -828,26 +828,4 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         return menuTabs;
     }
-
-    // this used to be needed, as previous version of ag-grid had lockPosition as column state,
-    // so couldn't depend on colDef version.
-    public isLockPosition(): boolean {
-        console.warn('AG Grid: since v21, col.isLockPosition() should not be used, please use col.getColDef().lockPosition instead.');
-        return this.colDef ? !!this.colDef.lockPosition : false;
-    }
-
-    // this used to be needed, as previous version of ag-grid had lockVisible as column state,
-    // so couldn't depend on colDef version.
-    public isLockVisible(): boolean {
-        console.warn('AG Grid: since v21, col.isLockVisible() should not be used, please use col.getColDef().lockVisible instead.');
-        return this.colDef ? !!this.colDef.lockVisible : false;
-    }
-
-    // this used to be needed, as previous version of ag-grid had lockPinned as column state,
-    // so couldn't depend on colDef version.
-    public isLockPinned(): boolean {
-        console.warn('AG Grid: since v21, col.isLockPinned() should not be used, please use col.getColDef().lockPinned instead.');
-        return this.colDef ? !!this.colDef.lockPinned : false;
-    }
-
 }
