@@ -26,7 +26,8 @@ import {
     ServerSideGroupLevelState,
     Beans,
     SortModelItem,
-    WithoutGridCommon
+    WithoutGridCommon,
+    RowModelType
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -378,7 +379,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return this.getRootStore() != null && this.getRowCount() > 0;
     }
 
-    public getType(): string {
+    public getType(): RowModelType {
         return Constants.ROW_MODEL_TYPE_SERVER_SIDE;
     }
 

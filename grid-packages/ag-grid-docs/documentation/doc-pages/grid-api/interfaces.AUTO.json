@@ -9859,7 +9859,7 @@
       "isRowsToRender()": "boolean",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
       "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
-      "getType()": "string",
+      "getType()": "RowModelType",
       "isLastRowIndexKnown()": "boolean",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
       "start()": "void"
@@ -10613,8 +10613,8 @@
       "displayName": "/** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */",
       "predicate?": "/** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */",
       "numberOfInputs?": "/** Number of inputs to display for this option. Defaults to `1` if unspecified. */",
-      "test?": "/** @deprecated use `predicate` instead. */",
-      "hideFilterInput?": "/** @deprecated use `numberOfInputs: 0` instead. */"
+      "test?": "/** @deprecated v26.2 use `predicate` instead. */",
+      "hideFilterInput?": "/** @deprecated v26.2 use `numberOfInputs: 0` instead. */"
     }
   },
   "IFilterParams": {
@@ -10694,7 +10694,7 @@
       "isRowsToRender()": "boolean",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
       "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
-      "getType()": "string",
+      "getType()": "RowModelType",
       "isLastRowIndexKnown()": "boolean",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
       "start()": "void"
@@ -11048,7 +11048,7 @@
       "isRowsToRender()": "boolean",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
       "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
-      "getType()": "string",
+      "getType()": "RowModelType",
       "isLastRowIndexKnown()": "boolean",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
       "start()": "void"
@@ -11186,7 +11186,7 @@
       "isRowsToRender()": "boolean",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
       "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
-      "getType()": "string",
+      "getType()": "RowModelType",
       "isLastRowIndexKnown()": "boolean",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
       "start()": "void"

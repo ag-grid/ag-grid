@@ -1,4 +1,4 @@
-import { IRowModel, RowBounds } from "../interfaces/iRowModel";
+import { IRowModel, RowBounds, RowModelType } from "../interfaces/iRowModel";
 import { BeanStub } from "../context/beanStub";
 import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
 import { RowNode } from "../entities/rowNode";
@@ -141,7 +141,7 @@ export class PaginationProxy extends BeanStub {
         return this.rowModel.forEachNode(callback);
     }
 
-    public getType(): string {
+    public getType(): RowModelType {
         return this.rowModel.getType();
     }
 

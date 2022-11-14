@@ -17043,7 +17043,11 @@
     },
     "getType": {
       "description": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "RowModelType",
+        "optional": false
+      }
     },
     "isLastRowIndexKnown": {
       "description": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
@@ -18298,7 +18302,7 @@
       "type": { "returnType": "0 | 1 | 2", "optional": true }
     },
     "test": {
-      "description": "/** @deprecated use `predicate` instead. */",
+      "description": "/** @deprecated v26.2 use `predicate` instead. */",
       "type": {
         "arguments": { "filterValue": "any", "cellValue": "any" },
         "returnType": "boolean",
@@ -18306,7 +18310,7 @@
       }
     },
     "hideFilterInput": {
-      "description": "/** @deprecated use `numberOfInputs: 0` instead. */",
+      "description": "/** @deprecated v26.2 use `numberOfInputs: 0` instead. */",
       "type": { "returnType": "boolean", "optional": true }
     }
   },
@@ -18574,7 +18578,11 @@
     },
     "getType": {
       "description": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "RowModelType",
+        "optional": false
+      }
     },
     "isLastRowIndexKnown": {
       "description": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
@@ -19350,7 +19358,11 @@
     },
     "getType": {
       "description": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "RowModelType",
+        "optional": false
+      }
     },
     "isLastRowIndexKnown": {
       "description": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
@@ -19713,7 +19725,11 @@
     },
     "getType": {
       "description": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "RowModelType",
+        "optional": false
+      }
     },
     "isLastRowIndexKnown": {
       "description": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",

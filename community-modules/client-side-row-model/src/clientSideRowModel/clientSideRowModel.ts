@@ -28,7 +28,8 @@ import {
     AsyncTransactionsFlushed,
     Beans,
     FilterManager,
-    WithoutGridCommon
+    WithoutGridCommon,
+    RowModelType
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -368,7 +369,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.refreshModel({ step: ClientSideRowModelSteps.SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true });
     }
 
-    public getType(): string {
+    public getType(): RowModelType {
         return Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
     }
 
