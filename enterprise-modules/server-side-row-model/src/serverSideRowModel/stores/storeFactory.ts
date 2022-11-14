@@ -13,6 +13,7 @@ import {
 import { InfiniteStore } from "./infiniteStore";
 import { SSRMParams } from "../serverSideRowModel";
 import { FullStore } from "./fullStore";
+import { LazyStore } from "./lazy/lazyStore";
 
 @Bean('ssrmStoreFactory')
 export class StoreFactory {
@@ -23,7 +24,8 @@ export class StoreFactory {
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
 
-        const CacheClass = storeParams.infiniteScroll ? InfiniteStore : FullStore;
+        const InfiniteScrollStore = !!this.gridOptionsWrapper.isServerSideNewInfiniteScroll() ? LazyStore : InfiniteStore;
+        const CacheClass = storeParams.infiniteScroll ? InfiniteScrollStore : FullStore;
 
         return new CacheClass(ssrmParams, storeParams, parentNode);
     }
