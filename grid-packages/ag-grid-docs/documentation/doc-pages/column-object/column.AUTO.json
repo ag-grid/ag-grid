@@ -369,8 +369,5 @@
       "arguments": { "defaultValues": "ColumnMenuTab[]" },
       "returnType": "ColumnMenuTab[]"
     }
-  },
-  "isLockPosition": { "type": { "arguments": {}, "returnType": "boolean" } },
-  "isLockVisible": { "type": { "arguments": {}, "returnType": "boolean" } },
-  "isLockPinned": { "type": { "arguments": {}, "returnType": "boolean" } }
+  }
 }
