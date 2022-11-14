@@ -22876,7 +22876,9 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "lastRowOnPage": { "type": { "returnType": "boolean", "optional": false } },
-    "printLayout": { "type": { "returnType": "boolean", "optional": false } },
+    "usePositionRelative": {
+      "type": { "returnType": "boolean", "optional": false }
+    },
     "expandable": { "type": { "returnType": "boolean", "optional": false } },
     "pinned": {
       "type": { "returnType": "ColumnPinnedType", "optional": false }
