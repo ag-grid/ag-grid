@@ -46,7 +46,7 @@ export abstract class ChartProxy {
     /**
      * Integrated Charts specific chart theme overrides
      */
-    private readonly integratedThemeOverrides = {
+    private readonly integratedThemeOverrides: AgChartThemeOverrides = {
         common: {
             padding: {
                 top: 25,
