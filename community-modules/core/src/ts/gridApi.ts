@@ -344,7 +344,7 @@ export class GridApi<TData = any> {
 
     }
 
-    private assertRowModel(apiMethod: keyof GridApi, ...requiredRowModels: RowModelType[]) {
+    private logMissingRowModel(apiMethod: keyof GridApi, ...requiredRowModels: RowModelType[]) {
         console.error(`AG Grid: api.${apiMethod} can only be called when gridOptions.rowModelType is ${requiredRowModels.join(' or ')}`);
     }
 
@@ -353,7 +353,7 @@ export class GridApi<TData = any> {
         if (this.serverSideRowModel) {
             this.serverSideRowModel.setDatasource(datasource);
         } else {
-            this.assertRowModel('setServerSideDatasource', 'serverSide');
+            this.logMissingRowModel('setServerSideDatasource', 'serverSide');
         }
     }
 
@@ -363,12 +363,12 @@ export class GridApi<TData = any> {
      * Note this purges all the cached data and reloads all the rows of the grid.
      * */
     public setCacheBlockSize(blockSize: number) {
-        if (!this.serverSideRowModel) {
-            this.assertRowModel('setCacheBlockSize', 'serverSide');
-            return;
+        if (this.serverSideRowModel) {
+            this.gridOptionsWrapper.setProperty('cacheBlockSize', blockSize);
+            this.serverSideRowModel.resetRootStore();
+        } else {
+            this.logMissingRowModel('setCacheBlockSize', 'serverSide');
         }
-        this.gridOptionsWrapper.setProperty('cacheBlockSize', blockSize);
-        this.serverSideRowModel.resetRootStore();
     }
 
     /** Set new datasource for Infinite Row Model. */
@@ -376,7 +376,7 @@ export class GridApi<TData = any> {
         if (this.gridOptionsWrapper.isRowModelInfinite()) {
             (this.rowModel as IInfiniteRowModel).setDatasource(datasource);
         } else {
-            this.assertRowModel('setDatasource', 'infinite');
+            this.logMissingRowModel('setDatasource', 'infinite');
         }
     }
 
@@ -388,7 +388,7 @@ export class GridApi<TData = any> {
             // the enterprise implement it, rather than casting to 'any' here
             (this.rowModel as any).setViewportDatasource(viewportDatasource);
         } else {
-            this.assertRowModel('setViewportDatasource', 'viewport');
+            this.logMissingRowModel('setViewportDatasource', 'viewport');
         }
     }
 
@@ -398,7 +398,7 @@ export class GridApi<TData = any> {
         const missingImmutableService = this.immutableService == null;
 
         if (missingImmutableService) {
-            this.assertRowModel('setRowData', 'clientSide');
+            this.logMissingRowModel('setRowData', 'clientSide');
             return;
         }
 
@@ -558,7 +558,8 @@ export class GridApi<TData = any> {
      */
     public onGroupExpandedOrCollapsed() {
         if (missing(this.clientSideRowModel)) {
-            this.assertRowModel('onGroupExpandedOrCollapsed', 'clientSide');
+            this.logMissingRowModel('onGroupExpandedOrCollapsed', 'clientSide');
+            return;
         }
         // we don't really want the user calling this if only one rowNode was expanded, instead they should be
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
@@ -573,7 +574,8 @@ export class GridApi<TData = any> {
      */
     public refreshClientSideRowModel(step?: 'everything' | 'group' | 'filter' | 'pivot' | 'aggregate' | 'sort' | 'map'): any {
         if (missing(this.clientSideRowModel)) {
-            this.assertRowModel('refreshClientSideRowModel', 'clientSide');
+            this.logMissingRowModel('refreshClientSideRowModel', 'clientSide');
+            return;
         }
 
         let paramsStep = ClientSideRowModelSteps.EVERYTHING;
@@ -642,7 +644,7 @@ export class GridApi<TData = any> {
         } else if (this.serverSideRowModel) {
             this.serverSideRowModel.expandAll(true);
         } else {
-            this.assertRowModel('expandAll', 'clientSide', 'serverSide');
+            this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
         }
     }
 
@@ -653,7 +655,7 @@ export class GridApi<TData = any> {
         } else if (this.serverSideRowModel) {
             this.serverSideRowModel.expandAll(false);
         } else {
-            this.assertRowModel('expandAll', 'clientSide', 'serverSide');
+            this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
         }
     }
 
@@ -748,6 +750,10 @@ export class GridApi<TData = any> {
      * Designed for use with `'children'` as the group selection type, where groups don't actually appear in the selection normally.
      */
     public getBestCostNodeSelection(): RowNode<TData>[] | undefined {
+        if (missing(this.clientSideRowModel)) {
+            this.logMissingRowModel('getBestCostNodeSelection', 'clientSide');
+            return;
+        }
         return this.selectionService.getBestCostNodeSelection();
     }
 
@@ -801,7 +807,8 @@ export class GridApi<TData = any> {
      */
     public forEachLeafNode(callback: (rowNode: RowNode<TData>) => void) {
         if (missing(this.clientSideRowModel)) {
-            this.assertRowModel('forEachLeafNode', 'clientSide');
+            this.logMissingRowModel('forEachLeafNode', 'clientSide');
+            return;
         }
         this.clientSideRowModel.forEachLeafNode(callback);
     }
@@ -819,7 +826,8 @@ export class GridApi<TData = any> {
     /** Similar to `forEachNode`, except skips any filtered out data. */
     public forEachNodeAfterFilter(callback: (rowNode: RowNode<TData>, index: number) => void) {
         if (missing(this.clientSideRowModel)) {
-            this.assertRowModel('forEachNodeAfterFilter', 'clientSide');
+            this.logMissingRowModel('forEachNodeAfterFilter', 'clientSide');
+            return;
         }
         this.clientSideRowModel.forEachNodeAfterFilter(callback);
     }
@@ -827,7 +835,8 @@ export class GridApi<TData = any> {
     /** Similar to `forEachNodeAfterFilter`, except the callbacks are called in the order the rows are displayed in the grid. */
     public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode<TData>, index: number) => void) {
         if (missing(this.clientSideRowModel)) {
-            this.assertRowModel('forEachNodeAfterFilterAndSort', 'clientSide');
+            this.logMissingRowModel('forEachNodeAfterFilterAndSort', 'clientSide');
+            return;
         }
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }
@@ -1635,7 +1644,7 @@ export class GridApi<TData = any> {
     /** Apply transactions to the server side row model. */
     public applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
         if (!this.serverSideTransactionManager) {
-            this.assertRowModel('applyServerSideTransaction', 'serverSide');
+            this.logMissingRowModel('applyServerSideTransaction', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.applyTransaction(transaction);
@@ -1643,7 +1652,7 @@ export class GridApi<TData = any> {
 
     public applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
         if (!this.serverSideTransactionManager) {
-            this.assertRowModel('applyServerSideTransactionAsync', 'serverSide');
+            this.logMissingRowModel('applyServerSideTransactionAsync', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
@@ -1652,7 +1661,7 @@ export class GridApi<TData = any> {
     /** Gets all failed server side loads to retry. */
     public retryServerSideLoads(): void {
         if (!this.serverSideRowModel) {
-            this.assertRowModel('retryServerSideLoads', 'serverSide');
+            this.logMissingRowModel('retryServerSideLoads', 'serverSide');
             return;
         }
         this.serverSideRowModel.retryLoads();
@@ -1660,7 +1669,7 @@ export class GridApi<TData = any> {
 
     public flushServerSideAsyncTransactions(): void {
         if (!this.serverSideTransactionManager) {
-            this.assertRowModel('flushServerSideAsyncTransactions', 'serverSide');
+            this.logMissingRowModel('flushServerSideAsyncTransactions', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.flushAsyncTransactions();
@@ -1669,7 +1678,7 @@ export class GridApi<TData = any> {
     /** Update row data. Pass a transaction object with lists for `add`, `remove` and `update`. */
     public applyTransaction(rowDataTransaction: RowDataTransaction<TData>): RowNodeTransaction<TData> | null | undefined {
         if (!this.clientSideRowModel) {
-            this.assertRowModel('applyTransaction', 'clientSide');
+            this.logMissingRowModel('applyTransaction', 'clientSide');
             return;
         }
 
@@ -1694,7 +1703,7 @@ export class GridApi<TData = any> {
     /** Same as `applyTransaction` except executes asynchronously for efficiency. */
     public applyTransactionAsync(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void {
         if (!this.clientSideRowModel) {
-            this.assertRowModel('applyTransactionAsync', 'clientSide');
+            this.logMissingRowModel('applyTransactionAsync', 'clientSide');
             return;
         }
         this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
@@ -1703,7 +1712,7 @@ export class GridApi<TData = any> {
     /** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */
     public flushAsyncTransactions(): void {
         if (!this.clientSideRowModel) {
-            this.assertRowModel('flushAsyncTransactions', 'clientSide');
+            this.logMissingRowModel('flushAsyncTransactions', 'clientSide');
             return;
         }
         this.clientSideRowModel.flushAsyncTransactions();
@@ -1718,7 +1727,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             this.infiniteRowModel.refreshCache();
         } else {
-            this.assertRowModel('refreshInfiniteCache', 'infinite');
+            this.logMissingRowModel('refreshInfiniteCache', 'infinite');
         }
     }
 
@@ -1732,7 +1741,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             this.infiniteRowModel.purgeCache();
         } else {
-            this.assertRowModel('purgeInfiniteCache', 'infinite');
+            this.logMissingRowModel('purgeInfiniteCache', 'infinite');
         }
     }
 
@@ -1743,7 +1752,7 @@ export class GridApi<TData = any> {
      */
     public refreshServerSide(params?: RefreshServerSideParams): void {
         if (!this.serverSideRowModel) {
-            this.assertRowModel('refreshServerSide', 'serverSide');
+            this.logMissingRowModel('refreshServerSide', 'serverSide');
             return;
         }
         this.serverSideRowModel.refreshStore(params);
@@ -1766,7 +1775,7 @@ export class GridApi<TData = any> {
     /** Returns info on all server side group levels. */
     public getServerSideGroupLevelState(): ServerSideGroupLevelState[] {
         if (!this.serverSideRowModel) {
-            this.assertRowModel('getServerSideGroupLevelState', 'serverSide')
+            this.logMissingRowModel('getServerSideGroupLevelState', 'serverSide')
             return [];
         }
         return this.serverSideRowModel.getStoreState();
@@ -1777,7 +1786,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             return this.infiniteRowModel.getRowCount();
         } else {
-            this.assertRowModel('getInfiniteRowCount', 'infinite')
+            this.logMissingRowModel('getInfiniteRowCount', 'infinite')
         }
     }
 
@@ -1786,7 +1795,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             return this.infiniteRowModel.isLastRowIndexKnown();
         } else {
-            this.assertRowModel('isLastRowIndexKnown', 'infinite');
+            this.logMissingRowModel('isLastRowIndexKnown', 'infinite');
         }
     }
 
@@ -1801,7 +1810,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
         } else {
-            this.assertRowModel('setRowCount', 'infinite');
+            this.logMissingRowModel('setRowCount', 'infinite');
         }
     }
 

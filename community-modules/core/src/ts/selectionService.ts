@@ -201,7 +201,7 @@ export class SelectionService extends BeanStub {
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection(): RowNode[] | undefined {
         if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.warn('AG Grid: `getBestCostNodeSelection` is only available when using normal row model');
+            // Error logged as part of gridApi as that is only call point for this method.
             return;
         }
 
@@ -210,7 +210,6 @@ export class SelectionService extends BeanStub {
         const topLevelNodes = clientSideRowModel.getTopLevelNodes();
 
         if (topLevelNodes === null) {
-            console.warn('AG Grid: `selectAll` not available doing `rowModel=virtual`');
             return;
         }
 
@@ -258,7 +257,7 @@ export class SelectionService extends BeanStub {
 
         if (justFiltered) {
             if (!rowModelClientSide) {
-                console.error('AG Grid: selecting just filtered only works with In Memory Row Model');
+                console.error("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
                 return;
             }
             const clientSideRowModel = this.rowModel as IClientSideRowModel;
