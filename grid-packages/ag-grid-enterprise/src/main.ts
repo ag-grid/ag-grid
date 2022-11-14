@@ -598,7 +598,6 @@ WrappableInterface,
 XmlElement,
 XmlFactory,
 ZipContainer,
-defaultGroupComparator,
 getRowContainerTypeForName,
 simpleHttpRequest } from "ag-grid-community";
 /* COMMUNITY_EXPORTS_END_DO_NOT_DELETE */
