@@ -1642,7 +1642,7 @@ export class ColumnModel extends BeanStub {
 
     public setColumnsPinned(keys: (string | Column)[], pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
         if (this.gridOptionsWrapper.getDomLayout() === 'print') {
-            console.warn(`Changing the column pinning status is not allowed with domLayout='print'`);
+            console.warn(`AG Grid: Changing the column pinning status is not allowed with domLayout='print'`);
             return;
         }
         this.columnAnimationService.start();
@@ -2663,7 +2663,7 @@ export class ColumnModel extends BeanStub {
                 // valueGetter is an expression, so execute the expression
                 return this.expressionService.evaluate(headerValueGetter, params);
             }
-            console.warn('ag-grid: headerValueGetter must be a function or a string');
+            console.warn('AG Grid: headerValueGetter must be a function or a string');
             return '';
         } else if (colDef.headerName != null) {
             return colDef.headerName;

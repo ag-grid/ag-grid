@@ -192,7 +192,7 @@ export class UserComponentFactory extends BeanStub {
 
         if (!jsComp && !fwComp) {
             if (mandatory) {
-                console.error(`Could not find component ${compName}, did you forget to configure this component?`);
+                console.error(`AG Grid: Could not find component ${compName}, did you forget to configure this component?`);
             }
             return;
         }

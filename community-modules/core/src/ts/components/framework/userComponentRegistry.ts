@@ -239,7 +239,7 @@ export class UserComponentRegistry extends BeanStub {
 
         if (deprecatedInfo != null) {
             doOnce(() => {
-                console.warn(`ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename ${deprecatedInfo.propertyHolder}:${raw} to ${deprecatedInfo.propertyHolder}:${deprecatedInfo.newComponentName}`);
+                console.warn(`AG Grid: Since v15.0 component names have been renamed to be namespaced. You should rename ${deprecatedInfo.propertyHolder}:${raw} to ${deprecatedInfo.propertyHolder}:${deprecatedInfo.newComponentName}`);
             }, 'DEPRECATE_COMPONENT_' + raw);
 
             return deprecatedInfo.newComponentName;
