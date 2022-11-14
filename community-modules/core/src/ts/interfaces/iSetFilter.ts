@@ -1,4 +1,3 @@
-import { ICellRendererComp, ICellRendererFunc } from '../rendering/cellRenderers/iCellRenderer';
 import { ColDef, ValueFormatterParams } from '../entities/colDef';
 import { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/providedFilter';
 import { Column } from '../entities/column';
@@ -7,19 +6,24 @@ import { ColumnApi } from '../columns/columnApi';
 import { ProvidedFilterModel } from './iFilter';
 import { AgPromise } from '../utils/promise';
 
-export type SetFilterModelValue = (string | null)[];
-export interface SetFilterModel extends ProvidedFilterModel {
+/** @param V type of value in the Set Filter */
+export type SetFilterModelValue<V = string> = (V | null)[];
+/** @param V type of value in the Set Filter */
+export interface SetFilterModel<V = string> extends ProvidedFilterModel {
     filterType?: 'set';
-    values: SetFilterModelValue;
+    values: SetFilterModelValue<V>;
 }
 
-/** Interface contract for the public aspects of the SetFilter implementation. */
-export interface ISetFilter extends IProvidedFilter {
+/**
+ * Interface contract for the public aspects of the SetFilter implementation. 
+ * @param V type of value in the Set Filter
+*/
+export interface ISetFilter<V = string> extends IProvidedFilter {
     /**
      * Returns a model representing the current state of the filter, or `null` if the filter is
      * not active.
      */
-    getModel(): SetFilterModel | null;
+    getModel(): SetFilterModel<V> | null;
 
     /**
      * Sets the state of the filter using the supplied model. Providing `null` as the model will
@@ -30,13 +34,13 @@ export interface ISetFilter extends IProvidedFilter {
      * actions by waiting on the returned grid promise, e.g. 
      * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`
      */
-    setModel(model: SetFilterModel | null): void | AgPromise<void>;
+    setModel(model: SetFilterModel<V> | null): void | AgPromise<void>;
 
     /** Returns the full list of unique values used by the Set Filter. */
-    getValues(): SetFilterModelValue;
+    getValues(): SetFilterModelValue<V>;
 
     /** Sets the values used in the Set Filter on the fly. */
-    setFilterValues(values: SetFilterModelValue): void;
+    setFilterValues(values: SetFilterModelValue<V>): void;
     /**
      * Refreshes the values shown in the filter from the original source. For example, if a
      * callback was provided, the callback will be executed again and the filter will refresh using
@@ -55,12 +59,16 @@ export interface ISetFilter extends IProvidedFilter {
     setMiniFilter(newMiniFilter: string | null): void;
 
     /** Returns the current UI state (potentially un-applied). */
-    getModelFromUi(): SetFilterModel | null;
+    getModelFromUi(): SetFilterModel<V> | null;
 }
 
-export interface SetFilterValuesFuncParams<TData = any> {
+/** 
+ * @param TData type of data row
+ * @param V type of value in the Set Filter
+ */
+export interface SetFilterValuesFuncParams<TData = any, V = string> {
     /** The function to call with the values to load into the filter once they are ready. */
-    success: (values: string[]) => void;
+    success: (values: SetFilterModelValue<V>) => void;
     /** The column definition from which the set filter is invoked. */
     colDef: ColDef<TData>;
     /** Column from which the set filter is invoked. */
@@ -71,15 +79,27 @@ export interface SetFilterValuesFuncParams<TData = any> {
     context: any;
 }
 
-export type SetFilterValuesFunc<TData = any> = (params: SetFilterValuesFuncParams<TData>) => void;
-export type SetFilterValues<TData = any> = SetFilterValuesFunc<TData> | any[];
+/** 
+ * @param TData type of data row
+ * @param V type of value in the Set Filter
+ */
+export type SetFilterValuesFunc<TData = any, V = string> = (params: SetFilterValuesFuncParams<TData, V>) => void;
+/** 
+ * @param TData type of data row
+ * @param V type of value in the Set Filter
+ */
+export type SetFilterValues<TData = any, V = string> = SetFilterValuesFunc<TData, V> | SetFilterModelValue<V>;
 
-export interface ISetFilterParams extends IProvidedFilterParams {
+/** 
+ * @param TData type of data row
+ * @param V type of value in the Set Filter
+ */
+export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilterParams {
     /**
      * The values to display in the Filter List. If this is not set, the filter will takes its
      * values from what is loaded in the table.
      */
-    values?: SetFilterValues;
+    values?: SetFilterValues<TData, V>;
     /**
      * Refresh the values every time the Set filter is opened.
      */
@@ -130,12 +150,15 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      * Comparator for sorting. If not provided, the Column Definition comparator is used. If Column
      * Definition comparator is also not provided, the default (grid provided) comparator is used.
      */
-    comparator?: (a: any, b: any) => number;
+    comparator?: (a: V | null, b: V | null) => number;
     /**
      * If specified, this formats the text before applying the Mini Filter compare logic, useful for
      * instance to substitute accented characters.
      */
     textFormatter?: (from: string) => string;
+    /**
+     * If specified, this formats the value before it is displayed in the Filter List.
+     */
     valueFormatter?: (params: ValueFormatterParams) => string;
     /**
      * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,
@@ -153,4 +176,10 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      * Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.
      */
     excelMode?: 'mac' | 'windows';
+    /**
+     * @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects.
+     * If this is set to  `true`, complex objects will instead be converted to strings by the keyCreator,
+     * and those values will be used in the Filter Model and Filter List
+     */
+    suppressComplexObjects?: boolean
 }

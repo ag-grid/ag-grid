@@ -14,6 +14,9 @@ const gridOptions: GridOptions<IOlympicData> = {
       keyCreator: countryKeyCreator,
       valueFormatter: countryValueFormatter,
       filter: 'agSetColumnFilter',
+      filterParams: {
+        suppressComplexObjects: true,
+      },
     },
   ],
   defaultColDef: {

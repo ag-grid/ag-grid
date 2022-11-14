@@ -21,7 +21,8 @@ export interface SetFilterListItemSelectionChangedEvent extends AgEvent {
     isSelected: boolean;
 }
 
-export class SetFilterListItem extends Component {
+/** @param V type of value in the Set Filter */
+export class SetFilterListItem<V> extends Component {
     public static EVENT_SELECTION_CHANGED = 'selectionChanged';
 
     @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
@@ -35,8 +36,8 @@ export class SetFilterListItem extends Component {
     @RefSelector('eCheckbox') private readonly eCheckbox: AgCheckbox;
 
     constructor(
-        private readonly value: string | (() => string),
-        private readonly params: ISetFilterParams,
+        private readonly value: V | null | (() => string),
+        private readonly params: ISetFilterParams<any, V>,
         private readonly translate: (key: keyof ISetFilterLocaleText) => string,
         private isSelected?: boolean,
     ) {
@@ -83,13 +84,15 @@ export class SetFilterListItem extends Component {
         let formattedValue: string | null = null;
 
         if (typeof value === 'function') {
-            value = value();
+            formattedValue = (value as () => string)();
+            // backwards compatibility for select all in value
+            value = formattedValue as any;
         } else {
             formattedValue = this.getFormattedValue(this.params, column, value);
         }
 
         if (this.params.showTooltips) {
-            const tooltipValue = formattedValue != null ? formattedValue : value;
+            const tooltipValue = formattedValue != null ? formattedValue : String(value);
             this.setTooltip(tooltipValue);
         }
 
@@ -113,7 +116,7 @@ export class SetFilterListItem extends Component {
         return res;
     }
 
-    private getFormattedValue(filterParams: ISetFilterParams, column: Column, value: any) {
+    private getFormattedValue(filterParams: ISetFilterParams<any, V>, column: Column, value: any) {
         const formatter = filterParams && filterParams.valueFormatter;
 
         return this.valueFormatterService.formatValue(column, null, value, formatter, false);

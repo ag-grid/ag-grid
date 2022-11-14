@@ -44,6 +44,9 @@ const gridOptions: GridOptions = {
       filter: 'agSetColumnFilter',
       valueFormatter: valueFormatter,
       keyCreator: keyCreator,
+      filterParams: {
+        suppressComplexObjects: true,
+      },
     },
   ],
   defaultColDef: {

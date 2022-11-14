@@ -12,6 +12,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 return `${params.value.name} (${params.value.code})`
             },
             keyCreator: countryKeyCreator,
+            filterParams: { suppressComplexObjects: true },
         },
         { field: 'age', maxWidth: 120, filter: 'agNumberColumnFilter' },
         { field: 'year', maxWidth: 120 },

@@ -19995,26 +19995,27 @@
       "type": { "returnType": "number", "optional": true }
     }
   },
-  "SetFilterModelValue": {},
+  "SetFilterModelValue": { "meta": { "typeParams": ["V = string"] } },
   "SetFilterModel": {
     "filterType": { "type": { "returnType": "'set'", "optional": true } },
     "values": {
-      "type": { "returnType": "SetFilterModelValue", "optional": false }
-    }
+      "type": { "returnType": "SetFilterModelValue<V>", "optional": false }
+    },
+    "meta": { "typeParams": ["V = string"] }
   },
   "ISetFilter": {
     "getModel": {
       "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n     * not active.\n     */",
       "type": {
         "arguments": {},
-        "returnType": "SetFilterModel | null",
+        "returnType": "SetFilterModel<V> | null",
         "optional": false
       }
     },
     "setModel": {
       "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n     * de-activate the filter.\n     * \n     * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)\n     * to the Set Filter, you need to wait for these changes to be applied before performing any further\n     * actions by waiting on the returned grid promise, e.g. \n     * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`\n     */",
       "type": {
-        "arguments": { "model": "SetFilterModel | null" },
+        "arguments": { "model": "SetFilterModel<V> | null" },
         "returnType": "void | AgPromise<void>",
         "optional": false
       }
@@ -20023,14 +20024,14 @@
       "description": "/** Returns the full list of unique values used by the Set Filter. */",
       "type": {
         "arguments": {},
-        "returnType": "SetFilterModelValue",
+        "returnType": "SetFilterModelValue<V>",
         "optional": false
       }
     },
     "setFilterValues": {
       "description": "/** Sets the values used in the Set Filter on the fly. */",
       "type": {
-        "arguments": { "values": "SetFilterModelValue" },
+        "arguments": { "values": "SetFilterModelValue<V>" },
         "returnType": "void",
         "optional": false
       }
@@ -20063,10 +20064,11 @@
       "description": "/** Returns the current UI state (potentially un-applied). */",
       "type": {
         "arguments": {},
-        "returnType": "SetFilterModel | null",
+        "returnType": "SetFilterModel<V> | null",
         "optional": false
       }
     },
+    "meta": { "typeParams": ["V = string"] },
     "applyModel": {
       "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
@@ -20112,7 +20114,7 @@
     "success": {
       "description": "/** The function to call with the values to load into the filter once they are ready. */",
       "type": {
-        "arguments": { "values": "string[]" },
+        "arguments": { "values": "SetFilterModelValue<V>" },
         "returnType": "void",
         "optional": false
       }
@@ -20131,14 +20133,18 @@
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] }
+    "meta": { "typeParams": ["TData = any", "V = string"] }
   },
-  "SetFilterValuesFunc": { "meta": { "typeParams": ["TData = any"] } },
-  "SetFilterValues": { "meta": { "typeParams": ["TData = any"] } },
+  "SetFilterValuesFunc": {
+    "meta": { "typeParams": ["TData = any", "V = string"] }
+  },
+  "SetFilterValues": {
+    "meta": { "typeParams": ["TData = any", "V = string"] }
+  },
   "ISetFilterParams": {
     "values": {
       "description": "/** The values to display in the Filter List. If this is not set, the filter will takes its\n     * values from what is loaded in the table.\n     */",
-      "type": { "returnType": "SetFilterValues", "optional": true }
+      "type": { "returnType": "SetFilterValues<TData, V>", "optional": true }
     },
     "refreshValuesOnOpen": {
       "description": "/** Refresh the values every time the Set filter is opened.\n     */",
@@ -20179,7 +20185,7 @@
     "comparator": {
       "description": "/** Comparator for sorting. If not provided, the Column Definition comparator is used. If Column\n     * Definition comparator is also not provided, the default (grid provided) comparator is used.\n     */",
       "type": {
-        "arguments": { "a": "any", "b": "any" },
+        "arguments": { "a": "V | null", "b": "V | null" },
         "returnType": "number",
         "optional": true
       }
@@ -20193,6 +20199,7 @@
       }
     },
     "valueFormatter": {
+      "description": "/** If specified, this formats the value before it is displayed in the Filter List.\n     */",
       "type": {
         "arguments": { "params": "ValueFormatterParams" },
         "returnType": "string",
@@ -20211,6 +20218,11 @@
       "description": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.\n     */",
       "type": { "returnType": "'mac' | 'windows'", "optional": true }
     },
+    "suppressComplexObjects": {
+      "description": "/** @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects.\n     * If this is set to  `true`, complex objects will instead be converted to strings by the keyCreator,\n     * and those values will be used in the Filter Model and Filter List\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any", "V = string"] },
     "buttons": {
       "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n     * The options are:\n     * \n     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.\n     */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
@@ -20263,7 +20275,6 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }

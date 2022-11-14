@@ -8,7 +8,6 @@ import {
     AgInputTextField,
     _,
     ColumnModel,
-    ISetFilterParams,
     SetFilterModel,
 } from '@ag-grid-community/core';
 
@@ -99,11 +98,13 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
             const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             const availableValues = values.filter(v => valueModel.isValueAvailable(v))!;
 
+            const valueFormatter = setFilter.getValueFormatter();
+
             // format all the values, if a formatter is provided
             const formattedValues = availableValues.map(value => {
-                const { column, filterParams } = this.params;
+                const { column } = this.params;
                 const formattedValue = this.valueFormatterService.formatValue(
-                    column, null, value, (filterParams as ISetFilterParams).valueFormatter, false);
+                    column, null, value, valueFormatter, false);
 
                 const valueToRender = formattedValue != null ? formattedValue : value;
 
