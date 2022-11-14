@@ -18,7 +18,8 @@ import {
     StoreUpdatedEvent,
     WithoutGridCommon,
     Column,
-    ColumnModel
+    ColumnModel,
+    IsApplyServerSideTransactionParams
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
@@ -94,10 +95,24 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
         const idFunc = this.gridOptionsWrapper.getRowIdFunc();
         if (!idFunc) {
-            console.warn('AG Grid: Transactions require getRowId to have been implemented.');
+            console.warn('AG Grid: getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
                 status: ServerSideTransactionResultStatus.Cancelled,
             };
+        }
+
+        const applyCallback = this.gridOptionsWrapper.getIsApplyServerSideTransactionFunc();
+        if (applyCallback) {
+            const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
+                transaction: transaction,
+                parentNode: this.parentRowNode,
+                storeInfo: this.info,
+                groupLevelInfo: this.info
+            };
+            const apply = applyCallback(params);
+            if (!apply) {
+                return { status: ServerSideTransactionResultStatus.Cancelled };
+            }
         }
 
         let updatedNodes: RowNode[] | undefined = undefined;
