@@ -6,6 +6,7 @@ import {
     IRichCellEditorParams,
     UserComponentFactory
 } from "@ag-grid-community/core";
+import { bindCellRendererToHtmlElement } from "./utils";
 
 export class RichSelectRow extends Component {
 
@@ -57,7 +58,7 @@ export class RichSelectRow extends Component {
         const cellRendererPromise = compDetails ? compDetails.newAgStackInstance() : undefined;
 
         if (cellRendererPromise != null) {
-            _.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
+            bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
         } else {
             this.getGui().innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
         }
