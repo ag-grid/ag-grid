@@ -1152,6 +1152,7 @@ export class RowCtrl extends BeanStub {
 
     private getInitialRowClasses(rowContainerType: RowContainerType): string[] {
         const pinned = this.getPinnedForContainer(rowContainerType);
+        const isEnsureDomOrder = this.beans.gridOptionsWrapper.isEnsureDomOrder();
 
         const params: RowCssClassCalculatorParams = {
             rowNode: this.rowNode,
@@ -1162,7 +1163,7 @@ export class RowCtrl extends BeanStub {
             fullWidthRow: this.isFullWidth(),
             firstRowOnPage: this.isFirstRowOnPage(),
             lastRowOnPage: this.isLastRowOnPage(),
-            printLayout: this.printLayout,
+            usePositionRelative: isEnsureDomOrder || this.printLayout,
             expandable: this.rowNode.isExpandable(),
             pinned: pinned
         };

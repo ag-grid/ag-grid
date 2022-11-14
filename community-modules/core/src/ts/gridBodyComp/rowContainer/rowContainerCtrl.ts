@@ -271,7 +271,10 @@ export class RowContainerCtrl extends BeanStub {
             return;
         }
 
-        const listener = () => this.comp.setDomOrder(this.gridOptionsWrapper.isEnsureDomOrder());
+        const isEnsureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+
+        const listener = () => this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
         listener();
     }
