@@ -1,6 +1,5 @@
 import {
     _,
-    AgChartThemePalette,
     Autowired,
     BeanStub,
     CellRange,
@@ -18,7 +17,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartProxy, UpdateChartParams } from "./chartProxies/chartProxy";
-import { _Theme } from "ag-charts-community";
+import { _Theme, AgChartThemePalette } from "ag-charts-community";
 import { ChartSeriesType, getSeriesType } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
 

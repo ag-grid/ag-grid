@@ -1,12 +1,13 @@
 import {
     _,
+    Autowired,
     BeanStub,
     ChartOptionsChanged,
     ChartType,
     Events,
     WithoutGridCommon
 } from "@ag-grid-community/core";
-import { AgCartesianAxisType, AgChart, AgChartOptions } from "ag-charts-community";
+import { AgCartesianAxisType, AgChartInstance, AgChartThemeOverrides } from "ag-charts-community";
 import { ChartController } from "../chartController";
 import { AgChartActual } from "../utils/integration";
 import { deepMerge } from "../utils/object";
@@ -179,7 +180,7 @@ export class ChartOptionsService extends BeanStub {
     ];
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
         const mapTypeToImplType = (type: ChartSeriesType) => type === 'column' ? 'bar' : type;
-        
+
         return ChartOptionsService.VALID_SERIES_TYPES.includes(seriesType) &&
             series.type === mapTypeToImplType(seriesType);
     }

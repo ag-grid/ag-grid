@@ -1,12 +1,5 @@
-import { _, AgChartThemeOverrides, ChartType, SeriesChartType, AgChartThemeName } from '@ag-grid-community/core';
-import {
-    AgChart,
-    AgChartTheme,
-    AgChartThemePalette,
-    AgChartInstance,
-    _Theme,
-    AgChartOptions,
-} from 'ag-charts-community';
+import { _, ChartType, AgChartTheme as GridAgChartTheme, SeriesChartType } from "@ag-grid-community/core";
+import { AgChart, AgChartTheme, AgChartThemeOverrides, AgChartThemePalette, AgChartInstance, _Theme } from "ag-charts-community";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";
@@ -15,7 +8,7 @@ import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
 export interface ChartProxyParams {
     chartInstance?: AgChartInstance;
     chartType: ChartType;
-    customChartThemes?: { [name: string]: AgChartTheme; };
+    customChartThemes?: { [name: string]: AgChartTheme | GridAgChartTheme };
     parentElement: HTMLElement;
     grouping: boolean;
     getChartThemeName: () => string;
