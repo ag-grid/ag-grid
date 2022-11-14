@@ -287,7 +287,7 @@ export class SelectionService extends BeanStub {
 
     public selectAllRowNodes(justFiltered = false) {
         if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            throw new Error(`selectAll only available with normal row model, ie not ${this.rowModel.getType()}`);
+            throw new Error(`selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`);
         }
 
         const clientSideRowModel = this.rowModel as IClientSideRowModel;

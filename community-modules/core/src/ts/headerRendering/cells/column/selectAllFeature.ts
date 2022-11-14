@@ -73,7 +73,7 @@ export class SelectAllFeature extends BeanStub {
 
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
-            this.checkRightRowModelType();
+            this.checkRightRowModelType('selectAllCheckbox');
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
@@ -170,13 +170,15 @@ export class SelectAllFeature extends BeanStub {
         };
     }
 
-    private checkRightRowModelType(): void {
+    private checkRightRowModelType(feature: string): boolean {
         const rowModelType = this.rowModel.getType();
         const rowModelMatches = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
         if (!rowModelMatches) {
-            console.warn(`AG Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
+            console.warn(`AG Grid: ${feature} is only available if using 'clientSide' rowModelType, you are using ${rowModelType}.`);
+            return false;
         }
+        return true;
     }
 
     private onCbSelectAll(): void {
@@ -208,20 +210,7 @@ export class SelectAllFeature extends BeanStub {
         }
 
         if (result) {
-            if (this.gridOptionsWrapper.isRowModelServerSide()) {
-                console.warn('AG Grid: headerCheckboxSelection is not supported for Server Side Row Model');
-                return false;
-            }
-            if (this.gridOptionsWrapper.isRowModelInfinite()) {
-                console.warn('AG Grid: headerCheckboxSelection is not supported for Infinite Row Model');
-                return false;
-            }
-            if (this.gridOptionsWrapper.isRowModelViewport()) {
-                console.warn('AG Grid: headerCheckboxSelection is not supported for Viewport Row Model');
-                return false;
-            }
-            // otherwise the row model is compatible, so return true
-            return true;
+            return this.checkRightRowModelType('headerCheckboxSelection');
         }
 
         return false;
