@@ -273,9 +273,9 @@ export class ColumnGroup implements IHeaderColumn {
         return this.providedColumnGroup;
     }
 
-    /** @deprecated getOriginalColumnGroup is deprecated, use getOriginalColumnGroup. */
+    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getOriginalColumnGroup. */
     public getOriginalColumnGroup(): ProvidedColumnGroup {
-        console.warn('AG Grid: columnGroup.getOriginalColumnGroup() is deprecated due to a method rename, use columnGroup.getProvidedColumnGroup() instead');
+        console.warn('AG Grid: Since v27 columnGroup.getOriginalColumnGroup() is deprecated due to a method rename, use columnGroup.getProvidedColumnGroup() instead');
         return this.getProvidedColumnGroup();
     }
 
