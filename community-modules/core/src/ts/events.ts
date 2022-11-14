@@ -8,7 +8,7 @@ import { IFilterComp } from './interfaces/iFilter';
 import { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
-import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
 import { AgGridCommon } from './interfaces/iCommon';
 export { Events } from './eventKeys';
 

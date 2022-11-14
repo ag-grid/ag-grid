@@ -14,7 +14,6 @@ import { AgEvent } from './events';
 import { EventService } from './eventService';
 import { GridApi } from './gridApi';
 import { CsvExportParams } from './interfaces/exportParams';
-import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import { IDatasource } from './interfaces/iDatasource';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
@@ -1523,15 +1522,15 @@ export class GridOptionsWrapper {
         return this.mergeGridCommonParams(this.gridOptions.getChartToolbarItems);
     }
 
-    public getChartThemeOverrides(): AgChartThemeOverrides | undefined {
+    public getChartThemeOverrides() {
         return this.gridOptions.chartThemeOverrides;
     }
 
-    public getCustomChartThemes(): { [name: string]: AgChartTheme; } | undefined {
+    public getCustomChartThemes() {
         return this.gridOptions.customChartThemes;
     }
 
-    public getChartThemes(): string[] {
+    public getChartThemes() {
         // return default themes if user hasn't supplied any
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
     }
