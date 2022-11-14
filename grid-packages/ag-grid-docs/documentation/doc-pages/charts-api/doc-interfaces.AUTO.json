@@ -2803,10 +2803,6 @@
       "description": "/** The key to use to retrieve x-values from the data. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "yKeys": {
-      "description": "/** The keys to use to retrieve y-values from the data.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) use yKey and multiple series instead\n     */",
-      "type": { "returnType": "string[]", "optional": true }
-    },
     "yKey": {
       "description": "/** The key to use to retrieve y-values from the data. */",
       "type": { "returnType": "string", "optional": true }
@@ -2815,22 +2811,13 @@
       "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "yNames": {
-      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) use yName and multiple series instead\n     */",
-      "type": { "returnType": "string[]", "optional": true }
-    },
-    "yName": { "type": { "returnType": "string", "optional": true } },
-    "fills": {
-      "description": "/** The colours to cycle through for the fills of the areas.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) use fill and multiple series instead\n     */",
-      "type": { "returnType": "CssColor[]", "optional": true }
+    "yName": {
+      "description": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
     },
     "fill": {
       "description": "/** The colour to use for the fill of the area. */",
       "type": { "returnType": "CssColor", "optional": true }
-    },
-    "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the areas.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) use stroke and multiple series instead\n     */",
-      "type": { "returnType": "string[]", "optional": true }
     },
     "stroke": {
       "description": "/** The colours to use for the stroke of the areas. */",
@@ -2990,10 +2977,6 @@
       "description": "/** The keys to use to retrieve y-values from the data. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "yKeys": {
-      "description": "/** The keys to use to retrieve y-values from the data.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use yKey and multiple series instead\n     */",
-      "type": { "returnType": "string[] | string[][]", "optional": true }
-    },
     "xName": {
       "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
@@ -3002,25 +2985,10 @@
       "description": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "yNames": {
-      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use yName and multiple series instead\n     */",
-      "type": {
-        "returnType": "string[] | { [key in string]: string }",
-        "optional": true
-      }
-    },
     "flipXY": { "type": { "returnType": "boolean", "optional": true } },
-    "fills": {
-      "description": "/** The colours to cycle through for the fills of the bars.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use fill and multiple series instead\n     */",
-      "type": { "returnType": "CssColor[]", "optional": true }
-    },
     "fill": {
       "description": "/** The colour to use for the fill of the area. */",
       "type": { "returnType": "CssColor", "optional": true }
-    },
-    "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the bars.\n     *\n     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use stroke and multiple series instead\n     */",
-      "type": { "returnType": "string[]", "optional": true }
     },
     "stroke": {
       "description": "/** The colours to use for the stroke of the bars. */",

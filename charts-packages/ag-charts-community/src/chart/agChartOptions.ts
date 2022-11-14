@@ -1015,37 +1015,14 @@ export interface AgAreaSeriesOptions<DatumType = any> extends AgBaseSeriesOption
     normalizedTo?: number;
     /** The key to use to retrieve x-values from the data. */
     xKey?: string;
-    /**
-     * The keys to use to retrieve y-values from the data.
-     *
-     * @deprecated since v5.1.0 (ag-grid v27.1.0) use yKey and multiple series instead
-     */
-    yKeys?: string[];
     /** The key to use to retrieve y-values from the data. */
     yKey?: string;
     /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
-    /**
-     * Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.
-     *
-     * @deprecated since v5.1.0 (ag-grid v27.1.0) use yName and multiple series instead
-     */
-    yNames?: string[];
+    /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
-    /**
-     * The colours to cycle through for the fills of the areas.
-     *
-     * @deprecated since v5.1.0 (ag-grid v27.1.0) use fill and multiple series instead
-     */
-    fills?: CssColor[];
     /** The colour to use for the fill of the area. */
     fill?: CssColor;
-    /**
-     * The colours to cycle through for the strokes of the areas.
-     *
-     * @deprecated since v5.1.0 (ag-grid v27.1.0) use stroke and multiple series instead
-     */
-    strokes?: string[];
     /** The colours to use for the stroke of the areas. */
     stroke?: CssColor;
     /** The width in pixels of the stroke for the areas. */
@@ -1108,37 +1085,13 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     xKey?: string;
     /** The keys to use to retrieve y-values from the data. */
     yKey?: string;
-    /**
-     * The keys to use to retrieve y-values from the data.
-     *
-     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use yKey and multiple series instead
-     */
-    yKeys?: string[] | string[][];
     /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
     /** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
-    /**
-     * Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.
-     *
-     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use yName and multiple series instead
-     */
-    yNames?: string[] | { [key in string]: string };
     flipXY?: boolean;
-    /**
-     * The colours to cycle through for the fills of the bars.
-     *
-     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use fill and multiple series instead
-     */
-    fills?: CssColor[];
     /** The colour to use for the fill of the area. */
     fill?: CssColor;
-    /**
-     * The colours to cycle through for the strokes of the bars.
-     *
-     * @deprecated since v5.1.0 (ag-grid v27.1.0) Use stroke and multiple series instead
-     */
-    strokes?: string[];
     /** The colours to use for the stroke of the bars. */
     stroke?: CssColor;
     /** The width in pixels of the stroke for the bars. */

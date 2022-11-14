@@ -35,9 +35,17 @@ const seriesOptions: ((AgBarSeriesOptions | AgLineSeriesOptions) & { hideInLegen
     {
         type: 'column',
         xKey: 'quarter',
-        yKeys: ['wearables', 'services'],
-        yNames: ['Wearables', 'Services'],
-        hideInLegend: ['services'],
+        yKey: 'wearables',
+        yName: 'Wearables',
+        showInLegend: true,
+        grouped: true,
+    },
+    {
+        type: 'column',
+        xKey: 'quarter',
+        yKey: 'services',
+        yName: 'Services',
+        showInLegend: false,
         grouped: true,
     },
 ];
@@ -66,9 +74,17 @@ describe('transform series options', () => {
                 {
                     type: 'column',
                     xKey: 'quarter',
-                    yKeys: ['wearables', 'services'],
-                    yNames: ['Wearables', 'Services'],
-                    hideInLegend: ['services'],
+                    yKey: 'wearables',
+                    yName: 'Wearables',
+                    showInLegend: true,
+                    grouped: true,
+                },
+                {
+                    type: 'column',
+                    xKey: 'quarter',
+                    yKey: 'services',
+                    yName: 'Services',
+                    showInLegend: false,
                     grouped: true,
                 },
             ],
@@ -114,10 +130,18 @@ describe('transform series options', () => {
             {
                 type: 'column',
                 xKey: 'quarter',
-                yKeys: ['wearables', 'services'],
-                yNames: ['Wearables', 'Services'],
-                fills: ['blue', 'orange'],
-                hideInLegend: ['services'],
+                yKey: 'wearables',
+                yName: 'Wearables',
+                fill: 'blue',
+                showInLegend: true,
+            },
+            {
+                type: 'column',
+                xKey: 'quarter',
+                yKey: 'services',
+                yName: 'Services',
+                fill: 'orange',
+                showInLegend: false,
             },
         ];
 
@@ -155,9 +179,16 @@ describe('transform series options', () => {
             {
                 type: 'column',
                 xKey: 'quarter',
-                yKeys: ['wearables', 'services'],
-                yNames: ['Wearables', 'Services'],
-                fills: ['blue', 'orange'],
+                yKey: 'wearables',
+                yName: 'Wearables',
+                fill: 'blue',
+            },
+            {
+                type: 'column',
+                xKey: 'quarter',
+                yKey: 'services',
+                yName: 'Services',
+                fill: 'orange',
             },
         ];
 
@@ -169,7 +200,7 @@ describe('transform series options', () => {
             yKeys: ['iphone', 'mac', 'wearables', 'services'],
             yNames: ['Iphone', 'Mac', 'Wearables', 'Services'],
             fills: ['pink', 'red', 'blue', 'orange'],
-            visibles: [true, false, true],
+            visibles: [true, false, true, true],
         };
 
         expect(result).toEqual(columnSeriesOptions);

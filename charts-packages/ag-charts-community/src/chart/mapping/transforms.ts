@@ -39,7 +39,7 @@ function is2dArray<E>(input: E[] | E[][]): input is E[][] {
 
 function yNamesMapping(
     p: string[] | Record<string, string> | undefined,
-    src: AgBarSeriesOptions
+    src: AgBarSeriesOptions & { yKeys: string[] }
 ): Record<string, string> {
     if (p == null) {
         return {};
@@ -75,11 +75,11 @@ function yKeysMapping(p: string[] | string[][] | undefined, src: AgBarSeriesOpti
 }
 
 function barSeriesTransform<T extends AgBarSeriesOptions>(options: T): T {
-    let result = {
+    const result = {
         ...options,
-        yKeys: options.yKeys || [options.yKey],
     };
     delete result['yKey'];
+    delete result['yName'];
 
     return transform(result, {
         yNames: yNamesMapping,

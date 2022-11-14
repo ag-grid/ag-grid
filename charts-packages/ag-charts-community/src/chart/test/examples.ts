@@ -203,8 +203,8 @@ export const AREA_MISSING_Y_DATA_EXAMPLE: AgCartesianChartOptions = {
         {
             type: 'area',
             xKey: 'year',
-            yKeys: ['ie'],
-            yNames: ['IE'],
+            yKey: 'ie',
+            yName: 'IE',
             marker: {
                 size: 5,
             },
@@ -228,8 +228,39 @@ export const STACKED_AREA_MISSING_Y_DATA_EXAMPLE: AgCartesianChartOptions = {
         {
             type: 'area',
             xKey: 'year',
-            yKeys: ['ie', 'firefox', 'safari', 'chrome'],
-            yNames: ['IE', 'Firefox', 'Safari', 'Chrome'],
+            yKey: 'ie',
+            yName: 'IE',
+            stacked: true,
+            marker: {
+                enabled: true,
+            },
+        },
+        {
+            type: 'area',
+            xKey: 'year',
+            yKey: 'firefox',
+            yName: 'Firefox',
+            stacked: true,
+            marker: {
+                enabled: true,
+            },
+        },
+        {
+            type: 'area',
+            xKey: 'year',
+            yKey: 'safari',
+            yName: 'Safari',
+            stacked: true,
+            marker: {
+                enabled: true,
+            },
+        },
+        {
+            type: 'area',
+            xKey: 'year',
+            yKey: 'chrome',
+            yName: 'Chrome',
+            stacked: true,
             marker: {
                 enabled: true,
             },
@@ -253,8 +284,16 @@ export const STACKED_AREA_MISSING_FIRST_Y_DATA_EXAMPLE: AgCartesianChartOptions 
         {
             type: 'area',
             xKey: 'year',
-            yKeys: ['safari', 'chrome'],
-            yNames: ['Safari', 'Chrome'],
+            yKey: 'safari',
+            yName: 'Safari',
+            stacked: true,
+        },
+        {
+            type: 'area',
+            xKey: 'year',
+            yKey: 'chrome',
+            yName: 'Chrome',
+            stacked: true,
         },
     ],
 };
@@ -269,7 +308,7 @@ export const AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'x',
-            yKeys: ['y1'],
+            yKey: 'y1',
             marker: {
                 size: 5,
             },
@@ -287,7 +326,7 @@ export const AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'x',
-            yKeys: ['y1'],
+            yKey: 'y1',
             marker: {
                 size: 5,
             },
@@ -305,7 +344,17 @@ export const STACKED_AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions =
         {
             type: 'area',
             xKey: 'x',
-            yKeys: ['y1', 'y2'],
+            yKey: 'y1',
+            stacked: true,
+            marker: {
+                size: 5,
+            },
+        },
+        {
+            type: 'area',
+            xKey: 'x',
+            yKey: 'y2',
+            stacked: true,
             marker: {
                 size: 5,
             },
@@ -323,7 +372,17 @@ export const STACKED_AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'x',
-            yKeys: ['y1', 'y2'],
+            yKey: 'y1',
+            stacked: true,
+            marker: {
+                size: 5,
+            },
+        },
+        {
+            type: 'area',
+            xKey: 'x',
+            yKey: 'y2',
+            stacked: true,
             marker: {
                 size: 5,
             },
