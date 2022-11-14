@@ -22,12 +22,12 @@ export class AreaChartProxy extends CartesianChartProxy {
         const axisOptions = this.getAxesOptions();
         const axes = [
             {
-                ...(axisOptions ? deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom) : {}),
+                ...(axisOptions ? deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType]?.bottom) : {}),
                 type: this.xAxisType,
                 position: 'bottom',
             },
             {
-                ...(axisOptions ? deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left) : {}),
+                ...(axisOptions ? deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType]?.left) : {}),
                 type: this.yAxisType,
                 position: 'left',
             },
