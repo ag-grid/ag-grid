@@ -265,12 +265,6 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             return null;
         }
 
-        const deprecationWarning = () => {
-            _.doOnce(() => {
-                console.warn('AG Grid: since v24.0, custom aggregation functions take a params object. Please alter your aggregation function to use params.values');
-            }, 'aggregationStage.aggregateValues Deprecation');
-        };
-
         const aggFuncAny = aggFunc;
         const params: IAggFuncParams = {
             values: values,
