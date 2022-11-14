@@ -177,17 +177,20 @@ export function set(target: any, expression: string, value: any) {
     if (target == null) { return; }
 
     const keys = expression.split('.');
+    
     let objectToUpdate = target;
-
-    while (keys.length > 1) {
-        objectToUpdate = objectToUpdate[keys.shift()!];
-
-        if (objectToUpdate == null) {
-            return;
+    // Create empty objects
+    keys.forEach((key, i) => {
+        if (!objectToUpdate[key]) {
+            objectToUpdate[key] = {};
         }
-    }
 
-    objectToUpdate[keys[0]] = value;
+        if (i < keys.length - 1) {
+            objectToUpdate = objectToUpdate[key];
+        }
+    });
+
+    objectToUpdate[keys[keys.length - 1]] = value;
 }
 
 export function deepFreeze(object: any): any {
