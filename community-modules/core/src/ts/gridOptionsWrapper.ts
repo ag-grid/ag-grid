@@ -784,6 +784,10 @@ export class GridOptionsWrapper {
     }
 
     public isServerSideInfiniteScroll(): boolean {
+        return isTrue(this.gridOptions.serverSideInfiniteScroll) || this.gridOptions.serverSideInfiniteScroll === 'legacy';
+    }
+
+    public isServerSideNewInfiniteScroll(): boolean {
         return isTrue(this.gridOptions.serverSideInfiniteScroll);
     }
 

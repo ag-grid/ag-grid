@@ -52,7 +52,7 @@ function propertyIsUnsafe(target: any, key: string) {
             && Object.propertyIsEnumerable.call(target, key)); // and also unsafe if they're nonenumerable.
 }
 
-function mergeObject(target: any, source: any, options: any) {
+function mergeObject(target: Record<string, any> = {}, source: Record<string, any> = {}, options: any) {
     const destination: any = {};
     if (options.isMergeableObject(target)) {
         getKeys(target).forEach(function(key) {

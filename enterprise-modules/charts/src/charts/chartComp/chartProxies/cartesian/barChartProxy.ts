@@ -27,12 +27,12 @@ export class BarChartProxy extends CartesianChartProxy {
         const axisOptions = this.getAxesOptions();
         const axes = [
             {
-                ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
+                ...(axisOptions ? deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom) : {}),
                 type: this.xAxisType,
                 position: isBar ? 'left' : 'bottom',
             },
             {
-                ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
+                ...(axisOptions ? deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left) : {}),
                 type: this.yAxisType,
                 position: isBar ? 'bottom' : 'left',
             },
@@ -67,14 +67,14 @@ export class BarChartProxy extends CartesianChartProxy {
     }
 
     private extractCrossFilterSeries(series: AgBarSeriesOptions[]): AgBarSeriesOptions[] {
-        const palette = this.chartTheme.palette;
+        const palette = this.chartPalette;
 
         const updatePrimarySeries = (seriesOptions: AgBarSeriesOptions, index: number) => {
             return {
                 ...seriesOptions,
                 highlightStyle: { item: { fill: undefined } },
-                fill: palette.fills[index],
-                stroke: palette.strokes[index],
+                fill: palette?.fills[index],
+                stroke: palette?.strokes[index],
                 listeners: {
                     ...this.extractSeriesOverrides().listeners,
                     nodeClick: this.crossFilterCallback

@@ -7,6 +7,7 @@ import { _ } from "../utils";
 @Bean('rowNodeBlockLoader')
 export class RowNodeBlockLoader extends BeanStub {
 
+    public static BLOCK_LOADED_EVENT = 'blockLoaded';
     public static BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
 
     private maxConcurrentRequests: number | undefined;
@@ -51,9 +52,10 @@ export class RowNodeBlockLoader extends BeanStub {
         this.active = false;
     }
 
-    private loadComplete(): void {
+    public loadComplete(): void {
         this.activeBlockLoadsCount--;
         this.checkBlockToLoad();
+        this.dispatchEvent({type: RowNodeBlockLoader.BLOCK_LOADED_EVENT});
         if (this.activeBlockLoadsCount == 0) {
             this.dispatchEvent({type: RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT});
         }
@@ -77,12 +79,12 @@ export class RowNodeBlockLoader extends BeanStub {
             return;
         }
 
-        const loadAvailability = this.maxConcurrentRequests !== undefined ? this.maxConcurrentRequests - this.activeBlockLoadsCount : undefined;
+        const loadAvailability = this.getAvailableLoadingCount();
         const blocksToLoad: RowNodeBlock[] = this.blocks.filter(block => (
             block.getState() === RowNodeBlock.STATE_WAITING_TO_LOAD
         )).slice(0, loadAvailability);
 
-        this.activeBlockLoadsCount += blocksToLoad.length;
+        this.registerLoads(blocksToLoad.length);
         blocksToLoad.forEach(block => block.load());
         this.printCacheStatus();
     }
@@ -106,5 +108,13 @@ export class RowNodeBlockLoader extends BeanStub {
 
     public isLoading(): boolean {
         return this.activeBlockLoadsCount > 0;
+    }
+
+    public registerLoads(count: number) {
+        this.activeBlockLoadsCount += count;
+    }
+
+    public getAvailableLoadingCount() {
+        return this.maxConcurrentRequests !== undefined ? this.maxConcurrentRequests - this.activeBlockLoadsCount : undefined;
     }
 }

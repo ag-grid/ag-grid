@@ -60,17 +60,3 @@ export function getChartTheme(value?: string | ChartTheme | AgChartTheme): Chart
 
     return lightTheme;
 }
-
-export function getIntegratedChartTheme(value?: string | ChartTheme | AgChartTheme): ChartTheme {
-    const theme = getChartTheme(value);
-    const themeConfig = theme.config;
-
-    for (const chartType in themeConfig) {
-        const axes = themeConfig[chartType].axes;
-        for (const axis in axes) {
-            delete axes[axis].crossLines;
-        }
-    }
-
-    return theme;
-}

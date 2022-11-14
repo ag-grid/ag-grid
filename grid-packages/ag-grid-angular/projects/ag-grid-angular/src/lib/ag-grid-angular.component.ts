@@ -727,7 +727,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set whether Server-side Row Model will use Infinite Scrolling
          * Default: `false`
          */
-    @Input() public serverSideInfiniteScroll: boolean | undefined = undefined;
+    @Input() public serverSideInfiniteScroll: boolean | 'legacy' | undefined = undefined;
     /** How many rows for each block in the store, i.e. how many rows returned from the server at a time.
          * Default: `100`
          */
