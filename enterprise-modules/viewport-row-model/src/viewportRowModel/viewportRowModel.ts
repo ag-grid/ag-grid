@@ -17,6 +17,7 @@ import {
     WithoutGridCommon,
     FocusService
 } from "@ag-grid-community/core";
+import { RowModelType } from "@ag-grid-community/core/src/ts/main";
 
 @Bean('rowModel')
 export class ViewportRowModel extends BeanStub implements IRowModel {
@@ -142,7 +143,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         }
     }
 
-    public getType(): string {
+    public getType(): RowModelType {
         return Constants.ROW_MODEL_TYPE_VIEWPORT;
     }
 
