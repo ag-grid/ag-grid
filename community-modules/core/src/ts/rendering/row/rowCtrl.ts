@@ -341,14 +341,10 @@ export class RowCtrl extends BeanStub {
         const pinned = this.getPinnedForContainer(gui.containerType);
         const params = this.createFullWidthParams(gui.element, pinned);
 
-        const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
-        if (this.rowType == RowType.FullWidthDetail && !masterDetailModuleLoaded) {
-            if (ModuleRegistry.isPackageBased()) {
-                console.warn(`AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with ag-grid-enterprise package.`);
-            } else {
-                console.warn(`AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with AG Grid Enterprise Module ${ModuleNames.MasterDetailModule}`);
+        if (this.rowType == RowType.FullWidthDetail) {
+            if (!ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)")) {
+                return
             }
-            return;
         }
 
         let compDetails: UserCompDetails;
@@ -1313,18 +1309,10 @@ export class RowCtrl extends BeanStub {
     }
 
     public addEventListener(eventType: string, listener: Function): void {
-        if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
-            eventType = Events.EVENT_VIRTUAL_ROW_REMOVED;
-            console.warn('AG Grid: Since version 11, event renderedRowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
-        }
         super.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
-        if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
-            eventType = Events.EVENT_VIRTUAL_ROW_REMOVED;
-            console.warn('AG Grid: Since version 11, event renderedRowRemoved and rowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
-        }
         super.removeEventListener(eventType, listener);
     }
 
