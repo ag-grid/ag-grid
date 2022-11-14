@@ -432,7 +432,7 @@ export class PopupService extends BeanStub {
         let destroyPositionTracker: AgPromise<() => void> = new AgPromise(resolve => resolve(() => { }));
 
         if (!eDocument) {
-            console.warn('ag-grid: could not find the document, document is empty');
+            console.warn('AG Grid: could not find the document, document is empty');
             return { hideFunc: () => { }, stopAnchoringPromise: destroyPositionTracker };
         }
 
