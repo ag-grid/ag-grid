@@ -40,10 +40,11 @@ module.exports = {
             displayName: 'e2e',
             roots: ['<rootDir>/src'],
             testMatch: e2eTests,
-            // runner: 'jest-serial-runner',
+            runner: 'jest-serial-runner',
+            // WIP discussion: https://github.com/facebook/jest/issues/10936
             // maxWorkers: 1,
+            // WIP discussion: https://github.com/facebook/jest/pull/10912
             // maxConcurrency: 1,
-            // slowTestThreshold: 10,
             ...commonConfig,
         },
     ],
