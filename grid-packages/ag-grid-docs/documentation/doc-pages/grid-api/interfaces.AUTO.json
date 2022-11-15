@@ -13049,7 +13049,7 @@
       "fullWidthRow?": "boolean",
       "firstRowOnPage": "boolean",
       "lastRowOnPage": "boolean",
-      "printLayout": "boolean",
+      "usePositionRelative": "boolean",
       "expandable": "boolean",
       "pinned": "ColumnPinnedType",
       "extraCssClass?": "string",
@@ -13191,7 +13191,8 @@
       "suppressKeepFocus?": "boolean",
       "onlyBody?": "boolean",
       "newData?": "boolean",
-      "newPage?": "boolean"
+      "newPage?": "boolean",
+      "domLayoutChanged?": "boolean"
     }
   },
   "ITooltipParams": {

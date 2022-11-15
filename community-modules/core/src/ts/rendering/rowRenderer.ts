@@ -179,7 +179,10 @@ export class RowRenderer extends BeanStub {
 
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
-        if (this.gridOptionsWrapper.isEnsureDomOrder()) {
+        const isEnsureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+
+        if (isEnsureDomOrder || isPrintLayout) {
             liveList.sort((a, b) => a.getRowNode().rowIndex - b.getRowNode.rowIndex);
         }
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
@@ -317,7 +320,7 @@ export class RowRenderer extends BeanStub {
         this.embedFullWidthRows = embedFullWidthRows;
 
         if (destroyRows) {
-            this.redrawAfterModelUpdate();
+            this.redrawAfterModelUpdate({ domLayoutChanged: true });
         }
     }
 
@@ -475,9 +478,9 @@ export class RowRenderer extends BeanStub {
         this.updateContainerHeights();
         this.scrollToTopIfNewData(params);
 
-        // never recycle rows when print layout, we draw each row again from scratch. this is because print layout
-        // uses normal dom layout to put cells into dom - it doesn't allow reordering rows.
-        const recycleRows = !this.printLayout && !!params.recycleRows;
+        // never recycle rows on layout change as rows could change from normal DOM layout
+        // back to the grid's row positioning.
+        const recycleRows: boolean = !params.domLayoutChanged && !!params.recycleRows;
         const animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
@@ -1414,4 +1417,5 @@ export interface RefreshViewParams {
     // when new data, grid scrolls back to top
     newData?: boolean;
     newPage?: boolean;
+    domLayoutChanged?: boolean;
 }

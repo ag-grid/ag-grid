@@ -1,4 +1,5 @@
 import { PostConstruct, PreDestroy } from '../../context/context';
+import { Constants } from '../../constants/constants';
 import { setAriaRowIndex } from '../../utils/aria';
 import { setDomChildOrder } from '../../utils/dom';
 import { getAllValuesInObject, iterateObject } from '../../utils/object';
@@ -81,8 +82,10 @@ export class HeaderRowComp extends Component {
             this.destroyBean(comp);
         });
 
-        const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
-        if (ensureDomOrder) {
+        const isEnsureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+
+        if (isEnsureDomOrder || isPrintLayout) {
             const comps = getAllValuesInObject(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
             comps.sort((a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>, b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
