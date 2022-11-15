@@ -48,13 +48,9 @@ if [ "$2" != "skipWarning" ]; then
     done
 fi
 
-echo $SSH_LOCATION
-echo $PUBLIC_HTML_DIR
-echo $HOST
-echo $SSH_PORT
-
 # delete dir if it exists - can ignore dir not found error
-#ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "cd $PUBLIC_HTML_DIR/archive/ && rm -r $VERSION"
+echo "ssh -i $SSH_LOCATION -p $SSH_PORT $HOST cd $PUBLIC_HTML_DIR/archive/ && rm -r $VERSION"
+ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "cd $PUBLIC_HTML_DIR/archive/ && rm -r $VERSION"
 
 # upload file
 #ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "mkdir -p $PUBLIC_HTML_DIR/archive/$VERSION"
