@@ -186,7 +186,7 @@ export class UndoRedoService extends BeanStub {
                     columnId: range.startColumn.getColId()
                 };
 
-                this.setLastFocusedCell(lastFocusedCell);
+                this.setLastFocusedCell(lastFocusedCell, true);
             }
 
             const cellRangeParams: CellRangeParams = {
@@ -214,7 +214,7 @@ export class UndoRedoService extends BeanStub {
             columnId: cellValueChange.columnId
         };
 
-        this.setLastFocusedCell(lastFocusedCell, true);
+        this.setLastFocusedCell(lastFocusedCell, false);
     }
 
     private setLastFocusedCell(lastFocusedCell: LastFocusedCell, setRangeToCell?: boolean) {
