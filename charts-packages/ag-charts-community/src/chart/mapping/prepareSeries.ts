@@ -19,13 +19,7 @@ export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
         }
 
         const seriesType = s.type || 'line';
-        const groupingKey = (s as any).stacked
-            ? 'stacked'
-            : (s as any).grouped
-            ? 'grouped'
-            : s.yKeys
-            ? 'stacked'
-            : 'grouped';
+        const groupingKey = (s as any).stacked ? 'stacked' : 'grouped';
         const indexKey = `${seriesType}-${s.xKey}-${groupingKey}`;
         if (indexMap[indexKey] == null) {
             // Add indexed array to result on first addition.
@@ -90,10 +84,6 @@ interface ReduceConfig<T> {
     seriesType?: string[];
 }
 const REDUCE_CONFIG: Record<string, ReduceConfig<any>> = {
-    yKeys: { outputProp: 'yKeys', reducer: ARRAY_REDUCER('yKeys'), start: [] },
-    fills: { outputProp: 'fills', reducer: ARRAY_REDUCER('fills'), start: [] },
-    strokes: { outputProp: 'strokes', reducer: ARRAY_REDUCER('strokes'), start: [] },
-    yNames: { outputProp: 'yNames', reducer: ARRAY_REDUCER('yNames'), start: [] },
     hideInChart: { outputProp: 'hideInChart', reducer: ARRAY_REDUCER('hideInChart'), start: [] },
     hideInLegend: { outputProp: 'hideInLegend', reducer: ARRAY_REDUCER('hideInLegend'), start: [] },
 

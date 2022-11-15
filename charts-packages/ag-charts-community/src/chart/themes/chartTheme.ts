@@ -324,9 +324,6 @@ export class ChartTheme {
                 yName: '',
                 sizeName: 'Size',
                 labelName: 'Label',
-                strokeWidth: 2,
-                fillOpacity: 1,
-                strokeOpacity: 1,
                 marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults(),
                 },

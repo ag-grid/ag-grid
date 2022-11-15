@@ -95,8 +95,44 @@ describe('ChartTheme', () => {
                 {
                     type: 'column',
                     xKey: 'label',
-                    yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
-                    yNames: ['Reliability', 'Ease of use', 'Performance', 'Price', 'Market share'],
+                    yKey: 'v1',
+                    yName: 'Reliability',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v2',
+                    yName: 'Ease of use',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v3',
+                    yName: 'Performance',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v4',
+                    yName: 'Price',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v5',
+                    yName: 'Market share',
                     label: {
                         fontSize: 18,
                     },
@@ -104,7 +140,32 @@ describe('ChartTheme', () => {
                 {
                     type: 'area',
                     xKey: 'label',
-                    yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
+                    yKey: 'v1',
+                    stacked: true,
+                },
+                {
+                    type: 'area',
+                    xKey: 'label',
+                    yKey: 'v2',
+                    stacked: true,
+                },
+                {
+                    type: 'area',
+                    xKey: 'label',
+                    yKey: 'v3',
+                    stacked: true,
+                },
+                {
+                    type: 'area',
+                    xKey: 'label',
+                    yKey: 'v4',
+                    stacked: true,
+                },
+                {
+                    type: 'area',
+                    xKey: 'label',
+                    yKey: 'v5',
+                    stacked: true,
                 },
             ],
         };
@@ -112,7 +173,9 @@ describe('ChartTheme', () => {
         const serializedOptions = JSON.stringify(cartesianChartOptions);
         let chart: CartesianChart;
 
-        beforeEach(() => (chart = AgChart.create(cartesianChartOptions) as CartesianChart));
+        beforeEach(() => {
+            chart = AgChart.create(cartesianChartOptions) as CartesianChart;
+        });
         afterEach(() => {
             chart.destroy();
             (chart as any) = null;
@@ -207,7 +270,9 @@ describe('ChartTheme', () => {
         const serializedOptions = JSON.stringify(polarChartOptions);
         let chart: PolarChart;
 
-        beforeEach(() => (chart = AgChart.create(polarChartOptions) as PolarChart));
+        beforeEach(() => {
+            chart = AgChart.create(polarChartOptions) as PolarChart;
+        });
         afterEach(() => {
             chart.destroy();
             (chart as any) = null;
@@ -294,8 +359,44 @@ describe('ChartTheme', () => {
                 {
                     type: 'column',
                     xKey: 'label',
-                    yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
-                    yNames: ['Reliability', 'Ease of use', 'Performance', 'Price', 'Market share'],
+                    yKey: 'v1',
+                    yName: 'Reliability',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v2',
+                    yName: 'Ease of use',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v3',
+                    yName: 'Performance',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v4',
+                    yName: 'Price',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v5',
+                    yName: 'Market share',
                     label: {
                         fontSize: 18,
                     },
@@ -438,7 +539,27 @@ describe('ChartTheme', () => {
                     {
                         type: 'area',
                         xKey: 'label',
-                        yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
+                        yKey: 'v1',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v2',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v3',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v4',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v5',
                     },
                 ],
             } as AgCartesianChartOptions) as Chart;
@@ -463,7 +584,23 @@ describe('ChartTheme', () => {
                 series: [
                     {
                         xKey: 'label',
-                        yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
+                        yKey: 'v1',
+                    },
+                    {
+                        xKey: 'label',
+                        yKey: 'v2',
+                    },
+                    {
+                        xKey: 'label',
+                        yKey: 'v3',
+                    },
+                    {
+                        xKey: 'label',
+                        yKey: 'v4',
+                    },
+                    {
+                        xKey: 'label',
+                        yKey: 'v5',
                     },
                 ],
             } as AgCartesianChartOptions) as Chart;
@@ -498,7 +635,27 @@ describe('ChartTheme', () => {
                     {
                         type: 'area',
                         xKey: 'label',
-                        yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
+                        yKey: 'v1',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v2',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v3',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v4',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v5',
                     },
                 ],
             } as AgCartesianChartOptions) as Chart;
@@ -550,7 +707,27 @@ describe('ChartTheme', () => {
                     {
                         type: 'area',
                         xKey: 'label',
-                        yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
+                        yKey: 'v1',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v2',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v3',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v4',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v5',
                     },
                 ],
             } as AgCartesianChartOptions) as Chart;
@@ -647,8 +824,14 @@ describe('ChartTheme', () => {
                 {
                     type: 'column',
                     xKey: 'label',
-                    yKeys: ['v1', 'v2'],
-                    yNames: ['Reliability', 'Ease of use'],
+                    yKey: 'v1',
+                    yName: 'Reliability',
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v2',
+                    yName: 'Ease of use',
                 },
                 {
                     type: 'line',

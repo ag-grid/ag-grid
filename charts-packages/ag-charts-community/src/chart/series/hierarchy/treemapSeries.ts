@@ -331,14 +331,11 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             gradient,
             chart: { highlightedDatum },
             highlightStyle: {
-                fill: deprecatedFill,
-                stroke: deprecatedStroke,
-                strokeWidth: deprecatedStrokeWidth,
                 item: {
-                    fill: highlightedFill = deprecatedFill,
+                    fill: highlightedFill,
                     fillOpacity: highlightedFillOpacity,
-                    stroke: highlightedStroke = deprecatedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                    stroke: highlightedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth,
                 },
             },
             formatter,

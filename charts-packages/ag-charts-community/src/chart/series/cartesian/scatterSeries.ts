@@ -16,7 +16,6 @@ import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Marker } from '../../marker/marker';
 import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
 import { checkDatum, isContinuous } from '../../../util/value';
-import { Deprecated } from '../../../util/deprecation';
 import { OPT_FUNCTION, OPT_STRING, STRING, Validate } from '../../../util/validation';
 import {
     AgScatterSeriesTooltipRendererParams,
@@ -64,35 +63,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     readonly marker = new CartesianSeriesMarker();
 
     readonly label = new Label();
-
-    /**
-     * @deprecated Use {@link marker.fill} instead.
-     */
-    @Deprecated('Use marker.fill instead.', { default: '#c16068' })
-    fill: string | undefined = '#c16068';
-
-    /**
-     * @deprecated Use {@link marker.stroke} instead.
-     */
-    @Deprecated('Use marker.stroke instead.', { default: '#874349' })
-    stroke: string | undefined = '#874349';
-
-    /**
-     * @deprecated Use {@link marker.strokeWidth} instead.
-     */
-    @Deprecated('Use marker.strokeWidth instead.', { default: 2 })
-    strokeWidth: number = 2;
-    /**
-     * @deprecated Use {@link marker.fillOpacity} instead.
-     */
-    @Deprecated('Use marker.fillOpacity instead.', { default: 1 })
-    fillOpacity: number = 1;
-
-    /**
-     * @deprecated Use {@link marker.strokeOpacity} instead.
-     */
-    @Deprecated('Use marker.strokeOpacity instead.', { default: 1 })
-    strokeOpacity: number = 1;
 
     @Validate(OPT_STRING)
     title?: string = undefined;
@@ -305,47 +275,35 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             marker,
             xKey,
             yKey,
-            strokeWidth,
-            fillOpacity: seriesFillOpacity,
-            strokeOpacity: seriesStrokeOpacity,
-            fill: seriesFill,
-            stroke: seriesStroke,
             sizeScale,
             marker: {
-                fillOpacity: markerFillOpacity = seriesFillOpacity,
-                strokeOpacity: markerStrokeOpacity = seriesStrokeOpacity,
+                fillOpacity: markerFillOpacity,
+                strokeOpacity: markerStrokeOpacity,
+                strokeWidth: markerStrokeWidth,
             },
             highlightStyle: {
-                fill: deprecatedFill,
-                stroke: deprecatedStroke,
-                strokeWidth: deprecatedStrokeWidth,
                 item: {
-                    fill: highlightedFill = deprecatedFill,
+                    fill: highlightedFill,
                     fillOpacity: highlightFillOpacity = markerFillOpacity,
-                    stroke: highlightedStroke = deprecatedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                    stroke: highlightedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth,
                 },
             },
             id: seriesId,
         } = this;
-        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         const { formatter } = marker;
 
         sizeScale.range = [marker.size, marker.maxSize];
 
         markerSelection.each((node, datum) => {
-            const fill =
-                isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || seriesFill;
+            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
             const fillOpacity = isDatumHighlighted ? highlightFillOpacity : markerFillOpacity;
-            const stroke =
-                isDatumHighlighted && highlightedStroke !== undefined
-                    ? highlightedStroke
-                    : marker.stroke || seriesStroke;
+            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke;
             const strokeOpacity = markerStrokeOpacity;
             const strokeWidth =
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                     ? highlightedDatumStrokeWidth
-                    : markerStrokeWidth;
+                    : markerStrokeWidth ?? 1;
             const size = datum.point?.size ?? 0;
 
             let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
@@ -365,7 +323,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
             node.fill = (format && format.fill) || fill;
             node.stroke = (format && format.stroke) || stroke;
-            node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+            node.strokeWidth = format?.strokeWidth ?? strokeWidth;
             node.size = format && format.size !== undefined ? format.size : size;
             node.fillOpacity = fillOpacity ?? 1;
             node.strokeOpacity = strokeOpacity ?? 1;
@@ -431,23 +389,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             return '';
         }
 
-        const {
-            fill: seriesFill,
-            stroke: seriesStroke,
-            marker,
-            tooltip,
-            xName,
-            yName,
-            sizeKey,
-            sizeName,
-            labelKey,
-            labelName,
-            id: seriesId,
-        } = this;
+        const { marker, tooltip, xName, yName, sizeKey, sizeName, labelKey, labelName, id: seriesId } = this;
 
-        const fill = marker.fill ?? seriesFill;
-        const stroke = marker.stroke ?? seriesStroke;
-        const strokeWidth = this.getStrokeWidth(marker.strokeWidth || this.strokeWidth);
+        const { fill, stroke } = marker;
+        const strokeWidth = this.getStrokeWidth(marker.strokeWidth ?? 1);
 
         const { formatter } = this.marker;
         let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
@@ -520,7 +465,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     getLegendData(): LegendDatum[] {
-        const { id, data, xKey, yKey, yName, title, visible, marker, fill, stroke, fillOpacity, strokeOpacity } = this;
+        const { id, data, xKey, yKey, yName, title, visible, marker } = this;
+        const { fill, stroke, fillOpacity, strokeOpacity } = marker;
 
         if (!(data && data.length && xKey && yKey)) {
             return [];
@@ -538,8 +484,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     shape: marker.shape,
                     fill: marker.fill || fill || 'rgba(0, 0, 0, 0)',
                     stroke: marker.stroke || stroke || 'rgba(0, 0, 0, 0)',
-                    fillOpacity: marker.fillOpacity !== undefined ? marker.fillOpacity : fillOpacity,
-                    strokeOpacity: marker.strokeOpacity !== undefined ? marker.strokeOpacity : strokeOpacity,
+                    fillOpacity: fillOpacity ?? 1,
+                    strokeOpacity: strokeOpacity ?? 1,
                 },
             },
         ];
