@@ -3,48 +3,63 @@ import 'jest-canvas-mock';
 import { groupSeriesByType, reduceSeries, processSeriesOptions } from './prepareSeries';
 import { AgBarSeriesOptions, AgLineSeriesOptions } from '../agChartOptions';
 
-const seriesOptions: ((AgBarSeriesOptions | AgLineSeriesOptions) & { hideInLegend?: string[] })[] = [
+const colSeriesIPhone: AgBarSeriesOptions = {
+    type: 'column',
+    xKey: 'quarter',
+    yKey: 'iphone',
+    fill: 'pink',
+    yName: 'Iphone',
+};
+const lineSeriesMac: AgLineSeriesOptions = {
+    type: 'line',
+    xKey: 'quarter',
+    yKey: 'mac',
+    yName: 'Mac',
+};
+const colSeriesMac: AgBarSeriesOptions = {
+    type: 'column',
+    xKey: 'quarter',
+    yKey: 'mac',
+    fill: 'red',
+    yName: 'Mac',
+};
+const lineSeriesIPhone: AgLineSeriesOptions = {
+    type: 'line',
+    xKey: 'quarter',
+    yKey: 'iphone',
+    yName: 'iPhone',
+};
+const colSeriesWearables: AgBarSeriesOptions = {
+    type: 'column',
+    xKey: 'quarter',
+    yKey: 'wearables',
+    yName: 'Wearables',
+};
+const colSeriesServices: AgBarSeriesOptions = {
+    type: 'column',
+    xKey: 'quarter',
+    yKey: 'services',
+    yName: 'Services',
+};
+
+const seriesOptions: Array<AgBarSeriesOptions | AgLineSeriesOptions> = [
     {
-        type: 'column',
-        xKey: 'quarter',
-        yKey: 'iphone',
-        fill: 'pink',
-        yName: 'Iphone',
+        ...colSeriesIPhone,
         showInLegend: true,
     },
+    lineSeriesMac,
     {
-        type: 'line',
-        xKey: 'quarter',
-        yKey: 'mac',
-        yName: 'Mac',
-    },
-    {
-        type: 'column',
-        xKey: 'quarter',
-        yKey: 'mac',
-        fill: 'red',
-        yName: 'Mac',
+        ...colSeriesMac,
         showInLegend: false,
     },
+    lineSeriesIPhone,
     {
-        type: 'line',
-        xKey: 'quarter',
-        yKey: 'iphone',
-        yName: 'iPhone',
-    },
-    {
-        type: 'column',
-        xKey: 'quarter',
-        yKey: 'wearables',
-        yName: 'Wearables',
+        ...colSeriesWearables,
         showInLegend: true,
         grouped: true,
     },
     {
-        type: 'column',
-        xKey: 'quarter',
-        yKey: 'services',
-        yName: 'Services',
+        ...colSeriesServices,
         showInLegend: false,
         grouped: true,
     },
@@ -54,56 +69,9 @@ describe('transform series options', () => {
     test('groupSeriesByType', () => {
         const result = groupSeriesByType(seriesOptions);
         const groupedSeriesOptions = [
-            [
-                {
-                    type: 'column',
-                    xKey: 'quarter',
-                    yKey: 'iphone',
-                    fill: 'pink',
-                    yName: 'Iphone',
-                    showInLegend: true,
-                },
-                {
-                    type: 'column',
-                    xKey: 'quarter',
-                    yKey: 'mac',
-                    fill: 'red',
-                    yName: 'Mac',
-                    showInLegend: false,
-                },
-                {
-                    type: 'column',
-                    xKey: 'quarter',
-                    yKey: 'wearables',
-                    yName: 'Wearables',
-                    showInLegend: true,
-                    grouped: true,
-                },
-                {
-                    type: 'column',
-                    xKey: 'quarter',
-                    yKey: 'services',
-                    yName: 'Services',
-                    showInLegend: false,
-                    grouped: true,
-                },
-            ],
-            [
-                {
-                    type: 'line',
-                    xKey: 'quarter',
-                    yKey: 'mac',
-                    yName: 'Mac',
-                },
-            ],
-            [
-                {
-                    type: 'line',
-                    xKey: 'quarter',
-                    yKey: 'iphone',
-                    yName: 'iPhone',
-                },
-            ],
+            [seriesOptions[0], seriesOptions[2], seriesOptions[4], seriesOptions[5]],
+            [lineSeriesMac],
+            [lineSeriesIPhone],
         ];
 
         expect(result).toEqual(groupedSeriesOptions);
@@ -112,34 +80,20 @@ describe('transform series options', () => {
     test('reduceSeries', () => {
         const columnSeriesGroup: any[] = [
             {
-                type: 'column',
-                xKey: 'quarter',
-                yKey: 'iphone',
-                fill: 'pink',
-                yName: 'Iphone',
+                ...colSeriesIPhone,
                 showInLegend: true,
             },
             {
-                type: 'column',
-                xKey: 'quarter',
-                yKey: 'mac',
-                fill: 'red',
-                yName: 'Mac',
+                ...colSeriesMac,
                 showInLegend: false,
             },
             {
-                type: 'column',
-                xKey: 'quarter',
-                yKey: 'wearables',
-                yName: 'Wearables',
+                ...colSeriesWearables,
                 fill: 'blue',
                 showInLegend: true,
             },
             {
-                type: 'column',
-                xKey: 'quarter',
-                yKey: 'services',
-                yName: 'Services',
+                ...colSeriesServices,
                 fill: 'orange',
                 showInLegend: false,
             },
@@ -161,33 +115,17 @@ describe('transform series options', () => {
 
     test('reduceSeries - sparse properties', () => {
         const columnSeriesGroup: any[] = [
+            colSeriesIPhone,
             {
-                type: 'column',
-                xKey: 'quarter',
-                yKey: 'iphone',
-                fill: 'pink',
-                yName: 'Iphone',
-            },
-            {
-                type: 'column',
-                xKey: 'quarter',
-                yKey: 'mac',
-                fill: 'red',
-                yName: 'Mac',
+                ...colSeriesMac,
                 visible: false,
             },
             {
-                type: 'column',
-                xKey: 'quarter',
-                yKey: 'wearables',
-                yName: 'Wearables',
+                ...colSeriesWearables,
                 fill: 'blue',
             },
             {
-                type: 'column',
-                xKey: 'quarter',
-                yKey: 'services',
-                yName: 'Services',
+                ...colSeriesServices,
                 fill: 'orange',
             },
         ];
