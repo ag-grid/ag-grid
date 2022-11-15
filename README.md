@@ -79,8 +79,8 @@ $ npm install --save ag-grid-community
 ```js
 import { Grid } from 'ag-grid-community';
 
-import 'ag-grid-community/styles//ag-grid.css';
-import 'ag-grid-community/styles//ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 ```
 
 ### Set configuration
