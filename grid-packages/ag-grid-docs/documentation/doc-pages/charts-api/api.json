@@ -562,43 +562,18 @@
     "xKey": {
       "isRequired": true
     },
-    "yKeys": {
+    "yKey": {
       "isRequired": true
     },
     "normalizedTo": {
       "min": 1,
       "max": 100
     },
-    "fills": {
-      "default": [
-        "#f3622d",
-        "#fba71b",
-        "#57b757",
-        "#41a9c9",
-        "#4258c9",
-        "#9a42c8",
-        "#c84164",
-        "#888888"
-      ]
-    },
     "fillOpacity": {
       "default": 1,
       "min": 0,
       "max": 1,
       "step": 0.05
-    },
-    "strokes": {
-      "type": "string[]",
-      "default": [
-        "#aa4520",
-        "#b07513",
-        "#3d803d",
-        "#2d768d",
-        "#2e3e8d",
-        "#6c2e8c",
-        "#8c2d46",
-        "#5f5f5f"
-      ]
     },
     "strokeOpacity": {
       "default": 1,
@@ -669,7 +644,7 @@
     "xKey": {
       "isRequired": true
     },
-    "yKeys": {
+    "yKey": {
       "isRequired": true
     },
     "grouped": {
@@ -679,35 +654,11 @@
       "min": 1,
       "max": 100
     },
-    "fills": {
-      "default": [
-        "#f3622d",
-        "#fba71b",
-        "#57b757",
-        "#41a9c9",
-        "#4258c9",
-        "#9a42c8",
-        "#c84164",
-        "#888888"
-      ]
-    },
     "fillOpacity": {
       "default": 1,
       "min": 0,
       "max": 1,
       "step": 0.05
-    },
-    "strokes": {
-      "default": [
-        "#aa4520",
-        "#b07513",
-        "#3d803d",
-        "#2d768d",
-        "#2e3e8d",
-        "#6c2e8c",
-        "#8c2d46",
-        "#5f5f5f"
-      ]
     },
     "strokeOpacity": {
       "default": 1,
