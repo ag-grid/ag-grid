@@ -101,15 +101,15 @@ export class LazyBlockLoader extends BeanStub {
         }
 
         const success = (params: LoadSuccessParams) => {
-            removeNodesFromLoadingMap();
-            this.cache.onLoadSuccess(startRow, endRow - startRow, params);
             this.rowNodeBlockLoader.loadComplete();
+            this.cache.onLoadSuccess(startRow, endRow - startRow, params);
+            removeNodesFromLoadingMap();
         };
 
         const fail = () => {
-            removeNodesFromLoadingMap();
-            this.cache.onLoadFailed(startRow, endRow - startRow);
             this.rowNodeBlockLoader.loadComplete();
+            this.cache.onLoadFailed(startRow, endRow - startRow);
+            removeNodesFromLoadingMap();
         }
 
         const params: IServerSideGetRowsParams = {

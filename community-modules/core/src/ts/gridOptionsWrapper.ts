@@ -227,14 +227,16 @@ export class GridOptionsWrapper {
         }
 
         if (this.isRowModelServerSide()) {
-            const msg = (prop: string) => `AG Grid: '${prop}' is not supported on the Server-Side Row Model`;
+            const msg = (prop: string, alt?: string) => (
+                `AG Grid: '${prop}' is not supported on the Server-Side Row Model.` + (alt ? ` Please use ${alt} instead.` : '')
+            );
             if (exists(this.gridOptions.groupDefaultExpanded)) {
-                console.warn(msg('groupDefaultExpanded'));
+                console.warn(msg('groupDefaultExpanded', 'isServerSideGroupOpenByDefault callback'));
             }
-            if (exists(this.gridOptions.groupDefaultExpanded)) {
+            if (exists(this.gridOptions.groupIncludeFooter)) {
                 console.warn(msg('groupIncludeFooter'));
             }
-            if (exists(this.gridOptions.groupDefaultExpanded)) {
+            if (exists(this.gridOptions.groupIncludeTotalFooter)) {
                 console.warn(msg('groupIncludeTotalFooter'));
             }
         }
