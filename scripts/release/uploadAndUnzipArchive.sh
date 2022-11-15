@@ -18,20 +18,13 @@ function checkFileExists {
 
 VERSION=$1
 
-export CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
-export SSH_LOCATION=$HOME/$SSH_FILE
+export SSH_LOCATION=$SSH_FILE
 
 # a few safety checks
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
 then
     echo "Version isn't in the expected format. Valid format is: Number.Number.number. For example 19.1.2";
     exit 1;
-fi
-
-if [ -z "$CREDENTIALS_LOCATION" ]
-then
-      echo "\$CREDENTIALS_LOCATION is not set"
-      exit 1;
 fi
 
 if [ -z "$SSH_LOCATION" ]
