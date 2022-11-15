@@ -56,10 +56,10 @@ ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "mkdir -p $PUBLIC_HTML_DIR/archive/$VERS
 scp -i $SSH_LOCATION $ARCHIVE $HOST:$PUBLIC_HTML_DIR/archive/$VERSION/
 
 # unzip archive
-#ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "cd $PUBLIC_HTML_DIR/archive/$VERSION && tar -m -xf $ARCHIVE"
-#
-##update folder permissions (default is 777 - change to 755)
-#ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "chmod -R 755 $PUBLIC_HTML_DIR/archive/$VERSION"
-#
+ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "cd $PUBLIC_HTML_DIR/archive/$VERSION && tar -m -xf $ARCHIVE"
+
+#update folder permissions (default is 777 - change to 755)
+ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "chmod -R 755 $PUBLIC_HTML_DIR/archive/$VERSION"
+
 
 
