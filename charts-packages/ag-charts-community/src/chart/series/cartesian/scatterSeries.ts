@@ -333,6 +333,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         sizeScale.range = [marker.size, marker.maxSize];
 
+        const customMarker = typeof marker.shape === 'function';
+
         markerSelection.each((node, datum) => {
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || seriesFill;
@@ -372,6 +374,15 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             node.translationX = datum.point?.x ?? 0;
             node.translationY = datum.point?.y ?? 0;
             node.visible = node.size > 0;
+
+            if (!customMarker) {
+                return;
+            }
+
+            // Only for cutom marker shapes
+            node.path.clear({ trackChanges: true });
+            node.updatePath();
+            node.checkPathDirty();
         });
 
         if (!isDatumHighlighted) {

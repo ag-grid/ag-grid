@@ -67,7 +67,7 @@ export class Path extends Shape {
     protected isDirtyPath() {
         // Override point for more expensive dirty checks.
     }
-    protected updatePath() {
+    updatePath() {
         // Override point for subclasses.
     }
 

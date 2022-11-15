@@ -380,6 +380,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const { size, formatter } = marker;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
 
+        const customMarker = typeof marker.shape === 'function';
+
         markerSelection.each((node, datum) => {
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
             const fillOpacity = isDatumHighlighted ? highlightFillOpacity : markerFillOpacity;
@@ -415,6 +417,15 @@ export class LineSeries extends CartesianSeries<LineContext> {
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
             node.visible = node.size > 0 && !isNaN(datum.point.x) && !isNaN(datum.point.y);
+
+            if (!customMarker) {
+                return;
+            }
+
+            // Only for cutom marker shapes
+            node.path.clear({ trackChanges: true });
+            node.updatePath();
+            node.checkPathDirty();
         });
 
         if (!isDatumHighlighted) {
