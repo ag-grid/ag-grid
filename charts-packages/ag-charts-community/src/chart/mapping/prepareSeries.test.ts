@@ -7,7 +7,6 @@ const colSeriesIPhone: AgBarSeriesOptions = {
     type: 'column',
     xKey: 'quarter',
     yKey: 'iphone',
-    fill: 'pink',
     yName: 'Iphone',
 };
 const lineSeriesMac: AgLineSeriesOptions = {
@@ -20,7 +19,6 @@ const colSeriesMac: AgBarSeriesOptions = {
     type: 'column',
     xKey: 'quarter',
     yKey: 'mac',
-    fill: 'red',
     yName: 'Mac',
 };
 const lineSeriesIPhone: AgLineSeriesOptions = {
@@ -45,11 +43,13 @@ const colSeriesServices: AgBarSeriesOptions = {
 const seriesOptions: Array<AgBarSeriesOptions | AgLineSeriesOptions> = [
     {
         ...colSeriesIPhone,
+        fill: 'pink',
         showInLegend: true,
     },
     lineSeriesMac,
     {
         ...colSeriesMac,
+        fill: 'red',
         showInLegend: false,
     },
     lineSeriesIPhone,
@@ -70,8 +70,8 @@ describe('transform series options', () => {
         const result = groupSeriesByType(seriesOptions);
         const groupedSeriesOptions = [
             [seriesOptions[0], seriesOptions[2], seriesOptions[4], seriesOptions[5]],
-            [lineSeriesMac],
-            [lineSeriesIPhone],
+            [seriesOptions[1]],
+            [seriesOptions[3]],
         ];
 
         expect(result).toEqual(groupedSeriesOptions);
@@ -81,10 +81,12 @@ describe('transform series options', () => {
         const columnSeriesGroup: any[] = [
             {
                 ...colSeriesIPhone,
+                fill: 'pink',
                 showInLegend: true,
             },
             {
                 ...colSeriesMac,
+                fill: 'red',
                 showInLegend: false,
             },
             {
@@ -115,9 +117,13 @@ describe('transform series options', () => {
 
     test('reduceSeries - sparse properties', () => {
         const columnSeriesGroup: any[] = [
-            colSeriesIPhone,
+            {
+                ...colSeriesIPhone,
+                fill: 'pink',
+            },
             {
                 ...colSeriesMac,
+                fill: 'red',
                 visible: false,
             },
             {

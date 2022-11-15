@@ -179,8 +179,8 @@ export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
             {
                 xKey: 'grouping',
                 xName: 'Group',
-                yKeys: ['totalWinnings'],
-                yNames: ['Total Winnings'],
+                yKey: 'totalWinnings',
+                yName: 'Total Winnings',
                 showInLegend: false,
                 flipXY: false,
                 grouped: true,
