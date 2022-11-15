@@ -49,7 +49,7 @@ if [ "$2" != "skipWarning" ]; then
 fi
 
 echo $SSH_LOCATION
-echo $$PUBLIC_HTML_DIR
+echo $PUBLIC_HTML_DIR
 echo $HOST
 echo $SSH_PORT
 
