@@ -1,13 +1,10 @@
 import {
     _,
     AgChartThemeOverrides,
-    Autowired,
     BeanStub,
     ChartOptionsChanged,
     ChartType,
-    ColumnApi,
     Events,
-    GridApi,
     WithoutGridCommon
 } from "@ag-grid-community/core";
 import { AgCartesianAxisType, AgChartInstance } from "ag-charts-community";
@@ -18,10 +15,6 @@ import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
 type SupportedSeries = AgChartActual['series'][number];
 export class ChartOptionsService extends BeanStub {
-
-    @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
-
     private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
