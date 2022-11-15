@@ -183,7 +183,13 @@ export class GridChartComp extends Component {
                 this.params.crossFilteringResetCallback!();
             }
             this.crossFilterService.filter(event, reset);
-        }
+        };
+
+        const clickCallback = (event: any) => {
+            if (this.chartMenu?.isVisible()) {
+                this.chartMenu.hideMenu();
+            }
+        };
 
         const chartType = this.chartController.getChartType();
         const chartProxyParams: ChartProxyParams = {
@@ -195,6 +201,7 @@ export class GridChartComp extends Component {
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             crossFiltering: this.params.crossFiltering,
             crossFilterCallback,
+            clickCallback,
             parentElement: this.eChart,
             grouping: this.chartController.isGrouping(),
             chartOptionsToRestore: this.params.chartOptionsToRestore,
