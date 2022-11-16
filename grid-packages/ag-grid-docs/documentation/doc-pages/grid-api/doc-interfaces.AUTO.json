@@ -16163,7 +16163,16 @@
   },
   "AgChartOptions": {},
   "AgChartInstance": {
+    "getOptions": {
+      "description": "/** Get the AgChartOptions representing the current chart configuration. */",
+      "type": {
+        "arguments": {},
+        "returnType": "AgChartOptions",
+        "optional": false
+      }
+    },
     "destroy": {
+      "description": "/** Destroy the chart instance and any allocated resources to support its rendering. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },

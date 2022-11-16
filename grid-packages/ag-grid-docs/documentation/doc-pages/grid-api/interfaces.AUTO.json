@@ -9424,7 +9424,14 @@
     "meta": { "isTypeAlias": true },
     "type": "AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions"
   },
-  "AgChartInstance": { "meta": {}, "type": { "destroy()": "void" } },
+  "AgChartInstance": {
+    "meta": {},
+    "type": { "getOptions()": "AgChartOptions", "destroy()": "void" },
+    "docs": {
+      "getOptions()": "/** Get the AgChartOptions representing the current chart configuration. */",
+      "destroy()": "/** Destroy the chart instance and any allocated resources to support its rendering. */"
+    }
+  },
   "IAggFuncService": {
     "meta": {},
     "type": {
