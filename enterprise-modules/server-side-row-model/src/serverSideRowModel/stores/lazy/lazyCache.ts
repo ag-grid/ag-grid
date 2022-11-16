@@ -101,7 +101,7 @@ export class LazyCache extends BeanStub {
 
         // no node was found before this display index, so calculate based on store end index
         if (nodeAfterStringIndex == null) {
-            const storeIndexFromEndIndex = this.store.getRowCount() - (this.store.getDisplayIndexEnd()! - displayIndex - 1);
+            const storeIndexFromEndIndex = this.store.getRowCount() - (this.store.getDisplayIndexEnd()! - displayIndex);
             return this.createStubNode(storeIndexFromEndIndex, displayIndex);
         }
 
@@ -301,6 +301,7 @@ export class LazyCache extends BeanStub {
 
     public destroyRowAtIndex(atStoreIndex: number) {
         const node = this.nodeIndexMap[atStoreIndex];
+        this.nodeIds.delete(node.id!);
         this.blockUtils.destroyRowNode(node);
         delete this.nodeIndexMap[atStoreIndex];
     }
@@ -467,6 +468,17 @@ export class LazyCache extends BeanStub {
 
     public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
         if (!this.live) return;
+
+        if (this.isUsingRowIds()) {
+            const newIds = new Set(response.rowData.map(data => this.getRowId(data)));
+            const responseHasDuplicates = newIds.size !== response.rowData.length;
+            if (responseHasDuplicates) {
+                console.warn(`AG Grid: Server response contained duplicate ids, please modify the getRowId callback to provide unique ids.`);
+                this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
+                return;
+            }
+        }
+        
         response.rowData.forEach((data, responseRowIndex) => {
             const rowIndex = firstRowIndex + responseRowIndex;
             const nodeFromCache = this.nodeIndexMap[rowIndex];
@@ -526,9 +538,7 @@ export class LazyCache extends BeanStub {
         for(let i = firstRowIndex; i < firstRowIndex + numberOfRowsExpected; i++) {
             const nodeFromCache = this.nodeIndexMap[i];
             if (nodeFromCache) {
-                this.destroyRowAtIndex(i);
-                const newNode = this.createRowAtIndex(i);
-                newNode.failedLoad = true;
+                nodeFromCache.failedLoad = true;
             }
         }
 
@@ -549,6 +559,28 @@ export class LazyCache extends BeanStub {
         if (!this.live) { return; }
 
         this.store.fireStoreUpdatedEvent();
+    }
+
+    private isUsingRowIds() {
+        return this.gridOptionsWrapper.getRowIdFunc() != null;
+    }
+
+    private getRowId(data: any) {
+        const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+
+        if (getRowIdFunc == null) {
+            return null;
+        }
+
+        // find rowNode using id
+        const { level } = this.store.getRowDetails();
+        const parentKeys = this.store.getParentNode().getGroupKeys();
+        const id: string = getRowIdFunc({
+            data,
+            parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
+            level,
+        });
+        return id;
     }
 
     private lookupRowNode(data: any): RowNode | null {
