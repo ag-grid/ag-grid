@@ -13,7 +13,8 @@ import {
     RefSelector,
     UserComponentFactory,
     ValueFormatterService,
-    WithoutGridCommon
+    WithoutGridCommon,
+    ValueFormatterParams
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 
@@ -39,6 +40,7 @@ export class SetFilterListItem<V> extends Component {
         private readonly value: V | null | (() => string),
         private readonly params: ISetFilterParams<any, V>,
         private readonly translate: (key: keyof ISetFilterLocaleText) => string,
+        private readonly valueFormatter: (params: ValueFormatterParams) => string,
         private isSelected?: boolean,
     ) {
         super(SetFilterListItem.TEMPLATE);
@@ -88,7 +90,7 @@ export class SetFilterListItem<V> extends Component {
             // backwards compatibility for select all in value
             value = formattedValue as any;
         } else {
-            formattedValue = this.getFormattedValue(this.params, column, value);
+            formattedValue = this.getFormattedValue(column, value);
         }
 
         if (this.params.showTooltips) {
@@ -116,10 +118,8 @@ export class SetFilterListItem<V> extends Component {
         return res;
     }
 
-    private getFormattedValue(filterParams: ISetFilterParams<any, V>, column: Column, value: any) {
-        const formatter = filterParams && filterParams.valueFormatter;
-
-        return this.valueFormatterService.formatValue(column, null, value, formatter, false);
+    private getFormattedValue(column: Column, value: any) {
+        return this.valueFormatterService.formatValue(column, null, value, this.valueFormatter, false);
     }
 
     private renderCell(params: ISetFilterCellRendererParams): void {

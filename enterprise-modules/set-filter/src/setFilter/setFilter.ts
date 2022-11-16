@@ -29,10 +29,8 @@ import { SetFilterListItem, SetFilterListItemSelectionChangedEvent } from './set
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 
 
-const NULL_SUBSTITUTE = '__<ag-grid-pseudo-null>__';
-
 /** @param V type of value in the Set Filter */
-export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> implements ISetFilter<V> {
+export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
     public static SELECT_ALL_VALUE = '__AG_SELECT_ALL__';
 
     @RefSelector('eMiniFilter') private readonly eMiniFilter: AgInputTextField;
@@ -47,14 +45,13 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
     private virtualList: VirtualList | null = null;
     private positionableFeature: PositionableFeature;
     private caseSensitive: boolean = false;
-    private suppressComplexObjects: boolean = false;
+    private convertValuesToStrings: boolean = false;
 
-    // To make the filtering super fast, we store the keys in an object, and check for the boolean value.
-    // Although Set would be a more natural choice of data structure, its performance across browsers is
-    // significantly worse than using an object: https://jsbench.me/hdk91jbw1h/
-    private appliedModelKeys: { [key: string]: boolean; } | null = null;
+    // To make the filtering super fast, we store the keys in an Set rather than using the default array
+    private appliedModelKeys: Set<string | null> | null = null;
+    private noAppliedModelKeys: boolean = false;
 
-    private keyCreator: (params: KeyCreatorParams) => string;
+    private createKey: (value: V | null, node?: RowNode | null) => string | null;
 
     private valueFormatter: (params: ValueFormatterParams) => string;
 
@@ -135,7 +132,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
         return 'set-filter';
     }
 
-    public setModel(model: SetFilterModel<V> | null): AgPromise<void> {
+    public setModel(model: SetFilterModel | null): AgPromise<void> {
         if (model == null && this.valueModel?.getModel() == null) {
             // refreshing is expensive. if new and old model are both null (e.g. nothing set), skip.
             // mini filter isn't contained within the model, so always reset
@@ -145,7 +142,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
         return super.setModel(model);
     }
 
-    private setModelAndRefresh(values: SetFilterModelValue<V> | null): AgPromise<void> {
+    private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
         return this.valueModel ? this.valueModel.setModel(values).then(() => this.refresh()) : AgPromise.resolve();
     }
 
@@ -155,14 +152,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
         return this.setModelAndRefresh(null);
     }
 
-    protected setModelIntoUi(model: SetFilterModel<V> | null): AgPromise<void> {
+    protected setModelIntoUi(model: SetFilterModel | null): AgPromise<void> {
         this.setMiniFilter(null);
 
         const values = model == null ? null : model.values;
         return this.setModelAndRefresh(values);
     }
 
-    public getModelFromUi(): SetFilterModel<V> | null {
+    public getModelFromUi(): SetFilterModel | null {
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         const values = this.valueModel.getModel();
@@ -180,11 +177,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
         return this.valueModel;
     }
 
-    protected areModelsEqual(a: SetFilterModel<V>, b: SetFilterModel<V>): boolean {
+    protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
         // both are missing
         if (a == null && b == null) { return true; }
 
-        return a != null && b != null && _.jsonEquals(a.values, b.values);
+        return a != null && b != null && _.areEqual(a.values, b.values);
     }
 
     public setParams(params: ISetFilterParams<any, V>): void {
@@ -193,17 +190,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
         super.setParams(params);
 
         this.setFilterParams = params;
-        this.suppressComplexObjects = !!params.suppressComplexObjects;
-        const { colDef: { keyCreator } } = params;
-        if (!this.setFilterParams.valueFormatter) {
-            if (keyCreator && !this.suppressComplexObjects) {
-                throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless suppressComplexObjects is enabled');
-            }
-            this.setFilterParams.valueFormatter = params => _.toStringOrNull(params.value)!;
-        }
-        this.valueFormatter = this.setFilterParams.valueFormatter;
+        this.convertValuesToStrings = !!params.convertValuesToStrings;
         this.caseSensitive = !!params.caseSensitive;
-        this.keyCreator = keyCreator ?? (params => _.toStringOrNull(params.value)!);
+        let keyCreator = params.keyCreator ?? params.colDef.keyCreator;
+        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings);
+        this.setCreateKey(keyCreator, this.convertValuesToStrings);
 
         this.valueModel = new SetValueModel(
             params,
@@ -211,12 +202,45 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
             this.valueFormatterService,
             key => this.translateForSetFilter(key),
             v => this.caseFormat(v),
-            (value, node) => this.getKey(value, node)
+            this.createKey,
+            this.valueFormatter,
+            !!keyCreator
         );
 
         this.initialiseFilterBodyUi();
 
         this.addEventListenersForDataChanges();
+    }
+
+    private setValueFormatter(
+        providedValueFormatter: ((params: ValueFormatterParams) => string) | undefined,
+        keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined,
+        convertValuesToStrings: boolean
+    ) {
+        let valueFormatter = providedValueFormatter;
+        if (!valueFormatter) {
+            if (keyCreator && !convertValuesToStrings) {
+                throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
+            }
+            valueFormatter = params => _.toStringOrNull(params.value)!;
+        }
+        this.valueFormatter = valueFormatter;
+    }
+
+    private setCreateKey(keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined, convertValuesToStrings: boolean): void {
+        if (keyCreator) {
+            this.createKey = (value, node = null) => {
+                const params = this.getKeyCreatorParams(value, node);
+                return _.makeNull(keyCreator!(params));
+            };
+        } else {
+            if (convertValuesToStrings) {
+                // for backwards compatibility - keeping separate as it will eventually be removed
+                this.createKey = value => Array.isArray(value) ? value as any : _.makeNull(_.toStringOrNull(value));
+            } else {
+                this.createKey = value => _.makeNull(_.toStringOrNull(value));
+            }
+        }
     }
 
     public getValueFormatter() {
@@ -336,6 +360,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
                 () => this.getSelectAllLabel(),
                 this.setFilterParams,
                 translateKey => this.translateForSetFilter(translateKey),
+                this.valueFormatter,
                 this.isSelectAllSelected()));
 
             listItem.addEventListener(
@@ -347,7 +372,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
         }
 
         listItem = this.createBean(new SetFilterListItem(
-            this.valueModel.getValue(key), this.setFilterParams, translateKey => this.translateForSetFilter(translateKey), this.valueModel.isValueSelected(key)));
+            this.valueModel.getValue(key),
+            this.setFilterParams,
+            translateKey => this.translateForSetFilter(translateKey),
+            this.valueFormatter,
+            this.valueModel.isKeySelected(key)));
 
         listItem.addEventListener(
             SetFilterListItem.EVENT_SELECTION_CHANGED,
@@ -424,29 +453,34 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
 
         const result = super.applyModel();
 
-        // keep appliedModelValues in sync with the applied model
+        // keep appliedModelKeys in sync with the applied model
         const appliedModel = this.getModel();
 
         if (appliedModel) {
-            this.appliedModelKeys = appliedModel.values.reduce(
-                (values, value) => {
-                    values[this.suppressComplexObjects ? this.caseFormat(value as any) ?? NULL_SUBSTITUTE : this.uniqueKey(value)] = true;
-                    return values;
-                },
-                {} as { [key: string]: boolean; });
+            this.appliedModelKeys = new Set();
+            appliedModel.values.forEach(value => {
+                this.appliedModelKeys!.add(this.caseFormat(value));
+            });
         } else {
             this.appliedModelKeys = null;
         }
 
+        this.noAppliedModelKeys = appliedModel?.values.length === 0;
+
         return result;
     }
 
-    protected isModelValid(model: SetFilterModel<V>): boolean {
+    protected isModelValid(model: SetFilterModel): boolean {
         return this.setFilterParams && this.setFilterParams.excelMode ? model == null || model.values.length > 0 : true;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         if (!this.setFilterParams || !this.valueModel || !this.appliedModelKeys) { return true; }
+
+        // if nothing selected, don't need to check value
+        if (this.noAppliedModelKeys) {
+            return false;
+        }
 
         const { node, data } = params;
         const { valueGetter, api, colDef, column, columnApi, context } = this.setFilterParams;
@@ -462,22 +496,20 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
             node: node,
         });
 
-        if (this.suppressComplexObjects) {
+        if (this.convertValuesToStrings) {
             // for backwards compatibility - keeping separate as it will eventually be removed
-            const key = this.getKey(value, node);
+            const key = this.createKey(value, node);
             if (key != null && Array.isArray(key)) {
-                return key.some(v => this.appliedModelKeys![this.caseFormat(v) ?? NULL_SUBSTITUTE] === true);
+                return key.some(v => this.appliedModelKeys!.has(this.caseFormat(v)));
             }
 
-            return this.appliedModelKeys[this.caseFormat(key) ?? NULL_SUBSTITUTE] === true;
+            return this.appliedModelKeys!.has(this.caseFormat(key));
         } else {
             if (value != null && Array.isArray(value)) {
-                return value.some(v => this.appliedModelKeys![this.uniqueKey(v, node)] === true);
+                return value.some(v => this.appliedModelKeys!.has(this.caseFormat(this.createKey(v, node))));
             }
     
-            // Comparing against a value performs better than just checking for undefined
-            // https://jsbench.me/hdk91jbw1h/
-            return this.appliedModelKeys[this.uniqueKey(value, node)] === true;
+            return this.appliedModelKeys!.has(this.caseFormat(this.createKey(value, node)));
         }
     }
 
@@ -492,15 +524,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
             columnApi: this.setFilterParams!.columnApi,
             context: this.setFilterParams!.context
         }
-    }
-
-    private getKey(value: V | null, node: RowNode | null = null): string | null  {
-        const params = this.getKeyCreatorParams(value, node);
-        return _.makeNull(this.keyCreator(params));
-    }
-
-    private uniqueKey(value: V | null, node: RowNode | null = null): string {
-        return this.caseFormat(this.getKey(value, node)) ?? NULL_SUBSTITUTE;
     }
 
     public onNewRowsLoaded(): void {
@@ -518,12 +541,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
     /**
      * Public method provided so the user can change the value of the filter once
      * the filter has been already started
-     * @param options The options to use.
+     * @param values The values to use.
      */
-    public setFilterValues(options: SetFilterModelValue<V>): void {
+    public setFilterValues(values: (V | null)[]): void {
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        this.valueModel.overrideValues(options).then(() => {
+        this.valueModel.overrideValues(values).then(() => {
             this.refresh();
             this.onUiChanged();
         });
@@ -667,9 +690,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
         if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
 
         if (isSelected) {
-            this.valueModel.selectValue(key);
+            this.valueModel.selectKey(key);
         } else {
-            this.valueModel.deselectValue(key);
+            this.valueModel.deselectKey(key);
         }
 
         const focusedRow = this.virtualList.getLastFocusedRow();
@@ -694,8 +717,16 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel<V>, V> 
         this.virtualList.refresh();
     }
 
-    public getValues(): SetFilterModelValue<V> {
+    public getFilterKeys(): SetFilterModelValue {
+        return this.valueModel ? this.valueModel.getKeys() : [];
+    }
+
+    public getFilterValues(): (V | null)[] {
         return this.valueModel ? this.valueModel.getValues() : [];
+    }
+
+    public getValues(): SetFilterModelValue {
+        return this.getFilterKeys();
     }
 
     public refreshVirtualList(): void {
@@ -768,7 +799,7 @@ class ModelWrapper<V> implements VirtualListModel {
     }
 
     public isRowSelected(index: number): boolean {
-        return this.model.isValueSelected(this.getRow(index));
+        return this.model.isKeySelected(this.getRow(index));
     }
 }
 
@@ -787,6 +818,6 @@ class ModelWrapperWithSelectAll<V> implements VirtualListModel {
     }
 
     public isRowSelected(index: number): boolean | undefined {
-        return index === 0 ? this.isSelectAllSelected() : this.model.isValueSelected(this.getRow(index));
+        return index === 0 ? this.isSelectAllSelected() : this.model.isKeySelected(this.getRow(index));
     }
 }

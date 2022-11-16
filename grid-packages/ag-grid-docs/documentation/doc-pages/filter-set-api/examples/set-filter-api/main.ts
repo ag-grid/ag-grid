@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ISetFilter, KeyCreatorParams, ValueFormatterParams, IFiltersToolPanel } from '@ag-grid-community/core'
+import { Grid, GridOptions, ISetFilter, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -12,7 +12,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 return `${params.value.name} (${params.value.code})`
             },
             keyCreator: countryKeyCreator,
-            filterParams: { suppressComplexObjects: true },
+            filterParams: { valueFormatter: (params: ValueFormatterParams) => params.value.name },
         },
         { field: 'age', maxWidth: 120, filter: 'agNumberColumnFilter' },
         { field: 'year', maxWidth: 120 },
@@ -68,14 +68,23 @@ function selectNothing() {
 }
 
 function setCountriesToFranceAustralia() {
-    const instance = gridOptions.api!.getFilterInstance<ISetFilter>('country')!;
-    instance.setFilterValues(['France', 'Australia'])
+    const instance = gridOptions.api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
+    instance.setFilterValues([
+        {
+            name: 'France',
+            code: 'FR',
+        },
+        {
+            name: 'Australia',
+            code: 'AU'
+        }
+    ])
     instance.applyModel()
     gridOptions.api!.onFilterChanged()
 }
 
 function setCountriesToAll() {
-    const instance = gridOptions.api!.getFilterInstance<ISetFilter>('country')!;
+    const instance = gridOptions.api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
     instance.resetFilterValues()
     instance.applyModel()
     gridOptions.api!.onFilterChanged()

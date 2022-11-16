@@ -19995,43 +19995,58 @@
       "type": { "returnType": "number", "optional": true }
     }
   },
-  "SetFilterModelValue": { "meta": { "typeParams": ["V = string"] } },
+  "SetFilterModelValue": {},
   "SetFilterModel": {
     "filterType": { "type": { "returnType": "'set'", "optional": true } },
     "values": {
-      "type": { "returnType": "SetFilterModelValue<V>", "optional": false }
-    },
-    "meta": { "typeParams": ["V = string"] }
+      "type": { "returnType": "SetFilterModelValue", "optional": false }
+    }
   },
   "ISetFilter": {
     "getModel": {
       "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n     * not active.\n     */",
       "type": {
         "arguments": {},
-        "returnType": "SetFilterModel<V> | null",
+        "returnType": "SetFilterModel | null",
         "optional": false
       }
     },
     "setModel": {
       "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n     * de-activate the filter.\n     * \n     * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)\n     * to the Set Filter, you need to wait for these changes to be applied before performing any further\n     * actions by waiting on the returned grid promise, e.g. \n     * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`\n     */",
       "type": {
-        "arguments": { "model": "SetFilterModel<V> | null" },
+        "arguments": { "model": "SetFilterModel | null" },
         "returnType": "void | AgPromise<void>",
         "optional": false
       }
     },
     "getValues": {
+      "description": "/** @deprecated As of v29 use `getFilterValues` to get the values in the Set Filter\n     * (e.g. complex objects if provided), or `getFilterKeys` to get the string keys\n     * \n     * Returns the full list of unique keys used by the Set Filter.\n     */",
+      "type": {
+        "arguments": {},
+        "returnType": "SetFilterModelValue",
+        "optional": false
+      }
+    },
+    "getFilterKeys": {
+      "description": "/** Returns the full list of unique keys used by the Set Filter. */",
+      "type": {
+        "arguments": {},
+        "returnType": "SetFilterModelValue",
+        "optional": false
+      }
+    },
+    "getFilterValues": {
       "description": "/** Returns the full list of unique values used by the Set Filter. */",
       "type": {
         "arguments": {},
-        "returnType": "SetFilterModelValue<V>",
+        "returnType": "(V | null)[]",
         "optional": false
       }
     },
     "setFilterValues": {
       "description": "/** Sets the values used in the Set Filter on the fly. */",
       "type": {
-        "arguments": { "values": "SetFilterModelValue<V>" },
+        "arguments": { "values": "(V | null)[]" },
         "returnType": "void",
         "optional": false
       }
@@ -20064,7 +20079,7 @@
       "description": "/** Returns the current UI state (potentially un-applied). */",
       "type": {
         "arguments": {},
-        "returnType": "SetFilterModel<V> | null",
+        "returnType": "SetFilterModel | null",
         "optional": false
       }
     },
@@ -20114,7 +20129,7 @@
     "success": {
       "description": "/** The function to call with the values to load into the filter once they are ready. */",
       "type": {
-        "arguments": { "values": "SetFilterModelValue<V>" },
+        "arguments": { "values": "(V | null)[]" },
         "returnType": "void",
         "optional": false
       }
@@ -20199,9 +20214,17 @@
       }
     },
     "valueFormatter": {
-      "description": "/** If specified, this formats the value before it is displayed in the Filter List.\n     */",
+      "description": "/** If specified, this formats the value before it is displayed in the Filter List.\n     * If a Key Creator is provided (see `keyCreator`), this must also be provided,\n     * unless `convertValuesToStrings` is `true`\n     */",
       "type": {
         "arguments": { "params": "ValueFormatterParams" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "keyCreator": {
+      "description": "/** Function to return a string key for a value. This is required when the filter values are complex objects.\n     * If not provided, the Column Definition Key Creator is used.\n     */",
+      "type": {
+        "arguments": { "params": "KeyCreatorParams<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -20218,8 +20241,8 @@
       "description": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.\n     */",
       "type": { "returnType": "'mac' | 'windows'", "optional": true }
     },
-    "suppressComplexObjects": {
-      "description": "/** @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects.\n     * If this is set to  `true`, complex objects will instead be converted to strings by the keyCreator,\n     * and those values will be used in the Filter Model and Filter List\n     */",
+    "convertValuesToStrings": {
+      "description": "/** @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,\n     * as well as maintaining the type of primitives (e.g. number, boolean).\n     * \n     * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.\n     * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "meta": { "typeParams": ["TData = any", "V = string"] },

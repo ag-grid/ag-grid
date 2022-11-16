@@ -20,12 +20,6 @@ var valueFormatter = function (params: ValueFormatterParams) {
     .join(', ')
 }
 
-var keyCreator = function (params: KeyCreatorParams) {
-  return params.value.map(function (animal: any) {
-    return animal.name
-  })
-}
-
 const gridOptions: GridOptions = {
   columnDefs: [
     {
@@ -43,9 +37,9 @@ const gridOptions: GridOptions = {
       field: 'animalsObjects',
       filter: 'agSetColumnFilter',
       valueFormatter: valueFormatter,
-      keyCreator: keyCreator,
+      keyCreator: (params: KeyCreatorParams) => params.value.name,
       filterParams: {
-        suppressComplexObjects: true,
+        valueFormatter: (params: ValueFormatterParams) => params.value.name
       },
     },
   ],

@@ -1,4 +1,4 @@
-import { ColDef, ValueFormatterParams } from '../entities/colDef';
+import { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
 import { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/providedFilter';
 import { Column } from '../entities/column';
 import { GridApi } from '../gridApi';
@@ -6,12 +6,10 @@ import { ColumnApi } from '../columns/columnApi';
 import { ProvidedFilterModel } from './iFilter';
 import { AgPromise } from '../utils/promise';
 
-/** @param V type of value in the Set Filter */
-export type SetFilterModelValue<V = string> = (V | null)[];
-/** @param V type of value in the Set Filter */
-export interface SetFilterModel<V = string> extends ProvidedFilterModel {
+export type SetFilterModelValue = (string | null)[];
+export interface SetFilterModel extends ProvidedFilterModel {
     filterType?: 'set';
-    values: SetFilterModelValue<V>;
+    values: SetFilterModelValue;
 }
 
 /**
@@ -23,7 +21,7 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
      * Returns a model representing the current state of the filter, or `null` if the filter is
      * not active.
      */
-    getModel(): SetFilterModel<V> | null;
+    getModel(): SetFilterModel | null;
 
     /**
      * Sets the state of the filter using the supplied model. Providing `null` as the model will
@@ -34,13 +32,24 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
      * actions by waiting on the returned grid promise, e.g. 
      * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`
      */
-    setModel(model: SetFilterModel<V> | null): void | AgPromise<void>;
+    setModel(model: SetFilterModel | null): void | AgPromise<void>;
+
+    /**
+     * @deprecated As of v29 use `getFilterValues` to get the values in the Set Filter
+     * (e.g. complex objects if provided), or `getFilterKeys` to get the string keys
+     * 
+     * Returns the full list of unique keys used by the Set Filter.
+     */
+    getValues(): SetFilterModelValue;
+
+    /** Returns the full list of unique keys used by the Set Filter. */
+    getFilterKeys(): SetFilterModelValue;
 
     /** Returns the full list of unique values used by the Set Filter. */
-    getValues(): SetFilterModelValue<V>;
+    getFilterValues(): (V | null)[];
 
     /** Sets the values used in the Set Filter on the fly. */
-    setFilterValues(values: SetFilterModelValue<V>): void;
+    setFilterValues(values: (V | null)[]): void;
     /**
      * Refreshes the values shown in the filter from the original source. For example, if a
      * callback was provided, the callback will be executed again and the filter will refresh using
@@ -59,7 +68,7 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
     setMiniFilter(newMiniFilter: string | null): void;
 
     /** Returns the current UI state (potentially un-applied). */
-    getModelFromUi(): SetFilterModel<V> | null;
+    getModelFromUi(): SetFilterModel | null;
 }
 
 /** 
@@ -68,7 +77,7 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
  */
 export interface SetFilterValuesFuncParams<TData = any, V = string> {
     /** The function to call with the values to load into the filter once they are ready. */
-    success: (values: SetFilterModelValue<V>) => void;
+    success: (values: (V | null)[]) => void;
     /** The column definition from which the set filter is invoked. */
     colDef: ColDef<TData>;
     /** Column from which the set filter is invoked. */
@@ -88,7 +97,7 @@ export type SetFilterValuesFunc<TData = any, V = string> = (params: SetFilterVal
  * @param TData type of data row
  * @param V type of value in the Set Filter
  */
-export type SetFilterValues<TData = any, V = string> = SetFilterValuesFunc<TData, V> | SetFilterModelValue<V>;
+export type SetFilterValues<TData = any, V = string> = SetFilterValuesFunc<TData, V> | (V | null)[];
 
 /** 
  * @param TData type of data row
@@ -158,8 +167,15 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     textFormatter?: (from: string) => string;
     /**
      * If specified, this formats the value before it is displayed in the Filter List.
+     * If a Key Creator is provided (see `keyCreator`), this must also be provided,
+     * unless `convertValuesToStrings` is `true`
      */
     valueFormatter?: (params: ValueFormatterParams) => string;
+    /**
+     * Function to return a string key for a value. This is required when the filter values are complex objects.
+     * If not provided, the Column Definition Key Creator is used.
+     */
+    keyCreator?: (params: KeyCreatorParams<TData>) => string;
     /**
      * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,
      * untruncated value.
@@ -177,9 +193,11 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      */
     excelMode?: 'mac' | 'windows';
     /**
-     * @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects.
-     * If this is set to  `true`, complex objects will instead be converted to strings by the keyCreator,
-     * and those values will be used in the Filter Model and Filter List
+     * @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,
+     * as well as maintaining the type of primitives (e.g. number, boolean).
+     * 
+     * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.
+     * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.
      */
-    suppressComplexObjects?: boolean
+    convertValuesToStrings?: boolean
 }
