@@ -278,27 +278,28 @@ export class GridApi<TData = any> {
         const mergedParams = Object.assign({ exportMode: 'xlsx' }, baseParams, params);
         return mergedParams.exportMode;
     }
+    private assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method)) { return false }
+        const exportMode = this.getExcelExportMode(params);
+        if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
+            console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
+            return false;
+        }
+        return true;
+    }
 
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getDataAsExcel')) { return; }
-        const exportMode = this.getExcelExportMode(params);
-        if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
-            console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
-            return;
+        if (this.assertNotExcelMultiSheet('getDataAsExcel', params)) {
+            return this.excelCreator.getDataAsExcel(params);
         }
-        return this.excelCreator.getDataAsExcel(params);
     }
 
     /** Downloads an Excel export of the grid's data. */
     public exportDataAsExcel(params?: ExcelExportParams): void {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportDataAsExcel')) { return; }
-        const exportMode = this.getExcelExportMode(params);
-        if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
-            console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
-            return;
+        if (this.assertNotExcelMultiSheet('exportDataAsExcel', params)) {
+            this.excelCreator.exportDataAsExcel(params);
         }
-        this.excelCreator.exportDataAsExcel(params);
     }
 
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
@@ -490,12 +491,6 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty('alwaysShowVerticalScroll', show);
     }
 
-    /** Force refresh all tool panels by calling their `refresh` method. */
-    public refreshToolPanel(): void {
-        if (!this.sideBarComp) { return; }
-        this.sideBarComp.refresh();
-    }
-
     /** Performs change detection on all cells, refreshing cells where required. */
     public refreshCells(params: RefreshCellsParams<TData> = {}): void {
         this.rowRenderer.refreshCells(params);
@@ -657,20 +652,6 @@ export class GridApi<TData = any> {
         } else {
             this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
         }
-    }
-
-    public getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
-    public getToolPanelInstance(id: 'filters'): IFiltersToolPanel | undefined;
-    // This override is a duplicate but is required to make the general override public.
-    public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined;
-    /** Gets the tool panel instance corresponding to the supplied `id`. */
-    public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
-            return;
-        }
-        const comp = this.sideBarComp.getToolPanelInstance(id);
-        return unwrapUserComp(comp) as any;
     }
 
     /**
@@ -885,8 +866,7 @@ export class GridApi<TData = any> {
 
     /** Gets the status panel instance corresponding to the supplied `id`. */
     public getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined {
-        if (!this.statusBarService) { return; }
-
+        if (!ModuleRegistry.assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel')) { return; }
         const comp = this.statusBarService.getStatusPanel(key);
         return unwrapUserComp(comp) as any;
     }
@@ -1194,52 +1174,73 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_HEIGHT, rowHeightFunc);
     }
 
+    private assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
+        return ModuleRegistry.assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod);
+    }
+
     /** Returns `true` if the side bar is visible. */
     public isSideBarVisible(): boolean {
-        return this.sideBarComp ? this.sideBarComp.isDisplayed() : false;
+        return this.assertSideBarLoaded('isSideBarVisible') && this.sideBarComp.isDisplayed();
     }
 
     /** Show/hide the entire side bar, including any visible panel and the tab buttons. */
     public setSideBarVisible(show: boolean) {
-        if (!this.sideBarComp) {
-            if (show) {
-                console.warn('AG Grid: sideBar is not loaded');
-            }
-            return;
+        if (this.assertSideBarLoaded('setSideBarVisible')) {
+            this.sideBarComp.setDisplayed(show);
         }
-        this.sideBarComp.setDisplayed(show);
     }
 
     /** Sets the side bar position relative to the grid. Possible values are `'left'` or `'right'`. */
     public setSideBarPosition(position: 'left' | 'right') {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: sideBar is not loaded');
-            return;
+        if (this.assertSideBarLoaded('setSideBarPosition')) {
+            this.sideBarComp.setSideBarPosition(position);
         }
-        this.sideBarComp.setSideBarPosition(position);
     }
 
     /** Opens a particular tool panel. Provide the ID of the tool panel to open. */
     public openToolPanel(key: string) {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
-            return;
+        if (this.assertSideBarLoaded('openToolPanel')) {
+            this.sideBarComp.openToolPanel(key);
         }
-        this.sideBarComp.openToolPanel(key);
     }
 
     /** Closes the currently open tool panel (if any). */
     public closeToolPanel() {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
-            return;
+        if (this.assertSideBarLoaded('closeToolPanel')) {
+            this.sideBarComp.close();
         }
-        this.sideBarComp.close();
     }
 
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     public getOpenedToolPanel(): string | null {
-        return this.sideBarComp ? this.sideBarComp.openedItem() : null;
+        if (this.assertSideBarLoaded('getOpenedToolPanel')) {
+            this.sideBarComp.openedItem()
+        }
+        return null;
+    }
+
+    /** Force refresh all tool panels by calling their `refresh` method. */
+    public refreshToolPanel(): void {
+        if (this.assertSideBarLoaded('refreshToolPanel')) {
+            this.sideBarComp.refresh();
+        }
+    }
+
+    /** Returns `true` if the tool panel is showing, otherwise `false`. */
+    public isToolPanelShowing(): boolean {
+        return this.assertSideBarLoaded('isToolPanelShowing') && this.sideBarComp.isToolPanelShowing();
+    }
+
+    public getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
+    public getToolPanelInstance(id: 'filters'): IFiltersToolPanel | undefined;
+    // This override is a duplicate but is required to make the general override public.
+    public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined;
+    /** Gets the tool panel instance corresponding to the supplied `id`. */
+    public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined {
+        if (this.assertSideBarLoaded('getToolPanelInstance')) {
+            const comp = this.sideBarComp.getToolPanelInstance(id);
+            return unwrapUserComp(comp) as any;
+        }
     }
 
     /** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */
@@ -1254,11 +1255,6 @@ export class GridApi<TData = any> {
 
     public setSuppressClipboardPaste(value: boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_CLIPBOARD_PASTE, value);
-    }
-
-    /** Returns `true` if the tool panel is showing, otherwise `false`. */
-    public isToolPanelShowing(): boolean {
-        return this.sideBarComp.isToolPanelShowing();
     }
 
     /** Tells the grid to recalculate the row heights. */
@@ -1384,7 +1380,7 @@ export class GridApi<TData = any> {
             return this.rangeService.getCellRanges();
         }
 
-        console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise');
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges');
         return null;
     }
 
@@ -1394,14 +1390,19 @@ export class GridApi<TData = any> {
 
     /** Adds the provided cell range to the selected ranges. */
     public addCellRange(params: CellRangeParams): void {
-        if (!this.rangeService) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
-        this.rangeService.addCellRange(params);
+        if (this.rangeService) {
+            this.rangeService.addCellRange(params);
+            return;
+        }
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange');
     }
 
     /** Clears the selected ranges. */
     public clearRangeSelection(): void {
-        if (!this.rangeService) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
-        this.rangeService.removeAllCellRanges();
+        if (this.rangeService) {
+            this.rangeService.removeAllCellRanges();    
+        }
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection');
     }
     /** Reverts the last cell edit. */
     public undoCellEditing(): void {

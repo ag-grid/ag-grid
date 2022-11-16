@@ -192,10 +192,6 @@
     "description": "/** If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary. */",
     "type": { "arguments": { "show": "boolean" } }
   },
-  "refreshToolPanel": {
-    "description": "/** Force refresh all tool panels by calling their `refresh` method. */",
-    "type": { "arguments": {}, "returnType": "void" }
-  },
   "refreshCells": {
     "description": "/** Performs change detection on all cells, refreshing cells where required. */",
     "type": {
@@ -285,13 +281,6 @@
   "collapseAll": {
     "description": "/** Collapse all groups. */",
     "type": { "arguments": {} }
-  },
-  "getToolPanelInstance": {
-    "description": "/** Gets the tool panel instance corresponding to the supplied `id`. */",
-    "type": {
-      "arguments": { "id": "string" },
-      "returnType": "TToolPanel | undefined"
-    }
   },
   "addRenderedRowListener": {
     "description": "/** Registers a callback to a virtual row.\n     * A virtual row is a row that is visually rendered on the screen (rows that are not visible because of the scroll position are not rendered).\n     * Unlike normal events, you do not need to unregister rendered row listeners.\n     * When the rendered row is removed from the grid, all associated rendered row listeners will also be removed.\n     * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.\n     */",
@@ -888,6 +877,21 @@
     "description": "/** Returns the ID of the currently shown tool panel if any, otherwise `null`. */",
     "type": { "arguments": {}, "returnType": "string | null" }
   },
+  "refreshToolPanel": {
+    "description": "/** Force refresh all tool panels by calling their `refresh` method. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "isToolPanelShowing": {
+    "description": "/** Returns `true` if the tool panel is showing, otherwise `false`. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "getToolPanelInstance": {
+    "description": "/** Gets the tool panel instance corresponding to the supplied `id`. */",
+    "type": {
+      "arguments": { "id": "string" },
+      "returnType": "TToolPanel | undefined"
+    }
+  },
   "getSideBar": {
     "description": "/** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */",
     "type": { "arguments": {}, "returnType": "SideBarDef" }
@@ -901,10 +905,6 @@
   },
   "setSuppressClipboardPaste": {
     "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
-  },
-  "isToolPanelShowing": {
-    "description": "/** Returns `true` if the tool panel is showing, otherwise `false`. */",
-    "type": { "arguments": {}, "returnType": "boolean" }
   },
   "resetRowHeights": {
     "description": "/** Tells the grid to recalculate the row heights. */",
