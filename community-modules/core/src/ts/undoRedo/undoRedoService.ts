@@ -186,7 +186,7 @@ export class UndoRedoService extends BeanStub {
                     columnId: range.startColumn.getColId()
                 };
 
-                this.setLastFocusedCell(lastFocusedCell, true);
+                this.setLastFocusedCell(lastFocusedCell);
             }
 
             const cellRangeParams: CellRangeParams = {
@@ -214,7 +214,10 @@ export class UndoRedoService extends BeanStub {
             columnId: cellValueChange.columnId
         };
 
-        this.setLastFocusedCell(lastFocusedCell, false);
+        // when single cells are being processed, they should be considered
+        // as ranges when the rangeService is present (singleCellRanges).
+        // otherwise focus will be restore but the range will not.
+        this.setLastFocusedCell(lastFocusedCell, !!this.rangeService);
     }
 
     private setLastFocusedCell(lastFocusedCell: LastFocusedCell, setRangeToCell?: boolean) {
@@ -230,6 +233,7 @@ export class UndoRedoService extends BeanStub {
 
         const cellPosition: CellPosition = { rowIndex, column, rowPinned };
         this.focusService.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
+
 
         if (setRangeToCell) {
             this.rangeService.setRangeToCell(cellPosition);
