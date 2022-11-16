@@ -23,16 +23,12 @@ export class BarChartProxy extends CartesianChartProxy {
 
     public getAxes(): AgCartesianAxisOptions[] {
         const isBar = this.standaloneChartType === 'bar';
-
-        const axisOptions = this.getAxesOptions();
-        const axes = [
+        const axes: AgCartesianAxisOptions[] = [
             {
-                ...(axisOptions ? deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType]?.bottom) : {}),
                 type: this.xAxisType,
                 position: isBar ? 'left' : 'bottom',
             },
             {
-                ...(axisOptions ? deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType]?.left) : {}),
                 type: this.yAxisType,
                 position: isBar ? 'bottom' : 'left',
             },
@@ -52,7 +48,6 @@ export class BarChartProxy extends CartesianChartProxy {
 
         const series: AgBarSeriesOptions[] = params.fields.map(f => (
             {
-                ...this.extractSeriesOverrides(),
                 type: this.standaloneChartType,
                 grouped: isGrouped,
                 normalizedTo: this.isNormalised() ? 100 : undefined,
@@ -60,14 +55,14 @@ export class BarChartProxy extends CartesianChartProxy {
                 xName: params.category.name,
                 yKey: f.colId,
                 yName: f.displayName
-            }
+            } as AgBarSeriesOptions
         ));
 
         return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
     }
 
     private extractCrossFilterSeries(series: AgBarSeriesOptions[]): AgBarSeriesOptions[] {
-        const palette = this.chartPalette;
+        const palette = this.getChartPalette();
 
         const updatePrimarySeries = (seriesOptions: AgBarSeriesOptions, index: number) => {
             return {
@@ -76,7 +71,6 @@ export class BarChartProxy extends CartesianChartProxy {
                 fill: palette?.fills[index],
                 stroke: palette?.strokes[index],
                 listeners: {
-                    ...this.extractSeriesOverrides().listeners,
                     nodeClick: this.crossFilterCallback
                 }
             }

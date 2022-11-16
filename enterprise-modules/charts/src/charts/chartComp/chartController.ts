@@ -1,7 +1,6 @@
 import {
     _,
     AgChartThemePalette,
-    AgEvent,
     Autowired,
     BeanStub,
     CellRange,
@@ -117,8 +116,8 @@ export class ChartController extends BeanStub {
             modelType,
             chartId: this.model.chartId,
             chartType: this.model.chartType,
-            chartThemeName: this.model.chartThemeName,
-            chartOptions: this.chartProxy.getChartOptions(),
+            chartThemeName: this.getChartThemeName(),
+            chartOptions: this.chartProxy.getChartThemeOverrides(),
             chartPalette: this.chartProxy.getChartPalette(),
             cellRange: this.getCellRangeParams(),
             suppressChartRanges: this.model.suppressChartRanges,
@@ -362,8 +361,8 @@ export class ChartController extends BeanStub {
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId,
             chartType,
-            chartThemeName: this.model.chartThemeName,
-            chartOptions: this.chartProxy.getChartOptions()
+            chartThemeName: this.getChartThemeName(),
+            chartOptions: this.chartProxy.getChartThemeOverrides()
         });
 
         this.eventService.dispatchEvent(event);

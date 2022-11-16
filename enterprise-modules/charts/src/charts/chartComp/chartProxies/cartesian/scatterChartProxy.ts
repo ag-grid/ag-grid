@@ -1,7 +1,6 @@
 import { AgCartesianAxisOptions, AgScatterSeriesMarker, AgScatterSeriesOptions } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
-import { deepMerge } from "../../utils/object";
 import { ChartDataModel } from "../../chartDataModel";
 
 interface SeriesDefinition {
@@ -27,15 +26,12 @@ export class ScatterChartProxy extends CartesianChartProxy {
     }
 
     public getAxes(): AgCartesianAxisOptions[] {
-        const axisOptions = this.getAxesOptions();
         return [
             {
-                ...(axisOptions ? deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType]?.bottom) : {}),
                 type: this.xAxisType,
                 position: 'bottom',
             },
             {
-                ...(axisOptions ? deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType]?.left) : {}),
                 type: this.yAxisType,
                 position: 'left',
             },
@@ -43,13 +39,12 @@ export class ScatterChartProxy extends CartesianChartProxy {
     }
 
     public getSeries(params: UpdateChartParams): AgScatterSeriesOptions[] {
-        const paired = this.chartOptions[this.standaloneChartType]?.paired;
+        const paired = this.getIntegratedThemeOptions()[this.standaloneChartType]?.paired;
         const seriesDefinitions = this.getSeriesDefinitions(params.fields, paired);
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
 
         const series: AgScatterSeriesOptions[] = seriesDefinitions.map(seriesDefinition => (
             {
-                ...this.extractSeriesOverrides(),
                 type: this.standaloneChartType,
                 xKey: seriesDefinition!.xField.colId,
                 xName: seriesDefinition!.xField.displayName,
@@ -60,7 +55,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
                 sizeName: seriesDefinition!.sizeField ? seriesDefinition!.sizeField.displayName : undefined,
                 labelKey: labelFieldDefinition ? labelFieldDefinition.id : seriesDefinition!.yField.colId,
                 labelName: labelFieldDefinition ? labelFieldDefinition.name : undefined,
-            }
+            } as AgScatterSeriesOptions
         ));
 
         return this.crossFiltering ? this.extractCrossFilterSeries(series, params) : series;
@@ -71,7 +66,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
         params: UpdateChartParams,
     ): AgScatterSeriesOptions[] {
         const { data } = params;
-        const palette = this.chartPalette;
+        const palette = this.getChartPalette();
 
         const filteredOutKey = (key: string) => `${key}-filtered-out`;
 

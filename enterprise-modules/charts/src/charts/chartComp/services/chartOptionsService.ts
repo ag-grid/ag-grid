@@ -1,15 +1,15 @@
 import {
     _,
-    AgChartThemeOverrides,
     BeanStub,
     ChartOptionsChanged,
     ChartType,
     Events,
     WithoutGridCommon
 } from "@ag-grid-community/core";
-import { AgCartesianAxisType, AgChartInstance } from "ag-charts-community";
+import { AgCartesianAxisType, AgChart, AgChartOptions } from "ag-charts-community";
 import { ChartController } from "../chartController";
 import { AgChartActual } from "../utils/integration";
+import { deepMerge } from "../utils/object";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
@@ -28,17 +28,20 @@ export class ChartOptionsService extends BeanStub {
 
     public setChartOption<T = string>(expression: string, value: T): void {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
-        if(this.chartController.isComboChart()) {
+        if (this.chartController.isComboChart()) {
             chartSeriesTypes.push('cartesian');
         }
 
+        let chartOptions = {};
         // we need to update chart options on each series type for combo charts
-        chartSeriesTypes.forEach(optionsType => {
-            _.set(this.getChartOptions(), `${optionsType}.${expression}`, value);
+        chartSeriesTypes.forEach(seriesType => {
+            chartOptions = deepMerge(chartOptions, this.createChartOptions<T>({
+                seriesType,
+                expression,
+                value
+            }));
         });
-
-        // update chart
-        this.updateChart();
+        this.updateChart(chartOptions);
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -50,13 +53,12 @@ export class ChartOptionsService extends BeanStub {
     public setAxisProperty<T = string>(expression: string, value: T) {
         // update axis options
         const chart = this.getChart();
+        let chartOptions = {};
         chart.axes?.forEach((axis: any) => {
-            this.updateAxisOptions<T>(axis, expression, value);
+            chartOptions = deepMerge(chartOptions, this.getUpdateAxisOptions<T>(axis, expression, value));
         });
 
-        // update chart
-        this.updateChart();
-
+        this.updateChart(chartOptions);
         this.raiseChartOptionsChangedEvent();
     }
 
@@ -68,8 +70,8 @@ export class ChartOptionsService extends BeanStub {
     public setLabelRotation(axisType: 'xAxis' | 'yAxis', value: number | undefined) {
         const chartAxis = this.getAxis(axisType);
         if (chartAxis) {
-            this.updateAxisOptions(chartAxis, 'label.rotation', value);
-            this.updateChart();
+            const chartOptions = this.getUpdateAxisOptions(chartAxis, 'label.rotation', value);
+            this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
         }
     }
@@ -80,22 +82,24 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public setSeriesOption<T = string>(expression: string, value: T, seriesType: ChartSeriesType): void {
-        _.set(this.getChartOptions(), `${seriesType}.series.${expression}`, value);
-
-        // update chart
-        this.updateChart();
+        const chartOptions = this.createChartOptions<T>({
+            seriesType,
+            expression: `series.${expression}`,
+            value
+        });
+        this.updateChart(chartOptions);
 
         this.raiseChartOptionsChangedEvent();
     }
 
     public getPairedMode(): boolean {
         const optionsType = getSeriesType(this.getChartType());
-        return _.get(this.getChartOptions(), `${optionsType}.paired`, undefined);
+        return _.get(this.chartController.getChartProxy().getIntegratedThemeOptions(), `${optionsType}.paired`, undefined);
     }
 
     public setPairedMode(paired: boolean): void {
         const optionsType = getSeriesType(this.getChartType());
-        _.set(this.getChartOptions(), `${optionsType}.paired`, paired);
+        this.chartController.getChartProxy().setIntegratedThemeOptions(`${optionsType}.paired`, paired);
     }
 
     private getAxis(axisType: string): ChartAxis | undefined {
@@ -108,29 +112,19 @@ export class ChartOptionsService extends BeanStub {
         return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
     }
 
-    private getAxisOptionExpression({ optionsType, axisType, expression }: {
-        optionsType: ChartSeriesType,
-        axisType: AgCartesianAxisType,
-        expression: string
-    }): string {
-        return `${optionsType}.axes.${axisType}.${expression}`
-    }
-
-    private updateAxisOptions<T = string>(chartAxis: ChartAxis, expression: string, value: T) {
-        const optionsType = getSeriesType(this.getChartType());
+    private getUpdateAxisOptions<T = string>(chartAxis: ChartAxis, expression: string, value: T): AgChartOptions {
+        const seriesType = getSeriesType(this.getChartType());
         const validAxisTypes: AgCartesianAxisType[] = ['number', 'category', 'time', 'groupedCategory'];
 
-        if (validAxisTypes.includes(chartAxis.type)) {
-            _.set(
-                this.getChartOptions(),
-                this.getAxisOptionExpression({
-                    optionsType,
-                    axisType: chartAxis.type,
-                    expression
-                }), 
-                value
-            );
+        if (!validAxisTypes.includes(chartAxis.type)) {
+            return {};
         }
+
+        return this.createChartOptions<T>({
+            seriesType,
+            expression: `axes.${chartAxis.type}.${expression}`,
+            value
+        });
     }
 
     public getChartType(): ChartType {
@@ -141,13 +135,25 @@ export class ChartOptionsService extends BeanStub {
         return this.chartController.getChartProxy().getChart();
     }
 
-    private getChartOptions(): AgChartThemeOverrides {
-        return this.chartController.getChartProxy().getChartOptions();
+    private updateChart(chartOptions: AgChartOptions) {
+        const chartRef = this.chartController.getChartProxy().getChartRef();
+        AgChart.updateDelta(chartRef, chartOptions);
     }
 
-    private updateChart() {
-        let chartUpdateParams = this.chartController.getChartUpdateParams();
-        this.chartController.getChartProxy().update(chartUpdateParams);
+    private createChartOptions<T>({ seriesType, expression, value }: {
+        seriesType: ChartSeriesType,
+        expression: string,
+        value: T
+    }): AgChartOptions {
+        const overrides = {};
+        const chartOptions = {
+            theme: {
+                overrides
+            }
+        };
+        _.set(overrides, `${seriesType}.${expression}`, value);
+
+        return chartOptions;
     }
 
     private raiseChartOptionsChangedEvent(): void {
@@ -157,8 +163,8 @@ export class ChartOptionsService extends BeanStub {
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId: chartModel.chartId,
             chartType: chartModel.chartType,
-            chartThemeName: chartModel.chartThemeName!,
-            chartOptions: chartModel.chartOptions            
+            chartThemeName: this.chartController.getChartThemeName(),
+            chartOptions: chartModel.chartOptions
         });
 
         this.eventService.dispatchEvent(event);
