@@ -25,6 +25,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('26.2.0', model, migrateV26_2);
     model = migrateIfBefore('28.0.0', model, migrateV28);
     model = migrateIfBefore('28.2.0', model, migrateV28_2);
+    model = migrateIfBefore('29.0.0', model, migrateV29);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -182,6 +183,14 @@ function migrateV28_2(model: ChartModel) {
 
     // series.yKeys => yKey ?
     // series.yNames => yName ?
+
+    return model;
+}
+
+function migrateV29(model: ChartModel) {
+    model = jsonMove('chartOptions', 'chartTheme.overrides', model);
+    model = jsonMove('chartThemeName', 'chartTheme.baseName', model);
+    model = jsonMove('chartPalette', 'chartTheme.palette', model);
 
     return model;
 }

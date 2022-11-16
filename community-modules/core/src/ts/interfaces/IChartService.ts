@@ -2,7 +2,7 @@ import { ChartToolPanelName, ChartType, CrossFilterChartType, SeriesChartType } 
 import { ChartRef } from "../entities/gridOptions";
 import { CellRangeParams } from "./IRangeService";
 import { IAggFunc } from "../entities/colDef";
-import { AgChartThemeOverrides, AgChartThemePalette } from "./iAgChartOptions";
+import { AgChartTheme, AgChartThemeOverrides, AgChartThemePalette } from "./iAgChartOptions";
 
 export interface GetChartImageDataUrlParams {
     /** The id of the created chart. */
@@ -59,9 +59,7 @@ export interface ChartModel {
     chartId: string;
     chartType: ChartType;
     cellRange: CellRangeParams;
-    chartThemeName?: string;
-    chartOptions: AgChartThemeOverrides;
-    chartPalette?: AgChartThemePalette;
+    chartTheme: AgChartTheme;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
     unlinkChart?: boolean;
