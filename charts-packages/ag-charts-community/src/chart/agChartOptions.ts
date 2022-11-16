@@ -1596,6 +1596,9 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
 export type AgChartOptions = AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions;
 
 export interface AgChartInstance {
+    /** Get the AgChartOptions representing the current chart configuration. */
+    getOptions(): AgChartOptions;
+    /** Destroy the chart instance and any allocated resources to support its rendering. */
     destroy(): void;
 }
 

@@ -22,6 +22,7 @@ import { sleep } from '../util/async';
 import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
+import { jsonMerge } from '../util/json';
 
 /** Types of chart-update, in pipeline execution order. */
 export enum ChartUpdateType {
@@ -37,8 +38,13 @@ type OptionalHTMLElement = HTMLElement | undefined | null;
 export abstract class Chart extends Observable implements AgChartInstance {
     readonly id = createId(this);
 
-    options: AgChartOptions = {};
+    processedOptions: AgChartOptions = {};
     userOptions: AgChartOptions = {};
+
+    getOptions() {
+        return jsonMerge([this.userOptions]);
+    }
+
     readonly scene: Scene;
     readonly background: Background = new Background();
     readonly legend = new Legend();
