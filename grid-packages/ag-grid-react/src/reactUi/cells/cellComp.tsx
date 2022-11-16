@@ -281,11 +281,14 @@ const CellComp = (props: {
     useEffect(() => {
         if (!cellCtrl || !context) { return; }
 
-        setAriaDescribedBy(!!eCellWrapper.current ? `cell-${cellCtrl.getInstanceId()}` : undefined);
+        const cellId = `cell-${cellCtrl.getInstanceId()}`;
+        const describedByIds: string[] = [];
+
+        describedByIds.push(cellId);
 
         if (!eCellWrapper.current || !showCellWrapper) { return; }
 
-        const destroyFuncs: (()=>void)[] = [];
+        const destroyFuncs: (() => void)[] = [];
 
         const addComp = (comp: Component | undefined) => {
             if (comp) {
@@ -300,7 +303,9 @@ const CellComp = (props: {
         }
 
         if (includeSelection) {
-            addComp(cellCtrl.createSelectionCheckbox());
+            const checkboxSelectionComp = cellCtrl.createSelectionCheckbox();
+            describedByIds.push(checkboxSelectionComp.getCheckboxId());
+            addComp(checkboxSelectionComp);
         }
 
         if (includeDndSource) {
@@ -310,6 +315,8 @@ const CellComp = (props: {
         if (includeRowDrag) {
             addComp(cellCtrl.createRowDragComp());
         }
+
+        setAriaDescribedBy(describedByIds.join(' '));
 
         return () => destroyFuncs.forEach(f => f());
 
@@ -415,7 +422,7 @@ const CellComp = (props: {
         >
             { showCellWrapper
                 ? (
-                    <div className="ag-cell-wrapper" role="presentation" ref={ setCellWrapperRef }>
+                    <div className="ag-cell-wrapper" role="presentation" aria-hidden="true" ref={ setCellWrapperRef }>
                         { showContents() }
                     </div>
                 )

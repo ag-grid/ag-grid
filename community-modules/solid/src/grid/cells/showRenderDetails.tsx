@@ -1,5 +1,5 @@
-import { CellCtrl, Component, ICellRenderer } from '@ag-grid-community/core';
-import { createMemo, onCleanup, useContext } from 'solid-js';
+import { CellCtrl, Component  } from '@ag-grid-community/core';
+import { createMemo, onCleanup, Setter, useContext } from 'solid-js';
 import { BeansContext } from '../core/beansContext';
 import UserComp from '../userComps/userComp';
 import { RenderDetails } from './common';
@@ -8,29 +8,34 @@ const ToolsComp = (props: {
     includeSelection: boolean,
     includeDndSource: boolean,
     includeRowDrag: boolean,
+    setSelectionCheckboxId: Setter<string>,
     cellCtrl: CellCtrl
 }) => {
 
-    const {context} = useContext(BeansContext);
+    const { context } = useContext(BeansContext);
 
     const CompWrapper = (innerProps: {
-        createFn: ()=>Component|undefined
-    })=> {
+        createFn: () => Component | undefined
+    }) => {
         const comp = innerProps.createFn();
         if (!comp) { return <></>; }
 
-        onCleanup( ()=> context.destroyBean(comp) );
+        onCleanup(() => context.destroyBean(comp));
         return <>{comp.getGui()}</>
     };
 
     return (
         <>
             { props.includeSelection && 
-                <CompWrapper createFn={()=>props.cellCtrl.createSelectionCheckbox()}/> }
+                <CompWrapper createFn={() => {
+                    const checkboxSelectionComp = props.cellCtrl.createSelectionCheckbox();
+                    props.setSelectionCheckboxId(checkboxSelectionComp.getCheckboxId());
+                    return checkboxSelectionComp;
+                }}/> }
             { props.includeDndSource && 
-                <CompWrapper createFn={()=>props.cellCtrl.createDndSource()}/> }
+                <CompWrapper createFn={() => props.cellCtrl.createDndSource()}/> }
             { props.includeRowDrag && 
-                <CompWrapper createFn={()=>props.cellCtrl.createRowDragComp()}/> }
+                <CompWrapper createFn={() => props.cellCtrl.createRowDragComp()}/> }
         </>
     );
 };
@@ -43,13 +48,14 @@ const ShowRenderDetails = (props: {
     includeDndSource: boolean,
     includeRowDrag: boolean,
     includeSelection: boolean,
+    setSelectionCheckboxId: Setter<string>
     cellCtrl: CellCtrl,
     cellInstanceId: string,
     setECellValue: (eCellValue: HTMLElement) => void
 }) => {
 
     const getCompDetails = createMemo(() => props.showDetails.compDetails);
-    const isNoCompDetails = createMemo(()=> props.showDetails.compDetails == null);
+    const isNoCompDetails = createMemo(() => props.showDetails.compDetails == null);
 
     // if we didn't do this, objects would cause error. we depend on objects for things
     // like the aggregation functions avg and count, which return objects and depend on toString()
@@ -75,6 +81,7 @@ const ShowRenderDetails = (props: {
                     includeDndSource={props.includeDndSource}
                     includeRowDrag={props.includeRowDrag}
                     includeSelection={props.includeSelection}
+                    setSelectionCheckboxId={props.setSelectionCheckboxId}
                     cellCtrl={props.cellCtrl} />
             }
             {

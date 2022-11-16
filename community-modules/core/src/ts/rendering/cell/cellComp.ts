@@ -10,7 +10,7 @@ import { RowDragComp } from "./../row/rowDragComp";
 import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { DndSourceComp } from "./../dndSourceComp";
 import { TooltipParentComp } from "../../widgets/customTooltipFeature";
-import { setAriaDescribedBy, setAriaHidden, setAriaRole } from "../../utils/aria";
+import { setAriaDescribedBy, setAriaRole } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
 import { addStylesToElement, clearElement, loadTemplate, removeFromParent } from "../../utils/dom";
@@ -175,7 +175,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const putWrapperIn = usingWrapper && this.eCellWrapper == null;
         if (putWrapperIn) {
-            this.eCellWrapper = loadTemplate(`<div class="ag-cell-wrapper" role="presentation"></div>`);
+            this.eCellWrapper = loadTemplate(/* html */`<div class="ag-cell-wrapper" role="presentation" aria-hidden="true"></div>`);
             this.getGui().appendChild(this.eCellWrapper);
         }
         const takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
@@ -189,7 +189,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            this.eCellValue = loadTemplate(`<span class="ag-cell-value" role="presentation"></span>`);
+            this.eCellValue = loadTemplate(/* html */`<span class="ag-cell-value" role="presentation"></span>`);
             this.eCellWrapper!.appendChild(this.eCellValue);
         }
         const takeCellValueOut = !usingCellValue && this.eCellValue != null;
@@ -204,19 +204,19 @@ export class CellComp extends Component implements TooltipParentComp {
             this.removeControls();
         }
 
-        if (!editing && providingControls) {
-            this.addControls();
+        if (!editing) {
+            if (providingControls) {
+                this.addControls();
+            }
+            if (usingWrapper) {
+                this.refreshAriaProperties();
+            }
         }
 
         return templateChanged;
     }
 
     private addControls(): void {
-        const id = this.eCellValue!.id = `cell-${this.getCompId()}`;
-        const describedByIds: string[] = [];
-
-        setAriaHidden(this.eCellWrapper!, true);
-
         if (this.includeRowDrag) {
             if (this.rowDraggingComp == null) {
                 this.rowDraggingComp = this.cellCtrl.createRowDragComp();
@@ -240,11 +240,18 @@ export class CellComp extends Component implements TooltipParentComp {
                 this.checkboxSelectionComp = this.cellCtrl.createSelectionCheckbox();
                 this.eCellWrapper!.insertBefore(this.checkboxSelectionComp.getGui(), this.eCellValue!);
             }
+        }
+    }
+
+    private refreshAriaProperties(): void {
+        const id = this.eCellValue!.id = `cell-${this.getCompId()}`;
+        const describedByIds: string[] = [];
+
+        if (this.includeSelection && this.checkboxSelectionComp) {
             describedByIds.push(this.checkboxSelectionComp.getCheckboxId());
         }
 
         describedByIds.push(id);
-
         setAriaDescribedBy(this.getGui(), describedByIds.join(' '));
     }
 
