@@ -3,6 +3,7 @@ import { Node } from '../scene/node';
 import { PolarSeries } from './series/polar/polarSeries';
 import { Padding } from '../util/padding';
 import { BBox } from '../scene/bbox';
+import { SeriesNodeDatum } from './series/series';
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
@@ -21,10 +22,14 @@ export class PolarChart extends Chart {
     }
 
     async performLayout() {
-        const shrinkRect = new BBox(0, 0, this.width, this.height);
-
         const { captionAutoPadding = 0 } = this.positionCaptions();
         this.positionLegend(captionAutoPadding);
+        this.computeSeriesRect(captionAutoPadding);
+        this.computeLabelsPadding();
+    }
+
+    private computeSeriesRect(captionAutoPadding: number) {
+        const shrinkRect = new BBox(0, 0, this.width, this.height);
 
         shrinkRect.y += captionAutoPadding;
         shrinkRect.height -= captionAutoPadding;
@@ -61,17 +66,55 @@ export class PolarChart extends Chart {
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
         this.seriesRect = shrinkRect;
+    }
 
-        const centerX = shrinkRect.x + shrinkRect.width / 2;
-        const centerY = shrinkRect.y + shrinkRect.height / 2;
-        const radius = Math.max(0, Math.min(shrinkRect.width, shrinkRect.height) / 2); // radius shouldn't be negative
+    private computeLabelsPadding() {
+        const seriesBox = this.seriesRect!;
+        const polarSeries = this.series.filter((series) => {
+            return series instanceof PolarSeries;
+        }) as PolarSeries<SeriesNodeDatum>[];
 
-        this.series.forEach((series) => {
-            if (series instanceof PolarSeries) {
+        let centerX = seriesBox.x + seriesBox.width / 2;
+        let centerY = seriesBox.y + seriesBox.height / 2;
+        let radius = Math.max(0, Math.min(seriesBox.width, seriesBox.height) / 2);
+        polarSeries.forEach((series) => {
+            series.centerX = centerX;
+            series.centerY = centerY;
+            series.radius = radius;
+        });
+
+        const labelRepositionAttempts = 2;
+        for (let i = 0; i < labelRepositionAttempts; i++) {
+            const labelBoxes = polarSeries
+                .map((series) => series.computeLabelsBBox())
+                .filter((box) => box != null) as BBox[];
+            if (labelBoxes.length === 0) {
+                break;
+            }
+
+            const labelBox = BBox.merge(labelBoxes);
+
+            const circleLeft = -radius;
+            const circleTop = -radius;
+            const circleRight = radius;
+            const circleBottom = radius;
+
+            const padLeft = Math.max(0, circleLeft - labelBox.x);
+            const padTop = Math.max(0, circleTop - labelBox.y);
+            const padRight = Math.max(0, labelBox.x + labelBox.width - circleRight);
+            const padBottom = Math.max(0, labelBox.y + labelBox.height - circleBottom);
+
+            radius = Math.min(seriesBox.width - padLeft - padRight, seriesBox.height - padTop - padBottom) / 2;
+            const newWidth = padLeft + 2 * radius + padRight;
+            const newHeight = padTop + 2 * radius + padBottom;
+            centerX = seriesBox.x + padLeft + radius + (seriesBox.width - newWidth) / 2;
+            centerY = seriesBox.y + padTop + radius + (seriesBox.height - newHeight) / 2;
+
+            polarSeries.forEach((series) => {
                 series.centerX = centerX;
                 series.centerY = centerY;
                 series.radius = radius;
-            }
-        });
+            });
+        }
     }
 }

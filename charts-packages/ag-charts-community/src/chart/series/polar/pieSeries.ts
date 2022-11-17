@@ -661,12 +661,15 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return outerRadius;
     }
 
-    async update() {
-        const { title } = this;
+    updateRadiusScale() {
         const innerRadius = this.getInnerRadius();
         const outerRadius = this.getOuterRadius();
-
         this.radiusScale.range = [innerRadius, outerRadius];
+    }
+
+    async update() {
+        const { title } = this;
+        this.updateRadiusScale();
 
         this.rootGroup.translationX = this.centerX;
         this.rootGroup.translationY = this.centerY;
@@ -764,7 +767,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const {
             radiusScale,
-            calloutLine,
             chart: { highlightedDatum },
         } = this;
 
@@ -813,9 +815,17 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         });
 
-        const { length: calloutLength, strokeWidth: calloutStrokeWidth } = calloutLine;
-        const calloutColors = calloutLine.colors || this.strokes;
+        this.updateCalloutLineNodes();
+        this.updateCalloutLabelNodes();
+        this.updateSectorLabelNodes();
+        this.updateInnerLabelNodes();
+    }
 
+    updateCalloutLineNodes() {
+        const { radiusScale, calloutLine } = this;
+        const calloutLength = calloutLine.length;
+        const calloutStrokeWidth = calloutLine.strokeWidth;
+        const calloutColors = calloutLine.colors || this.strokes;
         this.calloutLabelSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
             const radius = radiusScale.convert(datum.radius, clamper);
             const outerRadius = Math.max(0, radius);
@@ -831,36 +841,69 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 line.stroke = undefined;
             }
         });
+    }
 
-        {
-            const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = this.calloutLabel;
+    updateCalloutLabelNodes() {
+        const { radiusScale, calloutLabel, calloutLine } = this;
+        const calloutLength = calloutLine.length;
+        const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = calloutLabel;
 
-            this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum) => {
+        this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum) => {
+            const label = datum.calloutLabel;
+            const radius = radiusScale.convert(datum.radius, clamper);
+            const outerRadius = Math.max(0, radius);
+
+            if (label && outerRadius !== 0) {
+                const labelRadius = outerRadius + calloutLength + offset;
+
+                text.fontStyle = fontStyle;
+                text.fontWeight = fontWeight;
+                text.fontSize = fontSize;
+                text.fontFamily = fontFamily;
+                text.text = label.text;
+                text.x = datum.midCos * labelRadius;
+                text.y = datum.midSin * labelRadius;
+                text.fill = color;
+                text.textAlign = label.textAlign;
+                text.textBaseline = label.textBaseline;
+            } else {
+                text.fill = undefined;
+            }
+        });
+    }
+
+    computeLabelsBBox(): BBox | null {
+        const { radiusScale, calloutLabel, calloutLine } = this;
+        const calloutLength = calloutLine.length;
+        const { offset, fontStyle, fontWeight, fontSize, fontFamily } = calloutLabel;
+        this.updateRadiusScale();
+
+        const text = new Text();
+        const textBoxes = this.groupSelectionData
+            .map((datum) => {
                 const label = datum.calloutLabel;
                 const radius = radiusScale.convert(datum.radius, clamper);
                 const outerRadius = Math.max(0, radius);
-
-                if (label && outerRadius !== 0) {
-                    const labelRadius = outerRadius + calloutLength + offset;
-
-                    text.fontStyle = fontStyle;
-                    text.fontWeight = fontWeight;
-                    text.fontSize = fontSize;
-                    text.fontFamily = fontFamily;
-                    text.text = label.text;
-                    text.x = datum.midCos * labelRadius;
-                    text.y = datum.midSin * labelRadius;
-                    text.fill = color;
-                    text.textAlign = label.textAlign;
-                    text.textBaseline = label.textBaseline;
-                } else {
-                    text.fill = undefined;
+                if (!label || outerRadius === 0) {
+                    return null;
                 }
-            });
+                const labelRadius = outerRadius + calloutLength + offset;
+                text.fontStyle = fontStyle;
+                text.fontWeight = fontWeight;
+                text.fontSize = fontSize;
+                text.fontFamily = fontFamily;
+                text.text = label.text;
+                text.x = datum.midCos * labelRadius;
+                text.y = datum.midSin * labelRadius;
+                text.textAlign = label.textAlign;
+                text.textBaseline = label.textBaseline;
+                return text.computeBBox();
+            })
+            .filter((box) => box != null) as BBox[];
+        if (textBoxes.length === 0) {
+            return null;
         }
-
-        this.updateSectorLabelNodes();
-        this.updateInnerLabelNodes();
+        return BBox.merge(textBoxes);
     }
 
     private updateSectorLabelNodes() {
