@@ -13,9 +13,6 @@ export class Sector extends Path {
     centerY: number = 0;
 
     @ScenePathChangeDetection()
-    centerOffset: number = 0;
-
-    @ScenePathChangeDetection()
     innerRadius: number = 10;
 
     @ScenePathChangeDetection()
@@ -45,20 +42,13 @@ export class Sector extends Path {
         const angleOffset = this.angleOffset;
         const startAngle = Math.min(this.startAngle, this.endAngle) + angleOffset;
         const endAngle = Math.max(this.startAngle, this.endAngle) + angleOffset;
-        const midAngle = (startAngle + endAngle) * 0.5;
         const innerRadius = Math.min(this.innerRadius, this.outerRadius);
         const outerRadius = Math.max(this.innerRadius, this.outerRadius);
-        const centerOffset = this.centerOffset;
         const fullPie = this.isFullPie();
         let centerX = this.centerX;
         let centerY = this.centerY;
 
         path.clear();
-
-        if (centerOffset) {
-            centerX += centerOffset * Math.cos(midAngle);
-            centerY += centerOffset * Math.sin(midAngle);
-        }
 
         if (!fullPie) {
             path.moveTo(centerX + innerRadius * Math.cos(startAngle), centerY + innerRadius * Math.sin(startAngle));

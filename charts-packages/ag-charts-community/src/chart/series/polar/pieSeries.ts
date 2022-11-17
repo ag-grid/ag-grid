@@ -89,11 +89,6 @@ interface PieNodeDatum extends SeriesNodeDatum {
     readonly sectorFormat: AgPieSeriesFormat;
 }
 
-class PieHighlightStyle extends HighlightStyle {
-    @Validate(OPT_NUMBER(0))
-    centerOffset?: number;
-}
-
 enum PieNodeTag {
     Sector,
     Callout,
@@ -384,7 +379,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     shadow?: DropShadow = undefined;
 
-    readonly highlightStyle = new PieHighlightStyle();
+    readonly highlightStyle = new HighlightStyle();
 
     constructor() {
         super({ useLabelLayer: true });
@@ -773,7 +768,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             chart: { highlightedDatum },
         } = this;
 
-        const centerOffsets: number[] = [];
         const innerRadius = radiusScale.convert(0);
 
         const updateSectorFn = (sector: Sector, datum: PieNodeDatum, index: number, isDatumHighlighted: boolean) => {
@@ -803,8 +797,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             sector.lineDashOffset = this.lineDashOffset;
             sector.fillShadow = this.shadow;
             sector.lineJoin = 'round';
-
-            centerOffsets.push(sector.centerOffset);
 
             this.datumSectorRefs.set(datum, sector);
         };
@@ -843,13 +835,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         {
             const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = this.calloutLabel;
 
-            this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
+            this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum) => {
                 const label = datum.calloutLabel;
                 const radius = radiusScale.convert(datum.radius, clamper);
                 const outerRadius = Math.max(0, radius);
 
                 if (label && outerRadius !== 0) {
-                    const labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset;
+                    const labelRadius = outerRadius + calloutLength + offset;
 
                     text.fontStyle = fontStyle;
                     text.fontWeight = fontWeight;
