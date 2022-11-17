@@ -219,7 +219,7 @@ describe('CartesianChart', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create<any>(options) as CartesianChart;
+                chart = AgChart.create(options) as CartesianChart;
                 await waitForChartStability(chart);
 
                 const seriesImpl = chart.series.find(
@@ -262,7 +262,7 @@ describe('CartesianChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            chart = AgChart.create<any>(options) as CartesianChart;
+            chart = AgChart.create(options) as CartesianChart;
             await waitForChartStability(chart);
 
             const series = chart.series.find((v: any) => v.type === 'scatter');

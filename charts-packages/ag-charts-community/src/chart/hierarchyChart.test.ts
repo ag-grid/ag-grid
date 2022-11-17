@@ -59,7 +59,7 @@ describe('HierarchyChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            chart = AgChart.create<any>(options) as HierarchyChart;
+            chart = AgChart.create(options) as HierarchyChart;
             await compare(chart);
         });
 
@@ -70,7 +70,7 @@ describe('HierarchyChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            chart = AgChart.create<any>(options) as HierarchyChart;
+            chart = AgChart.create(options) as HierarchyChart;
             await waitForChartStability(chart);
 
             const seriesImpl = chart.series[0] as TreemapSeries;

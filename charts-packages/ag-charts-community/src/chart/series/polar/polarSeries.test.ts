@@ -150,7 +150,7 @@ describe('PolarSeries', () => {
             options.height = CANVAS_HEIGHT;
             options.legend = { enabled: true };
 
-            chart = AgChart.create<any>(options) as Chart;
+            chart = AgChart.create(options) as Chart;
             const reference = await snapshot();
 
             options.data?.forEach((_, idx) => {

@@ -80,7 +80,7 @@ describe('BarSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create<any>(options) as Chart;
+                chart = AgChart.create(options) as Chart;
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -98,7 +98,7 @@ describe('BarSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create<any>(options) as Chart;
+                chart = AgChart.create(options) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {

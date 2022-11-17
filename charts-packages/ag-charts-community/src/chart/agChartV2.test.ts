@@ -109,7 +109,7 @@ describe('AgChartV2', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create<any>(options) as Chart;
+                chart = AgChart.create(options) as Chart;
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -120,7 +120,7 @@ describe('AgChartV2', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create<any>(options) as Chart;
+                chart = AgChart.create(options) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -146,7 +146,7 @@ describe('AgChartV2', () => {
             const snapshots: any[] = [];
 
             // Create initial chart instance.
-            chart = AgChart.create<any>(exampleCycle[0]) as Chart;
+            chart = AgChart.create(exampleCycle[0]) as Chart;
             snapshots[0] = await snapshot();
 
             // Execute 2 rounds of comparisons to try and catch any issues. On first round, just
@@ -155,7 +155,7 @@ describe('AgChartV2', () => {
             let previousSnapshot: any = undefined;
             for (let round = 0; round <= 1; round++) {
                 for (let index = 0; index < exampleCycle.length; index++) {
-                    AgChart.update<any>(chart, exampleCycle[index]);
+                    AgChart.update(chart, exampleCycle[index]);
 
                     const exampleSnapshot = await snapshot();
                     if (snapshots[index] != null) {
@@ -188,7 +188,7 @@ describe('AgChartV2', () => {
             }));
 
             // Create initial chart instance.
-            chart = AgChart.create<any>(exampleCycle[0]) as Chart;
+            chart = AgChart.create(exampleCycle[0]) as Chart;
             await waitForChartStability(chart);
 
             // Execute 2 rounds of comparisons to try and catch any issues. On first round, just
@@ -196,7 +196,7 @@ describe('AgChartV2', () => {
             // generated.
             for (let round = 0; round <= 1; round++) {
                 for (let index = 0; index < exampleCycle.length; index++) {
-                    AgChart.update<any>(chart, exampleCycle[index]);
+                    AgChart.update(chart, exampleCycle[index]);
 
                     await waitForChartStability(chart);
                 }

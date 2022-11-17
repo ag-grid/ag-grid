@@ -161,7 +161,7 @@ describe('Gallery Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = AgChart.create<any>(options) as Chart;
+                chart = AgChart.create(options) as Chart;
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -179,7 +179,7 @@ describe('Gallery Examples', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create<any>(options) as Chart;
+                chart = AgChart.create(options) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -212,7 +212,7 @@ describe('Gallery Examples', () => {
                     options.width = CANVAS_WIDTH;
                     options.height = CANVAS_HEIGHT;
 
-                    chart = AgChart.create<any>(options) as Chart;
+                    chart = AgChart.create(options) as Chart;
                     await waitForChartStability(chart);
                 });
 
@@ -223,7 +223,7 @@ describe('Gallery Examples', () => {
                 });
 
                 it(`it should update chart instance as expected`, async () => {
-                    AgChart.update<any>(chart, options);
+                    AgChart.update(chart, options);
                     await waitForChartStability(chart);
 
                     await example.assertions(chart);
@@ -236,10 +236,10 @@ describe('Gallery Examples', () => {
                         return ctx.nodeCanvas.toBuffer('raw');
                     };
 
-                    AgChart.update<any>(chart, options);
+                    AgChart.update(chart, options);
 
                     const before = await snapshot();
-                    AgChart.update<any>(chart, options);
+                    AgChart.update(chart, options);
                     const after = await snapshot();
 
                     (expect(after) as any).toMatchImage(before);
