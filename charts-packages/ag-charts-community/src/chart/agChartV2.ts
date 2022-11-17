@@ -107,20 +107,37 @@ type DeepPartial<T> = T extends object
       }
     : T;
 
-// Backwards-compatibility layer.
+/**
+ * Factory for creating and updating instances of AgChartInstance.
+ *
+ * @docsInterface
+ */
 export abstract class AgChart {
-    public static create<T extends AgChartOptions>(options: T): AgChartInstance {
+    /**
+     * Create a new `AgChartInstance`.
+     */
+    public static create(options: AgChartOptions): AgChartInstance {
         return AgChartInternal.create(options as any);
     }
 
-    public static update<T extends AgChartOptions>(chart: AgChartInstance, options: T) {
-        return AgChartInternal.update(chart as AgChartType<T>, options as any);
+    /**
+     * Update an existing `AgChartInstance`. Options provided should be complete and not
+     * partial.
+     */
+    public static update(chart: AgChartInstance, options: AgChartOptions) {
+        return AgChartInternal.update(chart as AgChartType<any>, options as any);
     }
 
-    public static updateDelta<T extends AgChartOptions>(chart: AgChartInstance, deltaOptions: DeepPartial<T>) {
-        return AgChartInternal.updateUserDelta(chart as AgChartType<T>, deltaOptions as any);
+    /**
+     * Update an existing `AgChartInstance` by applying a partial set of option changes.
+     */
+    public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) {
+        return AgChartInternal.updateUserDelta(chart as AgChartType<any>, deltaOptions as any);
     }
 
+    /**
+     * Initiate a browser-based image download for the given `AgChartInstance`s rendering.
+     */
     public static download(chart: AgChartInstance, options?: DownloadOptions) {
         return AgChartInternal.download(chart as AgChartType<any>, options);
     }

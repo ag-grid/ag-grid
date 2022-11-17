@@ -38,7 +38,10 @@ const TEST_INTERFACE_GLOBS = [
 function findAllInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];
     let interfaces = [];
-    if (kind == 'InterfaceDeclaration' || kind == 'EnumDeclaration' || kind == 'TypeAliasDeclaration') {
+
+    const interfaceNode = kind == 'InterfaceDeclaration' || kind == 'EnumDeclaration' || kind == 'TypeAliasDeclaration';
+    const classNode = kind == 'ClassDeclaration' && getJsDoc(node)?.indexOf('@docsInterface') >= 0;
+    if (interfaceNode || classNode) {
         interfaces.push(node);
     }
     ts.forEachChild(node, n => {
@@ -88,7 +91,7 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
             // i.e colWidth?: number;             
             nodeMembers[name] = { description: getJsDoc(node), type: { returnType, optional } };
         }
-    } else if (kind == 'MethodSignature') {
+    } else if (kind == 'MethodSignature' || kind == 'MethodDeclaration') {
         // i.e isExternalFilterPresent?(): boolean;
         // i.e doesExternalFilterPass?(node: RowNode): boolean;        
         const methodArgs = getArgTypes(node.parameters, srcFile);
@@ -439,7 +442,6 @@ function extractMethodsAndPropsFromNode(node, srcFile) {
             type: { arguments: methodArgs, returnType }
         };
     } else if (kind == 'PropertyDeclaration') {
-
         nodeMembers[name] = {
             description: getJsDoc(node),
             type: { returnType: returnType }
@@ -524,6 +526,34 @@ function getColumn() {
     return getClassProperties(file, 'Column');
 }
 
+function getChartInterfaces() {
+    return getInterfaces(CHARTS_INTERFACE_GLOBS);
+}
+
+function getChartInterfaceProps() {
+    return buildInterfaceProps(CHARTS_INTERFACE_GLOBS);
+    // const mainProps = buildInterfaceProps(CHARTS_INTERFACE_GLOBS);
+
+    // const file = "../../charts-packages/ag-charts-community/src/chart/agChartV2.ts";
+    // const srcFile = parseFile(file);
+    // const agChartDef = findNode('AgChart', srcFile, 'ClassDeclaration');
+
+    // let members = {};
+    // const addToMembers = (node, src) => {
+    //     const nodeName = node.name.escapedText;
+    //     ts.forEachChild(node, n => {
+    //         const extract = extractTypesFromNode(n, src, false);
+    //         if (extract) {
+    //             members[nodeName] = { ...members[nodeName], ...extract };
+    //         }
+    //     });
+    // }
+
+    // addToMembers(agChartDef, srcFile);
+
+    // return { ...mainProps, ...members };
+}
+
 const generateMetaFiles = () => {
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
@@ -534,8 +564,8 @@ const generateMetaFiles = () => {
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-object/', 'column.AUTO.json', getColumn());
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
     // Charts.
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'interfaces.AUTO.json', getInterfaces(CHARTS_INTERFACE_GLOBS));
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps(CHARTS_INTERFACE_GLOBS));
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'interfaces.AUTO.json', getChartInterfaces());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'doc-interfaces.AUTO.json', getChartInterfaceProps());
     // Tests.
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-interfaces.AUTO.json', getInterfaces(TEST_INTERFACE_GLOBS));
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-doc-interfaces.AUTO.json', buildInterfaceProps(TEST_INTERFACE_GLOBS));

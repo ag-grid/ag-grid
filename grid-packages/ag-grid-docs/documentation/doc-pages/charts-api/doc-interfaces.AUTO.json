@@ -4314,6 +4314,46 @@
   "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
   "DownloadOptions": {},
   "DeepPartial": { "meta": { "typeParams": ["T"] } },
+  "AgChart": {
+    "create": {
+      "description": "/** Create a new `AgChartInstance`.\n     */",
+      "type": {
+        "arguments": { "options": "AgChartOptions" },
+        "returnType": "AgChartInstance",
+        "optional": false
+      }
+    },
+    "update": {
+      "description": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     */",
+      "type": {
+        "arguments": {
+          "chart": "AgChartInstance",
+          "options": "AgChartOptions"
+        },
+        "optional": false
+      }
+    },
+    "updateDelta": {
+      "description": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     */",
+      "type": {
+        "arguments": {
+          "chart": "AgChartInstance",
+          "deltaOptions": "DeepPartial<AgChartOptions>"
+        },
+        "optional": false
+      }
+    },
+    "download": {
+      "description": "/** Initiate a browser-based image download for the given `AgChartInstance`s rendering.\n     */",
+      "type": {
+        "arguments": {
+          "chart": "AgChartInstance",
+          "options?": "DownloadOptions"
+        },
+        "optional": false
+      }
+    }
+  },
   "ObservableLike": {},
   "ChartUpdateType": {},
   "OptionalHTMLElement": {},
