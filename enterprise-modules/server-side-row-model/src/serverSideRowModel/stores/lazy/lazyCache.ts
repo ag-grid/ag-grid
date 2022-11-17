@@ -337,7 +337,7 @@ export class LazyCache extends BeanStub {
         }
 
         if (this.isUsingRowIds()) {
-            const id: string = String(this.getRowId(data));
+            const id: string = this.getRowId(data)!;
             return node.id === id;
         }
         return node.data === data;
@@ -570,7 +570,7 @@ export class LazyCache extends BeanStub {
             parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
             level,
         });
-        return id;
+        return String(id);
     }
 
     private lookupRowNode(data: any): RowNode | null {
