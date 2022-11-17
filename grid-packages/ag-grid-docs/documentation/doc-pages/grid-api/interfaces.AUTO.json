@@ -9428,7 +9428,7 @@
     "meta": {},
     "type": { "getOptions()": "AgChartOptions", "destroy()": "void" },
     "docs": {
-      "getOptions()": "/** Get the AgChartOptions representing the current chart configuration. */",
+      "getOptions()": "/** Get the `AgChartOptions` representing the current chart configuration. */",
       "destroy()": "/** Destroy the chart instance and any allocated resources to support its rendering. */"
     }
   },

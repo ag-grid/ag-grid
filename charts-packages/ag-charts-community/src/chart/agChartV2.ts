@@ -101,10 +101,11 @@ function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian
     throw new Error('AG Chart - unknown type of chart for options with type: ' + options.type);
 }
 
-type DeepPartial<T> = T extends object
-    ? {
-          [P in keyof T]?: DeepPartial<T[P]>;
-      }
+type DeepPartialDepth = [never, 0, 1, 2, 3, 4, 5, 6]; // DeepPartial recursion limit type.
+type DeepPartial<T, N extends DeepPartialDepth[number] = 5> = [N] extends [never]
+    ? Partial<T>
+    : T extends object
+    ? { [P in keyof T]?: DeepPartial<T[P], DeepPartialDepth[N]> }
     : T;
 
 /**
@@ -114,7 +115,7 @@ type DeepPartial<T> = T extends object
  */
 export abstract class AgChart {
     /**
-     * Create a new `AgChartInstance`.
+     * Create a new `AgChartInstance` based upon the given configuration options.
      */
     public static create(options: AgChartOptions): AgChartInstance {
         return AgChartInternal.create(options as any);
@@ -123,6 +124,10 @@ export abstract class AgChart {
     /**
      * Update an existing `AgChartInstance`. Options provided should be complete and not
      * partial.
+     *
+     * NOTE: each call could trigger a redraw; multiple calls in quick succession could result in
+     * undesirable flickering, so callers should batch up and/or debounce changes to avoid
+     * unintended partial update renderings.
      */
     public static update(chart: AgChartInstance, options: AgChartOptions) {
         return AgChartInternal.update(chart as AgChartType<any>, options as any);
@@ -130,6 +135,10 @@ export abstract class AgChart {
 
     /**
      * Update an existing `AgChartInstance` by applying a partial set of option changes.
+     *
+     * NOTE: each call could trigger a redraw, each delta should leave the chart in a valid options
+     * state. Multiple calls in quick succession could result in undesirable flickering, so callers
+     * should batch up and/or debounce changes to avoid unintended partial update renderings.
      */
     public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) {
         return AgChartInternal.updateUserDelta(chart as AgChartType<any>, deltaOptions as any);

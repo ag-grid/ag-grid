@@ -2799,7 +2799,7 @@
     "meta": {},
     "type": { "getOptions()": "AgChartOptions", "destroy()": "void" },
     "docs": {
-      "getOptions()": "/** Get the AgChartOptions representing the current chart configuration. */",
+      "getOptions()": "/** Get the `AgChartOptions` representing the current chart configuration. */",
       "destroy()": "/** Destroy the chart instance and any allocated resources to support its rendering. */"
     }
   },
@@ -2823,6 +2823,10 @@
     "meta": { "isTypeAlias": true },
     "type": "{ width?: number; height?: number; fileName?: string; fileFormat?: string; }"
   },
+  "DeepPartialDepth": {
+    "meta": { "isTypeAlias": true },
+    "type": "[ never, 0, 1, 2, 3, 4, 5, 6 ]"
+  },
   "DeepPartial": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "{[P1 in keyof T]?: IsSkippableProperty<T, P1> extends true ? any : IsLiteralProperty<T, P1> extends true ? T[P1] : { [P2 in keyof T[P1]]?: IsSkippableProperty<T[P1], P2> extends true ? any : IsLiteralProperty<T[P1], P2> extends true ? T[P1][P2] : { [P3 in keyof T[P1][P2]]?: IsSkippableProperty<T[P1][P2], P3> extends true ? any : IsLiteralProperty<T[P1][P2], P3> extends true ? T[P1][P2][P3] : { [P4 in keyof T[P1][P2][P3]]?: IsSkippableProperty<T[P1][P2][P3], P4> extends true ? any : IsLiteralProperty<T[P1][P2][P3], P4> extends true ? T[P1][P2][P3][P4] : Partial<T[P1][P2][P3][P4]>; }; }; }}"
@@ -2835,9 +2839,9 @@
       "public static create(options: AgChartOptions): AgChartInstance { return AgChartInternal.create(options as any); }": "AgChartInstance"
     },
     "docs": {
-      "public static create(options: AgChartOptions): AgChartInstance { return AgChartInternal.create(options as any); }": "/** Create a new `AgChartInstance`.\n     */",
-      "public static update(chart: AgChartInstance, options: AgChartOptions) { return AgChartInternal.update(chart as AgChartType<any>, options as any); }": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     */",
-      "public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) { return AgChartInternal.updateUserDelta(chart as AgChartType<any>, deltaOptions as any); }": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     */",
+      "public static create(options: AgChartOptions): AgChartInstance { return AgChartInternal.create(options as any); }": "/** Create a new `AgChartInstance` based upon the given configuration options.\n     */",
+      "public static update(chart: AgChartInstance, options: AgChartOptions) { return AgChartInternal.update(chart as AgChartType<any>, options as any); }": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     *\n     * NOTE: each call could trigger a redraw; multiple calls in quick succession could result in\n     * undesirable flickering, so callers should batch up and/or debounce changes to avoid\n     * unintended partial update renderings.\n     */",
+      "public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) { return AgChartInternal.updateUserDelta(chart as AgChartType<any>, deltaOptions as any); }": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     *\n     * NOTE: each call could trigger a redraw, each delta should leave the chart in a valid options\n     * state. Multiple calls in quick succession could result in undesirable flickering, so callers\n     * should batch up and/or debounce changes to avoid unintended partial update renderings.\n     */",
       "public static download(chart: AgChartInstance, options?: DownloadOptions) { return AgChartInternal.download(chart as AgChartType<any>, options); }": "/** Initiate a browser-based image download for the given `AgChartInstance`s rendering.\n     */"
     }
   },
