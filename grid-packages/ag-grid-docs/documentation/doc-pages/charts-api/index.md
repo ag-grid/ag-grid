@@ -49,7 +49,7 @@ The following example demonstrates both create and update cases:
 | To assist with state management, the complete applied options state can be retrieve by calling `getOptions()` on the
 | chart instance.
 |
-| <chart-example title='Update with Partial AgChartOptions' name='update-partial' type='generated'></chart-example>
+| <chart-example title='Update with Partial AgChartOptions' name='update-partial' type='typescript'></chart-example>
 |
 
 [[only-javascript]]
