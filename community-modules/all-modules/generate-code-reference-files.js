@@ -532,26 +532,6 @@ function getChartInterfaces() {
 
 function getChartInterfaceProps() {
     return buildInterfaceProps(CHARTS_INTERFACE_GLOBS);
-    // const mainProps = buildInterfaceProps(CHARTS_INTERFACE_GLOBS);
-
-    // const file = "../../charts-packages/ag-charts-community/src/chart/agChartV2.ts";
-    // const srcFile = parseFile(file);
-    // const agChartDef = findNode('AgChart', srcFile, 'ClassDeclaration');
-
-    // let members = {};
-    // const addToMembers = (node, src) => {
-    //     const nodeName = node.name.escapedText;
-    //     ts.forEachChild(node, n => {
-    //         const extract = extractTypesFromNode(n, src, false);
-    //         if (extract) {
-    //             members[nodeName] = { ...members[nodeName], ...extract };
-    //         }
-    //     });
-    // }
-
-    // addToMembers(agChartDef, srcFile);
-
-    // return { ...mainProps, ...members };
 }
 
 const generateMetaFiles = () => {

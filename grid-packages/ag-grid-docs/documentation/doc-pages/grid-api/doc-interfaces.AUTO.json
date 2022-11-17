@@ -16164,7 +16164,7 @@
   "AgChartOptions": {},
   "AgChartInstance": {
     "getOptions": {
-      "description": "/** Get the AgChartOptions representing the current chart configuration. */",
+      "description": "/** Get the `AgChartOptions` representing the current chart configuration. */",
       "type": {
         "arguments": {},
         "returnType": "AgChartOptions",
