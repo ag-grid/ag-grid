@@ -67,7 +67,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     @PostConstruct
     private init() {
-        const numberOfRows = this.gridOptionsWrapper.getServerSideInitialRowCount() || 1;
+        let numberOfRows = 1;
+        if (this.level === 0) {
+            numberOfRows = this.gridOptionsWrapper.getServerSideInitialRowCount();
+        }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
 
         const usingTreeData = this.gridOptionsWrapper.isTreeData();
