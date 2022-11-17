@@ -456,14 +456,33 @@ export class LazyCache extends BeanStub {
         return (!!node.group && node.expanded) || this.isNodeFocused(node);
     }
 
+    private extractDuplicateIds(rows: any[]) {
+        if (!this.isUsingRowIds()) {
+            return [];
+        }
+
+        const newIds = new Set();
+        const duplicates = new Set();
+        rows.forEach(data => {
+            const id = this.getRowId(data);
+            if (newIds.has(id)) {
+                duplicates.add(id);
+                return;
+            }
+            newIds.add(id);
+        });
+
+        return [...duplicates];
+    }
+
     public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
         if (!this.live) return;
 
         if (this.isUsingRowIds()) {
-            const newIds = new Set(response.rowData.map(data => this.getRowId(data)));
-            const responseHasDuplicates = newIds.size !== response.rowData.length;
-            if (responseHasDuplicates) {
-                console.warn(`AG Grid: Server response contained duplicate ids, please modify the getRowId callback to provide unique ids.`);
+            const duplicates = this.extractDuplicateIds(response.rowData);
+            if (duplicates.length > 0) {
+                const duplicateIdText = duplicates.join(', ');
+                console.warn(`AG Grid: Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.`);
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }
