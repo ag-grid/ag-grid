@@ -83,6 +83,7 @@ export class PolarChart extends Chart {
             series.radius = radius;
         });
 
+        const radiusRatioThreshold = 0.5;
         const labelRepositionAttempts = 2;
         for (let i = 0; i < labelRepositionAttempts; i++) {
             const labelBoxes = polarSeries
@@ -99,16 +100,39 @@ export class PolarChart extends Chart {
             const circleRight = radius;
             const circleBottom = radius;
 
-            const padLeft = Math.max(0, circleLeft - labelBox.x);
-            const padTop = Math.max(0, circleTop - labelBox.y);
-            const padRight = Math.max(0, labelBox.x + labelBox.width - circleRight);
-            const padBottom = Math.max(0, labelBox.y + labelBox.height - circleBottom);
+            // Label padding around the circle
+            let padLeft = Math.max(0, circleLeft - labelBox.x);
+            let padTop = Math.max(0, circleTop - labelBox.y);
+            let padRight = Math.max(0, labelBox.x + labelBox.width - circleRight);
+            let padBottom = Math.max(0, labelBox.y + labelBox.height - circleBottom);
 
-            radius = Math.min(seriesBox.width - padLeft - padRight, seriesBox.height - padTop - padBottom) / 2;
-            const newWidth = padLeft + 2 * radius + padRight;
-            const newHeight = padTop + 2 * radius + padBottom;
-            centerX = seriesBox.x + padLeft + radius + (seriesBox.width - newWidth) / 2;
-            centerY = seriesBox.y + padTop + radius + (seriesBox.height - newHeight) / 2;
+            // Available area for the circle (after the padding will be applied)
+            const availCircleWidth = seriesBox.width - padLeft - padRight;
+            const availCircleHeight = seriesBox.height - padTop - padBottom;
+
+            let newRadius = Math.min(availCircleWidth, availCircleHeight) / 2;
+            const minRadius = (radiusRatioThreshold * Math.min(seriesBox.width, seriesBox.height)) / 2;
+            if (newRadius < minRadius) {
+                // If the radius is too small, reduce the label padding
+                newRadius = minRadius;
+                if (padLeft + 2 * newRadius + padRight > seriesBox.width) {
+                    const padWidth = seriesBox.width - 2 * newRadius;
+                    if (Math.min(padLeft, padRight) * 2 > padWidth) {
+                        padLeft = padWidth / 2;
+                        padRight = padWidth / 2;
+                    } else if (padLeft > padRight) {
+                        padLeft = padWidth - padRight;
+                    } else {
+                        padRight = padWidth - padLeft;
+                    }
+                }
+            }
+
+            const newWidth = padLeft + 2 * newRadius + padRight;
+            const newHeight = padTop + 2 * newRadius + padBottom;
+            centerX = seriesBox.x + (seriesBox.width - newWidth) / 2 + padLeft + newRadius;
+            centerY = seriesBox.y + (seriesBox.height - newHeight) / 2 + padTop + newRadius;
+            radius = newRadius;
 
             polarSeries.forEach((series) => {
                 series.centerX = centerX;

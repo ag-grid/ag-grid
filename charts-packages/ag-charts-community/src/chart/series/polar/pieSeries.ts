@@ -847,6 +847,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = calloutLabel;
+        const seriesBox = this.chart!.getSeriesRect()!;
+        const seriesLeft = seriesBox.x - this.centerX;
+        const seriesRight = seriesBox.x + seriesBox.width - this.centerX;
 
         this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum) => {
             const label = datum.calloutLabel;
@@ -866,8 +869,23 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 text.fill = color;
                 text.textAlign = label.textAlign;
                 text.textBaseline = label.textBaseline;
+
+                // Clip text if there is overflow
+                const box = text.computeBBox();
+                const errPx = 1; // Prevents errors related to floating point calculations
+                let t = 1;
+                if (box.x + errPx < seriesLeft) {
+                    t = (box.x + box.width - seriesLeft) / box.width;
+                } else if (box.x + box.width - errPx > seriesRight) {
+                    t = (seriesRight - box.x) / box.width;
+                }
+                if (t < 1) {
+                    const length = Math.floor(label.text.length * t) - 1;
+                    text.text = label.text.substring(0, length) + '…';
+                }
+                text.visible = true;
             } else {
-                text.fill = undefined;
+                text.visible = false;
             }
         });
     }
