@@ -412,7 +412,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
         if (editingCancelledByUserComp) {
             this.beans.context.destroyBean(cellEditor);
-            this.cellCtrl.stopEditing();
+            this.cellCtrl.stopEditing(true);
             return;
         }
 
