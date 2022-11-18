@@ -49,7 +49,7 @@ export class LazyBlockLoader extends BeanStub {
             }
 
             // if node is a loading stub, or has manually been marked as needsRefresh we refresh
-            if (node.stub || node.needsRefresh) {
+            if ((node.stub && !node.failedLoad) || node.needsRefresh) {
                 indexesToLoad.add(blockStart);
                 return;
             }
