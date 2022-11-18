@@ -12,7 +12,6 @@ import {
     ColumnVisibleEvent,
     Events
 } from "./events";
-import { GridOptions } from "./entities/gridOptions";
 import { Column } from "./entities/column";
 import { Bean } from "./context/context";
 import { Qualifier } from "./context/context";

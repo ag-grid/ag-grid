@@ -978,7 +978,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public columnPinned: EventEmitter<ColumnPinnedEvent<TData>> = new EventEmitter<ColumnPinnedEvent<TData>>();
     /** A column was resized.     */
     @Output() public columnResized: EventEmitter<ColumnResizedEvent<TData>> = new EventEmitter<ColumnResizedEvent<TData>>();
-    /** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below.     */
+    /** A column was moved.     */
     @Output() public columnMoved: EventEmitter<ColumnMovedEvent<TData>> = new EventEmitter<ColumnMovedEvent<TData>>();
     /** A value column was added or removed.     */
     @Output() public columnValueChanged: EventEmitter<ColumnValueChangedEvent<TData>> = new EventEmitter<ColumnValueChangedEvent<TData>>();

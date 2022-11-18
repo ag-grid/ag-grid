@@ -3836,7 +3836,7 @@
       "meta": { "isEvent": true, "name": "onColumnResized" }
     },
     "onColumnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -3845,7 +3845,7 @@
       "meta": { "isEvent": true, "name": "onColumnMoved" }
     },
     "columnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -7822,6 +7822,10 @@
     "toIndex": {
       "description": "/** The position the column was moved to */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "finished": {
+      "description": "/** `True` when the column has finished moving. */",
+      "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "column": {
@@ -25770,7 +25774,7 @@
       "meta": { "isEvent": true, "name": "onColumnResized" }
     },
     "onColumnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -25779,7 +25783,7 @@
       "meta": { "isEvent": true, "name": "onColumnMoved" }
     },
     "columnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -28490,7 +28494,7 @@
       "meta": { "isEvent": true, "name": "onColumnResized" }
     },
     "onColumnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -28499,7 +28503,7 @@
       "meta": { "isEvent": true, "name": "onColumnMoved" }
     },
     "columnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -31216,7 +31220,7 @@
       "meta": { "isEvent": true, "name": "onColumnResized" }
     },
     "onColumnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -31225,7 +31229,7 @@
       "meta": { "isEvent": true, "name": "onColumnMoved" }
     },
     "columnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
