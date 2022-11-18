@@ -50,7 +50,7 @@ const CellComp = (props: {
 
     let eCellWrapper: HTMLDivElement;
     let eCellValue: HTMLElement;
-    const setECellValue = (val: HTMLElement) => {
+    const setECellValue = (val: HTMLElement)=> {
         eCellValue = val;
     };
 
@@ -67,7 +67,10 @@ const CellComp = (props: {
         const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
         if (editingCancelledByUserComp) {
             // we cannot set state inside render, so hack is to do it in next VM turn
-            setTimeout(() => cellCtrl.stopEditing(true), 0);
+            setTimeout(() => {
+                cellCtrl.stopEditing(true);
+                cellCtrl.focusCell(true);
+            });
         }
 
         const refAny = ref as any;
