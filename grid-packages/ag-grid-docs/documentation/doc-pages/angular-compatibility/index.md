@@ -11,8 +11,7 @@ The following page provides information that is relevant when using older versio
  
  | Angular | AG Grid   | AG Grid Legacy    |
  | --------| --------- | ------------------|
- | 6       | 18 - 22   |                   |
- | 7       | 18 - 26   |                   |
+ | 6 - 7   | 18 - 22   |                   |
  | 8       | 18 - 27   | 28                |
  | 9       | 23 - 27   | 28                |
  | 10 - 11 | 24 - 27   | 28+               |
