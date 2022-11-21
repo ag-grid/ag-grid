@@ -145,7 +145,7 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(params.colDef!, TooltipComponent, 'agTooltipComponent', params, true)!;
     }
 
-    public getSetFilterCellRendererDetails(def: ISetFilterParams, params: WithoutGridCommon<ISetFilterCellRendererParams>): UserCompDetails | undefined {
+    public getSetFilterCellRendererDetails<TData, V>(def: ISetFilterParams<TData, V>, params: WithoutGridCommon<ISetFilterCellRendererParams>): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent, null, params);
     }
 
