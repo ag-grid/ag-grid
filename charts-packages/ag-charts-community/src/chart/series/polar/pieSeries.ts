@@ -30,6 +30,7 @@ import {
     OPT_STRING,
     STRING,
     COLOR_STRING_ARRAY,
+    OPT_COLOR_STRING_ARRAY,
     Validate,
     COLOR_STRING,
 } from '../../../util/validation';
@@ -122,8 +123,8 @@ class PieSeriesSectorLabel extends Label {
 }
 
 class PieSeriesCalloutLine {
-    @Validate(COLOR_STRING_ARRAY)
-    colors: string[] = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
+    @Validate(OPT_COLOR_STRING_ARRAY)
+    colors: string[] | undefined = undefined;
 
     @Validate(NUMBER(0))
     length: number = 10;
@@ -826,7 +827,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         });
 
-        const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = calloutLine;
+        const { length: calloutLength, strokeWidth: calloutStrokeWidth } = calloutLine;
+        const calloutColors = calloutLine.colors || this.strokes;
 
         this.calloutLabelSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
             const radius = radiusScale.convert(datum.radius, clamper);
