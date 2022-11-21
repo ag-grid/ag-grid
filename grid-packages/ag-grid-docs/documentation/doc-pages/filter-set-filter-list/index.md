@@ -295,7 +295,7 @@ If there are missing / empty values in the row data of the grid, or missing valu
 
 ## Filter Value Types
 
-The Filter Model maintains the type of the cell values used within the Set Filter (e.g. if the cell contains a number, the Filter Model will contain values with type number). Note that in previous versions the Filter Model values were converted to strings. This behaviour can be replicated by setting `filterParams.convertValuesToStrings = true`, but the setting is deprecated.
+The Set Filter internally maintains the original type of the cell values, but always uses strings for the keys. E.g. if the cell contains a number, the Filter Model will contain those numbers converted to strings, but if you specified a comparator, that would use the values with type number. Note that in previous versions the Filter Model values were converted to strings for everything. This behaviour can be replicated by setting `filterParams.convertValuesToStrings = true`, but the setting is deprecated.
 
 ### Complex Objects
 

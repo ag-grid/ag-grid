@@ -194,7 +194,7 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     excelMode?: 'mac' | 'windows';
     /**
      * @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,
-     * as well as maintaining the type of primitives (e.g. number, boolean).
+     * as well as maintaining the type of primitives (e.g. number, boolean) when not used as keys.
      * 
      * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.
      * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.
