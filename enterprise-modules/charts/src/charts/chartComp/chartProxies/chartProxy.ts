@@ -211,7 +211,7 @@ export abstract class ChartProxy {
     }
 
     public getChartImageDataURL(type?: string) {
-        return deproxy(this.chart).scene.getDataURL(type);
+        return this.getChart().scene.getDataURL(type);
     }
 
     public getChartOptions(): AgChartThemeOverrides {
