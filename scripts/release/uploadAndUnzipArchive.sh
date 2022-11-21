@@ -55,8 +55,8 @@ ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "cd $PUBLIC_HTML_PATH/archive/ && [[ -d 
 # upload file
 echo "ssh -i $SSH_LOCATION -p $SSH_PORT $HOST \"mkdir -p $PUBLIC_HTML_PATH/archive/$VERSION\""
 ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "mkdir -p $PUBLIC_HTML_PATH/archive/$VERSION"
-echo "scp -i $SSH_LOCATION -p $SSH_PORT $ARCHIVE $HOST:$PUBLIC_HTML_PATH/archive/$VERSION/"
-scp -i $SSH_LOCATION -p $SSH_PORT $ARCHIVE $HOST:$PUBLIC_HTML_PATH/archive/$VERSION/
+echo "scp -i $SSH_LOCATION -P $SSH_PORT $ARCHIVE $HOST:$PUBLIC_HTML_PATH/archive/$VERSION/"
+scp -i $SSH_LOCATION -P $SSH_PORT $ARCHIVE $HOST:$PUBLIC_HTML_PATH/archive/$VERSION/
 
 # unzip archive
 echo "ssh -i $SSH_LOCATION -p $SSH_PORT $HOST \"cd $PUBLIC_HTML_PATH/archive/$VERSION && tar -m -xf $ARCHIVE\""
