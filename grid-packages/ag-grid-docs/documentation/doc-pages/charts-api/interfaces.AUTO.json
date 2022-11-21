@@ -2807,10 +2807,6 @@
     "meta": { "isTypeAlias": true },
     "type": "CartesianChart | PolarChart | HierarchyChart"
   },
-  "AgChartType": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
-    "type": "T extends AgCartesianChartOptions ? CartesianChart : T extends AgPolarChartOptions ? PolarChart : T extends AgHierarchyChartOptions ? HierarchyChart : never"
-  },
   "ChartOptionType": {
     "meta": { "isTypeAlias": true, "typeParams": ["T extends ChartType"] },
     "type": "T extends CartesianChart ? AgCartesianChartOptions : T extends PolarChart ? AgPolarChartOptions : T extends HierarchyChart ? AgHierarchyChartOptions : never"

@@ -49,14 +49,6 @@ import { windowValue } from '../util/window';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
-type AgChartType<T> = T extends AgCartesianChartOptions
-    ? CartesianChart
-    : T extends AgPolarChartOptions
-    ? PolarChart
-    : T extends AgHierarchyChartOptions
-    ? HierarchyChart
-    : never;
-
 type ChartOptionType<T extends ChartType> = T extends CartesianChart
     ? AgCartesianChartOptions
     : T extends PolarChart
