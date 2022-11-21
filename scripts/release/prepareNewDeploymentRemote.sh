@@ -19,10 +19,12 @@ VERSION=""${RAW_VERSION//./}""
 TIMESTAMP=`date +%Y%m%d`
 FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 
+cd $WORKING_DIR_ROOT
+
 # delete old temp folder if it exists
 rm -f public_html_tmp > /dev/null
 
-# create a new folder - this will become public_html
+# create a new folder - this will become $HTML_FOLDER_NAME
 mkdir public_html_tmp
 
 # unzip release
@@ -33,14 +35,14 @@ cd ..
 
 # copy non versioned files & directories over
 echo "Copying non-versioned directories"
-cp -R ./public_html/support public_html_tmp/
-cp -R ./public_html/example-assets public_html_tmp/
-cp -R ./public_html/ecommerce public_html_tmp/
-cp -R ./public_html/ecommerce-uat public_html_tmp/
-cp -R ./public_html/zendesk public_html_tmp/
-cp -R ./public_html/services public_html_tmp/
-cp -R ./public_html/robots.txt public_html_tmp/
-cp -R ./public_html/__shared public_html_tmp/
+cp -R ./$HTML_FOLDER_NAME/support public_html_tmp/
+cp -R ./$HTML_FOLDER_NAME/example-assets public_html_tmp/
+cp -R ./$HTML_FOLDER_NAME/ecommerce public_html_tmp/
+cp -R ./$HTML_FOLDER_NAME/ecommerce-uat public_html_tmp/
+cp -R ./$HTML_FOLDER_NAME/zendesk public_html_tmp/
+cp -R ./$HTML_FOLDER_NAME/services public_html_tmp/
+cp -R ./$HTML_FOLDER_NAME/robots.txt public_html_tmp/
+cp -R ./$HTML_FOLDER_NAME/__shared public_html_tmp/
 
 #update folder permissions (default is 777 - change to 755)
 echo "Updating folder permissions"

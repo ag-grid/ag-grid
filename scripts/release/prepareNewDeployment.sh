@@ -7,18 +7,11 @@ if [ "$#" -lt 1 ]
     exit 1
 fi
 
-CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
-SSH_LOCATION=$HOME/$SSH_FILE
+SSH_LOCATION=$SSH_FILE
 
 if [ -z "$SSH_LOCATION" ]
 then
       echo "\$SSH_LOCATION is not set"
-      exit 1;
-fi
-
-if [ -z "$CREDENTIALS_LOCATION" ]
-then
-      echo "\$CREDENTIALS_LOCATION is not set"
       exit 1;
 fi
 
@@ -32,17 +25,13 @@ function checkFileExists {
 }
 
 checkFileExists $SSH_LOCATION
-checkFileExists $CREDENTIALS_LOCATION
 
 FILENAME=$1
 
-# copy the remote script that will create tmp dirs, unzip the new deployment etc to the upload dir (archives)
-curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T "./scripts/release/prepareNewDeploymentRemote.sh" ftp://ag-grid.com/
-# move prepareNewDeploymentRemote from the archives dir to the root, and make it executable
-ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "mv public_html/archive/prepareNewDeploymentRemote.sh ./"
-ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "chmod +x ./prepareNewDeploymentRemote.sh"
+scp -i $SSH_LOCATION -p $SSH_PORT "./scripts/release/prepareNewDeploymentRemote.sh" $HOST:$WORKING_DIR_ROOT/
+ssh -i $SSH_LOCATION -p $SSH_PORT $HOST  "chmod +x $WORKING_DIR_ROOT/prepareNewDeploymentRemote.sh"
 
-# backup the old public_html, unzip the new release and update permissions etc
+# backup the old html folder, unzip the new release and update permissions etc
 # we do this via a remote script as there are many steps and doing so one by one remotely times out occasionally
-ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "cd /home/aggrid/ && ./prepareNewDeploymentRemote.sh $FILENAME"
+ssh -i $SSH_LOCATION -p $SSH_PORT $HOST  "cd $WORKING_DIR_ROOT && ./prepareNewDeploymentRemote.sh $FILENAME"
 
