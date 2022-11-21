@@ -417,12 +417,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.seriesItemEnabled = data?.map(() => visible) || [];
     }
 
-    setColors(fills: string[], strokes: string[]) {
-        this.fills = fills;
-        this.strokes = strokes;
-        this.calloutLine.colors = strokes;
-    }
-
     getDomain(direction: ChartAxisDirection): any[] {
         if (direction === ChartAxisDirection.X) {
             return this.angleScale.domain;
