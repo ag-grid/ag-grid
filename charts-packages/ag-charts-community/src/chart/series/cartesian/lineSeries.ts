@@ -418,7 +418,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             node.translationY = datum.point.y;
             node.visible = node.size > 0 && !isNaN(datum.point.x) && !isNaN(datum.point.y);
 
-            if (!customMarker) {
+            if (!customMarker || node.dirtyPath) {
                 return;
             }
 

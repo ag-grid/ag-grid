@@ -778,7 +778,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             node.visible =
                 node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
 
-            if (!customMarker) {
+            if (!customMarker || node.dirtyPath) {
                 return;
             }
 

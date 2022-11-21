@@ -375,7 +375,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             node.translationY = datum.point?.y ?? 0;
             node.visible = node.size > 0;
 
-            if (!customMarker) {
+            if (!customMarker || node.dirtyPath) {
                 return;
             }
 
