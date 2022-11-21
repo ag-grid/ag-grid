@@ -2,7 +2,6 @@ import {
     Autowired,
     Component,
     UserComponentFactory,
-    GridOptions,
     PostConstruct,
     AgPromise,
     RefSelector,
@@ -21,7 +20,6 @@ export class StatusBar extends Component {
             <div ref="eStatusBarRight" class="ag-status-bar-right" role="status"></div>
         </div>`;
 
-    @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('statusBarService') private statusBarService: StatusBarService;
 
@@ -35,16 +33,17 @@ export class StatusBar extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.gridOptions.statusBar && this.gridOptions.statusBar.statusPanels) {
-            const leftStatusPanelComponents = this.gridOptions.statusBar.statusPanels
+        const statusPanels = this.gridOptionsService.get('statusBar')?.statusPanels;
+        if (statusPanels) {
+            const leftStatusPanelComponents = statusPanels
                 .filter((componentConfig) => componentConfig.align === 'left');
             this.createAndRenderComponents(leftStatusPanelComponents, this.eStatusBarLeft);
 
-            const centerStatusPanelComponents = this.gridOptions.statusBar.statusPanels
+            const centerStatusPanelComponents = statusPanels
                 .filter((componentConfig) => componentConfig.align === 'center');
             this.createAndRenderComponents(centerStatusPanelComponents, this.eStatusBarCenter);
 
-            const rightStatusPanelComponents = this.gridOptions.statusBar.statusPanels
+            const rightStatusPanelComponents = statusPanels
                 .filter((componentConfig) => (!componentConfig.align || componentConfig.align === 'right'));
             this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight);
         } else {

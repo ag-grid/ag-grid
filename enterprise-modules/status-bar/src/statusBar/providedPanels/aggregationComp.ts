@@ -4,7 +4,6 @@ import {
     Component,
     Events,
     GridApi,
-    GridOptions,
     RowPosition,
     IStatusPanelComp,
     PostConstruct,
@@ -32,7 +31,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
@@ -98,7 +96,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
         let statusBarValueComponent: NameValueComp | null = null;
-        const aggregationPanelConfig = _.exists(this.gridOptions.statusBar) && this.gridOptions.statusBar ? this.gridOptions.statusBar.statusPanels.find(panel => panel.statusPanel === 'agAggregationComponent') : null;
+        const statusBar = this.gridOptionsService.get('statusBar');
+        const aggregationPanelConfig = _.exists(statusBar) && statusBar ? statusBar.statusPanels.find(panel => panel.statusPanel === 'agAggregationComponent') : null;
         if (_.exists(aggregationPanelConfig) && aggregationPanelConfig) {
             // a little defensive here - if no statusPanelParams show it, if componentParams we also expect aggFuncs
             if (!_.exists(aggregationPanelConfig.statusPanelParams) ||

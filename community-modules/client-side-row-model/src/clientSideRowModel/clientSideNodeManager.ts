@@ -8,7 +8,8 @@ import {
     RowNodeTransaction,
     SelectionChangedEvent,
     SelectionService, _,
-    WithoutGridCommon
+    WithoutGridCommon,
+    GridOptionsService
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -18,6 +19,7 @@ export class ClientSideNodeManager {
     private readonly rootNode: RowNode;
 
     private gridOptionsWrapper: GridOptionsWrapper;
+    private gridOptionsService: GridOptionsService;
     private eventService: EventService;
     private columnModel: ColumnModel;
     private selectionService: SelectionService;
@@ -36,10 +38,11 @@ export class ClientSideNodeManager {
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: { [id: string]: RowNode } = {};
 
-    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService,
+    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, gridOptionsService: GridOptionsService, eventService: EventService,
         columnModel: ColumnModel, selectionService: SelectionService, beans: Beans) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
+        this.gridOptionsService = gridOptionsService;
         this.eventService = eventService;
         this.columnModel = columnModel;
         this.beans = beans;
@@ -62,7 +65,7 @@ export class ClientSideNodeManager {
     public postConstruct(): void {
         // func below doesn't have 'this' pointer, so need to pull out these bits
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-        this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+        this.isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
         this.doingTreeData = this.gridOptionsWrapper.isTreeData();
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }

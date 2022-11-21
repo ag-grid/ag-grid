@@ -7,7 +7,6 @@ import {
     ExcelExportParams,
     ExcelFactoryMode,
     ExcelStyle,
-    GridOptions,
     GridOptionsWrapper,
     GridOptionsService,
     IExcelCreator,
@@ -114,7 +113,6 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('stylingService') private stylingService: StylingService;
 
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
@@ -238,7 +236,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
             gridOptionsWrapper,
             gridOptionsService,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
-            baseExcelStyles: this.gridOptions.excelStyles || [],
+            baseExcelStyles: this.gridOptionsService.get('excelStyles') || [],
             styleLinker: this.styleLinker.bind(this)
         };
 
@@ -270,7 +268,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
             return headerClasses;
         }
 
-        const styles = this.gridOptions.excelStyles;
+        const styles = this.gridOptionsService.get('excelStyles');
 
         const applicableStyles: string [] = ["cell"];
 

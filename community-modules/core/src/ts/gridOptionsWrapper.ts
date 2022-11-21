@@ -404,14 +404,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressExpandablePivotGroups);
     }
 
-    public getPivotColumnGroupTotals() {
-        return this.gridOptions.pivotColumnGroupTotals;
-    }
-
-    public getPivotRowTotals() {
-        return this.gridOptions.pivotRowTotals;
-    }
-
     public isRowModelInfinite() {
         return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE;
     }
@@ -1221,14 +1213,6 @@ export class GridOptionsWrapper {
         }
 
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
-    }
-
-    public getIsRowMasterFunc() {
-        return this.gridOptions.isRowMaster;
-    }
-
-    public getIsRowSelectableFunc() {
-        return this.gridOptions.isRowSelectable;
     }
 
     public getGroupRowRendererParams() {

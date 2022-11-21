@@ -134,7 +134,7 @@ export class PivotColDefService extends BeanStub {
     ) {
         if (
             this.gridOptionsWrapper.isSuppressExpandablePivotGroups() ||
-            this.gridOptionsWrapper.getPivotColumnGroupTotals()
+            this.gridOptionsService.get('pivotColumnGroupTotals')
         ) {
             return;
         }
@@ -194,9 +194,9 @@ export class PivotColDefService extends BeanStub {
     }
 
     private addPivotTotalsToGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[], pivotColumnDefs: ColDef[]) {
-        if (!this.gridOptionsWrapper.getPivotColumnGroupTotals()) { return; }
+        if (!this.gridOptionsService.get('pivotColumnGroupTotals')) { return; }
 
-        const insertAfter = this.gridOptionsWrapper.getPivotColumnGroupTotals() === 'after';
+        const insertAfter = this.gridOptionsService.get('pivotColumnGroupTotals') === 'after';
 
         const valueCols = this.columnModel.getValueColumns();
         const aggFuncs = valueCols.map(valueCol => valueCol.getAggFunc());
@@ -259,9 +259,9 @@ export class PivotColDefService extends BeanStub {
     private addRowGroupTotals(pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
                               pivotColumnDefs: ColDef[],
                               valueColumns: Column[]) {
-        if (!this.gridOptionsWrapper.getPivotRowTotals()) { return; }
+        if (!this.gridOptionsService.get('pivotRowTotals')) { return; }
 
-        const insertAfter = this.gridOptionsWrapper.getPivotRowTotals() === 'after';
+        const insertAfter = this.gridOptionsService.get('pivotRowTotals') === 'after';
 
         // order of row group totals depends on position
         const valueCols = insertAfter ? valueColumns.slice() : valueColumns.slice().reverse();
