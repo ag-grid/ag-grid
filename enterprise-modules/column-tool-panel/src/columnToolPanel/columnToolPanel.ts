@@ -78,7 +78,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.params = {
             ...defaultParams,
             ...params,
-            context: this.gridOptionsWrapper.getContext(),
+            context: this.gridOptionsService.get('context'),
         };
 
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {

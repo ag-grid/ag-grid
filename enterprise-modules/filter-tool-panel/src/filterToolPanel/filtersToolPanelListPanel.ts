@@ -48,7 +48,7 @@ export class FiltersToolPanelListPanel extends Component {
             suppressSyncLayoutWithGrid: false,
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsWrapper.getContext()
+            context: this.gridOptionsService.get('context')
         };
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;

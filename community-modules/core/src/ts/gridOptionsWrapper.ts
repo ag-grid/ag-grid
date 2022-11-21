@@ -3,7 +3,8 @@ import { ColDefUtil } from './components/colDefUtil';
 import { ComponentUtil } from './components/componentUtil';
 import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
+import { ColDef, ColGroupDef, IAggFunc } from './entities/colDef';
+import { Column } from './entities/column';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
 import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
@@ -13,18 +14,18 @@ import { Events } from './eventKeys';
 import { AgEvent } from './events';
 import { EventService } from './eventService';
 import { GridApi } from './gridApi';
+import { GridOptionsService } from './gridOptionsService';
 import { CsvExportParams } from './interfaces/exportParams';
 import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import { ChartToolPanelsDef } from './interfaces/iChartOptions';
 import { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import { IDatasource } from './interfaces/iDatasource';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
 import { IViewportDatasource } from './interfaces/iViewportDatasource';
-import { Column } from './entities/column';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
-import { _ } from './utils';
 import { getScrollbarWidth } from './utils/browser';
 import { doOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
@@ -32,7 +33,6 @@ import { exists, missing, values } from './utils/generic';
 import { isNumeric } from './utils/number';
 import { iterateObject } from './utils/object';
 import { capitalise } from './utils/string';
-import { ChartToolPanelsDef } from './interfaces/iChartOptions';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -157,6 +157,7 @@ export class GridOptionsWrapper {
     public static PROP_DEFAULT_COL_DEF: 'defaultColDef' = 'defaultColDef';
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
+    @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
@@ -349,7 +350,7 @@ export class GridOptionsWrapper {
         ((params: WithoutGridCommon<P>) => T) | undefined {
         if (callback) {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
-                const mergedParams = { ...callbackParams, api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() } as P;
+                const mergedParams = { ...callbackParams, api: this.gridOptionsService.get('api')!, columnApi: this.gridOptionsService.get('columnApi')!, context: this.gridOptionsService.get('context') } as P;
                 return callback(mergedParams);
             };
             return wrapped;
@@ -393,10 +394,6 @@ export class GridOptionsWrapper {
 
     public isRowMultiSelectWithClick() {
         return isTrue(this.gridOptions.rowMultiSelectWithClick);
-    }
-
-    public getContext() {
-        return this.gridOptions.context;
     }
 
     public isPivotMode() {
@@ -861,14 +858,6 @@ export class GridOptionsWrapper {
 
     public getBusinessKeyForNodeFunc() {
         return this.gridOptions.getBusinessKeyForNode;
-    }
-
-    public getApi(): GridApi | undefined | null {
-        return this.gridOptions.api;
-    }
-
-    public getColumnApi(): ColumnApi | undefined | null {
-        return this.gridOptions.columnApi;
     }
 
     public isReadOnlyEdit(): boolean {
@@ -1618,7 +1607,7 @@ export class GridOptionsWrapper {
 
     public isExternalFilterPresent() {
         if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
-            return this.gridOptions.isExternalFilterPresent({ api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() });
+            return this.gridOptions.isExternalFilterPresent({ api: this.gridOptionsService.get('api')!, columnApi: this.gridOptionsService.get('columnApi')!, context: this.gridOptionsService.get('context') });
         }
 
         return false;
@@ -1892,9 +1881,9 @@ export class GridOptionsWrapper {
                     key,
                     defaultValue,
                     variableValues,
-                    api: this.getApi()!,
-                    columnApi: this.getColumnApi()!,
-                    context: this.getContext()
+                    api: this.gridOptionsService.get('api')!,
+                    columnApi: this.gridOptionsService.get('columnApi')!,
+                    context: this.gridOptionsService.get('context')
                 };
                 return getLocaleText(params);
             };

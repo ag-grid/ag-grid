@@ -9,6 +9,7 @@ import {
     ExcelStyle,
     GridOptions,
     GridOptionsWrapper,
+    GridOptionsService,
     IExcelCreator,
     PostConstruct,
     StylingService,
@@ -118,6 +119,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
 
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
 
     private exportMode: string = 'xlsx';
 
@@ -125,7 +127,8 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,
-            gridOptionsWrapper: this.gridOptionsWrapper
+            gridOptionsWrapper: this.gridOptionsWrapper,
+            gridOptionsService: this.gridOptionsService
         });
     }
 
@@ -219,7 +222,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     }
 
     public createSerializingSession(params: ExcelExportParams): SerializingSession {
-        const { columnModel, valueService, gridOptionsWrapper } = this;
+        const { columnModel, valueService, gridOptionsWrapper, gridOptionsService } = this;
         const isXlsx = this.getExportMode() === 'xlsx';
 
         let sheetName = 'ag-grid';
@@ -233,6 +236,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
             columnModel,
             valueService,
             gridOptionsWrapper,
+            gridOptionsService,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles: this.gridOptions.excelStyles || [],
             styleLinker: this.styleLinker.bind(this)
@@ -257,7 +261,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
             if (col) {
                 headerClasses = headerClasses.concat(CssClassApplier.getHeaderClassesFromColDef(
                     col.getDefinition(),
-                    this.gridOptionsWrapper,
+                    this.gridOptionsService,
                     column || null,
                     columnGroup || null
                 ));
@@ -285,9 +289,9 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
                 colDef: column!.getDefinition(),
                 column: column!,
                 rowIndex: rowIndex,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
+                api: this.gridOptionsService.get('api')!,
+                columnApi: this.gridOptionsService.get('columnApi')!,
+                context: this.gridOptionsService.get('context')
             },
             (className: string) => {
                 if (styleIds.indexOf(className) > -1) {

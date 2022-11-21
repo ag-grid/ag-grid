@@ -1,11 +1,11 @@
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
-import { RowNode } from '../entities/rowNode';
-import { Column } from '../entities/column';
-import { SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams } from '../entities/colDef';
-import { isBrowserEdge, isMacOsUserAgent } from './browser';
-import { ColumnGroup } from '../entities/columnGroup';
-import { exists } from './generic';
 import { KeyCode } from '../constants/keyCode';
+import { SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams } from '../entities/colDef';
+import { Column } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
+import { RowNode } from '../entities/rowNode';
+import { GridOptionsService } from '../gridOptionsService';
+import { isBrowserEdge, isMacOsUserAgent } from './browser';
+import { exists } from './generic';
 
 const NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
 
@@ -35,7 +35,7 @@ export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
 
 /**
  * Allows user to tell the grid to skip specific keyboard events
- * @param {GridOptionsWrapper} gridOptionsWrapper
+ * @param {GridOptionsService} gridOptionsService
  * @param {KeyboardEvent} keyboardEvent
  * @param {RowNode} rowNode
  * @param {Column} column
@@ -43,7 +43,7 @@ export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
  * @returns {boolean}
  */
 export function isUserSuppressingKeyboardEvent(
-    gridOptionsWrapper: GridOptionsWrapper,
+    gridOptionsService: GridOptionsService,
     keyboardEvent: KeyboardEvent,
     rowNode: RowNode,
     column: Column,
@@ -58,12 +58,12 @@ export function isUserSuppressingKeyboardEvent(
         event: keyboardEvent,
         editing,
         column,
-        api: gridOptionsWrapper.getApi()!,
+        api: gridOptionsService.get('api')!,
         node: rowNode,
         data: rowNode.data,
         colDef: column.getColDef(),
-        context: gridOptionsWrapper.getContext(),
-        columnApi: gridOptionsWrapper.getColumnApi()!
+        context: gridOptionsService.get('context'),
+        columnApi: gridOptionsService.get('columnApi')!
     };
 
     // colDef get first preference on suppressing events
@@ -78,7 +78,7 @@ export function isUserSuppressingKeyboardEvent(
 }
 
 export function isUserSuppressingHeaderKeyboardEvent(
-    gridOptionsWrapper: GridOptionsWrapper,
+    gridOptionsService: GridOptionsService,
     keyboardEvent: KeyboardEvent,
     headerRowIndex: number,
     column: Column | ColumnGroup
@@ -89,9 +89,9 @@ export function isUserSuppressingHeaderKeyboardEvent(
     if (!exists(colDefFunc)) { return false; }
 
     const params: SuppressHeaderKeyboardEventParams = {
-        api: gridOptionsWrapper.getApi()!,
-        columnApi: gridOptionsWrapper.getColumnApi()!,
-        context: gridOptionsWrapper.getContext(),
+        api: gridOptionsService.get('api')!,
+        columnApi: gridOptionsService.get('columnApi')!,
+        context: gridOptionsService.get('context'),
         colDef: colDef,
         column,
         headerRowIndex,
