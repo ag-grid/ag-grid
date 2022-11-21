@@ -245,6 +245,8 @@ export abstract class ChartProxy {
         }
 
         return {
+            container: this.chartProxyParams.parentElement,
+            theme: this.agChartTheme,
             padding: getChartOption('padding'),
             background: getChartOption('background'),
             title: getChartOption('title'),

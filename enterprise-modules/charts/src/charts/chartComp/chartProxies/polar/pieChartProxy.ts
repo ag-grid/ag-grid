@@ -97,7 +97,6 @@ export class PieChartProxy extends ChartProxy {
 
     private getCrossFilterChartOptions(options: AgPolarChartOptions) {
         const seriesOverrides = this.extractSeriesOverrides();
-        const chart = this.getChart();
         return {
             ...options,
             tooltip: {
@@ -108,6 +107,7 @@ export class PieChartProxy extends ChartProxy {
                 ...seriesOverrides.legend,
                 listeners: {
                     legendItemClick: (e: AgChartLegendClickEvent) => {
+                        const chart = this.getChart();
                         chart.series.forEach(s => s.toggleSeriesItem(e.itemId, e.enabled));
                     }
                 }
