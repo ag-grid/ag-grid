@@ -27,7 +27,7 @@ export class ClipRect extends Node {
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MAJOR })
-    enabled: boolean = true;
+    enabled: boolean = false;
 
     private _dirtyPath = true;
 

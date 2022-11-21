@@ -1,5 +1,4 @@
-import { Chart } from './chart';
-import { Node } from '../scene/node';
+import { Chart, TransferableResources } from './chart';
 import { PolarSeries } from './series/polar/polarSeries';
 import { Padding } from '../util/padding';
 import { BBox } from '../scene/bbox';
@@ -10,17 +9,15 @@ export class PolarChart extends Chart {
 
     padding = new Padding(40);
 
-    constructor(document = window.document, overrideDevicePixelRatio?: number) {
-        super(document, overrideDevicePixelRatio);
+    constructor(document = window.document, overrideDevicePixelRatio?: number, resources?: TransferableResources) {
+        super(document, overrideDevicePixelRatio, resources);
 
         this.scene.root!.append(this.legend.group);
     }
 
-    get seriesRoot(): Node {
-        return this.scene.root!;
-    }
-
     async performLayout() {
+        this.scene.root!.visible = true;
+
         const shrinkRect = new BBox(0, 0, this.width, this.height);
 
         const { captionAutoPadding = 0 } = this.positionCaptions();

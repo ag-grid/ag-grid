@@ -4358,6 +4358,7 @@
   "ObservableLike": {},
   "ChartUpdateType": {},
   "OptionalHTMLElement": {},
+  "TransferableResources": {},
   "ChartAxisDirection": {},
   "NodeData": {},
   "CrossLineType": {},
@@ -4694,14 +4695,14 @@
     },
     "assertions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": false
       }
     },
     "extraScreenshotActions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": true
       }
@@ -4713,14 +4714,14 @@
     },
     "assertions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": false
       }
     },
     "extraScreenshotActions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": true
       }
@@ -4732,14 +4733,14 @@
     },
     "assertions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": false
       }
     },
     "extraScreenshotActions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": true
       }
