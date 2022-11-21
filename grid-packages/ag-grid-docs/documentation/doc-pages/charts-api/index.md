@@ -22,7 +22,7 @@ Click through the tabs to see the three main variations of `AgChartOptions` depe
     <expandable-snippet label="Hierarchy" interfaceName='AgHierarchyChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]'></expandable-snippet>
 </tabs>
 
-## Creating and Updating Charts Using Options
+## Creating and Updating Charts Using Complete Options
 
 [[only-javascript]]
 | `AgChart` exposes `create()` and `update()` static methods to perform chart initialisation and update respectively.
@@ -31,9 +31,7 @@ Click through the tabs to see the three main variations of `AgChartOptions` depe
 |
 | [[note]]
 | | NOTE: We expect the options supplied to `AgChart.update()` to be the full configuration to update
-| | to, not a partial configuration. If properties or nested objects are missing compared with an
-| | earlier `create()`/`update()` call, features may be disabled or defaults assumed as the target
-| | configuration.
+| | to, not a partial configuration. Use `AgChart.updateDelta()` to apply partial updates.
 
 [[only-frameworks]]
 | Options are supplied to the AG Charts component, and mutations of the options trigger an update of the chart configuration.
@@ -43,3 +41,19 @@ The following example demonstrates both create and update cases:
 - Buttons that invoke mutations of the `options` and trigger update of the chart state.
 
 <chart-example title='Create and Update with AgChartOptions' name='create-update' type='generated'></chart-example>
+
+[[only-javascript]]
+| ## Updating Charts Using Partial Options
+|
+| `AgChart` exposes an `updateDelta()` static method to allow partial updates to an existing charts configuration.
+| To assist with state management, the complete applied options state can be retrieve by calling `getOptions()` on the
+| chart instance.
+|
+| <chart-example title='Update with Partial AgChartOptions' name='update-partial' type='typescript'></chart-example>
+|
+
+[[only-javascript]]
+| ## API
+| Static methods available on the `AgChart` factory class:
+| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" config='{ "showSnippets": false }'></api-documentation>
+| <interface-documentation interfaceName='AgChartInstance' config='{ "showSnippets": false }'></interface-documentation>

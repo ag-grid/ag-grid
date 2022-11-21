@@ -95,12 +95,13 @@ export class RowContainerComp extends Component {
         const processRow = (rowCon: RowCtrl) => {
             const instanceId = rowCon.getInstanceId();
             const existingRowComp = oldRows[instanceId];
+
             if (existingRowComp) {
                 this.rowComps[instanceId] = existingRowComp;
                 delete oldRows[instanceId];
                 this.ensureDomOrder(existingRowComp.getGui());
             } else {
-                const rowComp = this.newRowComp(rowCon);
+                const rowComp = new RowComp(rowCon, this.beans, this.type);
                 this.rowComps[instanceId] = rowComp;
                 this.appendRow(rowComp.getGui());
             }
@@ -129,12 +130,6 @@ export class RowContainerComp extends Component {
             ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
             this.lastPlacedElement = eRow;
         }
-    }
-
-    private newRowComp(rowCtrl: RowCtrl): RowComp {
-        const pinned = RowContainerCtrl.getPinned(this.name);
-        const res = new RowComp(rowCtrl, this.beans, this.type);
-        return res;
     }
 
 }

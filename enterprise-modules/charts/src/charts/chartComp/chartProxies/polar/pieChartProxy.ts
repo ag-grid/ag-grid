@@ -1,7 +1,7 @@
 import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateChartParams } from '../chartProxy';
 import {
     AgChart,
-    PolarChart,
+    AgChartInstance,
     AgChartLegendClickEvent,
     AgPieSeriesOptions,
     AgPolarChartOptions,
@@ -23,11 +23,11 @@ export class PieChartProxy extends ChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(): PolarChart {
+    protected createChart(): AgChartInstance {
         return AgChart.create({
             type: 'pie',
             container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme,
+            theme: this.agChartTheme
         });
     }
 
@@ -44,7 +44,7 @@ export class PieChartProxy extends ChartProxy {
             options = this.getCrossFilterChartOptions(options);
         }
 
-        AgChart.update(this.chart as PolarChart, options);
+        AgChart.update(this.chart as AgChartInstance, options);
     }
 
     private getSeries(params: UpdateChartParams): AgPolarSeriesOptions[] {
@@ -78,13 +78,13 @@ export class PieChartProxy extends ChartProxy {
                     outerRadiusOffset,
                     innerRadiusOffset,
                     title: {
-                        ...seriesDefaults.title,
-                        text: seriesDefaults.title.text || f.displayName,
+                        ...seriesDefaults?.title,
+                        text: seriesDefaults?.title?.text || f.displayName,
                         showInLegend: numFields > 1,
                     },
                     calloutLine: {
-                        ...seriesDefaults.calloutLine,
-                        colors: this.chartTheme.palette.strokes,
+                        ...seriesDefaults?.calloutLine,
+                        colors: this.chartPalette?.strokes,
                     }
                 }
             }
@@ -128,7 +128,7 @@ export class PieChartProxy extends ChartProxy {
     }
 
     private extractCrossFilterSeries(series: AgPieSeriesOptions[]) {
-        const palette = this.chartTheme.palette;
+        const palette = this.chartPalette;
         const seriesOverrides = this.extractSeriesOverrides();
 
         const primaryOptions = (seriesOptions: AgPieSeriesOptions) => {
@@ -158,10 +158,10 @@ export class PieChartProxy extends ChartProxy {
                 calloutLabel: seriesOverrides.calloutLabel, // labels can be shown on the 'filtered-out' series
                 calloutLine: seriesOverrides.calloutLine && {
                     ...seriesOverrides.calloutLine,
-                    colors: seriesOverrides.calloutLine.colors ?? palette.strokes,
+                    colors: seriesOverrides.calloutLine.colors ?? palette!.strokes,
                 },
-                fills: changeOpacity(seriesOptions.fills ?? palette.fills, 0.3),
-                strokes: changeOpacity(seriesOptions.strokes ?? palette.strokes, 0.3),
+                fills: changeOpacity(seriesOptions.fills ?? palette!.fills, 0.3),
+                strokes: changeOpacity(seriesOptions.strokes ?? palette!.strokes, 0.3),
                 showInLegend: false,
             };
         }
@@ -203,7 +203,7 @@ export class PieChartProxy extends ChartProxy {
     }
 
     protected extractSeriesOverrides() {
-        return this.chartOptions[this.standaloneChartType].series;
+        return this.chartOptions[this.standaloneChartType]?.series || {};
     }
 
     public crossFilteringReset() {

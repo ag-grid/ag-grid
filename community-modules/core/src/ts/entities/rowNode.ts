@@ -9,7 +9,7 @@ import { getAllKeysInObjects } from "../utils/object";
 import { IServerSideStore } from "../interfaces/IServerSideStore";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
-import { debounce} from "../utils/function";
+import { debounce } from "../utils/function";
 import { Beans } from "../rendering/beans";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IsFullWidthRowParams } from "./iCallbackParams";
@@ -169,6 +169,9 @@ export class RowNode<TData = any> implements IEventEmitter {
 
     /** Used by server side row model, true if this row node failed a load */
     public failedLoad: boolean;
+
+    /** Used by server side row model, true if this row node requires reload */
+    public needsRefresh: boolean;
 
     /** All lowest level nodes beneath this node, no groups. */
     public allLeafChildren: RowNode<TData>[];

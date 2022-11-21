@@ -37,9 +37,10 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;
+    private hidden: boolean = false;
 
     private filtersRowCtrl: HeaderRowCtrl | undefined;
-    private columnsRowCtrl: HeaderRowCtrl;
+    private columnsRowCtrl: HeaderRowCtrl | undefined;
     private groupsRowCtrls: HeaderRowCtrl[] = [];
     private eViewport: HTMLElement;
 
@@ -74,7 +75,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public refresh(keepColumns = false): void {
         const sequence = new NumberSequence();
-
         const focusedHeaderPosition = this.focusService.getFocusHeaderToUseAfterRefresh();
 
         const refreshColumnGroups = () => {
@@ -90,17 +90,22 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         const refreshColumns = () => {
             const rowIndex = sequence.next();
-            const needNewInstance = this.columnsRowCtrl == null || !keepColumns || this.columnsRowCtrl.getRowIndex() !== rowIndex;
+
+            const needNewInstance = !this.hidden && (this.columnsRowCtrl == null || !keepColumns || this.columnsRowCtrl.getRowIndex() !== rowIndex);
+            const shouldDestroyInstance = needNewInstance || this.hidden;
+
+            if (shouldDestroyInstance) {
+                this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
+            }
 
             if (needNewInstance) {
-                this.destroyBean(this.columnsRowCtrl);
                 this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
             }
+
         };
 
         const refreshFilters = () => {
-
-            const includeFloatingFilter = this.columnModel.hasFloatingFilters();
+            const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
 
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
@@ -142,10 +147,16 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     private getAllCtrls(): HeaderRowCtrl[] {
-        const res = [...this.groupsRowCtrls, this.columnsRowCtrl];
-        if (this.filtersRowCtrl) {
-            res.push(this.filtersRowCtrl!);
+        const res: HeaderRowCtrl[] = [...this.groupsRowCtrls];
+
+        if (this.columnsRowCtrl) {
+            res.push(this.columnsRowCtrl);
         }
+
+        if (this.filtersRowCtrl) {
+            res.push(this.filtersRowCtrl);
+        }
+
         return res;
     }
 
@@ -175,12 +186,15 @@ export class HeaderRowContainerCtrl extends BeanStub {
         const pinningLeft = this.pinned === Constants.PINNED_LEFT;
         const pinningRight = this.pinned === Constants.PINNED_RIGHT;
 
+        this.hidden = true;
+
         const listener = () => {
             const width = pinningLeft ? this.pinnedWidthService.getPinnedLeftWidth() : this.pinnedWidthService.getPinnedRightWidth();
             if (width == null) { return; } // can happen at initialisation, width not yet set
 
-            const hidden = width == 0;
-            const isRtl = this.gridOptionsService.is('enableRtl');
+            const hidden = (width == 0);
+            const hiddenChanged = this.hidden !== hidden;
+            const isRtl = this.gridOptionsWrapper.isEnableRtl();
             const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
@@ -189,8 +203,13 @@ export class HeaderRowContainerCtrl extends BeanStub {
             const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
             const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
 
-            this.comp.setPinnedContainerWidth(widthWithPadding + 'px');
+            this.comp.setPinnedContainerWidth(`${widthWithPadding}px`);
             this.comp.setDisplayed(!hidden);
+
+            if (hiddenChanged) {
+                this.hidden = hidden;
+                this.refresh();
+            }
         };
 
         this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
@@ -220,7 +239,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     public getHtmlElementForColumnHeader(column: ColumnGroup): HTMLElement | null;
     public getHtmlElementForColumnHeader(column: Column): HTMLElement | null;
     public getHtmlElementForColumnHeader(column: any): any {
-    /* tslint:enable */
+        /* tslint:enable */
         const cellCtrl = this.getHeaderCtrlForColumn(column);
 
         if (!cellCtrl) { return null; }

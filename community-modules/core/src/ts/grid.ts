@@ -375,14 +375,15 @@ export class GridCoreCreator {
                 console.error('AG Grid: could not find row model for rowModelType ' + rowModelType);
             }
         } else {
+            const logMissingModule = (rowModel: RowModelType, module: string) => console.error(`AG Grid: Row Model "${rowModel}" not found. Please ensure the ${module} module is registered. Please see: https://www.ag-grid.com/javascript-grid/modules/`);
             if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
-                console.error(`AG Grid: Row Model "Infinite" not found. Please ensure the ${ModuleNames.InfiniteRowModelModule} module is registered. Please see: https://www.ag-grid.com/javascript-grid/modules/`);
+                logMissingModule('infinite', ModuleNames.InfiniteRowModelModule);
             } else if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
-                console.error(`AG Grid: Row Model "Viewport" not found. Please ensure the AG Grid Enterprise Module ${ModuleNames.ViewportRowModelModule} module is registered. Please see: https://www.ag-grid.com/javascript-grid/modules/`);
+                logMissingModule('viewport', ModuleNames.ViewportRowModelModule);
             } else if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-                console.error(`AG Grid: Row Model "Server Side" not found. Please ensure the AG Grid Enterprise Module ${ModuleNames.ServerSideRowModelModule} module is registered. Please see: https://www.ag-grid.com/javascript-grid/modules/`);
+                logMissingModule('serverSide', ModuleNames.ServerSideRowModelModule);
             } else if (rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-                console.error(`AG Grid: Row Model "Client Side" not found. Please ensure the ${ModuleNames.ClientSideRowModelModule} module is registered. Please see: https://www.ag-grid.com/javascript-grid/modules/`);
+                logMissingModule('clientSide', ModuleNames.ClientSideRowModelModule);
             } else {
                 console.error('AG Grid: could not find row model for rowModelType ' + rowModelType);
             }

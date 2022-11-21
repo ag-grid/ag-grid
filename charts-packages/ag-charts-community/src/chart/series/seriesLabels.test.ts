@@ -14,7 +14,7 @@ import {
     waitForChartStability,
 } from '../test/utils';
 import { AgChartOptions } from '../agChartOptions';
-import { AgChartV2 } from '../agChartV2';
+import { AgChart } from '../agChartV2';
 import * as examples from './test/examples';
 import { Chart } from '../chart';
 
@@ -148,7 +148,7 @@ describe('series labels', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<any>(options);
+                chart = AgChart.create(options) as Chart;
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -166,7 +166,7 @@ describe('series labels', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<any>(options);
+                chart = AgChart.create(options) as Chart;
                 await compare();
             });
         }

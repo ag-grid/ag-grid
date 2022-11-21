@@ -49,11 +49,10 @@ export function isUserSuppressingKeyboardEvent(
     column: Column,
     editing: boolean
 ): boolean {
-    const gridOptionsFunc = gridOptionsService.getCallback('suppressKeyboardEvent');
     const colDefFunc = column ? column.getColDef().suppressKeyboardEvent : undefined;
 
     // if no callbacks provided by user, then do nothing
-    if (!gridOptionsFunc && !colDefFunc) { return false; }
+    if (!colDefFunc) { return false; }
 
     const params: SuppressKeyboardEventParams = {
         event: keyboardEvent,
@@ -72,11 +71,6 @@ export function isUserSuppressingKeyboardEvent(
         const colDefFuncResult = colDefFunc(params);
         // if colDef func suppressed, then return now, no need to call gridOption func
         if (colDefFuncResult) { return true; }
-    }
-
-    if (gridOptionsFunc) {
-        // if gridOption func, return the result
-        return gridOptionsFunc(params);
     }
 
     // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions

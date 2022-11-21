@@ -309,7 +309,7 @@ export interface AgChartLegendMarkerOptions {
 }
 
 export interface AgChartLegendLabelFormatterParams {
-    /** @deprecated Use seriesId. */
+    /** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId. */
     id: string;
     seriesId: string;
     itemId: any;
@@ -401,7 +401,7 @@ interface AgChartEvent<T extends string> {
 export interface AgNodeClickEvent extends AgChartEvent<'seriesNodeClick'> {
     /** Event type. */
     type: 'seriesNodeClick';
-    /** @deprecated Use seriesId to get the series ID. */
+    /** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */
     series: any;
     /** Series ID, as specified in series.id (or generated if not specified) */
     seriesId: string;
@@ -720,24 +720,6 @@ export interface AgSeriesHighlightSeriesStyle {
 }
 
 export interface AgSeriesHighlightStyle {
-    /**
-     * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.
-     *
-     * @deprecated Use item.fill instead.
-     */
-    fill?: CssColor;
-    /**
-     * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.
-     *
-     * @deprecated Use item.stroke instead.
-     */
-    stroke?: CssColor;
-    /**
-     * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.
-     *
-     * @deprecated Use item.strokeWidth instead.
-     */
-    strokeWidth?: PixelSize;
     /** Highlight style used for an individual marker when tapped or hovered over. */
     item?: AgSeriesHighlightMarkerStyle;
     /** Highlight style used for whole series when one of its markers is tapped or hovered over. */
@@ -747,7 +729,7 @@ export interface AgSeriesHighlightStyle {
 export interface AgSeriesNodeClickParams<DatumType> {
     /** Event type. */
     type: 'nodeClick';
-    /** @deprecated Use seriesId to get the series ID. */
+    /** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */
     series: any;
     /** Series ID, as specified in series.id (or generated if not specified) */
     seriesId: string;
@@ -1013,16 +995,6 @@ export interface AgScatterSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     labelName?: string;
     /** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not.  */
     title?: string;
-    /** @deprecated Use {@link marker.fill} instead. */
-    fill?: CssColor;
-    /** @deprecated Use {@link marker.stroke} instead. */
-    stroke?: CssColor;
-    /** @deprecated Use {@link marker.strokeWidth} instead. */
-    strokeWidth?: PixelSize;
-    /** @deprecated Use {@link marker.fillOpacity} instead. */
-    fillOpacity?: Opacity;
-    /** @deprecated Use {@link marker.strokeOpacity} instead. */
-    strokeOpacity?: Opacity;
     /** Series-specific tooltip configuration.  */
     tooltip?: AgScatterSeriesTooltip;
     /** A map of event names to event listeners. */
@@ -1043,37 +1015,14 @@ export interface AgAreaSeriesOptions<DatumType = any> extends AgBaseSeriesOption
     normalizedTo?: number;
     /** The key to use to retrieve x-values from the data. */
     xKey?: string;
-    /**
-     * The keys to use to retrieve y-values from the data.
-     *
-     * @deprecated use yKey and multiple series instead
-     */
-    yKeys?: string[];
     /** The key to use to retrieve y-values from the data. */
     yKey?: string;
     /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
-    /**
-     * Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.
-     *
-     * @deprecated use yName and multiple series instead
-     */
-    yNames?: string[];
+    /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
-    /**
-     * The colours to cycle through for the fills of the areas.
-     *
-     * @deprecated use fill and multiple series instead
-     */
-    fills?: CssColor[];
     /** The colour to use for the fill of the area. */
     fill?: CssColor;
-    /**
-     * The colours to cycle through for the strokes of the areas.
-     *
-     * @deprecated use stroke and multiple series instead
-     */
-    strokes?: string[];
     /** The colours to use for the stroke of the areas. */
     stroke?: CssColor;
     /** The width in pixels of the stroke for the areas. */
@@ -1136,37 +1085,13 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     xKey?: string;
     /** The keys to use to retrieve y-values from the data. */
     yKey?: string;
-    /**
-     * The keys to use to retrieve y-values from the data.
-     *
-     * @deprecated use yKey and multiple series instead
-     */
-    yKeys?: string[] | string[][];
     /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
     /** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
-    /**
-     * Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.
-     *
-     * @deprecated use yName and multiple series instead
-     */
-    yNames?: string[] | { [key in string]: string };
     flipXY?: boolean;
-    /**
-     * The colours to cycle through for the fills of the bars.
-     *
-     * @deprecated use fill and multiple series instead
-     */
-    fills?: CssColor[];
     /** The colour to use for the fill of the area. */
     fill?: CssColor;
-    /**
-     * The colours to cycle through for the strokes of the bars.
-     *
-     * @deprecated use stroke and multiple series instead
-     */
-    strokes?: string[];
     /** The colours to use for the stroke of the bars. */
     stroke?: CssColor;
     /** The width in pixels of the stroke for the bars. */
@@ -1341,7 +1266,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /**
      * Configuration for the labels used outside of the sectors.
      *
-     * @deprecated Use series.calloutLabel instead.
+     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.
      */
     label?: AgPieSeriesLabelOptions<DatumType>;
     /** Configuration for the labels used outside of the sectors. */
@@ -1351,7 +1276,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /**
      * Configuration for the callout lines used with the labels for the sectors.
      *
-     * @deprecated Use series.calloutLine instead.
+     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.
      */
     callout?: AgPieSeriesCalloutOptions;
     /** Configuration for the callout lines used with the labels for the sectors. */
@@ -1367,13 +1292,13 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /**
      * The key to use to retrieve label values from the data.
      *
-     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.
+     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.
      */
     labelKey?: string;
     /**
      * A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.
      *
-     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.
+     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.
      */
     labelName?: string;
     /** The key to use to retrieve label values from the data. */
@@ -1430,13 +1355,13 @@ export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRe
     /**
      * labelKey as specified on series options.
      *
-     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.
+     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.
      */
     labelKey?: string;
     /**
      * labelName as specified on series options.
      *
-     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.
+     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.
      */
     labelName?: string;
     /** calloutLabelKey as specified on series options. */
@@ -1456,19 +1381,19 @@ export interface AgPieSeriesLabelFormatterParams<DatumType> {
     /**
      * labelKey as specified on series options.
      *
-     * @deprecated Use calloutLabelKey instead.
+     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelKey instead.
      */
     readonly labelKey?: string;
     /**
      * labelValue as read from series data via the labelKey property.
      *
-     * @deprecated Use calloutLabelValue instead.
+     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelValue instead.
      */
     readonly labelValue?: string;
     /**
      * labelName as specified on series options.
      *
-     * @deprecated Use calloutLabelName instead.
+     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelName instead.
      */
     readonly labelName?: string;
 
@@ -1503,7 +1428,7 @@ export interface AgPieSeriesLabelFormatterParams<DatumType> {
     /**
      * The value of labelKey as specified on series options.
      *
-     * @deprecated Use item.datum instead.
+     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use item.datum instead.
      */
     readonly value?: any;
 
@@ -1669,6 +1594,13 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
 }
 
 export type AgChartOptions = AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions;
+
+export interface AgChartInstance {
+    /** Get the `AgChartOptions` representing the current chart configuration. */
+    getOptions(): AgChartOptions;
+    /** Destroy the chart instance and any allocated resources to support its rendering. */
+    destroy(): void;
+}
 
 /**
  * Internal Use Only: Used to ensure this file is treated as a module until we can use moduleDetection flag in Ts v4.7

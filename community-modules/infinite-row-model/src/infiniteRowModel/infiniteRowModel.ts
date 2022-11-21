@@ -18,7 +18,8 @@ import {
     SelectionService,
     SortController,
     IInfiniteRowModel,
-    WithoutGridCommon
+    WithoutGridCommon,
+    RowModelType
 } from "@ag-grid-community/core";
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
@@ -118,7 +119,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         return !_.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
     }
 
-    public getType(): string {
+    public getType(): RowModelType {
         return Constants.ROW_MODEL_TYPE_INFINITE;
     }
 

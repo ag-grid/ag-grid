@@ -10,25 +10,12 @@ import {
     GridApi,
     WithoutGridCommon
 } from "@ag-grid-community/core";
+import { AgCartesianAxisType, AgChartInstance } from "ag-charts-community";
 import { ChartController } from "../chartController";
-import {
-    AreaSeries,
-    BarSeries,
-    CategoryAxis,
-    Chart,
-    ChartAxis,
-    GroupedCategoryAxis,
-    HistogramSeries,
-    LineSeries,
-    NumberAxis,
-    PieSeries,
-    ScatterSeries,
-    TimeAxis
-} from "ag-charts-community";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 
-type SupportedSeries = AreaSeries | BarSeries | HistogramSeries | LineSeries | PieSeries | ScatterSeries;
-
+type ChartAxis = NonNullable<AgChartInstance['axes']>[number];
+type SupportedSeries = AgChartInstance['series'][number];
 export class ChartOptionsService extends BeanStub {
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
@@ -53,9 +40,7 @@ export class ChartOptionsService extends BeanStub {
 
         // we need to update chart options on each series type for combo charts
         chartSeriesTypes.forEach(optionsType => {
-            // update options
-            const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
-            _.set(options, expression, value);
+            _.set(this.getChartOptions(), `${optionsType}.${expression}`, value);
         });
 
         // update chart
@@ -65,13 +50,13 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public getAxisProperty<T = string>(expression: string): T {
-        return _.get(this.getChart().axes[0], expression, undefined) as T;
+        return _.get(this.getChart().axes?.[0], expression, undefined) as T;
     }
 
     public setAxisProperty<T = string>(expression: string, value: T) {
         // update axis options
         const chart = this.getChart();
-        chart.axes.forEach((axis: any) => {
+        chart.axes?.forEach((axis: any) => {
             this.updateAxisOptions<T>(axis, expression, value);
         });
 
@@ -101,12 +86,7 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public setSeriesOption<T = string>(expression: string, value: T, seriesType: ChartSeriesType): void {
-        // update series options
-        const options = this.getChartOptions();
-        if (!options[seriesType]) {
-            options[seriesType] = {};
-        }
-        _.set(options[seriesType].series, expression, value);
+        _.set(this.getChartOptions(), `${seriesType}.series.${expression}`, value);
 
         // update chart
         this.updateChart();
@@ -121,8 +101,7 @@ export class ChartOptionsService extends BeanStub {
 
     public setPairedMode(paired: boolean): void {
         const optionsType = getSeriesType(this.getChartType());
-        const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
-        _.set(options, 'paired', paired);
+        _.set(this.getChartOptions(), `${optionsType}.paired`, paired);
     }
 
     private getAxis(axisType: string): ChartAxis | undefined {
@@ -135,17 +114,28 @@ export class ChartOptionsService extends BeanStub {
         return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
     }
 
+    private getAxisOptionExpression({ optionsType, axisType, expression }: {
+        optionsType: ChartSeriesType,
+        axisType: AgCartesianAxisType,
+        expression: string
+    }): string {
+        return `${optionsType}.axes.${axisType}.${expression}`
+    }
+
     private updateAxisOptions<T = string>(chartAxis: ChartAxis, expression: string, value: T) {
         const optionsType = getSeriesType(this.getChartType());
-        const axisOptions = this.getChartOptions()[optionsType].axes;
-        if (chartAxis instanceof NumberAxis) {
-            _.set(axisOptions.number, expression, value);
-        } else if (chartAxis instanceof CategoryAxis) {
-            _.set(axisOptions.category, expression, value);
-        } else if (chartAxis instanceof TimeAxis) {
-            _.set(axisOptions.time, expression, value);
-        } else if (chartAxis instanceof GroupedCategoryAxis) {
-            _.set(axisOptions.groupedCategory, expression, value);
+        const validAxisTypes: AgCartesianAxisType[] = ['number', 'category', 'time', 'groupedCategory'];
+
+        if (validAxisTypes.includes(chartAxis.type)) {
+            _.set(
+                this.getChartOptions(),
+                this.getAxisOptionExpression({
+                    optionsType,
+                    axisType: chartAxis.type,
+                    expression
+                }), 
+                value
+            );
         }
     }
 
@@ -153,7 +143,7 @@ export class ChartOptionsService extends BeanStub {
         return this.chartController.getChartType();
     }
 
-    private getChart(): Chart {
+    private getChart(): AgChartInstance {
         return this.chartController.getChartProxy().getChart();
     }
 
@@ -180,14 +170,20 @@ export class ChartOptionsService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
+    private static VALID_SERIES_TYPES: ChartSeriesType[] = [
+        'area',
+        'bar',
+        'column',
+        'histogram',
+        'line',
+        'pie',
+        'scatter',
+    ];
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
-        return seriesType === 'area' && series instanceof AreaSeries ? true :
-               seriesType === 'bar' && series instanceof BarSeries ? true :
-               seriesType === 'column' && series instanceof BarSeries ? true :
-               seriesType === 'histogram' && series instanceof HistogramSeries ? true :
-               seriesType === 'line' && series instanceof LineSeries ? true :
-               seriesType === 'pie' && series instanceof PieSeries ? true :
-               seriesType === 'scatter' && series instanceof ScatterSeries;
+        const mapTypeToImplType = (type: ChartSeriesType) => type === 'column' ? 'bar' : type;
+        
+        return ChartOptionsService.VALID_SERIES_TYPES.includes(seriesType) &&
+            series.type === mapTypeToImplType(seriesType);
     }
 
     protected destroy(): void {

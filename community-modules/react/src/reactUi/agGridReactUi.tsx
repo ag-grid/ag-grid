@@ -30,6 +30,7 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
     private renderedAfterMount = false;
     private mounted = false;
 
+    // Would like props to be of type AgReactUiProps<TData> but currently breaks build
     constructor(public props: any) {
         super(props);
         debug('AgGridReactUi.constructor');
@@ -90,7 +91,7 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
 
                 this.api = this.gridOptions.api!;
                 this.columnApi = this.gridOptions.columnApi!;
-                this.props.setGridApi(this.api, this.columnApi);
+                this.props.setGridApi!(this.api, this.columnApi);
                 this.destroyFuncs.push(() => this.api.destroy());
             });
         };
@@ -200,9 +201,9 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
     }
 
     private isImmutableDataActive() {
-        return (this.props.deltaRowDataMode || this.props.immutableData || this.props.getRowId != null) ||
-            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode
-                || this.props.gridOptions.immutableData
+        return (this.props.immutableData || this.props.getRowId != null) ||
+            (this.props.gridOptions && (
+                this.props.gridOptions.immutableData
                 || this.props.gridOptions.getRowId != null));
     }
 }

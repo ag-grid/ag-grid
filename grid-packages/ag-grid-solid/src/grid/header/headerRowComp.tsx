@@ -1,20 +1,20 @@
-import { AbstractHeaderCellCtrl, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderGroupCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from 'ag-grid-community';
+import { AbstractHeaderCellCtrl, Constants, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderGroupCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from 'ag-grid-community';
 import { createMemo, createSignal, For, onMount, useContext } from 'solid-js';
 import { BeansContext } from '../core/beansContext';
 import HeaderCellComp from './headerCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 
-const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
+const HeaderRowComp = (props: { ctrl: HeaderRowCtrl }) => {
 
     const { gridOptionsWrapper } = useContext(BeansContext);
 
-    const [ getTransform, setTransform ] = createSignal<string>();
-    const [ getHeight, setHeight ] = createSignal<string>();
-    const [ getTop, setTop ] = createSignal<string>();
-    const [ getWidth, setWidth ] = createSignal<string>();
-    const [ getAriaRowIndex, setAriaRowIndex ] = createSignal<number>();
-    const [ getCellCtrls, setCellCtrls ] = createSignal<AbstractHeaderCellCtrl[]>([]);
+    const [getTransform, setTransform] = createSignal<string>();
+    const [getHeight, setHeight] = createSignal<string>();
+    const [getTop, setTop] = createSignal<string>();
+    const [getWidth, setWidth] = createSignal<string>();
+    const [getAriaRowIndex, setAriaRowIndex] = createSignal<number>();
+    const [getCellCtrls, setCellCtrls] = createSignal<AbstractHeaderCellCtrl[]>([]);
 
     let eGui: HTMLDivElement;
 
@@ -26,9 +26,11 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     const setCellCtrlsMaintainOrder = (next: AbstractHeaderCellCtrl[]) => {
         const prev = getCellCtrls();
+        const isEnsureDomOrder = gridOptionsWrapper.isEnsureDomOrder();
+        const isPrintLayout = gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
-        if (gridOptionsService.is('ensureDomOrder')) {
+        if (isEnsureDomOrder || isPrintLayout) {
             return next;
         }
 
@@ -37,8 +39,8 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         const prevMap = _.mapById(prev, c => c.getInstanceId());
         const nextMap = _.mapById(next, c => c.getInstanceId());
 
-        const oldCtrlsWeAreKeeping = prev.filter( c => nextMap.has(c.getInstanceId()) );
-        const newCtrls = next.filter( c => !prevMap.has(c.getInstanceId()) )
+        const oldCtrlsWeAreKeeping = prev.filter(c => nextMap.has(c.getInstanceId()));
+        const newCtrls = next.filter(c => !prevMap.has(c.getInstanceId()))
 
         const nextOrderMaintained = [...oldCtrlsWeAreKeeping, ...newCtrls];
         setCellCtrls(nextOrderMaintained);
@@ -56,7 +58,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         ctrl.setComp(compProxy);
     });
 
-    const style = createMemo( ()=> ({
+    const style = createMemo(() => ({
         transform: getTransform(),
         height: getHeight(),
         top: getTop(),
@@ -71,13 +73,13 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     const createCellJsx = (cellCtrl: AbstractHeaderCellCtrl) => {
         switch (ctrl.getType()) {
-            case HeaderRowType.COLUMN_GROUP :
+            case HeaderRowType.COLUMN_GROUP:
                 return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} />;
 
-            case HeaderRowType.FLOATING_FILTER :
+            case HeaderRowType.FLOATING_FILTER:
                 return <HeaderFilterCellComp ctrl={cellCtrl as HeaderFilterCellCtrl} />;
-                
-            default :
+
+            default:
                 return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} />;
         }
     };
@@ -85,7 +87,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     // below, we are not doing floating filters, not yet
     return (
         <div ref={eGui!} class={cssClasses} role="row" style={style()} aria-rowindex={getAriaRowIndex()}>
-            <For each={getCellCtrls()}>{(cellCtrl, i) => createCellJsx(cellCtrl) }</For>
+            <For each={getCellCtrls()}>{(cellCtrl, i) => createCellJsx(cellCtrl)}</For>
         </div>
     );
 };

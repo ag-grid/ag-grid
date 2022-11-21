@@ -80,7 +80,7 @@ import { IImmutableService } from "./interfaces/iImmutableService";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
-import { IRowModel } from "./interfaces/iRowModel";
+import { IRowModel, RowModelType } from "./interfaces/iRowModel";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import {
     IServerSideRowModel,
@@ -289,27 +289,28 @@ export class GridApi<TData = any> {
         const mergedParams = Object.assign({ exportMode: 'xlsx' }, baseParams, params);
         return mergedParams.exportMode;
     }
+    private assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method)) { return false }
+        const exportMode = this.getExcelExportMode(params);
+        if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
+            console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
+            return false;
+        }
+        return true;
+    }
 
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getDataAsExcel')) { return; }
-        const exportMode = this.getExcelExportMode(params);
-        if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
-            console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
-            return;
+        if (this.assertNotExcelMultiSheet('getDataAsExcel', params)) {
+            return this.excelCreator.getDataAsExcel(params);
         }
-        return this.excelCreator.getDataAsExcel(params);
     }
 
     /** Downloads an Excel export of the grid's data. */
     public exportDataAsExcel(params?: ExcelExportParams): void {
-        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportDataAsExcel')) { return; }
-        const exportMode = this.getExcelExportMode(params);
-        if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
-            console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
-            return;
+        if (this.assertNotExcelMultiSheet('exportDataAsExcel', params)) {
+            this.excelCreator.exportDataAsExcel(params);
         }
-        this.excelCreator.exportDataAsExcel(params);
     }
 
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
@@ -355,13 +356,16 @@ export class GridApi<TData = any> {
 
     }
 
+    private logMissingRowModel(apiMethod: keyof GridApi, ...requiredRowModels: RowModelType[]) {
+        console.error(`AG Grid: api.${apiMethod} can only be called when gridOptions.rowModelType is ${requiredRowModels.join(' or ')}`);
+    }
+
     /** Set new datasource for Server-Side Row Model. */
     public setServerSideDatasource(datasource: IServerSideDatasource) {
         if (this.serverSideRowModel) {
-            // should really have an IEnterpriseRowModel interface, so we are not casting to any
             this.serverSideRowModel.setDatasource(datasource);
         } else {
-            console.warn(`AG Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_SERVER_SIDE}'`);
+            this.logMissingRowModel('setServerSideDatasource', 'serverSide');
         }
     }
 
@@ -371,12 +375,12 @@ export class GridApi<TData = any> {
      * Note this purges all the cached data and reloads all the rows of the grid.
      * */
     public setCacheBlockSize(blockSize: number) {
-        if (!this.serverSideRowModel) {
-            console.warn(`AG Grid: you can only set cacheBlockSize with gridOptions.rowModelType '${Constants.ROW_MODEL_TYPE_SERVER_SIDE}'`);
-            return;
+        if (this.serverSideRowModel) {
+            this.gridOptionsWrapper.setProperty('cacheBlockSize', blockSize);
+            this.serverSideRowModel.resetRootStore();
+        } else {
+            this.logMissingRowModel('setCacheBlockSize', 'serverSide');
         }
-        this.gridOptionsWrapper.setProperty('cacheBlockSize', blockSize);
-        this.serverSideRowModel.resetRootStore();
     }
 
     /** Set new datasource for Infinite Row Model. */
@@ -384,7 +388,7 @@ export class GridApi<TData = any> {
         if (this.gridOptionsWrapper.isRowModelInfinite()) {
             (this.rowModel as IInfiniteRowModel).setDatasource(datasource);
         } else {
-            console.warn(`AG Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_INFINITE}'`);
+            this.logMissingRowModel('setDatasource', 'infinite');
         }
     }
 
@@ -396,7 +400,7 @@ export class GridApi<TData = any> {
             // the enterprise implement it, rather than casting to 'any' here
             (this.rowModel as any).setViewportDatasource(viewportDatasource);
         } else {
-            console.warn(`AG Grid: you can only use a viewport datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`);
+            this.logMissingRowModel('setViewportDatasource', 'viewport');
         }
     }
 
@@ -406,7 +410,7 @@ export class GridApi<TData = any> {
         const missingImmutableService = this.immutableService == null;
 
         if (missingImmutableService) {
-            console.warn('AG Grid: you can only set rowData when using the Client Side Row Model');
+            this.logMissingRowModel('setRowData', 'clientSide');
             return;
         }
 
@@ -498,19 +502,8 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty('alwaysShowVerticalScroll', show);
     }
 
-    /** Force refresh all tool panels by calling their `refresh` method. */
-    public refreshToolPanel(): void {
-        if (!this.sideBarComp) { return; }
-        this.sideBarComp.refresh();
-    }
-
     /** Performs change detection on all cells, refreshing cells where required. */
     public refreshCells(params: RefreshCellsParams<TData> = {}): void {
-        if (Array.isArray(params)) {
-            // the old version of refreshCells() took an array of rowNodes for the first argument
-            console.warn('since AG Grid v11.1, refreshCells() now takes parameters, please see the documentation.');
-            return;
-        }
         this.rowRenderer.refreshCells(params);
     }
 
@@ -569,9 +562,11 @@ export class GridApi<TData = any> {
      *  If after getting the model, you expand or collapse a group, call this method to inform the grid.
      *  It will work out the final set of 'to be displayed' rows again (i.e. expand or collapse the group visually).
      */
-    public onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any) {
-        if (missing(this.clientSideRowModel)) { console.warn('AG Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model'); }
-        if (exists(deprecated_refreshFromIndex)) { console.warn('AG Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows'); }
+    public onGroupExpandedOrCollapsed() {
+        if (missing(this.clientSideRowModel)) {
+            this.logMissingRowModel('onGroupExpandedOrCollapsed', 'clientSide');
+            return;
+        }
         // we don't really want the user calling this if only one rowNode was expanded, instead they should be
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
@@ -584,7 +579,10 @@ export class GridApi<TData = any> {
      * Optionally provide the step you wish the refresh to apply from. Defaults to `everything`.
      */
     public refreshClientSideRowModel(step?: 'everything' | 'group' | 'filter' | 'pivot' | 'aggregate' | 'sort' | 'map'): any {
-        if (missing(this.clientSideRowModel)) { console.warn('cannot call refreshClientSideRowModel unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) {
+            this.logMissingRowModel('refreshClientSideRowModel', 'clientSide');
+            return;
+        }
 
         let paramsStep = ClientSideRowModelSteps.EVERYTHING;
         const stepsMapped: any = {
@@ -652,7 +650,7 @@ export class GridApi<TData = any> {
         } else if (this.serverSideRowModel) {
             this.serverSideRowModel.expandAll(true);
         } else {
-            console.warn('AG Grid: expandAll only works with Client Side Row Model and Server Side Row Model');
+            this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
         }
     }
 
@@ -663,29 +661,8 @@ export class GridApi<TData = any> {
         } else if (this.serverSideRowModel) {
             this.serverSideRowModel.expandAll(false);
         } else {
-            console.warn('AG Grid: collapseAll only works with Client Side Row Model and Server Side Row Model');
+            this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
         }
-    }
-
-    public getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
-    public getToolPanelInstance(id: 'filters'): IFiltersToolPanel | undefined;
-    // This override is a duplicate but is required to make the general override public.
-    public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined;
-    /** Gets the tool panel instance corresponding to the supplied `id`. */
-    public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
-            return;
-        }
-        const comp = this.sideBarComp.getToolPanelInstance(id);
-        return unwrapUserComp(comp) as any;
-    }
-
-    public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
-        if (typeof eventName !== 'string') {
-            console.warn('AG Grid: addVirtualRowListener is deprecated, please use addRenderedRowListener.');
-        }
-        this.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
     /**
@@ -696,10 +673,6 @@ export class GridApi<TData = any> {
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
-        if (eventName === 'virtualRowSelected') {
-            console.warn(`AG Grid: event virtualRowSelected is deprecated, to register for individual row
-                selection events, add a listener directly to the row node.`);
-        }
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
@@ -769,6 +742,10 @@ export class GridApi<TData = any> {
      * Designed for use with `'children'` as the group selection type, where groups don't actually appear in the selection normally.
      */
     public getBestCostNodeSelection(): RowNode<TData>[] | undefined {
+        if (missing(this.clientSideRowModel)) {
+            this.logMissingRowModel('getBestCostNodeSelection', 'clientSide');
+            return;
+        }
         return this.selectionService.getBestCostNodeSelection();
     }
 
@@ -821,7 +798,10 @@ export class GridApi<TData = any> {
      * but excluding groups the grid created where gaps were missing in the hierarchy.
      */
     public forEachLeafNode(callback: (rowNode: RowNode<TData>) => void) {
-        if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNode unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) {
+            this.logMissingRowModel('forEachLeafNode', 'clientSide');
+            return;
+        }
         this.clientSideRowModel.forEachLeafNode(callback);
     }
 
@@ -837,13 +817,19 @@ export class GridApi<TData = any> {
 
     /** Similar to `forEachNode`, except skips any filtered out data. */
     public forEachNodeAfterFilter(callback: (rowNode: RowNode<TData>, index: number) => void) {
-        if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilter unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) {
+            this.logMissingRowModel('forEachNodeAfterFilter', 'clientSide');
+            return;
+        }
         this.clientSideRowModel.forEachNodeAfterFilter(callback);
     }
 
     /** Similar to `forEachNodeAfterFilter`, except the callbacks are called in the order the rows are displayed in the grid. */
     public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode<TData>, index: number) => void) {
-        if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilterAndSort unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) {
+            this.logMissingRowModel('forEachNodeAfterFilterAndSort', 'clientSide');
+            return;
+        }
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }
 
@@ -891,8 +877,7 @@ export class GridApi<TData = any> {
 
     /** Gets the status panel instance corresponding to the supplied `id`. */
     public getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined {
-        if (!this.statusBarService) { return; }
-
+        if (!ModuleRegistry.assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel')) { return; }
         const comp = this.statusBarService.getStatusPanel(key);
         return unwrapUserComp(comp) as any;
     }
@@ -1200,52 +1185,73 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty('getRowHeight', rowHeightFunc);
     }
 
+    private assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
+        return ModuleRegistry.assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod);
+    }
+
     /** Returns `true` if the side bar is visible. */
     public isSideBarVisible(): boolean {
-        return this.sideBarComp ? this.sideBarComp.isDisplayed() : false;
+        return this.assertSideBarLoaded('isSideBarVisible') && this.sideBarComp.isDisplayed();
     }
 
     /** Show/hide the entire side bar, including any visible panel and the tab buttons. */
     public setSideBarVisible(show: boolean) {
-        if (!this.sideBarComp) {
-            if (show) {
-                console.warn('AG Grid: sideBar is not loaded');
-            }
-            return;
+        if (this.assertSideBarLoaded('setSideBarVisible')) {
+            this.sideBarComp.setDisplayed(show);
         }
-        this.sideBarComp.setDisplayed(show);
     }
 
     /** Sets the side bar position relative to the grid. Possible values are `'left'` or `'right'`. */
     public setSideBarPosition(position: 'left' | 'right') {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: sideBar is not loaded');
-            return;
+        if (this.assertSideBarLoaded('setSideBarPosition')) {
+            this.sideBarComp.setSideBarPosition(position);
         }
-        this.sideBarComp.setSideBarPosition(position);
     }
 
     /** Opens a particular tool panel. Provide the ID of the tool panel to open. */
     public openToolPanel(key: string) {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
-            return;
+        if (this.assertSideBarLoaded('openToolPanel')) {
+            this.sideBarComp.openToolPanel(key);
         }
-        this.sideBarComp.openToolPanel(key);
     }
 
     /** Closes the currently open tool panel (if any). */
     public closeToolPanel() {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
-            return;
+        if (this.assertSideBarLoaded('closeToolPanel')) {
+            this.sideBarComp.close();
         }
-        this.sideBarComp.close();
     }
 
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     public getOpenedToolPanel(): string | null {
-        return this.sideBarComp ? this.sideBarComp.openedItem() : null;
+        if (this.assertSideBarLoaded('getOpenedToolPanel')) {
+            this.sideBarComp.openedItem()
+        }
+        return null;
+    }
+
+    /** Force refresh all tool panels by calling their `refresh` method. */
+    public refreshToolPanel(): void {
+        if (this.assertSideBarLoaded('refreshToolPanel')) {
+            this.sideBarComp.refresh();
+        }
+    }
+
+    /** Returns `true` if the tool panel is showing, otherwise `false`. */
+    public isToolPanelShowing(): boolean {
+        return this.assertSideBarLoaded('isToolPanelShowing') && this.sideBarComp.isToolPanelShowing();
+    }
+
+    public getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
+    public getToolPanelInstance(id: 'filters'): IFiltersToolPanel | undefined;
+    // This override is a duplicate but is required to make the general override public.
+    public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined;
+    /** Gets the tool panel instance corresponding to the supplied `id`. */
+    public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined {
+        if (this.assertSideBarLoaded('getToolPanelInstance')) {
+            const comp = this.sideBarComp.getToolPanelInstance(id);
+            return unwrapUserComp(comp) as any;
+        }
     }
 
     /** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */
@@ -1260,11 +1266,6 @@ export class GridApi<TData = any> {
 
     public setSuppressClipboardPaste(value: boolean): void {
         this.gridOptionsWrapper.setProperty('suppressClipboardPaste', value);
-    }
-
-    /** Returns `true` if the tool panel is showing, otherwise `false`. */
-    public isToolPanelShowing(): boolean {
-        return this.sideBarComp.isToolPanelShowing();
     }
 
     /** Tells the grid to recalculate the row heights. */
@@ -1390,7 +1391,7 @@ export class GridApi<TData = any> {
             return this.rangeService.getCellRanges();
         }
 
-        console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise');
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges');
         return null;
     }
 
@@ -1400,14 +1401,19 @@ export class GridApi<TData = any> {
 
     /** Adds the provided cell range to the selected ranges. */
     public addCellRange(params: CellRangeParams): void {
-        if (!this.rangeService) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
-        this.rangeService.addCellRange(params);
+        if (this.rangeService) {
+            this.rangeService.addCellRange(params);
+            return;
+        }
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange');
     }
 
     /** Clears the selected ranges. */
     public clearRangeSelection(): void {
-        if (!this.rangeService) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
-        this.rangeService.removeAllCellRanges();
+        if (this.rangeService) {
+            this.rangeService.removeAllCellRanges();    
+        }
+        ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection');
     }
     /** Reverts the last cell edit. */
     public undoCellEditing(): void {
@@ -1505,26 +1511,30 @@ export class GridApi<TData = any> {
 
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     public copyToClipboard(params?: IClipboardCopyParams) {
-        if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copyToClipboard(params);
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard')) {
+            this.clipboardService.copyToClipboard(params);
+        }
     }
 
     /** Copies the selected rows to the clipboard. */
     public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
-        if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copySelectedRowsToClipboard(params);
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard')) {
+            this.clipboardService.copySelectedRowsToClipboard(params);
+        }
     }
 
     /** Copies the selected ranges to the clipboard. */
     public copySelectedRangeToClipboard(params?: IClipboardCopyParams): void {
-        if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copySelectedRangeToClipboard(params);
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard')) {
+            this.clipboardService.copySelectedRangeToClipboard(params);
+        }
     }
 
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     public copySelectedRangeDown(): void {
-        if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copyRangeDown();
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown')) {
+            this.clipboardService.copyRangeDown();
+        }
     }
 
     /** Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template. */
@@ -1646,7 +1656,7 @@ export class GridApi<TData = any> {
     /** Apply transactions to the server side row model. */
     public applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
         if (!this.serverSideTransactionManager) {
-            console.warn('AG Grid: Cannot apply Server Side Transaction if not using the Server Side Row Model.');
+            this.logMissingRowModel('applyServerSideTransaction', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.applyTransaction(transaction);
@@ -1654,7 +1664,7 @@ export class GridApi<TData = any> {
 
     public applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
         if (!this.serverSideTransactionManager) {
-            console.warn('AG Grid: Cannot apply Server Side Transaction if not using the Server Side Row Model.');
+            this.logMissingRowModel('applyServerSideTransactionAsync', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
@@ -1663,7 +1673,7 @@ export class GridApi<TData = any> {
     /** Gets all failed server side loads to retry. */
     public retryServerSideLoads(): void {
         if (!this.serverSideRowModel) {
-            console.warn('AG Grid: API retryServerSideLoads() can only be used when using Server-Side Row Model.');
+            this.logMissingRowModel('retryServerSideLoads', 'serverSide');
             return;
         }
         this.serverSideRowModel.retryLoads();
@@ -1671,7 +1681,7 @@ export class GridApi<TData = any> {
 
     public flushServerSideAsyncTransactions(): void {
         if (!this.serverSideTransactionManager) {
-            console.warn('AG Grid: Cannot flush Server Side Transaction if not using the Server Side Row Model.');
+            this.logMissingRowModel('flushServerSideAsyncTransactions', 'serverSide');
             return;
         }
         return this.serverSideTransactionManager.flushAsyncTransactions();
@@ -1680,7 +1690,7 @@ export class GridApi<TData = any> {
     /** Update row data. Pass a transaction object with lists for `add`, `remove` and `update`. */
     public applyTransaction(rowDataTransaction: RowDataTransaction<TData>): RowNodeTransaction<TData> | null | undefined {
         if (!this.clientSideRowModel) {
-            console.error('AG Grid: applyTransaction() only works with ClientSideRowModel. Working with InfiniteRowModel was deprecated in v23.1 and removed in v24.1');
+            this.logMissingRowModel('applyTransaction', 'clientSide');
             return;
         }
 
@@ -1705,7 +1715,7 @@ export class GridApi<TData = any> {
     /** Same as `applyTransaction` except executes asynchronously for efficiency. */
     public applyTransactionAsync(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void {
         if (!this.clientSideRowModel) {
-            console.error('AG Grid: api.applyTransactionAsync() only works with ClientSideRowModel.');
+            this.logMissingRowModel('applyTransactionAsync', 'clientSide');
             return;
         }
         this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
@@ -1714,7 +1724,7 @@ export class GridApi<TData = any> {
     /** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */
     public flushAsyncTransactions(): void {
         if (!this.clientSideRowModel) {
-            console.error('AG Grid: api.flushAsyncTransactions() only works with ClientSideRowModel.');
+            this.logMissingRowModel('flushAsyncTransactions', 'clientSide');
             return;
         }
         this.clientSideRowModel.flushAsyncTransactions();
@@ -1729,7 +1739,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             this.infiniteRowModel.refreshCache();
         } else {
-            console.warn(`AG Grid: api.refreshInfiniteCache is only available when rowModelType='infinite'.`);
+            this.logMissingRowModel('refreshInfiniteCache', 'infinite');
         }
     }
 
@@ -1743,7 +1753,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             this.infiniteRowModel.purgeCache();
         } else {
-            console.warn(`AG Grid: api.purgeInfiniteCache is only available when rowModelType='infinite'.`);
+            this.logMissingRowModel('purgeInfiniteCache', 'infinite');
         }
     }
 
@@ -1754,7 +1764,7 @@ export class GridApi<TData = any> {
      */
     public refreshServerSide(params?: RefreshServerSideParams): void {
         if (!this.serverSideRowModel) {
-            console.warn(`AG Grid: api.refreshServerSide is only available when rowModelType='serverSide'.`);
+            this.logMissingRowModel('refreshServerSide', 'serverSide');
             return;
         }
         this.serverSideRowModel.refreshStore(params);
@@ -1777,7 +1787,7 @@ export class GridApi<TData = any> {
     /** Returns info on all server side group levels. */
     public getServerSideGroupLevelState(): ServerSideGroupLevelState[] {
         if (!this.serverSideRowModel) {
-            console.warn(`AG Grid: api.getServerSideGroupLevelState is only available when rowModelType='serverSide'.`);
+            this.logMissingRowModel('getServerSideGroupLevelState', 'serverSide')
             return [];
         }
         return this.serverSideRowModel.getStoreState();
@@ -1788,7 +1798,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             return this.infiniteRowModel.getRowCount();
         } else {
-            console.warn(`AG Grid: api.getInfiniteRowCount is only available when rowModelType='infinite'.`);
+            this.logMissingRowModel('getInfiniteRowCount', 'infinite')
         }
     }
 
@@ -1797,7 +1807,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             return this.infiniteRowModel.isLastRowIndexKnown();
         } else {
-            console.warn(`AG Grid: api.isLastRowIndexKnown is only available when rowModelType='infinite'.`);
+            this.logMissingRowModel('isLastRowIndexKnown', 'infinite');
         }
     }
 
@@ -1812,7 +1822,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
         } else {
-            console.warn(`AG Grid: api.setRowCount is only available for Infinite Row Model.`);
+            this.logMissingRowModel('setRowCount', 'infinite');
         }
     }
 

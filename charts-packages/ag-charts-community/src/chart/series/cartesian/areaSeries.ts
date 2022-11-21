@@ -146,8 +146,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         super({
             pathsPerSeries: 2,
             pathsZIndexSubOrderOffset: [0, 1000],
-            pickGroupIncludes: ['markers'],
-            features: ['markers'],
+            hasMarkers: true,
             renderLayerPerSubSeries: false,
         });
 
@@ -719,14 +718,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             marker: { fillOpacity: markerFillOpacity = seriesFillOpacity },
             strokeOpacity,
             highlightStyle: {
-                fill: deprecatedFill,
-                stroke: deprecatedStroke,
-                strokeWidth: deprecatedStrokeWidth,
                 item: {
-                    fill: highlightedFill = deprecatedFill,
+                    fill: highlightedFill,
                     fillOpacity: highlightFillOpacity = markerFillOpacity,
-                    stroke: highlightedStroke = deprecatedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                    stroke: highlightedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth,
                 },
             },
         } = this;

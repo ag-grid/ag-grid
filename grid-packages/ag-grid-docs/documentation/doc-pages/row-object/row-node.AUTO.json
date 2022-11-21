@@ -139,6 +139,10 @@
     "description": "/** Used by server side row model, true if this row node failed a load */",
     "type": { "returnType": "boolean" }
   },
+  "needsRefresh": {
+    "description": "/** Used by server side row model, true if this row node requires reload */",
+    "type": { "returnType": "boolean" }
+  },
   "allLeafChildren": {
     "description": "/** All lowest level nodes beneath this node, no groups. */",
     "type": { "returnType": "RowNode<TData>[]" }

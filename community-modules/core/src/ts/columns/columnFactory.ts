@@ -260,7 +260,6 @@ export class ColumnFactory extends BeanStub {
         const colGroupDefMerged: ColGroupDef = {} as ColGroupDef;
         Object.assign(colGroupDefMerged, this.gridOptionsService.get('defaultColGroupDef'));
         Object.assign(colGroupDefMerged, colGroupDef);
-        this.checkForDeprecatedItems(colGroupDefMerged);
 
         return colGroupDefMerged;
     }
@@ -272,8 +271,6 @@ export class ColumnFactory extends BeanStub {
         columnKeyCreator: ColumnKeyCreator
     ): Column {
         const colDefMerged = this.mergeColDefs(colDef);
-
-        this.checkForDeprecatedItems(colDefMerged);
 
         // see if column already exists
         let column = this.findExistingColumn(colDef, existingColsCopy);
@@ -456,37 +453,6 @@ export class ColumnFactory extends BeanStub {
                 console.warn("AG Grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
             }
         });
-    }
-
-    private checkForDeprecatedItems(colDef: AbstractColDef) {
-        if (colDef) {
-            const colDefNoType = colDef as any; // take out the type, so we can access attributes not defined in the type
-            if (colDefNoType.group !== undefined) {
-                console.warn('AG Grid: colDef.group is invalid, please check documentation on how to do grouping as it changed in version 3');
-            }
-            if (colDefNoType.headerGroup !== undefined) {
-                console.warn('AG Grid: colDef.headerGroup is invalid, please check documentation on how to do grouping as it changed in version 3');
-            }
-            if (colDefNoType.headerGroupShow !== undefined) {
-                console.warn('AG Grid: colDef.headerGroupShow is invalid, should be columnGroupShow, please check documentation on how to do grouping as it changed in version 3');
-            }
-
-            if (colDefNoType.suppressRowGroup !== undefined) {
-                console.warn('AG Grid: colDef.suppressRowGroup is deprecated, please use colDef.type instead');
-            }
-            if (colDefNoType.suppressAggregation !== undefined) {
-                console.warn('AG Grid: colDef.suppressAggregation is deprecated, please use colDef.type instead');
-            }
-
-            if (colDefNoType.suppressRowGroup || colDefNoType.suppressAggregation) {
-                console.warn('AG Grid: colDef.suppressAggregation and colDef.suppressRowGroup are deprecated, use allowRowGroup, allowPivot and allowValue instead');
-            }
-
-            if (colDefNoType.displayName) {
-                console.warn("AG Grid: Found displayName " + colDefNoType.displayName + ", please use headerName instead, displayName is deprecated.");
-                colDefNoType.headerName = colDefNoType.displayName;
-            }
-        }
     }
 
     // if object has children, we assume it's a group

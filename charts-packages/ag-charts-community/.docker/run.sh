@@ -29,7 +29,7 @@ case $1 in
     ;;
 
     clean)
-        if (docker volume ls charts-nmdocker 2>/dev/null >/dev/null) ; then
+        if ((docker volume ls | grep charts-nm) 2>/dev/null >/dev/null) ; then
             docker volume rm charts-nm
         fi
         if (docker image ls | grep charts:latest 2>/dev/null >/dev/null) ; then

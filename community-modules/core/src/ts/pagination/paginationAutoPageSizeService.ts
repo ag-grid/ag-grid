@@ -40,7 +40,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
         }
 
         const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        const bodyHeight = this.centerRowContainerCon.getViewportSizeFeature().getBodyHeight();
+        const bodyHeight = this.centerRowContainerCon.getViewportSizeFeature()!.getBodyHeight();
 
         if (bodyHeight > 0) {
             const newPageSize = Math.floor(bodyHeight / rowHeight);

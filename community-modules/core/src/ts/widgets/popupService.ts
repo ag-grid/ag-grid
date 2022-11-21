@@ -19,6 +19,20 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 
+export interface PopupPositionParams {
+    ePopup: HTMLElement,
+    column?: Column | null,
+    rowNode?: RowNode | null,
+    x?: number,
+    y?: number,
+    nudgeX?: number,
+    nudgeY?: number,
+    position?: 'over' | 'under',
+    alignSide?: 'left' | 'right',
+    keepWithinBounds?: boolean;
+    skipObserver?: boolean
+}
+
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
     mouseEvent?: MouseEvent;
@@ -164,16 +178,7 @@ export class PopupService extends BeanStub {
         }
     }
 
-    public positionPopupUnderMouseEvent(params: {
-        rowNode?: RowNode | null,
-        column?: Column | null,
-        type: string,
-        mouseEvent: MouseEvent | Touch,
-        nudgeX?: number,
-        nudgeY?: number,
-        ePopup: HTMLElement,
-        skipObserver?: boolean
-    }): void {
+    public positionPopupUnderMouseEvent(params: PopupPositionParams & { type: string, mouseEvent: MouseEvent | Touch }): void {
         const { ePopup, nudgeX, nudgeY, skipObserver } = params;
         const { x, y } = this.calculatePointerAlign(params.mouseEvent);
 
@@ -199,19 +204,10 @@ export class PopupService extends BeanStub {
         };
     }
 
-    public positionPopupUnderComponent(params: {
-        type: string,
-        eventSource: HTMLElement,
-        ePopup: HTMLElement,
-        column?: Column,
-        rowNode?: RowNode,
-        nudgeX?: number,
-        nudgeY?: number,
-        alignSide?: 'left' | 'right',
-        keepWithinBounds?: boolean;
-    }) {
+    public positionPopupByComponent(params: PopupPositionParams & { type: string, eventSource: HTMLElement }) {
         const sourceRect = params.eventSource.getBoundingClientRect();
         const alignSide = params.alignSide || 'left';
+        const position = params.position || 'over';
         const parentRect = this.getParentRect();
 
         let x = sourceRect.left - parentRect.left;
@@ -220,38 +216,18 @@ export class PopupService extends BeanStub {
             x -= (params.ePopup.offsetWidth - sourceRect.width);
         }
 
+        const y = position === 'over'
+            ? (sourceRect.top - parentRect.top)
+            : (sourceRect.top - parentRect.top + sourceRect.height);
+
         this.positionPopup({
             ePopup: params.ePopup,
             nudgeX: params.nudgeX,
             nudgeY: params.nudgeY,
             x,
-            y: sourceRect.top - parentRect.top + sourceRect.height,
+            y,
             keepWithinBounds: params.keepWithinBounds
-        });
 
-        this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
-    }
-
-    public positionPopupOverComponent(params: {
-        type: string,
-        eventSource: HTMLElement,
-        ePopup: HTMLElement,
-        column: Column,
-        rowNode: RowNode,
-        nudgeX?: number,
-        nudgeY?: number,
-        keepWithinBounds?: boolean;
-    }) {
-        const sourceRect = params.eventSource.getBoundingClientRect();
-        const parentRect = this.getParentRect();
-
-        this.positionPopup({
-            ePopup: params.ePopup,
-            nudgeX: params.nudgeX,
-            nudgeY: params.nudgeY,
-            x: sourceRect.left - parentRect.left,
-            y: sourceRect.top - parentRect.top,
-            keepWithinBounds: params.keepWithinBounds
         });
 
         this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
@@ -279,19 +255,11 @@ export class PopupService extends BeanStub {
         }
     }
 
-    public positionPopup(params: {
-        ePopup: HTMLElement,
-        nudgeX?: number,
-        nudgeY?: number,
-        x: number,
-        y: number,
-        keepWithinBounds?: boolean;
-        skipObserver?: boolean
-    }): void {
+    public positionPopup(params: PopupPositionParams): void {
         const { x, y, ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver } = params;
 
-        let currentX = x;
-        let currentY = y;
+        let currentX = x!;
+        let currentY = y!;
 
         if (nudgeX) {
             currentX += nudgeX;
@@ -464,7 +432,7 @@ export class PopupService extends BeanStub {
         let destroyPositionTracker: AgPromise<() => void> = new AgPromise(resolve => resolve(() => { }));
 
         if (!eDocument) {
-            console.warn('ag-grid: could not find the document, document is empty');
+            console.warn('AG Grid: could not find the document, document is empty');
             return { hideFunc: () => { }, stopAnchoringPromise: destroyPositionTracker };
         }
 

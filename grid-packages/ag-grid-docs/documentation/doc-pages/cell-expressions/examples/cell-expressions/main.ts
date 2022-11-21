@@ -47,7 +47,7 @@ var columnDefsRight: ColDef[] = [
     field: 'b',
     width: 150,
     editable: true,
-    newValueHandler: numberNewValueHandler,
+    valueSetter: numberNewValueHandler,
     onCellValueChanged: cellValueChanged,
   },
 ]

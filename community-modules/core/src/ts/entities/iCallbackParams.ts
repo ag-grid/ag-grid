@@ -165,8 +165,8 @@ export interface GetRowIdParams<TData = any> extends AgGridCommon<TData> {
 
 export interface ProcessRowParams<TData = any> extends AgGridCommon<TData> {
     eRow: HTMLElement;
-    ePinnedLeftRow: HTMLElement;
-    ePinnedRightRow: HTMLElement;
+    ePinnedLeftRow?: HTMLElement;
+    ePinnedRightRow?: HTMLElement;
     rowIndex: number;
     node: RowNode<TData>;
     addRenderedRowListener: (eventType: string, listener: Function) => void;

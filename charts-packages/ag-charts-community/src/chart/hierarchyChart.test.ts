@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgChartOptions } from './agChartOptions';
-import { AgChartV2 } from './agChartV2';
+import { AgChart } from './agChartV2';
 import { Chart, ChartUpdateType } from './chart';
 import {
     waitForChartStability,
@@ -59,7 +59,7 @@ describe('HierarchyChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            chart = AgChartV2.create<any>(options);
+            chart = AgChart.create(options) as HierarchyChart;
             await compare(chart);
         });
 
@@ -70,7 +70,7 @@ describe('HierarchyChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            chart = AgChartV2.create<any>(options);
+            chart = AgChart.create(options) as HierarchyChart;
             await waitForChartStability(chart);
 
             const seriesImpl = chart.series[0] as TreemapSeries;

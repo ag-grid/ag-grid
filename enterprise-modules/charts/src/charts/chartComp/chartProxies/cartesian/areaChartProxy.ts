@@ -20,18 +20,26 @@ export class AreaChartProxy extends CartesianChartProxy {
 
     public getAxes(): AgCartesianAxisOptions[] {
         const axisOptions = this.getAxesOptions();
-        return [
+        const axes = [
             {
-                ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
+                ...(axisOptions ? deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType]?.bottom) : {}),
                 type: this.xAxisType,
                 position: 'bottom',
             },
             {
-                ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
+                ...(axisOptions ? deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType]?.left) : {}),
                 type: this.yAxisType,
-                position: 'left'
+                position: 'left',
             },
         ];
+
+        // Add a default label formatter to show '%' for normalized charts if none is provided
+        if (this.isNormalised()) {
+            const numberAxis = axes[1];
+            numberAxis.label = { ...numberAxis.label, formatter: (params: any) => Math.round(params.value) + '%' };
+        }
+
+        return axes;
     }
 
     public getSeries(params: UpdateChartParams) {
@@ -49,5 +57,9 @@ export class AreaChartProxy extends CartesianChartProxy {
         ));
 
         return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;
+    }
+
+    private isNormalised() {
+        return !this.crossFiltering && this.chartType === 'normalizedArea';
     }
 }

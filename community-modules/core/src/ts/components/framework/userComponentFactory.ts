@@ -66,7 +66,7 @@ export interface UserCompDetails {
     params: any;
     type: ComponentType;
     popupFromSelector?: boolean,
-    popupPositionFromSelector?: string,
+    popupPositionFromSelector?: 'over' | 'under',
     newAgStackInstance: () => AgPromise<any>;
 }
 
@@ -192,7 +192,7 @@ export class UserComponentFactory extends BeanStub {
 
         if (!jsComp && !fwComp) {
             if (mandatory) {
-                console.error(`Could not find component ${compName}, did you forget to configure this component?`);
+                console.error(`AG Grid: Could not find component ${compName}, did you forget to configure this component?`);
             }
             return;
         }
@@ -219,7 +219,7 @@ export class UserComponentFactory extends BeanStub {
         fwComp: any,
         paramsFromSelector: any,
         popupFromSelector?: boolean,
-        popupPositionFromSelector?: string
+        popupPositionFromSelector?: 'over' | 'under'
     } {
 
         const { propertyName } = type;
@@ -230,7 +230,7 @@ export class UserComponentFactory extends BeanStub {
 
         let paramsFromSelector: any;
         let popupFromSelector: boolean | undefined;
-        let popupPositionFromSelector: string | undefined;
+        let popupPositionFromSelector: 'over' | 'under' | undefined;
 
         // there are two types of js comps, class based and func based. we can only check for
         // class based, by checking if getGui() exists. no way to differentiate js func based vs eg react func based

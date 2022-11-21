@@ -88,10 +88,11 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
         listGui.style.position = 'absolute';
 
-        this.popupService.positionPopupUnderComponent({
+        this.popupService.positionPopupByComponent({
             type: 'ag-list',
             eventSource: this.eWrapper,
             ePopup: listGui,
+            position: 'under',
             keepWithinBounds: true
         });
 

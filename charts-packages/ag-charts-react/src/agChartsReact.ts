@@ -1,6 +1,6 @@
 import { Component, createElement, createRef, RefObject } from "react";
 import * as PropTypes from "prop-types";
-import { Chart, AgChart, AgChartOptions } from "ag-charts-community";
+import { AgChartInstance, AgChart, AgChartOptions } from "ag-charts-community";
 
 export interface AgChartProps {
     options: AgChartOptions;
@@ -12,7 +12,7 @@ interface AgChartState {
 export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     static propTypes: any;
 
-    private chart!: Chart;
+    private chart!: AgChartInstance;
 
     protected chartRef: RefObject<HTMLElement>;
 

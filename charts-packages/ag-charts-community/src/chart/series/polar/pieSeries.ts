@@ -14,6 +14,7 @@ import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
 import { doOnce } from '../../../util/function';
 import { toFixed, mod } from '../../../util/number';
+import { Layers } from '../../layers';
 import { LegendDatum } from '../../legend';
 import { Caption } from '../../../caption';
 import { PolarSeries } from './polarSeries';
@@ -191,14 +192,17 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     private radiusScale: LinearScale = new LinearScale();
     private groupSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(
-        this.pickGroup
+        this.contentGroup
     ).selectAll<Group>();
     private highlightSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(
         this.highlightGroup
     ).selectAll<Group>();
-    private calloutSelection: Selection<Group, Group, PieNodeDatum, any>;
+    private calloutLabelSelection: Selection<Group, Group, PieNodeDatum, any>;
     private sectorLabelSelection: Selection<Text, Group, PieNodeDatum, any>;
     private innerLabelsSelection: Selection<Text, Group, DoughnutInnerLabel, any>;
+
+    // The group node that contains the background graphics.
+    readonly backgroundGroup: Group;
 
     /**
      * The processed data that gets visualized.
@@ -384,13 +388,21 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     constructor() {
         super({ useLabelLayer: true });
 
-        const pieLabels = new Group();
-        const pieSectorLabels = new Group();
-        const innerLabels = new Group();
-        this.labelGroup!.append(pieLabels);
+        this.backgroundGroup = this.rootGroup.appendChild(
+            new Group({
+                name: `${this.id}-background`,
+                layer: true,
+                zIndex: Layers.SERIES_BACKGROUND_ZINDEX,
+            })
+        );
+
+        const pieCalloutLabels = new Group({ name: 'pieCalloutLabels' });
+        const pieSectorLabels = new Group({ name: 'pieSectorLabels' });
+        const innerLabels = new Group({ name: 'innerLabels' });
+        this.labelGroup!.append(pieCalloutLabels);
         this.labelGroup!.append(pieSectorLabels);
         this.labelGroup!.append(innerLabels);
-        this.calloutSelection = Selection.select(pieLabels).selectAll<Group>();
+        this.calloutLabelSelection = Selection.select(pieCalloutLabels).selectAll<Group>();
         this.sectorLabelSelection = Selection.select(pieSectorLabels).selectAll<Text>();
         this.innerLabelsSelection = Selection.select(innerLabels).selectAll<Text>();
     }
@@ -666,8 +678,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         this.radiusScale.range = [innerRadius, outerRadius];
 
-        this.group.translationX = this.centerX;
-        this.group.translationY = this.centerY;
+        this.rootGroup.translationX = this.centerX;
+        this.rootGroup.translationY = this.centerY;
 
         if (title) {
             const outerRadius = Math.max(0, this.radiusScale.range[1]);
@@ -690,8 +702,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private async updateGroupSelection() {
-        const { groupSelection, highlightSelection, calloutSelection, sectorLabelSelection, innerLabelsSelection } =
-            this;
+        const {
+            groupSelection,
+            highlightSelection,
+            calloutLabelSelection,
+            sectorLabelSelection,
+            innerLabelsSelection,
+        } = this;
 
         const update = (selection: typeof groupSelection) => {
             const updateGroups = selection.setData(this.groupSelectionData);
@@ -706,19 +723,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.groupSelection = update(groupSelection);
         this.highlightSelection = update(highlightSelection);
 
-        const updateLabels = calloutSelection.setData(this.groupSelectionData);
-        updateLabels.exit.remove();
+        const updateCalloutLabels = calloutLabelSelection.setData(this.groupSelectionData);
+        updateCalloutLabels.exit.remove();
 
-        const enterLabels = updateLabels.enter.append(Group);
-        enterLabels.append(Line).each((node) => {
+        const enterCalloutLabels = updateCalloutLabels.enter.append(Group);
+        enterCalloutLabels.append(Line).each((node) => {
             node.tag = PieNodeTag.Callout;
             node.pointerEvents = PointerEvents.None;
         });
-        enterLabels.append(Text).each((node) => {
+        enterCalloutLabels.append(Text).each((node) => {
             node.tag = PieNodeTag.Label;
             node.pointerEvents = PointerEvents.None;
         });
-        this.calloutSelection = updateLabels.merge(enterLabels);
+        this.calloutLabelSelection = updateCalloutLabels.merge(enterCalloutLabels);
 
         const updateSectorLabels = sectorLabelSelection.setData(this.groupSelectionData);
         updateSectorLabels.exit.remove();
@@ -745,13 +762,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
 
         const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
-        this.group.visible = isVisible;
+        this.rootGroup.visible = isVisible;
         this.backgroundGroup.visible = isVisible;
-        this.seriesGroup.visible = isVisible;
+        this.contentGroup.visible = isVisible;
         this.highlightGroup.visible = isVisible && this.chart?.highlightedDatum?.series === this;
         this.labelGroup!.visible = isVisible;
 
-        this.seriesGroup.opacity = this.getOpacity();
+        this.contentGroup.opacity = this.getOpacity();
 
         this.updateInnerCircle();
 
@@ -811,7 +828,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = calloutLine;
 
-        this.calloutSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
+        this.calloutLabelSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
             const radius = radiusScale.convert(datum.radius, clamper);
             const outerRadius = Math.max(0, radius);
 
@@ -830,7 +847,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         {
             const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = this.calloutLabel;
 
-            this.calloutSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
+            this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
                 const label = datum.calloutLabel;
                 const radius = radiusScale.convert(datum.radius, clamper);
                 const outerRadius = Math.max(0, radius);

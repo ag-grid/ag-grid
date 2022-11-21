@@ -63,7 +63,7 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
         };
 
         const ctrl = context.createBean(new RowContainerCtrl(name));
-        onCleanup( ()=> context.destroyBean(ctrl));
+        onCleanup(() => context.destroyBean(ctrl));
 
         ctrl.setComp(compProxy, eContainer, eViewport, eWrapper);
     });

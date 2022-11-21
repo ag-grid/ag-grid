@@ -1,12 +1,12 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { Path } from "ag-charts-community";
+import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { createLinePaths } from "../miniChartHelpers";
 
 export class MiniLine extends MiniChartWithAxes {
     static chartType: ChartType = 'line';
 
-    private readonly lines: Path[];
+    private readonly lines: _Scene.Path[];
 
     private data = [
         [9, 7, 8, 5, 6],
@@ -23,7 +23,7 @@ export class MiniLine extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.lines.forEach((line: Path, i: number) => {
+        this.lines.forEach((line: _Scene.Path, i: number) => {
             line.stroke = fills[i];
         });
     }

@@ -1,7 +1,7 @@
 import React from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
-import {useJsonFileNodes} from './use-json-file-nodes';
+import { useJsonFileNodes } from './use-json-file-nodes';
 import { convertUrl, convertMarkdown } from 'components/documentation-helpers';
 import styles from './MatrixTable.module.scss';
 
@@ -9,25 +9,17 @@ import styles from './MatrixTable.module.scss';
  * This presents a matrix of information, e.g. to show which features are available with different versions of the grid.
  */
 const MatrixTable = ({
-                         src,
-                         rootnode: rootNode,
-                         columns,
-                         tree,
-                         booleanonly: booleanOnly,
-                         stringonly: stringOnly,
-                         childpropertyname: childPropertyName,
-                         showcondition: showCondition,
-                         framework,
-                         jsonData
-                     }) => {
-    let file;
-    if(jsonData) {
-        file = jsonData[src];
-    } else {
-        const nodes = useJsonFileNodes();
-        file = JSON.parse(nodes.find(node => node.relativePath === src).internal.content);
-    }
-
+    src,
+    rootnode: rootNode,
+    columns,
+    tree,
+    booleanonly: booleanOnly,
+    stringonly: stringOnly,
+    childpropertyname: childPropertyName,
+    showcondition: showCondition,
+    framework }) => {
+    const nodes = useJsonFileNodes();
+    const file = JSON.parse(nodes.find(node => node.relativePath === src).internal.content);
     const allRows = getRowsToProcess(file, rootNode, showCondition);
     const allColumns = JSON.parse(columns);
 
@@ -67,12 +59,12 @@ const createTable = (framework, allColumns, allRows, isTree, booleanOnly, string
     return (
         <table className={styles['matrix-table']}>
             <thead>
-            <tr>
-                {columnNames.map((column, idx) => <th key={`header-column-${idx}`}>{renderEnterprise(column, isTree)}</th>)}
-            </tr>
+                <tr>
+                    {columnNames.map((column, idx) => <th key={`header-column-${idx}`}>{renderEnterprise(column, isTree)}</th>)}
+                </tr>
             </thead>
             <tbody>
-            {processRows(framework, allRows, columnFields, isTree, booleanOnly, stringOnly, childPropertyName, 0)}
+                {processRows(framework, allRows, columnFields, isTree, booleanOnly, stringOnly, childPropertyName, 0)}
             </tbody>
         </table>
     );
@@ -83,9 +75,7 @@ const wrapWithLink = (value, url, framework) => <a href={convertUrl(url, framewo
 const renderEnterprise = (value, isTree, rowData = {}) => {
     const processedValue = value.replace('<enterprise-icon></enterprise-icon>', '');
     if (processedValue.length !== value.length || (isTree && rowData.enterprise)) {
-        return <React.Fragment>{processedValue}
-            <enterprise-icon></enterprise-icon>
-        </React.Fragment>;
+        return <React.Fragment>{processedValue}<enterprise-icon></enterprise-icon></React.Fragment>;
     }
     return processedValue;
 };
@@ -98,9 +88,7 @@ const processRows = (framework, rowArray, columnFields, isTree, booleanOnly, str
         if (
             (isTree && currentRow.title) === 'See Also' ||
             (currentRow.frameworks && currentRow.frameworks.indexOf(framework) === -1)
-        ) {
-            exclude = true;
-        }
+        ) { exclude = true; }
 
         if (isTree && rowItems != null && !currentRow.matrixExcludeChildren && !exclude) {
             const titleField = columnFields[0];
@@ -163,21 +151,19 @@ const renderPropertyColumn = (framework, value, isTree, rowData, level) => {
         return <span className={level > 2 ? styles[`matrix-table--pad${level}`] : ''}>{processedValue}</span>;
     }
 
-    return <span dangerouslySetInnerHTML={{__html: convertMarkdown(value, framework)}}/>;
+    return <span dangerouslySetInnerHTML={{ __html: convertMarkdown(value, framework) }} />;
 };
 
 const renderCross = () => {
-    return <FontAwesomeIcon icon={faTimes} fixedWidth className={styles['matrix-table__false']}/>;
+    return <FontAwesomeIcon icon={faTimes} fixedWidth className={styles['matrix-table__false']} />;
 };
 
 const renderTick = () => {
-    return <FontAwesomeIcon icon={faCheck} fixedWidth className={styles['matrix-table__true']}/>
+    return <FontAwesomeIcon icon={faCheck} fixedWidth className={styles['matrix-table__true']} />
 };
 
 const renderValue = (value, booleanOnly, stringOnly, notIn) => {
-    if (stringOnly) {
-        return value;
-    }
+    if (stringOnly) { return value; }
 
     if (value === false || (value === true && notIn)) {
         return renderCross();

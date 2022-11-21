@@ -450,6 +450,7 @@ export {
     PinnedRowModel,
     PopupComponent,
     PopupEditorWrapper,
+    PopupPositionParams,
     PopupSelectCellEditor,
     PopupService,
     PopupTextCellEditor,
@@ -598,7 +599,6 @@ export {
     XmlElement,
     XmlFactory,
     ZipContainer,
-    defaultGroupComparator,
     getRowContainerTypeForName,
     simpleHttpRequest
 } from "ag-grid-community";

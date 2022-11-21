@@ -15,6 +15,7 @@ import {
     WithoutGridCommon
 } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
+import { findLineByLeastSquares } from './utils';
 
 interface FillValues {
     position: CellPosition;
@@ -328,7 +329,7 @@ export class FillHandle extends AbstractSelectionHandle {
             return { value: processedValues[idx % processedValues.length], fromUserFunction: false };
         }
 
-        return { value: _.last(_.findLineByLeastSquares(processedValues.map(Number))), fromUserFunction: false };
+        return { value: _.last(findLineByLeastSquares(processedValues.map(Number))), fromUserFunction: false };
 
     }
 

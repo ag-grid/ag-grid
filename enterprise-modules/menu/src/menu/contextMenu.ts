@@ -12,7 +12,6 @@ import {
     ColumnModel,
     Component,
     FocusService,
-    GetContextMenuItems,
     GetContextMenuItemsParams,
     IAfterGuiAttachedParams,
     IContextMenuFactory,
@@ -167,9 +166,11 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             },
             click: mouseEvent,
             positionCallback: () => {
-                this.popupService.positionPopupUnderMouseEvent(Object.assign({}, {
-                    nudgeX: this.gridOptionsService.is('enableRtl') ? (eMenuGui.offsetWidth + 1) * -1 : 1
-                }, positionParams));
+                const isRtl = this.gridOptionsWrapper.isEnableRtl();
+                this.popupService.positionPopupUnderMouseEvent({
+                    ...positionParams,
+                    nudgeX: isRtl ? (eMenuGui.offsetWidth + 1) * -1 : 1
+                });
             },
             // so when browser is scrolled down, or grid is scrolled, context menu stays with cell
             anchorToElement: anchorToElement,

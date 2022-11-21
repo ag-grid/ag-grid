@@ -142,7 +142,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     constructor() {
         super({
-            pickGroupIncludes: ['datumNodes'],
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
         });
@@ -201,13 +200,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     @Validate(STRING_ARRAY)
     hideInLegend: string[] = [];
 
-    /**
-     * yKeys: [['coffee']] - regular bars, each category has a single bar that shows a value for coffee
-     * yKeys: [['coffee'], ['tea'], ['milk']] - each category has three bars that show values for coffee, tea and milk
-     * yKeys: [['coffee', 'tea', 'milk']] - each category has a single bar with three stacks that show values for coffee, tea and milk
-     * yKeys: [['coffee', 'tea', 'milk'], ['paper', 'ink']] - each category has 2 stacked bars,
-     *     first showing values for coffee, tea and milk and second values for paper and ink
-     */
     protected _yKeys: string[][] = [];
     set yKeys(yKeys: string[][]) {
         let flatYKeys: string[] | undefined = undefined;
@@ -728,14 +720,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             xKey,
             flipXY,
             highlightStyle: {
-                fill: deprecatedFill,
-                stroke: deprecatedStroke,
-                strokeWidth: deprecatedStrokeWidth,
                 item: {
-                    fill: highlightedFill = deprecatedFill,
+                    fill: highlightedFill,
                     fillOpacity: highlightFillOpacity = seriesFillOpacity,
-                    stroke: highlightedStroke = deprecatedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                    stroke: highlightedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth,
                 },
             },
             id: seriesId,

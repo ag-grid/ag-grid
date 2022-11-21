@@ -6,7 +6,7 @@ import { Chart } from '../chart';
 import { createId } from '../../util/id';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
-import { Deprecated, createDeprecationWarning } from '../../util/deprecation';
+import { createDeprecationWarning } from '../../util/deprecation';
 import { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, OPT_COLOR_STRING, STRING, Validate } from '../../util/validation';
 import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
@@ -52,7 +52,7 @@ const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get
 export class SeriesNodeClickEvent<Datum extends { datum: any }> implements TypedEvent {
     readonly type = 'nodeClick';
     readonly datum: any;
-    readonly event: MouseEvent;
+    readonly event: Event;
     readonly seriesId: string;
 
     private readonly _series: Series;
@@ -62,7 +62,7 @@ export class SeriesNodeClickEvent<Datum extends { datum: any }> implements Typed
         return this._series;
     }
 
-    constructor(nativeEvent: MouseEvent, datum: Datum, series: Series) {
+    constructor(nativeEvent: Event, datum: Datum, series: Series) {
         this.event = nativeEvent;
         this.datum = datum.datum;
         this.seriesId = series.id;
@@ -96,21 +96,6 @@ class SeriesHighlightStyle {
 }
 
 export class HighlightStyle {
-    /**
-     * @deprecated Use item.fill instead.
-     */
-    @Deprecated('Use item.fill instead.')
-    fill?: string = undefined;
-    /**
-     * @deprecated Use item.stroke instead.
-     */
-    @Deprecated('Use item.stroke instead.')
-    stroke?: string = undefined;
-    /**
-     * @deprecated Use item.strokeWidth instead.
-     */
-    @Deprecated('Use item.strokeWidth instead.')
-    strokeWidth?: number = undefined;
     readonly item = new SeriesItemHighlightStyle();
     readonly series = new SeriesHighlightStyle();
 }
@@ -137,13 +122,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     }
 
     // The group node that contains all the nodes used to render this series.
-    readonly group: Group = new Group();
-
-    // The group node that contains the background graphics.
-    readonly backgroundGroup: Group;
+    readonly rootGroup: Group = new Group({ name: 'seriesRoot' });
 
     // The group node that contains the series rendering in it's default (non-highlighted) state.
-    readonly seriesGroup: Group;
+    readonly contentGroup: Group;
 
     // The group node that contains all highlighted series items. This is a performance optimisation
     // for large-scale data-sets, where the only thing that routinely varies is the currently
@@ -154,9 +136,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     // Lazily initialised labelGroup for label presentation.
     readonly labelGroup?: Group;
-
-    // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
-    readonly pickGroup: Group;
 
     // Package-level visibility, not meant to be set by the user.
     chart?: Chart;
@@ -205,44 +184,33 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     } = {}) {
         super();
 
-        const { group } = this;
+        const { rootGroup } = this;
 
-        this.backgroundGroup = group.appendChild(
+        this.contentGroup = rootGroup.appendChild(
             new Group({
-                name: `${this.id}-background`,
-                layer: useSeriesGroupLayer,
-                zIndex: Layers.SERIES_BACKGROUND_ZINDEX,
-            })
-        );
-
-        this.seriesGroup = group.appendChild(
-            new Group({
-                name: `${this.id}-series`,
+                name: `${this.id}-content`,
                 layer: useSeriesGroupLayer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
             })
         );
 
-        this.pickGroup = this.seriesGroup.appendChild(new Group());
-
-        this.highlightGroup = group.appendChild(
+        this.highlightGroup = rootGroup.appendChild(
             new Group({
                 name: `${this.id}-highlight`,
                 layer: true,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
                 zIndexSubOrder: [this.id, 15000],
-                optimiseDirtyTracking: true,
             })
         );
-        this.highlightNode = this.highlightGroup.appendChild(new Group());
-        this.highlightLabel = this.highlightGroup.appendChild(new Group());
+        this.highlightNode = this.highlightGroup.appendChild(new Group({ name: 'highlightNode' }));
+        this.highlightLabel = this.highlightGroup.appendChild(new Group({ name: 'highlightLabel' }));
         this.highlightNode.zIndex = 0;
         this.highlightLabel.zIndex = 10;
 
         this.pickModes = pickModes;
 
         if (useLabelLayer) {
-            this.labelGroup = group.appendChild(
+            this.labelGroup = rootGroup.appendChild(
                 new Group({
                     name: `${this.id}-series-labels`,
                     layer: true,
@@ -395,9 +363,9 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         point: Point,
         limitPickModes?: SeriesNodePickMode[]
     ): { pickMode: SeriesNodePickMode; match: SeriesNodeDatum; distance: number } | undefined {
-        const { pickModes, visible, group } = this;
+        const { pickModes, visible, rootGroup } = this;
 
-        if (!visible || !group.visible) {
+        if (!visible || !rootGroup.visible) {
             return;
         }
 
@@ -433,7 +401,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     }
 
     protected pickNodeExactShape(point: Point): SeriesNodePickMatch | undefined {
-        const match = this.pickGroup.pickNode(point.x, point.y);
+        const match = this.contentGroup.pickNode(point.x, point.y);
 
         if (match) {
             return {
@@ -457,12 +425,12 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     abstract getLabelData(): PointLabelDatum[];
 
-    fireNodeClickEvent(_event: MouseEvent, _datum: C['nodeData'][number]): void {
-        const eventObject = this.getNodeClickEvent(_event, _datum);
+    fireNodeClickEvent(event: Event, _datum: C['nodeData'][number]): void {
+        const eventObject = this.getNodeClickEvent(event, _datum);
         this.fireEvent(eventObject);
     }
 
-    protected getNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): SeriesNodeClickEvent<any> {
+    protected getNodeClickEvent(event: Event, datum: SeriesNodeDatum): SeriesNodeClickEvent<any> {
         return new SeriesNodeClickEvent(event, datum, this);
     }
 

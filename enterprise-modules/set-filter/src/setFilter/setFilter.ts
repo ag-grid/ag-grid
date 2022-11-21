@@ -125,6 +125,16 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
         return 'set-filter';
     }
 
+    public setModel(model: SetFilterModel | null): AgPromise<void> {
+        if (model == null && this.valueModel?.getModel() == null) {
+            // refreshing is expensive. if new and old model are both null (e.g. nothing set), skip.
+            // mini filter isn't contained within the model, so always reset
+            this.setMiniFilter(null);
+            return AgPromise.resolve();
+        }
+        return super.setModel(model);
+    }
+
     private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
         return this.valueModel ? this.valueModel.setModel(values).then(() => this.refresh()) : AgPromise.resolve();
     }
@@ -508,7 +518,9 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
 
             if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-            this.valueModel.refreshAfterAnyFilterChanged().then(() => this.refresh());
+            this.valueModel.refreshAfterAnyFilterChanged().then(refresh => {
+                if (refresh) { this.refresh(); }
+            });
         }, 0);
     }
 

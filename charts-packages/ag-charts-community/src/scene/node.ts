@@ -103,24 +103,6 @@ export abstract class Node extends ChangeDetectable {
         return this._children;
     }
 
-    private static MAX_SAFE_INTEGER = Math.pow(2, 53) - 1; // Number.MAX_SAFE_INTEGER
-
-    countChildren(depth = Node.MAX_SAFE_INTEGER): number {
-        if (depth <= 0) {
-            return 0;
-        }
-
-        const children = this.children;
-        const n = children.length;
-        let size = n;
-
-        for (let i = 0; i < n; i++) {
-            size += children[i].countChildren(depth - 1);
-        }
-
-        return size;
-    }
-
     // Used to check for duplicate nodes.
     private childSet: { [id: string]: boolean } = {}; // new Set<Node>()
 
@@ -303,25 +285,6 @@ export abstract class Node extends ChangeDetectable {
     @SceneChangeDetection({ type: 'transform' })
     rotation: number = 0;
 
-    /**
-     * For performance reasons the rotation angle's internal representation
-     * is in radians. Therefore, don't expect to get the same number you set.
-     * Even with integer angles about a quarter of them from 0 to 359 cannot
-     * be converted to radians and back without precision loss.
-     * For example:
-     *
-     *     node.rotationDeg = 11;
-     *     console.log(node.rotationDeg); // 10.999999999999998
-     *
-     * @param value Rotation angle in degrees.
-     */
-    set rotationDeg(value: number) {
-        this.rotation = (value / 180) * Math.PI;
-    }
-    get rotationDeg(): number {
-        return (this.rotation / Math.PI) * 180;
-    }
-
     @SceneChangeDetection({ type: 'transform' })
     translationX: number = 0;
 
@@ -390,7 +353,7 @@ export abstract class Node extends ChangeDetectable {
             matrix.preMultiplySelf(parent.matrix);
             parent = parent.parent;
         }
-        matrix.transformBBox(bbox, 0, bbox);
+        matrix.transformBBox(bbox, bbox);
 
         return bbox;
     }

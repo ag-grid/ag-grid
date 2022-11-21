@@ -20,7 +20,6 @@ export const GRID_COMPONENTS = [
     'dateComponent',
     'statusPanel',
     'cellRenderer',
-    'pinnedRowCellRenderer',
     'cellEditor',
     'filter',
     'floatingFilterComponent',

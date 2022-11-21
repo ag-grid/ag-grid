@@ -1,5 +1,5 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { Path, Rect } from "ag-charts-community";
+import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { createColumnRects, CreateColumnRectsParams, createLinePaths } from "../miniChartHelpers";
 
@@ -7,8 +7,8 @@ export class MiniColumnLineCombo extends MiniChartWithAxes {
 
     static chartType: ChartType = 'columnLineCombo';
 
-    private columns: Rect[];
-    private lines: Path[];
+    private columns: _Scene.Rect[];
+    private lines: _Scene.Path[];
 
     private columnData = [3, 4];
 
@@ -40,12 +40,12 @@ export class MiniColumnLineCombo extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.columns.forEach((bar: Rect, i: number) => {
+        this.columns.forEach((bar: _Scene.Rect, i: number) => {
             bar.fill = fills[i];
             bar.stroke = strokes[i];
         });
 
-        this.lines.forEach((line: Path, i: number) => {
+        this.lines.forEach((line: _Scene.Path, i: number) => {
             line.stroke = fills[i+2];
         });
     }

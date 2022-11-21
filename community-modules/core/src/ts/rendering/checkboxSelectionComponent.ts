@@ -174,7 +174,7 @@ export class CheckboxSelectionComponent extends Component {
             return this.overrides.isVisible;
         }
 
-        // column will be missing if groupUseEntireRow=true
+        // column will be missing if groupDisplayType = 'groupRows'
         return this.column?.getColDef()?.checkboxSelection;
     }
 }

@@ -30,12 +30,12 @@ export class ScatterChartProxy extends CartesianChartProxy {
         const axisOptions = this.getAxesOptions();
         return [
             {
-                ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
+                ...(axisOptions ? deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType]?.bottom) : {}),
                 type: this.xAxisType,
                 position: 'bottom',
             },
             {
-                ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
+                ...(axisOptions ? deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType]?.left) : {}),
                 type: this.yAxisType,
                 position: 'left',
             },
@@ -43,7 +43,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
     }
 
     public getSeries(params: UpdateChartParams): AgScatterSeriesOptions[] {
-        const paired = this.chartOptions[this.standaloneChartType].paired;
+        const paired = this.chartOptions[this.standaloneChartType]?.paired;
         const seriesDefinitions = this.getSeriesDefinitions(params.fields, paired);
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
 
@@ -71,7 +71,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
         params: UpdateChartParams,
     ): AgScatterSeriesOptions[] {
         const { data } = params;
-        const { chartTheme: { palette } } = this;
+        const palette = this.chartPalette;
 
         const filteredOutKey = (key: string) => `${key}-filtered-out`;
 
@@ -96,8 +96,8 @@ export class ScatterChartProxy extends CartesianChartProxy {
 
         const updatePrimarySeries = (series: AgScatterSeriesOptions, idx: number): AgScatterSeriesOptions => {
             const { sizeKey } = series;
-            const fill = palette.fills[idx];
-            const stroke = palette.strokes[idx];
+            const fill = palette?.fills[idx];
+            const stroke = palette?.strokes[idx];
 
             let markerDomain = calcMarkerDomain(data, sizeKey);
             const marker: AgScatterSeriesMarker<any> = {

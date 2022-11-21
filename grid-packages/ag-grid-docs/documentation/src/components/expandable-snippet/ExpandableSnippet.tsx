@@ -1,7 +1,7 @@
-import React, {Fragment, useState} from "react";
+import React, { Fragment, useState } from "react";
 import classnames from 'classnames';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faChevronRight} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 import {convertMarkdown, formatJsDocString} from "../documentation-helpers";
 import styles from "./ExpandableSnippet.module.scss";
@@ -33,21 +33,18 @@ type Config = {
 export interface ExpandableSnippetParams {
     interfacename: string;
     overridesrc?: string;
-    jsonData?: object;
     breadcrumbs?: string[];
     config?: Config;
 }
 
 export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
-                                                                         interfacename,
-                                                                         overridesrc,
-                                                                         jsonData,
-                                                                         breadcrumbs = [],
-                                                                         config= {},
-                                                                     }) => {
-
+    interfacename,
+    overridesrc,
+    breadcrumbs = [],
+    config = {},
+}) => {
     const {lookupRoot = 'grid-api'}: { lookupRoot: string } = config as any;
-    const {interfaceLookup, codeLookup} = loadLookups(lookupRoot, jsonData!, overridesrc);
+    const { interfaceLookup, codeLookup } = loadLookups(lookupRoot, overridesrc);
 
     const model = buildModel(interfacename, interfaceLookup, codeLookup, config);
 
@@ -70,12 +67,12 @@ interface BuildSnippetParams {
 }
 
 const BuildSnippet: React.FC<BuildSnippetParams> = ({
-                                                        model,
-                                                        breadcrumbs = [],
-                                                        config = {},
-                                                    }) => {
+    model,
+    breadcrumbs = [],
+    config = {},
+}) => {
     return renderObjectBreadcrumb(breadcrumbs, () => <Fragment>
-        <FontAwesomeIcon icon={faChevronRight} className={styles['node-expander']} symbol="node-expander"/>
+        <FontAwesomeIcon icon={faChevronRight} className={styles['node-expander']} symbol="node-expander" />
         <div className={styles['json-object']} role="presentation">
             <ModelSnippet model={model} config={config} path={[]}></ModelSnippet>
         </div>
@@ -91,11 +88,11 @@ interface ModelSnippetParams {
 }
 
 const ModelSnippet: React.FC<ModelSnippetParams> = ({
-                                                        model,
-                                                        closeWith = ';',
-                                                        path,
-                                                        config = {},
-                                                    }) => {
+    model,
+    closeWith = ';',
+    path,
+    config = {},
+}) => {
     if (model.type === "model") {
         const propertiesRendering = Object.entries(model.properties)
             .map(([propName, propInfo]) => {
@@ -103,7 +100,7 @@ const ModelSnippet: React.FC<ModelSnippetParams> = ({
                     return;
                 }
 
-                const {desc} = propInfo;
+                const { desc } = propInfo;
                 return (
                     <PropertySnippet key={propName} propName={propName} desc={desc} meta={propInfo} path={path} config={config}/>
                 );
@@ -146,21 +143,21 @@ function renderUnion(
 
     return (
         <div className={styles["json-object-union"]} role="presentation">
-            {
-                model.options
-                    .map((desc, idx) => {
-                        const lastIdx = model.options.length - 1;
-                        switch (desc.type) {
-                            case "primitive":
-                                return renderPrimitiveUnionOption(desc, idx, idx >= lastIdx);
-                            case "array":
-                                break;
-                            case "nested-object":
-                                return renderUnionNestedObject(desc, idx, idx >= lastIdx, closeWith, path, config);
-                        }
-                    })
-                    .map((el, idx) => <div key={idx} className={classnames(styles["json-union-item"])}>{el}</div>)
-            }
+        {
+            model.options
+                .map((desc, idx) => {
+                    const lastIdx = model.options.length - 1;
+                    switch (desc.type) {
+                        case "primitive":
+                            return renderPrimitiveUnionOption(desc, idx, idx >= lastIdx);
+                        case "array":
+                            break;
+                        case "nested-object":
+                            return renderUnionNestedObject(desc, idx, idx >= lastIdx, closeWith, path, config);
+                    }
+                })
+                .map((el, idx) => <div key={idx} className={classnames(styles["json-union-item"])}>{el}</div>)
+        }
         </div>
     );
 }
@@ -219,8 +216,7 @@ function renderUnionNestedObject(
                 </span>
                 {
                     isExpanded ?
-                        <div className={classnames(styles['json-object'], styles['unexpandable'])} onClick={(e) => e.stopPropagation()}
-                             role="presentation">
+                        <div className={classnames(styles['json-object'], styles['unexpandable'])} onClick={(e) => e.stopPropagation()} role="presentation">
                             <ModelSnippet model={desc.model} config={config} path={unionPath}></ModelSnippet>
                         </div> :
                         <span className={classnames('token', 'operator')}> ... </span>
@@ -245,20 +241,20 @@ interface PropertySnippetParams {
 }
 
 const PropertySnippet: React.FC<PropertySnippetParams> = ({
-                                                              propName,
-                                                              desc,
-                                                              meta,
-                                                              forceInitiallyExpanded,
-                                                              needsClosingSemi = true,
-                                                              path,
-                                                              config,
-                                                          }) => {
+    propName,
+    desc,
+    meta,
+    forceInitiallyExpanded,
+    needsClosingSemi = true,
+    path,
+    config,
+}) => {
     const propPath = path.concat(propName);
     const expandedInitially = forceInitiallyExpanded || isExpandedInitially(propName, propPath, config);
     const [isJSONNodeExpanded, setJSONNodeExpanded] = useState(expandedInitially);
 
-    const {deprecated} = meta;
-    const {tsType} = desc;
+    const { deprecated } = meta;
+    const { tsType } = desc;
     const formattedDocumentation = formatPropertyDocumentation(meta, config);
 
     let propertyRendering;
@@ -329,27 +325,20 @@ function maybeRenderPropertyDocumentation(
     isDocumentationExpanded: boolean,
     config: Config,
 ): React.ReactNode {
-    if (!isDocumentationExpanded) {
-        return;
-    }
+    if (!isDocumentationExpanded) { return; }
 
     const formattedDocumentation = formatPropertyDocumentation(meta, config);
-    if (formattedDocumentation.length === 0) {
-        return;
-    }
+    if (formattedDocumentation.length === 0) { return; }
 
     const renderedDocs = convertMarkdown(formattedDocumentation.join('\n'));
-    if (!renderedDocs || renderedDocs?.trim().length === 0) {
-        return
-    }
-    ;
+    if (!renderedDocs || renderedDocs?.trim().length === 0) { return };
 
     return (
         <Fragment>
             <div
                 className={classnames('token', 'comment', styles['jsdoc-expandable'])}
                 onClick={(e) => e.stopPropagation()}
-                dangerouslySetInnerHTML={{__html: convertMarkdown(formattedDocumentation.join('\n'))}}
+                dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}
                 role="presentation"
             >
             </div>
@@ -362,22 +351,17 @@ function maybeRenderModelDocumentation(
     config: Config,
 ): React.ReactNode {
     const formattedDocumentation = formatModelDocumentation(model, config);
-    if (formattedDocumentation.length === 0) {
-        return;
-    }
+    if (formattedDocumentation.length === 0) { return; }
 
     const renderedDocs = convertMarkdown(formattedDocumentation.join('\n'));
-    if (!renderedDocs || renderedDocs?.trim().length === 0) {
-        return
-    }
-    ;
+    if (!renderedDocs || renderedDocs?.trim().length === 0) { return };
 
     return (
         <Fragment>
             <div
                 className={classnames('token', 'comment', styles['jsdoc-expandable'])}
                 onClick={(e) => e.stopPropagation()}
-                dangerouslySetInnerHTML={{__html: convertMarkdown(formattedDocumentation.join('\n'))}}
+                dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}
                 role="presentation"
             >
             </div>
@@ -388,9 +372,7 @@ function maybeRenderModelDocumentation(
 function renderJsonNodeExpander(isExpanded: boolean) {
     return (
         <Fragment>
-            <svg className={classnames(styles['expander'], {'fa-rotate-90': isExpanded})}>
-                <use href="#node-expander" role="button"/>
-            </svg>
+            <svg className={classnames(styles['expander'], { 'fa-rotate-90': isExpanded })}><use href="#node-expander" role="button"/></svg>
         </Fragment>
     );
 }
@@ -403,7 +385,7 @@ function renderPropertyDeclaration(
     expandable: boolean,
     style = 'property-name',
 ) {
-    const {required} = propDesc;
+    const { required } = propDesc;
     return (
         <Fragment>
             {expandable && <div className={classnames(styles['expander-bar'])}></div>}
@@ -548,12 +530,11 @@ function renderFunction(
         <Fragment>
             {maybeRenderModelDocumentation(desc, config)}
             <span className={classnames('token', 'punctuation')}>(</span>
-            <div className={styles['json-object']} role="presentation">
+                <div className={styles['json-object']} role="presentation">
                 {
                     paramEntries.map(([prop, model], idx) => (
                         <Fragment key={prop}>
-                            <PropertySnippet propName={prop} desc={model.desc} meta={model} path={path} config={config}
-                                             forceInitiallyExpanded={singleParameter} needsClosingSemi={false}></PropertySnippet>
+                            <PropertySnippet propName={prop} desc={model.desc} meta={model} path={path} config={config} forceInitiallyExpanded={singleParameter} needsClosingSemi={false}></PropertySnippet>
                             {(idx + 1) < paramEntries.length && <span className={classnames('token', 'punctuation')}>, </span>}
                         </Fragment>
                     ))
@@ -576,9 +557,7 @@ function isSimpleFunction(desc: JsonFunction) {
 }
 
 function isExpandedInitially(propName: string, path: string[], config: Config) {
-    if (config.expandAll) {
-        return true;
-    }
+    if (config.expandAll) { return true; }
 
     const currentPath = path.join('.')
         .replace(/\.\[/g, '[')
@@ -589,10 +568,10 @@ function isExpandedInitially(propName: string, path: string[], config: Config) {
 }
 
 function formatPropertyDocumentation(meta: Omit<JsonModel['properties'][number], 'desc'>, config: Config): string[] {
-    const {documentation} = meta;
+    const { documentation } = meta;
     const defaultValue = meta.default;
     const result: string[] = documentation?.trim() ?
-        [formatJsDocString(documentation.trim())] :
+        [ formatJsDocString(documentation.trim()) ] :
         [];
 
     if (meta.hasOwnProperty('default')) {
@@ -603,9 +582,9 @@ function formatPropertyDocumentation(meta: Omit<JsonModel['properties'][number],
 }
 
 function formatModelDocumentation(model: JsonModel | JsonFunction, config: Config) {
-    const {documentation} = model;
+    const { documentation } = model;
     const result: string[] = documentation?.trim() ?
-        [formatJsDocString(documentation)] :
+        [ formatJsDocString(documentation) ] :
         [];
 
     return result;
@@ -638,7 +617,7 @@ export function renderObjectBreadcrumb(
             }
             {
                 breadcrumbs.length > 0 &&
-                <div>{'}'}</div>
+                    <div>{'}'}</div>
             }
         </Fragment>
     );

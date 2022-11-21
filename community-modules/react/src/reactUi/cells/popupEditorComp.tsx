@@ -6,23 +6,23 @@ import { BeansContext } from '../beansContext';
 import { useEffectOnce } from '../useEffectOnce';
 
 const PopupEditorComp = (props: {
-            editDetails: EditDetails, 
-            cellCtrl: CellCtrl, 
-            eParentCell: HTMLElement,
-            wrappedContent?: any,
-            jsChildComp?: any
-        }) => {
+    editDetails: EditDetails,
+    cellCtrl: CellCtrl,
+    eParentCell: HTMLElement,
+    wrappedContent?: any,
+    jsChildComp?: any
+}) => {
 
     const [popupEditorWrapper, setPopupEditorWrapper] = useState<PopupEditorWrapper>();
 
     const { context, popupService, gridOptionsWrapper, gridOptionsService } = useContext(BeansContext);
 
-    useEffectOnce( () => {
-        const {editDetails, cellCtrl, eParentCell} = props;
-        const {compDetails} = editDetails;
+    useEffectOnce(() => {
+        const { editDetails, cellCtrl, eParentCell } = props;
+        const { compDetails } = editDetails;
 
         const useModelPopup = gridOptionsService.is('stopEditingWhenCellsLoseFocus');
-        
+
         const wrapper = context.createBean(new PopupEditorWrapper(compDetails.params));
         const ePopupGui = wrapper.getGui();
 
@@ -39,15 +39,14 @@ const PopupEditorComp = (props: {
             type: 'popupCellEditor',
             eventSource: eParentCell,
             ePopup: ePopupGui,
+            position: editDetails!.popupPosition,
             keepWithinBounds: true
         };
-    
-        const positionCallback = editDetails!.popupPosition === 'under' ?
-            popupService.positionPopupUnderComponent.bind(popupService, positionParams)
-            : popupService.positionPopupOverComponent.bind(popupService, positionParams);
+
+        const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams);
 
         const translate = getLocaleTextFunc(gridOptionsService);
-    
+
         const addPopupRes = popupService.addPopup({
             modal: useModelPopup,
             eChild: ePopupGui,
@@ -57,15 +56,15 @@ const PopupEditorComp = (props: {
             positionCallback,
             ariaLabel: translate('ariaLabelCellEditor', 'Cell Editor')
         });
-    
-        const hideEditorPopup: (()=>void) | undefined = addPopupRes ? addPopupRes.hideFunc : undefined;
+
+        const hideEditorPopup: (() => void) | undefined = addPopupRes ? addPopupRes.hideFunc : undefined;
 
         setPopupEditorWrapper(wrapper);
 
         props.jsChildComp && props.jsChildComp.afterGuiAttached && props.jsChildComp.afterGuiAttached();
 
-        return ()=> {
-            if (hideEditorPopup!=null) {
+        return () => {
+            if (hideEditorPopup != null) {
                 hideEditorPopup();
             }
             context.destroyBean(wrapper);
@@ -75,8 +74,8 @@ const PopupEditorComp = (props: {
 
     return (
         <>
-            { popupEditorWrapper && props.wrappedContent 
-                                 && createPortal(props.wrappedContent, popupEditorWrapper.getGui()) }
+            {popupEditorWrapper && props.wrappedContent
+                && createPortal(props.wrappedContent, popupEditorWrapper.getGui())}
         </>
     );
 };

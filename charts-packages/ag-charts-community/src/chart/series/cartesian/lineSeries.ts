@@ -103,8 +103,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
     constructor() {
         super({
-            pickGroupIncludes: ['markers'],
-            features: ['markers'],
+            hasMarkers: true,
             pickModes: [
                 SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
                 SeriesNodePickMode.NEAREST_NODE,
@@ -366,14 +365,11 @@ export class LineSeries extends CartesianSeries<LineContext> {
             stroke: lineStroke,
             strokeOpacity,
             highlightStyle: {
-                fill: deprecatedFill,
-                stroke: deprecatedStroke,
-                strokeWidth: deprecatedStrokeWidth,
                 item: {
-                    fill: highlightedFill = deprecatedFill,
+                    fill: highlightedFill,
                     fillOpacity: highlightFillOpacity = markerFillOpacity,
-                    stroke: highlightedStroke = deprecatedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                    stroke: highlightedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth,
                 },
             },
             id: seriesId,

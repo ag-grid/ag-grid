@@ -88,7 +88,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     static type = 'treemap' as const;
 
     private groupSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(
-        this.pickGroup
+        this.contentGroup
     ).selectAll<Group>();
     private highlightSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(
         this.highlightGroup
@@ -331,14 +331,11 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             gradient,
             chart: { highlightedDatum },
             highlightStyle: {
-                fill: deprecatedFill,
-                stroke: deprecatedStroke,
-                strokeWidth: deprecatedStrokeWidth,
                 item: {
-                    fill: highlightedFill = deprecatedFill,
+                    fill: highlightedFill,
                     fillOpacity: highlightedFillOpacity,
-                    stroke: highlightedStroke = deprecatedStroke,
-                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                    stroke: highlightedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth,
                 },
             },
             formatter,

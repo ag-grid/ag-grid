@@ -17,6 +17,7 @@ import {
     WithoutGridCommon,
     FocusService
 } from "@ag-grid-community/core";
+import { RowModelType } from "@ag-grid-community/core/src/ts/main";
 
 const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 const DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
@@ -153,7 +154,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         }
     }
 
-    public getType(): string {
+    public getType(): RowModelType {
         return Constants.ROW_MODEL_TYPE_VIEWPORT;
     }
 

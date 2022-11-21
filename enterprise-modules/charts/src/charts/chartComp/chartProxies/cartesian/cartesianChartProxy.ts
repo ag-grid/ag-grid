@@ -6,13 +6,9 @@ import {
     AgCartesianAxisType,
     AgCartesianChartOptions,
     AgChart,
+    AgChartInstance,
     AgChartLegendClickEvent,
     AgLineSeriesOptions,
-    CartesianChart,
-    CategoryAxis,
-    GroupedCategoryAxis,
-    NumberAxis,
-    TimeAxis
 } from "ag-charts-community";
 import { ChartSeriesType } from "../../utils/seriesTypeMapper";
 
@@ -20,13 +16,6 @@ export abstract class CartesianChartProxy extends ChartProxy {
     protected supportsAxesUpdates = true;
     protected xAxisType: AgCartesianAxisType;
     protected yAxisType: AgCartesianAxisType;
-
-    protected axisTypeToClassMap: { [key in string]: any } = {
-        number: NumberAxis,
-        category: CategoryAxis,
-        groupedCategory: GroupedCategoryAxis,
-        time: TimeAxis,
-    };
 
     protected crossFilteringAllPoints = new Set<string>();
     protected crossFilteringSelectedPoints: string[] = [];
@@ -39,10 +28,10 @@ export abstract class CartesianChartProxy extends ChartProxy {
     abstract getAxes(params: UpdateChartParams): AgCartesianAxisOptions[];
     abstract getSeries(params: UpdateChartParams): AgBaseSeriesOptions<any>[];
 
-    protected createChart(): CartesianChart {
+    protected createChart(): AgChartInstance {
         return AgChart.create({
             container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme,
+            theme: this.agChartTheme
         });
     }
 
@@ -62,7 +51,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
             options = this.addCrossFilterOptions(options);
         }
 
-        AgChart.update(this.chart as CartesianChart, options);
+        AgChart.update(this.chart, options);
     }
 
     protected getDataTransformedData(params: UpdateChartParams) {
@@ -95,7 +84,9 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     protected extractSeriesOverrides(chartSeriesType?: ChartSeriesType) {
-        const seriesOverrides = this.chartOptions[chartSeriesType ? chartSeriesType : this.standaloneChartType].series;
+        const seriesOverrides = this.chartOptions[chartSeriesType ? chartSeriesType : this.standaloneChartType]?.series;
+
+        if (!seriesOverrides) { return {}; }
 
         // TODO: remove once `yKeys` and `yNames` have been removed from the options
         delete seriesOverrides.yKeys;
@@ -107,7 +98,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
     protected updateAxes(params: UpdateChartParams): void {
         // when grouping recreate chart if the axis is not a 'groupedCategory', otherwise return
         if (params.grouping) {
-            if (!(this.axisTypeToClassMap[this.xAxisType] === GroupedCategoryAxis)) {
+            if (this.xAxisType !== 'groupedCategory') {
                 this.xAxisType = 'groupedCategory';
                 this.recreateChart();
             }
@@ -123,7 +114,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     protected getAxesOptions(chartSeriesType: ChartSeriesType = this.standaloneChartType) {
-        return this.chartOptions[chartSeriesType].axes;
+        return this.chartOptions[chartSeriesType]?.axes;
     }
 
     private static isTimeAxis(params: UpdateChartParams): boolean {

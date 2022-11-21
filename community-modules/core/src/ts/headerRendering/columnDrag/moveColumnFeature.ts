@@ -34,6 +34,7 @@ export class MoveColumnFeature implements DropListener {
     private centerContainer: boolean;
 
     private lastDraggingEvent: DraggingEvent;
+    private lastMovedInfo: { columns: Column[]; toIndex: number; } | null = null;
 
     // this counts how long the user has been trying to scroll by dragging and failing,
     // if they fail x amount of times, then the column will get pinned. this is what gives
@@ -82,8 +83,9 @@ export class MoveColumnFeature implements DropListener {
         this.onDragging(draggingEvent, true, true);
     }
 
-    public onDragLeave(draggingEvent: DraggingEvent): void {
+    public onDragLeave(): void {
         this.ensureIntervalCleared();
+        this.lastMovedInfo = null;
     }
 
     public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType = "api") {
@@ -101,7 +103,9 @@ export class MoveColumnFeature implements DropListener {
     }
 
     public onDragStop(): void {
+        this.onDragging(this.lastDraggingEvent, false, true, true);
         this.ensureIntervalCleared();
+        this.lastMovedInfo = null;
     }
 
     private normaliseX(x: number): number {
@@ -142,7 +146,14 @@ export class MoveColumnFeature implements DropListener {
         }
     }
 
-    public onDragging(draggingEvent: DraggingEvent, fromEnter = false, fakeEvent = false): void {
+    public onDragging(draggingEvent: DraggingEvent = this.lastDraggingEvent, fromEnter = false, fakeEvent = false, finished = false): void {
+        if (finished) {
+            if (this.lastMovedInfo) {
+                const { columns, toIndex } = this.lastMovedInfo;
+                this.moveColumns(columns, toIndex, 'uiColumnMoved', true);
+            }
+            return;
+        }
         this.lastDraggingEvent = draggingEvent;
 
         // if moving up or down (ie not left or right) then do nothing
@@ -150,21 +161,20 @@ export class MoveColumnFeature implements DropListener {
             return;
         }
 
-        const mouseXNormalised = this.normaliseX(draggingEvent.x);
+        const mouseX = this.normaliseX(draggingEvent.x);
 
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
         // we don't want to scroll the grid this time, it would appear like the table is jumping
         // each time a column is dragged in.
         if (!fromEnter) {
-            this.checkCenterForScrolling(mouseXNormalised);
+            this.checkCenterForScrolling(mouseX);
         }
 
-        const hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
+        const hDirection = this.normaliseDirection(draggingEvent.hDirection);
 
         const dragSourceType: DragSourceType = draggingEvent.dragSource.type;
-        let columnsToMove = draggingEvent.dragSource.getDragItem().columns;
 
-        columnsToMove = columnsToMove!.filter(col => {
+        const allMovingColumns = draggingEvent.dragSource.getDragItem().columns?.filter(col => {
             if (col.getColDef().lockPinned) {
                 // if locked return true only if both col and container are same pin type.
                 // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
@@ -172,9 +182,9 @@ export class MoveColumnFeature implements DropListener {
             }
             // if not pin locked, then always allowed to be in this container
             return true;
-        });
+        }) || [];
 
-        this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, mouseXNormalised, fromEnter, fakeEvent);
+        this.attemptMoveColumns({ dragSourceType, allMovingColumns, hDirection, mouseX, fromEnter, fakeEvent });
     }
 
     private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
@@ -189,23 +199,20 @@ export class MoveColumnFeature implements DropListener {
         }
     }
 
-    // returns the index of the first column in the list ONLY if the cols are all beside
-    // each other. if the cols are not beside each other, then returns null
-    private calculateOldIndex(movingCols: Column[]): number | null {
-        const gridCols: Column[] = this.columnModel.getAllGridColumns();
-        const indexes = sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
-        const firstIndex = indexes[0];
-        const lastIndex = last(indexes);
-        const spread = lastIndex - firstIndex;
-        const gapsExist = spread !== indexes.length - 1;
+    private attemptMoveColumns(params: {
+        dragSourceType: DragSourceType;
+        allMovingColumns: Column[];
+        hDirection?: HorizontalDirection;
+        mouseX: number;
+        fromEnter: boolean;
+        fakeEvent: boolean
+    }): void {
+        const { dragSourceType, hDirection, mouseX, fromEnter, fakeEvent } = params; 
 
-        return gapsExist ? null : firstIndex;
-    }
-
-    private attemptMoveColumns(dragSourceType: DragSourceType, allMovingColumns: Column[], hDirection: HorizontalDirection | undefined, mouseX: number, fromEnter: boolean, fakeEvent: boolean): void {
         const draggingLeft = hDirection === HorizontalDirection.Left;
         const draggingRight = hDirection === HorizontalDirection.Right;
 
+        let { allMovingColumns } = params;
         if (dragSourceType === DragSourceType.HeaderCell) {
             // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
             let newCols: Column[] = [];
@@ -306,9 +313,26 @@ export class MoveColumnFeature implements DropListener {
 
         // The best move is the move with least group fragmentation
         potentialMoves.sort((a, b) => a.fragCount - b.fragCount);
-        const bestMove = potentialMoves[0].move;
 
-        this.columnModel.moveColumns(allMovingColumnsOrdered, bestMove, "uiColumnDragged");
+        this.moveColumns(allMovingColumns, potentialMoves[0].move, 'uiColumnMoved', false);
+    }
+
+    // returns the index of the first column in the list ONLY if the cols are all beside
+    // each other. if the cols are not beside each other, then returns null
+    private calculateOldIndex(movingCols: Column[]): number | null {
+        const gridCols: Column[] = this.columnModel.getAllGridColumns();
+        const indexes = sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
+        const firstIndex = indexes[0];
+        const lastIndex = last(indexes);
+        const spread = lastIndex - firstIndex;
+        const gapsExist = spread !== indexes.length - 1;
+
+        return gapsExist ? null : firstIndex;
+    }
+
+    private moveColumns(columns: Column[], toIndex: number, source: ColumnEventType, finished: boolean): void {
+        this.columnModel.moveColumns(columns, toIndex, source, finished);
+        this.lastMovedInfo = finished ? null : { columns, toIndex };
     }
 
     // A measure of how fragmented in terms of groups an order of columns is

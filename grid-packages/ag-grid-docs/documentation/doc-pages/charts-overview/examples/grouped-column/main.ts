@@ -45,10 +45,7 @@ const options: AgChartOptions = {
       type: "number",
       position: "left",
       label: {
-        formatter: (params) => {
-          const formatted = params.value / 1000 + "M";
-          return formatted.indexOf('.') >= 0 ? undefined : formatted;
-        },
+        formatter: ({ value }) => `${value / 1000}M`,
       },
     },
   ],

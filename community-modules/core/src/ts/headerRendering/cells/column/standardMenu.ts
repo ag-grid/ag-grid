@@ -42,11 +42,12 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType): void {
         this.showPopup(column, eMenu => {
-            this.popupService.positionPopupUnderComponent({
+            this.popupService.positionPopupByComponent({
                 type: containerType,
                 eventSource,
                 ePopup: eMenu,
                 keepWithinBounds: true,
+                position: 'under',
                 column
             });
         }, eventSource);

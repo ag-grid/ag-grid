@@ -1,7 +1,7 @@
 import { ProvidedFilter, IProvidedFilterParams } from './providedFilter';
 import { ProvidedFilterModel, IDoesFilterPassParams } from '../../interfaces/iFilter';
 import { Constants } from '../../constants/constants';
-import { IRowModel } from '../../interfaces/iRowModel';
+import { IRowModel, RowModelType } from '../../interfaces/iRowModel';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { mock } from '../../test-utils/mock';
 import { AgPromise } from '../../utils';
@@ -10,7 +10,7 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
     private uiModel: ProvidedFilterModel;
     private modelHasChanged = false;
 
-    constructor(params: IProvidedFilterParams, rowModelType: string = Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+    constructor(params: IProvidedFilterParams, rowModelType: RowModelType = Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
         super('textFilter');
 
         const eGui = mock<HTMLElement>('appendChild');

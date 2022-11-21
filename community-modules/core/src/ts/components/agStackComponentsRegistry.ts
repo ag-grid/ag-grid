@@ -14,7 +14,6 @@ export class AgStackComponentsRegistry extends BeanStub {
 
     private addComponent(componentMeta: ComponentMeta): void {
         // get name of the class as a string
-        // let className = getNameOfClass(ComponentClass);
         // insert a dash after every capital letter
         // let classEscaped = className.replace(/([A-Z])/g, "-$1").toLowerCase();
         const classEscaped = componentMeta.componentName.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();

@@ -75,15 +75,6 @@ export class HdpiCanvas {
         return this._enabled;
     }
 
-    private _opacity: number = 1;
-    set opacity(value: number) {
-        this.element.style.opacity = `${value}`;
-        this._opacity = value;
-    }
-    get opacity() {
-        return this._opacity;
-    }
-
     private remove() {
         const { parentNode } = this.element;
 

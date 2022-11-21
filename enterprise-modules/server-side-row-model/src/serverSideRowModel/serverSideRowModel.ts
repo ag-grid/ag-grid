@@ -26,7 +26,8 @@ import {
     ServerSideGroupLevelState,
     Beans,
     SortModelItem,
-    WithoutGridCommon
+    WithoutGridCommon,
+    RowModelType
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -137,16 +138,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private onColumnEverything(): void {
-        // this is a hack for one customer only, so they can suppress the resetting of the columns.
-        // The problem the customer had was they were api.setColumnDefs() after the data source came
-        // back with data. So this stops the reload from the grid after the data comes back.
-        // Once we have "AG-1591 Allow delta changes to columns" fixed, then this hack can be taken out.
-        if (this.gridOptionsService.is('suppressEnterpriseResetOnNewColumns')) {
-            return;
-        }
-        // every other customer can continue as normal and have it working!!!
-
-        // if first time, alwasy reset
+        // if first time, always reset
         if (!this.storeParams) {
             this.resetRootStore();
             return;
@@ -230,7 +222,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
         const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
 
-        const dynamicRowHeight = typeof this.gridOptionsService.getCallback('getRowHeight') === 'function';        
+        const dynamicRowHeight = typeof this.gridOptionsService.getCallback('getRowHeight') === 'function';
 
         const params: SSRMParams = {
             // the columns the user has grouped and aggregated by
@@ -387,7 +379,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return this.getRootStore() != null && this.getRowCount() > 0;
     }
 
-    public getType(): string {
+    public getType(): RowModelType {
         return Constants.ROW_MODEL_TYPE_SERVER_SIDE;
     }
 

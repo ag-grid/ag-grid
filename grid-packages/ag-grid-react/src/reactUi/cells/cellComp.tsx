@@ -125,7 +125,7 @@ export interface RenderDetails {
 export interface EditDetails {
     compDetails: UserCompDetails;
     popup?: boolean;
-    popupPosition?: string;
+    popupPosition?: 'over' | 'under';
 }
 
 const CellComp = (props: {
@@ -186,7 +186,10 @@ const CellComp = (props: {
             const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
             if (editingCancelledByUserComp) {
                 // we cannot set state inside render, so hack is to do it in next VM turn
-                setTimeout(() => cellCtrl.stopEditing(), 0);
+                setTimeout(() => {
+                    cellCtrl.stopEditing(true);
+                    cellCtrl.focusCell(true);
+                });
             }
         }
     }, []);
@@ -281,11 +284,14 @@ const CellComp = (props: {
     useEffect(() => {
         if (!cellCtrl || !context) { return; }
 
-        setAriaDescribedBy(!!eCellWrapper.current ? `cell-${cellCtrl.getInstanceId()}` : undefined);
+        const cellId = `cell-${cellCtrl.getInstanceId()}`;
+        const describedByIds: string[] = [];
+
+        describedByIds.push(cellId);
 
         if (!eCellWrapper.current || !showCellWrapper) { return; }
 
-        const destroyFuncs: (()=>void)[] = [];
+        const destroyFuncs: (() => void)[] = [];
 
         const addComp = (comp: Component | undefined) => {
             if (comp) {
@@ -300,7 +306,9 @@ const CellComp = (props: {
         }
 
         if (includeSelection) {
-            addComp(cellCtrl.createSelectionCheckbox());
+            const checkboxSelectionComp = cellCtrl.createSelectionCheckbox();
+            describedByIds.push(checkboxSelectionComp.getCheckboxId());
+            addComp(checkboxSelectionComp);
         }
 
         if (includeDndSource) {
@@ -310,6 +318,8 @@ const CellComp = (props: {
         if (includeRowDrag) {
             addComp(cellCtrl.createRowDragComp());
         }
+
+        setAriaDescribedBy(describedByIds.join(' '));
 
         return () => destroyFuncs.forEach(f => f());
 
@@ -415,7 +425,7 @@ const CellComp = (props: {
         >
             { showCellWrapper
                 ? (
-                    <div className="ag-cell-wrapper" role="presentation" ref={ setCellWrapperRef }>
+                    <div className="ag-cell-wrapper" role="presentation" aria-hidden="true" ref={ setCellWrapperRef }>
                         { showContents() }
                     </div>
                 )

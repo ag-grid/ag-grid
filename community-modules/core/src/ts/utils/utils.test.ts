@@ -1,8 +1,6 @@
-import * as GeneralUtils from './general';
 import * as AriaUtils from './aria';
 import * as ArrayUtils from './array';
 import * as BrowserUtils from './browser';
-import * as CsvUtils from './csv';
 import * as DateUtils from './date';
 import * as DomUtils from './dom';
 import * as EventUtils from './event';
@@ -22,11 +20,9 @@ import { _ } from './utils';
 
 it('exports all util methods', () => {
     const combinedMethodCount = NumberUtils.sum([
-        GeneralUtils,
         AriaUtils,
         ArrayUtils,
         BrowserUtils,
-        CsvUtils,
         DateUtils,
         DomUtils,
         EventUtils,

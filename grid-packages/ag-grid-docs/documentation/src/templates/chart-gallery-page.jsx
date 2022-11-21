@@ -9,7 +9,7 @@ import styles from './chart-gallery-page.module.scss';
 /**
  * This template is used for individual chart gallery pages.
  */
-const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description, previous, next, pageName, exampleIndexData } }) => {
+const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description, previous, next, pageName } }) => {
     return (
         <div id="doc-page-wrapper" className={pageStyles['doc-page__wrapper']}>
             <div id="doc-content" className={pageStyles['doc-page']}>
@@ -37,8 +37,7 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
                     framework={framework}
                     pageName={pageName}
                     library="charts"
-                    options={{ exampleHeight: '60vh' }}
-                    exampleIndexData={exampleIndexData}/>
+                    options={{ exampleHeight: '60vh' }} />
             </div>
         </div>
     );

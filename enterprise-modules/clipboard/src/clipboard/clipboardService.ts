@@ -40,6 +40,7 @@ import {
     CtrlsService,
     WithoutGridCommon,
 } from "@ag-grid-community/core";
+import { stringToArray } from "./csv";
 
 interface RowCallback {
     (gridRow: RowPosition, rowNode: RowNode | undefined, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
@@ -156,8 +157,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         if (focusedCell) {
             this.focusService.setFocusedCell({
                 rowIndex: focusedCell.rowIndex,
-                column: focusedCell.column, 
-                rowPinned: focusedCell.rowPinned, 
+                column: focusedCell.column,
+                rowPinned: focusedCell.rowPinned,
                 forceBrowserFocus: true
             });
         }
@@ -166,7 +167,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private processClipboardData(data: string): void {
         if (data == null) { return; }
 
-        let parsedData: string[][] | null = _.stringToArray(data, this.getClipboardDelimiter());
+        let parsedData: string[][] | null = stringToArray(data, this.gridOptionsWrapper.getClipboardDelimiter());
 
         const userFunc = this.gridOptionsService.getCallback('processDataFromClipboard');
 
@@ -723,7 +724,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             processRowGroupCallback: (params) => params.node.key!,
             processHeaderCallback: this.gridOptionsService.getCallback('processHeaderForClipboard'),
             processGroupHeaderCallback: this.gridOptionsService.getCallback('processGroupHeaderForClipboard')
-            
+
         };
 
         return this.csvCreator.getDataAsCsv(exportParams, true);

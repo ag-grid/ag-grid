@@ -129,21 +129,6 @@ export function tsCollect(tsTree, tsBindings, collectors, recurse = true) {
     return tsBindings;
 }
 
-export function collect(iterable: any[], initialBindings: any, collectors: any[]): any {
-
-    const original = iterable.reduce((bindings, value) => {
-        collectors.filter(c => c.matches(value)).forEach(c => c.apply(bindings, value));
-
-        return bindings;
-    }, initialBindings);
-
-    return original;
-}
-
-export function nodeIsVarWithName(node: any, name: string): boolean {
-    // eg: var currentRowHeight = 10;
-    return node.type === NodeType.Variable && node.declarations[0].id.name === name;
-}
 export function tsNodeIsGlobalVarWithName(node: any, name: string): boolean {
     // eg: var currentRowHeight = 10;
     if (ts.isVariableDeclaration(node) && ts.isSourceFile(node.parent.parent.parent)) {
@@ -152,12 +137,6 @@ export function tsNodeIsGlobalVarWithName(node: any, name: string): boolean {
     return false;
 }
 
-
-export function nodeIsPropertyWithName(node: any, name: string) {
-    // we skip { property: variable } - SPL why??
-    // and get only inline property assignments
-    return node.key.name == name && node.value.type != 'Identifier';
-}
 export function tsNodeIsPropertyWithName(node: ts.Node, name: string) {
     if (ts.isPropertyAssignment(node)) {
         if (node.name.getText() === name) {
@@ -186,10 +165,6 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
     }
 }
 
-export function nodeIsFunctionWithName(node: any, name: string): boolean {
-    // eg: function someFunction() { }
-    return node.type === NodeType.Function && node.id.name === name;
-}
 export function tsNodeIsFunctionWithName(node: ts.Node, name: string): boolean {
     // eg: function someFunction() { }
     if (ts.isFunctionDeclaration(node)) {
@@ -226,9 +201,6 @@ export function tsNodeIsTypeDeclaration(node: any): boolean {
     return false;
 }
 
-export function nodeIsFunctionCall(node: any): boolean {
-    return node.type === NodeType.Expression && node.expression.type === 'CallExpression';
-}
 export function tsNodeIsFunctionCall(node: any): boolean {
     return ts.isExpressionStatement(node) && ts.isCallExpression(node.expression);
 }
@@ -241,16 +213,6 @@ export function tsNodeIsGlobalFunctionCall(node: ts.Node) {
     if (ts.isExpressionStatement(node)) {
         return ts.isSourceFile(node.parent) && ts.isCallExpression(node.expression) && ts.isIdentifier(node.expression.expression);
     }
-}
-
-export function nodeIsGlobalFunctionCall(node: any): boolean {
-    if (!nodeIsFunctionCall(node)) {
-        return false;
-    }
-
-    const { callee } = node.expression;
-
-    return callee && callee.type === 'Identifier';
 }
 
 export const recognizedDomEvents = ['click', 'change', 'input', 'dragover', 'dragstart', 'drop'];

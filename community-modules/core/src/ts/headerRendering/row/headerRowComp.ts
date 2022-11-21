@@ -1,4 +1,5 @@
 import { PostConstruct, PreDestroy } from '../../context/context';
+import { Constants } from '../../constants/constants';
 import { setAriaRowIndex } from '../../utils/aria';
 import { setDomChildOrder } from '../../utils/dom';
 import { getAllValuesInObject, iterateObject } from '../../utils/object';
@@ -29,7 +30,7 @@ export class HeaderRowComp extends Component {
         super();
 
         const extraClass = ctrl.getType() == HeaderRowType.COLUMN_GROUP ? `ag-header-row-column-group` :
-                            ctrl.getType() == HeaderRowType.FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
+            ctrl.getType() == HeaderRowType.FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
 
         this.setTemplate(/* html */`<div class="ag-header-row ${extraClass}" role="row"></div>`);
 
@@ -81,8 +82,10 @@ export class HeaderRowComp extends Component {
             this.destroyBean(comp);
         });
 
-        const ensureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-        if (ensureDomOrder) {
+        const isEnsureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+
+        if (isEnsureDomOrder || isPrintLayout) {
             const comps = getAllValuesInObject(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
             comps.sort((a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>, b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {

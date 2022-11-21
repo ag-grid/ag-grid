@@ -9,5 +9,5 @@ export interface RenderDetails {
 export interface EditDetails {
     compDetails: UserCompDetails;
     popup?: boolean;
-    popupPosition?: string;
+    popupPosition?: 'over' | 'under';
 }

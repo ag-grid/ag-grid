@@ -105,14 +105,16 @@ export class GridOptionsWrapper {
         }
 
         if (this.isRowModelServerSide()) {
-            const msg = (prop: string) => `AG Grid: '${prop}' is not supported on the Server-Side Row Model`;
+            const msg = (prop: string, alt?: string) => (
+                `AG Grid: '${prop}' is not supported on the Server-Side Row Model.` + (alt ? ` Please use ${alt} instead.` : '')
+            );
             if (exists(this.gridOptions.groupDefaultExpanded)) {
-                console.warn(msg('groupDefaultExpanded'));
+                console.warn(msg('groupDefaultExpanded', 'isServerSideGroupOpenByDefault callback'));
             }
-            if (exists(this.gridOptions.groupDefaultExpanded)) {
+            if (exists(this.gridOptions.groupIncludeFooter)) {
                 console.warn(msg('groupIncludeFooter'));
             }
-            if (exists(this.gridOptions.groupDefaultExpanded)) {
+            if (exists(this.gridOptions.groupIncludeTotalFooter)) {
                 console.warn(msg('groupIncludeTotalFooter'));
             }
         }
@@ -216,11 +218,11 @@ export class GridOptionsWrapper {
         );
 
         iterateObject<any>(invalidProperties, (key, value) => {
-            console.warn(`ag-grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`);
+            console.warn(`AG Grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`);
         });
 
         if (Object.keys(invalidProperties).length > 0) {
-            console.warn(`ag-grid: to see all the valid ${containerName} properties please check: ${docsUrl}`);
+            console.warn(`AG Grid: to see all the valid ${containerName} properties please check: ${docsUrl}`);
         }
     }
 
@@ -238,6 +240,791 @@ export class GridOptionsWrapper {
     public setDomData(element: Element, key: string, value: any): any {
         const domDataKey = this.getDomDataKey();
         let domData = (element as any)[domDataKey];
+
+        if (missing(domData)) {
+            domData = {};
+            (element as any)[domDataKey] = domData;
+        }
+        domData[key] = value;
+    }
+
+    public isRowSelection() {
+        return this.gridOptions.rowSelection === 'single' || this.gridOptions.rowSelection === 'multiple';
+    }
+
+    public isSuppressRowDeselection() {
+        return isTrue(this.gridOptions.suppressRowDeselection);
+    }
+
+    public isRowSelectionMulti() {
+        return this.gridOptions.rowSelection === 'multiple';
+    }
+
+    public isRowMultiSelectWithClick() {
+        return isTrue(this.gridOptions.rowMultiSelectWithClick);
+    }
+
+    public getContext() {
+        return this.gridOptions.context;
+    }
+
+    public isPivotMode() {
+        return isTrue(this.gridOptions.pivotMode);
+    }
+
+    public isSuppressExpandablePivotGroups() {
+        return isTrue(this.gridOptions.suppressExpandablePivotGroups);
+    }
+
+    public getPivotColumnGroupTotals() {
+        return this.gridOptions.pivotColumnGroupTotals;
+    }
+
+    public getPivotRowTotals() {
+        return this.gridOptions.pivotRowTotals;
+    }
+
+    public isRowModelInfinite() {
+        return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE;
+    }
+
+    public isRowModelViewport() {
+        return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT;
+    }
+
+    public isRowModelServerSide() {
+        return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+    }
+
+    public isRowModelDefault() {
+        return (missing(this.gridOptions.rowModelType) ||
+            this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE);
+    }
+
+    public isFullRowEdit() {
+        return this.gridOptions.editType === 'fullRow';
+    }
+
+    public isSuppressFocusAfterRefresh() {
+        return isTrue(this.gridOptions.suppressFocusAfterRefresh);
+    }
+
+    public isSuppressBrowserResizeObserver() {
+        return isTrue(this.gridOptions.suppressBrowserResizeObserver);
+    }
+
+    public isSuppressMaintainUnsortedOrder() {
+        return isTrue(this.gridOptions.suppressMaintainUnsortedOrder);
+    }
+
+    public isSuppressClearOnFillReduction() {
+        return isTrue(this.gridOptions.suppressClearOnFillReduction);
+    }
+
+    public isShowToolPanel() {
+        return isTrue(this.gridOptions.sideBar && Array.isArray(this.getSideBar().toolPanels));
+    }
+
+    public getSideBar(): SideBarDef {
+        return this.gridOptions.sideBar as SideBarDef;
+    }
+
+    public isSuppressTouch() {
+        return isTrue(this.gridOptions.suppressTouch);
+    }
+
+    public isMaintainColumnOrder() {
+        return isTrue(this.gridOptions.maintainColumnOrder);
+    }
+
+    public isSuppressRowTransform() {
+        return isTrue(this.gridOptions.suppressRowTransform);
+    }
+
+    public isAllowDragFromColumnsToolPanel() {
+        return isTrue(this.gridOptions.allowDragFromColumnsToolPanel);
+    }
+
+    public useAsyncEvents() {
+        return !isTrue(this.gridOptions.suppressAsyncEvents);
+    }
+
+    public isEnableCellChangeFlash() {
+        return isTrue(this.gridOptions.enableCellChangeFlash);
+    }
+
+    public getCellFlashDelay(): number {
+        return this.gridOptions.cellFlashDelay || 500;
+    }
+
+    public getCellFadeDelay(): number {
+        return this.gridOptions.cellFadeDelay || 1000;
+    }
+
+    public isGroupSelectsChildren() {
+        return isTrue(this.gridOptions.groupSelectsChildren);
+    }
+
+    public isSuppressRowHoverHighlight() {
+        return isTrue(this.gridOptions.suppressRowHoverHighlight);
+    }
+
+    public isColumnHoverHighlight() {
+        return isTrue(this.gridOptions.columnHoverHighlight);
+    }
+
+    public isGroupSelectsFiltered() {
+        return isTrue(this.gridOptions.groupSelectsFiltered);
+    }
+
+    public isGroupHideOpenParents() {
+        return isTrue(this.gridOptions.groupHideOpenParents);
+    }
+
+    public isGroupMaintainOrder() {
+        return isTrue(this.gridOptions.groupMaintainOrder);
+    }
+
+    public getAutoGroupColumnDef(): ColDef | undefined {
+        return this.gridOptions.autoGroupColumnDef;
+    }
+
+    public isColumnsSortingCoupledToGroup(): boolean {
+        const autoGroupColumnDef = this.getAutoGroupColumnDef();
+        const isClientSideRowModel = this.isRowModelDefault();
+        return isClientSideRowModel && !autoGroupColumnDef?.comparator;
+    }
+
+    public isGroupMultiAutoColumn() {
+        if (this.gridOptions.groupDisplayType) {
+            return this.matchesGroupDisplayType('multipleColumns', this.gridOptions.groupDisplayType);
+        }
+        // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
+        return isTrue(this.gridOptions.groupHideOpenParents);
+    }
+
+    public isGroupUseEntireRow(pivotMode: boolean): boolean {
+        // we never allow groupDisplayType = 'groupRows' if in pivot mode, otherwise we won't see the pivot values.
+        if (pivotMode) { return false; }
+
+        return this.gridOptions.groupDisplayType ?
+            this.matchesGroupDisplayType('groupRows', this.gridOptions.groupDisplayType) : false;
+    }
+
+    public isRowGroupPanelSuppressSort() {
+        return isTrue(this.gridOptions.rowGroupPanelSuppressSort);
+    }
+
+    public isGroupRowsSticky(): boolean {
+        return isTrue(this.gridOptions.groupRowsSticky);
+    }
+
+    public isGroupSuppressAutoColumn() {
+        const isCustomRowGroups = this.gridOptions.groupDisplayType ?
+            this.matchesGroupDisplayType('custom', this.gridOptions.groupDisplayType) : false;
+
+        if (isCustomRowGroups) { return true; }
+
+        return this.gridOptions.treeDataDisplayType ?
+            this.matchesTreeDataDisplayType('custom', this.gridOptions.treeDataDisplayType) : false;
+    }
+
+    public isGroupRemoveSingleChildren() {
+        return isTrue(this.gridOptions.groupRemoveSingleChildren);
+    }
+
+    public isGroupRemoveLowestSingleChildren() {
+        return isTrue(this.gridOptions.groupRemoveLowestSingleChildren);
+    }
+
+    public isGroupIncludeFooter() {
+        return isTrue(this.gridOptions.groupIncludeFooter);
+    }
+
+    public isGroupIncludeTotalFooter() {
+        return isTrue(this.gridOptions.groupIncludeTotalFooter);
+    }
+
+    public isGroupSuppressBlankHeader() {
+        return isTrue(this.gridOptions.groupSuppressBlankHeader);
+    }
+
+    public isSuppressRowClickSelection() {
+        return isTrue(this.gridOptions.suppressRowClickSelection);
+    }
+
+    public isSuppressCellFocus() {
+        return isTrue(this.gridOptions.suppressCellFocus);
+    }
+
+    public isSuppressMultiSort() {
+        return isTrue(this.gridOptions.suppressMultiSort);
+    }
+
+    public isAlwaysMultiSort() {
+        return isTrue(this.gridOptions.alwaysMultiSort);
+    }
+
+    public isMultiSortKeyCtrl() {
+        return this.gridOptions.multiSortKey === 'ctrl';
+    }
+
+    public isPivotSuppressAutoColumn() {
+        return isTrue(this.gridOptions.pivotSuppressAutoColumn);
+    }
+
+    public isSuppressDragLeaveHidesColumns() {
+        return isTrue(this.gridOptions.suppressDragLeaveHidesColumns);
+    }
+
+    public isSuppressRowGroupHidesColumns() {
+        return isTrue(this.gridOptions.suppressRowGroupHidesColumns);
+    }
+
+    public isSuppressScrollOnNewData() {
+        return isTrue(this.gridOptions.suppressScrollOnNewData);
+    }
+
+    public isSuppressScrollWhenPopupsAreOpen() {
+        return isTrue(this.gridOptions.suppressScrollWhenPopupsAreOpen);
+    }
+
+    public isRowDragEntireRow() {
+        return isTrue(this.gridOptions.rowDragEntireRow);
+    }
+
+    public getRowDragText(column?: Column) {
+        if (column) {
+            const colDef = column.getColDef();
+            if (colDef.rowDragText) {
+                return colDef.rowDragText;
+            }
+        }
+        return this.gridOptions.rowDragText;
+    }
+
+    public isSuppressRowDrag() {
+        return isTrue(this.gridOptions.suppressRowDrag);
+    }
+
+    public isRowDragManaged() {
+        return isTrue(this.gridOptions.rowDragManaged);
+    }
+
+    public isSuppressMoveWhenRowDragging() {
+        return isTrue(this.gridOptions.suppressMoveWhenRowDragging);
+    }
+
+    public isRowDragMultiRow() {
+        return isTrue(this.gridOptions.rowDragMultiRow);
+    }
+
+    // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
+    public getDomLayout(): string {
+        const domLayout = this.gridOptions.domLayout || Constants.DOM_LAYOUT_NORMAL;
+        const validLayouts = [
+            Constants.DOM_LAYOUT_PRINT,
+            Constants.DOM_LAYOUT_AUTO_HEIGHT,
+            Constants.DOM_LAYOUT_NORMAL
+        ];
+
+        if (validLayouts.indexOf(domLayout) === -1) {
+            doOnce(
+                () =>
+                    console.warn(
+                        `AG Grid: ${domLayout} is not valid for DOM Layout, valid values are ${Constants.DOM_LAYOUT_NORMAL}, ${Constants.DOM_LAYOUT_AUTO_HEIGHT} and ${Constants.DOM_LAYOUT_PRINT}`
+                    ),
+                'warn about dom layout values'
+            );
+            return Constants.DOM_LAYOUT_NORMAL;
+        }
+
+        return domLayout;
+    }
+
+    public isSuppressHorizontalScroll() {
+        return isTrue(this.gridOptions.suppressHorizontalScroll);
+    }
+
+    public isSuppressMaxRenderedRowRestriction() {
+        return isTrue(this.gridOptions.suppressMaxRenderedRowRestriction);
+    }
+
+    public isExcludeChildrenWhenTreeDataFiltering() {
+        return isTrue(this.gridOptions.excludeChildrenWhenTreeDataFiltering);
+    }
+
+    public isAlwaysShowHorizontalScroll() {
+        return isTrue(this.gridOptions.alwaysShowHorizontalScroll);
+    }
+
+    public isAlwaysShowVerticalScroll() {
+        return isTrue(this.gridOptions.alwaysShowVerticalScroll);
+    }
+
+    public isDebounceVerticalScrollbar() {
+        return isTrue(this.gridOptions.debounceVerticalScrollbar);
+    }
+
+    public isSuppressLoadingOverlay() {
+        return isTrue(this.gridOptions.suppressLoadingOverlay);
+    }
+
+    public isSuppressNoRowsOverlay() {
+        return isTrue(this.gridOptions.suppressNoRowsOverlay);
+    }
+
+    public isSuppressFieldDotNotation() {
+        return isTrue(this.gridOptions.suppressFieldDotNotation);
+    }
+
+    public getPinnedTopRowData(): any[] | undefined {
+        return this.gridOptions.pinnedTopRowData;
+    }
+
+    public getPinnedBottomRowData(): any[] | undefined {
+        return this.gridOptions.pinnedBottomRowData;
+    }
+
+    public isFunctionsPassive() {
+        return isTrue(this.gridOptions.functionsPassive);
+    }
+
+    public isSuppressChangeDetection() {
+        return isTrue(this.gridOptions.suppressChangeDetection);
+    }
+
+    public isSuppressAnimationFrame() {
+        return isTrue(this.gridOptions.suppressAnimationFrame);
+    }
+
+    public getQuickFilterText(): string | undefined {
+        return this.gridOptions.quickFilterText;
+    }
+
+    public isCacheQuickFilter() {
+        return isTrue(this.gridOptions.cacheQuickFilter);
+    }
+
+    public isUnSortIcon() {
+        return isTrue(this.gridOptions.unSortIcon);
+    }
+
+    public isSuppressMenuHide() {
+        return isTrue(this.gridOptions.suppressMenuHide);
+    }
+
+    public isEnterMovesDownAfterEdit() {
+        return isTrue(this.gridOptions.enterMovesDownAfterEdit);
+    }
+
+    public isEnterMovesDown() {
+        return isTrue(this.gridOptions.enterMovesDown);
+    }
+
+    public isUndoRedoCellEditing() {
+        return isTrue(this.gridOptions.undoRedoCellEditing);
+    }
+
+    public getUndoRedoCellEditingLimit(): number | undefined {
+        return toNumber(this.gridOptions.undoRedoCellEditingLimit);
+    }
+
+    public isEnableCellEditingOnBackspace(): boolean {
+        return isTrue(this.gridOptions.enableCellEditingOnBackspace);
+    }
+
+    public getRowStyle() {
+        return this.gridOptions.rowStyle;
+    }
+
+    public getRowClass() {
+        return this.gridOptions.rowClass;
+    }
+
+    public getRowStyleFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.getRowStyle);
+    }
+
+    public getRowClassFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.getRowClass);
+    }
+
+    public rowClassRules() {
+        return this.gridOptions.rowClassRules;
+    }
+
+    public isServerSideInfiniteScroll(): boolean {
+        return isTrue(this.gridOptions.serverSideInfiniteScroll) || this.gridOptions.serverSideInfiniteScroll === 'legacy';
+    }
+
+    public isServerSideNewInfiniteScroll(): boolean {
+        return isTrue(this.gridOptions.serverSideInfiniteScroll);
+    }
+
+    public getServerSideGroupLevelParamsFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.getServerSideGroupLevelParams);
+    }
+
+    public getCreateChartContainerFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.createChartContainer);
+    }
+
+    public getPopupParent() {
+        return this.gridOptions.popupParent;
+    }
+
+    public getBlockLoadDebounceMillis() {
+        return this.gridOptions.blockLoadDebounceMillis;
+    }
+
+    public getPostProcessPopupFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.postProcessPopup);
+    }
+
+    public getPaginationNumberFormatterFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.paginationNumberFormatter);
+    }
+
+    public getChildCountFunc() {
+        return this.gridOptions.getChildCount;
+    }
+
+    public getIsApplyServerSideTransactionFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.isApplyServerSideTransaction);
+    }
+
+    public getInitialGroupOrderComparator() {
+        const { initialGroupOrderComparator, defaultGroupOrderComparator } = this.gridOptions;
+        if (initialGroupOrderComparator) {
+            return this.mergeGridCommonParams(initialGroupOrderComparator);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (defaultGroupOrderComparator) {
+            return (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => defaultGroupOrderComparator(params.nodeA, params.nodeB);
+        }
+    }
+
+    public getIsFullWidthCellFunc() {
+        const { isFullWidthRow, isFullWidthCell } = this.gridOptions;
+        if (isFullWidthRow) {
+            return this.mergeGridCommonParams(isFullWidthRow);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (isFullWidthCell) {
+            return (params: WithoutGridCommon<IsFullWidthRowParams>) => isFullWidthCell(params.rowNode);
+        }
+    }
+
+    public getFullWidthCellRendererParams() {
+        return this.gridOptions.fullWidthCellRendererParams;
+    }
+
+    public isEmbedFullWidthRows() {
+        return isTrue(this.gridOptions.embedFullWidthRows);
+    }
+
+    public isDetailRowAutoHeight() {
+        return isTrue(this.gridOptions.detailRowAutoHeight);
+    }
+
+    public getBusinessKeyForNodeFunc() {
+        return this.gridOptions.getBusinessKeyForNode;
+    }
+
+    public getApi(): GridApi | undefined | null {
+        return this.gridOptions.api;
+    }
+
+    public getColumnApi(): ColumnApi | undefined | null {
+        return this.gridOptions.columnApi;
+    }
+
+    public isReadOnlyEdit(): boolean {
+        return isTrue(this.gridOptions.readOnlyEdit);
+    }
+
+    public isImmutableData() {
+        // we used to have a property immutableData for this. however this was deprecated
+        // in favour of having Immutable Data on by default when getRowId is provided
+        const getRowIdProvided = this.gridOptions.getRowId != null;
+        const immutableData = isTrue(this.gridOptions.immutableData);
+        // this property is a backwards compatibility property, for those who want
+        // the old behaviour of Row ID's but NOT Immutable Data.
+        const resetRowDataOnUpdate = isTrue(this.gridOptions.resetRowDataOnUpdate);
+
+        if (resetRowDataOnUpdate) { return false; }
+        return getRowIdProvided || immutableData;
+    }
+
+    public isEnsureDomOrder() {
+        return isTrue(this.gridOptions.ensureDomOrder);
+    }
+
+    public isEnableCharts() {
+        if (isTrue(this.gridOptions.enableCharts)) {
+            return ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'enableCharts');
+        }
+        return false;
+    }
+
+    public isEnableChartToolPanelsButton() {
+        return isTrue(this.gridOptions.enableChartToolPanelsButton);
+    }
+
+    public isSuppressChartToolPanelsButton() {
+        return isTrue(this.gridOptions.suppressChartToolPanelsButton);
+    }
+
+    public getColResizeDefault() {
+        return this.gridOptions.colResizeDefault;
+    }
+
+    public isSingleClickEdit() {
+        return isTrue(this.gridOptions.singleClickEdit);
+    }
+
+    public isSuppressClickEdit() {
+        return isTrue(this.gridOptions.suppressClickEdit);
+    }
+
+    public isStopEditingWhenCellsLoseFocus() {
+        return isTrue(this.gridOptions.stopEditingWhenCellsLoseFocus);
+    }
+
+    public getGroupDefaultExpanded(): number | undefined {
+        return this.gridOptions.groupDefaultExpanded;
+    }
+
+    public getMaxConcurrentDatasourceRequests(): number | undefined {
+        const res = toNumber(this.gridOptions.maxConcurrentDatasourceRequests);
+        if (res == null) { return 2; } // 2 is the default
+        if (res <= 0) { return; } // negative number, eg -1, means no max restriction
+        return res;
+    }
+
+    public getMaxBlocksInCache(): number | undefined {
+        return this.gridOptions.maxBlocksInCache;
+    }
+
+    public getCacheOverflowSize(): number | undefined {
+        return this.gridOptions.cacheOverflowSize;
+    }
+
+    public getPaginationPageSize(): number | undefined {
+        return toNumber(this.gridOptions.paginationPageSize);
+    }
+
+    public isPaginateChildRows(): boolean {
+        const shouldPaginate = this.isGroupRemoveSingleChildren() || this.isGroupRemoveLowestSingleChildren();
+        if (shouldPaginate) { return true; }
+        return isTrue(this.gridOptions.paginateChildRows);
+    }
+
+    public getCacheBlockSize(): number | undefined {
+        return oneOrGreater(this.gridOptions.cacheBlockSize);
+    }
+
+    public getInfiniteInitialRowCount(): number | undefined {
+        return this.gridOptions.infiniteInitialRowCount;
+    }
+
+    public getServerSideInitialRowCount(): number {
+        const rowCount = this.gridOptions.serverSideInitialRowCount;
+        if (typeof rowCount === 'number' && rowCount > 0) {
+            return rowCount;
+        }
+        return 1;
+    }
+
+    public isPurgeClosedRowNodes() {
+        return isTrue(this.gridOptions.purgeClosedRowNodes);
+    }
+
+    public isSuppressPaginationPanel() {
+        return isTrue(this.gridOptions.suppressPaginationPanel);
+    }
+
+    public getRowData(): any[] | undefined | null {
+        return this.gridOptions.rowData;
+    }
+
+    public isEnableRtl() {
+        return isTrue(this.gridOptions.enableRtl);
+    }
+
+    public getRowGroupPanelShow() {
+        return this.gridOptions.rowGroupPanelShow;
+    }
+
+    public getPivotPanelShow() {
+        return this.gridOptions.pivotPanelShow;
+    }
+
+    public isDebug() {
+        return isTrue(this.gridOptions.debug);
+    }
+
+    public getColumnDefs() {
+        return this.gridOptions.columnDefs;
+    }
+
+    public getColumnTypes(): { [key: string]: ColDef; } | undefined {
+        return this.gridOptions.columnTypes;
+    }
+
+    public getDatasource(): IDatasource | undefined {
+        return this.gridOptions.datasource;
+    }
+
+    public getViewportDatasource(): IViewportDatasource | undefined {
+        return this.gridOptions.viewportDatasource;
+    }
+
+    public getServerSideDatasource(): IServerSideDatasource | undefined {
+        return this.gridOptions.serverSideDatasource;
+    }
+
+    public isAccentedSort() {
+        return isTrue(this.gridOptions.accentedSort);
+    }
+
+    public isEnableBrowserTooltips() {
+        return isTrue(this.gridOptions.enableBrowserTooltips);
+    }
+
+    public isEnableCellExpressions() {
+        return isTrue(this.gridOptions.enableCellExpressions);
+    }
+
+    public isEnableGroupEdit() {
+        return isTrue(this.gridOptions.enableGroupEdit);
+    }
+
+    public isSuppressMiddleClickScrolls() {
+        return isTrue(this.gridOptions.suppressMiddleClickScrolls);
+    }
+
+    public isPreventDefaultOnContextMenu() {
+        return isTrue(this.gridOptions.preventDefaultOnContextMenu);
+    }
+
+    public isSuppressPreventDefaultOnMouseWheel() {
+        return isTrue(this.gridOptions.suppressPreventDefaultOnMouseWheel);
+    }
+
+    public isSuppressColumnVirtualisation() {
+        return isTrue(this.gridOptions.suppressColumnVirtualisation);
+    }
+
+    public isSuppressRowVirtualisation() {
+        return isTrue(this.gridOptions.suppressRowVirtualisation);
+    }
+
+    public isSuppressContextMenu() {
+        return isTrue(this.gridOptions.suppressContextMenu);
+    }
+
+    public isAllowContextMenuWithControlKey() {
+        return isTrue(this.gridOptions.allowContextMenuWithControlKey);
+    }
+
+    public isSuppressCopyRowsToClipboard() {
+        return isTrue(this.gridOptions.suppressCopyRowsToClipboard);
+    }
+
+    public isSuppressCopySingleCellRanges() {
+        return isTrue(this.gridOptions.suppressCopySingleCellRanges);
+    }
+
+    public isCopyHeadersToClipboard() {
+        return isTrue(this.gridOptions.copyHeadersToClipboard);
+    }
+
+    public isCopyGroupHeadersToClipboard() {
+        return isTrue(this.gridOptions.copyGroupHeadersToClipboard);
+    }
+
+    public isSuppressClipboardPaste() {
+        return isTrue(this.gridOptions.suppressClipboardPaste);
+    }
+
+    public isSuppressLastEmptyLineOnPaste() {
+        return isTrue(this.gridOptions.suppressLastEmptyLineOnPaste);
+    }
+
+    public isPagination() {
+        return isTrue(this.gridOptions.pagination);
+    }
+
+    public getProcessDataFromClipboardFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.processDataFromClipboard);
+    }
+
+    public getAsyncTransactionWaitMillis(): number | undefined {
+        return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : Constants.BATCH_WAIT_MILLIS;
+    }
+
+    public isSuppressMovableColumns() {
+        return isTrue(this.gridOptions.suppressMovableColumns);
+    }
+
+    public isAnimateRows() {
+        // never allow animating if enforcing the row order
+        if (this.isEnsureDomOrder()) { return false; }
+
+        return isTrue(this.gridOptions.animateRows);
+    }
+
+    public isSuppressColumnMoveAnimation() {
+        return isTrue(this.gridOptions.suppressColumnMoveAnimation);
+    }
+
+    public isSuppressAggFuncInHeader() {
+        return isTrue(this.gridOptions.suppressAggFuncInHeader);
+    }
+
+    public isSuppressAggAtRootLevel() {
+        return isTrue(this.gridOptions.suppressAggAtRootLevel);
+    }
+
+    public isSuppressAggFilteredOnly() {
+        const isGroupAggFiltering = this.getGroupAggFiltering() !== undefined;
+        return isGroupAggFiltering || isTrue(this.gridOptions.suppressAggFilteredOnly);
+    }
+
+    public isRemovePivotHeaderRowWhenSingleValueColumn() {
+        return isTrue(this.gridOptions.removePivotHeaderRowWhenSingleValueColumn);
+    }
+
+    public isShowOpenedGroup() {
+        return isTrue(this.gridOptions.showOpenedGroup);
+    }
+
+    public isReactUi() {
+        return isTrue(this.gridOptions.reactUi);
+    }
+
+    public isSuppressReactUi() {
+        return isTrue(this.gridOptions.suppressReactUi);
+    }
+
+    public isEnableRangeSelection(): boolean {
+        return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
+    }
+
+    public isEnableRangeHandle(): boolean {
+        return isTrue(this.gridOptions.enableRangeHandle);
+    }
+
+    public isEnableFillHandle(): boolean {
+        return isTrue(this.gridOptions.enableFillHandle);
+    }
+
+    public getFillHandleDirection(): 'x' | 'y' | 'xy' {
+        const direction = this.gridOptions.fillHandleDirection;
+
+        if (!direction) { return 'xy'; }
 
         if (missing(domData)) {
             domData = {};
@@ -392,12 +1179,12 @@ export class GridOptionsWrapper {
     public getDefaultExportParams(type: 'csv'): CsvExportParams | undefined;
     public getDefaultExportParams(type: 'excel'): ExcelExportParams | undefined;
     public getDefaultExportParams(type: 'csv' | 'excel'): CsvExportParams | ExcelExportParams | undefined {
-        if (this.gridOptions.defaultExportParams) {
+        if ((this.gridOptions as any).defaultExportParams) {
             console.warn(`AG Grid: Since v25.2 \`defaultExportParams\`  has been replaced by \`default${capitalise(type)}ExportParams\`'`);
             if (type === 'csv') {
-                return this.gridOptions.defaultExportParams as CsvExportParams;
+                return (this.gridOptions as any).defaultExportParams as CsvExportParams;
             }
-            return this.gridOptions.defaultExportParams as ExcelExportParams;
+            return (this.gridOptions as any).defaultExportParams as ExcelExportParams;
         }
 
         if (type === 'csv' && this.gridOptions.defaultCsvExportParams) {
@@ -534,6 +1321,30 @@ export class GridOptionsWrapper {
         return false;
     }
 
+    public getTooltipDelay(type: 'show' | 'hide'): number | null {
+        const { tooltipShowDelay, tooltipHideDelay } = this.gridOptions;
+        const delay = type === 'show' ? tooltipShowDelay : tooltipHideDelay;
+        const capitalisedType = capitalise(type);
+
+        if (exists(delay)) {
+            if (delay < 0) {
+                doOnce(() => console.warn(`AG Grid: tooltip${capitalisedType}Delay should not be lower than 0`), `tooltip${capitalisedType}DelayWarn`);
+            }
+
+            return Math.max(200, delay);
+        }
+
+        return null;
+    }
+
+    public isTooltipMouseTrack() {
+        return isTrue(this.gridOptions.tooltipMouseTrack);
+    }
+
+    public isSuppressModelUpdateAfterUpdateTransaction(): boolean {
+        return isTrue(this.gridOptions.suppressModelUpdateAfterUpdateTransaction);
+    }
+
     public getDocument(): Document {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.
@@ -552,30 +1363,8 @@ export class GridOptionsWrapper {
     }
 
     public getMinColWidth(): number {
-        const minColWidth = this.gridOptions.minColWidth;
-
-        if (exists(minColWidth) && minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
-            return this.gridOptions.minColWidth!;
-        }
-
         const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
         return exists(measuredMin) ? Math.max(measuredMin, GridOptionsWrapper.MIN_COL_WIDTH) : GridOptionsWrapper.MIN_COL_WIDTH;
-    }
-
-    public getMaxColWidth() {
-        if (this.gridOptions.maxColWidth && this.gridOptions.maxColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
-            return this.gridOptions.maxColWidth;
-        }
-
-        return null;
-    }
-
-    public getColWidth() {
-        if (typeof this.gridOptions.colWidth !== 'number' || this.gridOptions.colWidth < GridOptionsWrapper.MIN_COL_WIDTH) {
-            return 200;
-        }
-
-        return this.gridOptions.colWidth;
     }
 
     public getRowBuffer(): number {
@@ -625,16 +1414,6 @@ export class GridOptionsWrapper {
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
 
-        if (options.deprecatedEmbedFullWidthRows) {
-            console.warn(`AG Grid: since v21.2, deprecatedEmbedFullWidthRows has been replaced with embedFullWidthRows.`);
-        }
-
-        if (options.rowDeselection) {
-            console.warn(
-                'AG Grid: since v24.x, rowDeselection is deprecated and the behaviour is true by default. Please use `suppressRowDeselection` to prevent rows from being deselected.'
-            );
-        }
-
         if (options.enableMultiRowDragging) {
             options.rowDragMultiRow = true;
             delete options.enableMultiRowDragging;
@@ -643,7 +1422,7 @@ export class GridOptionsWrapper {
             );
         }
 
-        const checkRenamedProperty = (oldProp: string, newProp: string, version: string) => {
+        const checkRenamedProperty = (oldProp: string, newProp: keyof GridOptions, version: string) => {
             if (options[oldProp] != null) {
                 console.warn(`AG Grid: since version ${version}, '${oldProp}' is deprecated / renamed, please use the new property name '${newProp}' instead.`);
                 if (options[newProp] == null) {
@@ -652,61 +1431,11 @@ export class GridOptionsWrapper {
             }
         };
 
-        checkRenamedProperty('batchUpdateWaitMillis', 'asyncTransactionWaitMillis', '23.1.x');
-        checkRenamedProperty('deltaRowDataMode', 'immutableData', '23.1.x');
-
         checkRenamedProperty('serverSideFilteringAlwaysResets', 'serverSideFilterAllLevels', '28.0.0');
         checkRenamedProperty('serverSideSortingAlwaysResets', 'serverSideSortAllLevels', '28.0.0');
 
-        if (options.immutableColumns || options.deltaColumnMode) {
-            console.warn(
-                'AG Grid: since v24.0, immutableColumns and deltaColumnMode properties are gone. The grid now works like this as default. To keep column order maintained, set grid property applyColumnDefOrder=true'
-            );
-        }
-
-        checkRenamedProperty('suppressSetColumnStateEvents', 'suppressColumnStateEvents', '24.0.x');
-
-        if (options.groupRowInnerRenderer || options.groupRowInnerRendererParams || options.groupRowInnerRendererFramework) {
-            console.warn('AG Grid: since v24.0, grid properties groupRowInnerRenderer, groupRowInnerRendererFramework and groupRowInnerRendererParams are no longer used.');
-            console.warn('  Instead use the grid properties groupRowRendererParams.innerRenderer, groupRowRendererParams.innerRendererFramework and groupRowRendererParams.innerRendererParams.');
-            console.warn('  For example instead of this:');
-            console.warn('    groupRowInnerRenderer: "myRenderer"');
-            console.warn('    groupRowInnerRendererParams: {x: a}');
-            console.warn('  Replace with this:');
-            console.warn('    groupRowRendererParams: {');
-            console.warn('      innerRenderer: "myRenderer",');
-            console.warn('      innerRendererParams: {x: a}');
-            console.warn('    }');
-            console.warn('  We have copied the properties over for you. However to stop this error message, please change your application code.');
-            if (!options.groupRowRendererParams) {
-                options.groupRowRendererParams = {};
-            }
-            const params = options.groupRowRendererParams;
-            if (options.groupRowInnerRenderer) {
-                params.innerRenderer = options.groupRowInnerRenderer;
-            }
-            if (options.groupRowInnerRendererParams) {
-                params.innerRendererParams = options.groupRowInnerRendererParams;
-            }
-            if (options.groupRowInnerRendererFramework) {
-                params.innerRendererFramework = options.groupRowInnerRendererFramework;
-            }
-        }
-
         if (options.rememberGroupStateWhenNewData) {
             console.warn('AG Grid: since v24.0, grid property rememberGroupStateWhenNewData is deprecated. This feature was provided before Transaction Updates worked (which keep group state). Now that transaction updates are possible and they keep group state, this feature is no longer needed.');
-        }
-
-        if (options.detailCellRendererParams && options.detailCellRendererParams.autoHeight) {
-            console.warn('AG Grid: since v24.1, grid property detailCellRendererParams.autoHeight is replaced with grid property detailRowAutoHeight. This allows this feature to work when you provide a custom DetailCellRenderer');
-            options.detailRowAutoHeight = true;
-        }
-
-        if (options.suppressKeyboardEvent) {
-            console.warn(
-                `AG Grid: since v24.1 suppressKeyboardEvent in the gridOptions has been deprecated and will be removed in
-                 future versions of AG Grid. If you need this to be set for every column use the defaultColDef property.`
-            );
         }
 
         if (options.suppressEnterpriseResetOnNewColumns) {

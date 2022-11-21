@@ -1,21 +1,21 @@
-import { AbstractHeaderCellCtrl, HeaderGroupCellCtrl, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from 'ag-grid-community';
-import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { AbstractHeaderCellCtrl, HeaderGroupCellCtrl, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _, Constants } from 'ag-grid-community';
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import HeaderCellComp from './headerCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
 import { useEffectOnce } from '../useEffectOnce';
 
-const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
+const HeaderRowComp = (props: { ctrl: HeaderRowCtrl }) => {
 
-    const { gridOptionsService } = useContext(BeansContext);
+    const { gridOptionsWrapper } = useContext(BeansContext);
 
-    const [ transform, setTransform ] = useState<string>();
-    const [ height, setHeight ] = useState<string>();
-    const [ top, setTop ] = useState<string>();
-    const [ width, setWidth ] = useState<string>();
-    const [ ariaRowIndex, setAriaRowIndex ] = useState<number>();
-    const [ cellCtrls, setCellCtrls ] = useState<AbstractHeaderCellCtrl[]>([]);
+    const [transform, setTransform] = useState<string>();
+    const [height, setHeight] = useState<string>();
+    const [top, setTop] = useState<string>();
+    const [width, setWidth] = useState<string>();
+    const [ariaRowIndex, setAriaRowIndex] = useState<number>();
+    const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>([]);
 
     const eGui = useRef<HTMLDivElement>(null);
 
@@ -25,10 +25,12 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     const typeGroup = ctrl.getType() === HeaderRowType.COLUMN_GROUP;
     const typeFilter = ctrl.getType() === HeaderRowType.FLOATING_FILTER;
 
-    const setCellCtrlsMaintainOrder = useCallback( (prev: AbstractHeaderCellCtrl[], next: AbstractHeaderCellCtrl[]) => {
+    const setCellCtrlsMaintainOrder = useCallback((prev: AbstractHeaderCellCtrl[], next: AbstractHeaderCellCtrl[]) => {
+        const isEnsureDomOrder = gridOptionsWrapper.isEnsureDomOrder();
+        const isPrintLayout = gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
-        if (gridOptionsService.is('ensureDomOrder')) {
+        if (isEnsureDomOrder || isPrintLayout) {
             return next;
         }
 
@@ -37,8 +39,8 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         const prevMap = _.mapById(prev, c => c.getInstanceId());
         const nextMap = _.mapById(next, c => c.getInstanceId());
 
-        const oldCtrlsWeAreKeeping = prev.filter( c => nextMap.has(c.getInstanceId()) );
-        const newCtrls = next.filter( c => !prevMap.has(c.getInstanceId()) )
+        const oldCtrlsWeAreKeeping = prev.filter(c => nextMap.has(c.getInstanceId()));
+        const newCtrls = next.filter(c => !prevMap.has(c.getInstanceId()))
 
         return [...oldCtrlsWeAreKeeping, ...newCtrls];
     }, []);
@@ -58,16 +60,16 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     });
 
-    const style = useMemo( ()=> ({
+    const style = useMemo(() => ({
         transform: transform,
         height: height,
         top: top,
         width: width
     }), [transform, height, top, width]);
 
-    const className = useMemo( ()=> {
+    const className = useMemo(() => {
         const res: string[] = [`ag-header-row`];
-        
+
         typeColumn && res.push(`ag-header-row-column`);
         typeGroup && res.push(`ag-header-row-column-group`);
         typeFilter && res.push(`ag-header-row-column-filter`);
@@ -75,15 +77,15 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         return res.join(' ');
     }, []);
 
-    const createCellJsx = useCallback( (cellCtrl: AbstractHeaderCellCtrl) => {
+    const createCellJsx = useCallback((cellCtrl: AbstractHeaderCellCtrl) => {
         switch (ctrl.getType()) {
-            case HeaderRowType.COLUMN_GROUP :
+            case HeaderRowType.COLUMN_GROUP:
                 return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.getInstanceId()} />;
 
-            case HeaderRowType.FLOATING_FILTER :
+            case HeaderRowType.FLOATING_FILTER:
                 return <HeaderFilterCellComp ctrl={cellCtrl as HeaderFilterCellCtrl} key={cellCtrl.getInstanceId()} />;
-                
-            default :
+
+            default:
                 return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.getInstanceId()} />;
         }
     }, []);
@@ -91,7 +93,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     // below, we are not doing floating filters, not yet
     return (
         <div ref={eGui} className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
-            { cellCtrls.map( createCellJsx ) }
+            {cellCtrls.map(createCellJsx)}
         </div>
     );
 };

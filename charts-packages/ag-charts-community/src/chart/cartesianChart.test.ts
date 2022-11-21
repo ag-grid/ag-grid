@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgCartesianChartOptions, AgChartOptions } from './agChartOptions';
-import { AgChartV2 } from './agChartV2';
+import { AgChart } from './agChartV2';
 import { CartesianChart } from './cartesianChart';
 import { Chart, ChartUpdateType } from './chart';
 import { SeriesNodeDataContext } from './series/series';
@@ -106,8 +106,20 @@ const OPTIONS: AgCartesianChartOptions = {
         {
             type: 'area',
             xKey: 'year',
-            yKeys: ['adults', 'children'],
-            yNames: ['Adults', 'Children'],
+            yKey: 'adults',
+            yName: 'Adults',
+            stacked: true,
+            strokeWidth: 10,
+            normalizedTo: 32,
+            marker: { enabled: true },
+            label: { enabled: true },
+        },
+        {
+            type: 'area',
+            xKey: 'year',
+            yKey: 'children',
+            yName: 'Children',
+            stacked: true,
             strokeWidth: 10,
             normalizedTo: 32,
             marker: { enabled: true },
@@ -207,7 +219,7 @@ describe('CartesianChart', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChartV2.create<any>(options);
+                chart = AgChart.create(options) as CartesianChart;
                 await waitForChartStability(chart);
 
                 const seriesImpl = chart.series.find(
@@ -250,7 +262,7 @@ describe('CartesianChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            chart = AgChartV2.create<any>(options);
+            chart = AgChart.create(options) as CartesianChart;
             await waitForChartStability(chart);
 
             const series = chart.series.find((v: any) => v.type === 'scatter');
@@ -258,7 +270,7 @@ describe('CartesianChart', () => {
             const context = nodeDataArray[0];
             const item = context.nodeData.find((n) => n.datum['engine-size'] === 108 && n.datum['highway-mpg'] === 23);
 
-            const { x, y } = series!.group.inverseTransformPoint(item.point.x, item.point.y);
+            const { x, y } = series!.rootGroup.inverseTransformPoint(item.point.x, item.point.y);
 
             await hoverAction(x, y)(chart);
             await waitForChartStability(chart);

@@ -24,11 +24,11 @@ export class AutoGroupColService extends BeanStub {
         let doingMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
 
         if (doingTreeData && doingMultiAutoColumn) {
-            console.warn('AG Grid: you cannot mix groupMultiAutoColumn with treeData, only one column can be used to display groups when doing tree data');
+            console.warn('AG Grid: you cannot mix groupDisplayType = "multipleColumns" with treeData, only one column can be used to display groups when doing tree data');
             doingMultiAutoColumn = false;
         }
 
-        // if doing groupMultiAutoColumn, then we call the method multiple times, once
+        // if doing groupDisplayType = "multipleColumns", then we call the method multiple times, once
         // for each column we are grouping by
         if (doingMultiAutoColumn) {
             rowGroupColumns.forEach((rowGroupCol: Column, index: number) => {
@@ -41,7 +41,7 @@ export class AutoGroupColService extends BeanStub {
         return groupAutoColumns;
     }
 
-    // rowGroupCol and index are missing if groupMultiAutoColumn=false
+    // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
     private createOneAutoGroupColumn(existingCols: Column[], rowGroupCol?: Column, index?: number): Column {
         // if one provided by user, use it, otherwise create one
         let defaultAutoColDef: ColDef = this.generateDefaultColDef(rowGroupCol);

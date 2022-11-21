@@ -21,9 +21,6 @@ const checkCellEditorDeprecations = (popup: boolean, cellEditor: ICellEditor, ce
     }
 }
 
-
-
-
 const CellComp = (props: {
     cellCtrl: CellCtrl,
     printLayout: boolean, 
@@ -44,6 +41,7 @@ const CellComp = (props: {
     const [role, setRole] = createSignal<string>();
     const [colId, setColId] = createSignal<string>();
     const [title, setTitle] = createSignal<string | undefined>();
+    const [selectionCheckboxId, setSelectionCheckboxId] = createSignal<string>();
     const [includeSelection, setIncludeSelection] = createSignal<boolean>(false);
     const [includeRowDrag, setIncludeRowDrag] = createSignal<boolean>(false);
     const [includeDndSource, setIncludeDndSource] = createSignal<boolean>(false);
@@ -69,12 +67,15 @@ const CellComp = (props: {
         const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
         if (editingCancelledByUserComp) {
             // we cannot set state inside render, so hack is to do it in next VM turn
-            setTimeout( ()=> cellCtrl.stopEditing(), 0);
+            setTimeout(() => {
+                cellCtrl.stopEditing(true);
+                cellCtrl.focusCell(true);
+            });
         }
 
         const refAny = ref as any;
         if (refAny.afterGuiAttached) {
-            setTimeout(()=> refAny.afterGuiAttached(), 0);
+            setTimeout(() => refAny.afterGuiAttached(), 0);
         }
     }
     const setPopupEditorRef = (ref: ICellEditor) => setEditorRef(true, ref);
@@ -82,12 +83,23 @@ const CellComp = (props: {
 
     const cssClassManager = new CssClassManager(() => eGui);
 
-    const showTools = createMemo( ()=> renderDetails() != null && (includeSelection() || includeDndSource() || includeRowDrag()) );
-    const showCellWrapper = createMemo( ()=> forceWrapper || showTools() );
+    const showTools = createMemo(() => renderDetails() != null && (includeSelection() || includeDndSource() || includeRowDrag()) );
+    const showCellWrapper = createMemo(() => forceWrapper || showTools());
 
     const cellInstanceId = cellCtrl.getInstanceId();
 
-    const ariaDescribedBy = createMemo( ()=> showCellWrapper() ? `cell-${cellInstanceId}` : undefined);
+    const ariaDescribedBy = createMemo(() => {
+        const cellId = `cell-${cellInstanceId}`;
+        const describedByIds: string[] = [];
+
+        if (includeSelection() && selectionCheckboxId()) {
+            describedByIds.push(selectionCheckboxId()!);
+        }
+        
+        describedByIds.push(cellId);
+
+        return describedByIds.join(' ')
+    });
 
     onMount( () => {
         if (!cellCtrl) { return; }
@@ -137,15 +149,15 @@ const CellComp = (props: {
         cellCtrl.setComp(compProxy, eGui, eCellWrapper, printLayout, editingRow);
     });
 
-    createEffect( ()=> {
+    createEffect(() => {
         cssClassManager.addOrRemoveCssClass('ag-cell-value', !showCellWrapper());
     });
 
     // we only do refreshing for JS Comps. for SolidJS, the props will change for the cell renderer.
-    let readyForRefresh = false;    
-    createEffect( ()=> {
+    let readyForRefresh = false;
+    createEffect(() => {
         const details = renderDetails();
-        const isJsCellRenderer = details!=null && details.compDetails!=null && !details.compDetails.componentFromFramework;
+        const isJsCellRenderer = details != null && details.compDetails != null && !details.compDetails.componentFromFramework;
         if (!isJsCellRenderer) {
             readyForRefresh = false;
             return;
@@ -172,11 +184,12 @@ const CellComp = (props: {
     // when the template is built, only after it. so we defer
     // reading eGui variable until it's needed, after ShowEditDetails
     // is created.
-    const eGuiFn = ()=> eGui;
+    const eGuiFn = () => eGui;
 
-    const bodyJsxFunc = ()=> (
+    const bodyJsxFunc = () => (
         <>
-                <For each={renderCompVersionList()}>{ () =>
+                <For each={
+                    renderCompVersionList()}>{() =>
                     <>
                         { renderDetails() && <ShowRenderDetails 
                             showDetails={renderDetails()!}
@@ -187,18 +200,21 @@ const CellComp = (props: {
                             includeDndSource={includeDndSource()}
                             includeRowDrag={includeRowDrag()}
                             includeSelection={includeSelection()}
+                            setSelectionCheckboxId={setSelectionCheckboxId}
                             showTools={showTools()}
                             setECellValue={setECellValue}
                         /> }
-                    </>                
+                    </>
                 }</For>
-                { editDetails() && <ShowEditDetails 
-                            editDetails={editDetails()!}
-                            cellCtrl={cellCtrl}
-                            eGuiFn={eGuiFn}
-                            setInlineRef={setInlineEditorRef}
-                            setPopupRef={setPopupEditorRef}
-                        /> }
+                { editDetails() &&
+                    <ShowEditDetails
+                        editDetails={editDetails()!}
+                        cellCtrl={cellCtrl}
+                        eGuiFn={eGuiFn}
+                        setInlineRef={setInlineEditorRef}
+                        setPopupRef={setPopupEditorRef}
+                    /> 
+                }
         </>);
 
     return (
@@ -209,10 +225,10 @@ const CellComp = (props: {
             role={ role() as 'gridcell'} //fixme - why not hard code role to gridcell?
             col-id={ colId() }
             title={ title() }
-            aria-describedby={ ariaDescribedBy() }>            {
+            aria-describedby={ ariaDescribedBy() }> {
                 showCellWrapper()
                 ? (
-                    <div class="ag-cell-wrapper" role="presentation" ref={ eCellWrapper! }>
+                    <div class="ag-cell-wrapper" role="presentation" aria-hidden="true" ref={ eCellWrapper! }>
                         { bodyJsxFunc() }
                     </div>
                 )

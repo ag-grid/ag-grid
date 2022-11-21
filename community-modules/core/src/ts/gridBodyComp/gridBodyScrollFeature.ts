@@ -379,7 +379,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const rowCount = this.paginationProxy.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
-            console.warn('invalid row index for ensureIndexVisible: ' + index);
+            console.warn('AG Grid: Invalid row index for ensureIndexVisible: ' + index);
             return;
         }
 

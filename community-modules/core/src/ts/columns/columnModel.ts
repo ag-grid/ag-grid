@@ -295,9 +295,8 @@ export class ColumnModel extends BeanStub {
     }
 
     private createColumnsFromColumnDefs(colsPreviouslyExisted: boolean, source: ColumnEventType = 'api'): void {
-
-        // only need to raise before/after events if updating columns, never if setting columns for first time
-        const raiseEventsFunc = colsPreviouslyExisted ? this.compareColumnStatesAndRaiseEvents(source) : undefined;
+        // only need to dispatch before/after events if updating columns, never if setting columns for first time
+        const dispatchEventsFunc = colsPreviouslyExisted ? this.compareColumnStatesAndDispatchEvents(source) : undefined;
 
         // always invalidate cache on changing columns, as the column id's for the new columns
         // could overlap with the old id's, so the cache would return old values for new columns.
@@ -345,8 +344,8 @@ export class ColumnModel extends BeanStub {
         // in case applications use it
         this.dispatchEverythingChanged(source);
 
-        if (raiseEventsFunc) {
-            raiseEventsFunc();
+        if (dispatchEventsFunc) {
+            dispatchEventsFunc();
         }
 
         this.dispatchNewColumnsLoaded();
@@ -432,7 +431,7 @@ export class ColumnModel extends BeanStub {
         return columns;
     }
 
-    // checks what columns are currently displayed due to column virtualisation. fires an event
+    // checks what columns are currently displayed due to column virtualisation. dispatches an event
     // if the list of columns has changed.
     // + setColumnWidth(), setViewportPosition(), setColumnDefs(), sizeColumnsToFit()
     private checkViewportColumns(): void {
@@ -484,7 +483,7 @@ export class ColumnModel extends BeanStub {
 
         this.pivotMode = pivotMode;
 
-        // we need to update grid columns to cover the scenario where user has groupSuppressAutoColumn=true, as
+        // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
         // so need to updateGridColumn() to check it autoGroupCol needs to be added / removed
         this.autoGroupsNeedBuilding = true;
@@ -595,10 +594,10 @@ export class ColumnModel extends BeanStub {
             this.autoSizeColumnGroupsByColumns(columns, stopAtGroup);
         }
 
-        this.fireColumnResizedEvent(columnsAutosized, true, 'autosizeColumns');
+        this.dispatchColumnResizedEvent(columnsAutosized, true, 'autosizeColumns');
     }
 
-    public fireColumnResizedEvent(columns: Column[] | null, finished: boolean, source: ColumnEventType, flexColumns: Column[] | null = null): void {
+    private dispatchColumnResizedEvent(columns: Column[] | null, finished: boolean, source: ColumnEventType, flexColumns: Column[] | null = null): void {
         if (columns && columns.length) {
             const event: WithoutGridCommon<ColumnResizedEvent> = {
                 type: Events.EVENT_COLUMN_RESIZED,
@@ -610,6 +609,77 @@ export class ColumnModel extends BeanStub {
             };
             this.eventService.dispatchEvent(event);
         }
+    }
+
+    private dispatchColumnChangedEvent(type: string, columns: Column[], source: ColumnEventType): void {
+        const event: WithoutGridCommon<ColumnValueChangedEvent> = {
+            type: type,
+            columns: columns,
+            column: (columns && columns.length == 1) ? columns[0] : null,
+            source: source
+        };
+        this.eventService.dispatchEvent(event);
+    }
+
+    private dispatchColumnMovedEvent(params: {
+        movedColumns: Column[];
+        source: ColumnEventType;
+        toIndex?: number;
+        finished: boolean
+    }): void {
+        const { movedColumns, source, toIndex, finished } = params;
+
+        const event: WithoutGridCommon<ColumnMovedEvent> = {
+            type: Events.EVENT_COLUMN_MOVED,
+            columns: movedColumns,
+            column: movedColumns && movedColumns.length === 1 ? movedColumns[0] : null,
+            toIndex,
+            finished,
+            source
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private dispatchColumnPinnedEvent(changedColumns: Column[], source: ColumnEventType) {
+        if (!changedColumns.length) { return; }
+
+        // if just one column, we use this, otherwise we don't include the col
+        const column: Column | null = changedColumns.length === 1 ? changedColumns[0] : null;
+
+        // only include visible if it's common in all columns
+        const pinned = this.getCommonValue(changedColumns, col => col.getPinned());
+
+        const event: WithoutGridCommon<ColumnPinnedEvent> = {
+            type: Events.EVENT_COLUMN_PINNED,
+            // mistake in typing, 'undefined' should be allowed, as 'null' means 'not pinned'
+            pinned: pinned != null ? pinned : null,
+            columns: changedColumns,
+            column,
+            source: source
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private dispatchColumnVisibleEvent(changedColumns: Column[], source: ColumnEventType) {
+        if (!changedColumns.length) { return; }
+
+        // if just one column, we use this, otherwise we don't include the col
+        const column: Column | null = changedColumns.length === 1 ? changedColumns[0] : null;
+
+        // only include visible if it's common in all columns
+        const visible = this.getCommonValue(changedColumns, col => col.isVisible());
+
+        const event: WithoutGridCommon<ColumnVisibleEvent> = {
+            type: Events.EVENT_COLUMN_VISIBLE,
+            visible,
+            columns: changedColumns,
+            column,
+            source: source
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     public autoSizeColumn(key: string | Column | null, skipHeader?: boolean, source: ColumnEventType = "api"): void {
@@ -1021,7 +1091,7 @@ export class ColumnModel extends BeanStub {
 
         this.updateDisplayedColumns(source);
 
-        this.fireColumnEvent(eventName, masterList, source);
+        this.dispatchColumnChangedEvent(eventName, masterList, source);
     }
 
     public setValueColumns(colKeys: (string | Column)[], source: ColumnEventType = "api"): void {
@@ -1185,10 +1255,10 @@ export class ColumnModel extends BeanStub {
         const passMinMaxCheck = !resizeSets || resizeSets.every(columnResizeSet => this.checkMinAndMaxWidthsForSet(columnResizeSet));
 
         if (!passMinMaxCheck) {
-            // even though we are not going to resize beyond min/max size, we still need to raise event when finished
+            // even though we are not going to resize beyond min/max size, we still need to dispatch event when finished
             if (finished) {
                 const columns = resizeSets && resizeSets.length > 0 ? resizeSets[0].columns : null;
-                this.fireColumnResizedEvent(columns, finished, source);
+                this.dispatchColumnResizedEvent(columns, finished, source);
             }
 
             return; // don't resize!
@@ -1303,14 +1373,14 @@ export class ColumnModel extends BeanStub {
         }
 
         // check for change first, to avoid unnecessary firing of events
-        // however we always fire 'finished' events. this is important
+        // however we always dispatch 'finished' events. this is important
         // when groups are resized, as if the group is changing slowly,
-        // eg 1 pixel at a time, then each change will fire change events
+        // eg 1 pixel at a time, then each change will dispatch change events
         // in all the columns in the group, but only one with get the pixel.
         const colsForEvent = allResizedCols.concat(flexedCols);
 
         if (atLeastOneColChanged || finished) {
-            this.fireColumnResizedEvent(colsForEvent, finished, source, flexedCols);
+            this.dispatchColumnResizedEvent(colsForEvent, finished, source, flexedCols);
         }
     }
 
@@ -1322,17 +1392,7 @@ export class ColumnModel extends BeanStub {
 
         column.setAggFunc(aggFunc);
 
-        this.fireColumnEvent(Events.EVENT_COLUMN_VALUE_CHANGED, [column], source);
-    }
-
-    private fireColumnEvent(type: string, columns: Column[], source: ColumnEventType): void {
-        const event: WithoutGridCommon<ColumnValueChangedEvent> = {
-            type: type,
-            columns: columns,
-            column: (columns && columns.length == 1) ? columns[0] : null,
-            source: source
-        };
-        this.eventService.dispatchEvent(event);
+        this.dispatchColumnChangedEvent(Events.EVENT_COLUMN_VALUE_CHANGED, [column], source);
     }
 
     public moveRowGroupColumn(fromIndex: number, toIndex: number, source: ColumnEventType = "api"): void {
@@ -1351,7 +1411,7 @@ export class ColumnModel extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number, source: ColumnEventType = "api"): void {
+    public moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number, source: ColumnEventType = "api", finished: boolean = true): void {
         this.columnAnimationService.start();
 
         if (toIndex > this.gridColumns.length - columnsToMoveKeys.length) {
@@ -1361,23 +1421,15 @@ export class ColumnModel extends BeanStub {
         }
 
         // we want to pull all the columns out first and put them into an ordered list
-        const columnsToMove = this.getGridColumns(columnsToMoveKeys);
-        const failedRules = !this.doesMovePassRules(columnsToMove, toIndex);
+        const movedColumns = this.getGridColumns(columnsToMoveKeys);
+        const failedRules = !this.doesMovePassRules(movedColumns, toIndex);
 
         if (failedRules) { return; }
 
-        moveInArray(this.gridColumns, columnsToMove, toIndex);
+        moveInArray(this.gridColumns, movedColumns, toIndex);
         this.updateDisplayedColumns(source);
 
-        const event: WithoutGridCommon<ColumnMovedEvent> = {
-            type: Events.EVENT_COLUMN_MOVED,
-            columns: columnsToMove,
-            column: columnsToMove.length === 1 ? columnsToMove[0] : null,
-            toIndex: toIndex,
-            source: source
-        };
-
-        this.eventService.dispatchEvent(event);
+        this.dispatchColumnMovedEvent({ movedColumns, source, toIndex, finished });
         this.columnAnimationService.finish();
     }
 
@@ -1643,7 +1695,7 @@ export class ColumnModel extends BeanStub {
 
     public setColumnsPinned(keys: (string | Column)[], pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
         if (this.gridOptionsWrapper.getDomLayout() === 'print') {
-            console.warn(`Changing the column pinning status is not allowed with domLayout='print'`);
+            console.warn(`AG Grid: Changing the column pinning status is not allowed with domLayout='print'`);
             return;
         }
         this.columnAnimationService.start();
@@ -1964,7 +2016,7 @@ export class ColumnModel extends BeanStub {
         }
 
         const applyStates = (states: ColumnState[], existingColumns: Column[], getById: (id: string) => Column | null) => {
-            const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
+            const dispatchEventsFunc = this.compareColumnStatesAndDispatchEvents(source);
             this.autoGroupsNeedBuilding = true;
 
             // at the end below, this list will have all columns we got no state for
@@ -2075,7 +2127,7 @@ export class ColumnModel extends BeanStub {
             this.updateDisplayedColumns(source);
             this.dispatchEverythingChanged(source);
 
-            raiseEventsFunc(); // Will trigger secondary column changes if pivoting modified
+            dispatchEventsFunc(); // Will trigger secondary column changes if pivoting modified
             return { unmatchedAndAutoStates, unmatchedCount };
         };
 
@@ -2149,7 +2201,7 @@ export class ColumnModel extends BeanStub {
         this.gridColumns = newOrder;
     }
 
-    private compareColumnStatesAndRaiseEvents(source: ColumnEventType): () => void {
+    private compareColumnStatesAndDispatchEvents(source: ColumnEventType): () => void {
 
         const startState = {
             rowGroupColumns: this.rowGroupColumns.slice(),
@@ -2165,12 +2217,10 @@ export class ColumnModel extends BeanStub {
         });
 
         return () => {
-            if (this.gridOptionsService.is('suppressColumnStateEvents')) { return; }
-
             const colsForState = this.getPrimaryAndSecondaryAndAutoColumns();
 
-            // raises generic ColumnEvents where all columns are returned rather than what has changed
-            const raiseWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
+            // dispatches generic ColumnEvents where all columns are returned rather than what has changed
+            const dispatchWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
                 const beforeList = colsBefore.map(idMapper);
                 const afterList = colsAfter.map(idMapper);
                 const unchanged = areEqual(beforeList, afterList);
@@ -2204,13 +2254,13 @@ export class ColumnModel extends BeanStub {
 
             const columnIdMapper = (c: Column) => c.getColId();
 
-            raiseWhenListsDifferent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            dispatchWhenListsDifferent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
                 startState.rowGroupColumns,
                 this.rowGroupColumns,
                 columnIdMapper
             );
 
-            raiseWhenListsDifferent(Events.EVENT_COLUMN_PIVOT_CHANGED,
+            dispatchWhenListsDifferent(Events.EVENT_COLUMN_PIVOT_CHANGED,
                 startState.pivotColumns,
                 this.pivotColumns,
                 columnIdMapper
@@ -2232,17 +2282,17 @@ export class ColumnModel extends BeanStub {
                 // this is more for backwards compatibility, as it's always been this way.
                 // really it should be the other way, as the order of the cols makes no difference
                 // for valueColumns (apart from displaying them in the tool panel).
-                this.fireColumnEvent(Events.EVENT_COLUMN_VALUE_CHANGED, this.valueColumns, source);
+                this.dispatchColumnChangedEvent(Events.EVENT_COLUMN_VALUE_CHANGED, this.valueColumns, source);
             }
 
             const resizeChangePredicate = (cs: ColumnState, c: Column) => cs.width != c.getActualWidth();
-            this.fireColumnResizedEvent(getChangedColumns(resizeChangePredicate), true, source);
+            this.dispatchColumnResizedEvent(getChangedColumns(resizeChangePredicate), true, source);
 
             const pinnedChangePredicate = (cs: ColumnState, c: Column) => cs.pinned != c.getPinned();
-            this.raiseColumnPinnedEvent(getChangedColumns(pinnedChangePredicate), source);
+            this.dispatchColumnPinnedEvent(getChangedColumns(pinnedChangePredicate), source);
 
             const visibilityChangePredicate = (cs: ColumnState, c: Column) => cs.hide == c.isVisible();
-            this.raiseColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
+            this.dispatchColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
 
             const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
             if (getChangedColumns(sortChangePredicate).length > 0) {
@@ -2250,29 +2300,8 @@ export class ColumnModel extends BeanStub {
             }
 
             // special handling for moved column events
-            this.raiseColumnMovedEvent(columnStateBefore, source);
+            this.normaliseColumnMovedEventForColumnState(columnStateBefore, source);
         };
-    }
-
-    private raiseColumnPinnedEvent(changedColumns: Column[], source: ColumnEventType) {
-        if (!changedColumns.length) { return; }
-
-        // if just one column, we use this, otherwise we don't include the col
-        const column: Column | null = changedColumns.length === 1 ? changedColumns[0] : null;
-
-        // only include visible if it's common in all columns
-        const pinned = this.getCommonValue(changedColumns, col => col.getPinned());
-
-        const event: WithoutGridCommon<ColumnPinnedEvent> = {
-            type: Events.EVENT_COLUMN_PINNED,
-            // mistake in typing, 'undefined' should be allowed, as 'null' means 'not pinned'
-            pinned: pinned != null ? pinned : null,
-            columns: changedColumns,
-            column,
-            source: source
-        };
-
-        this.eventService.dispatchEvent(event);
     }
 
     private getCommonValue<T>(cols: Column[], valueGetter: ((col: Column) => T)): T | undefined {
@@ -2290,28 +2319,7 @@ export class ColumnModel extends BeanStub {
         return firstValue;
     }
 
-    private raiseColumnVisibleEvent(changedColumns: Column[], source: ColumnEventType) {
-        if (!changedColumns.length) { return; }
-
-        // if just one column, we use this, otherwise we don't include the col
-        const column: Column | null = changedColumns.length === 1 ? changedColumns[0] : null;
-
-        // only include visible if it's common in all columns
-        const visible = this.getCommonValue(changedColumns, col => col.isVisible());
-
-        const event: WithoutGridCommon<ColumnVisibleEvent> = {
-            type: Events.EVENT_COLUMN_VISIBLE,
-            visible,
-            columns: changedColumns,
-            column,
-            source: source
-        };
-
-        this.eventService.dispatchEvent(event);
-    }
-
-    private raiseColumnMovedEvent(colStateBefore: ColumnState[], source: ColumnEventType) {
-
+    private normaliseColumnMovedEventForColumnState(colStateBefore: ColumnState[], source: ColumnEventType) {
         // we are only interested in columns that were both present and visible before and after
 
         const colStateAfter = this.getColumnState();
@@ -2346,14 +2354,7 @@ export class ColumnModel extends BeanStub {
 
         if (!movedColumns.length) { return; }
 
-        const event: WithoutGridCommon<ColumnMovedEvent> = {
-            type: Events.EVENT_COLUMN_MOVED,
-            columns: movedColumns,
-            column: null,
-            source: source
-        };
-
-        this.eventService.dispatchEvent(event);
+        this.dispatchColumnMovedEvent({ movedColumns, source, finished: true });
     }
 
     private syncColumnWithStateItem(
@@ -2665,7 +2666,7 @@ export class ColumnModel extends BeanStub {
                 // valueGetter is an expression, so execute the expression
                 return this.expressionService.evaluate(headerValueGetter, params);
             }
-            console.warn('ag-grid: headerValueGetter must be a function or a string');
+            console.warn('AG Grid: headerValueGetter must be a function or a string');
             return '';
         } else if (colDef.headerName != null) {
             return colDef.headerName;
@@ -3717,7 +3718,7 @@ export class ColumnModel extends BeanStub {
         }
 
         if (params.fireResizedEvent) {
-            this.fireColumnResizedEvent(changedColumns, true, source, flexingColumns);
+            this.dispatchColumnResizedEvent(changedColumns, true, source, flexingColumns);
         }
 
         // if the user sets rowData directly into GridOptions, then the row data is set before
@@ -3769,7 +3770,7 @@ export class ColumnModel extends BeanStub {
         });
 
         // make a copy of the cols that are going to be resized
-        const colsToFireEventFor = colsToSpread.slice(0);
+        const colsToDispatchEventFor = colsToSpread.slice(0);
         let finishedResizing = false;
 
         const moveToNotSpread = (column: Column) => {
@@ -3784,7 +3785,7 @@ export class ColumnModel extends BeanStub {
         // the columns to start shrinking / growing over time.
         //
         // NOTE: the process below will assign values to `this.actualWidth` of each column without firing events
-        // for this reason we need to manually fire resize events after the resize has been done for each column.
+        // for this reason we need to manually dispatch resize events after the resize has been done for each column.
         colsToSpread.forEach(column => column.resetActualWidth(source));
 
         while (!finishedResizing) {
@@ -3837,7 +3838,7 @@ export class ColumnModel extends BeanStub {
         }
 
         // see notes above
-        colsToFireEventFor.forEach(col => {
+        colsToDispatchEventFor.forEach(col => {
             col.fireColumnWidthChangedEvent(source);
         });
 
@@ -3846,7 +3847,7 @@ export class ColumnModel extends BeanStub {
 
         if (silent) { return; }
 
-        this.fireColumnResizedEvent(colsToFireEventFor, true, source);
+        this.dispatchColumnResizedEvent(colsToDispatchEventFor, true, source);
     }
 
     private buildDisplayedTrees(visibleColumns: Column[]) {
@@ -3939,7 +3940,7 @@ export class ColumnModel extends BeanStub {
             const existingCols = this.groupAutoColumns || [];
             const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(existingCols, this.rowGroupColumns);
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
-            // we force recreate when suppressColumnStateEvents changes, so new group cols pick up the new
+            // we force recreate so new group cols pick up the new
             // definitions. otherwise we could ignore the new cols because they appear to be the same.
             if (autoColsDifferent || this.forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
@@ -4008,9 +4009,8 @@ export class ColumnModel extends BeanStub {
     public getColumnGroupHeaderRowHeight(): number {
         if (this.isPivotMode()) {
             return this.gridOptionsWrapper.getPivotGroupHeaderHeight() as number;
-        } else {
-            return this.gridOptionsWrapper.getGroupHeaderHeight() as number;
         }
+        return this.gridOptionsWrapper.getGroupHeaderHeight() as number;
     }
 
     public getColumnHeaderRowHeight(): number {

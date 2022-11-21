@@ -264,19 +264,6 @@ export class ChartMenu extends Component {
             window.setTimeout(() => {
                 menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(defaultTab);
-                this.addManagedListener(
-                    this.eChartContainer,
-                    'click',
-                    (event: MouseEvent) => {
-                        if (this.getGui().contains(event.target as HTMLElement)) {
-                            return;
-                        }
-
-                        if (this.menuVisible) {
-                            this.hideMenu();
-                        }
-                    }
-                );
                 res(menuPanel);
             }, 100);
         });

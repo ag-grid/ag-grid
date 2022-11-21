@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, Input, ViewEncapsulation} from "@angular/core";
 
-import { Chart, AgChart, AgChartOptions } from 'ag-charts-community';
+import { AgChartInstance, AgChart, AgChartOptions } from 'ag-charts-community';
 
 // noinspection AngularIncorrectTemplateDefinition
 @Component({
@@ -14,7 +14,7 @@ export class AgChartsAngular implements AfterViewInit {
     private _initialised = false;
     private _destroyed = false;
 
-    private _chart!: Chart;
+    private _chart!: AgChartInstance;
 
     @Input()
     public options!: AgChartOptions;

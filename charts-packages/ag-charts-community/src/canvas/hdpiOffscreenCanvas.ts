@@ -14,7 +14,6 @@ export class HdpiOffscreenCanvas {
     imageSource: ImageBitmap;
 
     enabled: boolean = true;
-    opacity: number = 1;
 
     static isSupported() {
         return (window as any)['OffscreenCanvas'] != null;

@@ -1,8 +1,6 @@
-import * as GeneralUtils from './general';
 import * as AriaUtils from './aria';
 import * as ArrayUtils from './array';
 import * as BrowserUtils from './browser';
-import * as CsvUtils from './csv';
 import * as DateUtils from './date';
 import * as DomUtils from './dom';
 import * as EventUtils from './event';
@@ -20,11 +18,9 @@ import * as SetUtils from './set';
 import * as StringUtils from './string';
 
 const utils = {
-    ...GeneralUtils,
     ...AriaUtils,
     ...ArrayUtils,
     ...BrowserUtils,
-    ...CsvUtils,
     ...DateUtils,
     ...DomUtils,
     ...EventUtils,

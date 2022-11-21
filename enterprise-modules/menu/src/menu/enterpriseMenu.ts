@@ -86,7 +86,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         this.showMenu(column, (menu: EnterpriseMenu) => {
             const ePopup = menu.getGui();
 
-            this.popupService.positionPopupUnderComponent({
+            this.popupService.positionPopupByComponent({
                 type: containerType,
                 column,
                 eventSource,
@@ -94,6 +94,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 alignSide,
                 nudgeX: 9 * multiplier,
                 nudgeY: -23,
+                position: 'under',
                 keepWithinBounds: true
             });
 

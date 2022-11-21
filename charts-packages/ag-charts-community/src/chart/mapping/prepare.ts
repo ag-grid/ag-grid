@@ -16,6 +16,7 @@ import { jsonMerge, DELETE, jsonWalk, JsonMergeOptions } from '../../util/json';
 import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
+import { doOnce } from '../../util/function';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
@@ -185,17 +186,21 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
 }
 
 function sanityCheckOptions<T extends AgChartOptions>(options: T) {
-    if (options.series?.some((s: any) => s.yKeys != null && s.yKey != null)) {
-        console.warn(
-            'AG Charts - series options yKeys and yKey are mutually exclusive, please only use yKey for future compatibility.'
-        );
-    }
-
-    if (options.series?.some((s: any) => s.yNames != null && s.yName != null)) {
-        console.warn(
-            'AG Charts - series options yNames and yName are mutually exclusive, please only use yName for future compatibility.'
-        );
-    }
+    const deprecatedArrayProps = {
+        yKeys: 'yKey',
+        yNames: 'yName',
+    };
+    Object.entries(deprecatedArrayProps).forEach(([oldProp, newProp]) => {
+        if (options.series?.some((s: any) => s[oldProp] != null)) {
+            doOnce(
+                () =>
+                    console.warn(
+                        `AG Charts - Property [series.${oldProp}] is deprecated, please use [series.${newProp}] and multiple series instead.`
+                    ),
+                `deprecated series.${oldProp} array`
+            );
+        }
+    });
 }
 
 function prepareMainOptions<T>(

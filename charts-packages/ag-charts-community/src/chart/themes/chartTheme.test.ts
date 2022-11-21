@@ -9,11 +9,12 @@ import { AreaSeries } from '../series/cartesian/areaSeries';
 import { BarSeries } from '../series/cartesian/barSeries';
 import { PieSeries } from '../series/polar/pieSeries';
 import { ChartTheme } from './chartTheme';
-import { AgChartV2 } from '../agChartV2';
+import { AgChart } from '../agChartV2';
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { LineSeries } from '../series/cartesian/lineSeries';
 import { waitForChartStability } from '../test/utils';
+import { Chart } from '../chart';
 
 const data = [
     { label: 'Android', v1: 5.67, v2: 8.63, v3: 8.14, v4: 6.45, v5: 1.37 },
@@ -94,8 +95,44 @@ describe('ChartTheme', () => {
                 {
                     type: 'column',
                     xKey: 'label',
-                    yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
-                    yNames: ['Reliability', 'Ease of use', 'Performance', 'Price', 'Market share'],
+                    yKey: 'v1',
+                    yName: 'Reliability',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v2',
+                    yName: 'Ease of use',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v3',
+                    yName: 'Performance',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v4',
+                    yName: 'Price',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v5',
+                    yName: 'Market share',
                     label: {
                         fontSize: 18,
                     },
@@ -103,7 +140,32 @@ describe('ChartTheme', () => {
                 {
                     type: 'area',
                     xKey: 'label',
-                    yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
+                    yKey: 'v1',
+                    stacked: true,
+                },
+                {
+                    type: 'area',
+                    xKey: 'label',
+                    yKey: 'v2',
+                    stacked: true,
+                },
+                {
+                    type: 'area',
+                    xKey: 'label',
+                    yKey: 'v3',
+                    stacked: true,
+                },
+                {
+                    type: 'area',
+                    xKey: 'label',
+                    yKey: 'v4',
+                    stacked: true,
+                },
+                {
+                    type: 'area',
+                    xKey: 'label',
+                    yKey: 'v5',
+                    stacked: true,
                 },
             ],
         };
@@ -111,7 +173,9 @@ describe('ChartTheme', () => {
         const serializedOptions = JSON.stringify(cartesianChartOptions);
         let chart: CartesianChart;
 
-        beforeEach(() => (chart = AgChartV2.create(cartesianChartOptions)));
+        beforeEach(() => {
+            chart = AgChart.create(cartesianChartOptions) as CartesianChart;
+        });
         afterEach(() => {
             chart.destroy();
             (chart as any) = null;
@@ -206,7 +270,9 @@ describe('ChartTheme', () => {
         const serializedOptions = JSON.stringify(polarChartOptions);
         let chart: PolarChart;
 
-        beforeEach(() => (chart = AgChartV2.create(polarChartOptions)));
+        beforeEach(() => {
+            chart = AgChart.create(polarChartOptions) as PolarChart;
+        });
         afterEach(() => {
             chart.destroy();
             (chart as any) = null;
@@ -293,8 +359,44 @@ describe('ChartTheme', () => {
                 {
                     type: 'column',
                     xKey: 'label',
-                    yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
-                    yNames: ['Reliability', 'Ease of use', 'Performance', 'Price', 'Market share'],
+                    yKey: 'v1',
+                    yName: 'Reliability',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v2',
+                    yName: 'Ease of use',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v3',
+                    yName: 'Performance',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v4',
+                    yName: 'Price',
+                    label: {
+                        fontSize: 18,
+                    },
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v5',
+                    yName: 'Market share',
                     label: {
                         fontSize: 18,
                     },
@@ -323,7 +425,7 @@ describe('ChartTheme', () => {
         };
 
         test('Cartesian chart instance properties', async () => {
-            let cartesianChart = AgChartV2.create(cartesianChartOptions);
+            let cartesianChart = AgChart.create(cartesianChartOptions) as Chart;
             await waitForChartStability(cartesianChart);
 
             expect(cartesianChart!.title && cartesianChart!.title.enabled).toBe(true);
@@ -343,7 +445,7 @@ describe('ChartTheme', () => {
         });
 
         test('Polar chart intstance properties', async () => {
-            let polarChart = AgChartV2.create(polarChartOptions);
+            let polarChart = AgChart.create(polarChartOptions) as Chart;
             await waitForChartStability(polarChart);
 
             expect(polarChart!.title && polarChart!.title.enabled).toBe(true);
@@ -430,17 +532,37 @@ describe('ChartTheme', () => {
         });
 
         test('Themed bottom category, unthemed left number', async () => {
-            const chart = AgChartV2.create({
+            const chart = AgChart.create({
                 theme,
                 data,
                 series: [
                     {
                         type: 'area',
                         xKey: 'label',
-                        yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
+                        yKey: 'v1',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v2',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v3',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v4',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v5',
                     },
                 ],
-            } as AgCartesianChartOptions);
+            } as AgCartesianChartOptions) as Chart;
             await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
@@ -455,17 +577,33 @@ describe('ChartTheme', () => {
         });
 
         test('Specialized chart type themed bottom category, unthemed left number', async () => {
-            const chart = AgChartV2.create({
+            const chart = AgChart.create({
                 type: 'area',
                 theme,
                 data,
                 series: [
                     {
                         xKey: 'label',
-                        yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
+                        yKey: 'v1',
+                    },
+                    {
+                        xKey: 'label',
+                        yKey: 'v2',
+                    },
+                    {
+                        xKey: 'label',
+                        yKey: 'v3',
+                    },
+                    {
+                        xKey: 'label',
+                        yKey: 'v4',
+                    },
+                    {
+                        xKey: 'label',
+                        yKey: 'v5',
                     },
                 ],
-            } as AgCartesianChartOptions);
+            } as AgCartesianChartOptions) as Chart;
             await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
@@ -480,7 +618,7 @@ describe('ChartTheme', () => {
         });
 
         test('Themed right number, unthemed top category', async () => {
-            const chart = AgChartV2.create({
+            const chart = AgChart.create({
                 theme,
                 data,
                 axes: [
@@ -497,10 +635,30 @@ describe('ChartTheme', () => {
                     {
                         type: 'area',
                         xKey: 'label',
-                        yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
+                        yKey: 'v1',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v2',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v3',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v4',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v5',
                     },
                 ],
-            } as AgCartesianChartOptions);
+            } as AgCartesianChartOptions) as Chart;
             await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
@@ -515,7 +673,7 @@ describe('ChartTheme', () => {
         });
 
         test('Partially themed axes', async () => {
-            const chart = AgChartV2.create({
+            const chart = AgChart.create({
                 theme,
                 data,
                 axes: [
@@ -549,10 +707,30 @@ describe('ChartTheme', () => {
                     {
                         type: 'area',
                         xKey: 'label',
-                        yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
+                        yKey: 'v1',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v2',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v3',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v4',
+                    },
+                    {
+                        type: 'area',
+                        xKey: 'label',
+                        yKey: 'v5',
                     },
                 ],
-            } as AgCartesianChartOptions);
+            } as AgCartesianChartOptions) as Chart;
             await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
@@ -646,8 +824,14 @@ describe('ChartTheme', () => {
                 {
                     type: 'column',
                     xKey: 'label',
-                    yKeys: ['v1', 'v2'],
-                    yNames: ['Reliability', 'Ease of use'],
+                    yKey: 'v1',
+                    yName: 'Reliability',
+                },
+                {
+                    type: 'column',
+                    xKey: 'label',
+                    yKey: 'v2',
+                    yName: 'Ease of use',
                 },
                 {
                     type: 'line',
@@ -665,7 +849,7 @@ describe('ChartTheme', () => {
         };
 
         test('Cartesian chart instance properties', async () => {
-            const cartesianChart = AgChartV2.create(cartesianChartOptions);
+            const cartesianChart = AgChart.create(cartesianChartOptions) as Chart;
             await waitForChartStability(cartesianChart);
             const { series } = cartesianChart;
 

@@ -384,6 +384,8 @@ export interface ColumnValueChangedEvent<TData = any> extends ColumnEvent<TData>
 export interface ColumnMovedEvent<TData = any> extends ColumnEvent<TData> {
     /** The position the column was moved to */
     toIndex?: number;
+    /** `True` when the column has finished moving. */
+    finished: boolean;
 }
 
 export interface ColumnVisibleEvent<TData = any> extends ColumnEvent<TData> {

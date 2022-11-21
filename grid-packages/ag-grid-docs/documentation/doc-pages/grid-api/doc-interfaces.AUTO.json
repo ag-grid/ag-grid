@@ -211,7 +211,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "popupPositionFromSelector": {
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'over' | 'under'", "optional": true }
     },
     "newAgStackInstance": {
       "type": {
@@ -964,21 +964,13 @@
       "description": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "newValueHandler": {
-      "description": "/** @deprecated v26 use `valueSetter` instead */",
-      "type": {
-        "arguments": { "params": "NewValueParams<TData>" },
-        "returnType": "boolean",
-        "optional": true
-      }
-    },
     "cellEditorPopup": {
       "description": "/** Set to `true`, to have the cell editor appear in a popup.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cellEditorPopupPosition": {
       "description": "/** Set the position for the popup cell editor. Possible values are\n     *  - `over` Popup will be positioned over the cell\n     *  - `under` Popup will be positioned below the cell leaving the cell value visible.\n     *\n     * Default: `over`. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'over' | 'under'", "optional": true }
     },
     "onCellValueChanged": {
       "description": "/** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */",
@@ -1095,28 +1087,6 @@
     "lockPinned": {
       "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`  */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "pinnedRowCellRenderer": {
-      "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
-    },
-    "pinnedRowCellRendererFramework": {
-      "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "pinnedRowCellRendererParams": {
-      "description": "/** @deprecated v26 Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "pinnedRowValueFormatter": {
-      "description": "/** @deprecated v26 Use valueFormatter for pinned rows, and check params.node.rowPinned. */",
-      "type": {
-        "returnType": "string | ValueFormatterFunc<TData>",
-        "optional": true
-      }
     },
     "pivot": {
       "description": "/** Set to true to pivot by this column. */",
@@ -1317,10 +1287,6 @@
     "unSortIcon": {
       "description": "/** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "sortedAt": {
-      "description": "/** @deprecated since v24 - use sortIndex instead*/",
-      "type": { "returnType": "number", "optional": true }
     },
     "colSpan": {
       "description": "/** By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns. */",
@@ -2366,7 +2332,7 @@
     },
     "popupPosition": {
       "description": "/** Equivalent of setting `colDef.cellEditorPopupPosition` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'over' | 'under'", "optional": true }
     }
   },
   "ColumnPinnedType": {},
@@ -2487,38 +2453,6 @@
       "description": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deltaColumnMode": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "applyColumnDefOrder": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "immutableColumns": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressSetColumnStateEvents": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnStateEvents": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "colWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.width` */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "minColWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.minWidth` */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "maxColWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.maxWidth` */",
-      "type": { "returnType": "number", "optional": true }
-    },
     "headerHeight": {
       "description": "/** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */",
       "type": { "returnType": "number", "optional": true }
@@ -2634,10 +2568,6 @@
       "description": "/** Set the size of the undo / redo stack. Default: `10` */",
       "type": { "returnType": "number", "optional": true }
     },
-    "stopEditingWhenGridLosesFocus": {
-      "description": "/** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "defaultCsvExportParams": {
       "description": "/** A default configuration object used to export to CSV. */",
       "type": { "returnType": "CsvExportParams", "optional": true }
@@ -2657,13 +2587,6 @@
     "excelStyles": {
       "description": "/** A list (array) of Excel styles to be used when exporting to Excel with styles. */",
       "type": { "returnType": "ExcelStyle[]", "optional": true }
-    },
-    "defaultExportParams": {
-      "description": "/** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams */",
-      "type": {
-        "returnType": "CsvExportParams | ExcelExportParams",
-        "optional": true
-      }
     },
     "quickFilterText": {
       "description": "/** Rows are filtered using this text as a quick filter. */",
@@ -3035,10 +2958,6 @@
       "description": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deprecatedEmbedFullWidthRows": {
-      "description": "/** @deprecated v21 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "groupDisplayType": {
       "description": "/** Specifies how the results of row grouping should be displayed.\n     *\n     *  The options are:\n     *\n     * - `'singleColumn'`: single group column automatically added by the grid.\n     * - `'multipleColumns'`: a group column per row group is added automatically.\n     * - `'groupRows'`: group rows are automatically added instead of group columns.\n     * - `'custom'`: informs the grid that group columns will be provided.\n     */",
       "type": { "returnType": "RowGroupingDisplayType", "optional": true }
@@ -3133,26 +3052,6 @@
       "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "groupRowInnerRenderer": {
-      "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupRowInnerRendererFramework": {
-      "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupMultiAutoColumn": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "groupUseEntireRow": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'groupRows' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "groupSuppressAutoColumn": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'custom' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "rememberGroupStateWhenNewData": {
       "description": "/** @deprecated v24 - no longer needed, transaction updates keep group state */",
       "type": { "returnType": "boolean", "optional": true }
@@ -3185,14 +3084,6 @@
       "description": "/** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deltaRowDataMode": {
-      "description": "/** @deprecated v23 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "batchUpdateWaitMillis": {
-      "description": "/** @deprecated v23 use asyncTransactionWaitMillis instead */",
-      "type": { "returnType": "number", "optional": true }
-    },
     "datasource": {
       "description": "/** Provide the datasource for infinite scrolling. */",
       "type": { "returnType": "IDatasource", "optional": true }
@@ -3215,7 +3106,7 @@
     },
     "serverSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean", "optional": true }
+      "type": { "returnType": "boolean | 'legacy'", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -3263,10 +3154,6 @@
     },
     "serverSideFilteringAlwaysResets": {
       "description": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressEnterpriseResetOnNewColumns": {
-      "description": "/** @deprecated v25 */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "viewportDatasource": {
@@ -3373,10 +3260,6 @@
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "rowDeselection": {
-      "description": "/** @deprecated v24 - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "sortingOrder": {
       "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */",
       "type": { "returnType": "('asc' | 'desc' | null)[]", "optional": true }
@@ -3443,14 +3326,6 @@
     "deltaSort": { "type": { "returnType": "boolean", "optional": true } },
     "treeDataDisplayType": {
       "type": { "returnType": "TreeDataDisplayType", "optional": true }
-    },
-    "angularCompileRows": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "angularCompileFilters": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
     },
     "functionsPassive": {
       "type": { "returnType": "boolean", "optional": true }
@@ -3582,14 +3457,6 @@
         "optional": true
       }
     },
-    "suppressKeyboardEvent": {
-      "description": "/** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property. */",
-      "type": {
-        "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
-        "returnType": "boolean",
-        "optional": true
-      }
-    },
     "localeTextFunc": {
       "description": "/** @deprecated v27.2 - Use `getLocaleText` instead. */",
       "type": {
@@ -3697,14 +3564,6 @@
     "getDataPath": {
       "description": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "type": { "returnType": "GetDataPath<TData>", "optional": true }
-    },
-    "defaultGroupSortComparator": {
-      "description": "/** @deprecated v26 - Use initialGroupOrderComparator instead */",
-      "type": {
-        "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
-        "returnType": "number",
-        "optional": true
-      }
     },
     "getChildCount": {
       "description": "/** Allows setting the child count for a group row. */",
@@ -3977,7 +3836,7 @@
       "meta": { "isEvent": true, "name": "onColumnResized" }
     },
     "onColumnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -3986,7 +3845,7 @@
       "meta": { "isEvent": true, "name": "onColumnMoved" }
     },
     "columnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -5857,10 +5716,10 @@
   "ProcessRowParams": {
     "eRow": { "type": { "returnType": "HTMLElement", "optional": false } },
     "ePinnedLeftRow": {
-      "type": { "returnType": "HTMLElement", "optional": false }
+      "type": { "returnType": "HTMLElement", "optional": true }
     },
     "ePinnedRightRow": {
-      "type": { "returnType": "HTMLElement", "optional": false }
+      "type": { "returnType": "HTMLElement", "optional": true }
     },
     "rowIndex": { "type": { "returnType": "number", "optional": false } },
     "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
@@ -7963,6 +7822,10 @@
     "toIndex": {
       "description": "/** The position the column was moved to */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "finished": {
+      "description": "/** `True` when the column has finished moving. */",
+      "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "column": {
@@ -12845,7 +12708,7 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated Use series.calloutLabel instead.\n     */",
+      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
         "optional": true
@@ -12866,7 +12729,7 @@
       }
     },
     "callout": {
-      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated Use series.calloutLine instead.\n     */",
+      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "calloutLine": {
@@ -12890,11 +12753,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
+      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -13222,7 +13085,7 @@
   },
   "AgChartLegendLabelFormatterParams": {
     "id": {
-      "description": "/** @deprecated Use seriesId. */",
+      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId. */",
       "type": { "returnType": "string", "optional": false }
     },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
@@ -13374,7 +13237,7 @@
       "type": { "returnType": "'seriesNodeClick'", "optional": false }
     },
     "series": {
-      "description": "/** @deprecated Use seriesId to get the series ID. */",
+      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "type": { "returnType": "any", "optional": false }
     },
     "seriesId": {
@@ -14025,18 +13888,6 @@
     }
   },
   "AgSeriesHighlightStyle": {
-    "fill": {
-      "description": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated Use item.fill instead.\n     */",
-      "type": { "returnType": "CssColor", "optional": true }
-    },
-    "stroke": {
-      "description": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated Use item.stroke instead.\n     */",
-      "type": { "returnType": "CssColor", "optional": true }
-    },
-    "strokeWidth": {
-      "description": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n     *\n     * @deprecated Use item.strokeWidth instead.\n     */",
-      "type": { "returnType": "PixelSize", "optional": true }
-    },
     "item": {
       "description": "/** Highlight style used for an individual marker when tapped or hovered over. */",
       "type": { "returnType": "AgSeriesHighlightMarkerStyle", "optional": true }
@@ -14052,7 +13903,7 @@
       "type": { "returnType": "'nodeClick'", "optional": false }
     },
     "series": {
-      "description": "/** @deprecated Use seriesId to get the series ID. */",
+      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "type": { "returnType": "any", "optional": false }
     },
     "seriesId": {
@@ -14778,26 +14629,6 @@
       "description": "/** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not.  */",
       "type": { "returnType": "string", "optional": true }
     },
-    "fill": {
-      "description": "/** @deprecated Use {@link marker.fill} instead. */",
-      "type": { "returnType": "CssColor", "optional": true }
-    },
-    "stroke": {
-      "description": "/** @deprecated Use {@link marker.stroke} instead. */",
-      "type": { "returnType": "CssColor", "optional": true }
-    },
-    "strokeWidth": {
-      "description": "/** @deprecated Use {@link marker.strokeWidth} instead. */",
-      "type": { "returnType": "PixelSize", "optional": true }
-    },
-    "fillOpacity": {
-      "description": "/** @deprecated Use {@link marker.fillOpacity} instead. */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
-    "strokeOpacity": {
-      "description": "/** @deprecated Use {@link marker.strokeOpacity} instead. */",
-      "type": { "returnType": "Opacity", "optional": true }
-    },
     "tooltip": {
       "description": "/** Series-specific tooltip configuration.  */",
       "type": { "returnType": "AgScatterSeriesTooltip", "optional": true }
@@ -14863,10 +14694,6 @@
       "description": "/** The key to use to retrieve x-values from the data. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "yKeys": {
-      "description": "/** The keys to use to retrieve y-values from the data.\n     *\n     * @deprecated use yKey and multiple series instead\n     */",
-      "type": { "returnType": "string[]", "optional": true }
-    },
     "yKey": {
       "description": "/** The key to use to retrieve y-values from the data. */",
       "type": { "returnType": "string", "optional": true }
@@ -14875,22 +14702,13 @@
       "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "yNames": {
-      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated use yName and multiple series instead\n     */",
-      "type": { "returnType": "string[]", "optional": true }
-    },
-    "yName": { "type": { "returnType": "string", "optional": true } },
-    "fills": {
-      "description": "/** The colours to cycle through for the fills of the areas.\n     *\n     * @deprecated use fill and multiple series instead\n     */",
-      "type": { "returnType": "CssColor[]", "optional": true }
+    "yName": {
+      "description": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
     },
     "fill": {
       "description": "/** The colour to use for the fill of the area. */",
       "type": { "returnType": "CssColor", "optional": true }
-    },
-    "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the areas.\n     *\n     * @deprecated use stroke and multiple series instead\n     */",
-      "type": { "returnType": "string[]", "optional": true }
     },
     "stroke": {
       "description": "/** The colours to use for the stroke of the areas. */",
@@ -15050,10 +14868,6 @@
       "description": "/** The keys to use to retrieve y-values from the data. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "yKeys": {
-      "description": "/** The keys to use to retrieve y-values from the data.\n     *\n     * @deprecated use yKey and multiple series instead\n     */",
-      "type": { "returnType": "string[] | string[][]", "optional": true }
-    },
     "xName": {
       "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
@@ -15062,25 +14876,10 @@
       "description": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "yNames": {
-      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated use yName and multiple series instead\n     */",
-      "type": {
-        "returnType": "string[] | { [key in string]: string }",
-        "optional": true
-      }
-    },
     "flipXY": { "type": { "returnType": "boolean", "optional": true } },
-    "fills": {
-      "description": "/** The colours to cycle through for the fills of the bars.\n     *\n     * @deprecated use fill and multiple series instead\n     */",
-      "type": { "returnType": "CssColor[]", "optional": true }
-    },
     "fill": {
       "description": "/** The colour to use for the fill of the area. */",
       "type": { "returnType": "CssColor", "optional": true }
-    },
-    "strokes": {
-      "description": "/** The colours to cycle through for the strokes of the bars.\n     *\n     * @deprecated use stroke and multiple series instead\n     */",
-      "type": { "returnType": "string[]", "optional": true }
     },
     "stroke": {
       "description": "/** The colours to use for the stroke of the bars. */",
@@ -15599,7 +15398,7 @@
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
-      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated Use series.calloutLabel instead.\n     */",
+      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
       "type": {
         "returnType": "AgPieSeriesLabelOptions<DatumType>",
         "optional": true
@@ -15620,7 +15419,7 @@
       }
     },
     "callout": {
-      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated Use series.calloutLine instead.\n     */",
+      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
       "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "calloutLine": {
@@ -15644,11 +15443,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
+      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -15779,11 +15578,11 @@
   },
   "AgPieSeriesTooltipRendererParams": {
     "labelKey": {
-      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
+      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
+      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -15849,15 +15648,15 @@
       "type": { "returnType": "DatumType", "optional": false }
     },
     "labelKey": {
-      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated Use calloutLabelKey instead.\n     */",
+      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelKey instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelValue": {
-      "description": "/** labelValue as read from series data via the labelKey property.\n     *\n     * @deprecated Use calloutLabelValue instead.\n     */",
+      "description": "/** labelValue as read from series data via the labelKey property.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelValue instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "labelName": {
-      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated Use calloutLabelName instead.\n     */",
+      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -15909,7 +15708,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "value": {
-      "description": "/** The value of labelKey as specified on series options.\n     *\n     * @deprecated Use item.datum instead.\n     */",
+      "description": "/** The value of labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use item.datum instead.\n     */",
       "type": { "returnType": "any", "optional": true }
     },
     "seriesId": {
@@ -16386,6 +16185,20 @@
     }
   },
   "AgChartOptions": {},
+  "AgChartInstance": {
+    "getOptions": {
+      "description": "/** Get the `AgChartOptions` representing the current chart configuration. */",
+      "type": {
+        "arguments": {},
+        "returnType": "AgChartOptions",
+        "optional": false
+      }
+    },
+    "destroy": {
+      "description": "/** Destroy the chart instance and any allocated resources to support its rendering. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    }
+  },
   "IAggFuncService": {
     "addAggFuncs": {
       "type": {
@@ -16444,7 +16257,7 @@
       "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n     * should cover the cell, or \"under\" if it should be positioned below leaving the\n     * cell value visible. If this method is not present, the default is \"over\".\n     */",
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "'over' | 'under' | undefined",
         "optional": true
       }
     },
@@ -16570,7 +16383,7 @@
       "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n     * should cover the cell, or \"under\" if it should be positioned below leaving the\n     * cell value visible. If this method is not present, the default is \"over\".\n     */",
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "'over' | 'under' | undefined",
         "optional": true
       }
     },
@@ -17198,7 +17011,11 @@
     },
     "getType": {
       "description": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "RowModelType",
+        "optional": false
+      }
     },
     "isLastRowIndexKnown": {
       "description": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
@@ -18453,7 +18270,7 @@
       "type": { "returnType": "0 | 1 | 2", "optional": true }
     },
     "test": {
-      "description": "/** @deprecated use `predicate` instead. */",
+      "description": "/** @deprecated v26.2 use `predicate` instead. */",
       "type": {
         "arguments": { "filterValue": "any", "cellValue": "any" },
         "returnType": "boolean",
@@ -18461,7 +18278,7 @@
       }
     },
     "hideFilterInput": {
-      "description": "/** @deprecated use `numberOfInputs: 0` instead. */",
+      "description": "/** @deprecated v26.2 use `numberOfInputs: 0` instead. */",
       "type": { "returnType": "boolean", "optional": true }
     }
   },
@@ -18729,7 +18546,11 @@
     },
     "getType": {
       "description": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "RowModelType",
+        "optional": false
+      }
     },
     "isLastRowIndexKnown": {
       "description": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
@@ -19505,7 +19326,11 @@
     },
     "getType": {
       "description": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "RowModelType",
+        "optional": false
+      }
     },
     "isLastRowIndexKnown": {
       "description": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
@@ -19868,7 +19693,11 @@
     },
     "getType": {
       "description": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "RowModelType",
+        "optional": false
+      }
     },
     "isLastRowIndexKnown": {
       "description": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
@@ -22015,7 +21844,7 @@
         "arguments": {
           "compDetails?": "UserCompDetails",
           "popup?": "boolean",
-          "position?": "string"
+          "position?": "'over' | 'under'"
         },
         "returnType": "void",
         "optional": false
@@ -23028,7 +22857,9 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "lastRowOnPage": { "type": { "returnType": "boolean", "optional": false } },
-    "printLayout": { "type": { "returnType": "boolean", "optional": false } },
+    "usePositionRelative": {
+      "type": { "returnType": "boolean", "optional": false }
+    },
     "expandable": { "type": { "returnType": "boolean", "optional": false } },
     "pinned": {
       "type": { "returnType": "ColumnPinnedType", "optional": false }
@@ -23248,7 +23079,10 @@
     },
     "onlyBody": { "type": { "returnType": "boolean", "optional": true } },
     "newData": { "type": { "returnType": "boolean", "optional": true } },
-    "newPage": { "type": { "returnType": "boolean", "optional": true } }
+    "newPage": { "type": { "returnType": "boolean", "optional": true } },
+    "domLayoutChanged": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "ITooltipParams": {
     "location": {
@@ -23744,6 +23578,25 @@
       }
     }
   },
+  "PopupPositionParams": {
+    "ePopup": { "type": { "returnType": "HTMLElement", "optional": false } },
+    "column": { "type": { "returnType": "Column | null", "optional": true } },
+    "rowNode": { "type": { "returnType": "RowNode | null", "optional": true } },
+    "x": { "type": { "returnType": "number", "optional": true } },
+    "y": { "type": { "returnType": "number", "optional": true } },
+    "nudgeX": { "type": { "returnType": "number", "optional": true } },
+    "nudgeY": { "type": { "returnType": "number", "optional": true } },
+    "position": {
+      "type": { "returnType": "'over' | 'under'", "optional": true }
+    },
+    "alignSide": {
+      "type": { "returnType": "'left' | 'right'", "optional": true }
+    },
+    "keepWithinBounds": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "skipObserver": { "type": { "returnType": "boolean", "optional": true } }
+  },
   "PopupEventParams": {
     "originalMouseEvent": {
       "type": { "returnType": "MouseEvent | Touch | null", "optional": true }
@@ -24169,7 +24022,7 @@
       "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n     * should cover the cell, or \"under\" if it should be positioned below leaving the\n     * cell value visible. If this method is not present, the default is \"over\".\n     */",
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "'over' | 'under' | undefined",
         "optional": true
       }
     },
@@ -24234,7 +24087,7 @@
       "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n     * should cover the cell, or \"under\" if it should be positioned below leaving the\n     * cell value visible. If this method is not present, the default is \"over\".\n     */",
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "'over' | 'under' | undefined",
         "optional": true
       }
     },
@@ -24433,6 +24286,10 @@
     "maxComponentCreationTimeMs": {
       "type": { "returnType": "number", "optional": true }
     },
+    "rowDataChangeDetectionStrategy": {
+      "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
+    },
+    "children": { "type": { "returnType": "any", "optional": true } },
     "meta": { "typeParams": ["TData = any"] },
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
@@ -24550,38 +24407,6 @@
       "description": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deltaColumnMode": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "applyColumnDefOrder": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "immutableColumns": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressSetColumnStateEvents": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnStateEvents": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "colWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.width` */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "minColWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.minWidth` */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "maxColWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.maxWidth` */",
-      "type": { "returnType": "number", "optional": true }
-    },
     "headerHeight": {
       "description": "/** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */",
       "type": { "returnType": "number", "optional": true }
@@ -24697,10 +24522,6 @@
       "description": "/** Set the size of the undo / redo stack. Default: `10` */",
       "type": { "returnType": "number", "optional": true }
     },
-    "stopEditingWhenGridLosesFocus": {
-      "description": "/** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "defaultCsvExportParams": {
       "description": "/** A default configuration object used to export to CSV. */",
       "type": { "returnType": "CsvExportParams", "optional": true }
@@ -24720,13 +24541,6 @@
     "excelStyles": {
       "description": "/** A list (array) of Excel styles to be used when exporting to Excel with styles. */",
       "type": { "returnType": "ExcelStyle[]", "optional": true }
-    },
-    "defaultExportParams": {
-      "description": "/** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams */",
-      "type": {
-        "returnType": "CsvExportParams | ExcelExportParams",
-        "optional": true
-      }
     },
     "quickFilterText": {
       "description": "/** Rows are filtered using this text as a quick filter. */",
@@ -25098,10 +24912,6 @@
       "description": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deprecatedEmbedFullWidthRows": {
-      "description": "/** @deprecated v21 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "groupDisplayType": {
       "description": "/** Specifies how the results of row grouping should be displayed.\n     *\n     *  The options are:\n     *\n     * - `'singleColumn'`: single group column automatically added by the grid.\n     * - `'multipleColumns'`: a group column per row group is added automatically.\n     * - `'groupRows'`: group rows are automatically added instead of group columns.\n     * - `'custom'`: informs the grid that group columns will be provided.\n     */",
       "type": { "returnType": "RowGroupingDisplayType", "optional": true }
@@ -25196,26 +25006,6 @@
       "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "groupRowInnerRenderer": {
-      "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupRowInnerRendererFramework": {
-      "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupMultiAutoColumn": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "groupUseEntireRow": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'groupRows' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "groupSuppressAutoColumn": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'custom' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "rememberGroupStateWhenNewData": {
       "description": "/** @deprecated v24 - no longer needed, transaction updates keep group state */",
       "type": { "returnType": "boolean", "optional": true }
@@ -25248,14 +25038,6 @@
       "description": "/** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deltaRowDataMode": {
-      "description": "/** @deprecated v23 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "batchUpdateWaitMillis": {
-      "description": "/** @deprecated v23 use asyncTransactionWaitMillis instead */",
-      "type": { "returnType": "number", "optional": true }
-    },
     "datasource": {
       "description": "/** Provide the datasource for infinite scrolling. */",
       "type": { "returnType": "IDatasource", "optional": true }
@@ -25278,7 +25060,7 @@
     },
     "serverSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean", "optional": true }
+      "type": { "returnType": "boolean | 'legacy'", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -25326,10 +25108,6 @@
     },
     "serverSideFilteringAlwaysResets": {
       "description": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressEnterpriseResetOnNewColumns": {
-      "description": "/** @deprecated v25 */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "viewportDatasource": {
@@ -25436,10 +25214,6 @@
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "rowDeselection": {
-      "description": "/** @deprecated v24 - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "sortingOrder": {
       "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */",
       "type": { "returnType": "('asc' | 'desc' | null)[]", "optional": true }
@@ -25506,14 +25280,6 @@
     "deltaSort": { "type": { "returnType": "boolean", "optional": true } },
     "treeDataDisplayType": {
       "type": { "returnType": "TreeDataDisplayType", "optional": true }
-    },
-    "angularCompileRows": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "angularCompileFilters": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
     },
     "functionsPassive": {
       "type": { "returnType": "boolean", "optional": true }
@@ -25645,14 +25411,6 @@
         "optional": true
       }
     },
-    "suppressKeyboardEvent": {
-      "description": "/** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property. */",
-      "type": {
-        "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
-        "returnType": "boolean",
-        "optional": true
-      }
-    },
     "localeTextFunc": {
       "description": "/** @deprecated v27.2 - Use `getLocaleText` instead. */",
       "type": {
@@ -25760,14 +25518,6 @@
     "getDataPath": {
       "description": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "type": { "returnType": "GetDataPath<TData>", "optional": true }
-    },
-    "defaultGroupSortComparator": {
-      "description": "/** @deprecated v26 - Use initialGroupOrderComparator instead */",
-      "type": {
-        "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
-        "returnType": "number",
-        "optional": true
-      }
     },
     "getChildCount": {
       "description": "/** Allows setting the child count for a group row. */",
@@ -26040,7 +25790,7 @@
       "meta": { "isEvent": true, "name": "onColumnResized" }
     },
     "onColumnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -26049,7 +25799,7 @@
       "meta": { "isEvent": true, "name": "onColumnMoved" }
     },
     "columnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -27257,6 +27007,10 @@
     "maxComponentCreationTimeMs": {
       "type": { "returnType": "number", "optional": true }
     },
+    "rowDataChangeDetectionStrategy": {
+      "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
+    },
+    "children": { "type": { "returnType": "any", "optional": true } },
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
       "type": {
@@ -27373,38 +27127,6 @@
       "description": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deltaColumnMode": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "applyColumnDefOrder": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "immutableColumns": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressSetColumnStateEvents": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnStateEvents": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "colWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.width` */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "minColWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.minWidth` */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "maxColWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.maxWidth` */",
-      "type": { "returnType": "number", "optional": true }
-    },
     "headerHeight": {
       "description": "/** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */",
       "type": { "returnType": "number", "optional": true }
@@ -27520,10 +27242,6 @@
       "description": "/** Set the size of the undo / redo stack. Default: `10` */",
       "type": { "returnType": "number", "optional": true }
     },
-    "stopEditingWhenGridLosesFocus": {
-      "description": "/** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "defaultCsvExportParams": {
       "description": "/** A default configuration object used to export to CSV. */",
       "type": { "returnType": "CsvExportParams", "optional": true }
@@ -27543,13 +27261,6 @@
     "excelStyles": {
       "description": "/** A list (array) of Excel styles to be used when exporting to Excel with styles. */",
       "type": { "returnType": "ExcelStyle[]", "optional": true }
-    },
-    "defaultExportParams": {
-      "description": "/** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams */",
-      "type": {
-        "returnType": "CsvExportParams | ExcelExportParams",
-        "optional": true
-      }
     },
     "quickFilterText": {
       "description": "/** Rows are filtered using this text as a quick filter. */",
@@ -27921,10 +27632,6 @@
       "description": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deprecatedEmbedFullWidthRows": {
-      "description": "/** @deprecated v21 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "groupDisplayType": {
       "description": "/** Specifies how the results of row grouping should be displayed.\n     *\n     *  The options are:\n     *\n     * - `'singleColumn'`: single group column automatically added by the grid.\n     * - `'multipleColumns'`: a group column per row group is added automatically.\n     * - `'groupRows'`: group rows are automatically added instead of group columns.\n     * - `'custom'`: informs the grid that group columns will be provided.\n     */",
       "type": { "returnType": "RowGroupingDisplayType", "optional": true }
@@ -28019,26 +27726,6 @@
       "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "groupRowInnerRenderer": {
-      "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupRowInnerRendererFramework": {
-      "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupMultiAutoColumn": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "groupUseEntireRow": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'groupRows' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "groupSuppressAutoColumn": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'custom' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "rememberGroupStateWhenNewData": {
       "description": "/** @deprecated v24 - no longer needed, transaction updates keep group state */",
       "type": { "returnType": "boolean", "optional": true }
@@ -28071,14 +27758,6 @@
       "description": "/** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deltaRowDataMode": {
-      "description": "/** @deprecated v23 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "batchUpdateWaitMillis": {
-      "description": "/** @deprecated v23 use asyncTransactionWaitMillis instead */",
-      "type": { "returnType": "number", "optional": true }
-    },
     "datasource": {
       "description": "/** Provide the datasource for infinite scrolling. */",
       "type": { "returnType": "IDatasource", "optional": true }
@@ -28101,7 +27780,7 @@
     },
     "serverSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean", "optional": true }
+      "type": { "returnType": "boolean | 'legacy'", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -28149,10 +27828,6 @@
     },
     "serverSideFilteringAlwaysResets": {
       "description": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressEnterpriseResetOnNewColumns": {
-      "description": "/** @deprecated v25 */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "viewportDatasource": {
@@ -28259,10 +27934,6 @@
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "rowDeselection": {
-      "description": "/** @deprecated v24 - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "sortingOrder": {
       "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */",
       "type": { "returnType": "('asc' | 'desc' | null)[]", "optional": true }
@@ -28329,14 +28000,6 @@
     "deltaSort": { "type": { "returnType": "boolean", "optional": true } },
     "treeDataDisplayType": {
       "type": { "returnType": "TreeDataDisplayType", "optional": true }
-    },
-    "angularCompileRows": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "angularCompileFilters": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
     },
     "functionsPassive": {
       "type": { "returnType": "boolean", "optional": true }
@@ -28468,14 +28131,6 @@
         "optional": true
       }
     },
-    "suppressKeyboardEvent": {
-      "description": "/** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property. */",
-      "type": {
-        "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
-        "returnType": "boolean",
-        "optional": true
-      }
-    },
     "localeTextFunc": {
       "description": "/** @deprecated v27.2 - Use `getLocaleText` instead. */",
       "type": {
@@ -28583,14 +28238,6 @@
     "getDataPath": {
       "description": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "type": { "returnType": "GetDataPath<TData>", "optional": true }
-    },
-    "defaultGroupSortComparator": {
-      "description": "/** @deprecated v26 - Use initialGroupOrderComparator instead */",
-      "type": {
-        "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
-        "returnType": "number",
-        "optional": true
-      }
     },
     "getChildCount": {
       "description": "/** Allows setting the child count for a group row. */",
@@ -28863,7 +28510,7 @@
       "meta": { "isEvent": true, "name": "onColumnResized" }
     },
     "onColumnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -28872,7 +28519,7 @@
       "meta": { "isEvent": true, "name": "onColumnMoved" }
     },
     "columnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -30060,10 +29707,6 @@
     }
   },
   "AgGridReactProps": {
-    "children": { "type": { "returnType": "any", "optional": true } },
-    "rowDataChangeDetectionStrategy": {
-      "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
-    },
     "disableStaticMarkup": {
       "type": { "returnType": "boolean", "optional": true }
     },
@@ -30090,6 +29733,10 @@
     "maxComponentCreationTimeMs": {
       "type": { "returnType": "number", "optional": true }
     },
+    "rowDataChangeDetectionStrategy": {
+      "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
+    },
+    "children": { "type": { "returnType": "any", "optional": true } },
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
       "type": {
@@ -30206,38 +29853,6 @@
       "description": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deltaColumnMode": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "applyColumnDefOrder": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "immutableColumns": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressSetColumnStateEvents": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressColumnStateEvents": {
-      "description": "/** @deprecated v24 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "colWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.width` */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "minColWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.minWidth` */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "maxColWidth": {
-      "description": "/** @deprecated Set via `defaultColDef.maxWidth` */",
-      "type": { "returnType": "number", "optional": true }
-    },
     "headerHeight": {
       "description": "/** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */",
       "type": { "returnType": "number", "optional": true }
@@ -30353,10 +29968,6 @@
       "description": "/** Set the size of the undo / redo stack. Default: `10` */",
       "type": { "returnType": "number", "optional": true }
     },
-    "stopEditingWhenGridLosesFocus": {
-      "description": "/** @deprecated v25 Use stopEditingWhenCellsLoseFocus instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "defaultCsvExportParams": {
       "description": "/** A default configuration object used to export to CSV. */",
       "type": { "returnType": "CsvExportParams", "optional": true }
@@ -30376,13 +29987,6 @@
     "excelStyles": {
       "description": "/** A list (array) of Excel styles to be used when exporting to Excel with styles. */",
       "type": { "returnType": "ExcelStyle[]", "optional": true }
-    },
-    "defaultExportParams": {
-      "description": "/** @deprecated v25 Use defaultCsvExportParams or defaultExcelExportParams */",
-      "type": {
-        "returnType": "CsvExportParams | ExcelExportParams",
-        "optional": true
-      }
     },
     "quickFilterText": {
       "description": "/** Rows are filtered using this text as a quick filter. */",
@@ -30754,10 +30358,6 @@
       "description": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deprecatedEmbedFullWidthRows": {
-      "description": "/** @deprecated v21 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "groupDisplayType": {
       "description": "/** Specifies how the results of row grouping should be displayed.\n     *\n     *  The options are:\n     *\n     * - `'singleColumn'`: single group column automatically added by the grid.\n     * - `'multipleColumns'`: a group column per row group is added automatically.\n     * - `'groupRows'`: group rows are automatically added instead of group columns.\n     * - `'custom'`: informs the grid that group columns will be provided.\n     */",
       "type": { "returnType": "RowGroupingDisplayType", "optional": true }
@@ -30852,26 +30452,6 @@
       "description": "/** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "groupRowInnerRenderer": {
-      "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupRowInnerRendererFramework": {
-      "description": "/** @deprecated v24 - this is now groupRowRendererParams.innerRenderer */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupMultiAutoColumn": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'multipleColumns' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "groupUseEntireRow": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'groupRows' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "groupSuppressAutoColumn": {
-      "description": "/** @deprecated v26 - Use groupDisplayType = 'custom' instead */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "rememberGroupStateWhenNewData": {
       "description": "/** @deprecated v24 - no longer needed, transaction updates keep group state */",
       "type": { "returnType": "boolean", "optional": true }
@@ -30904,14 +30484,6 @@
       "description": "/** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "deltaRowDataMode": {
-      "description": "/** @deprecated v23 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "batchUpdateWaitMillis": {
-      "description": "/** @deprecated v23 use asyncTransactionWaitMillis instead */",
-      "type": { "returnType": "number", "optional": true }
-    },
     "datasource": {
       "description": "/** Provide the datasource for infinite scrolling. */",
       "type": { "returnType": "IDatasource", "optional": true }
@@ -30934,7 +30506,7 @@
     },
     "serverSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean", "optional": true }
+      "type": { "returnType": "boolean | 'legacy'", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -30982,10 +30554,6 @@
     },
     "serverSideFilteringAlwaysResets": {
       "description": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressEnterpriseResetOnNewColumns": {
-      "description": "/** @deprecated v25 */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "viewportDatasource": {
@@ -31092,10 +30660,6 @@
       "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "rowDeselection": {
-      "description": "/** @deprecated v24 - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "sortingOrder": {
       "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */",
       "type": { "returnType": "('asc' | 'desc' | null)[]", "optional": true }
@@ -31162,14 +30726,6 @@
     "deltaSort": { "type": { "returnType": "boolean", "optional": true } },
     "treeDataDisplayType": {
       "type": { "returnType": "TreeDataDisplayType", "optional": true }
-    },
-    "angularCompileRows": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "angularCompileFilters": {
-      "description": "/** @deprecated v26 */",
-      "type": { "returnType": "boolean", "optional": true }
     },
     "functionsPassive": {
       "type": { "returnType": "boolean", "optional": true }
@@ -31301,14 +30857,6 @@
         "optional": true
       }
     },
-    "suppressKeyboardEvent": {
-      "description": "/** @deprecated v24 - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property. */",
-      "type": {
-        "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
-        "returnType": "boolean",
-        "optional": true
-      }
-    },
     "localeTextFunc": {
       "description": "/** @deprecated v27.2 - Use `getLocaleText` instead. */",
       "type": {
@@ -31416,14 +30964,6 @@
     "getDataPath": {
       "description": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "type": { "returnType": "GetDataPath<TData>", "optional": true }
-    },
-    "defaultGroupSortComparator": {
-      "description": "/** @deprecated v26 - Use initialGroupOrderComparator instead */",
-      "type": {
-        "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
-        "returnType": "number",
-        "optional": true
-      }
     },
     "getChildCount": {
       "description": "/** Allows setting the child count for a group row. */",
@@ -31696,7 +31236,7 @@
       "meta": { "isEvent": true, "name": "onColumnResized" }
     },
     "onColumnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -31705,7 +31245,7 @@
       "meta": { "isEvent": true, "name": "onColumnMoved" }
     },
     "columnMoved": {
-      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
+      "description": "/** A column was moved. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent<TData>" },
         "returnType": "void",
@@ -33089,7 +32629,7 @@
       "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n     * should cover the cell, or \"under\" if it should be positioned below leaving the\n     * cell value visible. If this method is not present, the default is \"over\".\n     */",
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "'over' | 'under' | undefined",
         "optional": true
       }
     },

@@ -23,7 +23,7 @@ export class GridComp extends TabGuardComp {
     private ctrl: GridCtrl;
 
     constructor(eGridDiv: HTMLElement) {
-        super(undefined);
+        super();
         this.eGridDiv = eGridDiv;
     }
 

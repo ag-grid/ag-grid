@@ -13,6 +13,7 @@ import {
     _,
 } from "@ag-grid-community/core";
 import { RichSelectRow } from "./richSelectRow";
+import { bindCellRendererToHtmlElement } from "./utils";
 
 export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 
@@ -219,7 +220,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const promise = compDetails ? compDetails.newAgStackInstance() : undefined;
 
         if (promise) {
-            _.bindCellRendererToHtmlElement(promise, eValue);
+            bindCellRendererToHtmlElement(promise, eValue);
             promise.then(renderer => {
                 this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
             });

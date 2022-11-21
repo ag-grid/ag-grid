@@ -27,7 +27,7 @@ import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
 import { IClipboardService } from "../../interfaces/iClipboardService";
 import { CellCtrl } from "../../rendering/cell/cellCtrl";
-import { RowPinnedType } from "src/ts/main";
+import { RowPinnedType } from "../../entities/rowNode";
 
 export class RowContainerEventsFeature extends BeanStub {
 

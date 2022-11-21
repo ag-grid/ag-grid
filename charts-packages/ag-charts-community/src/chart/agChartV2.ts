@@ -11,6 +11,7 @@ import {
     AgHistogramSeriesOptions,
     AgPieSeriesOptions,
     AgTreemapSeriesOptions,
+    AgChartInstance,
 } from './agChartOptions';
 import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
@@ -100,72 +101,84 @@ function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian
     throw new Error('AG Chart - unknown type of chart for options with type: ' + options.type);
 }
 
-// Backwards-compatibility layer.
+type DeepPartialDepth = [never, 0, 1, 2, 3, 4, 5, 6]; // DeepPartial recursion limit type.
+type DeepPartial<T, N extends DeepPartialDepth[number] = 5> = [N] extends [never]
+    ? Partial<T>
+    : T extends object
+    ? { [P in keyof T]?: DeepPartial<T[P], DeepPartialDepth[N]> }
+    : T;
+
+/**
+ * Factory for creating and updating instances of AgChartInstance.
+ *
+ * @docsInterface
+ */
 export abstract class AgChart {
-    /** @deprecated use AgChart.create() or AgChart.update() instead. */
-    static createComponent(options: any, type: string): any {
-        // console.warn('AG Charts - createComponent should no longer be used, use AgChart.update() instead.')
-
-        if (type.indexOf('.series') >= 0) {
-            const optionsWithType = {
-                ...options,
-                type: options.type || type.split('.')[0],
-            };
-            return createSeries([optionsWithType])[0];
-        }
-
-        return null;
+    /**
+     * Create a new `AgChartInstance` based upon the given configuration options.
+     */
+    public static create(options: AgChartOptions): AgChartInstance {
+        return AgChartInternal.create(options as any);
     }
 
-    public static create<T extends AgChartOptions>(
-        options: T,
-        _container?: HTMLElement,
-        _data?: any[]
-    ): AgChartType<T> {
-        return AgChartV2.create(options as any);
+    /**
+     * Update an existing `AgChartInstance`. Options provided should be complete and not
+     * partial.
+     *
+     * NOTE: each call could trigger a redraw; multiple calls in quick succession could result in
+     * undesirable flickering, so callers should batch up and/or debounce changes to avoid
+     * unintended partial update renderings.
+     */
+    public static update(chart: AgChartInstance, options: AgChartOptions) {
+        return AgChartInternal.update(chart as AgChartType<any>, options as any);
     }
 
-    public static update<T extends AgChartOptions>(
-        chart: AgChartType<T>,
-        options: T,
-        _container?: HTMLElement,
-        _data?: any[]
-    ) {
-        return AgChartV2.update(chart, options as any);
+    /**
+     * Update an existing `AgChartInstance` by applying a partial set of option changes.
+     *
+     * NOTE: each call could trigger a redraw, each delta should leave the chart in a valid options
+     * state. Multiple calls in quick succession could result in undesirable flickering, so callers
+     * should batch up and/or debounce changes to avoid unintended partial update renderings.
+     */
+    public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) {
+        return AgChartInternal.updateUserDelta(chart as AgChartType<any>, deltaOptions as any);
     }
 
-    public static download<T extends AgChartOptions>(chart: AgChartType<T>, options?: DownloadOptions) {
-        return AgChartV2.download(chart, options);
+    /**
+     * Initiate a browser-based image download for the given `AgChartInstance`s rendering.
+     */
+    public static download(chart: AgChartInstance, options?: DownloadOptions) {
+        return AgChartInternal.download(chart as AgChartType<any>, options);
     }
 }
 
-export abstract class AgChartV2 {
+abstract class AgChartInternal {
     static DEBUG = () => windowValue('agChartsDebug') ?? false;
 
     static create<T extends ChartType>(userOptions: ChartOptionType<T> & { overrideDevicePixelRatio?: number }): T {
         debug('user options', userOptions);
         const mixinOpts: any = {};
-        if (AgChartV2.DEBUG()) {
+        if (AgChartInternal.DEBUG()) {
             mixinOpts['debug'] = true;
         }
 
         const { overrideDevicePixelRatio } = userOptions;
         delete userOptions['overrideDevicePixelRatio'];
 
-        const mergedOptions = prepareOptions(userOptions, mixinOpts);
+        const processedOptions = prepareOptions(userOptions, mixinOpts);
 
         let maybeChart: ChartType | undefined = undefined;
-        if (isAgCartesianChartOptions(mergedOptions)) {
+        if (isAgCartesianChartOptions(processedOptions)) {
             maybeChart = new CartesianChart(document, overrideDevicePixelRatio);
-        } else if (isAgHierarchyChartOptions(mergedOptions)) {
+        } else if (isAgHierarchyChartOptions(processedOptions)) {
             maybeChart = new HierarchyChart(document, overrideDevicePixelRatio);
-        } else if (isAgPolarChartOptions(mergedOptions)) {
+        } else if (isAgPolarChartOptions(processedOptions)) {
             maybeChart = new PolarChart(document, overrideDevicePixelRatio);
         }
 
         if (!maybeChart) {
             throw new Error(
-                `AG Charts - couldn\'t apply configuration, check type of options: ${mergedOptions['type']}`
+                `AG Charts - couldn\'t apply configuration, check type of options: ${processedOptions['type']}`
             );
         }
 
@@ -176,7 +189,7 @@ export abstract class AgChartV2 {
                 return;
             }
 
-            await AgChartV2.updateDelta(chart, mergedOptions, userOptions);
+            await AgChartInternal.updateDelta(chart, processedOptions, userOptions);
         });
         return chart as T;
     }
@@ -184,7 +197,7 @@ export abstract class AgChartV2 {
     static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>) {
         debug('user options', userOptions);
         const mixinOpts: any = {};
-        if (AgChartV2.DEBUG()) {
+        if (AgChartInternal.DEBUG()) {
             mixinOpts['debug'] = true;
         }
 
@@ -194,9 +207,9 @@ export abstract class AgChartV2 {
                 return;
             }
 
-            const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>, mixinOpts);
+            const processedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>, mixinOpts);
 
-            if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
+            if (chartType(processedOptions) !== chartType(chart.processedOptions as ChartOptionType<typeof chart>)) {
                 chart.destroy();
                 console.warn(
                     'AG Charts - options supplied require a different type of chart, please recreate the chart.'
@@ -204,13 +217,21 @@ export abstract class AgChartV2 {
                 return;
             }
 
-            const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions);
+            const deltaOptions = jsonDiff<ChartOptionType<T>>(
+                chart.processedOptions as ChartOptionType<T>,
+                processedOptions
+            );
             if (deltaOptions == null) {
                 return;
             }
 
-            await AgChartV2.updateDelta<T>(chart as T, deltaOptions, userOptions);
+            await AgChartInternal.updateDelta<T>(chart as T, deltaOptions, userOptions);
         });
+    }
+
+    static updateUserDelta<T extends ChartType>(chart: Chart, deltaOptions: DeepPartial<ChartOptionType<T>>) {
+        const userOptions = jsonMerge([chart.userOptions, deltaOptions]);
+        AgChartInternal.update(chart, userOptions as any);
     }
 
     /**
@@ -243,7 +264,7 @@ export abstract class AgChartV2 {
             overrideDevicePixelRatio: 1,
         };
 
-        const clonedChart = AgChartV2.create(options as any);
+        const clonedChart = AgChartInternal.create(options as any);
 
         clonedChart.waitForUpdate().then(() => {
             clonedChart.scene.download(fileName, fileFormat);
@@ -253,77 +274,84 @@ export abstract class AgChartV2 {
 
     private static async updateDelta<T extends ChartType>(
         chart: T,
-        update: Partial<ChartOptionType<T>>,
+        processedOptions: Partial<ChartOptionType<T>>,
         userOptions: ChartOptionType<T>
     ) {
-        if (update.type == null) {
-            update = { ...update, type: chart.options.type || optionsType(update) };
+        if (processedOptions.type == null) {
+            processedOptions = {
+                ...processedOptions,
+                type: chart.processedOptions.type || optionsType(processedOptions),
+            };
         }
-        debug('delta update', update);
+        debug('delta update', processedOptions);
 
         await chart.awaitUpdateCompletion();
 
-        applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions);
+        applyChartOptions(chart, processedOptions as ChartOptionType<typeof chart>, userOptions);
     }
 }
 
 function debug(message?: any, ...optionalParams: any[]): void {
-    if (AgChartV2.DEBUG()) {
+    if (AgChartInternal.DEBUG()) {
         console.log(message, ...optionalParams);
     }
 }
 
 function applyChartOptions<T extends ChartType, O extends ChartOptionType<T>>(
     chart: T,
-    options: O,
+    processedOptions: O,
     userOptions: O
 ): void {
-    if (isAgCartesianChartOptions(options)) {
-        applyOptionValues(chart, options, {
+    if (isAgCartesianChartOptions(processedOptions)) {
+        applyOptionValues(chart, processedOptions, {
             skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'],
         });
-    } else if (isAgPolarChartOptions(options)) {
-        applyOptionValues(chart, options, { skip: ['type', 'data', 'series', 'autoSize', 'listeners', 'theme'] });
-    } else if (isAgHierarchyChartOptions(options)) {
-        applyOptionValues(chart, options, { skip: ['type', 'data', 'series', 'autoSize', 'listeners', 'theme'] });
+    } else if (isAgPolarChartOptions(processedOptions)) {
+        applyOptionValues(chart, processedOptions, {
+            skip: ['type', 'data', 'series', 'autoSize', 'listeners', 'theme'],
+        });
+    } else if (isAgHierarchyChartOptions(processedOptions)) {
+        applyOptionValues(chart, processedOptions, {
+            skip: ['type', 'data', 'series', 'autoSize', 'listeners', 'theme'],
+        });
     } else {
         throw new Error(
-            `AG Charts - couldn\'t apply configuration, check type of options and chart: ${options['type']}`
+            `AG Charts - couldn\'t apply configuration, check type of options and chart: ${processedOptions['type']}`
         );
     }
 
     let forceNodeDataRefresh = false;
-    if (options.series && options.series.length > 0) {
-        applySeries<T, O>(chart, options);
+    if (processedOptions.series && processedOptions.series.length > 0) {
+        applySeries<T, O>(chart, processedOptions);
         forceNodeDataRefresh = true;
     }
-    if (isAgCartesianChartOptions(options) && options.axes) {
-        const axesPresent = applyAxes<T, O>(chart, options);
+    if (isAgCartesianChartOptions(processedOptions) && processedOptions.axes) {
+        const axesPresent = applyAxes<T, O>(chart, processedOptions);
         if (axesPresent) {
             forceNodeDataRefresh = true;
         }
     }
 
-    const seriesOpts = options.series as any[];
-    const seriesDataUpdate = !!options.data || seriesOpts?.some((s) => s.data != null);
-    const otherRefreshUpdate = options.legend || options.title || options.subtitle;
+    const seriesOpts = processedOptions.series as any[];
+    const seriesDataUpdate = !!processedOptions.data || seriesOpts?.some((s) => s.data != null);
+    const otherRefreshUpdate = processedOptions.legend || processedOptions.title || processedOptions.subtitle;
     forceNodeDataRefresh = forceNodeDataRefresh || seriesDataUpdate || !!otherRefreshUpdate;
-    if (options.data) {
-        chart.data = options.data;
+    if (processedOptions.data) {
+        chart.data = processedOptions.data;
     }
 
     // Needs to be done last to avoid overrides by width/height properties.
-    if (options.autoSize != null) {
-        chart.autoSize = options.autoSize;
+    if (processedOptions.autoSize != null) {
+        chart.autoSize = processedOptions.autoSize;
     }
-    if (options.listeners) {
-        registerListeners(chart, options.listeners);
+    if (processedOptions.listeners) {
+        registerListeners(chart, processedOptions.listeners);
     }
-    if (options.legend?.listeners) {
-        Object.assign(chart.legend.listeners, options.legend.listeners);
+    if (processedOptions.legend?.listeners) {
+        Object.assign(chart.legend.listeners, processedOptions.legend.listeners);
     }
 
-    chart.options = jsonMerge([chart.options || {}, options], noDataCloneMergeOptions);
+    chart.processedOptions = jsonMerge([chart.processedOptions || {}, processedOptions], noDataCloneMergeOptions);
     chart.userOptions = jsonMerge([chart.userOptions || {}, userOptions], noDataCloneMergeOptions);
 
     const updateType = forceNodeDataRefresh ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
@@ -342,7 +370,7 @@ function applySeries<T extends ChartType, O extends ChartOptionType<T>>(chart: T
     // Try to optimise series updates if series count and types didn't change.
     if (matchingTypes) {
         chart.series.forEach((s, i) => {
-            const previousOpts = chart.options?.series?.[i] || {};
+            const previousOpts = chart.processedOptions?.series?.[i] || {};
             const seriesDiff = jsonDiff(previousOpts, optSeries[i] || {}) as any;
 
             if (!seriesDiff) {
@@ -372,7 +400,7 @@ function applyAxes<T extends ChartType, O extends ChartOptionType<T>>(chart: T, 
 
     // Try to optimise series updates if series count and types didn't change.
     if (matchingTypes) {
-        const oldOpts = chart.options;
+        const oldOpts = chart.processedOptions;
         if (isAgCartesianChartOptions(oldOpts)) {
             chart.axes.forEach((a, i) => {
                 const previousOpts = oldOpts.axes?.[i] || {};
