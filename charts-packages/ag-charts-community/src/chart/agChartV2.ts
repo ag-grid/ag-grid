@@ -154,7 +154,10 @@ export abstract class AgChart {
      * Initiate a browser-based image download for the given `AgChartInstance`s rendering.
      */
     public static download(chart: AgChartInstance, options?: DownloadOptions) {
-        return AgChartInternal.download(chart as AgChartType<any>, options);
+        if (!(chart instanceof AgChartInstanceProxy)) {
+            throw new Error('AG Charts - invalid chart reference passed');
+        }
+        return AgChartInternal.download(chart, options);
     }
 }
 
@@ -255,7 +258,9 @@ abstract class AgChartInternal {
      * Returns the content of the current canvas as an image.
      * @param opts The download options including `width` and `height` of the image as well as `fileName` and `fileFormat`.
      */
-    static download(chart: Chart, opts?: DownloadOptions) {
+    static download(proxy: AgChartInstanceProxy, opts?: DownloadOptions) {
+        const { chart } = proxy;
+
         let { width, height, fileName, fileFormat } = opts || {};
         const currentWidth = chart.width;
         const currentHeight = chart.height;
