@@ -6174,10 +6174,68 @@
       "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
     }
   },
+  "GetKeys": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T", "U"] },
+    "type": "{ [K in keyof T]: U extends T[K] ? K : (T[K] extends U | undefined ? K : never); }[keyof T]"
+  },
+  "KeysLike": {
+    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
+    "type": "Exclude<GetKeys<GridOptions, U>, undefined>"
+  },
+  "KeysOfType": {
+    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
+    "type": "Exclude<GetKeys<GridOptions, U>, AnyGridOptions>"
+  },
+  "BooleanProps": {
+    "meta": { "isTypeAlias": true },
+    "type": "Exclude<KeysOfType<boolean>, AnyGridOptions>"
+  },
+  "NumberProps": {
+    "meta": { "isTypeAlias": true },
+    "type": "Exclude<KeysOfType<number>, AnyGridOptions>"
+  },
+  "NoArgFuncs": {
+    "meta": { "isTypeAlias": true },
+    "type": "KeysOfType<() => any>"
+  },
+  "AnyArgFuncs": {
+    "meta": { "isTypeAlias": true },
+    "type": "KeysOfType<(arg: 'NO_MATCH') => any>"
+  },
+  "CallbackProps": {
+    "meta": { "isTypeAlias": true },
+    "type": "Exclude<KeysOfType<(params: AgGridCommon<any>) => any>, NoArgFuncs | AnyArgFuncs>"
+  },
+  "NonPrimitiveProps": {
+    "meta": { "isTypeAlias": true },
+    "type": "Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>"
+  },
+  "ExtractParamsFromCallback": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TCallback"] },
+    "type": "TCallback extends (params: infer PA) => any ? PA : never"
+  },
+  "ExtractReturnTypeFromCallback": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TCallback"] },
+    "type": "TCallback extends (params: AgGridCommon<any>) => infer RT ? RT : never"
+  },
+  "WrappedCallback": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "K extends CallbackProps",
+        "OriginalCallback extends GridOptions[K]"
+      ]
+    },
+    "type": "undefined | ((params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>) => ExtractReturnTypeFromCallback<OriginalCallback>)"
+  },
   "PropertyChangedEvent": {
     "meta": {},
     "type": { "currentValue": "any", "previousValue": "any", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
+  },
+  "PropertyChangedListener": {
+    "meta": { "isTypeAlias": true },
+    "type": "(event?: PropertyChangedEvent) => void"
   },
   "IAbstractHeaderCellComp": { "meta": {}, "type": {} },
   "IHeaderCellComp": {
@@ -12458,21 +12516,9 @@
     "meta": { "isTypeAlias": true },
     "type": "keyof GridOptions"
   },
-  "GetKeys": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T", "U"] },
-    "type": "{ [K in keyof T]: U extends T[K] ? K : (T[K] extends U | undefined ? K : never); }[keyof T]"
-  },
   "AnyGridOptions": {
     "meta": { "isTypeAlias": true },
     "type": "{ [K in keyof GridOptions]: GridOptions[K] extends 'NO_MATCH' ? K : never; }[keyof GridOptions]"
-  },
-  "KeysLike": {
-    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
-    "type": "Exclude<GetKeys<GridOptions, U>, undefined>"
-  },
-  "KeysOfType": {
-    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
-    "type": "Exclude<GetKeys<GridOptions, U>, AnyGridOptions>"
   },
   "CallbackKeys": {
     "meta": { "isTypeAlias": true },

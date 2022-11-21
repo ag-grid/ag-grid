@@ -10875,6 +10875,25 @@
       }
     }
   },
+  "GetKeys": { "meta": { "typeParams": ["T", "U"] } },
+  "KeysLike": { "meta": { "typeParams": ["U"] } },
+  "KeysOfType": { "meta": { "typeParams": ["U"] } },
+  "BooleanProps": {},
+  "NumberProps": {},
+  "NoArgFuncs": {},
+  "AnyArgFuncs": {},
+  "CallbackProps": {},
+  "NonPrimitiveProps": {},
+  "ExtractParamsFromCallback": { "meta": { "typeParams": ["TCallback"] } },
+  "ExtractReturnTypeFromCallback": { "meta": { "typeParams": ["TCallback"] } },
+  "WrappedCallback": {
+    "meta": {
+      "typeParams": [
+        "K extends CallbackProps",
+        "OriginalCallback extends GridOptions[K]"
+      ]
+    }
+  },
   "PropertyChangedEvent": {
     "currentValue": { "type": { "returnType": "any", "optional": false } },
     "previousValue": { "type": { "returnType": "any", "optional": false } },
@@ -10883,6 +10902,7 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "PropertyChangedListener": {},
   "IAbstractHeaderCellComp": {},
   "IHeaderCellComp": {
     "setWidth": {
@@ -21714,10 +21734,7 @@
   },
   "ModuleNames": {},
   "GridOptionKey": {},
-  "GetKeys": { "meta": { "typeParams": ["T", "U"] } },
   "AnyGridOptions": {},
-  "KeysLike": { "meta": { "typeParams": ["U"] } },
-  "KeysOfType": { "meta": { "typeParams": ["U"] } },
   "CallbackKeys": {},
   "FunctionKeys": {},
   "ICellComp": {
