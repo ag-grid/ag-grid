@@ -846,54 +846,51 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     updateCalloutLabelNodes() {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
-        const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = calloutLabel;
+        const { offset, color } = calloutLabel;
         const seriesBox = this.chart!.getSeriesRect()!;
         const seriesLeft = seriesBox.x - this.centerX;
         const seriesRight = seriesBox.x + seriesBox.width - this.centerX;
+
+        const tempTextNode = new Text();
 
         this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum) => {
             const label = datum.calloutLabel;
             const radius = radiusScale.convert(datum.radius, clamper);
             const outerRadius = Math.max(0, radius);
 
-            if (label && outerRadius !== 0) {
-                const labelRadius = outerRadius + calloutLength + offset;
-
-                text.fontStyle = fontStyle;
-                text.fontWeight = fontWeight;
-                text.fontSize = fontSize;
-                text.fontFamily = fontFamily;
-                text.text = label.text;
-                text.x = datum.midCos * labelRadius;
-                text.y = datum.midSin * labelRadius;
-                text.fill = color;
-                text.textAlign = label.textAlign;
-                text.textBaseline = label.textBaseline;
-
-                // Clip text if there is overflow
-                const box = text.computeBBox();
-                const errPx = 1; // Prevents errors related to floating point calculations
-                let t = 1;
-                if (box.x + errPx < seriesLeft) {
-                    t = (box.x + box.width - seriesLeft) / box.width;
-                } else if (box.x + box.width - errPx > seriesRight) {
-                    t = (seriesRight - box.x) / box.width;
-                }
-                if (t < 1) {
-                    const length = Math.floor(label.text.length * t) - 1;
-                    text.text = label.text.substring(0, length) + '…';
-                }
-                text.visible = true;
-            } else {
+            if (!label || outerRadius === 0) {
                 text.visible = false;
+                return;
             }
+
+            const labelRadius = outerRadius + calloutLength + offset;
+            const x = datum.midCos * labelRadius;
+            const y = datum.midSin * labelRadius;
+
+            // Detect text overflow
+            let visibleTextPart = 1;
+            this.setTextDimensionalProps(tempTextNode, x, y, label);
+            const box = tempTextNode.computeBBox();
+            const errPx = 1; // Prevents errors related to floating point calculations
+            if (box.x + errPx < seriesLeft) {
+                visibleTextPart = (box.x + box.width - seriesLeft) / box.width;
+            } else if (box.x + box.width - errPx > seriesRight) {
+                visibleTextPart = (seriesRight - box.x) / box.width;
+            }
+
+            const textLength = Math.floor(label.text.length * visibleTextPart) - 1;
+            const displayText = visibleTextPart === 1 ? label.text : `${label.text.substring(0, textLength)}…`;
+
+            this.setTextDimensionalProps(text, x, y, { ...label, text: displayText });
+            text.fill = color;
+            text.visible = true;
         });
     }
 
     computeLabelsBBox(): BBox | null {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
-        const { offset, fontStyle, fontWeight, fontSize, fontFamily } = calloutLabel;
+        const { offset } = calloutLabel;
         this.updateRadiusScale();
 
         const text = new Text();
@@ -906,15 +903,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     return null;
                 }
                 const labelRadius = outerRadius + calloutLength + offset;
-                text.fontStyle = fontStyle;
-                text.fontWeight = fontWeight;
-                text.fontSize = fontSize;
-                text.fontFamily = fontFamily;
-                text.text = label.text;
-                text.x = datum.midCos * labelRadius;
-                text.y = datum.midSin * labelRadius;
-                text.textAlign = label.textAlign;
-                text.textBaseline = label.textBaseline;
+                const x = datum.midCos * labelRadius;
+                const y = datum.midSin * labelRadius;
+                this.setTextDimensionalProps(text, x, y, label);
                 return text.computeBBox();
             })
             .filter((box) => box != null) as BBox[];
@@ -922,6 +913,20 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             return null;
         }
         return BBox.merge(textBoxes);
+    }
+
+    private setTextDimensionalProps(textNode: Text, x: number, y: number, label: PieNodeDatum['calloutLabel']) {
+        const { calloutLabel } = this;
+        const { fontStyle, fontWeight, fontSize, fontFamily } = calloutLabel;
+        textNode.fontStyle = fontStyle;
+        textNode.fontWeight = fontWeight;
+        textNode.fontSize = fontSize!;
+        textNode.fontFamily = fontFamily!;
+        textNode.text = label!.text;
+        textNode.x = x;
+        textNode.y = y;
+        textNode.textAlign = label!.textAlign;
+        textNode.textBaseline = label!.textBaseline;
     }
 
     private updateSectorLabelNodes() {
