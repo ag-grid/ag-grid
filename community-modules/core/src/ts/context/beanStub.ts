@@ -6,6 +6,8 @@ import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { Component } from "../widgets/component";
 import { addSafePassiveEventListener } from "../utils/event";
+import { GridOptionsService, PropertyChangedListener } from "../gridOptionsService";
+import { GridOptions } from "../entities/gridOptions";
 
 export class BeanStub implements IEventEmitter {
 
@@ -24,6 +26,7 @@ export class BeanStub implements IEventEmitter {
     @Autowired('context') protected readonly context: Context;
     @Autowired('eventService') protected readonly eventService: EventService;
     @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
     // not destroyed. to use, create a new grid, then api.destroy() before 5 seconds. then anything that gets printed
@@ -104,9 +107,28 @@ export class BeanStub implements IEventEmitter {
 
         const destroyFunc: () => null = () => {
             object.removeEventListener(event, listener);
-
             this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
+            return null;
+        };
 
+        this.destroyFunctions.push(destroyFunc);
+
+        return destroyFunc;
+    }
+
+    public addManagedOptionsListener(
+        event: keyof GridOptions,
+        listener: PropertyChangedListener
+    ): (() => null) | undefined {
+        if (this.destroyed) {
+            return;
+        }
+
+        this.gridOptionsService.addEventListener(event, listener);
+
+        const destroyFunc: () => null = () => {
+            this.gridOptionsService.removeEventListener(event, listener);
+            this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
             return null;
         };
 

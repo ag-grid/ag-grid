@@ -154,25 +154,25 @@ export class LazyBlockLoader extends BeanStub {
             this.nextBlockToLoad = nextBlockToLoad;
             window.clearTimeout(this.loaderTimeout);
 
+            const [startRowString, endRow] = this.nextBlockToLoad;
+            const startRow = Number(startRowString);
             this.loaderTimeout = window.setTimeout(() => {
                 this.loaderTimeout = undefined;
-                this.attemptLoad();
+                this.attemptLoad(startRow, endRow);
                 this.nextBlockToLoad = undefined;
             }, this.gridOptionsWrapper.getBlockLoadDebounceMillis() ?? 0);
         }
     }
 
-    private attemptLoad() {
+    private attemptLoad(start: number, end: number) {
         const availableLoadingCount = this.rowNodeBlockLoader.getAvailableLoadingCount();
         // too many loads already, ignore the request as a successful request will requeue itself anyway
-        if (!this.nextBlockToLoad || (availableLoadingCount != null && availableLoadingCount === 0)) {
+        if (availableLoadingCount != null && availableLoadingCount === 0) {
             return;
         }
 
-        const [startRowString, endRow] = this.nextBlockToLoad;
-        const startRow = Number(startRowString);
         this.rowNodeBlockLoader.registerLoads(1);
-        this.executeLoad(startRow, endRow);
+        this.executeLoad(start, end);
 
         this.queueLoadAction();
     }

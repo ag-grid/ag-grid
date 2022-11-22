@@ -13,7 +13,7 @@ type GetKeys<T, U> = {
  *  Works by finding the properties that can extend a non existing string.
  *  This will only be the properties of type `any`.
  */
-type AnyGridOptions = {
+export type AnyGridOptions = {
     [K in keyof GridOptions]: GridOptions[K] extends 'NO_MATCH' ? K : never
 }[keyof GridOptions];
 

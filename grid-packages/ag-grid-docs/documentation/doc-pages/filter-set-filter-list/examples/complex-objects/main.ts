@@ -1,7 +1,6 @@
 import {
   FirstDataRenderedEvent, Grid,
   GridOptions,
-  IFiltersToolPanel,
   KeyCreatorParams,
   ValueFormatterParams,
 } from '@ag-grid-community/core'
@@ -9,11 +8,24 @@ import {
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     {
-      headerName: 'Country (Complex Object)',
+      headerName: 'Country (Complex Object as Value)',
       field: 'country',
-      keyCreator: countryKeyCreator,
       valueFormatter: countryValueFormatter,
       filter: 'agSetColumnFilter',
+      filterParams: {
+        valueFormatter: countryValueFormatter,
+        keyCreator: countryCodeKeyCreator,
+      },
+    },
+    {
+      headerName: 'Country (Complex Object as String)',
+      field: 'country',
+      valueFormatter: countryValueFormatter,
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        keyCreator: countryNameKeyCreator,
+        convertValuesToStrings: true,
+      },
     },
   ],
   defaultColDef: {
@@ -24,7 +36,12 @@ const gridOptions: GridOptions<IOlympicData> = {
   onFirstDataRendered: onFirstDataRendered,
 }
 
-function countryKeyCreator(params: KeyCreatorParams) {
+function countryCodeKeyCreator(params: KeyCreatorParams) {
+  var countryObject = params.value
+  return countryObject.code
+}
+
+function countryNameKeyCreator(params: KeyCreatorParams) {
   var countryObject = params.value
   return countryObject.name
 }
@@ -50,16 +67,24 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      // hack the data, replace each country with an object of country name and code
+      // hack the data, replace each country with an object of country name and code.
+      // also make country codes unique
+      const uniqueCountryCodes: Map<string, string> = new Map();
+      const newData: any[] = [];
       data.forEach(function (row: any) {
-        var countryName = row.country
-        var countryCode = countryName.substring(0, 2).toUpperCase()
-        row.country = {
-          name: countryName,
-          code: countryCode,
+        const countryName = row.country;
+        const countryCode = countryName.substring(0, 2).toUpperCase();
+        const uniqueCountryName = uniqueCountryCodes.get(countryCode);
+        if (!uniqueCountryName || uniqueCountryName === countryName) {
+          uniqueCountryCodes.set(countryCode, countryName);
+          row.country = {
+            name: countryName,
+            code: countryCode,
+          };
+          newData.push(row);
         }
       })
 
-      gridOptions.api!.setRowData(data)
+      gridOptions.api!.setRowData(newData)
     })
 })
