@@ -8,14 +8,14 @@ import { Chart } from '../chart';
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
-import { AgCartesianChartOptions, AgChartOptions, AgPolarChartOptions } from '../agChartOptions';
+import { AgCartesianChartOptions, AgChartInstance, AgChartOptions, AgPolarChartOptions } from '../agChartOptions';
 import { resetIds } from '../../util/id';
 import * as mockCanvas from './mock-canvas';
 
 export interface TestCase {
     options: AgChartOptions;
-    assertions: (chart: Chart) => Promise<void>;
-    extraScreenshotActions?: (chart: Chart) => Promise<void>;
+    assertions: (chart: AgChartInstance) => Promise<void>;
+    extraScreenshotActions?: (chart: AgChartInstance) => Promise<void>;
 }
 
 export interface CartesianTestCase extends TestCase {
@@ -37,6 +37,10 @@ process.env.FONTCONFIG_NAME = `${__dirname}/fonts.conf`;
 
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;
+
+export function deproxy(chartOrProxy: Chart | AgChartInstance): Chart {
+    return chartOrProxy instanceof Chart ? (chartOrProxy as any) : (chartOrProxy as any).chart;
+}
 
 export function repeat<T>(value: T, count: number): T[] {
     const result = new Array(count);
@@ -71,7 +75,8 @@ export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): D
     return result;
 }
 
-export async function waitForChartStability(chart: Chart, timeoutMs = 5000): Promise<void> {
+export async function waitForChartStability(chartOrProxy: Chart | AgChartInstance, timeoutMs = 5000): Promise<void> {
+    const chart = deproxy(chartOrProxy);
     const chartAny = chart as any;
     if (chart.autoSize === true && !chartAny._lastAutoSize) {
         // Bypass wait for SizeObservable callback - it's never going to be invoked.
@@ -96,7 +101,8 @@ export function clickEvent({ offsetX, offsetY }: { offsetX: number; offsetY: num
 export function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]; seriesTypes?: string[] }) {
     const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params || {};
 
-    return async (chart: Chart) => {
+    return async (chartOrProxy: Chart | AgChartInstance) => {
+        const chart = deproxy(chartOrProxy);
         expect(chart).toBeInstanceOf(CartesianChart);
         expect(chart.axes).toHaveLength(axisTypes.length);
         expect(chart.axes.map((a) => a.type)).toEqual(axisTypes);
@@ -107,7 +113,8 @@ export function cartesianChartAssertions(params?: { type?: string; axisTypes?: s
 export function polarChartAssertions(params?: { seriesTypes?: string[] }) {
     const { seriesTypes = ['pie'] } = params || {};
 
-    return async (chart: Chart) => {
+    return async (chartOrProxy: Chart | AgChartInstance) => {
+        const chart = deproxy(chartOrProxy);
         expect(chart).toBeInstanceOf(PolarChart);
         expect(chart.axes).toHaveLength(0);
         expect(chart.series.map((s) => s.type)).toEqual(seriesTypes);
@@ -117,15 +124,17 @@ export function polarChartAssertions(params?: { seriesTypes?: string[] }) {
 export function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
     const { seriesTypes = ['treemap'] } = params || {};
 
-    return async (chart: Chart) => {
+    return async (chartOrProxy: Chart | AgChartInstance) => {
+        const chart = deproxy(chartOrProxy);
         expect(chart).toBeInstanceOf(HierarchyChart);
         expect(chart.axes).toHaveLength(0);
         expect(chart.series.map((s) => s.type)).toEqual(seriesTypes);
     };
 }
 
-export function hoverAction(x: number, y: number): (chart: Chart) => Promise<void> {
-    return async (chart) => {
+export function hoverAction(x: number, y: number): (chart: Chart | AgChartInstance) => Promise<void> {
+    return async (chartOrProxy) => {
+        const chart = deproxy(chartOrProxy);
         // Reveal tooltip.
         chart.scene.container?.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1 }));
         chart.scene.container?.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y }));
@@ -145,10 +154,10 @@ export function clickAction(x: number, y: number): (chart: Chart) => Promise<voi
     };
 }
 
-export function combineAssertions(...assertions: ((chart: Chart) => void)[]) {
-    return async (chart: Chart) => {
+export function combineAssertions(...assertions: ((chart: AgChartInstance) => void)[]) {
+    return async (chartOrProxy: AgChartInstance) => {
         for (const assertion of assertions) {
-            await assertion(chart);
+            await assertion(chartOrProxy);
         }
     };
 }

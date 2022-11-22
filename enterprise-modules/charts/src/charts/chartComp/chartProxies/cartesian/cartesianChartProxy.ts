@@ -61,6 +61,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     private addCrossFilterOptions(options: AgCartesianChartOptions) {
         const seriesOverrides = this.extractSeriesOverrides();
+        const chart = this.getChart();
 
         options.tooltip = {
             ...options.tooltip,
@@ -72,7 +73,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
             ...seriesOverrides.legend,
             listeners: {
                 legendItemClick: (e: AgChartLegendClickEvent) => {
-                    this.chart.series.forEach(s => {
+                    chart.series.forEach(s => {
                         s.toggleSeriesItem(e.itemId, e.enabled);
                         s.toggleSeriesItem(`${e.itemId}-filtered-out` , e.enabled);
                     });

@@ -252,15 +252,24 @@ export class Scene {
         consoleLog: false,
     };
 
-    destroy() {
-        this.container = undefined;
-
+    /** Alternative to destroy() that preserves re-usable resources. */
+    strip() {
         const { layers } = this;
         for (const layer of layers) {
             layer.canvas.destroy();
             delete (layer as any)['canvas'];
         }
         layers.splice(0, layers.length);
+
+        this.root = null;
+        this._dirty = false;
+        this.ctx.resetTransform();
+    }
+
+    destroy() {
+        this.container = undefined;
+
+        this.strip();
     }
 
     async render(opts?: { debugSplitTimes: number[]; extraDebugStats: Record<string, number> }) {

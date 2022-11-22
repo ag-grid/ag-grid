@@ -2807,10 +2807,6 @@
     "meta": { "isTypeAlias": true },
     "type": "CartesianChart | PolarChart | HierarchyChart"
   },
-  "AgChartType": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
-    "type": "T extends AgCartesianChartOptions ? CartesianChart : T extends AgPolarChartOptions ? PolarChart : T extends AgHierarchyChartOptions ? HierarchyChart : never"
-  },
   "ChartOptionType": {
     "meta": { "isTypeAlias": true, "typeParams": ["T extends ChartType"] },
     "type": "T extends CartesianChart ? AgCartesianChartOptions : T extends PolarChart ? AgPolarChartOptions : T extends HierarchyChart ? AgHierarchyChartOptions : never"
@@ -2840,9 +2836,9 @@
     },
     "docs": {
       "public static create(options: AgChartOptions): AgChartInstance { return AgChartInternal.create(options as any); }": "/** Create a new `AgChartInstance` based upon the given configuration options.\n     */",
-      "public static update(chart: AgChartInstance, options: AgChartOptions) { return AgChartInternal.update(chart as AgChartType<any>, options as any); }": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     *\n     * NOTE: each call could trigger a redraw; multiple calls in quick succession could result in\n     * undesirable flickering, so callers should batch up and/or debounce changes to avoid\n     * unintended partial update renderings.\n     */",
-      "public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) { return AgChartInternal.updateUserDelta(chart as AgChartType<any>, deltaOptions as any); }": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     *\n     * NOTE: each call could trigger a redraw, each delta should leave the chart in a valid options\n     * state. Multiple calls in quick succession could result in undesirable flickering, so callers\n     * should batch up and/or debounce changes to avoid unintended partial update renderings.\n     */",
-      "public static download(chart: AgChartInstance, options?: DownloadOptions) { return AgChartInternal.download(chart as AgChartType<any>, options); }": "/** Initiate a browser-based image download for the given `AgChartInstance`s rendering.\n     */"
+      "public static update(chart: AgChartInstance, options: AgChartOptions) { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.update(chart, options as any); }": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     *\n     * NOTE: each call could trigger a redraw; multiple calls in quick succession could result in\n     * undesirable flickering, so callers should batch up and/or debounce changes to avoid\n     * unintended partial update renderings.\n     */",
+      "public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.updateUserDelta(chart, deltaOptions as any); }": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     *\n     * NOTE: each call could trigger a redraw, each delta should leave the chart in a valid options\n     * state. Multiple calls in quick succession could result in undesirable flickering, so callers\n     * should batch up and/or debounce changes to avoid unintended partial update renderings.\n     */",
+      "public static download(chart: AgChartInstance, options?: DownloadOptions) { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.download(chart, options); }": "/** Initiate a browser-based image download for the given `AgChartInstance`s rendering.\n     */"
     }
   },
   "ObservableLike": {
@@ -2864,6 +2860,10 @@
   "OptionalHTMLElement": {
     "meta": { "isTypeAlias": true },
     "type": "HTMLElement | undefined | null"
+  },
+  "TransferableResources": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ container?: OptionalHTMLElement; scene: Scene; element: HTMLElement; }"
   },
   "ChartAxisDirection": {
     "meta": { "isEnum": true },
@@ -3297,24 +3297,24 @@
     "meta": {},
     "type": {
       "options": "AgChartOptions",
-      "assertions": "(chart: Chart) => Promise<void>",
-      "extraScreenshotActions?": "(chart: Chart) => Promise<void>"
+      "assertions": "(chart: AgChartInstance) => Promise<void>",
+      "extraScreenshotActions?": "(chart: AgChartInstance) => Promise<void>"
     }
   },
   "CartesianTestCase": {
     "meta": {},
     "type": {
       "options": "AgCartesianChartOptions",
-      "assertions": "(chart: Chart) => Promise<void>",
-      "extraScreenshotActions?": "(chart: Chart) => Promise<void>"
+      "assertions": "(chart: AgChartInstance) => Promise<void>",
+      "extraScreenshotActions?": "(chart: AgChartInstance) => Promise<void>"
     }
   },
   "PolarTestCase": {
     "meta": {},
     "type": {
       "options": "AgPolarChartOptions",
-      "assertions": "(chart: Chart) => Promise<void>",
-      "extraScreenshotActions?": "(chart: Chart) => Promise<void>"
+      "assertions": "(chart: AgChartInstance) => Promise<void>",
+      "extraScreenshotActions?": "(chart: AgChartInstance) => Promise<void>"
     }
   },
   "ChartThemeDefaults": {

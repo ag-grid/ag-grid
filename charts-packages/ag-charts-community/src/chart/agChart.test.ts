@@ -6,8 +6,7 @@ import { LineSeries } from './series/cartesian/lineSeries';
 import { NumberAxis } from './axis/numberAxis';
 import { ChartTheme } from './themes/chartTheme';
 import { AgChart } from './agChartV2';
-import { waitForChartStability } from './test/utils';
-import { Chart } from './chart';
+import { deproxy, waitForChartStability } from './test/utils';
 
 const revenueProfitData = [
     {
@@ -46,7 +45,7 @@ describe('update', () => {
     });
 
     test('cartesian chart top-level properties', async () => {
-        const chart = AgChart.create({
+        const chartProxy = AgChart.create({
             // chart type is optional because it defaults to `cartesian`
             container: document.body,
             data: revenueProfitData,
@@ -72,9 +71,9 @@ describe('update', () => {
                     paddingY: 16,
                 },
             },
-        }) as Chart;
-        await waitForChartStability(chart);
-        AgChart.update(chart, {
+        });
+        await waitForChartStability(chartProxy);
+        AgChart.update(chartProxy, {
             width: 500,
             height: 500,
             autoSize: false,
@@ -115,10 +114,11 @@ describe('update', () => {
                 position: 'bottom',
             },
         });
-        await waitForChartStability(chart);
+        await waitForChartStability(chartProxy);
 
         const theme = new ChartTheme();
 
+        const chart = deproxy(chartProxy);
         expect(chart.container).toBeInstanceOf(HTMLElement);
         expect(chart.width).toBe(500);
         expect(chart.height).toBe(500);
@@ -140,7 +140,7 @@ describe('update', () => {
         expect(chart.background.visible).toBe(false);
         expect((chart.series[0] as any).marker.shape).toBe('plus');
 
-        AgChart.update(chart, {
+        AgChart.update(chartProxy, {
             data: revenueProfitData,
             series: [
                 {
@@ -161,7 +161,7 @@ describe('update', () => {
                 },
             },
         });
-        await waitForChartStability(chart);
+        await waitForChartStability(chartProxy);
 
         expect(chart.title!.enabled).toBe(theme.getConfig('cartesian.title.enabled'));
         expect(chart.title!.text).toBe(theme.getConfig('cartesian.title.text'));
@@ -176,7 +176,7 @@ describe('update', () => {
     });
 
     test('series', async () => {
-        const chart = AgChart.create({
+        const chartProxy = AgChart.create({
             data: revenueProfitData,
             series: [
                 {
@@ -195,11 +195,13 @@ describe('update', () => {
                     fill: 'lime',
                 },
             ],
-        }) as Chart;
-        await waitForChartStability(chart);
+        });
+        await waitForChartStability(chartProxy);
+
+        const chart = deproxy(chartProxy);
         const createdSeries = chart.series;
 
-        AgChart.update(chart, {
+        AgChart.update(chartProxy, {
             data: revenueProfitData,
             series: [
                 {
@@ -232,7 +234,7 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
+        await waitForChartStability(chartProxy);
         const updatedSeries = chart.series;
 
         expect(updatedSeries.length).toEqual(3);
@@ -246,7 +248,7 @@ describe('update', () => {
         expect((updatedSeries[2] as any).xKey).toEqual('month');
         expect((updatedSeries[2] as any).yKeys).toEqual(['foobar']);
 
-        AgChart.update(chart, {
+        AgChart.update(chartProxy, {
             data: revenueProfitData,
             series: [
                 {
@@ -272,14 +274,14 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
+        await waitForChartStability(chartProxy);
         const updatedSeries2 = chart.series;
 
         expect(updatedSeries2.length).toBe(2);
         expect(updatedSeries2[0]).not.toBe(updatedSeries[0]);
         expect(updatedSeries2[1]).not.toBe(updatedSeries[1]);
 
-        AgChart.update(chart, {
+        AgChart.update(chartProxy, {
             data: revenueProfitData,
             series: [
                 {
@@ -307,7 +309,7 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
+        await waitForChartStability(chartProxy);
         const updatedSeries3 = chart.series;
 
         expect(updatedSeries3.length).toBe(2);
@@ -321,7 +323,7 @@ describe('update', () => {
 
         const lineSeries = updatedSeries3[1];
 
-        AgChart.update(chart, {
+        AgChart.update(chartProxy, {
             data: revenueProfitData,
             series: [
                 {
@@ -349,7 +351,7 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
+        await waitForChartStability(chartProxy);
         const updatedSeries4 = chart.series;
 
         expect(updatedSeries4.length).toEqual(2);
@@ -359,7 +361,7 @@ describe('update', () => {
     });
 
     test('axes', async () => {
-        let chart = AgChart.create({
+        let chartProxy = AgChart.create({
             data: revenueProfitData,
             series: [
                 {
@@ -367,10 +369,10 @@ describe('update', () => {
                     yKey: 'revenue',
                 },
             ],
-        }) as Chart;
-        await waitForChartStability(chart);
+        });
+        await waitForChartStability(chartProxy);
 
-        AgChart.update(chart, {
+        AgChart.update(chartProxy, {
             data: revenueProfitData,
             series: [
                 {
@@ -392,8 +394,9 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
+        await waitForChartStability(chartProxy);
 
+        const chart = deproxy(chartProxy);
         let axes = chart.axes;
         expect(axes.length).toBe(2);
         expect(axes[0] instanceof NumberAxis).toBe(true);
@@ -409,7 +412,7 @@ describe('update', () => {
                 lineDash: [4, 2],
             },
         ]);
-        AgChart.update(chart, {
+        AgChart.update(chartProxy, {
             data: revenueProfitData,
             series: [
                 {
@@ -441,7 +444,7 @@ describe('update', () => {
                 },
             ],
         });
-        await waitForChartStability(chart);
+        await waitForChartStability(chartProxy);
 
         leftAxis = chart.axes.find((axis) => axis.position === 'left');
         expect(leftAxis!.gridStyle).toEqual([

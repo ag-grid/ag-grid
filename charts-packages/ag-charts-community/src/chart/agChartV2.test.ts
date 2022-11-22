@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgCartesianChartOptions, AgChartOptions } from './agChartOptions';
+import { AgCartesianChartOptions, AgChartInstance, AgChartOptions } from './agChartOptions';
 import { AgChart } from './agChartV2';
 import { Chart } from './chart';
 import * as examples from './test/examples';
@@ -21,7 +21,7 @@ import {
 expect.extend({ toMatchImageSnapshot, toMatchImage });
 
 function consoleWarnAssertions(options: AgCartesianChartOptions) {
-    return async (chart: Chart) => {
+    return async (chartOrProxy: AgChartInstance) => {
         expect(console.warn).toBeCalledTimes(1);
         expect(console.warn).toBeCalledWith(
             'AG Charts - the axis label format string %H:%M is invalid. No formatting will be applied'
@@ -29,8 +29,8 @@ function consoleWarnAssertions(options: AgCartesianChartOptions) {
 
         jest.clearAllMocks();
         options.axes[0].label.format = '%X %M'; // format string for Date objects, not valid for number values
-        AgChart.update(chart, options);
-        await waitForChartStability(chart);
+        AgChart.update(chartOrProxy, options);
+        await waitForChartStability(chartOrProxy);
 
         expect(console.warn).toBeCalledTimes(1);
         expect(console.warn).toBeCalledWith(
@@ -39,15 +39,15 @@ function consoleWarnAssertions(options: AgCartesianChartOptions) {
 
         jest.clearAllMocks();
         options.axes[0].label.format = '%'; // multiply by 100, and then decimal notation with a percent sign - valid format string for number values
-        AgChart.update(chart, options);
-        await waitForChartStability(chart);
+        AgChart.update(chartOrProxy, options);
+        await waitForChartStability(chartOrProxy);
 
         expect(console.warn).not.toBeCalled();
 
         // hovering on chart calls getTooltipHtml() which uses formatDatum() from NumberAxis to format the data points
         // if formatting non-numeric values (Date objects), a warning will be displayed
-        await waitForChartStability(chart);
-        await hoverAction(200, 100)(chart);
+        await waitForChartStability(chartOrProxy);
+        await hoverAction(200, 100)(chartOrProxy);
 
         expect(console.warn).toBeCalledTimes(1);
         expect(console.warn).toBeCalledWith(
@@ -74,7 +74,7 @@ const EXAMPLES: Record<string, TestCase> = {
 
 describe('AgChartV2', () => {
     let ctx = setupMockCanvas();
-    let chart: Chart;
+    let chart: AgChartInstance;
 
     beforeEach(() => {
         console.warn = jest.fn();
@@ -109,7 +109,7 @@ describe('AgChartV2', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create(options) as Chart;
+                chart = AgChart.create(options);
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -120,7 +120,7 @@ describe('AgChartV2', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create(options) as Chart;
+                chart = AgChart.create(options);
                 await compare();
 
                 if (example.extraScreenshotActions) {

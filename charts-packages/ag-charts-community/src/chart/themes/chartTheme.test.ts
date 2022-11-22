@@ -13,8 +13,7 @@ import { AgChart } from '../agChartV2';
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { LineSeries } from '../series/cartesian/lineSeries';
-import { waitForChartStability } from '../test/utils';
-import { Chart } from '../chart';
+import { deproxy, waitForChartStability } from '../test/utils';
 
 const data = [
     { label: 'Android', v1: 5.67, v2: 8.63, v3: 8.14, v4: 6.45, v5: 1.37 },
@@ -174,7 +173,7 @@ describe('ChartTheme', () => {
         let chart: CartesianChart;
 
         beforeEach(() => {
-            chart = AgChart.create(cartesianChartOptions) as CartesianChart;
+            chart = deproxy(AgChart.create(cartesianChartOptions)) as CartesianChart;
         });
         afterEach(() => {
             chart.destroy();
@@ -271,7 +270,7 @@ describe('ChartTheme', () => {
         let chart: PolarChart;
 
         beforeEach(() => {
-            chart = AgChart.create(polarChartOptions) as PolarChart;
+            chart = deproxy(AgChart.create(polarChartOptions)) as PolarChart;
         });
         afterEach(() => {
             chart.destroy();
@@ -425,7 +424,7 @@ describe('ChartTheme', () => {
         };
 
         test('Cartesian chart instance properties', async () => {
-            let cartesianChart = AgChart.create(cartesianChartOptions) as Chart;
+            let cartesianChart = deproxy(AgChart.create(cartesianChartOptions));
             await waitForChartStability(cartesianChart);
 
             expect(cartesianChart!.title && cartesianChart!.title.enabled).toBe(true);
@@ -445,7 +444,7 @@ describe('ChartTheme', () => {
         });
 
         test('Polar chart intstance properties', async () => {
-            let polarChart = AgChart.create(polarChartOptions) as Chart;
+            let polarChart = deproxy(AgChart.create(polarChartOptions));
             await waitForChartStability(polarChart);
 
             expect(polarChart!.title && polarChart!.title.enabled).toBe(true);
@@ -532,37 +531,39 @@ describe('ChartTheme', () => {
         });
 
         test('Themed bottom category, unthemed left number', async () => {
-            const chart = AgChart.create({
-                theme,
-                data,
-                series: [
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v1',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v2',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v3',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v4',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v5',
-                    },
-                ],
-            } as AgCartesianChartOptions) as Chart;
+            const chart = deproxy(
+                AgChart.create({
+                    theme,
+                    data,
+                    series: [
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v1',
+                        },
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v2',
+                        },
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v3',
+                        },
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v4',
+                        },
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v5',
+                        },
+                    ],
+                } as AgCartesianChartOptions)
+            );
             await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
@@ -577,33 +578,35 @@ describe('ChartTheme', () => {
         });
 
         test('Specialized chart type themed bottom category, unthemed left number', async () => {
-            const chart = AgChart.create({
-                type: 'area',
-                theme,
-                data,
-                series: [
-                    {
-                        xKey: 'label',
-                        yKey: 'v1',
-                    },
-                    {
-                        xKey: 'label',
-                        yKey: 'v2',
-                    },
-                    {
-                        xKey: 'label',
-                        yKey: 'v3',
-                    },
-                    {
-                        xKey: 'label',
-                        yKey: 'v4',
-                    },
-                    {
-                        xKey: 'label',
-                        yKey: 'v5',
-                    },
-                ],
-            } as AgCartesianChartOptions) as Chart;
+            const chart = deproxy(
+                AgChart.create({
+                    type: 'area',
+                    theme,
+                    data,
+                    series: [
+                        {
+                            xKey: 'label',
+                            yKey: 'v1',
+                        },
+                        {
+                            xKey: 'label',
+                            yKey: 'v2',
+                        },
+                        {
+                            xKey: 'label',
+                            yKey: 'v3',
+                        },
+                        {
+                            xKey: 'label',
+                            yKey: 'v4',
+                        },
+                        {
+                            xKey: 'label',
+                            yKey: 'v5',
+                        },
+                    ],
+                } as AgCartesianChartOptions)
+            );
             await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
@@ -618,47 +621,49 @@ describe('ChartTheme', () => {
         });
 
         test('Themed right number, unthemed top category', async () => {
-            const chart = AgChart.create({
-                theme,
-                data,
-                axes: [
-                    {
-                        type: 'number',
-                        position: 'right',
-                    },
-                    {
-                        type: 'category',
-                        position: 'top',
-                    },
-                ],
-                series: [
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v1',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v2',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v3',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v4',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v5',
-                    },
-                ],
-            } as AgCartesianChartOptions) as Chart;
+            const chart = deproxy(
+                AgChart.create({
+                    theme,
+                    data,
+                    axes: [
+                        {
+                            type: 'number',
+                            position: 'right',
+                        },
+                        {
+                            type: 'category',
+                            position: 'top',
+                        },
+                    ],
+                    series: [
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v1',
+                        },
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v2',
+                        },
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v3',
+                        },
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v4',
+                        },
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v5',
+                        },
+                    ],
+                } as AgCartesianChartOptions)
+            );
             await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
@@ -673,64 +678,66 @@ describe('ChartTheme', () => {
         });
 
         test('Partially themed axes', async () => {
-            const chart = AgChart.create({
-                theme,
-                data,
-                axes: [
-                    {
-                        type: 'number',
-                        position: 'right',
-                        line: {
-                            color: 'red',
+            const chart = deproxy(
+                AgChart.create({
+                    theme,
+                    data,
+                    axes: [
+                        {
+                            type: 'number',
+                            position: 'right',
+                            line: {
+                                color: 'red',
+                            },
+                            label: {
+                                fontStyle: 'italic',
+                                fontFamily: 'Tahoma',
+                            },
                         },
-                        label: {
-                            fontStyle: 'italic',
-                            fontFamily: 'Tahoma',
+                        {
+                            type: 'category',
+                            position: 'bottom',
+                            line: {
+                                width: 5,
+                            },
+                            label: {
+                                fontWeight: 'bold',
+                                rotation: 45,
+                            },
+                            title: {
+                                text: 'Test',
+                            },
                         },
-                    },
-                    {
-                        type: 'category',
-                        position: 'bottom',
-                        line: {
-                            width: 5,
+                    ],
+                    series: [
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v1',
                         },
-                        label: {
-                            fontWeight: 'bold',
-                            rotation: 45,
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v2',
                         },
-                        title: {
-                            text: 'Test',
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v3',
                         },
-                    },
-                ],
-                series: [
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v1',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v2',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v3',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v4',
-                    },
-                    {
-                        type: 'area',
-                        xKey: 'label',
-                        yKey: 'v5',
-                    },
-                ],
-            } as AgCartesianChartOptions) as Chart;
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v4',
+                        },
+                        {
+                            type: 'area',
+                            xKey: 'label',
+                            yKey: 'v5',
+                        },
+                    ],
+                } as AgCartesianChartOptions)
+            );
             await waitForChartStability(chart);
 
             expect(chart.axes[0].type).toBe('number');
@@ -849,7 +856,7 @@ describe('ChartTheme', () => {
         };
 
         test('Cartesian chart instance properties', async () => {
-            const cartesianChart = AgChart.create(cartesianChartOptions) as Chart;
+            const cartesianChart = deproxy(AgChart.create(cartesianChartOptions));
             await waitForChartStability(cartesianChart);
             const { series } = cartesianChart;
 

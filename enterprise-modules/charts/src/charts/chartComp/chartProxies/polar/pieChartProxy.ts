@@ -107,7 +107,8 @@ export class PieChartProxy extends ChartProxy {
                 ...seriesOverrides.legend,
                 listeners: {
                     legendItemClick: (e: AgChartLegendClickEvent) => {
-                        this.chart.series.forEach(s => s.toggleSeriesItem(e.itemId, e.enabled));
+                        const chart = this.getChart();
+                        chart.series.forEach(s => s.toggleSeriesItem(e.itemId, e.enabled));
                     }
                 }
             }

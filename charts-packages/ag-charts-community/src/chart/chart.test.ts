@@ -19,6 +19,7 @@ import {
     CANVAS_HEIGHT,
     hoverAction,
     clickAction,
+    deproxy,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -120,7 +121,7 @@ describe('Chart', () => {
                 ],
                 ...(testParams.chartOptions || {}),
             };
-            const chart = AgChart.create(options) as Chart;
+            const chart = deproxy(AgChart.create(options));
             await waitForChartStability(chart);
             return chart;
         };

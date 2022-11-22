@@ -1,29 +1,18 @@
 import { BBox } from '../scene/bbox';
-import { ClipRect } from '../scene/clipRect';
-import { Chart } from './chart';
+import { Chart, TransferableResources } from './chart';
 
 export class HierarchyChart extends Chart {
     static className = 'HierarchyChart';
     static type = 'hierarchy' as const;
 
-    constructor(document = window.document, overrideDevicePixelRatio?: number) {
-        super(document, overrideDevicePixelRatio);
-
-        // Prevent the scene from rendering chart components in an invalid state
-        // (before first layout is performed).
-        this.scene.root!!.visible = false;
+    constructor(document = window.document, overrideDevicePixelRatio?: number, resources?: TransferableResources) {
+        super(document, overrideDevicePixelRatio, resources);
 
         const root = this.scene.root!;
-        root.append(this.seriesRoot);
         root.append(this.legend.group);
     }
 
     protected _data: any = {};
-
-    private _seriesRoot = new ClipRect();
-    get seriesRoot(): ClipRect {
-        return this._seriesRoot;
-    }
 
     async performLayout() {
         this.scene.root!!.visible = true;

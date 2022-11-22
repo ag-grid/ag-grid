@@ -12,10 +12,11 @@ import {
 } from "@ag-grid-community/core";
 import { AgCartesianAxisType, AgChartInstance } from "ag-charts-community";
 import { ChartController } from "../chartController";
+import { AgChartActual } from "../utils/integration";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 
-type ChartAxis = NonNullable<AgChartInstance['axes']>[number];
-type SupportedSeries = AgChartInstance['series'][number];
+type ChartAxis = NonNullable<AgChartActual['axes']>[number];
+type SupportedSeries = AgChartActual['series'][number];
 export class ChartOptionsService extends BeanStub {
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
@@ -143,7 +144,7 @@ export class ChartOptionsService extends BeanStub {
         return this.chartController.getChartType();
     }
 
-    private getChart(): AgChartInstance {
+    private getChart() {
         return this.chartController.getChartProxy().getChart();
     }
 

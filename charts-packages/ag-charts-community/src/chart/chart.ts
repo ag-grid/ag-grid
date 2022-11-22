@@ -2,7 +2,6 @@ import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
-import { Node } from '../scene/node';
 import { Background } from './background';
 import { Legend, LegendDatum } from './legend';
 import { BBox } from '../scene/bbox';
@@ -23,6 +22,7 @@ import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
+import { ClipRect } from '../scene/clipRect';
 
 /** Types of chart-update, in pipeline execution order. */
 export enum ChartUpdateType {
@@ -35,6 +35,9 @@ export enum ChartUpdateType {
 }
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
+
+export type TransferableResources = { container?: OptionalHTMLElement; scene: Scene; element: HTMLElement };
+
 export abstract class Chart extends Observable implements AgChartInstance {
     readonly id = createId(this);
 
@@ -46,6 +49,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     readonly scene: Scene;
+    readonly seriesRoot = new ClipRect();
     readonly background: Background = new Background();
     readonly legend = new Legend();
 
@@ -186,20 +190,32 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     protected readonly interactionManager: InteractionManager;
 
-    protected constructor(document = window.document, overrideDevicePixelRatio?: number) {
+    protected constructor(
+        document = window.document,
+        overrideDevicePixelRatio?: number,
+        resources?: TransferableResources
+    ) {
         super();
 
-        const root = new Group({ name: 'root' });
-        const background = this.background;
+        const scene = resources?.scene;
+        const element = resources?.element ?? document.createElement('div');
+        const container = resources?.container;
 
+        const root = new Group({ name: 'root' });
+        // Prevent the scene from rendering chart components in an invalid state
+        // (before first layout is performed).
+        root.visible = false;
+        root.append(this.seriesRoot);
+
+        const background = this.background;
         background.fill = 'white';
         root.appendChild(background.node);
 
-        const element = (this.element = document.createElement('div'));
+        this.element = element;
         element.classList.add('ag-chart-wrapper');
         element.style.position = 'relative';
 
-        this.scene = new Scene({ document, overrideDevicePixelRatio });
+        this.scene = scene ?? new Scene({ document, overrideDevicePixelRatio });
         this.scene.debug.consoleLog = this._debug;
         this.scene.root = root;
         this.scene.container = element;
@@ -230,23 +246,39 @@ export abstract class Chart extends Observable implements AgChartInstance {
         });
 
         this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
+        this.container = container;
     }
 
-    destroy() {
+    destroy(opts?: { keepTransferableResources: boolean }): TransferableResources | undefined {
+        if (this._destroyed) {
+            return;
+        }
+
+        const keepTransferableResources = opts?.keepTransferableResources;
+        let result: TransferableResources | undefined = undefined;
+
         this._performUpdateType = ChartUpdateType.NONE;
         this._pendingFactoryUpdates.splice(0);
 
         this.tooltip.destroy();
         SizeMonitor.unobserve(this.element);
-        this.container = undefined;
 
         this.interactionManager.destroy();
 
-        this.scene.destroy();
+        if (keepTransferableResources) {
+            this.scene.strip();
+            result = { container: this.container, scene: this.scene, element: this.element };
+        } else {
+            this.scene.destroy();
+            this.container = undefined;
+        }
+
         this.series.forEach((s) => s.destroy());
         this.series = [];
 
         this._destroyed = true;
+
+        return result;
     }
 
     log(opts: any) {
@@ -403,8 +435,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     readonly element: HTMLElement;
-
-    abstract get seriesRoot(): Node;
 
     protected _axes: ChartAxis[] = [];
     set axes(values: ChartAxis[]) {

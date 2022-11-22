@@ -16,6 +16,7 @@ import {
     toMatchImage,
     CANVAS_HEIGHT,
     CANVAS_WIDTH,
+    deproxy,
 } from '../test/utils';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
@@ -193,7 +194,7 @@ describe('Axis Examples', () => {
     for (const [exampleName, example] of Object.entries(EXAMPLES)) {
         it(`for ${exampleName} it should create chart instance as expected`, async () => {
             const options: AgChartOptions = example.options;
-            chart = AgChart.create(options) as Chart;
+            chart = deproxy(AgChart.create(options));
             await waitForChartStability(chart);
             await example.assertions(chart);
         });
@@ -219,7 +220,7 @@ describe('Axis Examples', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            chart = AgChart.create(options) as Chart;
+            chart = deproxy(AgChart.create(options)) as Chart;
             await compare();
 
             if (example.extraScreenshotActions) {
@@ -238,7 +239,7 @@ describe('Axis Examples', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_NO_SERIES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
-                chart = AgChart.create(options) as Chart;
+                chart = deproxy(AgChart.create(options)) as Chart;
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -256,7 +257,7 @@ describe('Axis Examples', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create(options) as Chart;
+                chart = deproxy(AgChart.create(options)) as Chart;
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -277,7 +278,7 @@ describe('Axis Examples', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create(options) as Chart;
+                chart = deproxy(AgChart.create(options)) as Chart;
                 const reference = await snapshot();
 
                 chart.series.forEach((s) => {
@@ -312,7 +313,7 @@ describe('Axis Examples', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            chart = AgChart.create(options) as Chart;
+            chart = deproxy(AgChart.create(options)) as Chart;
             const reference = await snapshot();
             expect(chart.series[1].getKeys(ChartAxisDirection.Y)).toEqual(['exportedTonnes']);
 
