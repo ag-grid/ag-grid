@@ -2,14 +2,12 @@ import {
     AfterViewInit,
     Component,
     ComponentFactoryResolver,
-    ContentChildren,
     ElementRef,
     EventEmitter,
     Input,
     OnChanges,
     OnDestroy,
     Output,
-    QueryList,
     ViewContainerRef,
     ViewEncapsulation
 } from "@angular/core";
