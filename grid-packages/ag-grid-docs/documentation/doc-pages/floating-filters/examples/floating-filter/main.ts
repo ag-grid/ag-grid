@@ -101,7 +101,7 @@ function destroyCountryFilter() {
 function endingStan() {
   var countryFilterComponent = gridOptions.api!.getFilterInstance<ISetFilter>('country')!;
   var countriesEndingWithStan = countryFilterComponent
-    .getValues()
+    .getFilterKeys()
     .filter(function (value: any) {
       return value.indexOf('stan') === value.length - 4
     })
