@@ -9,15 +9,12 @@
 
 if [ "$#" -lt 1 ]
   then
-    echo "You must supply a release version"
-    echo "For example: deployAgGridReleaseRemote.sh 28.0.0"
+    echo "You must supply a release filename "
+    echo "For example: deployAgGridReleaseRemote.sh release_20191210.zip"
     exit 1
 fi
 
-RAW_VERSION=$1
-VERSION=""${RAW_VERSION//./}""
-TIMESTAMP=`date +%Y%m%d`
-FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
+FILENAME=$1
 
 PUBLIC_HTML_FOLDER="@HTML_FOLDER_NAME@"
 
