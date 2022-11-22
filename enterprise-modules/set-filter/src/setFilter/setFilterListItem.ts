@@ -13,7 +13,8 @@ import {
     RefSelector,
     UserComponentFactory,
     ValueFormatterService,
-    WithoutGridCommon
+    WithoutGridCommon,
+    ValueFormatterParams
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 
@@ -21,7 +22,8 @@ export interface SetFilterListItemSelectionChangedEvent extends AgEvent {
     isSelected: boolean;
 }
 
-export class SetFilterListItem extends Component {
+/** @param V type of value in the Set Filter */
+export class SetFilterListItem<V> extends Component {
     public static EVENT_SELECTION_CHANGED = 'selectionChanged';
 
     @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
@@ -35,9 +37,10 @@ export class SetFilterListItem extends Component {
     @RefSelector('eCheckbox') private readonly eCheckbox: AgCheckbox;
 
     constructor(
-        private readonly value: string | (() => string),
-        private readonly params: ISetFilterParams,
+        private readonly value: V | null | (() => string),
+        private readonly params: ISetFilterParams<any, V>,
         private readonly translate: (key: keyof ISetFilterLocaleText) => string,
+        private readonly valueFormatter: (params: ValueFormatterParams) => string,
         private isSelected?: boolean,
     ) {
         super(SetFilterListItem.TEMPLATE);
@@ -83,22 +86,24 @@ export class SetFilterListItem extends Component {
         let formattedValue: string | null = null;
 
         if (typeof value === 'function') {
-            value = value();
+            formattedValue = (value as () => string)();
+            // backwards compatibility for select all in value
+            value = formattedValue as any;
         } else {
-            formattedValue = this.getFormattedValue(this.params, column, value);
+            formattedValue = this.getFormattedValue(column, value);
         }
 
         if (this.params.showTooltips) {
-            const tooltipValue = formattedValue != null ? formattedValue : value;
+            const tooltipValue = formattedValue != null ? formattedValue : String(value);
             this.setTooltip(tooltipValue);
         }
 
         const params: ISetFilterCellRendererParams = {
             value,
             valueFormatted: formattedValue,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext(),
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context'),
             colDef: this.params.colDef,
             column: this.params.column,
         };
@@ -113,10 +118,8 @@ export class SetFilterListItem extends Component {
         return res;
     }
 
-    private getFormattedValue(filterParams: ISetFilterParams, column: Column, value: any) {
-        const formatter = filterParams && filterParams.valueFormatter;
-
-        return this.valueFormatterService.formatValue(column, null, value, formatter, false);
+    private getFormattedValue(column: Column, value: any) {
+        return this.valueFormatterService.formatValue(column, null, value, this.valueFormatter, false);
     }
 
     private renderCell(params: ISetFilterCellRendererParams): void {

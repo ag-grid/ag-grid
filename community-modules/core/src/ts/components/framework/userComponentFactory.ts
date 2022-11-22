@@ -145,7 +145,7 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(params.colDef!, TooltipComponent, 'agTooltipComponent', params, true)!;
     }
 
-    public getSetFilterCellRendererDetails(def: ISetFilterParams, params: WithoutGridCommon<ISetFilterCellRendererParams>): UserCompDetails | undefined {
+    public getSetFilterCellRendererDetails<TData, V>(def: ISetFilterParams<TData, V>, params: WithoutGridCommon<ISetFilterCellRendererParams>): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent, null, params);
     }
 
@@ -331,9 +331,9 @@ export class UserComponentFactory extends BeanStub {
         paramsFromSelector: any = null
     ): any {
         const params: AgGridCommon<any> = {
-            context: this.gridOptionsWrapper.getContext(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            api: this.gridOptionsWrapper.getApi()!
+            context: this.gridOptionsService.get('context'),
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            api: this.gridOptionsService.get('api')!
         };
 
         mergeDeep(params, paramsFromGrid);

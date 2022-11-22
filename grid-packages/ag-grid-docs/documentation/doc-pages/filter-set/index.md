@@ -49,7 +49,7 @@ Parameters that are common to all [Provided Filters](/filter-provided/):
 
 Parameters that are specific to the Set Filter:
 
-<interface-documentation interfaceName='ISetFilterParams' overrideSrc='filter-set/resources/set-filter-params.json'  names='["values","refreshValuesOnOpen","cellHeight","suppressSorting","suppressMiniFilter","applyMiniFilterWhileTyping","suppressSelectAll","defaultToNothingSelected","comparator","textFormatter","valueFormatter","showTooltips","excelMode","caseSensitive"]' config='{"description":""}'></interface-documentation>
+<interface-documentation interfaceName='ISetFilterParams' overrideSrc='filter-set/resources/set-filter-params.json'  names='["values","refreshValuesOnOpen","cellHeight","suppressSorting","cellRenderer","suppressMiniFilter","applyMiniFilterWhileTyping","suppressSelectAll","defaultToNothingSelected","comparator","textFormatter","valueFormatter","keyCreator","showTooltips","caseSensitive","excelMode","convertValuesToStrings"]' config='{"description":""}'></interface-documentation>
 
 ## Next Up
 

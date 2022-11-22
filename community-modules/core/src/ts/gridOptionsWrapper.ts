@@ -3,7 +3,8 @@ import { ColDefUtil } from './components/colDefUtil';
 import { ComponentUtil } from './components/componentUtil';
 import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
+import { ColDef, ColGroupDef, IAggFunc } from './entities/colDef';
+import { Column } from './entities/column';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
 import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
@@ -13,18 +14,18 @@ import { Events } from './eventKeys';
 import { AgEvent } from './events';
 import { EventService } from './eventService';
 import { GridApi } from './gridApi';
+import { GridOptionsService } from './gridOptionsService';
 import { CsvExportParams } from './interfaces/exportParams';
 import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import { ChartToolPanelsDef } from './interfaces/iChartOptions';
 import { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import { IDatasource } from './interfaces/iDatasource';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
 import { IViewportDatasource } from './interfaces/iViewportDatasource';
-import { Column } from './entities/column';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
-import { _ } from './utils';
 import { getScrollbarWidth } from './utils/browser';
 import { doOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
@@ -32,7 +33,6 @@ import { exists, missing, values } from './utils/generic';
 import { isNumeric } from './utils/number';
 import { iterateObject } from './utils/object';
 import { capitalise } from './utils/string';
-import { ChartToolPanelsDef } from './interfaces/iChartOptions';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -157,6 +157,7 @@ export class GridOptionsWrapper {
     public static PROP_DEFAULT_COL_DEF: 'defaultColDef' = 'defaultColDef';
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
+    @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
@@ -332,11 +333,11 @@ export class GridOptionsWrapper {
         );
 
         iterateObject<any>(invalidProperties, (key, value) => {
-            console.warn(`ag-grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`);
+            console.warn(`AG Grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`);
         });
 
         if (Object.keys(invalidProperties).length > 0) {
-            console.warn(`ag-grid: to see all the valid ${containerName} properties please check: ${docsUrl}`);
+            console.warn(`AG Grid: to see all the valid ${containerName} properties please check: ${docsUrl}`);
         }
     }
 
@@ -349,7 +350,7 @@ export class GridOptionsWrapper {
         ((params: WithoutGridCommon<P>) => T) | undefined {
         if (callback) {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
-                const mergedParams = { ...callbackParams, api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() } as P;
+                const mergedParams = { ...callbackParams, api: this.gridOptionsService.get('api')!, columnApi: this.gridOptionsService.get('columnApi')!, context: this.gridOptionsService.get('context') } as P;
                 return callback(mergedParams);
             };
             return wrapped;
@@ -395,24 +396,12 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.rowMultiSelectWithClick);
     }
 
-    public getContext() {
-        return this.gridOptions.context;
-    }
-
     public isPivotMode() {
         return isTrue(this.gridOptions.pivotMode);
     }
 
     public isSuppressExpandablePivotGroups() {
         return isTrue(this.gridOptions.suppressExpandablePivotGroups);
-    }
-
-    public getPivotColumnGroupTotals() {
-        return this.gridOptions.pivotColumnGroupTotals;
-    }
-
-    public getPivotRowTotals() {
-        return this.gridOptions.pivotRowTotals;
     }
 
     public isRowModelInfinite() {
@@ -863,14 +852,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.getBusinessKeyForNode;
     }
 
-    public getApi(): GridApi | undefined | null {
-        return this.gridOptions.api;
-    }
-
-    public getColumnApi(): ColumnApi | undefined | null {
-        return this.gridOptions.columnApi;
-    }
-
     public isReadOnlyEdit(): boolean {
         return isTrue(this.gridOptions.readOnlyEdit);
     }
@@ -1232,14 +1213,6 @@ export class GridOptionsWrapper {
         }
 
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
-    }
-
-    public getIsRowMasterFunc() {
-        return this.gridOptions.isRowMaster;
-    }
-
-    public getIsRowSelectableFunc() {
-        return this.gridOptions.isRowSelectable;
     }
 
     public getGroupRowRendererParams() {
@@ -1618,7 +1591,7 @@ export class GridOptionsWrapper {
 
     public isExternalFilterPresent() {
         if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
-            return this.gridOptions.isExternalFilterPresent({ api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() });
+            return this.gridOptions.isExternalFilterPresent({ api: this.gridOptionsService.get('api')!, columnApi: this.gridOptionsService.get('columnApi')!, context: this.gridOptionsService.get('context') });
         }
 
         return false;
@@ -1639,7 +1612,7 @@ export class GridOptionsWrapper {
 
         if (exists(delay)) {
             if (delay < 0) {
-                doOnce(() => console.warn(`ag-grid: tooltip${capitalisedType}Delay should not be lower than 0`), `tooltip${capitalisedType}DelayWarn`);
+                doOnce(() => console.warn(`AG Grid: tooltip${capitalisedType}Delay should not be lower than 0`), `tooltip${capitalisedType}DelayWarn`);
             }
 
             return Math.max(200, delay);
@@ -1725,16 +1698,6 @@ export class GridOptionsWrapper {
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
 
-        if (options.deprecatedEmbedFullWidthRows) {
-            console.warn(`AG Grid: since v21.2, deprecatedEmbedFullWidthRows has been replaced with embedFullWidthRows.`);
-        }
-
-        if (options.rowDeselection) {
-            console.warn(
-                'AG Grid: since v24.x, rowDeselection is deprecated and the behaviour is true by default. Please use `suppressRowDeselection` to prevent rows from being deselected.'
-            );
-        }
-
         if (options.enableMultiRowDragging) {
             options.rowDragMultiRow = true;
             delete options.enableMultiRowDragging;
@@ -1743,7 +1706,7 @@ export class GridOptionsWrapper {
             );
         }
 
-        const checkRenamedProperty = (oldProp: string, newProp: string, version: string) => {
+        const checkRenamedProperty = (oldProp: string, newProp: keyof GridOptions, version: string) => {
             if (options[oldProp] != null) {
                 console.warn(`AG Grid: since version ${version}, '${oldProp}' is deprecated / renamed, please use the new property name '${newProp}' instead.`);
                 if (options[newProp] == null) {
@@ -1752,47 +1715,11 @@ export class GridOptionsWrapper {
             }
         };
 
-        checkRenamedProperty('batchUpdateWaitMillis', 'asyncTransactionWaitMillis', '23.1.x');
-        checkRenamedProperty('deltaRowDataMode', 'immutableData', '23.1.x');
-
         checkRenamedProperty('serverSideFilteringAlwaysResets', 'serverSideFilterAllLevels', '28.0.0');
         checkRenamedProperty('serverSideSortingAlwaysResets', 'serverSideSortAllLevels', '28.0.0');
 
-        if (options.immutableColumns || options.deltaColumnMode) {
-            console.warn(
-                'AG Grid: since v24.0, immutableColumns and deltaColumnMode properties are gone. The grid now works like this as default. To keep column order maintained, set grid property applyColumnDefOrder=true'
-            );
-        }
-
-        checkRenamedProperty('suppressSetColumnStateEvents', 'suppressColumnStateEvents', '24.0.x');
-
-        if (options.groupRowInnerRenderer || options.groupRowInnerRendererParams || options.groupRowInnerRendererFramework) {
-            console.warn('AG Grid: since v24.0, grid properties groupRowInnerRenderer, groupRowInnerRendererFramework and groupRowInnerRendererParams are no longer used.');
-            console.warn('  Instead use the grid properties groupRowRendererParams.innerRenderer, groupRowRendererParams.innerRendererFramework and groupRowRendererParams.innerRendererParams.');
-            console.warn('  For example instead of this:');
-            console.warn('    groupRowInnerRenderer: "myRenderer"');
-            console.warn('    groupRowInnerRendererParams: {x: a}');
-            console.warn('  Replace with this:');
-            console.warn('    groupRowRendererParams: {');
-            console.warn('      innerRenderer: "myRenderer",');
-            console.warn('      innerRendererParams: {x: a}');
-            console.warn('    }');
-        }
-
         if (options.rememberGroupStateWhenNewData) {
             console.warn('AG Grid: since v24.0, grid property rememberGroupStateWhenNewData is deprecated. This feature was provided before Transaction Updates worked (which keep group state). Now that transaction updates are possible and they keep group state, this feature is no longer needed.');
-        }
-
-        if (options.detailCellRendererParams && options.detailCellRendererParams.autoHeight) {
-            console.warn('AG Grid: since v24.1, grid property detailCellRendererParams.autoHeight is replaced with grid property detailRowAutoHeight. This allows this feature to work when you provide a custom DetailCellRenderer');
-            options.detailRowAutoHeight = true;
-        }
-
-        if (options.suppressKeyboardEvent) {
-            console.warn(
-                `AG Grid: since v24.1 suppressKeyboardEvent in the gridOptions has been deprecated and will be removed in
-                 future versions of AG Grid. If you need this to be set for every column use the defaultColDef property.`
-            );
         }
 
         if (options.suppressEnterpriseResetOnNewColumns) {
@@ -1938,9 +1865,9 @@ export class GridOptionsWrapper {
                     key,
                     defaultValue,
                     variableValues,
-                    api: this.getApi()!,
-                    columnApi: this.getColumnApi()!,
-                    context: this.getContext()
+                    api: this.gridOptionsService.get('api')!,
+                    columnApi: this.gridOptionsService.get('columnApi')!,
+                    context: this.gridOptionsService.get('context')
                 };
                 return getLocaleText(params);
             };

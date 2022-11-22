@@ -202,11 +202,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         this._yKeys.forEach((key, idx) => seriesItemEnabled.set(key, visibles[idx] ?? true));
     }
 
-    setColors(fills: string[], strokes: string[]) {
-        this.fills = fills;
-        this.strokes = strokes;
-    }
-
     @Validate(STRING_ARRAY)
     yNames: string[] = [];
 
@@ -730,6 +725,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const { size, formatter } = marker;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
 
+        const customMarker = typeof marker.shape === 'function';
+
         markerSelection.each((node, datum) => {
             const yKeyIndex = yKeys.indexOf(datum.yKey);
             const fill =
@@ -772,6 +769,15 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             node.translationY = datum.point.y;
             node.visible =
                 node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
+
+            if (!customMarker || node.dirtyPath) {
+                return;
+            }
+
+            // Only for cutom marker shapes
+            node.path.clear({ trackChanges: true });
+            node.updatePath();
+            node.checkPathDirty();
         });
 
         if (!isDatumHighlighted) {

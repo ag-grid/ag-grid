@@ -204,7 +204,7 @@ export class SelectAllFeature extends BeanStub {
                 colDef: this.column.getColDef(),
                 columnApi: this.columnApi,
                 api: this.gridApi,
-                context: this.gridOptionsWrapper.getContext()
+                context: this.gridOptionsService.get('context')
             };
             result = func(params);
         }

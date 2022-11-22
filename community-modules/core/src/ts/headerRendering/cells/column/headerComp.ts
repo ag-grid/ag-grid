@@ -183,7 +183,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTap(): void {
-        const { gridOptionsWrapper: options } = this;
+        const { gridOptionsWrapper: options, gridOptionsService } = this;
 
         if (options.isSuppressTouch()) { return; }
 
@@ -195,7 +195,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (this.params.enableMenu) {
             const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
-                options.getApi()!.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
+                gridOptionsService.get('api')!.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
             this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }

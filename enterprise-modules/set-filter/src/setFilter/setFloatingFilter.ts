@@ -8,7 +8,6 @@ import {
     AgInputTextField,
     _,
     ColumnModel,
-    ISetFilterParams,
     SetFilterModel,
 } from '@ag-grid-community/core';
 
@@ -57,7 +56,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     private parentSetFilterInstance(cb: (instance: SetFilter<unknown>) => void): void {
         this.params.parentFilterInstance((filter) => {
             if (!(filter instanceof SetFilter)) {
-                throw new Error('AG Grid - SetFloatingFilter expects SetFilter as it\'s parent');
+                throw new Error('AG Grid - SetFloatingFilter expects SetFilter as its parent');
             }
 
             cb(filter);
@@ -97,13 +96,16 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
             }
 
             const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            const availableValues = values.filter(v => valueModel.isValueAvailable(v))!;
+            const availableKeys = values.filter(v => valueModel.isKeyAvailable(v))!;
+
+            const valueFormatter = setFilter.getValueFormatter();
 
             // format all the values, if a formatter is provided
-            const formattedValues = availableValues.map(value => {
-                const { column, filterParams } = this.params;
+            const formattedValues = availableKeys.map(key => {
+                const value = valueModel.getValue(key);
+                const { column } = this.params;
                 const formattedValue = this.valueFormatterService.formatValue(
-                    column, null, value, (filterParams as ISetFilterParams).valueFormatter, false);
+                    column, null, value, valueFormatter, false);
 
                 const valueToRender = formattedValue != null ? formattedValue : value;
 

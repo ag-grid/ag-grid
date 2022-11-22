@@ -60,7 +60,7 @@ export class StoreUtils extends BeanStub {
             parentNode: p.parentNode,
             api: this.gridApi,
             columnApi: this.columnApi,
-            context : this.gridOptionsWrapper.getContext()
+            context: this.gridOptionsService.get('context')
         };
 
         window.setTimeout(() => {

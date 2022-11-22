@@ -40,6 +40,7 @@ import { CtrlsFactory } from "../ctrlsFactory";
 import { UserComponentRegistry } from "../components/framework/userComponentRegistry";
 import { ValueCache } from "../valueService/valueCache";
 import { RowNodeEventThrottle } from "../entities/rowNodeEventThrottle";
+import { GridOptionsService } from "../gridOptionsService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -55,6 +56,7 @@ export class Beans {
     @Autowired('columnApi') public columnApi: ColumnApi;
     @Autowired('gridApi') public gridApi: GridApi;
     @Autowired('gridOptionsWrapper') public gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') public gridOptionsService: GridOptionsService;
     @Autowired('expressionService') public expressionService: ExpressionService;
     @Autowired('rowRenderer') public rowRenderer: RowRenderer;
     @Autowired('templateService') public templateService: TemplateService;

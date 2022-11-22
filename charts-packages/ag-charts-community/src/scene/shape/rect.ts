@@ -93,7 +93,7 @@ export class Rect extends Path {
      */
     private microPixelEffectOpacity: number = 1;
 
-    protected updatePath() {
+    updatePath() {
         const { path, borderPath, crisp } = this;
         let { x, y, width: w, height: h, strokeWidth } = this;
         const pixelRatio = this.scene?.canvas.pixelRatio ?? 1;

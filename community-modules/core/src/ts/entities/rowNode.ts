@@ -361,7 +361,7 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     private checkRowSelectable() {
-        const isRowSelectableFunc = this.beans.gridOptionsWrapper.getIsRowSelectableFunc();
+        const isRowSelectableFunc = this.beans.gridOptionsService.get('isRowSelectable');
         this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc!(this) : true);
     }
 
@@ -685,9 +685,9 @@ export class RowNode<TData = any> implements IEventEmitter {
             data: this.data,
             rowIndex: this.rowIndex,
             rowPinned: this.rowPinned,
-            context: this.beans.gridOptionsWrapper.getContext(),
-            api: this.beans.gridOptionsWrapper.getApi()!,
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!
+            context: this.beans.gridOptionsService.get('context'),
+            api: this.beans.gridOptionsService.get('api')!,
+            columnApi: this.beans.gridOptionsService.get('columnApi')!
         };
     }
 

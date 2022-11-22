@@ -25,6 +25,7 @@ import { ModuleRegistry } from "../modules/moduleRegistry";
 import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
+import { GridOptionsService } from "../gridOptionsService";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 
@@ -68,6 +69,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public static EVENT_VALUE_CHANGED = 'columnValueChanged';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
 
     private readonly colId: any;
@@ -302,31 +304,20 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         const usingCSRM = this.gridOptionsWrapper.isRowModelDefault();
         if (usingCSRM && !ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
-            const rowGroupingItems =
-                ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
+            const rowGroupingItems: (keyof ColDef)[] = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(item => {
                 if (exists(colDefAny[item])) {
-                    if (ModuleRegistry.isPackageBased()) {
-                        warnOnce(`AG Grid: ${item} is only valid in ag-grid-enterprise, your column definition should not have ${item}`, 'ColumnRowGroupingMissing' + item);
-                    } else {
-                        warnOnce(`AG Grid: ${item} is only valid with AG Grid Enterprise Module ${ModuleNames.RowGroupingModule} - your column definition should not have ${item}`, 'ColumnRowGroupingMissing' + item);
-                    }
+                    ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'colDef.' + item);                    
                 }
             });
         }
 
-        if (!ModuleRegistry.isRegistered(ModuleNames.RichSelectModule)) {
-            if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
-                if (ModuleRegistry.isPackageBased()) {
-                    warnOnce(`AG Grid: ${this.colDef.cellEditor} can only be used with ag-grid-enterprise`, 'ColumnRichSelectMissing');
-                } else {
-                    warnOnce(`AG Grid: ${this.colDef.cellEditor} can only be used with AG Grid Enterprise Module ${ModuleNames.RichSelectModule}`, 'ColumnRichSelectMissing');
-                }
-            }
+        if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
+            ModuleRegistry.assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor)
         }
 
         if (this.gridOptionsWrapper.isTreeData()) {
-            const itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
+            const itemsNotAllowedWithTreeData: (keyof ColDef)[] = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {
                 if (exists(colDefAny[item])) {
                     warnOnce(`AG Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`, 'TreeDataCannotRowGroup');
@@ -338,17 +329,8 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
         }
 
-        if (colDefAny.pinnedRowCellRenderer) {
-            warnOnce('AG Grid: pinnedRowCellRenderer no longer exists, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue. See https://www.ag-grid.com/javascript-grid/cell-rendering/#many-renderers-one-column', 'colDef.pinnedRowCellRenderer-deprecated');
-        }
-        if (colDefAny.pinnedRowCellRendererParams) {
-            warnOnce('AG Grid: pinnedRowCellRenderer no longer exists, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue. See https://www.ag-grid.com/javascript-grid/cell-rendering/#many-renderers-one-column', 'colDef.pinnedRowCellRenderer-deprecated');
-        }
-        if (colDefAny.pinnedRowCellRendererFramework) {
-            warnOnce('AG Grid: pinnedRowCellRenderer no longer exists, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue. See https://www.ag-grid.com/javascript-grid/cell-rendering/#many-renderers-one-column', 'colDef.pinnedRowCellRenderer-deprecated');
-        }
-        if (colDefAny.pinnedRowValueGetter) {
-            warnOnce('AG Grid: pinnedRowCellRenderer is deprecated, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue.', 'colDef.pinnedRowCellRenderer-deprecated');
+        if (colDefAny.pinnedRowCellRenderer || colDefAny.pinnedRowCellRendererParams || colDefAny.pinnedRowCellRendererFramework) {
+            warnOnce('AG Grid: pinnedRowCellRenderer[Params,Framework] no longer exist. Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.', 'colDef.pinnedRowCellRenderer-deprecated');
         }
     }
 
@@ -368,9 +350,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             data: rowNode.data,
             column: this,
             colDef: this.colDef,
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!
+            context: this.gridOptionsService.get('context'),
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!
         };
     }
 
@@ -459,9 +441,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             column: this,
             columns: [this],
             source: source,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext()
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context')
         };
     }
 
@@ -683,9 +665,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             data: rowNode.data,
             colDef: this.colDef,
             column: this,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext()
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context')
         };
         return params;
     }

@@ -616,7 +616,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
             if (!rowNode) { return; }
 
-            rowNode.updateData(item);
+            this.blockUtils.updateDataIntoRowNode(rowNode, item);
             if (!rowNode.selectable && rowNode.isSelected()) {
                 nodesToUnselect.push(rowNode);
             }

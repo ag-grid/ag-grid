@@ -948,7 +948,7 @@ export interface GridOptions<TData = any> {
     onColumnPinned?(event: ColumnPinnedEvent<TData>): void;
     /** A column was resized. */
     onColumnResized?(event: ColumnResizedEvent<TData>): void;
-    /** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */
+    /** A column was moved. */
     onColumnMoved?(event: ColumnMovedEvent<TData>): void;
     /** A value column was added or removed. */
     onColumnValueChanged?(event: ColumnValueChangedEvent<TData>): void;

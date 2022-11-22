@@ -1,12 +1,14 @@
 import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
-import { Constants, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams, ValueFormatterFunc } from '@ag-grid-community/core';
+import { Constants, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams, ValueFormatterFunc, _ } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 type ValueType = string | number | boolean | Date;
 
 const DEFAULT_OPTS = {
     values: ['A', 'B', 'C'] as ValueType[] | ValueType[][],
-    filterParams: {} as any,
+    filterParams: {
+        convertValuesToStrings: true
+    } as any,
     doesRowPassOtherFilters: _ => true,
     suppressSorting: false,
     simulateCaseSensitivity: false,
@@ -69,20 +71,23 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     const caseFormatFn = simulateCaseSensitivity ?
         v => v : (v) => typeof v === 'string' ? v.toUpperCase() : v;
 
-    return new SetValueModel(
+    return new SetValueModel<string>(
         svmParams,
         _ => { },
         valueFormatterService,
         key => key === 'blanks' ? '(Blanks)' : '',
         caseFormatFn,
+        value => _.makeNull(Array.isArray(value) ? value as any : _.toStringOrNull(value)!),
+        params => _.toStringOrNull(params.value)!,
+        false
     );
 }
 
-function getDisplayedValues(model: SetValueModel) {
+function getDisplayedValues<V>(model: SetValueModel<V>) {
     const values: (string | null)[] = [];
 
     for (let i = 0; i < model.getDisplayedValueCount(); i++) {
-        values.push(model.getDisplayedValue(i));
+        values.push(model.getDisplayedKey(i));
     }
 
     return values;
@@ -102,7 +107,7 @@ function asyncAssert(done: (error?: Error) => void, ...assertions: (() => void)[
 }
 
 describe('SetValueModel', () => {
-    let model: SetValueModel;
+    let model: SetValueModel<string>;
 
     describe('hasSelections', () => {
         describe('everything selected is the default', () => {
@@ -115,7 +120,7 @@ describe('SetValueModel', () => {
             });
 
             it('returns true if any value is deselected', () => {
-                model.deselectValue('B');
+                model.deselectKey('B');
 
                 expect(model.hasSelections()).toBe(true);
             });
@@ -129,8 +134,8 @@ describe('SetValueModel', () => {
             it('returns false if value is deselected then selected again', () => {
                 const value = 'B';
 
-                model.deselectValue(value);
-                model.selectValue(value);
+                model.deselectKey(value);
+                model.selectKey(value);
 
                 expect(model.hasSelections()).toBe(false);
             });
@@ -146,7 +151,7 @@ describe('SetValueModel', () => {
             });
 
             it('returns true if any value is selected', () => {
-                model.selectValue('B');
+                model.selectKey('B');
 
                 expect(model.hasSelections()).toBe(true);
             });
@@ -160,8 +165,8 @@ describe('SetValueModel', () => {
             it('returns false if value is selected then deselected again', () => {
                 const value = 'B';
 
-                model.selectValue(value);
-                model.deselectValue(value);
+                model.selectKey(value);
+                model.deselectKey(value);
 
                 expect(model.hasSelections()).toBe(false);
             });
@@ -180,26 +185,26 @@ describe('SetValueModel', () => {
         it('can change value selection', () => {
             const value = 'A';
 
-            expect(model.isValueSelected(value)).toBe(true);
+            expect(model.isKeySelected(value)).toBe(true);
 
-            model.deselectValue(value);
+            model.deselectKey(value);
 
-            expect(model.isValueSelected(value)).toBe(false);
+            expect(model.isKeySelected(value)).toBe(false);
 
-            model.selectValue(value);
+            model.selectKey(value);
 
-            expect(model.isValueSelected(value)).toBe(true);
+            expect(model.isKeySelected(value)).toBe(true);
         });
 
         it('keeps value selections when values are refreshed', done => {
             const value = 'A';
 
-            model.deselectValue(value);
+            model.deselectKey(value);
 
-            expect(model.isValueSelected(value)).toBe(false);
+            expect(model.isKeySelected(value)).toBe(false);
 
             model.refreshValues().then(() => {
-                asyncAssert(done, () => expect(model.isValueSelected(value)).toBe(false));
+                asyncAssert(done, () => expect(model.isKeySelected(value)).toBe(false));
             });
         });
 
@@ -208,7 +213,7 @@ describe('SetValueModel', () => {
             const doesRowPassOtherFilters = (row: RowNode) => row.data.value != 'B';
             model = createSetValueModel({ values, filterParams: { excelMode }, doesRowPassOtherFilters });
 
-            model.deselectValue('C');
+            model.deselectKey('C');
 
             expect(model.getModel()).toStrictEqual(['A']);
         });
@@ -218,7 +223,7 @@ describe('SetValueModel', () => {
             const doesRowPassOtherFilters = (row: RowNode) => row.data.value != 'B';
             model = createSetValueModel({ values, doesRowPassOtherFilters });
 
-            model.deselectValue('C');
+            model.deselectKey('C');
 
             expect(model.getModel()).toStrictEqual(['A', 'B']);
         });
@@ -250,9 +255,9 @@ describe('SetValueModel', () => {
         it('keeps existing deselection', done => {
             const values = ['A2', value, 'C2'];
 
-            model.deselectValue(value);
+            model.deselectKey(value);
             model.overrideValues(values).then(() => {
-                asyncAssert(done, () => expect(model.isValueSelected(value)).toBe(false));
+                asyncAssert(done, () => expect(model.isKeySelected(value)).toBe(false));
             });
         });
 
@@ -262,8 +267,8 @@ describe('SetValueModel', () => {
 
             model.overrideValues(values).then(() => {
                 asyncAssert(done, () => {
-                    expect(model.isValueSelected(lowerCaseValue)).toBe(true)
-                    expect(model.isValueSelected(value)).toBe(false)
+                    expect(model.isKeySelected(lowerCaseValue)).toBe(true)
+                    expect(model.isKeySelected(value)).toBe(false)
                 });
             });
         });
@@ -272,11 +277,11 @@ describe('SetValueModel', () => {
             const lowerCaseValue = 'b1';
             const values = ['A2', lowerCaseValue, 'C2'];
 
-            model.deselectValue(value);
+            model.deselectKey(value);
             model.overrideValues(values).then(() => {
                 asyncAssert(done, () => {
-                    expect(model.isValueSelected(lowerCaseValue)).toBe(false)
-                    expect(model.isValueSelected(value)).toBe(false)
+                    expect(model.isKeySelected(lowerCaseValue)).toBe(false)
+                    expect(model.isKeySelected(value)).toBe(false)
                 });
             });
         });
@@ -624,35 +629,35 @@ describe('SetValueModel', () => {
         });
 
         it('selects all values if no mini filter', () => {
-            values.forEach(v => model.deselectValue(v));
+            values.forEach(v => model.deselectKey(v));
 
             model.selectAllMatchingMiniFilter();
 
-            values.forEach(v => expect(model.isValueSelected(v)).toBe(true));
+            values.forEach(v => expect(model.isKeySelected(v)).toBe(true));
         });
 
         it('selects all values that match mini filter', () => {
-            model.deselectValue('B');
-            model.deselectValue('C');
+            model.deselectKey('B');
+            model.deselectKey('C');
             model.setMiniFilter('B');
             model.selectAllMatchingMiniFilter();
 
-            expect(model.isValueSelected('A')).toBe(true);
-            expect(model.isValueSelected('B')).toBe(true);
-            expect(model.isValueSelected('C')).toBe(false);
+            expect(model.isKeySelected('A')).toBe(true);
+            expect(model.isKeySelected('B')).toBe(true);
+            expect(model.isKeySelected('C')).toBe(false);
         });
 
         it.each([undefined, 'windows', 'mac'])('selects all values that match mini filter, replacing existing selection if requested, for excelMode = %s', excelMode => {
             model = createSetValueModel({values, filterParams: { excelMode }});
 
-            model.deselectValue('B');
-            model.deselectValue('C');
+            model.deselectKey('B');
+            model.deselectKey('C');
             model.setMiniFilter('B');
             model.selectAllMatchingMiniFilter(true);
 
-            expect(model.isValueSelected('A')).toBe(false);
-            expect(model.isValueSelected('B')).toBe(true);
-            expect(model.isValueSelected('C')).toBe(false);
+            expect(model.isKeySelected('A')).toBe(false);
+            expect(model.isKeySelected('B')).toBe(true);
+            expect(model.isKeySelected('C')).toBe(false);
         });
     });
 
@@ -666,19 +671,19 @@ describe('SetValueModel', () => {
         it('deselects all values if no mini filter', () => {
             model.deselectAllMatchingMiniFilter();
 
-            values.forEach(v => expect(model.isValueSelected(v)).toBe(false));
+            values.forEach(v => expect(model.isKeySelected(v)).toBe(false));
         });
 
         it.each([undefined, 'windows', 'mac'])('deselects all values that match mini filter, for excelMode = %s', excelMode => {
             model = createSetValueModel({values, filterParams: { excelMode }});
 
-            model.deselectValue('C');
+            model.deselectKey('C');
             model.setMiniFilter('B');
             model.deselectAllMatchingMiniFilter();
 
-            expect(model.isValueSelected('A')).toBe(true);
-            expect(model.isValueSelected('B')).toBe(false);
-            expect(model.isValueSelected('C')).toBe(false);
+            expect(model.isKeySelected('A')).toBe(true);
+            expect(model.isKeySelected('B')).toBe(false);
+            expect(model.isKeySelected('C')).toBe(false);
         });
     });
 
@@ -690,21 +695,21 @@ describe('SetValueModel', () => {
         });
 
         it('returns true if all values are selected', () => {
-            values.forEach(v => model.selectValue(v));
+            values.forEach(v => model.selectKey(v));
 
             expect(model.isEverythingVisibleSelected()).toBe(true);
         });
 
         it('returns false if any values are not selected', () => {
-            model.deselectValue('B');
+            model.deselectKey('B');
 
             expect(model.isEverythingVisibleSelected()).toBe(false);
         });
 
         it('returns true if everything that matches mini filter is selected', () => {
-            values.forEach(v => model.deselectValue(v));
+            values.forEach(v => model.deselectKey(v));
 
-            model.selectValue(values[1]);
+            model.selectKey(values[1]);
             model.setMiniFilter(values[1]);
 
             expect(model.isEverythingVisibleSelected()).toBe(true);
@@ -714,8 +719,8 @@ describe('SetValueModel', () => {
             const values = ['A', 'fooB', 'Cfoo'];
             model = createSetValueModel({values});
 
-            values.forEach(v => model.deselectValue(v));
-            model.selectValue('fooB');
+            values.forEach(v => model.deselectKey(v));
+            model.selectKey('fooB');
             model.setMiniFilter('foo');
 
             expect(model.isEverythingVisibleSelected()).toBe(false);
@@ -730,22 +735,22 @@ describe('SetValueModel', () => {
         });
 
         it('returns true if no values are selected', () => {
-            values.forEach(v => model.deselectValue(v));
+            values.forEach(v => model.deselectKey(v));
 
             expect(model.isNothingVisibleSelected()).toBe(true);
         });
 
         it('returns false if any values are selected', () => {
-            values.forEach(v => model.deselectValue(v));
-            model.selectValue('B');
+            values.forEach(v => model.deselectKey(v));
+            model.selectKey('B');
 
             expect(model.isNothingVisibleSelected()).toBe(false);
         });
 
         it('returns true if everything that matches mini filter is not selected', () => {
-            values.forEach(v => model.deselectValue(v));
+            values.forEach(v => model.deselectKey(v));
 
-            model.selectValue('A');
+            model.selectKey('A');
             model.setMiniFilter('B');
 
             expect(model.isNothingVisibleSelected()).toBe(true);
@@ -755,8 +760,8 @@ describe('SetValueModel', () => {
             const values = ['A', 'fooB', 'Cfoo'];
             model = createSetValueModel({values});
 
-            values.forEach(v => model.deselectValue(v));
-            model.selectValue('fooB');
+            values.forEach(v => model.deselectKey(v));
+            model.selectKey('fooB');
             model.setMiniFilter('foo');
 
             expect(model.isNothingVisibleSelected()).toBe(false);
@@ -775,8 +780,8 @@ describe('SetValueModel', () => {
             const values = ['A', ...expectedValues, 'D', 'E'];
             model = createSetValueModel({values});
 
-            values.forEach(v => model.deselectValue(v));
-            expectedValues.forEach(v => model.selectValue(v));
+            values.forEach(v => model.deselectKey(v));
+            expectedValues.forEach(v => model.selectKey(v));
 
             expect(model.getModel()).toStrictEqual(expectedValues);
         });
@@ -791,8 +796,8 @@ describe('SetValueModel', () => {
             model.setModel(expectedValues).then(() => {
                 asyncAssert(
                     done,
-                    () => expectedValues.forEach(v => expect(model.isValueSelected(v)).toBe(true)),
-                    () => otherValues.forEach(v => expect(model.isValueSelected(v)).toBe(false)));
+                    () => expectedValues.forEach(v => expect(model.isKeySelected(v)).toBe(true)),
+                    () => otherValues.forEach(v => expect(model.isKeySelected(v)).toBe(false)));
             });
         });
 
@@ -804,8 +809,8 @@ describe('SetValueModel', () => {
             model.setModel(expectedValues.map(v => v.toLowerCase())).then(() => {
                 asyncAssert(
                     done,
-                    () => expectedValues.forEach(v => expect(model.isValueSelected(v)).toBe(true)),
-                    () => otherValues.forEach(v => expect(model.isValueSelected(v)).toBe(false)));
+                    () => expectedValues.forEach(v => expect(model.isKeySelected(v)).toBe(true)),
+                    () => otherValues.forEach(v => expect(model.isKeySelected(v)).toBe(false)));
             });
         });
 
@@ -817,8 +822,8 @@ describe('SetValueModel', () => {
             model.setModel(expectedValues).then(() => {
                 asyncAssert(
                     done,
-                    () => expectedValues.forEach(v => expect(model.isValueSelected(v)).toBe(true)),
-                    () => otherValues.forEach(v => expect(model.isValueSelected(v)).toBe(false)));
+                    () => expectedValues.forEach(v => expect(model.isKeySelected(v)).toBe(true)),
+                    () => otherValues.forEach(v => expect(model.isKeySelected(v)).toBe(false)));
             });
         });
 
@@ -826,10 +831,10 @@ describe('SetValueModel', () => {
             const values = ['A', 'B', 'C', 'D', 'E'];
             model = createSetValueModel({values});
 
-            values.forEach(v => model.deselectValue(v));
+            values.forEach(v => model.deselectKey(v));
 
             model.setModel(null).then(() => {
-                asyncAssert(done, () => values.forEach(v => expect(model.isValueSelected(v)).toBe(true)));
+                asyncAssert(done, () => values.forEach(v => expect(model.isKeySelected(v)).toBe(true)));
             });
         });
     });

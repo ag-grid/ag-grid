@@ -289,11 +289,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return this._yNames;
     }
 
-    setColors(fills: string[], strokes: string[]) {
-        this.fills = fills;
-        this.strokes = strokes;
-    }
-
     /**
      * The value to normalize the bars to.
      * Should be a finite positive value or `undefined`.

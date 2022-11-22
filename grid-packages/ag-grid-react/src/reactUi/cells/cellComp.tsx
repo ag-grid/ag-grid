@@ -186,7 +186,10 @@ const CellComp = (props: {
             const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
             if (editingCancelledByUserComp) {
                 // we cannot set state inside render, so hack is to do it in next VM turn
-                setTimeout(() => cellCtrl.stopEditing(), 0);
+                setTimeout(() => {
+                    cellCtrl.stopEditing(true);
+                    cellCtrl.focusCell(true);
+                });
             }
         }
     }, []);

@@ -51,7 +51,7 @@ export class RichSelectRow extends Component {
         const params = {
             value: value,
             valueFormatted: valueFormatted,
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsService.get('api')
         } as ICellRendererParams;
 
         const compDetails = this.userComponentFactory.getCellRendererDetails(this.params, params);

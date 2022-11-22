@@ -230,10 +230,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
     }
 
-    setColors(_fills: string[], _strokes: string[]) {
-        // Override point for subclasses.
-    }
-
     // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
     getKeys(direction: ChartAxisDirection): string[] {
         const { directionKeys } = this;

@@ -57,17 +57,16 @@ export class GridSerializer extends BeanStub {
 
     private processRow<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T>, columnsToExport: Column[], node: RowNode): void {
         const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
-        const gridOptionsWrapper = this.gridOptionsWrapper;
-        const context = gridOptionsWrapper.getContext();
-        const api = gridOptionsWrapper.getApi()!;
-        const columnApi = gridOptionsWrapper.getColumnApi()!;
-        const skipSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveSingleChildren();
-        const skipLowestSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
+        const context = this.gridOptionsService.get('context');
+        const api = this.gridOptionsService.get('api')!;
+        const columnApi = this.gridOptionsService.get('columnApi')!;
+        const skipSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
+        const skipLowestSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
         // similarly, if specific rowNodes are provided we do the same. (the clipboard service uses rowNodes to define which rows to export)
         const isClipboardExport = params.rowPositions != null;
         const isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
-        const hideOpenParents = gridOptionsWrapper.isGroupHideOpenParents() && !isExplicitExportSelection;
+        const hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents() && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const skipRowGroups = params.skipGroups || params.skipRowGroups;
         const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
@@ -314,9 +313,9 @@ export class GridSerializer extends BeanStub {
             if (processGroupHeaderCallback) {
                 name = processGroupHeaderCallback({
                     columnGroup: columnGroup,
-                    api: this.gridOptionsWrapper.getApi()!,
-                    columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                    context: this.gridOptionsWrapper.getContext()
+                    api: this.gridOptionsService.get('api')!,
+                    columnApi: this.gridOptionsService.get('columnApi')!,
+                    context: this.gridOptionsService.get('context')
                 });
             } else {
                 name = this.columnModel.getDisplayNameForColumnGroup(columnGroup, 'header')!;

@@ -115,7 +115,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setMasterDetailInfo(rowNode: RowNode): void {
-        const isMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+        const isMasterFunc = this.gridOptionsService.get('isRowMaster');
         if (isMasterFunc != null) {
             rowNode.master = isMasterFunc(rowNode.data);
         } else {
