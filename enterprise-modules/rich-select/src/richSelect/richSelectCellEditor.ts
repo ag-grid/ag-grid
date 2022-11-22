@@ -56,7 +56,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.originalSelectedValue = params.value;
         this.focusAfterAttached = params.cellStartedEdit;
 
-        const icon = _.createIconNoSpan('smallDown', this.gridOptionsWrapper);
+        const icon = _.createIconNoSpan('smallDown', this.gridOptionsService);
         icon!.classList.add('ag-rich-select-value-icon');
         this.eValue.appendChild(icon!);
 

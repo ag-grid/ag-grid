@@ -37,7 +37,7 @@ export class RowDragComp extends Component {
     private postConstruct(): void {
         if (!this.customGui) {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
-            this.getGui().appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null)!);
+            this.getGui().appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsService, null)!);
             this.addDragSource();
         } else {
             this.setDragElement(this.customGui, this.dragStartPixels);

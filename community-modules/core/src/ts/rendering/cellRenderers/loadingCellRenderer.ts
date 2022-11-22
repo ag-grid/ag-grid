@@ -33,7 +33,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     private setupLoading(): void {
-        const eLoadingIcon = createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
+        const eLoadingIcon = createIconNoSpan('groupLoading', this.gridOptionsService, null);
         if (eLoadingIcon) {
             this.eLoadingIcon.appendChild(eLoadingIcon);
         }

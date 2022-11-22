@@ -40,7 +40,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            icon: _.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null)!,
+            icon: _.createIconNoSpan('pivotPanel', this.gridOptionsService, null)!,
             emptyMessage: emptyMessage,
             title: title
         });

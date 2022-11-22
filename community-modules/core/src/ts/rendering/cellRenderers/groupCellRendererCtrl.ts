@@ -454,8 +454,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
     private addExpandAndContract(): void {
         const params = this.params;
-        const eExpandedIcon = createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
-        const eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
+        const eExpandedIcon = createIconNoSpan('groupExpanded', this.gridOptionsService, null);
+        const eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsService, null);
 
         if (eExpandedIcon) {
             this.eExpanded.appendChild(eExpandedIcon);

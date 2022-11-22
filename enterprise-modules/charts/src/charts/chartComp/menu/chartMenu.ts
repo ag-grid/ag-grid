@@ -210,7 +210,7 @@ export class ChartMenu extends Component {
             const [iconName, callback] = buttonConfig;
             const buttonEl = _.createIconNoSpan(
                 iconName,
-                this.gridOptionsWrapper,
+                this.gridOptionsService,
                 undefined,
                 true
             )!;

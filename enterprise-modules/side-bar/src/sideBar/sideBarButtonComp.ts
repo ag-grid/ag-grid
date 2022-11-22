@@ -54,7 +54,7 @@ export class SideBarButtonComp extends Component {
     }
 
     private setIcon(): void {
-        this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper)!);
+        this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsService)!);
     }
 
     private onButtonPressed(): void {

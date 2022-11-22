@@ -185,15 +185,15 @@ export class DragAndDropService extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.ePinnedIcon = createIcon('columnMovePin', this.gridOptionsWrapper, null);
-        this.eHideIcon = createIcon('columnMoveHide', this.gridOptionsWrapper, null);
-        this.eMoveIcon = createIcon('columnMoveMove', this.gridOptionsWrapper, null);
-        this.eLeftIcon = createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
-        this.eRightIcon = createIcon('columnMoveRight', this.gridOptionsWrapper, null);
-        this.eGroupIcon = createIcon('columnMoveGroup', this.gridOptionsWrapper, null);
-        this.eAggregateIcon = createIcon('columnMoveValue', this.gridOptionsWrapper, null);
-        this.ePivotIcon = createIcon('columnMovePivot', this.gridOptionsWrapper, null);
-        this.eDropNotAllowedIcon = createIcon('dropNotAllowed', this.gridOptionsWrapper, null);
+        this.ePinnedIcon = createIcon('columnMovePin', this.gridOptionsService, null);
+        this.eHideIcon = createIcon('columnMoveHide', this.gridOptionsService, null);
+        this.eMoveIcon = createIcon('columnMoveMove', this.gridOptionsService, null);
+        this.eLeftIcon = createIcon('columnMoveLeft', this.gridOptionsService, null);
+        this.eRightIcon = createIcon('columnMoveRight', this.gridOptionsService, null);
+        this.eGroupIcon = createIcon('columnMoveGroup', this.gridOptionsService, null);
+        this.eAggregateIcon = createIcon('columnMoveValue', this.gridOptionsService, null);
+        this.ePivotIcon = createIcon('columnMovePivot', this.gridOptionsService, null);
+        this.eDropNotAllowedIcon = createIcon('dropNotAllowed', this.gridOptionsService, null);
     }
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {

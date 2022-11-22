@@ -458,7 +458,7 @@ export class EnterpriseMenu extends BeanStub {
         this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
-            title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column)!,
+            title: _.createIconNoSpan('menu', this.gridOptionsService, this.column)!,
             titleLabel: EnterpriseMenu.TAB_GENERAL.replace('MenuTab', ''),
             bodyPromise: AgPromise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
@@ -508,7 +508,7 @@ export class EnterpriseMenu extends BeanStub {
         };
 
         this.tabItemFilter = {
-            title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column)!,
+            title: _.createIconNoSpan('filter', this.gridOptionsService, this.column)!,
             titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
             bodyPromise: filterWrapper?.guiPromise as AgPromise<HTMLElement>,
             afterAttachedCallback: afterFilterAttachedCallback,
@@ -548,7 +548,7 @@ export class EnterpriseMenu extends BeanStub {
         eWrapperDiv.appendChild(columnSelectPanelGui);
 
         this.tabItemColumns = {
-            title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column)!, //createColumnsIcon(),
+            title: _.createIconNoSpan('columns', this.gridOptionsService, this.column)!, //createColumnsIcon(),
             titleLabel: EnterpriseMenu.TAB_COLUMNS.replace('MenuTab', ''),
             bodyPromise: AgPromise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS

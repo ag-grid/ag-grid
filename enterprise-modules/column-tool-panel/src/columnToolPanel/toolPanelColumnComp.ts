@@ -54,7 +54,7 @@ export class ToolPanelColumnComp extends Component {
     public init(): void {
 
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsService)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
