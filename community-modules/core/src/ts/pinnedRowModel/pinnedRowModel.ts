@@ -18,8 +18,8 @@ export class PinnedRowModel extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.setPinnedTopRowData(this.gridOptionsWrapper.getPinnedTopRowData());
-        this.setPinnedBottomRowData(this.gridOptionsWrapper.getPinnedBottomRowData());
+        this.setPinnedTopRowData(this.gridOptionsService.get('pinnedTopRowData'));
+        this.setPinnedBottomRowData(this.gridOptionsService.get('pinnedBottomRowData'));
     }
 
     public isEmpty(floating: RowPinnedType): boolean {

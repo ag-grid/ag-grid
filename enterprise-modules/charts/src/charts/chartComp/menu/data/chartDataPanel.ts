@@ -290,7 +290,7 @@ export class ChartDataPanel extends Component {
     }
 
     private addDragHandle(comp: AgCheckbox, col: ColState): void {
-        const eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
+        const eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsService)!;
 
         eDragHandle.classList.add('ag-drag-handle', 'ag-chart-data-column-drag-handle');
 

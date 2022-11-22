@@ -1,14 +1,14 @@
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { mock } from '../test-utils/mock';
 import { ExpressionService } from '../valueService/expressionService';
 import { ValueFormatterService } from './valueFormatterService';
 import { Column } from '../entities/column';
 import { ColDef, ValueFormatterParams } from '../entities/colDef';
 import { RowNode } from '../entities/rowNode';
+import { GridOptionsService } from '../gridOptionsService';
 
 let colDef: ColDef;
 let column: jest.Mocked<Column>;
-let gridOptionsWrapper: jest.Mocked<GridOptionsWrapper>;
+let gridOptionsService: jest.Mocked<GridOptionsService>;
 let expressionService: jest.Mocked<ExpressionService>;
 let valueFormatterService: ValueFormatterService;
 
@@ -18,10 +18,10 @@ describe('formatValue', () => {
         column = mock<Column>('getColDef');
         column.getColDef.mockReturnValue(colDef);
 
-        gridOptionsWrapper = mock<GridOptionsWrapper>('getApi', 'getColumnApi', 'getContext');
+        gridOptionsService = mock<GridOptionsService>('get');
         expressionService = mock<ExpressionService>('evaluate');
         valueFormatterService = new ValueFormatterService();
-        (valueFormatterService as any).gridOptionsWrapper = gridOptionsWrapper;
+        (valueFormatterService as any).gridOptionsService = gridOptionsService;
         (valueFormatterService as any).expressionService = expressionService;
     });
 

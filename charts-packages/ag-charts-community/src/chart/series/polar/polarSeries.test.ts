@@ -15,6 +15,7 @@ import {
     PolarTestCase,
     toMatchImage,
     repeat,
+    deproxy,
 } from '../../test/utils';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
@@ -102,7 +103,7 @@ describe('PolarSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create(options) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
                 await example.assertions(chart);
             });
@@ -120,7 +121,7 @@ describe('PolarSeries', () => {
                 options.width = CANVAS_WIDTH;
                 options.height = CANVAS_HEIGHT;
 
-                chart = AgChart.create(options) as Chart;
+                chart = deproxy(AgChart.create(options));
                 await compare();
 
                 if (example.extraScreenshotActions) {
@@ -150,7 +151,7 @@ describe('PolarSeries', () => {
             options.height = CANVAS_HEIGHT;
             options.legend = { enabled: true };
 
-            chart = AgChart.create(options) as Chart;
+            chart = deproxy(AgChart.create(options));
             const reference = await snapshot();
 
             options.data?.forEach((_, idx) => {

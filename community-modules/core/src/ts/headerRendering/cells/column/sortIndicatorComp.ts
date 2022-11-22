@@ -79,7 +79,7 @@ export class SortIndicatorComp extends Component {
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = createIconNoSpan(iconName, this.gridOptionsWrapper, column);
+        const eIcon = createIconNoSpan(iconName, this.gridOptionsService, column);
         if (eIcon) {
             eParent.appendChild(eIcon);
         }

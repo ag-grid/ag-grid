@@ -4309,7 +4309,6 @@
     }
   },
   "ChartType": {},
-  "AgChartType": { "meta": { "typeParams": ["T"] } },
   "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
   "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
   "DownloadOptions": {},
@@ -4358,6 +4357,7 @@
   "ObservableLike": {},
   "ChartUpdateType": {},
   "OptionalHTMLElement": {},
+  "TransferableResources": {},
   "ChartAxisDirection": {},
   "NodeData": {},
   "CrossLineType": {},
@@ -4694,14 +4694,14 @@
     },
     "assertions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": false
       }
     },
     "extraScreenshotActions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": true
       }
@@ -4713,14 +4713,14 @@
     },
     "assertions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": false
       }
     },
     "extraScreenshotActions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": true
       }
@@ -4732,14 +4732,14 @@
     },
     "assertions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": false
       }
     },
     "extraScreenshotActions": {
       "type": {
-        "arguments": { "chart": "Chart" },
+        "arguments": { "chart": "AgChartInstance" },
         "returnType": "Promise<void>",
         "optional": true
       }

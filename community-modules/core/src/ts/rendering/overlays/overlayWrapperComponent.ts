@@ -57,7 +57,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataUpdated.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
-        if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
+        if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsService.get('rowData')) {
             this.showLoadingOverlay();
         }
 

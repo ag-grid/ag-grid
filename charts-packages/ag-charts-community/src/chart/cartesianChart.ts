@@ -1,9 +1,8 @@
-import { Chart } from './chart';
+import { Chart, TransferableResources } from './chart';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
 import { ChartAxis, ChartAxisDirection } from './chartAxis';
 import { BBox } from '../scene/bbox';
-import { ClipRect } from '../scene/clipRect';
 import { Navigator } from './navigator/navigator';
 import { AgCartesianAxisPosition } from './agChartOptions';
 
@@ -11,21 +10,15 @@ export class CartesianChart extends Chart {
     static className = 'CartesianChart';
     static type: 'cartesian' | 'groupedCategory' = 'cartesian';
 
-    constructor(document = window.document, overrideDevicePixelRatio?: number) {
-        super(document, overrideDevicePixelRatio);
-
-        // Prevent the scene from rendering chart components in an invalid state
-        // (before first layout is performed).
-        this.scene.root!!.visible = false;
+    constructor(document = window.document, overrideDevicePixelRatio?: number, resources?: TransferableResources) {
+        super(document, overrideDevicePixelRatio, resources);
 
         const root = this.scene.root!;
-        root.append(this.seriesRoot);
         root.append(this.legend.group);
 
         this.navigator.enabled = false;
     }
 
-    readonly seriesRoot = new ClipRect();
     readonly navigator = new Navigator(this, this.interactionManager);
 
     async performLayout() {

@@ -130,11 +130,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         label.enabled = false;
     }
 
-    setColors(fills: string[], strokes: string[]) {
-        this.marker.fill = fills[0];
-        this.marker.stroke = strokes[0];
-    }
-
     async processData() {
         const { xKey, yKey, sizeKey, xAxis, yAxis, marker } = this;
 

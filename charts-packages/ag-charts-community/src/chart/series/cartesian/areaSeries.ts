@@ -202,11 +202,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         this._yKeys.forEach((key, idx) => seriesItemEnabled.set(key, visibles[idx] ?? true));
     }
 
-    setColors(fills: string[], strokes: string[]) {
-        this.fills = fills;
-        this.strokes = strokes;
-    }
-
     @Validate(STRING_ARRAY)
     yNames: string[] = [];
 

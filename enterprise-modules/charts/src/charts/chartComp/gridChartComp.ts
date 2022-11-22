@@ -37,6 +37,7 @@ import { ChartCrossFilterService } from "./services/chartCrossFilterService";
 import { CrossFilteringContext } from "../chartService";
 import { ChartOptionsService } from "./services/chartOptionsService";
 import { ComboChartProxy } from "./chartProxies/combo/comboChartProxy";
+import { AgChartInstance } from "ag-charts-community";
 
 export interface GridChartParams {
     chartId: string;
@@ -159,7 +160,7 @@ export class GridChartComp extends Component {
 
     private validateCustomThemes() {
         const suppliedThemes = this.gridOptionsWrapper.getChartThemes();
-        const customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
+        const customChartThemes = this.gridOptionsService.get('customChartThemes');
         if (customChartThemes) {
             _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
                 if (!_.includes(suppliedThemes, customThemeName)) {
@@ -172,8 +173,9 @@ export class GridChartComp extends Component {
 
     private createChart(): void {
         // if chart already exists, destroy it and remove it from DOM
+        let chartInstance: AgChartInstance | undefined = undefined;
         if (this.chartProxy) {
-            this.chartProxy.destroy();
+            chartInstance = this.chartProxy.destroy({ keepChartInstance: true });
         }
 
         const crossFilterCallback = (event: any, reset: boolean) => {
@@ -194,9 +196,10 @@ export class GridChartComp extends Component {
         const chartType = this.chartController.getChartType();
         const chartProxyParams: ChartProxyParams = {
             chartType,
+            chartInstance,
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
-            customChartThemes: this.gridOptionsWrapper.getCustomChartThemes(),
+            customChartThemes: this.gridOptionsService.get('customChartThemes'),
             getGridOptionsChartThemeOverrides: this.getGridOptionsChartThemeOverrides.bind(this),
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             crossFiltering: this.params.crossFiltering,
@@ -242,7 +245,7 @@ export class GridChartComp extends Component {
     }
 
     private getGridOptionsChartThemeOverrides(): AgChartThemeOverrides | undefined {
-        return this.gridOptionsWrapper.getChartThemeOverrides();
+        return this.gridOptionsService.get('chartThemeOverrides');
     }
 
     private static createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy {
@@ -430,8 +433,8 @@ export class GridChartComp extends Component {
         return this.chartController.getChartId();
     }
 
-    public getUnderlyingChart(): any {
-        return this.chartProxy.getChart();
+    public getUnderlyingChart() {
+        return this.chartProxy.getChartRef();
     }
 
     public crossFilteringReset(): void {

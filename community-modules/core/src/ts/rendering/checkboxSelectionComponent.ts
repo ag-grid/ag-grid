@@ -64,13 +64,13 @@ export class CheckboxSelectionComponent extends Component {
 
     private onCheckedClicked(event: MouseEvent): number {
         const groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        const updatedCount = this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
+        const updatedCount = this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event });
         return updatedCount;
     }
 
     private onUncheckedClicked(event: MouseEvent): number {
         const groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        const updatedCount = this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
+        const updatedCount = this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event });
         return updatedCount;
     }
 
@@ -119,7 +119,7 @@ export class CheckboxSelectionComponent extends Component {
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
 
-        const isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
+        const isRowSelectableFunc = this.gridOptionsService.get('isRowSelectable');
         const checkboxVisibleIsDynamic = isRowSelectableFunc || typeof this.getIsVisible() === 'function';
 
         if (checkboxVisibleIsDynamic) {

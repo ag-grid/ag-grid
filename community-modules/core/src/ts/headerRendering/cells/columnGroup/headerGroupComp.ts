@@ -133,7 +133,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     }
 
     private addInIcon(iconName: string, refName: string): void {
-        const eIcon = createIconNoSpan(iconName, this.gridOptionsWrapper, null);
+        const eIcon = createIconNoSpan(iconName, this.gridOptionsService, null);
         if (eIcon) {
             this.getRefElement(refName).appendChild(eIcon);
         }

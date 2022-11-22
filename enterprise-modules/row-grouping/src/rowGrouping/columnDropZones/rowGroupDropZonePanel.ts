@@ -27,6 +27,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     private passBeansUp(): void {
         super.setBeans({
             gridOptionsWrapper: this.gridOptionsWrapper,
+            gridOptionsService: this.gridOptionsService,
             eventService: this.eventService,
             context: this.getContext(),
             loggerFactory: this.loggerFactory,
@@ -39,7 +40,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            icon: _.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null)!,
+            icon: _.createIconNoSpan('rowGroupPanel', this.gridOptionsService, null)!,
             emptyMessage: emptyMessage,
             title
         });

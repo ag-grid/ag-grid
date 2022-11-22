@@ -10,6 +10,7 @@ import {
     extractImageData,
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
+    deproxy,
 } from './test/utils';
 import * as examples from './test/examples';
 import { HierarchyChart } from './hierarchyChart';
@@ -59,7 +60,7 @@ describe('HierarchyChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            chart = AgChart.create(options) as HierarchyChart;
+            chart = deproxy(AgChart.create(options)) as HierarchyChart;
             await compare(chart);
         });
 
@@ -70,7 +71,7 @@ describe('HierarchyChart', () => {
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
 
-            chart = AgChart.create(options) as HierarchyChart;
+            chart = deproxy(AgChart.create(options)) as HierarchyChart;
             await waitForChartStability(chart);
 
             const seriesImpl = chart.series[0] as TreemapSeries;

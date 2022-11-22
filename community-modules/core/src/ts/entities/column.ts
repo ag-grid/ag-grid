@@ -25,6 +25,7 @@ import { ModuleRegistry } from "../modules/moduleRegistry";
 import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
+import { GridOptionsService } from "../gridOptionsService";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 
@@ -68,6 +69,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public static EVENT_VALUE_CHANGED = 'columnValueChanged';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
 
     private readonly colId: any;
@@ -348,9 +350,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             data: rowNode.data,
             column: this,
             colDef: this.colDef,
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!
+            context: this.gridOptionsService.get('context'),
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!
         };
     }
 
@@ -439,9 +441,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             column: this,
             columns: [this],
             source: source,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext()
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context')
         };
     }
 
@@ -663,9 +665,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             data: rowNode.data,
             colDef: this.colDef,
             column: this,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext()
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context')
         };
         return params;
     }

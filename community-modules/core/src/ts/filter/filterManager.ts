@@ -57,7 +57,7 @@ export class FilterManager extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.refreshFiltersForAggregations());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.refreshFiltersForAggregations());
 
-        this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
+        this.quickFilter = this.parseQuickFilter(this.gridOptionsService.get('quickFilterText'));
         this.setQuickFilterParts();
 
         this.allowShowChangeAfterFilter = this.gridOptionsWrapper.isAllowShowChangeAfterFilter();
@@ -446,9 +446,9 @@ export class FilterManager extends BeanStub {
                 data: node.data,
                 column,
                 colDef,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
+                api: this.gridOptionsService.get('api')!,
+                columnApi: this.gridOptionsService.get('columnApi')!,
+                context: this.gridOptionsService.get('context')
             };
 
             value = colDef.getQuickFilterText(params);
@@ -565,16 +565,16 @@ export class FilterManager extends BeanStub {
 
     public createFilterParams(column: Column, colDef: ColDef): IFilterParams {
         const params: IFilterParams = {
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
             column,
             colDef: cloneObject(colDef),
             rowModel: this.rowModel,
             filterChangedCallback: () => { },
             filterModifiedCallback: () => { },
             valueGetter: this.createValueGetter(column),
-            context: this.gridOptionsWrapper.getContext(),
             doesRowPassOtherFilter: () => true,
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context'),
         };
 
         return params;

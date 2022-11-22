@@ -2,6 +2,7 @@ import { exists } from "../../utils/generic";
 import { RowNode } from "../../entities/rowNode";
 import { pushAll } from "../../utils/array";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { GridOptionsService } from "../../gridOptionsService";
 import { Autowired, Bean } from "../../context/context";
 import { StylingService } from "../../styling/stylingService";
 import { RowClassParams } from "../../entities/gridOptions";
@@ -16,7 +17,7 @@ export interface RowCssClassCalculatorParams {
     fullWidthRow?: boolean;
     firstRowOnPage: boolean;
     lastRowOnPage: boolean;
-    usePositionRelative: boolean;
+    printLayout: boolean;
     expandable: boolean;
 
     pinned: ColumnPinnedType;
@@ -30,6 +31,7 @@ export class RowCssClassCalculator {
 
     @Autowired('stylingService') public stylingService: StylingService;
     @Autowired('gridOptionsWrapper') public gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
 
     public getInitialRowClasses(params: RowCssClassCalculatorParams): string[] {
 
@@ -82,8 +84,8 @@ export class RowCssClassCalculator {
         pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
         pushAll(classes, this.preProcessRowClassRules(params.rowNode));
 
-        // we use absolute position unless we are doing print layout or ensureDomOrder
-        classes.push(params.usePositionRelative ? 'ag-row-position-relative' : 'ag-row-position-absolute');
+        // we use absolute position unless we are doing print layout
+        classes.push(params.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
 
         if (params.firstRowOnPage) {
             classes.push('ag-row-first');
@@ -117,7 +119,7 @@ export class RowCssClassCalculator {
         };
 
         // part 1 - rowClass
-        const rowClass = this.gridOptionsWrapper.getRowClass();
+        const rowClass = this.gridOptionsService.get('rowClass');
         if (rowClass) {
             if (typeof rowClass === 'function') {
                 console.warn('AG Grid: rowClass should not be a function, please use getRowClass instead');
@@ -162,13 +164,13 @@ export class RowCssClassCalculator {
             data: rowNode.data,
             node: rowNode,
             rowIndex: rowNode.rowIndex!,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext()
+            api: this.gridOptionsService.get('api')!,
+            columnApi: this.gridOptionsService.get('columnApi')!,
+            context: this.gridOptionsService.get('context')
         };
 
         this.stylingService.processClassRules(
-            this.gridOptionsWrapper.rowClassRules(),
+            this.gridOptionsService.get('rowClassRules'),
             rowClassParams,
             onApplicableClass,
             onNotApplicableClass

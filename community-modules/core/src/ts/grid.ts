@@ -337,7 +337,7 @@ export class GridCoreCreator {
     }
 
     private setColumnsAndData(beans: Beans): void {
-        const columnDefs = beans.gridOptionsWrapper.getColumnDefs();
+        const columnDefs = beans.gridOptionsService.get('columnDefs');
         beans.columnModel.setColumnDefs(columnDefs || [], "gridInitializing");
         beans.rowModel.start();
     }

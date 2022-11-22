@@ -74,7 +74,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public start(): void {
         this.started = true;
-        const datasource = this.gridOptionsWrapper.getServerSideDatasource();
+        const datasource = this.gridOptionsService.get('serverSideDatasource');
 
         if (datasource) {
             this.setDatasource(datasource);

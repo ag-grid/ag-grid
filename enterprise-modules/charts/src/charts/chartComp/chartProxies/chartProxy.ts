@@ -3,8 +3,10 @@ import { AgChart, AgChartTheme, AgChartThemePalette, AgChartInstance, _Theme } f
 import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
+import { deproxy } from "../utils/integration";
 
 export interface ChartProxyParams {
+    chartInstance?: AgChartInstance;
     chartType: ChartType;
     customChartThemes?: { [name: string]: AgChartTheme; };
     parentElement: HTMLElement;
@@ -89,6 +91,7 @@ export abstract class ChartProxy {
     protected readonly chartPalette: AgChartThemePalette | undefined;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
+        this.chart = chartProxyParams.chartInstance!;
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
@@ -113,22 +116,24 @@ export abstract class ChartProxy {
     public abstract update(params: UpdateChartParams): void;
 
     public recreateChart(): void {
-        if (this.chart) {
-            this.destroyChart();
+        if (this.chart == null) {
+            this.chart = this.createChart();
+
+            if (this.crossFiltering) {
+                // add event listener to chart canvas to detect when user wishes to reset filters
+                const resetFilters = true;
+                this.getChart().addEventListener('click', (e) => this.crossFilterCallback(e, resetFilters));
+            }
+    
+            this.getChart().addEventListener('click', (e) => this.clickCallback(e));
         }
-
-        this.chart = this.createChart();
-
-        if (this.crossFiltering) {
-            // add event listener to chart canvas to detect when user wishes to reset filters
-            const resetFilters = true;
-            this.chart.addEventListener('click', (e) => this.crossFilterCallback(e, resetFilters));
-        }
-
-        this.chart.addEventListener('click', (e) => this.clickCallback(e));
     }
 
-    public getChart(): AgChartInstance {
+    public getChart() {
+        return deproxy(this.chart);
+    }
+
+    public getChartRef() {
         return this.chart;
     }
 
@@ -198,14 +203,15 @@ export abstract class ChartProxy {
 
     public downloadChart(dimensions?: { width: number; height: number }, fileName?: string, fileFormat?: string) {
         const { chart } = this;
-        const imageFileName = fileName || (chart.title ? chart.title.text : 'chart');
+        const rawChart = deproxy(chart);
+        const imageFileName = fileName || (rawChart.title ? rawChart.title.text : 'chart');
         const { width, height } = dimensions || {};
 
         AgChart.download(chart, { width, height, fileName: imageFileName, fileFormat });
     }
 
     public getChartImageDataURL(type?: string) {
-        return this.chart.scene.getDataURL(type);
+        return this.getChart().scene.getDataURL(type);
     }
 
     public getChartOptions(): AgChartThemeOverrides {
@@ -239,6 +245,8 @@ export abstract class ChartProxy {
         }
 
         return {
+            container: this.chartProxyParams.parentElement,
+            theme: this.agChartTheme,
             padding: getChartOption('padding'),
             background: getChartOption('background'),
             title: getChartOption('title'),
@@ -249,7 +257,11 @@ export abstract class ChartProxy {
         };
     }
 
-    public destroy(): void {
+    public destroy({ keepChartInstance = false } = {}): AgChartInstance | undefined {
+        if (keepChartInstance) {
+            return this.chart;
+        }
+
         this.destroyChart();
     }
 

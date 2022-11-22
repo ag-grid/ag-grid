@@ -72,7 +72,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public start(): void {
-        this.setDatasource(this.gridOptionsWrapper.getDatasource());
+        this.setDatasource(this.gridOptionsService.get('datasource'));
     }
 
     @PreDestroy

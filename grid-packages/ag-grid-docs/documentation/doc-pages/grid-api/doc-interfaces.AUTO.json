@@ -20005,17 +20005,33 @@
       }
     },
     "getValues": {
-      "description": "/** Returns the full list of unique values used by the Set Filter. */",
+      "description": "/** @deprecated As of v29 use `getFilterValues` to get the values in the Set Filter\n     * (e.g. complex objects if provided), or `getFilterKeys` to get the string keys\n     * \n     * Returns the full list of unique keys used by the Set Filter.\n     */",
       "type": {
         "arguments": {},
         "returnType": "SetFilterModelValue",
         "optional": false
       }
     },
+    "getFilterKeys": {
+      "description": "/** Returns the full list of unique keys used by the Set Filter. */",
+      "type": {
+        "arguments": {},
+        "returnType": "SetFilterModelValue",
+        "optional": false
+      }
+    },
+    "getFilterValues": {
+      "description": "/** Returns the full list of unique values used by the Set Filter. */",
+      "type": {
+        "arguments": {},
+        "returnType": "(V | null)[]",
+        "optional": false
+      }
+    },
     "setFilterValues": {
       "description": "/** Sets the values used in the Set Filter on the fly. */",
       "type": {
-        "arguments": { "values": "SetFilterModelValue" },
+        "arguments": { "values": "(V | null)[]" },
         "returnType": "void",
         "optional": false
       }
@@ -20052,6 +20068,7 @@
         "optional": false
       }
     },
+    "meta": { "typeParams": ["V = string"] },
     "applyModel": {
       "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
@@ -20097,7 +20114,7 @@
     "success": {
       "description": "/** The function to call with the values to load into the filter once they are ready. */",
       "type": {
-        "arguments": { "values": "string[]" },
+        "arguments": { "values": "(V | null)[]" },
         "returnType": "void",
         "optional": false
       }
@@ -20116,14 +20133,18 @@
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] }
+    "meta": { "typeParams": ["TData = any", "V = string"] }
   },
-  "SetFilterValuesFunc": { "meta": { "typeParams": ["TData = any"] } },
-  "SetFilterValues": { "meta": { "typeParams": ["TData = any"] } },
+  "SetFilterValuesFunc": {
+    "meta": { "typeParams": ["TData = any", "V = string"] }
+  },
+  "SetFilterValues": {
+    "meta": { "typeParams": ["TData = any", "V = string"] }
+  },
   "ISetFilterParams": {
     "values": {
       "description": "/** The values to display in the Filter List. If this is not set, the filter will takes its\n     * values from what is loaded in the table.\n     */",
-      "type": { "returnType": "SetFilterValues", "optional": true }
+      "type": { "returnType": "SetFilterValues<TData, V>", "optional": true }
     },
     "refreshValuesOnOpen": {
       "description": "/** Refresh the values every time the Set filter is opened.\n     */",
@@ -20164,7 +20185,7 @@
     "comparator": {
       "description": "/** Comparator for sorting. If not provided, the Column Definition comparator is used. If Column\n     * Definition comparator is also not provided, the default (grid provided) comparator is used.\n     */",
       "type": {
-        "arguments": { "a": "any", "b": "any" },
+        "arguments": { "a": "V | null", "b": "V | null" },
         "returnType": "number",
         "optional": true
       }
@@ -20178,8 +20199,17 @@
       }
     },
     "valueFormatter": {
+      "description": "/** If specified, this formats the value before it is displayed in the Filter List.\n     * If a Key Creator is provided (see `keyCreator`), this must also be provided,\n     * unless `convertValuesToStrings` is `true`\n     */",
       "type": {
         "arguments": { "params": "ValueFormatterParams" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "keyCreator": {
+      "description": "/** Function to return a string key for a value. This is required when the filter values are complex objects.\n     * If not provided, the Column Definition Key Creator is used.\n     */",
+      "type": {
+        "arguments": { "params": "KeyCreatorParams<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -20196,6 +20226,11 @@
       "description": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.\n     */",
       "type": { "returnType": "'mac' | 'windows'", "optional": true }
     },
+    "convertValuesToStrings": {
+      "description": "/** @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,\n     * as well as maintaining the type of primitives (e.g. number, boolean) when not used as keys.\n     * \n     * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.\n     * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any", "V = string"] },
     "buttons": {
       "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n     * The options are:\n     * \n     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.\n     */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
@@ -20248,7 +20283,6 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -22858,9 +22892,7 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "lastRowOnPage": { "type": { "returnType": "boolean", "optional": false } },
-    "usePositionRelative": {
-      "type": { "returnType": "boolean", "optional": false }
-    },
+    "printLayout": { "type": { "returnType": "boolean", "optional": false } },
     "expandable": { "type": { "returnType": "boolean", "optional": false } },
     "pinned": {
       "type": { "returnType": "ColumnPinnedType", "optional": false }

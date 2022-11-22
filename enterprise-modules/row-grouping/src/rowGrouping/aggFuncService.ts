@@ -33,7 +33,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
         }
 
         this.initialiseWithDefaultAggregations();
-        this.addAggFuncs(this.gridOptionsWrapper.getAggFuncs());
+        this.addAggFuncs(this.gridOptionsService.get('aggFuncs'));
     }
 
     private initialiseWithDefaultAggregations(): void {

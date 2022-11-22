@@ -171,13 +171,15 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 const updatedCount = this.rowNode.setSelectedParams({
                     newValue: newSelection,
                     rangeSelect: event.shiftKey,
-                    groupSelectsFiltered: groupSelectsFiltered
+                    groupSelectsFiltered: groupSelectsFiltered,
+                    event
                 });
                 if (currentSelection === undefined && updatedCount === 0) {
                     this.rowNode.setSelectedParams({
                         newValue: false,
                         rangeSelect: event.shiftKey,
-                        groupSelectsFiltered: groupSelectsFiltered
+                        groupSelectsFiltered: groupSelectsFiltered,
+                        event
                     });
                 }
             }

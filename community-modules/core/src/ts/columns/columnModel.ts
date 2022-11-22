@@ -1181,7 +1181,7 @@ export class ColumnModel extends BeanStub {
             });
 
             // if user wants to do shift resize by default, then we invert the shift operation
-            const defaultIsShift = this.gridOptionsWrapper.getColResizeDefault() === 'shift';
+            const defaultIsShift = this.gridOptionsService.get('colResizeDefault') === 'shift';
 
             if (defaultIsShift) {
                 shiftKey = !shiftKey;
@@ -2653,9 +2653,9 @@ export class ColumnModel extends BeanStub {
                 columnGroup: columnGroup,
                 providedColumnGroup: providedColumnGroup,
                 location: location,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
+                api: this.gridOptionsService.get('api')!,
+                columnApi: this.gridOptionsService.get('columnApi')!,
+                context: this.gridOptionsService.get('context')
             };
 
             if (typeof headerValueGetter === 'function') {

@@ -1,5 +1,4 @@
-import { ICellRendererComp, ICellRendererFunc } from '../rendering/cellRenderers/iCellRenderer';
-import { ColDef, ValueFormatterParams } from '../entities/colDef';
+import { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
 import { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/providedFilter';
 import { Column } from '../entities/column';
 import { GridApi } from '../gridApi';
@@ -13,8 +12,11 @@ export interface SetFilterModel extends ProvidedFilterModel {
     values: SetFilterModelValue;
 }
 
-/** Interface contract for the public aspects of the SetFilter implementation. */
-export interface ISetFilter extends IProvidedFilter {
+/**
+ * Interface contract for the public aspects of the SetFilter implementation. 
+ * @param V type of value in the Set Filter
+*/
+export interface ISetFilter<V = string> extends IProvidedFilter {
     /**
      * Returns a model representing the current state of the filter, or `null` if the filter is
      * not active.
@@ -32,11 +34,22 @@ export interface ISetFilter extends IProvidedFilter {
      */
     setModel(model: SetFilterModel | null): void | AgPromise<void>;
 
-    /** Returns the full list of unique values used by the Set Filter. */
+    /**
+     * @deprecated As of v29 use `getFilterValues` to get the values in the Set Filter
+     * (e.g. complex objects if provided), or `getFilterKeys` to get the string keys
+     * 
+     * Returns the full list of unique keys used by the Set Filter.
+     */
     getValues(): SetFilterModelValue;
 
+    /** Returns the full list of unique keys used by the Set Filter. */
+    getFilterKeys(): SetFilterModelValue;
+
+    /** Returns the full list of unique values used by the Set Filter. */
+    getFilterValues(): (V | null)[];
+
     /** Sets the values used in the Set Filter on the fly. */
-    setFilterValues(values: SetFilterModelValue): void;
+    setFilterValues(values: (V | null)[]): void;
     /**
      * Refreshes the values shown in the filter from the original source. For example, if a
      * callback was provided, the callback will be executed again and the filter will refresh using
@@ -58,9 +71,13 @@ export interface ISetFilter extends IProvidedFilter {
     getModelFromUi(): SetFilterModel | null;
 }
 
-export interface SetFilterValuesFuncParams<TData = any> {
+/** 
+ * @param TData type of data row
+ * @param V type of value in the Set Filter
+ */
+export interface SetFilterValuesFuncParams<TData = any, V = string> {
     /** The function to call with the values to load into the filter once they are ready. */
-    success: (values: string[]) => void;
+    success: (values: (V | null)[]) => void;
     /** The column definition from which the set filter is invoked. */
     colDef: ColDef<TData>;
     /** Column from which the set filter is invoked. */
@@ -71,15 +88,27 @@ export interface SetFilterValuesFuncParams<TData = any> {
     context: any;
 }
 
-export type SetFilterValuesFunc<TData = any> = (params: SetFilterValuesFuncParams<TData>) => void;
-export type SetFilterValues<TData = any> = SetFilterValuesFunc<TData> | any[];
+/** 
+ * @param TData type of data row
+ * @param V type of value in the Set Filter
+ */
+export type SetFilterValuesFunc<TData = any, V = string> = (params: SetFilterValuesFuncParams<TData, V>) => void;
+/** 
+ * @param TData type of data row
+ * @param V type of value in the Set Filter
+ */
+export type SetFilterValues<TData = any, V = string> = SetFilterValuesFunc<TData, V> | (V | null)[];
 
-export interface ISetFilterParams extends IProvidedFilterParams {
+/** 
+ * @param TData type of data row
+ * @param V type of value in the Set Filter
+ */
+export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilterParams {
     /**
      * The values to display in the Filter List. If this is not set, the filter will takes its
      * values from what is loaded in the table.
      */
-    values?: SetFilterValues;
+    values?: SetFilterValues<TData, V>;
     /**
      * Refresh the values every time the Set filter is opened.
      */
@@ -130,13 +159,23 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      * Comparator for sorting. If not provided, the Column Definition comparator is used. If Column
      * Definition comparator is also not provided, the default (grid provided) comparator is used.
      */
-    comparator?: (a: any, b: any) => number;
+    comparator?: (a: V | null, b: V | null) => number;
     /**
      * If specified, this formats the text before applying the Mini Filter compare logic, useful for
      * instance to substitute accented characters.
      */
     textFormatter?: (from: string) => string;
+    /**
+     * If specified, this formats the value before it is displayed in the Filter List.
+     * If a Key Creator is provided (see `keyCreator`), this must also be provided,
+     * unless `convertValuesToStrings` is `true`
+     */
     valueFormatter?: (params: ValueFormatterParams) => string;
+    /**
+     * Function to return a string key for a value. This is required when the filter values are complex objects.
+     * If not provided, the Column Definition Key Creator is used.
+     */
+    keyCreator?: (params: KeyCreatorParams<TData>) => string;
     /**
      * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,
      * untruncated value.
@@ -153,4 +192,12 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      * Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.
      */
     excelMode?: 'mac' | 'windows';
+    /**
+     * @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,
+     * as well as maintaining the type of primitives (e.g. number, boolean) when not used as keys.
+     * 
+     * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.
+     * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.
+     */
+    convertValuesToStrings?: boolean
 }

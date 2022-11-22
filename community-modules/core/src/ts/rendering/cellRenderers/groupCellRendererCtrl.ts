@@ -4,12 +4,12 @@ import { Constants } from "../../constants/constants";
 import { KeyCode } from "../../constants/keyCode";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
+import { CtrlsService } from "../../ctrlsService";
 import { CellRendererSelectorFunc } from "../../entities/colDef";
 import { Column } from "../../entities/column";
-import { GridOptions } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
+import { removeAriaExpanded, setAriaExpanded } from "../../utils/aria";
 import { isElementInEventPath, isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../utils/event";
-import { getAriaDescribedBy, removeAriaExpanded, setAriaExpanded } from "../../utils/aria";
 import { doOnce } from "../../utils/function";
 import { missing } from "../../utils/generic";
 import { createIconNoSpan } from "../../utils/icon";
@@ -19,7 +19,6 @@ import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { RowDragComp } from "../row/rowDragComp";
 import { ValueFormatterService } from "../valueFormatterService";
 import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "./iCellRenderer";
-import { CtrlsService } from "../../ctrlsService";
 
 export interface IGroupCellRenderer {
     setInnerRenderer(compDetails: UserCompDetails | undefined, valueToDisplay: any): void;
@@ -79,7 +78,6 @@ export class GroupCellRendererCtrl extends BeanStub {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired("ctrlsService") private ctrlsService: CtrlsService;
 
     private params: GroupCellRendererParams;
@@ -366,7 +364,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         // for full width rows, we don't do any of the below
         if (params.fullWidth) {
             return this.userComponentFactory.getFullWidthGroupRowInnerCellRenderer(
-                this.gridOptions.groupRowRendererParams, params);
+                this.gridOptionsService.get('groupRowRendererParams'), params);
         }
 
         // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
@@ -456,8 +454,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
     private addExpandAndContract(): void {
         const params = this.params;
-        const eExpandedIcon = createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
-        const eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
+        const eExpandedIcon = createIconNoSpan('groupExpanded', this.gridOptionsService, null);
+        const eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsService, null);
 
         if (eExpandedIcon) {
             this.eExpanded.appendChild(eExpandedIcon);

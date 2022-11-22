@@ -30,6 +30,7 @@ import {
     OPT_STRING,
     STRING,
     COLOR_STRING_ARRAY,
+    OPT_COLOR_STRING_ARRAY,
     Validate,
     COLOR_STRING,
 } from '../../../util/validation';
@@ -88,11 +89,6 @@ interface PieNodeDatum extends SeriesNodeDatum {
     readonly sectorFormat: AgPieSeriesFormat;
 }
 
-class PieHighlightStyle extends HighlightStyle {
-    @Validate(OPT_NUMBER(0))
-    centerOffset?: number;
-}
-
 enum PieNodeTag {
     Sector,
     Callout,
@@ -122,8 +118,8 @@ class PieSeriesSectorLabel extends Label {
 }
 
 class PieSeriesCalloutLine {
-    @Validate(COLOR_STRING_ARRAY)
-    colors: string[] = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
+    @Validate(OPT_COLOR_STRING_ARRAY)
+    colors: string[] | undefined = undefined;
 
     @Validate(NUMBER(0))
     length: number = 10;
@@ -383,7 +379,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     shadow?: DropShadow = undefined;
 
-    readonly highlightStyle = new PieHighlightStyle();
+    readonly highlightStyle = new HighlightStyle();
 
     constructor() {
         super({ useLabelLayer: true });
@@ -414,12 +410,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private processSeriesItemEnabled() {
         const { data, visible } = this;
         this.seriesItemEnabled = data?.map(() => visible) || [];
-    }
-
-    setColors(fills: string[], strokes: string[]) {
-        this.fills = fills;
-        this.strokes = strokes;
-        this.calloutLine.colors = strokes;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -671,12 +661,15 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return outerRadius;
     }
 
-    async update() {
-        const { title } = this;
+    updateRadiusScale() {
         const innerRadius = this.getInnerRadius();
         const outerRadius = this.getOuterRadius();
-
         this.radiusScale.range = [innerRadius, outerRadius];
+    }
+
+    async update() {
+        const { title } = this;
+        this.updateRadiusScale();
 
         this.rootGroup.translationX = this.centerX;
         this.rootGroup.translationY = this.centerY;
@@ -774,11 +767,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const {
             radiusScale,
-            calloutLine,
             chart: { highlightedDatum },
         } = this;
 
-        const centerOffsets: number[] = [];
         const innerRadius = radiusScale.convert(0);
 
         const updateSectorFn = (sector: Sector, datum: PieNodeDatum, index: number, isDatumHighlighted: boolean) => {
@@ -809,8 +800,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             sector.fillShadow = this.shadow;
             sector.lineJoin = 'round';
 
-            centerOffsets.push(sector.centerOffset);
-
             this.datumSectorRefs.set(datum, sector);
         };
 
@@ -826,8 +815,17 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         });
 
-        const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = calloutLine;
+        this.updateCalloutLineNodes();
+        this.updateCalloutLabelNodes();
+        this.updateSectorLabelNodes();
+        this.updateInnerLabelNodes();
+    }
 
+    updateCalloutLineNodes() {
+        const { radiusScale, calloutLine } = this;
+        const calloutLength = calloutLine.length;
+        const calloutStrokeWidth = calloutLine.strokeWidth;
+        const calloutColors = calloutLine.colors || this.strokes;
         this.calloutLabelSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
             const radius = radiusScale.convert(datum.radius, clamper);
             const outerRadius = Math.max(0, radius);
@@ -843,36 +841,92 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 line.stroke = undefined;
             }
         });
+    }
 
-        {
-            const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = this.calloutLabel;
+    updateCalloutLabelNodes() {
+        const { radiusScale, calloutLabel, calloutLine } = this;
+        const calloutLength = calloutLine.length;
+        const { offset, color } = calloutLabel;
+        const seriesBox = this.chart!.getSeriesRect()!;
+        const seriesLeft = seriesBox.x - this.centerX;
+        const seriesRight = seriesBox.x + seriesBox.width - this.centerX;
 
-            this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
+        const tempTextNode = new Text();
+
+        this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum) => {
+            const label = datum.calloutLabel;
+            const radius = radiusScale.convert(datum.radius, clamper);
+            const outerRadius = Math.max(0, radius);
+
+            if (!label || outerRadius === 0) {
+                text.visible = false;
+                return;
+            }
+
+            const labelRadius = outerRadius + calloutLength + offset;
+            const x = datum.midCos * labelRadius;
+            const y = datum.midSin * labelRadius;
+
+            // Detect text overflow
+            let visibleTextPart = 1;
+            this.setTextDimensionalProps(tempTextNode, x, y, label);
+            const box = tempTextNode.computeBBox();
+            const errPx = 1; // Prevents errors related to floating point calculations
+            if (box.x + errPx < seriesLeft) {
+                visibleTextPart = (box.x + box.width - seriesLeft) / box.width;
+            } else if (box.x + box.width - errPx > seriesRight) {
+                visibleTextPart = (seriesRight - box.x) / box.width;
+            }
+
+            const textLength = Math.floor(label.text.length * visibleTextPart) - 1;
+            const displayText = visibleTextPart === 1 ? label.text : `${label.text.substring(0, textLength)}…`;
+
+            this.setTextDimensionalProps(text, x, y, { ...label, text: displayText });
+            text.fill = color;
+            text.visible = true;
+        });
+    }
+
+    computeLabelsBBox(): BBox | null {
+        const { radiusScale, calloutLabel, calloutLine } = this;
+        const calloutLength = calloutLine.length;
+        const { offset } = calloutLabel;
+        this.updateRadiusScale();
+
+        const text = new Text();
+        const textBoxes = this.groupSelectionData
+            .map((datum) => {
                 const label = datum.calloutLabel;
                 const radius = radiusScale.convert(datum.radius, clamper);
                 const outerRadius = Math.max(0, radius);
-
-                if (label && outerRadius !== 0) {
-                    const labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset;
-
-                    text.fontStyle = fontStyle;
-                    text.fontWeight = fontWeight;
-                    text.fontSize = fontSize;
-                    text.fontFamily = fontFamily;
-                    text.text = label.text;
-                    text.x = datum.midCos * labelRadius;
-                    text.y = datum.midSin * labelRadius;
-                    text.fill = color;
-                    text.textAlign = label.textAlign;
-                    text.textBaseline = label.textBaseline;
-                } else {
-                    text.fill = undefined;
+                if (!label || outerRadius === 0) {
+                    return null;
                 }
-            });
+                const labelRadius = outerRadius + calloutLength + offset;
+                const x = datum.midCos * labelRadius;
+                const y = datum.midSin * labelRadius;
+                this.setTextDimensionalProps(text, x, y, label);
+                return text.computeBBox();
+            })
+            .filter((box) => box != null) as BBox[];
+        if (textBoxes.length === 0) {
+            return null;
         }
+        return BBox.merge(textBoxes);
+    }
 
-        this.updateSectorLabelNodes();
-        this.updateInnerLabelNodes();
+    private setTextDimensionalProps(textNode: Text, x: number, y: number, label: PieNodeDatum['calloutLabel']) {
+        const { calloutLabel } = this;
+        const { fontStyle, fontWeight, fontSize, fontFamily } = calloutLabel;
+        textNode.fontStyle = fontStyle;
+        textNode.fontWeight = fontWeight;
+        textNode.fontSize = fontSize!;
+        textNode.fontFamily = fontFamily!;
+        textNode.text = label!.text;
+        textNode.x = x;
+        textNode.y = y;
+        textNode.textAlign = label!.textAlign;
+        textNode.textBaseline = label!.textBaseline;
     }
 
     private updateSectorLabelNodes() {

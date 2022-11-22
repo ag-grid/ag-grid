@@ -28,6 +28,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     private passBeansUp(): void {
         super.setBeans({
             gridOptionsWrapper: this.gridOptionsWrapper,
+            gridOptionsService: this.gridOptionsService,
             eventService: this.eventService,
             context: this.getContext(),
             loggerFactory: this.loggerFactory,
@@ -40,7 +41,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            icon: _.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null)!,
+            icon: _.createIconNoSpan('pivotPanel', this.gridOptionsService, null)!,
             emptyMessage: emptyMessage,
             title: title
         });
@@ -76,7 +77,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         if (this.isHorizontal()) {
             // what we do for horizontal (ie the pivot panel at the top) depends
             // on the user property as well as pivotMode.
-            switch (this.gridOptionsWrapper.getPivotPanelShow()) {
+            switch (this.gridOptionsService.get('pivotPanelShow')) {
                 case 'always':
                     this.setDisplayed(pivotMode);
                     break;

@@ -55,7 +55,7 @@ export function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHie
         return false;
     }
 
-    switch (input.type) {
+    switch (specifiedType) {
         case 'hierarchy':
         // fall-through - hierarchy and treemap are synonyms.
         case 'treemap':
@@ -72,7 +72,7 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
         return false;
     }
 
-    switch (input.type) {
+    switch (specifiedType) {
         case 'polar':
         // fall-through - polar and pie are synonyms.
         case 'pie':

@@ -41,4 +41,26 @@ export class BBox {
             Math.abs(this.height) === Infinity
         );
     }
+
+    static merge(boxes: BBox[]) {
+        let left = Infinity;
+        let top = Infinity;
+        let right = -Infinity;
+        let bottom = -Infinity;
+        boxes.forEach((box) => {
+            if (box.x < left) {
+                left = box.x;
+            }
+            if (box.y < top) {
+                top = box.y;
+            }
+            if (box.x + box.width > right) {
+                right = box.x + box.width;
+            }
+            if (box.y + box.height > bottom) {
+                bottom = box.y + box.height;
+            }
+        });
+        return new BBox(left, top, right - left, bottom - top);
+    }
 }

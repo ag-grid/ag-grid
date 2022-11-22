@@ -103,13 +103,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapListener);
 
         this.rootNode = new RowNode(this.beans);
-        this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
+        this.nodeManager = new ClientSideNodeManager(this.rootNode,
+            this.gridOptionsWrapper, this.gridOptionsService,
             this.eventService, this.columnModel,
             this.selectionService, this.beans);
     }
 
     public start(): void {
-        const rowData = this.gridOptionsWrapper.getRowData();
+        const rowData = this.gridOptionsService.get('rowData');
         if (rowData) {
             this.setRowData(rowData);
         }

@@ -54,7 +54,7 @@ export class ToolPanelColumnComp extends Component {
     public init(): void {
 
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsService)!;
         this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
@@ -94,7 +94,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.setupTooltip();
 
-        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.column.getColDef(), this.gridOptionsWrapper, this.column, null);
+        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.column.getColDef(), this.gridOptionsService, this.column, null);
         classes.forEach(c => this.addOrRemoveCssClass(c, true));
     }
 

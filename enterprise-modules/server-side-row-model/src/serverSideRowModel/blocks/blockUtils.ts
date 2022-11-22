@@ -85,8 +85,8 @@ export class BlockUtils extends BeanStub {
     }
 
     private setTreeGroupInfo(rowNode: RowNode): void {
-        const isGroupFunc = this.gridOptionsWrapper.getIsServerSideGroupFunc();
-        const getKeyFunc = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
+        const isGroupFunc = this.gridOptionsService.get('isServerSideGroup');
+        const getKeyFunc = this.gridOptionsService.get('getServerSideGroupKey');
 
         if (isGroupFunc != null) {
             rowNode.setGroup(isGroupFunc(rowNode.data));
@@ -115,7 +115,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setMasterDetailInfo(rowNode: RowNode): void {
-        const isMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+        const isMasterFunc = this.gridOptionsService.get('isRowMaster');
         if (isMasterFunc != null) {
             rowNode.master = isMasterFunc(rowNode.data);
         } else {
@@ -171,7 +171,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setChildCountIntoRowNode(rowNode: RowNode): void {
-        const getChildCount = this.gridOptionsWrapper.getChildCountFunc();
+        const getChildCount = this.gridOptionsService.get('getChildCount');
         if (getChildCount) {
             rowNode.allChildrenCount = getChildCount(rowNode.data);
         }

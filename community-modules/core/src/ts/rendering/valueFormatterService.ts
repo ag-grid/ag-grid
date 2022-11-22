@@ -36,9 +36,9 @@ export class ValueFormatterService extends BeanStub {
                 data: node ? node.data : null,
                 colDef,
                 column,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
+                api: this.gridOptionsService.get('api')!,
+                columnApi: this.gridOptionsService.get('columnApi')!,
+                context: this.gridOptionsService.get('context')
             };
 
             result = this.expressionService.evaluate(formatter, params);

@@ -219,11 +219,6 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
     shadow?: DropShadow = undefined;
 
-    setColors(fills: string[], strokes: string[]) {
-        this.fill = fills[0];
-        this.stroke = strokes[0];
-    }
-
     protected highlightedDatum?: HistogramNodeDatum;
 
     // During processData phase, used to unify different ways of the user specifying

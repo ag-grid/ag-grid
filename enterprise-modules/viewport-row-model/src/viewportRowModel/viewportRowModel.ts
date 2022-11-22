@@ -46,8 +46,8 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     public start(): void {
-        if (this.gridOptionsWrapper.getViewportDatasource()) {
-            this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource()!);
+        if (this.gridOptionsService.get('viewportDatasource')) {
+            this.setViewportDatasource(this.gridOptionsService.get('viewportDatasource')!);
         }
     }
 
