@@ -153,17 +153,16 @@ export class Group extends Node {
         }
 
         if (layer) {
-            // By default there is no need to force redraw a group which has it's own canvas layer
-            // as the layer is independent of any other layer.
-
             // If bounding-box of a layer changes, force re-render.
             const currentBBox = this.computeBBox();
             if (this.lastBBox === undefined || !this.lastBBox.equals(currentBBox)) {
                 forceRender = true;
                 this.lastBBox = currentBBox;
             } else if (!currentBBox.isInfinite()) {
-                // bbox for path2D is currently (Infinity) not calculated,
-                // if it's not a path2D, turn off forceRender
+                // bbox for path2D is currently (Infinity) not calculated
+                // If it's not a path2D, turn off forceRender
+                // By default there is no need to force redraw a group which has it's own canvas layer
+                // as the layer is independent of any other layer
                 forceRender = false;
             }
         }
