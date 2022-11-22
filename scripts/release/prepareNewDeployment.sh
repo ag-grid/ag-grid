@@ -28,13 +28,11 @@ checkFileExists $SSH_LOCATION
 
 FILENAME=$1
 
-scp -i $SSH_LOCATION -P $SSH_PORT "./scripts/release/prepareNewDeploymentRemote.sh" $HOST:$WORKING_DIR_ROOT/
-#echo "scp -i $SSH_LOCATION -P $SSH_PORT \"./scripts/release/prepareNewDeploymentRemote.sh\" $HOST:$WORKING_DIR_ROOT/"
+sed "s/\@HTML_FOLDER_NAME\@/$HTML_FOLDER_NAME/g" ./scripts/release/prepareNewDeploymentRemote.sh > /tmp/prepareNewDeploymentRemote.sh
+scp -i $SSH_LOCATION -P $SSH_PORT "/tmp/prepareNewDeploymentRemote.sh" $HOST:$WORKING_DIR_ROOT/prepareNewDeploymentRemote.sh
 ssh -i $SSH_LOCATION -p $SSH_PORT $HOST  "chmod +x $WORKING_DIR_ROOT/prepareNewDeploymentRemote.sh"
-#echo "ssh -i $SSH_LOCATION -p $SSH_PORT $HOST \"chmod +x $WORKING_DIR_ROOT/prepareNewDeploymentRemote.sh\""
 
 # backup the old html folder, unzip the new release and update permissions etc
 # we do this via a remote script as there are many steps and doing so one by one remotely times out occasionally
 ssh -i $SSH_LOCATION -p $SSH_PORT $HOST  "cd $WORKING_DIR_ROOT && ./prepareNewDeploymentRemote.sh $FILENAME"
-#echo "ssh -i $SSH_LOCATION -p $SSH_PORT $HOST \"cd $WORKING_DIR_ROOT && ./prepareNewDeploymentRemote.sh $FILENAME\""
 
