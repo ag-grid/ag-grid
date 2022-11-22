@@ -254,12 +254,14 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
 
     let systemJsMap;
     let systemJsPaths;
-    if (library === 'charts') {
+    if (library === 'charts' || options.enableChartApi) {
         systemJsMap = configuration.chartMap;
         systemJsPaths = configuration.chartPaths;
-    } else {
-        systemJsMap = configuration.gridMap;
-        systemJsPaths = isEnterprise ? configuration.gridEnterprisePaths : configuration.gridCommunityPaths;
+    }
+
+    if (library === 'grid') {
+        systemJsMap = { ...systemJsMap, ...configuration.gridMap };
+        systemJsPaths = { ...systemJsPaths, ...isEnterprise ? configuration.gridEnterprisePaths : configuration.gridCommunityPaths };
     }
 
     let systemJsVersion = `${NPM_CDN}/systemjs@0.19.47/dist/system.js`;
