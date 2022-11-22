@@ -100,8 +100,8 @@ export class PieChartProxy extends ChartProxy {
         return {
             ...options,
             tooltip: {
-                ...seriesOverrides.tooltip,
                 delay: 500,
+                ...(options.tooltip || {}),
             },
             legend: {
                 ...seriesOverrides.legend,
@@ -145,8 +145,8 @@ export class PieChartProxy extends ChartProxy {
                     nodeClick: this.crossFilterCallback,
                 },
                 tooltip: {
-                    ...seriesOverrides.tooltip,
                     renderer: this.getCrossFilterTooltipRenderer(`${seriesOptions.angleName}`),
+                    ...seriesOverrides.tooltip,
                 }
             };
         }
