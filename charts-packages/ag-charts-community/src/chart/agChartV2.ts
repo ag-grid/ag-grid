@@ -209,7 +209,7 @@ abstract class AgChartInternal {
 
             const processedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>, mixinOpts);
 
-            if (chartType(processedOptions) !== chartType(chart.processedOptions as ChartOptionType<typeof chart>)) {
+            if (chartType(processedOptions) !== chartType(chart.processedOptions)) {
                 chart.destroy();
                 console.warn(
                     'AG Charts - options supplied require a different type of chart, please recreate the chart.'
@@ -326,7 +326,7 @@ function applyChartOptions<T extends ChartType, O extends ChartOptionType<T>>(
         forceNodeDataRefresh = true;
     }
     if (isAgCartesianChartOptions(processedOptions) && processedOptions.axes) {
-        const axesPresent = applyAxes<T, O>(chart, processedOptions);
+        const axesPresent = applyAxes(chart as any, processedOptions);
         if (axesPresent) {
             forceNodeDataRefresh = true;
         }
