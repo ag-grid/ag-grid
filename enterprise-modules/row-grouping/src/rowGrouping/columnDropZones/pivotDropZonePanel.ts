@@ -76,7 +76,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         if (this.isHorizontal()) {
             // what we do for horizontal (ie the pivot panel at the top) depends
             // on the user property as well as pivotMode.
-            switch (this.gridOptionsWrapper.getPivotPanelShow()) {
+            switch (this.gridOptionsService.get('pivotPanelShow')) {
                 case 'always':
                     this.setDisplayed(pivotMode);
                     break;

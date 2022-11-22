@@ -152,7 +152,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private initRowBusinessKey(): void {
-        const businessKeyForNodeFunc = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc();
+        const businessKeyForNodeFunc = this.beans.gridOptionsService.get('getBusinessKeyForNode');
         if (typeof businessKeyForNodeFunc !== 'function') { return; }
         const businessKey = businessKeyForNodeFunc(this.rowNode);
         this.businessKeySanitised = escapeString(businessKey!);
@@ -1169,7 +1169,7 @@ export class RowCtrl extends BeanStub {
 
     public processStylesFromGridOptions(): any {
         // part 1 - rowStyle
-        const rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
+        const rowStyle = this.beans.gridOptionsService.get('rowStyle');
 
         if (rowStyle && typeof rowStyle === 'function') {
             console.warn('AG Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');

@@ -505,12 +505,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.groupMaintainOrder);
     }
 
-    public getAutoGroupColumnDef(): ColDef | undefined {
-        return this.gridOptions.autoGroupColumnDef;
-    }
-
     public isColumnsSortingCoupledToGroup(): boolean {
-        const autoGroupColumnDef = this.getAutoGroupColumnDef();
+        const autoGroupColumnDef = this.gridOptionsService.get('autoGroupColumnDef');
         const isClientSideRowModel = this.isRowModelDefault();
         return isClientSideRowModel && !autoGroupColumnDef?.comparator;
     }
@@ -698,14 +694,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressFieldDotNotation);
     }
 
-    public getPinnedTopRowData(): any[] | undefined {
-        return this.gridOptions.pinnedTopRowData;
-    }
-
-    public getPinnedBottomRowData(): any[] | undefined {
-        return this.gridOptions.pinnedBottomRowData;
-    }
-
     public isFunctionsPassive() {
         return isTrue(this.gridOptions.functionsPassive);
     }
@@ -716,10 +704,6 @@ export class GridOptionsWrapper {
 
     public isSuppressAnimationFrame() {
         return isTrue(this.gridOptions.suppressAnimationFrame);
-    }
-
-    public getQuickFilterText(): string | undefined {
-        return this.gridOptions.quickFilterText;
     }
 
     public isCacheQuickFilter() {
@@ -754,24 +738,12 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.enableCellEditingOnBackspace);
     }
 
-    public getRowStyle() {
-        return this.gridOptions.rowStyle;
-    }
-
-    public getRowClass() {
-        return this.gridOptions.rowClass;
-    }
-
     public getRowStyleFunc() {
         return this.mergeGridCommonParams(this.gridOptions.getRowStyle);
     }
 
     public getRowClassFunc() {
         return this.mergeGridCommonParams(this.gridOptions.getRowClass);
-    }
-
-    public rowClassRules() {
-        return this.gridOptions.rowClassRules;
     }
 
     public isServerSideInfiniteScroll(): boolean {
@@ -790,10 +762,6 @@ export class GridOptionsWrapper {
         return this.mergeGridCommonParams(this.gridOptions.createChartContainer);
     }
 
-    public getPopupParent() {
-        return this.gridOptions.popupParent;
-    }
-
     public getBlockLoadDebounceMillis() {
         return this.gridOptions.blockLoadDebounceMillis;
     }
@@ -804,10 +772,6 @@ export class GridOptionsWrapper {
 
     public getPaginationNumberFormatterFunc() {
         return this.mergeGridCommonParams(this.gridOptions.paginationNumberFormatter);
-    }
-
-    public getChildCountFunc() {
-        return this.gridOptions.getChildCount;
     }
 
     public getIsApplyServerSideTransactionFunc() {
@@ -836,20 +800,12 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getFullWidthCellRendererParams() {
-        return this.gridOptions.fullWidthCellRendererParams;
-    }
-
     public isEmbedFullWidthRows() {
         return isTrue(this.gridOptions.embedFullWidthRows);
     }
 
     public isDetailRowAutoHeight() {
         return isTrue(this.gridOptions.detailRowAutoHeight);
-    }
-
-    public getBusinessKeyForNodeFunc() {
-        return this.gridOptions.getBusinessKeyForNode;
     }
 
     public isReadOnlyEdit(): boolean {
@@ -886,10 +842,6 @@ export class GridOptionsWrapper {
 
     public isSuppressChartToolPanelsButton() {
         return isTrue(this.gridOptions.suppressChartToolPanelsButton);
-    }
-
-    public getColResizeDefault() {
-        return this.gridOptions.colResizeDefault;
     }
 
     public isSingleClickEdit() {
@@ -957,44 +909,12 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressPaginationPanel);
     }
 
-    public getRowData(): any[] | undefined | null {
-        return this.gridOptions.rowData;
-    }
-
     public isEnableRtl() {
         return isTrue(this.gridOptions.enableRtl);
     }
 
-    public getRowGroupPanelShow() {
-        return this.gridOptions.rowGroupPanelShow;
-    }
-
-    public getPivotPanelShow() {
-        return this.gridOptions.pivotPanelShow;
-    }
-
     public isDebug() {
         return isTrue(this.gridOptions.debug);
-    }
-
-    public getColumnDefs() {
-        return this.gridOptions.columnDefs;
-    }
-
-    public getColumnTypes(): { [key: string]: ColDef; } | undefined {
-        return this.gridOptions.columnTypes;
-    }
-
-    public getDatasource(): IDatasource | undefined {
-        return this.gridOptions.datasource;
-    }
-
-    public getViewportDatasource(): IViewportDatasource | undefined {
-        return this.gridOptions.viewportDatasource;
-    }
-
-    public getServerSideDatasource(): IServerSideDatasource | undefined {
-        return this.gridOptions.serverSideDatasource;
     }
 
     public isAccentedSort() {
@@ -1162,10 +1082,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.rememberGroupStateWhenNewData);
     }
 
-    public getIcons() {
-        return this.gridOptions.icons;
-    }
-
     public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
         const userValue = this.gridOptions.groupAggFiltering;
 
@@ -1178,18 +1094,6 @@ export class GridOptionsWrapper {
         }
 
         return undefined;
-    }
-
-    public getAggFuncs(): { [key: string]: IAggFunc; } | undefined {
-        return this.gridOptions.aggFuncs;
-    }
-
-    public getSortingOrder(): ('asc' | 'desc' | null)[] | undefined {
-        return this.gridOptions.sortingOrder;
-    }
-
-    public getAlignedGrids(): { api?: GridApi | null, columnApi?: ColumnApi | null }[] | undefined {
-        return this.gridOptions.alignedGrids;
     }
 
     public isMasterDetail() {
@@ -1215,18 +1119,6 @@ export class GridOptionsWrapper {
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
     }
 
-    public getGroupRowRendererParams() {
-        return this.gridOptions.groupRowRendererParams;
-    }
-
-    public getOverlayLoadingTemplate() {
-        return this.gridOptions.overlayLoadingTemplate;
-    }
-
-    public getOverlayNoRowsTemplate() {
-        return this.gridOptions.overlayNoRowsTemplate;
-    }
-
     public isSuppressAutoSize() {
         return isTrue(this.gridOptions.suppressAutoSize);
     }
@@ -1249,14 +1141,6 @@ export class GridOptionsWrapper {
 
     public isEnableCellTextSelect(): boolean {
         return isTrue(this.gridOptions.enableCellTextSelection);
-    }
-
-    public getDefaultColDef(): ColDef | undefined {
-        return this.gridOptions.defaultColDef;
-    }
-
-    public getDefaultColGroupDef(): Partial<ColGroupDef> | undefined {
-        return this.gridOptions.defaultColGroupDef;
     }
 
     public getDefaultExportParams(type: 'csv'): CsvExportParams | undefined;
@@ -1293,14 +1177,6 @@ export class GridOptionsWrapper {
 
     public isSuppressMakeColumnVisibleAfterUnGroup() {
         return isTrue(this.gridOptions.suppressMakeColumnVisibleAfterUnGroup);
-    }
-
-    public getDataPathFunc(): ((dataItem: any) => string[]) | undefined {
-        return this.gridOptions.getDataPath;
-    }
-
-    public getIsServerSideGroupFunc(): ((dataItem: any) => boolean) | undefined {
-        return this.gridOptions.isServerSideGroup;
     }
 
     public getIsServerSideGroupOpenByDefaultFunc() {
@@ -1832,7 +1708,7 @@ export class GridOptionsWrapper {
 
     private treeDataViolations() {
         if (this.isRowModelDefault()) {
-            if (missing(this.getDataPathFunc())) {
+            if (missing(this.gridOptionsService.get('getDataPath'))) {
                 console.warn(
                     'AG Grid: property usingTreeData=true with rowModel=clientSide, but you did not ' +
                     'provide getDataPath function, please provide getDataPath function if using tree data.'
@@ -1840,7 +1716,7 @@ export class GridOptionsWrapper {
             }
         }
         if (this.isRowModelServerSide()) {
-            if (missing(this.getIsServerSideGroupFunc())) {
+            if (missing(this.gridOptionsService.get('isServerSideGroup'))) {
                 console.warn(
                     'AG Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
                     'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.'

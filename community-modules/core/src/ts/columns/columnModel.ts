@@ -1181,7 +1181,7 @@ export class ColumnModel extends BeanStub {
             });
 
             // if user wants to do shift resize by default, then we invert the shift operation
-            const defaultIsShift = this.gridOptionsWrapper.getColResizeDefault() === 'shift';
+            const defaultIsShift = this.gridOptionsService.get('colResizeDefault') === 'shift';
 
             if (defaultIsShift) {
                 shiftKey = !shiftKey;

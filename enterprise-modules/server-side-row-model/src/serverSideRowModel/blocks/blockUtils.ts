@@ -85,7 +85,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setTreeGroupInfo(rowNode: RowNode): void {
-        const isGroupFunc = this.gridOptionsWrapper.getIsServerSideGroupFunc();
+        const isGroupFunc = this.gridOptionsService.get('isServerSideGroup');
         const getKeyFunc = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
 
         if (isGroupFunc != null) {
@@ -171,7 +171,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setChildCountIntoRowNode(rowNode: RowNode): void {
-        const getChildCount = this.gridOptionsWrapper.getChildCountFunc();
+        const getChildCount = this.gridOptionsService.get('getChildCount');
         if (getChildCount) {
             rowNode.allChildrenCount = getChildCount(rowNode.data);
         }

@@ -72,7 +72,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private postConstruct(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
         if (this.usingTreeData) {
-            this.getDataPath = this.gridOptionsWrapper.getDataPathFunc();
+            this.getDataPath = this.gridOptionsService.get('getDataPath');
         }
     }
 

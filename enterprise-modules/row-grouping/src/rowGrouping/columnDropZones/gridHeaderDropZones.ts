@@ -67,7 +67,7 @@ export class GridHeaderDropZones extends Component {
             return;
         }
 
-        const rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
+        const rowGroupPanelShow = this.gridOptionsService.get('rowGroupPanelShow');
 
         if (rowGroupPanelShow === Constants.ALWAYS) {
             this.rowGroupComp.setDisplayed(true);

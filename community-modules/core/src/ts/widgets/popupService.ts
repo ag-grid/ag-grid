@@ -125,7 +125,7 @@ export class PopupService extends BeanStub {
     }
 
     public getPopupParent(): HTMLElement {
-        const ePopupParent = this.gridOptionsWrapper.getPopupParent();
+        const ePopupParent = this.gridOptionsService.get('popupParent');
 
         if (ePopupParent) { return ePopupParent; }
 
