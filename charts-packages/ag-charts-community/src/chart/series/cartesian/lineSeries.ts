@@ -119,12 +119,6 @@ export class LineSeries extends CartesianSeries<LineContext> {
         label.enabled = false;
     }
 
-    setColors(fills: string[], strokes: string[]) {
-        this.stroke = fills[0];
-        this.marker.stroke = strokes[0];
-        this.marker.fill = fills[0];
-    }
-
     @Validate(STRING)
     protected _xKey: string = '';
     set xKey(value: string) {

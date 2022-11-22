@@ -1,4 +1,5 @@
 import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
+import { BBox } from '../../../scene/bbox';
 import { ChartAxisDirection } from '../../chartAxis';
 import { PointLabelDatum } from '../../../util/labelPlacement';
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
@@ -29,5 +30,9 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
 
     getLabelData(): PointLabelDatum[] {
         return [];
+    }
+
+    computeLabelsBBox(): BBox | null {
+        return null;
     }
 }
