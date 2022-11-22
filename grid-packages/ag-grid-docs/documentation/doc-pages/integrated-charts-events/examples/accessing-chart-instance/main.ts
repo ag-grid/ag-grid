@@ -1,4 +1,5 @@
-import { Grid, ChartCreated, ChartDestroyed, ChartRangeSelectionChanged, ColDef, GridApi, GridOptions } from '@ag-grid-community/core'
+import { Grid, ChartCreated, ChartDestroyed, ChartRangeSelectionChanged, ColDef, GridApi, GridOptions, ChartOptionsChanged } from '@ag-grid-community/core';
+import { AgChart } from 'ag-charts-community';
 
 const columnDefs: ColDef[] = [
   { field: 'Month', width: 150, chartDataType: 'category' },
@@ -21,48 +22,48 @@ const gridOptions: GridOptions = {
   enableCharts: true,
   onChartCreated: onChartCreated,
   onChartRangeSelectionChanged: onChartRangeSelectionChanged,
+  onChartOptionsChanged: onChartOptionsChanged,
   onChartDestroyed: onChartDestroyed,
 }
-
-var chart: any = null
 
 function onChartCreated(event: ChartCreated) {
   console.log('Created chart with ID ' + event.chartId)
 
-  const chartRef = gridOptions.api!.getChartRef(event.chartId)!
-  chart = chartRef.chart
-
-  updateTitle(gridOptions.api!, chart);
+  updateTitle(gridOptions.api!, event);
 }
 
 function onChartRangeSelectionChanged(event: ChartRangeSelectionChanged) {
   console.log('Changed range selection of chart with ID ' + event.chartId)
-  updateTitle(gridOptions.api!, chart);
+
+  updateTitle(gridOptions.api!, event);
+}
+
+function onChartOptionsChanged(event: ChartOptionsChanged) {
+  console.log('Options change of chart with ID ' + event.chartId)
+
+  updateTitle(gridOptions.api!, event);
 }
 
 function onChartDestroyed(event: ChartDestroyed) {
   console.log('Destroyed chart with ID ' + event.chartId)
-  chart = null
 }
 
-function updateTitle(api: GridApi, chart: any) {
+function updateTitle(api: GridApi, event: { chartId: string }) {
+  const chartRef = api.getChartRef(event.chartId)!
+  const chart = chartRef.chart
+
   var cellRange = api.getCellRanges()![1]
   if (!cellRange) return
   var columnCount = cellRange.columns.length
   var rowCount = cellRange.endRow!.rowIndex - cellRange.startRow!.rowIndex + 1
 
-  chart.title.enabled = true
-  chart.title.text = 'Monthly Weather'
-
-  chart.subtitle.enabled = true
-  chart.subtitle.text =
-    'Using series data from ' +
+  var subtitle = 'Using series data from ' +
     columnCount +
     ' column(s) and ' +
     rowCount +
     ' row(s)'
 
-  chart.update(0)
+  AgChart.updateDelta(chart, { title: { text: 'Monthly Weather' }, subtitle: { text: subtitle }});
 }
 
 // setup the grid after the page has finished loading

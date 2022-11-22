@@ -70,7 +70,7 @@ Note in the snippet above, the `chartId` is obtained from the [`ChartCreated`](#
 The example below shows how the chart instance can be used, creating a subtitle and updating
 it dynamically as you change the range selection.
 
-<grid-example title='Accessing Chart Instance' name='accessing-chart-instance' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Accessing Chart Instance' name='accessing-chart-instance' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"], "enableChartApi": true }'></grid-example>
 
 ## Other Resources
 
