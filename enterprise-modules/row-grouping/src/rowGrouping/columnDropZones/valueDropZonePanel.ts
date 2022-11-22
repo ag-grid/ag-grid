@@ -28,6 +28,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     private passBeansUp(): void {
         super.setBeans({
             gridOptionsWrapper: this.gridOptionsWrapper,
+            gridOptionsService: this.gridOptionsService,
             eventService: this.eventService,
             context: this.getContext(),
             loggerFactory: this.loggerFactory,

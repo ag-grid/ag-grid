@@ -12,13 +12,13 @@ import {
     Events,
     EventService,
     FocusService,
+    GridOptionsService,
     GridOptionsWrapper,
-    HorizontalDirection,
     KeyCode,
     LoggerFactory,
     ManagedFocusFeature,
     PositionableFeature,
-    VerticalDirection,
+
     _
 } from "@ag-grid-community/core";
 import { DropZoneColumnComp } from "./dropZoneColumnComp";
@@ -32,6 +32,7 @@ export interface BaseDropZonePanelParams {
 
 export interface BaseDropZonePanelBeans {
     gridOptionsWrapper: GridOptionsWrapper;
+    gridOptionsService: GridOptionsService;
     eventService: EventService;
     context: Context;
     loggerFactory: LoggerFactory;
