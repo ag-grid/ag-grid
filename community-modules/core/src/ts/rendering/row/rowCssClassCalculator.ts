@@ -17,7 +17,7 @@ export interface RowCssClassCalculatorParams {
     fullWidthRow?: boolean;
     firstRowOnPage: boolean;
     lastRowOnPage: boolean;
-    usePositionRelative: boolean;
+    printLayout: boolean;
     expandable: boolean;
 
     pinned: ColumnPinnedType;
@@ -84,8 +84,8 @@ export class RowCssClassCalculator {
         pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
         pushAll(classes, this.preProcessRowClassRules(params.rowNode));
 
-        // we use absolute position unless we are doing print layout or ensureDomOrder
-        classes.push(params.usePositionRelative ? 'ag-row-position-relative' : 'ag-row-position-absolute');
+        // we use absolute position unless we are doing print layout
+        classes.push(params.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
 
         if (params.firstRowOnPage) {
             classes.push('ag-row-first');

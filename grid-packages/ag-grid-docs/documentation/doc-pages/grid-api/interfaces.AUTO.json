@@ -13097,7 +13097,7 @@
       "fullWidthRow?": "boolean",
       "firstRowOnPage": "boolean",
       "lastRowOnPage": "boolean",
-      "usePositionRelative": "boolean",
+      "printLayout": "boolean",
       "expandable": "boolean",
       "pinned": "ColumnPinnedType",
       "extraCssClass?": "string",

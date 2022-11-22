@@ -117,7 +117,6 @@ export class RowCtrl extends BeanStub {
     private rowLevel: number;
 
     private readonly printLayout: boolean;
-    private readonly ensureDomOrder: boolean;
 
     private updateColumnListsPending = false;
 
@@ -136,7 +135,6 @@ export class RowCtrl extends BeanStub {
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
-        this.ensureDomOrder = this.beans.gridOptionsWrapper.isEnsureDomOrder();
 
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
 
@@ -1160,7 +1158,7 @@ export class RowCtrl extends BeanStub {
             fullWidthRow: this.isFullWidth(),
             firstRowOnPage: this.isFirstRowOnPage(),
             lastRowOnPage: this.isLastRowOnPage(),
-            usePositionRelative: this.ensureDomOrder || this.printLayout,
+            printLayout: this.printLayout,
             expandable: this.rowNode.isExpandable(),
             pinned: pinned
         };
@@ -1422,7 +1420,7 @@ export class RowCtrl extends BeanStub {
 
     public setRowTop(pixels: number): void {
         // print layout uses normal flow layout for row positioning
-        if (this.printLayout || this.ensureDomOrder) { return; }
+        if (this.printLayout) { return; }
 
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
@@ -1451,7 +1449,7 @@ export class RowCtrl extends BeanStub {
     }
     private getInitialRowTopShared(rowContainerType: RowContainerType): string {
         // print layout uses normal flow layout for row positioning
-        if (this.printLayout || this.ensureDomOrder) { return ''; }
+        if (this.printLayout) { return ''; }
 
         let rowTop: number;
         if (this.isSticky()) {
