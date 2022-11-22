@@ -32,4 +32,13 @@ export class BBox {
     containsPoint(x: number, y: number): boolean {
         return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height;
     }
+
+    isInfinite() {
+        return (
+            Math.abs(this.x) === Infinity ||
+            Math.abs(this.y) === Infinity ||
+            Math.abs(this.width) === Infinity ||
+            Math.abs(this.height) === Infinity
+        );
+    }
 }
