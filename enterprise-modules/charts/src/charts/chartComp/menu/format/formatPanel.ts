@@ -108,7 +108,7 @@ export class FormatPanel extends Component {
     }
 
     private getFormatPanelDef() {
-        const userProvidedFormatPanelDef = this.gridOptionsWrapper.getChartToolPanelsDef()?.formatPanel;
+        const userProvidedFormatPanelDef = this.gridOptionsService.get('chartToolPanelsDef')?.formatPanel;
         return userProvidedFormatPanelDef ? userProvidedFormatPanelDef : DefaultFormatPanelDef;
     }
 

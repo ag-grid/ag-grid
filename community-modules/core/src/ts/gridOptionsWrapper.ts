@@ -1187,10 +1187,6 @@ export class GridOptionsWrapper {
         return this.mergeGridCommonParams(this.gridOptions.isGroupOpenByDefault);
     }
 
-    public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {
-        return this.gridOptions.getServerSideGroupKey;
-    }
-
     public getGroupRowAggFunc() {
 
         const { getGroupRowAgg, groupRowAggNodes } = this.gridOptions;
@@ -1372,21 +1368,9 @@ export class GridOptionsWrapper {
         return this.mergeGridCommonParams(this.gridOptions.getChartToolbarItems);
     }
 
-    public getChartThemeOverrides(): AgChartThemeOverrides | undefined {
-        return this.gridOptions.chartThemeOverrides;
-    }
-
-    public getCustomChartThemes(): { [name: string]: AgChartTheme; } | undefined {
-        return this.gridOptions.customChartThemes;
-    }
-
     public getChartThemes(): string[] {
         // return default themes if user hasn't supplied any
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
-    }
-
-    public getChartToolPanelsDef(): ChartToolPanelsDef | undefined {
-        return this.gridOptions.chartToolPanelsDef;
     }
 
     public getClipboardDelimiter() {
@@ -1722,7 +1706,7 @@ export class GridOptionsWrapper {
                     'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.'
                 );
             }
-            if (missing(this.getServerSideGroupKeyFunc())) {
+            if (missing(this.gridOptionsService.get('getServerSideGroupKey'))) {
                 console.warn(
                     'AG Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
                     'provide getServerSideGroupKey function, please provide getServerSideGroupKey function if using tree data.'

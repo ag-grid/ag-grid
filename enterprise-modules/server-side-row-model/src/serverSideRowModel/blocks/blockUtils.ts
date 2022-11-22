@@ -86,7 +86,7 @@ export class BlockUtils extends BeanStub {
 
     private setTreeGroupInfo(rowNode: RowNode): void {
         const isGroupFunc = this.gridOptionsService.get('isServerSideGroup');
-        const getKeyFunc = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
+        const getKeyFunc = this.gridOptionsService.get('getServerSideGroupKey');
 
         if (isGroupFunc != null) {
             rowNode.setGroup(isGroupFunc(rowNode.data));
