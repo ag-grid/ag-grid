@@ -11,6 +11,10 @@ function getModuleImports(bindings: any, componentFileNames: string[], allStyles
         "import { AgGridVue } from '@ag-grid-community/vue3';",
     ];
 
+    if (bindings.gridSettings.enableChartApi) {
+        imports.push("import { AgChart } from 'ag-charts-community'");
+    }
+
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to alpine if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
