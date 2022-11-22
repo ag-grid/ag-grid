@@ -48,6 +48,9 @@ function getPackageImports(bindings: any, componentFilenames: string[], allStyle
     if (gridSettings.enterprise) {
         imports.push("import 'ag-grid-enterprise';");
     }
+    if (bindings.gridSettings.enableChartApi) {
+        imports.push("import { AgChart } from 'ag-charts-community'");
+    }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
