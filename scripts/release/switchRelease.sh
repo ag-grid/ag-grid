@@ -38,7 +38,7 @@ if [ "$1" != "skipWarning" ]; then
 fi
 
 # replace tokens in switchReleaseRemote.sh with env variables - we'll transfer the newly tokenised file to prod
-sed "s#\@PUBLIC_HTML_PATH\@#PUBLIC_HTML_PATH#g" ./scripts/release/switchReleaseRemote.sh | sed "s#\@WORKING_DIR_ROOT\@#$WORKING_DIR_ROOT#g" > /tmp/switchReleaseRemote.sh
+sed "s#\@PUBLIC_HTML_PATH\@#$PUBLIC_HTML_PATH#g" ./scripts/release/switchReleaseRemote.sh | sed "s#\@WORKING_DIR_ROOT\@#$WORKING_DIR_ROOT#g" > /tmp/switchReleaseRemote.sh
 
 # copy the remote script that will create tmp dirs, unzip the new deployment etc to the upload dir (archives)
 scp -i $SSH_LOCATION -P $SSH_PORT "/tmp/switchReleaseRemote.sh" $HOST:$WORKING_DIR_ROOT
