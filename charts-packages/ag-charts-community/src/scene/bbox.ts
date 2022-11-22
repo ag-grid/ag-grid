@@ -33,6 +33,15 @@ export class BBox {
         return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height;
     }
 
+    isInfinite() {
+        return (
+            Math.abs(this.x) === Infinity ||
+            Math.abs(this.y) === Infinity ||
+            Math.abs(this.width) === Infinity ||
+            Math.abs(this.height) === Infinity
+        );
+    }
+
     static merge(boxes: BBox[]) {
         let left = Infinity;
         let top = Infinity;

@@ -251,9 +251,6 @@ export abstract class Node extends ChangeDetectable {
     markDirtyTransform() {
         this._dirtyTransform = true;
         this.markDirty(this, RedrawType.MAJOR);
-        for (const child of this.children) {
-            child.markDirtyTransform();
-        }
     }
 
     @SceneChangeDetection({ type: 'transform' })
