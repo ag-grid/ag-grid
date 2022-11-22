@@ -1160,7 +1160,7 @@ export class RowCtrl extends BeanStub {
             fullWidthRow: this.isFullWidth(),
             firstRowOnPage: this.isFirstRowOnPage(),
             lastRowOnPage: this.isLastRowOnPage(),
-            usePositionRelative: this.ensureDomOrder || this.printLayout,
+            printLayout: this.printLayout,
             expandable: this.rowNode.isExpandable(),
             pinned: pinned
         };
