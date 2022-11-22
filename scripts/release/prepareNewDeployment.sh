@@ -28,7 +28,9 @@ checkFileExists $SSH_LOCATION
 
 VERSION=$1
 
-sed "s/\@HTML_FOLDER_NAME\@/$HTML_FOLDER_NAME/g" ./scripts/release/prepareNewDeploymentRemote.sh > /tmp/prepareNewDeploymentRemote.sh
+# replace tokens in prepareNewDeploymentRemote.sh with env variables - we'll transfer the newly tokenised file to prod
+sed "s/\@HTML_FOLDER_NAME\@/$HTML_FOLDER_NAME/g" ./scripts/release/prepareNewDeploymentRemote.sh | sed "s/\@WORKING_DIR_ROOT\@/$WORKING_DIR_ROOT/g" > /tmp/prepareNewDeploymentRemote.sh
+
 scp -i $SSH_LOCATION -P $SSH_PORT "/tmp/prepareNewDeploymentRemote.sh" $HOST:$WORKING_DIR_ROOT/prepareNewDeploymentRemote.sh
 ssh -i $SSH_LOCATION -p $SSH_PORT $HOST  "chmod +x $WORKING_DIR_ROOT/prepareNewDeploymentRemote.sh"
 
