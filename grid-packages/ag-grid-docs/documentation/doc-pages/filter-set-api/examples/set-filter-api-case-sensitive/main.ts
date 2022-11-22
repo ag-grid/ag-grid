@@ -86,7 +86,7 @@ function getValues(type: string) {
     FILTER_TYPES[type]
   )!;
 
-  alert(JSON.stringify(instance.getValues(), null, 2))
+  alert(JSON.stringify(instance.getFilterValues(), null, 2))
 }
 
 function reset(type: string) {
