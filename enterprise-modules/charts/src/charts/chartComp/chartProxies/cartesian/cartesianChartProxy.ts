@@ -1,6 +1,7 @@
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import {
     AgAreaSeriesOptions,
+    AgBaseChartOptions,
     AgBaseSeriesOptions,
     AgCartesianAxisOptions,
     AgCartesianAxisType,
@@ -10,7 +11,6 @@ import {
     AgChartLegendClickEvent,
     AgLineSeriesOptions,
 } from "ag-charts-community";
-import { ChartSeriesType } from "../../utils/seriesTypeMapper";
 
 export abstract class CartesianChartProxy extends ChartProxy {
     protected supportsAxesUpdates = true;
@@ -40,18 +40,16 @@ export abstract class CartesianChartProxy extends ChartProxy {
             this.updateAxes(params);
         }
 
-        let options: AgCartesianChartOptions = {
+        const options: AgCartesianChartOptions = {
             ...this.getCommonChartOptions(),
             data: this.getData(params),
             axes: this.getAxes(params),
             series: this.getSeries(params),
+
+            ...(this.crossFiltering ? this.createCrossFilterTheme() : {})
         }
 
-        if (this.crossFiltering) {
-            options = this.addCrossFilterOptions(options);
-        }
-
-        AgChart.update(this.chart, options);
+        AgChart.updateDelta(this.getChartRef(), options);
     }
 
     protected getDataTransformedData(params: UpdateChartParams) {
@@ -59,18 +57,13 @@ export abstract class CartesianChartProxy extends ChartProxy {
         return this.transformData(params.data, params.category.id, isCategoryAxis);
     }
 
-    private addCrossFilterOptions(options: AgCartesianChartOptions) {
-        const seriesOverrides = this.extractSeriesOverrides();
+    private createCrossFilterTheme(): AgBaseChartOptions {
         const chart = this.getChart();
-
-        options.tooltip = {
-            ...options.tooltip,
+        const tooltip = {
             delay: 500,
         }
 
-        options.legend = {
-            ...options.legend,
-            ...seriesOverrides.legend,
+        const legend = {
             listeners: {
                 legendItemClick: (e: AgChartLegendClickEvent) => {
                     chart.series.forEach(s => {
@@ -81,19 +74,16 @@ export abstract class CartesianChartProxy extends ChartProxy {
             }
         }
 
-        return options;
-    }
-
-    protected extractSeriesOverrides(chartSeriesType?: ChartSeriesType) {
-        const seriesOverrides = this.chartOptions[chartSeriesType ? chartSeriesType : this.standaloneChartType]?.series;
-
-        if (!seriesOverrides) { return {}; }
-
-        // TODO: remove once `yKeys` and `yNames` have been removed from the options
-        delete seriesOverrides.yKeys;
-        delete seriesOverrides.yNames;
-
-        return seriesOverrides;
+        return {
+            theme: {
+                overrides: {
+                    cartesian: {
+                        tooltip,
+                        legend
+                    }
+                }
+            }
+        };
     }
 
     protected updateAxes(params: UpdateChartParams): void {
@@ -112,10 +102,6 @@ export abstract class CartesianChartProxy extends ChartProxy {
             this.xAxisType = newXAxisType;
             this.recreateChart();
         }
-    }
-
-    protected getAxesOptions(chartSeriesType: ChartSeriesType = this.standaloneChartType) {
-        return this.chartOptions[chartSeriesType]?.axes;
     }
 
     private static isTimeAxis(params: UpdateChartParams): boolean {
@@ -150,11 +136,8 @@ export abstract class CartesianChartProxy extends ChartProxy {
         }
 
         return series.map(s => {
-            const seriesOverrides = this.extractSeriesOverrides();
-
             s.yKey = getYKey(s.yKey!);
             s.listeners = {
-                ...seriesOverrides.listeners,
                 nodeClick: (e: any) => {
                     const value = e.datum![s.xKey!];
                     const multiSelection = e.event.metaKey || e.event.ctrlKey;

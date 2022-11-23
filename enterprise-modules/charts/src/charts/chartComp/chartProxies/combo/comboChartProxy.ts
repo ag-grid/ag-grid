@@ -2,7 +2,6 @@ import { AgCartesianAxisOptions } from "ag-charts-community";
 import { ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
-import { deepMerge } from "../../utils/object";
 import { getSeriesType } from "../../utils/seriesTypeMapper";
 
 export class ComboChartProxy extends CartesianChartProxy {
@@ -25,11 +24,9 @@ export class ComboChartProxy extends CartesianChartProxy {
         const fieldsMap = new Map(fields.map(f => [f.colId, f]));
 
         const { primaryYKeys, secondaryYKeys } = this.getYKeys(fields, params.seriesChartTypes);
-        const { bottomOptions, leftOptions, rightOptions } = this.getAxisOptions();
 
-        const axes = [
+        const axes: AgCartesianAxisOptions[] = [
             {
-                ...bottomOptions,
                 type: this.xAxisType,
                 position: 'bottom',
                 gridStyle: [{ stroke: undefined }],
@@ -38,18 +35,14 @@ export class ComboChartProxy extends CartesianChartProxy {
 
         if (primaryYKeys.length > 0) {
             axes.push({
-                ...leftOptions,
                 type: this.yAxisType,
                 keys: primaryYKeys,
                 position: 'left',
                 title: {
-                    ...deepMerge(leftOptions.title, {
-                        enabled: leftOptions.title?.enabled,
-                        text: primaryYKeys.map(key => {
-                            const field = fieldsMap.get(key);
-                            return field ? field.displayName : key;
-                        }).join(' / '),
-                    })
+                    text: primaryYKeys.map(key => {
+                        const field = fieldsMap.get(key);
+                        return field ? field.displayName : key;
+                    }).join(' / '),
                 },
             });
         }
@@ -62,16 +55,12 @@ export class ComboChartProxy extends CartesianChartProxy {
                     return;
                 }
 
-                const secondaryAxisOptions = {
-                    ...rightOptions,
+                const secondaryAxisOptions: AgCartesianAxisOptions = {
                     type: this.yAxisType,
                     keys: [secondaryYKey],
                     position: 'right',
                     title: {
-                        ...deepMerge(rightOptions.title, {
-                            enabled: rightOptions.title?.enabled,
-                            text: field ? field.displayName : secondaryYKey,
-                        })
+                        text: field ? field.displayName! : secondaryYKey,
                     },
                 }
 
@@ -99,7 +88,6 @@ export class ComboChartProxy extends CartesianChartProxy {
             if (seriesChartType) {
                 const chartType: ChartType = seriesChartType.chartType;
                 return {
-                    ...this.extractSeriesOverrides(getSeriesType(seriesChartType.chartType)),
                     type: getSeriesType(chartType),
                     xKey: category.id,
                     yKey: field.colId,
@@ -109,19 +97,6 @@ export class ComboChartProxy extends CartesianChartProxy {
                 }
             }
         });
-    }
-
-    private getAxisOptions() {
-        const axisOptions = this.getAxesOptions('cartesian');
-        return axisOptions ? {
-            bottomOptions: deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType]?.bottom),
-            leftOptions: deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType]?.left),
-            rightOptions: deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType]?.right),
-        } : {
-            bottomOptions: {},
-            leftOptions: {},
-            rightOptions: {},
-        };
     }
 
     private getYKeys(fields: FieldDefinition[], seriesChartTypes: SeriesChartType[]) {

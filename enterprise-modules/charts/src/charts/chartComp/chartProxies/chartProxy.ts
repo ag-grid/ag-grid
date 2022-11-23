@@ -1,5 +1,5 @@
 import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { AgChart, AgChartTheme, AgChartThemePalette, AgChartInstance, _Theme } from "ag-charts-community";
+import { AgChart, AgChartTheme, AgChartThemePalette, AgChartInstance, _Theme, AgChartOptions } from "ag-charts-community";
 import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
@@ -43,7 +43,11 @@ export interface UpdateChartParams {
     seriesChartTypes: SeriesChartType[];
 }
 
-type CommonChartPropertyKeys = 'padding' | 'legend' | 'background' | 'title' | 'subtitle' | 'tooltip' | 'navigator';
+type IntegratedThemeOptions = AgChartThemeOverrides & {
+    scatter: {
+        paired?: boolean
+    }
+}
 
 export abstract class ChartProxy {
     /**
@@ -69,7 +73,7 @@ export abstract class ChartProxy {
     /**
      * Integrated Charts specific chart options
      */
-    private readonly integratedThemeOptions = {
+    private integratedThemeOptions: IntegratedThemeOptions = {
         scatter: {
             // Special handling to make scatter charts operate in paired mode by default, where 
             // columns alternate between being X and Y (and size for bubble). In standard mode,
@@ -83,12 +87,10 @@ export abstract class ChartProxy {
     protected readonly standaloneChartType: ChartSeriesType;
 
     protected chart: AgChartInstance;
-    protected chartOptions: AgChartThemeOverrides;
     protected agChartTheme?: AgChartTheme;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
     protected clickCallback: (event: any) => void;
-    protected readonly chartPalette: AgChartThemePalette | undefined;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chart = chartProxyParams.chartInstance!;
@@ -98,16 +100,23 @@ export abstract class ChartProxy {
         this.clickCallback = chartProxyParams.clickCallback;
         this.standaloneChartType = getSeriesType(this.chartType);
 
-        this.agChartTheme = this.createAgChartTheme();
-
+        const {chartOptionsToRestore, chartPaletteToRestore } = this.chartProxyParams;
         if (this.chartProxyParams.chartOptionsToRestore) {
-            this.chartOptions = this.chartProxyParams.chartOptionsToRestore;
-            this.chartPalette = this.chartProxyParams.chartPaletteToRestore;
+            this.agChartTheme = {
+                palette: chartPaletteToRestore,
+                overrides: chartOptionsToRestore
+            };
+
+            // Special handling to extract paired state from `chartOptionsToRestore`
+            const { scatter } = this.agChartTheme.overrides as IntegratedThemeOptions;
+            if (scatter?.paired !== undefined) {
+                this.integratedThemeOptions.scatter.paired = scatter?.paired;
+                delete (this.agChartTheme.overrides as IntegratedThemeOptions)?.scatter?.paired;
+            }
             return;
         }
-
-        this.chartOptions = deepMerge(this.integratedThemeOptions, this.agChartTheme?.overrides);
-        this.chartPalette = this.createChartPalette();
+        
+        this.agChartTheme = this.createAgChartTheme();
     }
 
     public abstract crossFilteringReset(): void;
@@ -158,16 +167,6 @@ export abstract class ChartProxy {
         return deepMerge({ overrides: this.integratedThemeOverrides }, theme);
     }
 
-    private createChartPalette(): AgChartThemePalette | undefined {
-        const selectedTheme = this.getSelectedTheme();
-        const stockTheme = this.isStockTheme(selectedTheme);
-
-        const themeName = stockTheme ? selectedTheme : this.lookupCustomChartTheme(selectedTheme);
-        const { palette } = _Theme.getChartTheme(themeName);
-
-        return palette;
-    }
-
     public isStockTheme(themeName: string): boolean {
         return _.includes(Object.keys(_Theme.themes), themeName);
     }
@@ -214,12 +213,33 @@ export abstract class ChartProxy {
         return this.getChart().scene.getDataURL(type);
     }
 
-    public getChartOptions(): AgChartThemeOverrides {
-        return this.chartOptions;
+    private getChartOptions(): AgChartOptions {
+        return this.getChart().getOptions();
+    }
+
+    public getChartThemeOverrides(): AgChartThemeOverrides { 
+        return this.getChartTheme().overrides || {};
+    }
+
+    public getChartTheme(): AgChartTheme { 
+        const chartOptionsTheme = this.getChartOptions().theme;
+        const chartTheme = typeof chartOptionsTheme === 'string'
+            ? { baseTheme: chartOptionsTheme } as AgChartTheme
+            : deepMerge(chartOptionsTheme, { overrides: this.integratedThemeOptions })
+
+        return chartTheme;
     }
 
     public getChartPalette(): AgChartThemePalette | undefined {
-        return this.chartPalette;
+        return _Theme.getChartTheme(this.getChartOptions().theme).palette;
+    }
+
+    public getIntegratedThemeOptions(): AgChartThemeOverrides {
+        return this.integratedThemeOptions;
+    }
+
+    public setIntegratedThemeOptions(expression: string, value: any) {
+        _.set(this.integratedThemeOptions, expression, value);
     }
 
     protected transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[] {
@@ -240,21 +260,9 @@ export abstract class ChartProxy {
     }
 
     protected getCommonChartOptions() {
-        const getChartOption = (propertyKey: CommonChartPropertyKeys) => {
-            return _.get(this.chartOptions, `${this.standaloneChartType}.${propertyKey}`, undefined);
-        }
-
         return {
-            container: this.chartProxyParams.parentElement,
-            theme: this.agChartTheme,
-            padding: getChartOption('padding'),
-            background: getChartOption('background'),
-            title: getChartOption('title'),
-            subtitle: getChartOption('subtitle'),
-            tooltip: getChartOption('tooltip'),
-            legend: getChartOption('legend'),
-            navigator: getChartOption('navigator'),
-        };
+            container: this.chartProxyParams.parentElement
+        }
     }
 
     public destroy({ keepChartInstance = false } = {}): AgChartInstance | undefined {

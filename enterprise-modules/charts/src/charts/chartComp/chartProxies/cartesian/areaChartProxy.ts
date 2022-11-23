@@ -1,7 +1,6 @@
 import { AgAreaSeriesOptions, AgCartesianAxisOptions } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
-import { deepMerge } from "../../utils/object";
 
 export class AreaChartProxy extends CartesianChartProxy {
 
@@ -19,15 +18,12 @@ export class AreaChartProxy extends CartesianChartProxy {
     }
 
     public getAxes(): AgCartesianAxisOptions[] {
-        const axisOptions = this.getAxesOptions();
-        const axes = [
+        const axes: AgCartesianAxisOptions[] = [
             {
-                ...(axisOptions ? deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType]?.bottom) : {}),
                 type: this.xAxisType,
                 position: 'bottom',
             },
             {
-                ...(axisOptions ? deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType]?.left) : {}),
                 type: this.yAxisType,
                 position: 'left',
             },
@@ -45,7 +41,6 @@ export class AreaChartProxy extends CartesianChartProxy {
     public getSeries(params: UpdateChartParams) {
         const series: AgAreaSeriesOptions[] = params.fields.map(f => (
             {
-                ...this.extractSeriesOverrides(),
                 type: this.standaloneChartType,
                 xKey: params.category.id,
                 xName: params.category.name,
@@ -53,7 +48,7 @@ export class AreaChartProxy extends CartesianChartProxy {
                 yName: f.displayName,
                 normalizedTo: this.chartType === 'normalizedArea' ? 100 : undefined,
                 stacked: ['normalizedArea', 'stackedArea'].includes(this.chartType)
-            }
+            } as AgAreaSeriesOptions
         ));
 
         return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;

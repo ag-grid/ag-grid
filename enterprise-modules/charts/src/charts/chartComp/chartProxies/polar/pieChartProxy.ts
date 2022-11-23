@@ -7,6 +7,7 @@ import {
     AgPolarChartOptions,
     AgPolarSeriesOptions,
     AgPieSeriesTooltipRendererParams,
+    AgBaseChartOptions,
 } from 'ag-charts-community';
 import { changeOpacity } from '../../utils/color';
 import { deepMerge } from '../../utils/object';
@@ -34,17 +35,15 @@ export class PieChartProxy extends ChartProxy {
     public update(params: UpdateChartParams): void {
         const { data, category } = params;
 
-        let options: AgPolarChartOptions = {
+        const options: AgPolarChartOptions = {
             ...this.getCommonChartOptions(),
             data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id),
-            series: this.getSeries(params)
+            series: this.getSeries(params),
+
+            ...(this.crossFiltering ? this.createCrossFilterTheme() : {})
         }
 
-        if (this.crossFiltering) {
-            options = this.getCrossFilterChartOptions(options);
-        }
-
-        AgChart.update(this.chart as AgChartInstance, options);
+        AgChart.updateDelta(this.getChartRef(), options);
     }
 
     private getSeries(params: UpdateChartParams): AgPolarSeriesOptions[] {
@@ -55,13 +54,10 @@ export class PieChartProxy extends ChartProxy {
             offsetAmount: numFields > 1 ? 20 : 40
         };
 
-        const series = this.getFields(params).map((f: FieldDefinition) => {
-            const seriesDefaults = this.extractSeriesOverrides();
-
+        const series: AgPieSeriesOptions[] = this.getFields(params).map((f: FieldDefinition) => {
             // options shared by 'pie' and 'doughnut' charts
             const options = {
-                ...seriesDefaults,
-                type: this.standaloneChartType,
+                type: this.standaloneChartType as AgPieSeriesOptions['type'],
                 angleKey: f.colId,
                 angleName: f.displayName!,
                 sectorLabelKey: f.colId,
@@ -71,20 +67,19 @@ export class PieChartProxy extends ChartProxy {
 
             if (this.chartType === 'doughnut') {
                 const { outerRadiusOffset, innerRadiusOffset } = PieChartProxy.calculateOffsets(offset);
+                const title = f.displayName ? {
+                    title: { text: f.displayName },
+                    showInLegend: numFields > 1
+                } : undefined;
 
                 // augment shared options with 'doughnut' specific options
                 return {
                     ...options,
                     outerRadiusOffset,
                     innerRadiusOffset,
-                    title: {
-                        ...seriesDefaults?.title,
-                        text: seriesDefaults?.title?.text || f.displayName,
-                        showInLegend: numFields > 1,
-                    },
+                    ...title,
                     calloutLine: {
-                        ...seriesDefaults?.calloutLine,
-                        colors: this.chartPalette?.strokes,
+                        colors: this.getChartPalette()?.strokes,
                     }
                 }
             }
@@ -95,20 +90,26 @@ export class PieChartProxy extends ChartProxy {
         return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
     }
 
-    private getCrossFilterChartOptions(options: AgPolarChartOptions) {
-        const seriesOverrides = this.extractSeriesOverrides();
+    private createCrossFilterTheme(): AgBaseChartOptions {
+        const chart = this.getChart();
+        const tooltip = {
+            delay: 500,
+        };
+
+        const legend = {
+            listeners: {
+                legendItemClick: (e: AgChartLegendClickEvent) => {
+                    chart.series.forEach(s => s.toggleSeriesItem(e.itemId, e.enabled));
+                }
+            }
+        };
+
         return {
-            ...options,
-            tooltip: {
-                delay: 500,
-                ...(options.tooltip || {}),
-            },
-            legend: {
-                ...seriesOverrides.legend,
-                listeners: {
-                    legendItemClick: (e: AgChartLegendClickEvent) => {
-                        const chart = this.getChart();
-                        chart.series.forEach(s => s.toggleSeriesItem(e.itemId, e.enabled));
+            theme: {
+                overrides: {
+                    pie: {
+                        tooltip,
+                        legend
                     }
                 }
             }
@@ -129,8 +130,7 @@ export class PieChartProxy extends ChartProxy {
     }
 
     private extractCrossFilterSeries(series: AgPieSeriesOptions[]) {
-        const palette = this.chartPalette;
-        const seriesOverrides = this.extractSeriesOverrides();
+        const palette = this.getChartPalette();
 
         const primaryOptions = (seriesOptions: AgPieSeriesOptions) => {
             return {
@@ -142,12 +142,10 @@ export class PieChartProxy extends ChartProxy {
                 radiusMin: 0,
                 radiusMax: 1,
                 listeners: {
-                    ...seriesOverrides.listeners,
                     nodeClick: this.crossFilterCallback,
                 },
                 tooltip: {
                     renderer: this.getCrossFilterTooltipRenderer(`${seriesOptions.angleName}`),
-                    ...seriesOverrides.tooltip,
                 }
             };
         }
@@ -156,11 +154,6 @@ export class PieChartProxy extends ChartProxy {
             return {
                 ...deepMerge({}, primaryOpts),
                 radiusKey: angleKey + '-filtered-out',
-                calloutLabel: seriesOverrides.calloutLabel, // labels can be shown on the 'filtered-out' series
-                calloutLine: seriesOverrides.calloutLine && {
-                    ...seriesOverrides.calloutLine,
-                    colors: seriesOverrides.calloutLine.colors ?? palette!.strokes,
-                },
                 fills: changeOpacity(seriesOptions.fills ?? palette!.fills, 0.3),
                 strokes: changeOpacity(seriesOptions.strokes ?? palette!.strokes, 0.3),
                 showInLegend: false,
@@ -190,7 +183,7 @@ export class PieChartProxy extends ChartProxy {
         return { outerRadiusOffset, innerRadiusOffset };
     }
 
-    private getFields(params: UpdateChartParams) {
+    private getFields(params: UpdateChartParams): FieldDefinition[] {
         return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
     }
 
@@ -201,10 +194,6 @@ export class PieChartProxy extends ChartProxy {
             const totalValue = params.angleValue;
             return { title, content: `${label}: ${totalValue * ratio}` };
         }
-    }
-
-    protected extractSeriesOverrides() {
-        return this.chartOptions[this.standaloneChartType]?.series || {};
     }
 
     public crossFilteringReset() {
