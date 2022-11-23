@@ -366,7 +366,7 @@ export class EnterpriseMenu extends BeanStub {
         const defaultMenuOptions = this.getDefaultMenuOptions();
         let result: (string | MenuItemDef)[];
 
-        const userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
+        const userFunc = this.gridOptionsService.getCallback('getMainMenuItems');
 
         if (userFunc) {
             result = userFunc({

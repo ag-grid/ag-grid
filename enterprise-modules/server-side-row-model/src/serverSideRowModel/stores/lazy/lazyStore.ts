@@ -104,7 +104,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             };
         }
 
-        const applyCallback = this.gridOptionsWrapper.getIsApplyServerSideTransactionFunc();
+        const applyCallback = this.gridOptionsService.getCallback('isApplyServerSideTransaction');
         if (applyCallback) {
             const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,

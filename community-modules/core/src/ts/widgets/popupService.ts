@@ -241,7 +241,7 @@ export class PopupService extends BeanStub {
         column?: Column | null,
         rowNode?: RowNode | null
     ): void {
-        const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
+        const callback = this.gridOptionsService.getCallback('postProcessPopup');
         if (callback) {
             const params: WithoutGridCommon<PostProcessPopupParams> = {
                 column: column,

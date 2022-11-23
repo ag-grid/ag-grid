@@ -436,14 +436,6 @@ export class GridOptionsWrapper {
         return toNumber(this.gridOptions.undoRedoCellEditingLimit);
     }
 
-    public getRowStyleFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.getRowStyle);
-    }
-
-    public getRowClassFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.getRowClass);
-    }
-
     public isServerSideInfiniteScroll(): boolean {
         return isTrue(this.gridOptions.serverSideInfiniteScroll) || this.gridOptions.serverSideInfiniteScroll === 'legacy';
     }
@@ -452,28 +444,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.serverSideInfiniteScroll);
     }
 
-    public getServerSideGroupLevelParamsFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.getServerSideGroupLevelParams);
-    }
-
-    public getCreateChartContainerFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.createChartContainer);
-    }
-
     public getBlockLoadDebounceMillis() {
         return this.gridOptions.blockLoadDebounceMillis;
-    }
-
-    public getPostProcessPopupFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.postProcessPopup);
-    }
-
-    public getPaginationNumberFormatterFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.paginationNumberFormatter);
-    }
-
-    public getIsApplyServerSideTransactionFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.isApplyServerSideTransaction);
     }
 
     public getInitialGroupOrderComparator() {
@@ -563,10 +535,6 @@ export class GridOptionsWrapper {
         return 1;
     }
 
-    public getProcessDataFromClipboardFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.processDataFromClipboard);
-    }
-
     public getAsyncTransactionWaitMillis(): number | undefined {
         return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : Constants.BATCH_WAIT_MILLIS;
     }
@@ -598,10 +566,6 @@ export class GridOptionsWrapper {
         }
 
         return direction;
-    }
-
-    public getFillOperation() {
-        return this.mergeGridCommonParams(this.gridOptions.fillOperation);
     }
 
     public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
@@ -657,14 +621,6 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getIsServerSideGroupOpenByDefaultFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.isServerSideGroupOpenByDefault);
-    }
-
-    public getIsGroupOpenByDefaultFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.isGroupOpenByDefault);
-    }
-
     public getGroupRowAggFunc() {
 
         const { getGroupRowAgg, groupRowAggNodes } = this.gridOptions;
@@ -675,14 +631,6 @@ export class GridOptionsWrapper {
         if (groupRowAggNodes) {
             return (params: WithoutGridCommon<GetGroupRowAggParams>) => groupRowAggNodes(params.nodes);
         }
-    }
-
-    public getContextMenuItemsFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.getContextMenuItems);
-    }
-
-    public getMainMenuItemsFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.getMainMenuItems);
     }
 
     public getRowIdFunc() {
@@ -696,21 +644,6 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getNavigateToNextHeaderFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.navigateToNextHeader);
-    }
-
-    public getTabToNextHeaderFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.tabToNextHeader);
-    }
-
-    public getNavigateToNextCellFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.navigateToNextCell);
-    }
-
-    public getTabToNextCellFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.tabToNextCell);
-    }
 
     public getGridTabIndex(): string {
         return (this.gridOptions.tabIndex || 0).toString();
@@ -732,30 +665,6 @@ export class GridOptionsWrapper {
 
     public getProcessPivotResultColGroupDefFunc() {
         return this.gridOptions.processPivotResultColGroupDef || this.gridOptions.processSecondaryColGroupDef;
-    }
-
-    public getSendToClipboardFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.sendToClipboard);
-    }
-
-    public getProcessRowPostCreateFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.processRowPostCreate);
-    }
-
-    public getProcessCellForClipboardFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.processCellForClipboard);
-    }
-
-    public getProcessHeaderForClipboardFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.processHeaderForClipboard);
-    }
-
-    public getProcessGroupHeaderForClipboardFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.processGroupHeaderForClipboard);
-    }
-
-    public getProcessCellFromClipboardFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.processCellFromClipboard);
     }
 
     public getViewportRowModelPageSize(): number | undefined {
@@ -824,10 +733,6 @@ export class GridOptionsWrapper {
         if (postSort) {
             return (params: WithoutGridCommon<PostSortRowsParams>) => postSort(params.nodes);
         }
-    }
-
-    public getChartToolbarItemsFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.getChartToolbarItems);
     }
 
     public getChartThemes(): string[] {

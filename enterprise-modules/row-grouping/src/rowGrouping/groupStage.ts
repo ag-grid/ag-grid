@@ -651,7 +651,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
 
         // use callback if exists
-        const userCallback = this.gridOptionsWrapper.getIsGroupOpenByDefaultFunc();
+        const userCallback = this.gridOptionsService.getCallback('isGroupOpenByDefault');
         if (userCallback) {
             const params: WithoutGridCommon<IsGroupOpenByDefaultParams> = {
                 rowNode: groupNode,

@@ -303,12 +303,11 @@ export class FocusService extends BeanStub {
         let { headerPosition } = params;
 
         if (allowUserOverride) {
-            const { gridOptionsWrapper } = this;
             const currentPosition = this.getFocusedHeader();
             const headerRowCount = this.headerNavigationService.getHeaderRowCount();
 
             if (fromTab) {
-                const userFunc = gridOptionsWrapper.getTabToNextHeaderFunc();
+                const userFunc = this.gridOptionsService.getCallback('tabToNextHeader');
                 if (userFunc) {
                     const params: WithoutGridCommon<TabToNextHeaderParams> = {
                         backwards: direction === 'Before',
@@ -319,7 +318,7 @@ export class FocusService extends BeanStub {
                     headerPosition = userFunc(params);
                 }
             } else {
-                const userFunc = gridOptionsWrapper.getNavigateToNextHeaderFunc();
+                const userFunc = this.gridOptionsService.getCallback('navigateToNextHeader');
                 if (userFunc && event) {
                     const params: WithoutGridCommon<NavigateToNextHeaderParams> = {
                         key: event.key,

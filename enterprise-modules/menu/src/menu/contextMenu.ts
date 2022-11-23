@@ -80,8 +80,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             }
         }
 
-        if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
-            const userFunc = this.gridOptionsWrapper.getContextMenuItemsFunc();
+        const userFunc = this.gridOptionsService.getCallback('getContextMenuItems');
+        if (userFunc) {
             const params: WithoutGridCommon<GetContextMenuItemsParams> = {
                 node: node,
                 column: column,
@@ -89,7 +89,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
                 defaultItems: defaultMenuOptions.length ? defaultMenuOptions : undefined,
             };
 
-            return userFunc ? userFunc(params) : undefined;
+            return userFunc(params);
         }
 
         return defaultMenuOptions;

@@ -589,6 +589,7 @@
     }
   },
   "setGroupRowAggNodes": {
+    "description": "/** @deprecated v27.2 - Use `setGetGroupRowAgg` instead. */",
     "type": {
       "arguments": { "groupRowAggNodesFunc": "(nodes: RowNode[]) => any" },
       "returnType": "void"
@@ -625,6 +626,7 @@
     }
   },
   "setGetRowNodeId": {
+    "description": "/** @deprecated v27.1 Use `getRowId` instead  */",
     "type": {
       "arguments": { "getRowNodeIdFunc": "GetRowNodeIdFunc" },
       "returnType": "void"
@@ -645,6 +647,7 @@
     }
   },
   "setIsFullWidthCell": {
+    "description": "/** @deprecated v27.2 Use `setIsFullWidthRow` instead. */",
     "type": {
       "arguments": { "isFullWidthCellFunc": "(rowNode: RowNode) => boolean" },
       "returnType": "void"
@@ -671,6 +674,7 @@
     }
   },
   "setPostSort": {
+    "description": "/** @deprecated v27.2 Use `setPostSortRows` instead */",
     "type": {
       "arguments": { "postSortFunc": "(nodes: RowNode[]) => void" },
       "returnType": "void"
@@ -767,6 +771,7 @@
     }
   },
   "setDefaultGroupOrderComparator": {
+    "description": "/** @deprecated v27.2 - Use `setInitialGroupOrderComparator` instead */",
     "type": {
       "arguments": {
         "defaultGroupOrderComparatorFunc": "(nodeA: RowNode, nodeB: RowNode) => number"
@@ -918,6 +923,23 @@
   },
   "setGroupDisplayType": {
     "type": { "arguments": { "value": "RowGroupingDisplayType" } }
+  },
+  "setRowClass": {
+    "type": {
+      "arguments": { "className": "string | undefined" },
+      "returnType": "void"
+    }
+  },
+  "setDeltaSort": {
+    "description": "/** Sets the `deltaSort` property */",
+    "type": { "arguments": { "enable": "boolean" }, "returnType": "void" }
+  },
+  "setRowCount": {
+    "description": "/** Sets the `rowCount` and `lastRowIndexKnown` properties.\n     * The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set.\n     * Set `rowCount` to adjust the height of the vertical scroll.\n     * Set `lastRowIndexKnown` to enable / disable searching for more rows.\n     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode.\n     */",
+    "type": {
+      "arguments": { "rowCount": "number", "maxRowFound?": "boolean" },
+      "returnType": "void"
+    }
   },
   "onRowHeightChanged": {
     "description": "/** Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`. */",
@@ -1208,10 +1230,6 @@
       "returnType": "RowNodeTransaction<TData> | null | undefined"
     }
   },
-  "setDeltaSort": {
-    "description": "/** Sets the `deltaSort` property */",
-    "type": { "arguments": { "enable": "boolean" }, "returnType": "void" }
-  },
   "applyTransactionAsync": {
     "description": "/** Same as `applyTransaction` except executes asynchronously for efficiency. */",
     "type": {
@@ -1263,13 +1281,6 @@
   "isLastRowIndexKnown": {
     "description": "/** Returns `true` if grid allows for scrolling past the last row to load more rows, thus providing infinite scroll. */",
     "type": { "arguments": {}, "returnType": "boolean | undefined" }
-  },
-  "setRowCount": {
-    "description": "/** Sets the `rowCount` and `lastRowIndexKnown` properties.\n     * The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set.\n     * Set `rowCount` to adjust the height of the vertical scroll.\n     * Set `lastRowIndexKnown` to enable / disable searching for more rows.\n     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode.\n     */",
-    "type": {
-      "arguments": { "rowCount": "number", "maxRowFound?": "boolean" },
-      "returnType": "void"
-    }
   },
   "getCacheBlockState": {
     "description": "/** Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.\n     */",
@@ -1337,11 +1348,5 @@
   "paginationGoToPage": {
     "description": "/** Goes to the specified page. If the page requested doesn't exist, it will go to the last page. */",
     "type": { "arguments": { "page": "number" }, "returnType": "void" }
-  },
-  "setRowClass": {
-    "type": {
-      "arguments": { "className": "string | undefined" },
-      "returnType": "void"
-    }
   }
 }

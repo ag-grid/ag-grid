@@ -169,7 +169,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         let parsedData: string[][] | null = stringToArray(data, this.gridOptionsWrapper.getClipboardDelimiter());
 
-        const userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
+        const userFunc = this.gridOptionsService.getCallback('processDataFromClipboard');
 
         if (userFunc) {
             parsedData = userFunc({ data: parsedData });
@@ -278,7 +278,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             // otherwise we are not the first row, so copy
             updatedRowNodes.push(rowNode);
 
-            const processCellFromClipboardFunc = this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
+            const processCellFromClipboardFunc = this.gridOptionsService.getCallback('processCellFromClipboard');
 
             columns.forEach((column, idx) => {
                 if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) { return; }
@@ -369,8 +369,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             focusedCell: CellPosition,
             changedPath: ChangedPath | undefined
         ) => {
-            const processCellForClipboardFunc = this.gridOptionsWrapper.getProcessCellForClipboardFunc();
-            const processCellFromClipboardFunc = this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
+            const processCellForClipboardFunc = this.gridOptionsService.getCallback('processCellForClipboard');
+            const processCellFromClipboardFunc = this.gridOptionsService.getCallback('processCellFromClipboard');
 
             const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[]) => {
                 // take reference of first row, this is the one we will be using to copy from
@@ -502,7 +502,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             column.isSuppressPaste(rowNode)
         ) { return; }
 
-        const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
+        const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'));
         rowNode.setDataValue(column, processedValue, Constants.SOURCE_PASTE);
 
         const cellId = this.cellPositionUtils.createIdFromValues(rowNode.rowIndex!, column, rowNode.rowPinned);
@@ -720,10 +720,10 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             suppressQuotes: true,
             columnSeparator: this.gridOptionsWrapper.getClipboardDelimiter(),
             onlySelected: !rowPositions,
-            processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc(),
+            processCellCallback: this.gridOptionsService.getCallback('processCellForClipboard'),
             processRowGroupCallback: (params) => params.node.key!,
-            processHeaderCallback: this.gridOptionsWrapper.getProcessHeaderForClipboardFunc(),
-            processGroupHeaderCallback: this.gridOptionsWrapper.getProcessGroupHeaderForClipboardFunc()
+            processHeaderCallback: this.gridOptionsService.getCallback('processHeaderForClipboard'),
+            processGroupHeaderCallback: this.gridOptionsService.getCallback('processGroupHeaderForClipboard')
             
         };
 
@@ -762,7 +762,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private copyDataToClipboard(data: string): void {
-        const userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
+        const userProvidedFunc = this.gridOptionsService.getCallback('sendToClipboard');
 
         // method 1 - user provided func
         if (userProvidedFunc) {

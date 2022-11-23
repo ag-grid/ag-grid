@@ -129,7 +129,7 @@ export class RowCssClassCalculator {
         }
 
         // part 2 - rowClassFunc
-        const rowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
+        const rowClassFunc = this.gridOptionsService.getCallback('getRowClass');
 
         if (rowClassFunc) {
             const params: WithoutGridCommon<RowClassParams> = {

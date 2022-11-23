@@ -355,7 +355,7 @@ export class BlockUtils extends BeanStub {
     public checkOpenByDefault(rowNode: RowNode): void {
         if (!rowNode.isExpandable()) { return; }
 
-        const userFunc = this.gridOptionsWrapper.getIsServerSideGroupOpenByDefaultFunc();
+        const userFunc = this.gridOptionsService.getCallback('isServerSideGroupOpenByDefault');
         if (!userFunc) { return; }
 
         const params: WithoutGridCommon<IsServerSideGroupOpenByDefaultParams> = {

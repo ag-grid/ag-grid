@@ -378,7 +378,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public executeProcessRowPostCreateFunc(): void {
-        const func = this.beans.gridOptionsWrapper.getProcessRowPostCreateFunc();
+        const func = this.beans.gridOptionsService.getCallback('processRowPostCreate');
         if (!func || !this.areAllContainersReady()) { return; }
 
         const params: WithoutGridCommon<ProcessRowParams> = {
@@ -1176,7 +1176,7 @@ export class RowCtrl extends BeanStub {
         }
 
         // part 1 - rowStyleFunc
-        const rowStyleFunc = this.beans.gridOptionsWrapper.getRowStyleFunc();
+        const rowStyleFunc = this.beans.gridOptionsService.getCallback('getRowStyle');
         let rowStyleFuncResult: any;
 
         if (rowStyleFunc) {

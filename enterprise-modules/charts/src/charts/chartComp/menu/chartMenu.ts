@@ -100,7 +100,7 @@ export class ChartMenu extends Component {
                 'chartDownload'
             ];
     
-            const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
+            const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
             const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
                 defaultItems: defaultChartToolbarOptions
             };
@@ -152,7 +152,7 @@ export class ChartMenu extends Component {
                 'chartDownload'
             ];
     
-            const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
+            const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
     
             if (toolbarItemsFunc) {
                 const params: WithoutGridCommon<GetChartToolbarItemsParams> = {

@@ -8,7 +8,8 @@ import {
     ServerSideGroupLevelParams,
     GetServerSideGroupLevelParamsParams,
     ColumnModel,
-    WithoutGridCommon
+    WithoutGridCommon,
+    GridOptionsService
 } from "@ag-grid-community/core";
 import { InfiniteStore } from "./infiniteStore";
 import { SSRMParams } from "../serverSideRowModel";
@@ -19,6 +20,7 @@ import { LazyStore } from "./lazy/lazyStore";
 export class StoreFactory {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
@@ -96,7 +98,7 @@ export class StoreFactory {
 
     private getLevelSpecificParams(parentNode: RowNode): ServerSideGroupLevelParams | undefined {
 
-        const callback = this.gridOptionsWrapper.getServerSideGroupLevelParamsFunc();
+        const callback = this.gridOptionsService.getCallback('getServerSideGroupLevelParams');
         if (!callback) { return undefined; }
 
         const params: WithoutGridCommon<GetServerSideGroupLevelParamsParams> = {

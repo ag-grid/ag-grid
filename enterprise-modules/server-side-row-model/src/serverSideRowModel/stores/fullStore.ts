@@ -505,7 +505,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 return { status: ServerSideTransactionResultStatus.StoreWaitingToLoad };
         }
 
-        const applyCallback = this.gridOptionsWrapper.getIsApplyServerSideTransactionFunc();
+        const applyCallback = this.gridOptionsService.getCallback('isApplyServerSideTransaction');
         if (applyCallback) {
             const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,
