@@ -46,7 +46,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
     queuedUserOptions: AgChartOptions[] = [];
 
     getOptions() {
-        return jsonMerge([this.userOptions]);
+        const { queuedUserOptions } = this;
+        const lastUpdateOptions = queuedUserOptions[queuedUserOptions.length - 1] ?? this.userOptions;
+        return jsonMerge([lastUpdateOptions]);
     }
 
     readonly scene: Scene;
@@ -347,6 +349,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     private seriesToUpdate: Set<Series> = new Set();
     private performUpdateTrigger = debouncedCallback(async ({ count }) => {
+        if (this._destroyed) return;
+
         try {
             await this.performUpdate(count);
         } catch (error) {
