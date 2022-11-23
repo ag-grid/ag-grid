@@ -517,7 +517,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     // replace Typescript new Grid( with Javascript new agGrid.Grid(
                     jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
                     // replace Typescript AgChart. with Javascript agCharts.AgChart.
-                    jsFile = jsFile.replace(/AgChart\./g, 'agCharts.AgChart.');
+                    jsFile = jsFile.replace(/(?<!.)AgChart\./g, 'agCharts.AgChart.');
 
                     const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');
                     jsFiles[jsFileName] = jsFile;
