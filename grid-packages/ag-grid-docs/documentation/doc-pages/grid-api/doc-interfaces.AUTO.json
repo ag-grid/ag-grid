@@ -23615,8 +23615,6 @@
     "ePopup": { "type": { "returnType": "HTMLElement", "optional": false } },
     "column": { "type": { "returnType": "Column | null", "optional": true } },
     "rowNode": { "type": { "returnType": "RowNode | null", "optional": true } },
-    "x": { "type": { "returnType": "number", "optional": true } },
-    "y": { "type": { "returnType": "number", "optional": true } },
     "nudgeX": { "type": { "returnType": "number", "optional": true } },
     "nudgeY": { "type": { "returnType": "number", "optional": true } },
     "position": {
@@ -23628,7 +23626,14 @@
     "keepWithinBounds": {
       "type": { "returnType": "boolean", "optional": true }
     },
-    "skipObserver": { "type": { "returnType": "boolean", "optional": true } }
+    "skipObserver": { "type": { "returnType": "boolean", "optional": true } },
+    "updatePosition": {
+      "type": {
+        "arguments": {},
+        "returnType": "{ x: number; y: number; }",
+        "optional": true
+      }
+    }
   },
   "PopupEventParams": {
     "originalMouseEvent": {

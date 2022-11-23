@@ -74,6 +74,8 @@ describe('update', () => {
         });
         await waitForChartStability(chartProxy);
         AgChart.update(chartProxy, {
+            // chart type is optional because it defaults to `cartesian`
+            container: document.body,
             width: 500,
             height: 500,
             autoSize: false,
@@ -140,7 +142,7 @@ describe('update', () => {
         expect(chart.background.visible).toBe(false);
         expect((chart.series[0] as any).marker.shape).toBe('plus');
 
-        AgChart.update(chartProxy, {
+        AgChart.updateDelta(chartProxy, {
             data: revenueProfitData,
             series: [
                 {

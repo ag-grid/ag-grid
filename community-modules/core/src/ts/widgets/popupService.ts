@@ -23,14 +23,13 @@ export interface PopupPositionParams {
     ePopup: HTMLElement,
     column?: Column | null,
     rowNode?: RowNode | null,
-    x?: number,
-    y?: number,
     nudgeX?: number,
     nudgeY?: number,
     position?: 'over' | 'under',
     alignSide?: 'left' | 'right',
     keepWithinBounds?: boolean;
-    skipObserver?: boolean
+    skipObserver?: boolean;
+    updatePosition?: () => { x: number; y: number; };
 }
 
 export interface PopupEventParams {
@@ -180,16 +179,14 @@ export class PopupService extends BeanStub {
 
     public positionPopupUnderMouseEvent(params: PopupPositionParams & { type: string, mouseEvent: MouseEvent | Touch }): void {
         const { ePopup, nudgeX, nudgeY, skipObserver } = params;
-        const { x, y } = this.calculatePointerAlign(params.mouseEvent);
 
         this.positionPopup({
             ePopup: ePopup,
-            x,
-            y,
             nudgeX,
             nudgeY,
             keepWithinBounds: true,
-            skipObserver
+            skipObserver,
+            updatePosition: () => this.calculatePointerAlign(params.mouseEvent)
         });
 
         this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode);
@@ -210,24 +207,25 @@ export class PopupService extends BeanStub {
         const position = params.position || 'over';
         const parentRect = this.getParentRect();
 
-        let x = sourceRect.left - parentRect.left;
+        const updatePosition = () => {
+            let x = sourceRect.left - parentRect.left;
+            if (alignSide === 'right') {
+                x -= (params.ePopup.offsetWidth - sourceRect.width);
+            }
 
-        if (alignSide === 'right') {
-            x -= (params.ePopup.offsetWidth - sourceRect.width);
-        }
+            const y = position === 'over'
+                ? (sourceRect.top - parentRect.top)
+                : (sourceRect.top - parentRect.top + sourceRect.height);
 
-        const y = position === 'over'
-            ? (sourceRect.top - parentRect.top)
-            : (sourceRect.top - parentRect.top + sourceRect.height);
+            return { x, y };
+        };
 
         this.positionPopup({
             ePopup: params.ePopup,
             nudgeX: params.nudgeX,
             nudgeY: params.nudgeY,
-            x,
-            y,
-            keepWithinBounds: params.keepWithinBounds
-
+            keepWithinBounds: params.keepWithinBounds,
+            updatePosition
         });
 
         this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
@@ -256,36 +254,31 @@ export class PopupService extends BeanStub {
     }
 
     public positionPopup(params: PopupPositionParams): void {
-        const { x, y, ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver } = params;
+        const { ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver, updatePosition } = params;
 
-        let currentX = x!;
-        let currentY = y!;
+        const updatePopupPosition = () => {
+            let { x, y } = updatePosition!();
 
-        if (nudgeX) {
-            currentX += nudgeX;
-        }
-        if (nudgeY) {
-            currentY += nudgeY;
-        }
-
-        const updatePosition = () => {
+            if (nudgeX) { x += nudgeX; }
+            if (nudgeY) { y += nudgeY; }
+            
             // if popup is overflowing to the bottom, move it up
             if (keepWithinBounds) {
-                currentX = this.keepXYWithinBounds(ePopup, currentX, DIRECTION.horizontal);
-                currentY = this.keepXYWithinBounds(ePopup, currentY, DIRECTION.vertical);
+                x = this.keepXYWithinBounds(ePopup, x, DIRECTION.horizontal);
+                y = this.keepXYWithinBounds(ePopup, y, DIRECTION.vertical);
             }
-    
-            ePopup.style.left = `${currentX}px`;
-            ePopup.style.top = `${currentY}px`;
+
+            ePopup.style.left = `${x}px`;
+            ePopup.style.top = `${y}px`;
         }
-        
-        updatePosition();
+
+        updatePopupPosition();
 
         // Mouse tracking will recalculate positioning when moving, so won't need to recalculate here
         if (!skipObserver) {
             // Since rendering popup contents can be asynchronous, use a resize observer to
             // reposition the popup after initial updates to the size of the contents
-            const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, updatePosition);
+            const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, updatePopupPosition);
             // Only need to reposition when first open, so can clean up after a bit of time
             setTimeout(() => resizeObserverDestroyFunc(), PopupService.WAIT_FOR_POPUP_CONTENT_RESIZE);
         }

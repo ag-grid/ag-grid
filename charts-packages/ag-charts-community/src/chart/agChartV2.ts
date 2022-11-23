@@ -110,7 +110,7 @@ export abstract class AgChart {
      * Create a new `AgChartInstance` based upon the given configuration options.
      */
     public static create(options: AgChartOptions): AgChartInstance {
-        return AgChartInternal.create(options as any);
+        return AgChartInternal.createOrUpdate(options as any);
     }
 
     /**
@@ -125,7 +125,7 @@ export abstract class AgChart {
         if (!AgChartInstanceProxy.isInstance(chart)) {
             throw new Error('AG Charts - invalid chart reference passed');
         }
-        return AgChartInternal.update(chart, options as any);
+        AgChartInternal.createOrUpdate(options as any, chart);
     }
 
     /**
@@ -188,7 +188,10 @@ class AgChartInstanceProxy implements AgChartInstance {
 abstract class AgChartInternal {
     static DEBUG = () => windowValue('agChartsDebug') ?? false;
 
-    static create(userOptions: AgChartOptions & { overrideDevicePixelRatio?: number }): AgChartInstanceProxy {
+    static createOrUpdate(
+        userOptions: AgChartOptions & { overrideDevicePixelRatio?: number },
+        proxy?: AgChartInstanceProxy
+    ) {
         debug('user options', userOptions);
         const mixinOpts: any = {};
         if (AgChartInternal.DEBUG()) {
@@ -198,64 +201,51 @@ abstract class AgChartInternal {
         const { overrideDevicePixelRatio } = userOptions;
         delete userOptions['overrideDevicePixelRatio'];
 
-        const processedOptions = prepareOptions(userOptions, mixinOpts);
-
-        let chart = AgChartInternal.createChartInstance(processedOptions, overrideDevicePixelRatio);
-        chart.requestFactoryUpdate(async () => {
-            // Chart destroyed, skip processing.
-            if (chart.destroyed) return;
-
-            await AgChartInternal.updateDelta(chart, processedOptions, userOptions);
-        });
-        return new AgChartInstanceProxy(chart);
-    }
-
-    static update(proxy: AgChartInstanceProxy, userOptions: AgChartOptions & { overrideDevicePixelRatio?: number }) {
-        debug('user options', userOptions);
-        const mixinOpts: any = {};
-        if (AgChartInternal.DEBUG()) {
-            mixinOpts['debug'] = true;
-        }
-
-        const { overrideDevicePixelRatio } = userOptions;
-        delete userOptions['overrideDevicePixelRatio'];
-
-        let { chart } = proxy;
-        let processedOptions: any;
-
-        if (chartType(userOptions as any) !== chartType(chart.processedOptions as any)) {
-            processedOptions = prepareOptions(userOptions, mixinOpts);
-
+        let processedOptions = prepareOptions(userOptions, mixinOpts);
+        let chart = proxy?.chart;
+        if (chart == null || chartType(userOptions as any) !== chartType(chart.processedOptions as any)) {
             chart = AgChartInternal.createChartInstance(processedOptions, overrideDevicePixelRatio, chart);
+        }
+
+        if (proxy == null) {
+            proxy = new AgChartInstanceProxy(chart);
+        } else {
             proxy.chart = chart;
         }
 
-        chart.requestFactoryUpdate(async () => {
+        const chartToUpdate = chart;
+        chartToUpdate.queuedUserOptions.push(userOptions);
+        const dequeue = () => {
+            const queuedOptionsIdx = chartToUpdate.queuedUserOptions.indexOf(userOptions);
+            chartToUpdate.queuedUserOptions.splice(queuedOptionsIdx, 1);
+        };
+
+        chartToUpdate.requestFactoryUpdate(async () => {
             // Chart destroyed, skip processing.
-            if (chart.destroyed) return;
+            if (chartToUpdate.destroyed) return;
 
-            if (processedOptions) {
-                // Recreated chart case.
-                await AgChartInternal.updateDelta(chart, processedOptions, userOptions);
-                return;
-            }
-
-            processedOptions = prepareOptions(userOptions, chart.userOptions, mixinOpts);
-
-            const deltaOptions = jsonDiff(chart.processedOptions, processedOptions);
+            const deltaOptions = jsonDiff(chartToUpdate.processedOptions, processedOptions);
             if (deltaOptions == null) {
+                dequeue();
                 return;
             }
 
-            await AgChartInternal.updateDelta(chart, deltaOptions, userOptions);
+            await AgChartInternal.updateDelta(chartToUpdate, deltaOptions, userOptions);
+            dequeue();
         });
+
+        return proxy;
     }
 
     static updateUserDelta(proxy: AgChartInstanceProxy, deltaOptions: DeepPartial<AgChartOptions>) {
-        const { chart } = proxy;
+        const {
+            chart,
+            chart: { queuedUserOptions },
+        } = proxy;
 
-        const userOptions = jsonMerge([chart.userOptions, deltaOptions]);
-        AgChartInternal.update(proxy, userOptions as any);
+        const lastUpdateOptions = queuedUserOptions[queuedUserOptions.length - 1] ?? chart.userOptions;
+        const userOptions = jsonMerge([lastUpdateOptions, deltaOptions]);
+        AgChartInternal.createOrUpdate(userOptions as any, proxy);
     }
 
     /**
@@ -290,7 +280,7 @@ abstract class AgChartInternal {
             overrideDevicePixelRatio: 1,
         };
 
-        const clonedChart = AgChartInternal.create(options as any);
+        const clonedChart = AgChartInternal.createOrUpdate(options as any);
 
         clonedChart.chart.waitForUpdate().then(() => {
             clonedChart.chart.scene.download(fileName, fileFormat);
