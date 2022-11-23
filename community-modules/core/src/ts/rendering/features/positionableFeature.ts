@@ -358,10 +358,9 @@ export class PositionableFeature extends BeanStub {
 
         this.popupService.positionPopup({
             ePopup,
-            x,
-            y,
             keepWithinBounds: true,
-            skipObserver: this.movable || this.isResizable()
+            skipObserver: this.movable || this.isResizable(),
+            updatePosition: () => ({ x, y })
         });
 
         this.setPosition(

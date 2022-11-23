@@ -13639,14 +13639,13 @@
       "ePopup": "HTMLElement",
       "column?": "Column | null",
       "rowNode?": "RowNode | null",
-      "x?": "number",
-      "y?": "number",
       "nudgeX?": "number",
       "nudgeY?": "number",
       "position?": "'over' | 'under'",
       "alignSide?": "'left' | 'right'",
       "keepWithinBounds?": "boolean",
-      "skipObserver?": "boolean"
+      "skipObserver?": "boolean",
+      "updatePosition?": "() => { x: number; y: number; }"
     }
   },
   "PopupEventParams": {
