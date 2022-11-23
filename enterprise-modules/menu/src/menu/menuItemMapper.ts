@@ -453,7 +453,7 @@ export class MenuItemMapper extends BeanStub {
 
             funcNames.forEach(funcName => {
                 result.push({
-                    name: localeTextFunc(funcName, funcName),
+                    name: localeTextFunc(funcName, _.capitalise(funcName)),
                     action: () => {
                         this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
                         this.columnModel.addValueColumn(columnToUse, "contextMenu");
