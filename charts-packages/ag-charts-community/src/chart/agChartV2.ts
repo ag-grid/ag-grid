@@ -194,7 +194,7 @@ abstract class AgChartInternal {
     ) {
         debug('user options', userOptions);
         const mixinOpts: any = {};
-        if (AgChartInternal.DEBUG()) {
+        if (AgChartInternal.DEBUG() === true) {
             mixinOpts['debug'] = true;
         }
 
@@ -245,6 +245,8 @@ abstract class AgChartInternal {
 
         const lastUpdateOptions = queuedUserOptions[queuedUserOptions.length - 1] ?? chart.userOptions;
         const userOptions = jsonMerge([lastUpdateOptions, deltaOptions]);
+        debug('user delta', deltaOptions);
+        debug('base options', lastUpdateOptions);
         AgChartInternal.createOrUpdate(userOptions as any, proxy);
     }
 
@@ -317,16 +319,16 @@ abstract class AgChartInternal {
                 type: chart.processedOptions.type || optionsType(processedOptions),
             } as Partial<AgChartOptions>;
         }
-        debug('delta update', processedOptions);
 
         await chart.awaitUpdateCompletion();
 
+        debug('applying delta', processedOptions);
         applyChartOptions(chart, processedOptions, userOptions);
     }
 }
 
 function debug(message?: any, ...optionalParams: any[]): void {
-    if (AgChartInternal.DEBUG()) {
+    if ([true, 'opts'].includes(AgChartInternal.DEBUG())) {
         console.log(message, ...optionalParams);
     }
 }
