@@ -200,4 +200,5 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.
      */
     convertValuesToStrings?: boolean
+    getDataPath?: (value: V) => (string | null)[];
 }

@@ -149,6 +149,22 @@
         @include ag-theme-rtl((margin-left: ag-param(widget-container-horizontal-padding)));
     }
 
+    // note - this applies a margin of the same width as a .ag-set-filter-group-icons element, to indent columns
+    // without icons to the same level as siblings with icons. If changing .ag-set-filter-group-icons, change this too.
+    .ag-set-filter-add-group-indent {
+        @include ag-theme-rtl((margin-left: ag-param(widget-container-horizontal-padding) + ag-param(icon-size) + ag-param(grid-size) * 2));
+    }
+
+    @for $i from 1 to 10 {
+        .ag-set-filter-indent-#{$i} {
+            @include ag-theme-rtl((padding-left: $i * ag-param(set-filter-indent-size)));
+        }
+    }
+
+    .ag-set-filter-group-icons {
+        @include ag-theme-rtl((margin-right: ag-param(widget-container-horizontal-padding)))
+    }
+
     .ag-filter-apply-panel {
         padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
         @include ag-border(secondary, top);

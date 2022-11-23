@@ -72,4 +72,8 @@
     .ag-filter-toolpanel-instance-header-icon {
         @include ag-theme-rtl((margin-left: ag-param(grid-size)));
     }
+
+    .ag-set-filter-group-icons{
+        @include ag-color-property(color, secondary-foreground-color);
+    }
 }

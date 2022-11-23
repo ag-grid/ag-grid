@@ -14,7 +14,8 @@ import {
     UserComponentFactory,
     ValueFormatterService,
     WithoutGridCommon,
-    ValueFormatterParams
+    ValueFormatterParams,
+    TouchListener
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 
@@ -22,12 +23,26 @@ export interface SetFilterListItemSelectionChangedEvent extends AgEvent {
     isSelected: boolean;
 }
 
+export interface SetFilterListItemExpandedChangedEvent extends AgEvent {
+    isExpanded: boolean;
+}
+
 /** @param V type of value in the Set Filter */
 export class SetFilterListItem<V> extends Component {
     public static EVENT_SELECTION_CHANGED = 'selectionChanged';
+    public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
 
     @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+
+    private static GROUP_TEMPLATE = /* html */`
+        <div class="ag-set-filter-item">
+            <span class="ag-set-filter-group-icons" ref="eGroupIcons" >
+                <span class="ag-set-filter-group-closed-icon" ref="eGroupClosedIcon"></span>
+                <span class="ag-set-filter-group-opened-icon" ref="eGroupOpenedIcon"></span>
+            </span>
+            <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+        </div>`;
 
     private static TEMPLATE = /* html */`
         <div class="ag-set-filter-item">
@@ -36,14 +51,22 @@ export class SetFilterListItem<V> extends Component {
 
     @RefSelector('eCheckbox') private readonly eCheckbox: AgCheckbox;
 
+    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
+    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
+    @RefSelector('eGroupIcons') private eGroupIcons: HTMLElement;
+
     constructor(
         private readonly value: V | null | (() => string),
         private readonly params: ISetFilterParams<any, V>,
         private readonly translate: (key: keyof ISetFilterLocaleText) => string,
         private readonly valueFormatter: (params: ValueFormatterParams) => string,
-        private isSelected?: boolean,
+        private isSelected: boolean | undefined,
+        private readonly depth: number,
+        private readonly groupsExist: boolean,
+        private readonly isGroup: boolean,
+        private isExpanded?: boolean
     ) {
-        super(SetFilterListItem.TEMPLATE);
+        super(isGroup ? SetFilterListItem.GROUP_TEMPLATE : SetFilterListItem.TEMPLATE);
     }
 
     @PostConstruct
@@ -53,23 +76,68 @@ export class SetFilterListItem<V> extends Component {
         this.eCheckbox.setValue(this.isSelected, true);
         this.eCheckbox.setDisabled(!!this.params.readOnly);
 
+        if (this.depth > 0) {
+            this.addCssClass('ag-set-filter-indent-' + this.depth);
+        }
+
+        if (this.isGroup) {
+            this.eGroupClosedIcon.appendChild(_.createIcon('setFilterGroupClosed', this.gridOptionsWrapper, null));
+            this.eGroupOpenedIcon.appendChild(_.createIcon('setFilterGroupOpen', this.gridOptionsWrapper, null));
+
+            this.setOpenClosedIcons();
+        } else {
+            if (this.groupsExist) {
+                this.addCssClass('ag-set-filter-add-group-indent');
+            }
+        }
+
         if (!!this.params.readOnly) {
             // Don't add event listeners if we're read-only.
             return;
         }
 
-        this.eCheckbox.onValueChange(value => {
-            const parsedValue = value || false;
+        if (this.isGroup) {
+            this.setupExpandContractListeners();
+        }
 
-            this.isSelected = parsedValue;
+        this.eCheckbox.onValueChange((value) => this.onCheckboxChanged(!!value));
+    }
 
-            const event: SetFilterListItemSelectionChangedEvent = {
-                type: SetFilterListItem.EVENT_SELECTION_CHANGED,
-                isSelected: parsedValue,
-            };
+    private setupExpandContractListeners(): void {
+        this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
 
-            this.dispatchEvent(event);
-        });
+        const touchListener = new TouchListener(this.eGroupIcons, true);
+        this.addManagedListener(touchListener, TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
+        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
+    }
+
+    private onExpandOrContractClicked(): void {
+        this.isExpanded = !this.isExpanded;
+
+        const event: SetFilterListItemExpandedChangedEvent = {
+            type: SetFilterListItem.EVENT_EXPANDED_CHANGED,
+            isExpanded: this.isExpanded,
+        };
+
+        this.dispatchEvent(event);
+    }
+
+    private setOpenClosedIcons(): void {
+        const folderOpen = !!this.isExpanded;
+        _.setDisplayed(this.eGroupClosedIcon, !folderOpen);
+        _.setDisplayed(this.eGroupOpenedIcon, folderOpen);
+    }
+
+    private onCheckboxChanged(isSelected: boolean): void {
+        this.isSelected = isSelected;
+
+        const event: SetFilterListItemSelectionChangedEvent = {
+            type: SetFilterListItem.EVENT_SELECTION_CHANGED,
+            isSelected,
+        };
+
+        this.dispatchEvent(event);
     }
 
     public toggleSelected(): void {

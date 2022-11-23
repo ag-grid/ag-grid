@@ -52,6 +52,7 @@ $ag-theme-alpine-default-params: (
     header-height: ag-derived(grid-size, $times: 8),    // if changed, update environment.ts
     list-item-height: ag-derived(grid-size, $times: 4), // if changed, update environment.ts
     column-select-indent-size: ag-derived(icon-size),
+    set-filter-indent-size: ag-derived(icon-size),
     cell-horizontal-padding: ag-derived(grid-size, $times: 3),
     cell-widget-spacing: ag-derived(grid-size, $times: 2),
 

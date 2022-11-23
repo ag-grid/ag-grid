@@ -19,6 +19,9 @@ import {
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
+import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
+import { ISetDisplayValueModel } from './iSetDisplayValueModel';
+import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 export enum SetFilterModelValuesType {
     PROVIDED_LIST, PROVIDED_CALLBACK, TAKEN_FROM_GRID_VALUES
@@ -39,6 +42,7 @@ export class SetValueModel<V> implements IEventEmitter {
     private readonly compareByValue: boolean;
     private readonly convertValuesToStrings: boolean;
     private readonly caseSensitive: boolean;
+    private readonly displayValueModel: ISetDisplayValueModel<V, any>;
 
     private valuesType: SetFilterModelValuesType;
     private miniFilterText: string | null = null;
@@ -57,9 +61,6 @@ export class SetValueModel<V> implements IEventEmitter {
 
     /** Remaining keys when filters from other columns have been applied. */
     private availableKeys = new Set<string | null>();
-
-    /** All keys that are currently displayed, after the mini-filter has been applied. */
-    private displayedKeys: (string | null)[] = [];
 
     /** Keys that have been selected for this filter. */
     private selectedKeys = new Set<string | null>();
@@ -87,6 +88,7 @@ export class SetValueModel<V> implements IEventEmitter {
             values,
             caseSensitive,
             convertValuesToStrings,
+            getDataPath,
         } = filterParams;
 
         this.column = column;
@@ -122,6 +124,16 @@ export class SetValueModel<V> implements IEventEmitter {
 
             this.providedValues = values;
         }
+
+        this.displayValueModel = getDataPath ? new TreeSetDisplayValueModel(
+            getDataPath,
+            this.formatter
+        ) : new FlatSetDisplayValueModel(
+            this.valueFormatterService,
+            this.valueFormatter,
+            this.formatter,
+            this.column
+        );
 
         this.updateAllValues().then(updatedValues => this.resetSelectionState(updatedValues || []));
     }
@@ -230,7 +242,7 @@ export class SetValueModel<V> implements IEventEmitter {
             }
         });
 
-        this.allValuesPromise.then(values => this.updateAvailableKeys(values || [])).then(() => this.initialised = true);
+        this.allValuesPromise.then(values => this.updateAvailableKeys(values || [], true)).then(() => this.initialised = true);
 
         return this.allValuesPromise;
     }
@@ -251,8 +263,9 @@ export class SetValueModel<V> implements IEventEmitter {
         return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
-    private updateAvailableKeys(allKeys: (string | null)[]): void {
-        const availableKeys = this.showAvailableOnly() ? this.sortKeys(this.getValuesFromRows(true)) : allKeys;
+    private updateAvailableKeys(allKeys: (string | null)[], isInitialLoad?: boolean): void {
+        // on initial load no need to re-read from rows
+        const availableKeys = this.showAvailableOnly() && !isInitialLoad ? this.sortKeys(this.getValuesFromRows(true)) : allKeys;
 
         this.availableKeys = new Set(availableKeys);
         this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
@@ -300,7 +313,7 @@ export class SetValueModel<V> implements IEventEmitter {
         }
 
         this.miniFilterText = value;
-        this.updateDisplayedValues();
+        this.updateDisplayedValues(true);
 
         return true;
     }
@@ -309,47 +322,36 @@ export class SetValueModel<V> implements IEventEmitter {
         return this.miniFilterText;
     }
 
-    private updateDisplayedValues(): void {
+    public updateDisplayedValues(fromMiniFilter?: boolean, fromExpansion?: boolean): void {
+        if (fromExpansion) {
+            this.displayValueModel.refresh();
+            return;
+        }
+
         // if no filter, just display all available values
         if (this.miniFilterText == null) {
-            this.displayedKeys = _.values(this.availableKeys);
+            this.displayValueModel.updateDisplayedValuesToAllAvailable(this.allValues, this.availableKeys);
             return;
         }
 
         // if filter present, we filter down the list
-        this.displayedKeys = [];
-
         // to allow for case insensitive searches, upper-case both filter text and value
         const formattedFilterText = this.caseFormat(this.formatter(this.miniFilterText) || '');
 
         const matchesFilter = (valueToCheck: string | null): boolean =>
             valueToCheck != null && this.caseFormat(valueToCheck).indexOf(formattedFilterText) >= 0;
 
-        this.availableKeys.forEach(key => {
-            if (key == null) {
-                if (this.filterParams.excelMode && matchesFilter(this.translate('blanks'))) {
-                    this.displayedKeys.push(key);
-                }
-            } else {
-                const value = this.allValues.get(key);
-                const valueFormatterValue = this.valueFormatterService.formatValue(
-                    this.column, null, value, this.valueFormatter, false);
+        const nullMatchesFilter = !!this.filterParams.excelMode && matchesFilter(this.translate('blanks'));
 
-                const textFormatterValue = this.formatter(valueFormatterValue);    
-
-                if (matchesFilter(textFormatterValue)) {
-                    this.displayedKeys.push(key);
-                }
-            }
-        });
-    }
+        this.displayValueModel.updateDisplayedValuesToMatchMiniFilter(this.allValues, this.availableKeys, matchesFilter, nullMatchesFilter, fromMiniFilter);
+    } 
 
     public getDisplayedValueCount(): number {
-        return this.displayedKeys.length;
+        return this.displayValueModel.getDisplayedValueCount();
     }
 
     public getDisplayedKey(index: number): string | null {
-        return this.displayedKeys[index];
+        return this.displayValueModel.getDisplayedKey(index);
     }
 
     public hasSelections(): boolean {
@@ -378,7 +380,7 @@ export class SetValueModel<V> implements IEventEmitter {
             // ensure everything that matches the mini filter is selected
             if (clearExistingSelection) { this.selectedKeys.clear(); }
 
-            this.displayedKeys.forEach(key => this.selectedKeys.add(key));
+            this.displayValueModel.forEachDisplayedKey(key => this.selectedKeys.add(key));
         }
     }
 
@@ -388,7 +390,7 @@ export class SetValueModel<V> implements IEventEmitter {
             this.selectedKeys.clear();
         } else {
             // ensure everything that matches the mini filter is deselected
-            this.displayedKeys.forEach(key => this.selectedKeys.delete(key));
+            this.displayValueModel.forEachDisplayedKey(key => this.selectedKeys.delete(key));
         }
     }
 
@@ -399,7 +401,7 @@ export class SetValueModel<V> implements IEventEmitter {
     public deselectKey(key: string | null): void {
         if (this.filterParams.excelMode && this.isEverythingVisibleSelected()) {
             // ensure we're starting from the correct "everything selected" state
-            this.resetSelectionState(this.displayedKeys);
+            this.resetSelectionState(this.displayValueModel.getDisplayedKeys());
         }
 
         this.selectedKeys.delete(key);
@@ -410,11 +412,11 @@ export class SetValueModel<V> implements IEventEmitter {
     }
 
     public isEverythingVisibleSelected(): boolean {
-        return !this.displayedKeys.some(it => !this.isKeySelected(it));
+        return !this.displayValueModel.someDisplayedKey(it => !this.isKeySelected(it));
     }
 
     public isNothingVisibleSelected(): boolean {
-        return !this.displayedKeys.some(it => this.isKeySelected(it));
+        return !this.displayValueModel.someDisplayedKey(it => this.isKeySelected(it));
     }
 
     public getModel(): SetFilterModelValue | null {
@@ -471,5 +473,9 @@ export class SetValueModel<V> implements IEventEmitter {
         } else {
             this.selectedKeys = new Set(keys);
         }
+    }
+
+    public hasGroups(): boolean {
+        return this.displayValueModel.hasGroups();
     }
 }

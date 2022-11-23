@@ -290,6 +290,30 @@
     .ag-column-select-add-group-indent {
         @extend .ag-toolpanel-add-group-indent !optional;
     }
+
+    .ag-set-filter-indent-1 {
+        @extend .ag-toolpanel-indent-1 !optional;
+    }
+    
+    .ag-set-filter-indent-2 {
+        @extend .ag-toolpanel-indent-2 !optional;
+    }
+    
+    .ag-set-filter-indent-3 {
+        @extend .ag-toolpanel-indent-3 !optional;
+    }
+    
+    .ag-set-filter-indent-4 {
+        @extend .ag-toolpanel-indent-4 !optional;
+    }
+    
+    .ag-set-filter-indent-5 {
+        @extend .ag-toolpanel-indent-5 !optional;
+    }
+
+    .ag-set-filter-add-group-indent {
+        @extend .ag-toolpanel-add-group-indent !optional;
+    }
     
     .ag-column-drop-horizontal-half-width {
         @extend .ag-width-half !optional;
