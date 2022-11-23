@@ -8,6 +8,7 @@ import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { last } from "../utils/array";
+import { GridOptionsService } from "../gridOptionsService";
 
 export class ColumnGroup implements IHeaderColumn {
 
@@ -23,6 +24,7 @@ export class ColumnGroup implements IHeaderColumn {
     }
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
 
     // all the children of this group, regardless of whether they are opened or closed
     private children: IHeaderColumn[] | null;
@@ -89,7 +91,7 @@ export class ColumnGroup implements IHeaderColumn {
 
         // set our left based on first displayed column
         if (this.displayedChildren!.length > 0) {
-            if (this.gridOptionsWrapper.isEnableRtl()) {
+            if (this.gridOptionsService.is('enableRtl')) {
                 const lastChild = last(this.displayedChildren!);
                 const lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);

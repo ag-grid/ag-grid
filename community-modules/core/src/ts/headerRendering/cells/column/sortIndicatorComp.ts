@@ -106,7 +106,7 @@ export class SortIndicatorComp extends Component {
         }
 
         if (this.eSortNone) {
-            const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
+            const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsService.is('unSortIcon');
             const isNone = sortDirection === null || sortDirection === undefined;
             setDisplayed(this.eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
         }

@@ -24,7 +24,7 @@ export class ValueService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
+        this.cellExpressions = this.gridOptionsService.is('enableCellExpressions');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
@@ -99,7 +99,7 @@ export class ValueService extends BeanStub {
 
     private getOpenedGroup(rowNode: RowNode, column: Column): any {
 
-        if (!this.gridOptionsWrapper.isShowOpenedGroup()) { return; }
+        if (!this.gridOptionsService.is('showOpenedGroup')) { return; }
 
         const colDef = column.getColDef();
         if (!colDef.showRowGroup) { return; }

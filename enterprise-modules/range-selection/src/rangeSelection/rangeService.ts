@@ -177,7 +177,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
         if (!columns) { return; }
 
-        const suppressMultiRangeSelections = this.gridOptionsWrapper.isSuppressMultiRangeSelection();
+        const suppressMultiRangeSelections = this.gridOptionsService.is('suppressMultiRangeSelection');
 
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || _.missing(this.cellRanges)) {
@@ -587,7 +587,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
         // ctrlKey for windows, metaKey for Apple
         const multiKeyPressed = ctrlKey || metaKey;
-        const allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
+        const allowMulti = !this.gridOptionsService.is('suppressMultiRangeSelection');
         const multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
         const extendRange = shiftKey && _.existsAndNotEmpty(this.cellRanges);
 
@@ -649,7 +649,7 @@ export class RangeService extends BeanStub implements IRangeService {
         // when ranges are created due to a mouse click without drag (happens in cellMouseListener)
         // this method will be called with `fromMouseClick=true`.
         if (fromMouseClick && this.dragging) { return; }
-        if (this.gridOptionsWrapper.isSuppressMultiRangeSelection()) { return; }
+        if (this.gridOptionsService.is('suppressMultiRangeSelection')) { return; }
         if (this.isEmpty()) { return; }
         
         const lastRange = _.last(this.cellRanges);

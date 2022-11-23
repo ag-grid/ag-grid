@@ -235,7 +235,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         if (this.isSuppressMoving()) { return; }
 
         const allLeafColumns = this.columnGroup.getProvidedColumnGroup().getLeafColumns();
-        const hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns();
+        const hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
         const dragSource: DragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eHeaderGroup,
@@ -299,7 +299,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             }
         });
 
-        const result = childSuppressesMoving || this.gridOptionsWrapper.isSuppressMovableColumns();
+        const result = childSuppressesMoving || this.gridOptionsService.is('suppressMovableColumns');
 
         return result;
     }

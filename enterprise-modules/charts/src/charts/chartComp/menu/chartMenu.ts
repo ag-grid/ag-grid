@@ -81,7 +81,7 @@ export class ChartMenu extends Component {
 
         this.refreshMenuClasses();
 
-        if (!this.gridOptionsWrapper.isSuppressChartToolPanelsButton() && this.panels.length > 0) {
+        if (!this.gridOptionsService.is('suppressChartToolPanelsButton') && this.panels.length > 0) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
@@ -322,7 +322,7 @@ export class ChartMenu extends Component {
         this.eChartContainer.classList.toggle('ag-chart-menu-visible', this.menuVisible);
         this.eChartContainer.classList.toggle('ag-chart-menu-hidden', !this.menuVisible);
 
-        if (!this.gridOptionsWrapper.isSuppressChartToolPanelsButton()) {
+        if (!this.gridOptionsService.is('suppressChartToolPanelsButton')) {
             this.eHideButtonIcon.classList.toggle('ag-icon-contracted', this.menuVisible);
             this.eHideButtonIcon.classList.toggle('ag-icon-expanded', !this.menuVisible);
         }

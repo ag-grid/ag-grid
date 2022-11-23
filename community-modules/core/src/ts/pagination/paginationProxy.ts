@@ -31,7 +31,7 @@ export class PaginationProxy extends BeanStub {
 
     @PostConstruct
     private postConstruct() {
-        this.active = this.gridOptionsWrapper.isPagination();
+        this.active = this.gridOptionsService.is('pagination');
         this.paginateChildRows = this.gridOptionsWrapper.isPaginateChildRows();
 
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));

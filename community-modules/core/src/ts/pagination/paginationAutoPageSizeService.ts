@@ -23,7 +23,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     }
 
     private notActive(): boolean {
-        return !this.gridOptionsWrapper.isPaginationAutoPageSize();
+        return !this.gridOptionsService.is('paginationAutoPageSize');
     }
 
     private onScrollVisibilityChanged(): void {

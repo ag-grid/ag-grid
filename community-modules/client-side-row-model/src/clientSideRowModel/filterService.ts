@@ -89,6 +89,6 @@ export class FilterService extends BeanStub {
     }
 
     private doingTreeDataFiltering() {
-        return this.gridOptionsWrapper.isTreeData() && !this.gridOptionsWrapper.isExcludeChildrenWhenTreeDataFiltering();
+        return this.gridOptionsWrapper.isTreeData() && !this.gridOptionsService.is('excludeChildrenWhenTreeDataFiltering');
     }
 }

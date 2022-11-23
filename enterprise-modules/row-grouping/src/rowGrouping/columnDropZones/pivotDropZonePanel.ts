@@ -98,13 +98,13 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
     protected isColumnDroppable(column: Column): boolean {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsWrapper.isFunctionsReadOnly() || !column.isPrimary()) { return false; }
+        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) { return false; }
 
         return column.isAllowPivot() && !column.isPivotActive();
     }
 
     protected updateColumns(columns: Column[]): void {
-        if (this.gridOptionsWrapper.isFunctionsPassive()) {
+        if (this.gridOptionsService.is('functionsPassive')) {
             const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                 columns: columns

@@ -194,7 +194,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
             const hidden = (width == 0);
             const hiddenChanged = this.hidden !== hidden;
-            const isRtl = this.gridOptionsWrapper.isEnableRtl();
+            const isRtl = this.gridOptionsService.is('enableRtl');
             const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)

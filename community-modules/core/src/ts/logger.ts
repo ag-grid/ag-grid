@@ -1,4 +1,4 @@
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { GridOptionsService } from "./gridOptionsService";
 import { Bean } from "./context/context";
 import { Qualifier } from "./context/context";
 import { BeanStub } from "./context/beanStub";
@@ -8,8 +8,8 @@ export class LoggerFactory extends BeanStub {
 
     private logging: boolean;
 
-    private setBeans(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper): void {
-        this.logging = gridOptionsWrapper.isDebug();
+    private setBeans(@Qualifier('gridOptionsService') gridOptionsService: GridOptionsService): void {
+        this.logging = gridOptionsService.is('debug');
     }
 
     public create(name: string) {

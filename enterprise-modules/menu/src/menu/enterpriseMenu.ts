@@ -78,7 +78,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.gridOptionsService.is('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }

@@ -8,7 +8,7 @@ import { useEffectOnce } from '../useEffectOnce';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
-    const {gridOptionsWrapper} = useContext(BeansContext);
+    const { gridOptionsWrapper, gridOptionsService } = useContext(BeansContext);
 
     const [ transform, setTransform ] = useState<string>();
     const [ height, setHeight ] = useState<string>();
@@ -26,7 +26,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     const typeFilter = ctrl.getType() === HeaderRowType.FLOATING_FILTER;
 
     const setCellCtrlsMaintainOrder = useCallback( (prev: AbstractHeaderCellCtrl[], next: AbstractHeaderCellCtrl[]) => {
-        const isEnsureDomOrder = gridOptionsWrapper.isEnsureDomOrder();
+        const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
         const isPrintLayout = gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen

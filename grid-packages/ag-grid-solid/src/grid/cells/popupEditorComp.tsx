@@ -11,12 +11,12 @@ const PopupEditorComp = (props: {
             children?: JSX.Element
         }) => {
 
-    const {context, popupService, gridOptionsWrapper} = useContext(BeansContext);
+    const { context, popupService, gridOptionsWrapper, gridOptionsService } = useContext(BeansContext);
 
     const {editDetails, cellCtrl, eParentCell} = props;
     const {compDetails} = editDetails;
 
-    const useModelPopup = gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
+    const useModelPopup = gridOptionsService.is('stopEditingWhenCellsLoseFocus');
     
     const wrapper = context.createBean(new PopupEditorWrapper(compDetails.params));
     const ePopupGui = wrapper.getGui();

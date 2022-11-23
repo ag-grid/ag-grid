@@ -648,7 +648,7 @@ export class NavigationService extends BeanStub {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
-            if (this.gridOptionsWrapper.isEnableRtl()) {
+            if (this.gridOptionsService.is('enableRtl')) {
                 if (key === KeyCode.LEFT) {
                     nextCell = this.getLastCellOfColSpan(nextCell);
                 }
@@ -811,7 +811,7 @@ export class NavigationService extends BeanStub {
     }
 
     public ensureCellVisible(gridCell: CellPosition): void {
-        const isGroupStickyEnabled = this.gridOptionsWrapper.isGroupRowsSticky();
+        const isGroupStickyEnabled = this.gridOptionsService.is('groupRowsSticky');
         const rowNode = this.rowModel.getRow(gridCell.rowIndex);
         // sticky rows are always visible, so the grid shouldn't scroll to focus them.
         const skipScrollToRow = isGroupStickyEnabled && rowNode?.sticky;

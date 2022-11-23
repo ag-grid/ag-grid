@@ -100,6 +100,6 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public isExportSuppressed(): boolean {
-        return this.gridOptionsWrapper.isSuppressCsvExport();
+        return this.gridOptionsService.is('suppressCsvExport');
     }
 }

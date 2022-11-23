@@ -72,7 +72,7 @@ export class DragService extends BeanStub {
 
         let touchListener: ((touchEvent: TouchEvent) => void) | null = null;
 
-        const suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
+        const suppressTouch = this.gridOptionsService.is('suppressTouch');
 
         if (includeTouch && !suppressTouch) {
             touchListener = (touchEvent: TouchEvent) => {
@@ -248,7 +248,7 @@ export class DragService extends BeanStub {
         // to avoid the grid text being selected while dragging components.
         // Note: Safari also has an issue, where `user-select: none` is not being respected.
         if (
-            (this.gridOptionsWrapper.isEnableCellTextSelect() || isBrowserSafari()) &&
+            (this.gridOptionsService.is('enableCellTextSelection') || isBrowserSafari()) &&
             // The event type can be `mousedown` when `dragStartPixels=0`
             // we should only preventDefault on `mousemove`.
             mouseEvent.type === 'mousemove' &&

@@ -38,7 +38,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         const includeGroupTotalFooter = !showRootNode
             // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
             && atLeastOneRowPresent
-            && this.gridOptionsWrapper.isGroupIncludeTotalFooter();
+            && this.gridOptionsService.is('groupIncludeTotalFooter');
 
         if (includeGroupTotalFooter) {
             this.ensureFooterNodeExists(rootNode);
@@ -57,10 +57,10 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
     ) {
         if (_.missingOrEmpty(rowsToFlatten)) { return; }
 
-        const hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
+        const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
         // these two are mutually exclusive, so if first set, we don't set the second
-        const groupRemoveSingleChildren = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
-        const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
+        const groupRemoveSingleChildren = this.gridOptionsService.is('groupRemoveSingleChildren');
+        const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gridOptionsService.is('groupRemoveLowestSingleChildren');
 
         for (let i = 0; i < rowsToFlatten!.length; i++) {
             const rowNode = rowsToFlatten![i];
@@ -107,7 +107,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
                         nextRowTop, skipLeafNodes, uiLevelForChildren);
 
                     // put a footer in if user is looking for it
-                    if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+                    if (this.gridOptionsService.is('groupIncludeFooter')) {
                         this.ensureFooterNodeExists(rowNode);
                         this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevel);
                     }

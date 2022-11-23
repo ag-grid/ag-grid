@@ -71,7 +71,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public showLoadingOverlay(): void {
-        if (this.gridOptionsWrapper.isSuppressLoadingOverlay()) { return; }
+        if (this.gridOptionsService.is('suppressLoadingOverlay')) { return; }
 
         const params: WithoutGridCommon<ILoadingOverlayParams> = {};
 
@@ -82,7 +82,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public showNoRowsOverlay(): void {
-        if (this.gridOptionsWrapper.isSuppressNoRowsOverlay()) { return; }
+        if (this.gridOptionsService.is('suppressNoRowsOverlay')) { return; }
 
         const params: WithoutGridCommon<INoRowsOverlayParams> = {};
 
@@ -148,7 +148,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     private showOrHideOverlay(): void {
         const isEmpty = this.paginationProxy.isEmpty();
-        const isSuppressNoRowsOverlay = this.gridOptionsWrapper.isSuppressNoRowsOverlay();
+        const isSuppressNoRowsOverlay = this.gridOptionsService.is('suppressNoRowsOverlay');
         if (isEmpty && !isSuppressNoRowsOverlay) {
             this.showNoRowsOverlay();
         } else {

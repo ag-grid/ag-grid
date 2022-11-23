@@ -372,7 +372,7 @@ export class RowNode<TData = any> implements IEventEmitter {
                 this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
             }
 
-            const isGroupSelectsChildren = this.beans.gridOptionsWrapper.isGroupSelectsChildren();
+            const isGroupSelectsChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
             if (isGroupSelectsChildren) {
                 const selected = this.calculateSelectedFromChildren();
                 this.setSelected(selected ?? false);
@@ -673,7 +673,7 @@ export class RowNode<TData = any> implements IEventEmitter {
 
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer
-        if (this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
+        if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
             this.beans.rowRenderer.refreshCells({ rowNodes: [this] });
         }
     }
@@ -897,7 +897,7 @@ export class RowNode<TData = any> implements IEventEmitter {
 
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
     public setSelectedParams(params: SetSelectedParams & { event?: Event }): number {
-        const groupSelectsChildren = this.beans.gridOptionsWrapper.isGroupSelectsChildren();
+        const groupSelectsChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
         const newValue = params.newValue === true;
         const clearSelection = params.clearSelection === true;
         const suppressFinishActions = params.suppressFinishActions === true;
@@ -982,7 +982,7 @@ export class RowNode<TData = any> implements IEventEmitter {
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
     private doRowRangeSelection(value: boolean = true): number {
-        const groupsSelectChildren = this.beans.gridOptionsWrapper.isGroupSelectsChildren();
+        const groupsSelectChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
         const lastSelectedNode = this.beans.selectionService.getLastSelectedNode();
         const nodesToSelect = this.beans.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
 

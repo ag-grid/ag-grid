@@ -71,8 +71,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             // if user clicks a cell
             const csvModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.CsvExportModule);
             const excelModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule);
-            const suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport() || excelModuleMissing;
-            const suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport() || csvModuleMissing;
+            const suppressExcel = this.gridOptionsService.is('suppressExcelExport') || excelModuleMissing;
+            const suppressCsv = this.gridOptionsService.is('suppressCsvExport') || csvModuleMissing;
             const onIPad = _.isIOSUserAgent();
             const anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
@@ -98,7 +98,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     public onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any, anchorToElement: HTMLElement): void {
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
+        if (!this.gridOptionsService.is('allowContextMenuWithControlKey')) {
             // then do the check
             if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) { return; }
         }
@@ -109,7 +109,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             this.blockMiddleClickScrollsIfNeeded(mouseEvent);
         }
 
-        if (this.gridOptionsWrapper.isSuppressContextMenu()) { return; }
+        if (this.gridOptionsService.is('suppressContextMenu')) { return; }
 
         const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent!.touches[0];
         if (this.showMenu(rowNode, column, value, eventOrTouch, anchorToElement)) {
@@ -123,10 +123,10 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
         // button in the browser). so this property allows the user to receive middle button clicks if
         // they want.
-        const { gridOptionsWrapper } = this;
+        const { gridOptionsService } = this;
         const { which } = mouseEvent;
 
-        if (gridOptionsWrapper.isSuppressMiddleClickScrolls() && which === 2) {
+        if (gridOptionsService.is('suppressMiddleClickScrolls') && which === 2) {
             mouseEvent.preventDefault();
         }
     }
@@ -165,7 +165,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             },
             click: mouseEvent,
             positionCallback: () => {
-                const isRtl = this.gridOptionsWrapper.isEnableRtl();
+                const isRtl = this.gridOptionsService.is('enableRtl');
                 this.popupService.positionPopupUnderMouseEvent({
                     ...positionParams,
                     nudgeX: isRtl ? (eMenuGui.offsetWidth + 1) * -1 : 1

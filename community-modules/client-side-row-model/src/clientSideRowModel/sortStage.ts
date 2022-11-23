@@ -30,7 +30,7 @@ export class SortStage extends BeanStub {
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
             // rolling out to everyone.
-            && this.gridOptionsWrapper.isDeltaSort();
+            && this.gridOptionsService.is('deltaSort');
 
         const sortContainsGroupColumns = sortOptions.some(opt => !!this.columnModel.getGroupDisplayColumnForGroup(opt.column.getId()));
         this.sortService.sort(sortOptions, sortActive, deltaSort, params.rowNodeTransactions, params.changedPath, sortContainsGroupColumns);

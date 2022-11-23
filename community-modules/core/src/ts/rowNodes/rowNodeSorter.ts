@@ -6,6 +6,7 @@ import { ValueService } from "../valueService/valueService";
 import { _ } from "../utils";
 import { Constants } from "../constants/constants";
 import { ColumnModel } from "../columns/columnModel";
+import { GridOptionsService } from "../gridOptionsService";
 
 export interface SortOption {
     sort: 'asc' | 'desc';
@@ -23,6 +24,7 @@ export interface SortedRowNode {
 export class RowNodeSorter {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
@@ -55,7 +57,7 @@ export class RowNodeSorter {
                 comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
             } else {
                 //otherwise do our own comparison
-                comparatorResult = _.defaultComparator(valueA, valueB, this.gridOptionsWrapper.isAccentedSort());
+                comparatorResult = _.defaultComparator(valueA, valueB, this.gridOptionsService.is('accentedSort'));
             }
 
             // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this

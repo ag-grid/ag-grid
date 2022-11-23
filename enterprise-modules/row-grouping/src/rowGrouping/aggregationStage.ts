@@ -95,7 +95,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             const isRootNode = rowNode.level === -1;
             if (isRootNode) {
                 const notPivoting = !this.columnModel.isPivotMode();
-                const suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
+                const suppressAggAtRootLevel = this.gridOptionsService.is('suppressAggAtRootLevel');
                 if (suppressAggAtRootLevel && notPivoting) { return; }
             }
 

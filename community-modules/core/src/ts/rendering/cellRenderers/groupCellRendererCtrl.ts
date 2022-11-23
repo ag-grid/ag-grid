@@ -122,7 +122,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
         // we should only display the groupCellRenderer if the current column is the rowGroupedColumn
-        if (this.gridOptionsWrapper.isGroupIncludeFooter() && this.gridOptionsWrapper.isGroupHideOpenParents()) {
+        if (this.gridOptionsService.is('groupIncludeFooter') && this.gridOptionsService.is('groupHideOpenParents')) {
             const node = params.node;
 
             if (node.footer) {
@@ -175,7 +175,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isTopLevelFooter(): boolean {
-        if (!this.gridOptionsWrapper.isGroupIncludeTotalFooter()) { return false; }
+        if (!this.gridOptionsService.is('groupIncludeTotalFooter')) { return false; }
 
         if (this.params.value != null || this.params.node.level != -1) { return false; }
 
@@ -202,13 +202,13 @@ export class GroupCellRendererCtrl extends BeanStub {
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     private isEmbeddedRowMismatch(): boolean {
-        if (!this.params.fullWidth || !this.gridOptionsWrapper.isEmbedFullWidthRows()) { return false; }
+        if (!this.params.fullWidth || !this.gridOptionsService.is('embedFullWidthRows')) { return false; }
 
         const pinnedLeftCell = this.params.pinned === Constants.PINNED_LEFT;
         const pinnedRightCell = this.params.pinned === Constants.PINNED_RIGHT;
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.gridOptionsService.is('enableRtl')) {
             if (this.columnModel.isPinningLeft()) {
                 return !pinnedRightCell;
             }
@@ -250,7 +250,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const rowNode: RowNode = this.params.node;
         const column = this.params.column as Column;
 
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
+        if (!this.gridOptionsService.is('groupHideOpenParents')) {
             this.showingValueForOpenedParent = false;
             return;
         }
@@ -468,7 +468,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const eGroupCell = params.eGridCell;
 
         // if editing groups, then double click is to start editing
-        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable() && !params.suppressDoubleClickExpand) {
+        if (!this.gridOptionsService.is('enableGroupEdit') && this.isExpandable() && !params.suppressDoubleClickExpand) {
             this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
 
@@ -597,7 +597,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private setIndent(): void {
-        if (this.gridOptionsWrapper.isGroupHideOpenParents()) { return; }
+        if (this.gridOptionsService.is('groupHideOpenParents')) { return; }
 
         const params = this.params;
         const rowNode: RowNode = params.node;

@@ -254,7 +254,7 @@ export class AgMenuItemComponent extends Component {
 
         this.tooltip = this.params.tooltip;
 
-        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+        if (this.gridOptionsService.is('enableBrowserTooltips')) {
             this.getGui().setAttribute('title', this.tooltip);
         } else {
             this.createManagedBean(new CustomTooltipFeature(this));
@@ -287,7 +287,7 @@ export class AgMenuItemComponent extends Component {
         const eGui = this.getGui();
 
         if (this.params.subMenu) {
-            const iconName = this.gridOptionsWrapper.isEnableRtl() ? 'smallLeft' : 'smallRight';
+            const iconName = this.gridOptionsService.is('enableRtl') ? 'smallLeft' : 'smallRight';
             setAriaExpanded(eGui, false);
 
             pointer.appendChild(createIconNoSpan(iconName, this.gridOptionsService)!);

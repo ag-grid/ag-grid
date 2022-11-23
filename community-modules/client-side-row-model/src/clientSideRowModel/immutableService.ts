@@ -63,7 +63,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
         const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
 
-        const suppressSortOrder = this.gridOptionsWrapper.isSuppressMaintainUnsortedOrder();
+        const suppressSortOrder = this.gridOptionsService.is('suppressMaintainUnsortedOrder');
         const orderMap: { [id: string]: number } | undefined = suppressSortOrder ? undefined : {};
 
         if (_.exists(rowData)) {

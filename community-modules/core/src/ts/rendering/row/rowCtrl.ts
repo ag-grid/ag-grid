@@ -207,7 +207,7 @@ export class RowCtrl extends BeanStub {
 
     public isCacheable(): boolean {
         return this.rowType === RowType.FullWidthDetail
-            && this.beans.gridOptionsWrapper.isKeepDetailRows();
+            && this.beans.gridOptionsService.is('keepDetailRows');
     }
 
     public setCached(cached: boolean): void {
@@ -217,6 +217,7 @@ export class RowCtrl extends BeanStub {
 
     private initialiseRowComp(gui: RowGui): void {
         const gow = this.beans.gridOptionsWrapper;
+        const gos = this.beans.gridOptionsService;
 
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
@@ -250,7 +251,7 @@ export class RowCtrl extends BeanStub {
             comp.setRowBusinessKey(this.businessKeySanitised);
         }
 
-        if (this.isFullWidth() && !this.beans.gridOptionsWrapper.isSuppressCellFocus()) {
+        if (this.isFullWidth() && !this.beans.gridOptionsService.is('suppressCellFocus')) {
             comp.setTabIndex(-1);
         }
 
@@ -276,7 +277,7 @@ export class RowCtrl extends BeanStub {
             this.setupFullWidth(gui);
         }
 
-        if (gow.isRowDragEntireRow()) {
+        if (gos.is('rowDragEntireRow')) {
             this.addRowDraggerToRow(gui);
         }
 
@@ -429,7 +430,7 @@ export class RowCtrl extends BeanStub {
         if (this.isFullWidth()) { return; }
 
         const noAnimation = suppressAnimationFrame
-            || this.beans.gridOptionsWrapper.isSuppressAnimationFrame()
+            || this.beans.gridOptionsService.is('suppressAnimationFrame')
             || this.printLayout;
 
         if (noAnimation) {
@@ -891,7 +892,7 @@ export class RowCtrl extends BeanStub {
         // the children (as the default behaviour when clicking is to unselect other rows) which results
         // in the group getting unselected (as all children are unselected). the correct thing would be
         // to change this, so that children of the selected group are not then subsequenly un-selected.
-        const groupSelectsChildren = this.beans.gridOptionsWrapper.isGroupSelectsChildren();
+        const groupSelectsChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
 
         if (
             // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
@@ -905,13 +906,13 @@ export class RowCtrl extends BeanStub {
             // if no selection method enabled, do nothing
             !this.beans.gridOptionsWrapper.isRowSelection() ||
             // if click selection suppressed, do nothing
-            this.beans.gridOptionsWrapper.isSuppressRowClickSelection()
+            this.beans.gridOptionsService.is('suppressRowClickSelection')
         ) {
             return;
         }
 
-        const multiSelectOnClick = this.beans.gridOptionsWrapper.isRowMultiSelectWithClick();
-        const rowDeselectionWithCtrl = !this.beans.gridOptionsWrapper.isSuppressRowDeselection();
+        const multiSelectOnClick = this.beans.gridOptionsService.is('rowMultiSelectWithClick');
+        const rowDeselectionWithCtrl = !this.beans.gridOptionsService.is('suppressRowDeselection');
 
         if (this.rowNode.isSelected()) {
             if (multiSelectOnClick) {
@@ -934,7 +935,7 @@ export class RowCtrl extends BeanStub {
 
         if (this.rowType !== RowType.FullWidthDetail) { return; }
 
-        if (!this.beans.gridOptionsWrapper.isDetailRowAutoHeight()) { return; }
+        if (!this.beans.gridOptionsService.is('detailRowAutoHeight')) { return; }
 
         const checkRowSizeFunc = () => {
             const clientHeight = eDetailGui.clientHeight;
@@ -1205,7 +1206,7 @@ export class RowCtrl extends BeanStub {
 
     private createAriaLabel(): string | undefined {
         const selected = this.rowNode.isSelected()!;
-        if (selected && this.beans.gridOptionsWrapper.isSuppressRowDeselection()) {
+        if (selected && this.beans.gridOptionsService.is('suppressRowDeselection')) {
             return undefined;
         }
 
@@ -1244,7 +1245,7 @@ export class RowCtrl extends BeanStub {
             // if hover turned off, we don't add the class. we do this here so that if the application
             // toggles this property mid way, we remove the hover form the last row, but we stop
             // adding hovers from that point onwards.
-            if (!this.beans.gridOptionsWrapper.isSuppressRowHoverHighlight()) {
+            if (!this.beans.gridOptionsService.is('suppressRowHoverHighlight')) {
                 eRow.classList.add('ag-row-hover');
             }
         });
@@ -1440,11 +1441,11 @@ export class RowCtrl extends BeanStub {
     // to below the viewport, so the row will appear to animate up. if we didn't set the initial position at creation
     // time, the row would animate down (ie from position zero).
     public getInitialRowTop(rowContainerType: RowContainerType): string | undefined {
-        const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
+        const suppressRowTransform = this.beans.gridOptionsService.is('suppressRowTransform');
         return suppressRowTransform ? this.getInitialRowTopShared(rowContainerType) : undefined;
     }
     public getInitialTransform(rowContainerType: RowContainerType): string | undefined {
-        const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
+        const suppressRowTransform = this.beans.gridOptionsService.is('suppressRowTransform');
         return suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared(rowContainerType)})`;
     }
     private getInitialRowTopShared(rowContainerType: RowContainerType): string {
@@ -1466,7 +1467,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private setRowTopStyle(topPx: string): void {
-        const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
+        const suppressRowTransform = this.beans.gridOptionsService.is('suppressRowTransform');
         this.allRowGuis.forEach(
             gui => suppressRowTransform ?
                 gui.rowComp.setTop(topPx) :

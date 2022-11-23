@@ -126,7 +126,7 @@ export class GridChartComp extends Component {
             seriesChartTypes: this.params.seriesChartTypes,
         };
 
-        const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        const isRtl = this.gridOptionsService.is('enableRtl');
 
         this.addCssClass(isRtl ? 'ag-rtl' : 'ag-ltr');
 

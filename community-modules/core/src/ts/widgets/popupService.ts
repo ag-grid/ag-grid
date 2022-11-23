@@ -146,7 +146,7 @@ export class PopupService extends BeanStub {
         // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
         // we try place it first to the left, and then if not to the right.
         let x: number;
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.gridOptionsService.is('enableRtl')) {
             // for RTL, try left first
             x = xLeftPosition();
             if (x < 0) {
@@ -463,7 +463,7 @@ export class PopupService extends BeanStub {
 
         eWrapper.classList.add('ag-popup');
         eChild.classList.add(
-            this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr',
+            this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr',
             'ag-popup-child'
         );
 

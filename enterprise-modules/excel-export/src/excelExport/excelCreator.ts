@@ -304,7 +304,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     }
 
     public isExportSuppressed():boolean {
-        return this.gridOptionsWrapper.isSuppressExcelExport();
+        return this.gridOptionsService.is('suppressExcelExport');
     }
 
     private setExportMode(exportMode: string): void {

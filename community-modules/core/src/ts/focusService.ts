@@ -173,7 +173,7 @@ export class FocusService extends BeanStub {
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): CellPosition | null {
         const eDocument = this.gridOptionsWrapper.getDocument();
-        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh() || !this.focusedCellPosition) {
+        if (this.gridOptionsService.is('suppressFocusAfterRefresh') || !this.focusedCellPosition) {
             return null;
         }
 
@@ -189,7 +189,7 @@ export class FocusService extends BeanStub {
 
     public getFocusHeaderToUseAfterRefresh(): HeaderPosition | null {
         const eDocument = this.gridOptionsWrapper.getDocument();
-        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh() || !this.focusedHeaderPosition) {
+        if (this.gridOptionsService.is('suppressFocusAfterRefresh') || !this.focusedHeaderPosition) {
             return null;
         }
 
@@ -497,7 +497,7 @@ export class FocusService extends BeanStub {
         // if suppressCellFocus is `true`, it means the user does not want to
         // navigate between the cells using tab. Instead, we put focus on either
         // the header or after the grid, depending on whether tab or shift-tab was pressed.
-        if (this.gridOptionsWrapper.isSuppressCellFocus()) {
+        if (this.gridOptionsService.is('suppressCellFocus')) {
 
             if (backwards) {
                 return this.focusLastHeader();

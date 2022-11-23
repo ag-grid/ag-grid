@@ -235,7 +235,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     private initDotNotation(): void {
-        const suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
+        const suppressDotNotation = this.gridOptionsService.is('suppressFieldDotNotation');
         this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
         this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
     }
@@ -375,7 +375,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public isCellEditable(rowNode: RowNode): boolean {
 
         // only allow editing of groups if the user has this option enabled
-        if (rowNode.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
+        if (rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
             return false;
         }
 

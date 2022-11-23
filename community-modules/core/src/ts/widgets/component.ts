@@ -63,7 +63,7 @@ export class Component extends BeanStub {
 
     @PreConstruct
     private preConstructOnComponent(): void {
-        this.usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
+        this.usingBrowserTooltips = this.gridOptionsService.is('enableBrowserTooltips');
     }
 
     public getCompId(): number {

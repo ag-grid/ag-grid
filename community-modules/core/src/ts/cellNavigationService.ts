@@ -45,7 +45,7 @@ export class CellNavigationService extends BeanStub {
             column = focusedCell.column;
         } else {
             const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
-            const isRtl = this.gridOptionsWrapper.isEnableRtl();
+            const isRtl = this.gridOptionsService.is('enableRtl');
             rowIndex = focusedCell.rowIndex;
             column = leftKey !== isRtl ? allColumns[0] : last(allColumns);
         }
@@ -76,14 +76,14 @@ export class CellNavigationService extends BeanStub {
                     pointer = this.getCellBelow(pointer);
                     break;
                 case KeyCode.RIGHT:
-                    if (this.gridOptionsWrapper.isEnableRtl()) {
+                    if (this.gridOptionsService.is('enableRtl')) {
                         pointer = this.getCellToLeft(pointer);
                     } else {
                         pointer = this.getCellToRight(pointer);
                     }
                     break;
                 case KeyCode.LEFT:
-                    if (this.gridOptionsWrapper.isEnableRtl()) {
+                    if (this.gridOptionsService.is('enableRtl')) {
                         pointer = this.getCellToRight(pointer);
                     } else {
                         pointer = this.getCellToLeft(pointer);
@@ -195,7 +195,7 @@ export class CellNavigationService extends BeanStub {
     }
 
     private getNextStickyPosition(rowNode?: RowNode, up?: boolean): RowPosition | undefined {
-        if (!this.gridOptionsWrapper.isGroupRowsSticky() || !rowNode || !rowNode.sticky) { return; }
+        if (!this.gridOptionsService.is('groupRowsSticky') || !rowNode || !rowNode.sticky) { return; }
 
         const stickyRowCtrls = [...this.rowRenderer.getStickyTopRowCtrls()].sort(
             (a, b) => a.getRowNode().rowIndex! - b.getRowNode().rowIndex!

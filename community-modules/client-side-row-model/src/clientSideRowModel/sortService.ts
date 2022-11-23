@@ -38,7 +38,7 @@ export class SortService extends BeanStub {
         changedPath: ChangedPath | undefined,
         sortContainsGroupColumns: boolean,
     ): void {
-        const groupMaintainOrder = this.gridOptionsWrapper.isGroupMaintainOrder();
+        const groupMaintainOrder = this.gridOptionsService.is('groupMaintainOrder');
         const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
 
         let allDirtyNodes: { [key: string]: true } = {};
@@ -210,7 +210,7 @@ export class SortService extends BeanStub {
     }
 
     private updateGroupDataForHideOpenParents(changedPath?: ChangedPath) {
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
+        if (!this.gridOptionsService.is('groupHideOpenParents')) {
             return;
         }
 
@@ -236,7 +236,7 @@ export class SortService extends BeanStub {
     }
 
     private pullDownGroupDataForHideOpenParents(rowNodes: RowNode[] | null, clearOperation: boolean) {
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents() || _.missing(rowNodes)) { return; }
+        if (!this.gridOptionsService.is('groupHideOpenParents') || _.missing(rowNodes)) { return; }
 
         rowNodes.forEach(childRowNode => {
             const groupDisplayCols = this.columnModel.getGroupDisplayColumns();

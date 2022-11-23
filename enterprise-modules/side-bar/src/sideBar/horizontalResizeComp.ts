@@ -37,7 +37,7 @@ export class HorizontalResizeComp extends Component {
         });
 
         this.addDestroyFunc(finishedWithResizeFunc);
-        this.setInverted(this.gridOptionsWrapper.isEnableRtl());
+        this.setInverted(this.gridOptionsService.is('enableRtl'));
     }
 
     private dispatchResizeEvent(start: boolean, end: boolean, width: number) {

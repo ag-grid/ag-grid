@@ -53,7 +53,7 @@ export class GroupResizeFeature extends BeanStub {
 
         this.addDestroyFunc(finishedWithResizeFunc);
 
-        if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
+        if (!this.gridOptionsService.is('suppressAutoSize')) {
             const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
 
             this.eResize.addEventListener('dblclick', () => {
@@ -169,7 +169,7 @@ export class GroupResizeFeature extends BeanStub {
     private normaliseDragChange(dragChange: number): number {
         let result = dragChange;
 
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.gridOptionsService.is('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
             if (this.pinned !== Constants.PINNED_LEFT) {
                 result *= -1;

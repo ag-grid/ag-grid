@@ -185,10 +185,10 @@ export class MenuItemMapper extends BeanStub {
                 const csvModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.CsvExportModule);
                 const excelModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule);
 
-                if (!this.gridOptionsWrapper.isSuppressCsvExport() && csvModuleLoaded) {
+                if (!this.gridOptionsService.is('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
                 }
-                if (!this.gridOptionsWrapper.isSuppressExcelExport() && excelModuleLoaded) {
+                if (!this.gridOptionsService.is('suppressExcelExport') && excelModuleLoaded) {
                     exportSubMenuItems.push('excelExport');
                 }
                 return {

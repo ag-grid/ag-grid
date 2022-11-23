@@ -4,7 +4,7 @@ import { ColumnModel } from "../../columns/columnModel";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../../dragAndDrop/dragAndDropService";
 import { DropListener } from "./bodyDropTarget";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { GridOptionsService } from "../../gridOptionsService";
 import { ColumnEventType } from "../../events";
 import { missing, exists } from "../../utils/generic";
 import { sortNumerically, last, includes } from "../../utils/array";
@@ -18,7 +18,7 @@ export class MoveColumnFeature implements DropListener {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     private gridBodyCon: GridBodyCtrl;
@@ -108,7 +108,7 @@ export class MoveColumnFeature implements DropListener {
 
     private normaliseX(x: number): number {
         // flip the coordinate if doing RTL
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.gridOptionsService.is('enableRtl')) {
             const clientWidth = this.eContainer.clientWidth;
             x = clientWidth - x;
         }
@@ -128,7 +128,7 @@ export class MoveColumnFeature implements DropListener {
             const firstVisiblePixel = this.ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
             const lastVisiblePixel = firstVisiblePixel + this.ctrlsService.getCenterRowContainerCtrl().getCenterWidth();
 
-            if (this.gridOptionsWrapper.isEnableRtl()) {
+            if (this.gridOptionsService.is('enableRtl')) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
                 this.needToMoveLeft = xAdjustedForScroll > (lastVisiblePixel - 50);
             } else {
@@ -186,7 +186,7 @@ export class MoveColumnFeature implements DropListener {
     }
 
     private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.gridOptionsService.is('enableRtl')) {
             switch (hDirection) {
                 case HorizontalDirection.Left: return HorizontalDirection.Right;
                 case HorizontalDirection.Right: return HorizontalDirection.Left;
@@ -360,7 +360,7 @@ export class MoveColumnFeature implements DropListener {
     }
 
     private calculateValidMoves(movingCols: Column[], draggingRight: boolean, mouseX: number): number[] {
-        const isMoveBlocked = this.gridOptionsWrapper.isSuppressMovableColumns() || movingCols.some(col => col.getColDef().suppressMovable);
+        const isMoveBlocked = this.gridOptionsService.is('suppressMovableColumns') || movingCols.some(col => col.getColDef().suppressMovable);
 
         if (isMoveBlocked) { return []; }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position

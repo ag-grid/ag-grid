@@ -7,7 +7,7 @@ import { CssClasses } from '../core/utils';
 const DetailCellRenderer = (props: IDetailCellRendererParams) => {
 
     const {ctrlsFactory, context, 
-            gridOptionsWrapper, resizeObserverService, 
+        gridOptionsService, resizeObserverService, 
             clientSideRowModel, serverSideRowModel} = useContext(BeansContext);
 
     const [getCssClasses, setCssClasses] = createSignal<CssClasses>(new CssClasses());
@@ -47,7 +47,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams) => {
 
         let resizeObserverDestroyFunc: () => void;
 
-        if (gridOptionsWrapper.isDetailRowAutoHeight()) {
+        if (gridOptionsService.is('detailRowAutoHeight')) {
             const checkRowSizeFunc = () => {
                 // when disposed, current is null, so nothing to do, and the resize observer will
                 // be disposed of soon

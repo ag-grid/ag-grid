@@ -125,7 +125,7 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
+        const isAlwaysShowHorizontalScroll = this.gridOptionsService.is('alwaysShowHorizontalScroll');
         return isAlwaysShowHorizontalScroll || this.centerContainerCtrl.isViewportHScrollShowing();
     }
 

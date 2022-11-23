@@ -82,7 +82,7 @@ export class HeaderRowComp extends Component {
             this.destroyBean(comp);
         });
 
-        const isEnsureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
         const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         if (isEnsureDomOrder || isPrintLayout) {
