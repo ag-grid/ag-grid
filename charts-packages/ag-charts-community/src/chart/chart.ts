@@ -43,6 +43,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     processedOptions: AgChartOptions = {};
     userOptions: AgChartOptions = {};
+    queuedUserOptions: AgChartOptions[] = [];
 
     getOptions() {
         return jsonMerge([this.userOptions]);

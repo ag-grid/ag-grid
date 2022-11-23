@@ -204,7 +204,7 @@ export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
 
         const types = values.map((v) => classify(v));
         const type = types[0];
-        if (types.some((t) => t !== type && t !== null)) {
+        if (types.some((t) => t !== type)) {
             // Short-circuit if mismatching types.
             result[nextProp] = lastValue;
             continue;
