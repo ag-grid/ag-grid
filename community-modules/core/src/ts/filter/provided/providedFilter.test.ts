@@ -10,7 +10,7 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
     private uiModel: ProvidedFilterModel;
     private modelHasChanged = false;
 
-    constructor(params: IProvidedFilterParams, rowModelType: RowModelType = Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+    constructor(params: IProvidedFilterParams, rowModelType: RowModelType = 'clientSide') {
         super('textFilter');
 
         const eGui = mock<HTMLElement>('appendChild');

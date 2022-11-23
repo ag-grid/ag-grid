@@ -139,7 +139,7 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_ROW_CLASS, this.redrawRows.bind(this));
 
         if (this.gridOptionsService.is('groupRowsSticky')) {
-            if (this.rowModel.getType() != Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            if (this.rowModel.getType() != 'clientSide') {
                 doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
             } else if (this.gridOptionsWrapper.isTreeData()) {
                 doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups does not work with Tree Data.'), 'rowRenderer.stickyDoesNotWorkWithTreeData');

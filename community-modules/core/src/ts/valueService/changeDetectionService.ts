@@ -19,7 +19,7 @@ export class ChangeDetectionService extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 

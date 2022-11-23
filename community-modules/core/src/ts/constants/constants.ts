@@ -12,11 +12,6 @@ export class Constants {
     static EXPORT_TYPE_EXCEL: 'excel' = 'excel';
     static EXPORT_TYPE_CSV: 'csv' = 'csv';
 
-    static ROW_MODEL_TYPE_INFINITE: RowModelType = 'infinite';
-    static ROW_MODEL_TYPE_VIEWPORT: RowModelType = 'viewport';
-    static ROW_MODEL_TYPE_CLIENT_SIDE: RowModelType = 'clientSide';
-    static ROW_MODEL_TYPE_SERVER_SIDE: RowModelType = 'serverSide';
-
     static ALWAYS: 'always' = 'always';
     static ONLY_WHEN_GROUPING: 'onlyWhenGrouping' = 'onlyWhenGrouping';
 

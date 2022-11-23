@@ -208,13 +208,13 @@ export class GridApi<TData = any> {
     @PostConstruct
     private init(): void {
         switch (this.rowModel.getType()) {
-            case Constants.ROW_MODEL_TYPE_CLIENT_SIDE:
+            case 'clientSide':
                 this.clientSideRowModel = this.rowModel as IClientSideRowModel;
                 break;
-            case Constants.ROW_MODEL_TYPE_INFINITE:
+            case 'infinite':
                 this.infiniteRowModel = this.rowModel as IInfiniteRowModel;
                 break;
-            case Constants.ROW_MODEL_TYPE_SERVER_SIDE:
+            case 'serverSide':
                 this.serverSideRowModel = this.rowModel as IServerSideRowModel;
                 break;
         }
@@ -376,7 +376,7 @@ export class GridApi<TData = any> {
 
     /** Set new datasource for Infinite Row Model. */
     public setDatasource(datasource: IDatasource) {
-        if (this.gridOptionsWrapper.isRowModelInfinite()) {
+        if (this.gridOptionsService.get('rowModelType') === 'infinite') {
             (this.rowModel as IInfiniteRowModel).setDatasource(datasource);
         } else {
             this.logMissingRowModel('setDatasource', 'infinite');
@@ -385,7 +385,7 @@ export class GridApi<TData = any> {
 
     /** Set new datasource for Viewport Row Model. */
     public setViewportDatasource(viewportDatasource: IViewportDatasource) {
-        if (this.gridOptionsWrapper.isRowModelViewport()) {
+        if (this.gridOptionsService.get('rowModelType') === 'viewport') {
             // this is bad coding, because it's using an interface that's exposed in the enterprise.
             // really we should create an interface in the core for viewportDatasource and let
             // the enterprise implement it, rather than casting to 'any' here

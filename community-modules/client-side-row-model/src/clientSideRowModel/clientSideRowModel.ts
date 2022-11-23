@@ -371,7 +371,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public getType(): RowModelType {
-        return Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+        return 'clientSide';
     }
 
     private onValueChanged(): void {

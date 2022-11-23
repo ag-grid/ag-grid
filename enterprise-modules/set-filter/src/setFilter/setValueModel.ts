@@ -104,7 +104,7 @@ export class SetValueModel<V> implements IEventEmitter {
         }
         this.caseSensitive = !!caseSensitive
 
-        if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (rowModel.getType() === 'clientSide') {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
                 rowModel as IClientSideRowModel,
                 this.filterParams,

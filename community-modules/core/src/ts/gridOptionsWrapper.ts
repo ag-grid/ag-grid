@@ -275,21 +275,13 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowSelection === 'multiple';
     }
 
-    public isRowModelInfinite() {
-        return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE;
-    }
-
-    public isRowModelViewport() {
-        return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT;
-    }
-
     public isRowModelServerSide() {
-        return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+        return this.gridOptions.rowModelType === 'serverSide';
     }
 
     public isRowModelDefault() {
         return (missing(this.gridOptions.rowModelType) ||
-            this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE);
+            this.gridOptions.rowModelType === 'clientSide');
     }
 
     public isFullRowEdit() {

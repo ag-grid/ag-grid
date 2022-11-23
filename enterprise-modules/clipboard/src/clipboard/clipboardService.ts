@@ -82,7 +82,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private init(): void {
         this.logger = this.loggerFactory.create('ClipboardService');
 
-        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 

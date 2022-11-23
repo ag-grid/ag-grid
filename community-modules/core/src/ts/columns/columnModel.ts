@@ -3260,7 +3260,7 @@ export class ColumnModel extends BeanStub {
             this.autoHeightActiveAtLeastOnce = true;
 
             const rowModelType = this.rowModel.getType();
-            const supportedRowModel = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE || rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+            const supportedRowModel = rowModelType === 'clientSide' || rowModelType === 'serverSide';
             if (!supportedRowModel) {
                 const message = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model.';
                 doOnce(() => console.warn(message), 'autoHeightActive.wrongRowModel');

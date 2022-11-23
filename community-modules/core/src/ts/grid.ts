@@ -353,7 +353,7 @@ export class GridCoreCreator {
 
         // default to client side
         if (!rowModelType) {
-            rowModelType = Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+            rowModelType = 'clientSide';
         }
 
         const rowModelClasses: { [name: string]: { new(): IRowModel; }; } = {};
@@ -368,7 +368,7 @@ export class GridCoreCreator {
         if (exists(rowModelClass)) { return rowModelClass; }
 
         if (ModuleRegistry.isPackageBased()) {
-            if ([Constants.ROW_MODEL_TYPE_VIEWPORT, Constants.ROW_MODEL_TYPE_SERVER_SIDE].includes(rowModelType)) {
+            if ((['viewport', 'serverSide'] as RowModelType[]).includes(rowModelType)) {
                 // If package based only the enterprise row models could be missing.
                 console.error(`AG Grid: Row Model "${rowModelType}" not found. Please ensure the package 'ag-grid-enterprise' is imported. Please see: https://www.ag-grid.com/javascript-grid/packages/`);
             } else {
@@ -376,13 +376,13 @@ export class GridCoreCreator {
             }
         } else {
             const logMissingModule = (rowModel: RowModelType, module: string) => console.error(`AG Grid: Row Model "${rowModel}" not found. Please ensure the ${module} module is registered. Please see: https://www.ag-grid.com/javascript-grid/modules/`);
-            if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
+            if (rowModelType === 'infinite') {
                 logMissingModule('infinite', ModuleNames.InfiniteRowModelModule);
-            } else if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
+            } else if (rowModelType === 'viewport') {
                 logMissingModule('viewport', ModuleNames.ViewportRowModelModule);
-            } else if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
+            } else if (rowModelType === 'serverSide') {
                 logMissingModule('serverSide', ModuleNames.ServerSideRowModelModule);
-            } else if (rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            } else if (rowModelType === 'clientSide') {
                 logMissingModule('clientSide', ModuleNames.ClientSideRowModelModule);
             } else {
                 console.error('AG Grid: could not find row model for rowModelType ' + rowModelType);

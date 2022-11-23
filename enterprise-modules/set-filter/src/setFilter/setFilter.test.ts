@@ -30,7 +30,7 @@ let setValueModel: jest.Mocked<SetValueModel<string>>;
 
 beforeEach(() => {
     rowModel = mock<IClientSideRowModel>('getType', 'forEachLeafNode');
-    rowModel.getType.mockReturnValue(Constants.ROW_MODEL_TYPE_CLIENT_SIDE);
+    rowModel.getType.mockReturnValue('clientSide');
 
     eventService = mock<EventService>('addEventListener');
 

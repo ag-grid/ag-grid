@@ -172,7 +172,7 @@ export class SelectAllFeature extends BeanStub {
 
     private checkRightRowModelType(feature: string): boolean {
         const rowModelType = this.rowModel.getType();
-        const rowModelMatches = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+        const rowModelMatches = rowModelType === 'clientSide';
 
         if (!rowModelMatches) {
             console.warn(`AG Grid: ${feature} is only available if using 'clientSide' rowModelType, you are using ${rowModelType}.`);

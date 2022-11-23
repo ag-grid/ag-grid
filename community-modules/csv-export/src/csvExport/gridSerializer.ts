@@ -198,8 +198,8 @@ export class GridSerializer extends BeanStub {
             // when in pivot mode, we always render cols on screen, never 'all columns'
             const rowModel = this.rowModel;
             const rowModelType = rowModel.getType();
-            const usingCsrm = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
-            const usingSsrm = rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+            const usingCsrm = rowModelType === 'clientSide';
+            const usingSsrm = rowModelType === 'serverSide';
             const onlySelectedNonStandardModel = !usingCsrm && params.onlySelected;
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
             const {

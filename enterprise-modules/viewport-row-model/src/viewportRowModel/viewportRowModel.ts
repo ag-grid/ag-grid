@@ -155,7 +155,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     public getType(): RowModelType {
-        return Constants.ROW_MODEL_TYPE_VIEWPORT;
+        return 'viewport';
     }
 
     public getRow(rowIndex: number): RowNode {
