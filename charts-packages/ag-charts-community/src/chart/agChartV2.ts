@@ -122,7 +122,7 @@ export abstract class AgChart {
      * unintended partial update renderings.
      */
     public static update(chart: AgChartInstance, options: AgChartOptions) {
-        if (!(chart instanceof AgChartInstanceProxy)) {
+        if (!AgChartInstanceProxy.isInstance(chart)) {
             throw new Error('AG Charts - invalid chart reference passed');
         }
         return AgChartInternal.update(chart, options as any);
@@ -136,7 +136,7 @@ export abstract class AgChart {
      * should batch up and/or debounce changes to avoid unintended partial update renderings.
      */
     public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) {
-        if (!(chart instanceof AgChartInstanceProxy)) {
+        if (!AgChartInstanceProxy.isInstance(chart)) {
             throw new Error('AG Charts - invalid chart reference passed');
         }
         return AgChartInternal.updateUserDelta(chart, deltaOptions as any);
@@ -159,6 +159,18 @@ export abstract class AgChart {
  */
 class AgChartInstanceProxy implements AgChartInstance {
     chart: Chart;
+
+    static isInstance(x: any): x is AgChartInstanceProxy {
+        if (x instanceof AgChartInstanceProxy) {
+            // Simple case.
+            return true;
+        } else if (x.constructor?.name === 'AgChartInstanceProxy' && x.chart != null) {
+            // instanceof can fail if mixing bundles (e.g. grid all-modules vs. standalone).
+            return true;
+        }
+
+        return false;
+    }
 
     constructor(chart: Chart) {
         this.chart = chart;
