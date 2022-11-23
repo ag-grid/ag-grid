@@ -28,13 +28,6 @@ export abstract class CartesianChartProxy extends ChartProxy {
     abstract getAxes(params: UpdateChartParams): AgCartesianAxisOptions[];
     abstract getSeries(params: UpdateChartParams): AgBaseSeriesOptions<any>[];
 
-    protected createChart(): AgChartInstance {
-        return AgChart.create({
-            container: this.chartProxyParams.parentElement,
-            theme: this.agChartTheme
-        });
-    }
-
     public update(params: UpdateChartParams): void {
         if (this.supportsAxesUpdates) {
             this.updateAxes(params);
@@ -49,7 +42,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
             ...(this.crossFiltering ? this.createCrossFilterTheme() : {})
         }
 
-        AgChart.updateDelta(this.getChartRef(), options);
+        AgChart.update(this.getChartRef(), options);
     }
 
     protected getDataTransformedData(params: UpdateChartParams) {
@@ -91,7 +84,6 @@ export abstract class CartesianChartProxy extends ChartProxy {
         if (params.grouping) {
             if (this.xAxisType !== 'groupedCategory') {
                 this.xAxisType = 'groupedCategory';
-                this.recreateChart();
             }
             return;
         }
@@ -100,7 +92,6 @@ export abstract class CartesianChartProxy extends ChartProxy {
         const newXAxisType = CartesianChartProxy.isTimeAxis(params) ? 'time' : 'category';
         if (newXAxisType !== this.xAxisType) {
             this.xAxisType = newXAxisType;
-            this.recreateChart();
         }
     }
 

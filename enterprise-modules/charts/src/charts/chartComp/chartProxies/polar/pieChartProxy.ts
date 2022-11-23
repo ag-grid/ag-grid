@@ -21,15 +21,6 @@ export class PieChartProxy extends ChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-        this.recreateChart();
-    }
-
-    protected createChart(): AgChartInstance {
-        return AgChart.create({
-            type: 'pie',
-            container: this.chartProxyParams.parentElement,
-            theme: this.agChartTheme
-        });
     }
 
     public update(params: UpdateChartParams): void {
@@ -43,7 +34,7 @@ export class PieChartProxy extends ChartProxy {
             ...(this.crossFiltering ? this.createCrossFilterTheme() : {})
         }
 
-        AgChart.updateDelta(this.getChartRef(), options);
+        AgChart.update(this.getChartRef(), options);
     }
 
     private getSeries(params: UpdateChartParams): AgPolarSeriesOptions[] {

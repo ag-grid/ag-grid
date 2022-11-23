@@ -11,8 +11,6 @@ export class ComboChartProxy extends CartesianChartProxy {
 
         this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         this.yAxisType = 'number';
-
-        this.recreateChart();
     }
 
     public getData(params: UpdateChartParams): any[] {

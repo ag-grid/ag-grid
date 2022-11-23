@@ -13,8 +13,6 @@ export class BarChartProxy extends CartesianChartProxy {
         // when the standalone chart type is 'bar' - xAxis is positioned to the 'left'
         this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         this.yAxisType = 'number';
-
-        this.recreateChart();
     }
 
     public getData(params: UpdateChartParams): any[] {

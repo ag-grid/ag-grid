@@ -89,7 +89,6 @@ export abstract class ChartProxy {
     protected agChartTheme?: AgChartTheme;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
-    protected clickCallback: (event: any) => void;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chart = chartProxyParams.chartInstance!;
@@ -104,17 +103,27 @@ export abstract class ChartProxy {
                 palette: chartPaletteToRestore,
                 overrides: chartOptionsToRestore
             };
-
-            this.updateIntegratedThemeOptions();
-            return;
+        } else if (this.chart != null) {
+            this.agChartTheme = this.getChartTheme();
+            this.agChartTheme.baseTheme = this.getSelectedTheme() as any;
+        } else {
+            this.agChartTheme = this.createAgChartTheme();
         }
         
-        this.agChartTheme = this.createAgChartTheme();
         this.updateIntegratedThemeOptions();
+
+        if (this.chart == null) {
+            this.chart = AgChart.create(this.getCommonChartOptions());
+
+            if (this.crossFiltering) {
+                // add event listener to chart canvas to detect when user wishes to reset filters
+                const resetFilters = true;
+                this.getChart().addEventListener('click', (e) => this.crossFilterCallback(e, resetFilters));
+            }
+        }
     }
 
     public abstract crossFilteringReset(): void;
-    protected abstract createChart(options?: AgChartThemeOverrides): AgChartInstance;
 
     public abstract update(params: UpdateChartParams): void;
 
@@ -127,18 +136,6 @@ export abstract class ChartProxy {
         if (scatter?.paired !== undefined) {
             this.integratedThemeOptions.scatter.paired = scatter?.paired;
             delete (this.agChartTheme?.overrides as IntegratedThemeOptions)?.scatter?.paired;
-        }
-    }
-
-    public recreateChart(): void {
-        if (this.chart == null) {
-            this.chart = this.createChart();
-
-            if (this.crossFiltering) {
-                // add event listener to chart canvas to detect when user wishes to reset filters
-                const resetFilters = true;
-                this.getChart().addEventListener('click', (e) => this.crossFilterCallback(e, resetFilters));
-            }
         }
     }
 
@@ -265,6 +262,7 @@ export abstract class ChartProxy {
 
     protected getCommonChartOptions() {
         return {
+            theme: this.agChartTheme,
             container: this.chartProxyParams.parentElement
         }
     }

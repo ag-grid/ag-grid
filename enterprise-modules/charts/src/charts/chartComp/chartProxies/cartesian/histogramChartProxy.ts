@@ -10,8 +10,6 @@ export class HistogramChartProxy extends CartesianChartProxy {
         this.supportsAxesUpdates = false;
         this.xAxisType = 'number';
         this.yAxisType = 'number';
-
-        this.recreateChart();
     }
 
     public getData(params: UpdateChartParams): any[] {
