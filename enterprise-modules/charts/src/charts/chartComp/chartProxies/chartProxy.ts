@@ -107,22 +107,30 @@ export abstract class ChartProxy {
                 overrides: chartOptionsToRestore
             };
 
-            // Special handling to extract paired state from `chartOptionsToRestore`
-            const { scatter } = this.agChartTheme.overrides as IntegratedThemeOptions;
-            if (scatter?.paired !== undefined) {
-                this.integratedThemeOptions.scatter.paired = scatter?.paired;
-                delete (this.agChartTheme.overrides as IntegratedThemeOptions)?.scatter?.paired;
-            }
+            this.updateIntegratedThemeOptions();
             return;
         }
         
         this.agChartTheme = this.createAgChartTheme();
+        this.updateIntegratedThemeOptions();
     }
 
     public abstract crossFilteringReset(): void;
     protected abstract createChart(options?: AgChartThemeOverrides): AgChartInstance;
 
     public abstract update(params: UpdateChartParams): void;
+
+    /**
+     * Update `agChartTheme` and `integratedThemeOptions` for Integrated Charts specific chart options
+     */
+    private updateIntegratedThemeOptions() {
+        // Special handling to extract paired state from `chartOptionsToRestore`
+        const { scatter } = this.agChartTheme?.overrides as IntegratedThemeOptions;
+        if (scatter?.paired !== undefined) {
+            this.integratedThemeOptions.scatter.paired = scatter?.paired;
+            delete (this.agChartTheme?.overrides as IntegratedThemeOptions)?.scatter?.paired;
+        }
+    }
 
     public recreateChart(): void {
         if (this.chart == null) {
