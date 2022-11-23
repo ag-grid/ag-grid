@@ -1028,6 +1028,7 @@ export class GridApi<TData = any> {
     public setRowGroupPanelShow(rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never'): void {
         this.gridOptionsWrapper.setProperty('rowGroupPanelShow', rowGroupPanelShow);
     }
+    /** @deprecated v27.2 - Use `setGetGroupRowAgg` instead. */
     public setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: RowNode[]) => any): void {
         this.gridOptionsWrapper.setProperty('groupRowAggNodes', groupRowAggNodesFunc);
     }
@@ -1047,6 +1048,7 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty('processRowPostCreate', processRowPostCreateFunc);
     }
 
+    /** @deprecated v27.1 Use `getRowId` instead  */
     public setGetRowNodeId(getRowNodeIdFunc: GetRowNodeIdFunc): void {
         this.gridOptionsWrapper.setProperty('getRowNodeId', getRowNodeIdFunc);
     }
@@ -1058,6 +1060,7 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty('getRowClass', rowClassFunc);
     }
 
+    /** @deprecated v27.2 Use `setIsFullWidthRow` instead. */
     public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: RowNode) => boolean): void {
         this.gridOptionsWrapper.setProperty('isFullWidthCell', isFullWidthCellFunc);
     }
@@ -1073,6 +1076,7 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty('isRowMaster', isRowMasterFunc);
     }
 
+    /** @deprecated v27.2 Use `setPostSortRows` instead */
     public setPostSort(postSortFunc: (nodes: RowNode[]) => void): void {
         this.gridOptionsWrapper.setProperty('postSort', postSortFunc);
     }
@@ -1128,6 +1132,7 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty('postProcessPopup', postProcessPopupFunc);
     }
 
+    /** @deprecated v27.2 - Use `setInitialGroupOrderComparator` instead */
     public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number): void {
         this.gridOptionsWrapper.setProperty('defaultGroupOrderComparator', defaultGroupOrderComparatorFunc);
     }
@@ -1280,6 +1285,28 @@ export class GridApi<TData = any> {
 
     public setGroupDisplayType(value: RowGroupingDisplayType) {
         this.gridOptionsWrapper.setProperty('groupDisplayType', value);
+    }
+
+    public setRowClass(className: string | undefined): void {
+        this.gridOptionsWrapper.setProperty('rowClass', className);
+    }
+    /** Sets the `deltaSort` property */
+    public setDeltaSort(enable: boolean): void {
+        this.gridOptionsWrapper.setProperty('deltaSort', enable);
+    }
+    /**
+     * Sets the `rowCount` and `lastRowIndexKnown` properties.
+     * The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set.
+     * Set `rowCount` to adjust the height of the vertical scroll.
+     * Set `lastRowIndexKnown` to enable / disable searching for more rows.
+     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode.
+     */
+    public setRowCount(rowCount: number, maxRowFound?: boolean): void {
+        if (this.infiniteRowModel) {
+            this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
+        } else {
+            this.logMissingRowModel('setRowCount', 'infinite');
+        }
     }
 
     /** Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`. */
@@ -1698,10 +1725,7 @@ export class GridApi<TData = any> {
         return res;
     }
 
-    /** Sets the `deltaSort` property */
-    public setDeltaSort(enable: boolean): void {
-        this.gridOptionsWrapper.setProperty('deltaSort', enable);
-    }
+
 
     /** Same as `applyTransaction` except executes asynchronously for efficiency. */
     public applyTransactionAsync(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void {
@@ -1803,21 +1827,6 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Sets the `rowCount` and `lastRowIndexKnown` properties.
-     * The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set.
-     * Set `rowCount` to adjust the height of the vertical scroll.
-     * Set `lastRowIndexKnown` to enable / disable searching for more rows.
-     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode.
-     */
-    public setRowCount(rowCount: number, maxRowFound?: boolean): void {
-        if (this.infiniteRowModel) {
-            this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
-        } else {
-            this.logMissingRowModel('setRowCount', 'infinite');
-        }
-    }
-
-    /**
      * Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.
      */
     public getCacheBlockState(): any {
@@ -1901,9 +1910,5 @@ export class GridApi<TData = any> {
     /** Goes to the specified page. If the page requested doesn't exist, it will go to the last page. */
     public paginationGoToPage(page: number): void {
         this.paginationProxy.goToPage(page);
-    }
-
-    public setRowClass(className: string | undefined): void {
-        this.gridOptionsWrapper.setProperty('rowClass', className);
     }
 }
