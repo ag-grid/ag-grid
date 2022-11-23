@@ -57,7 +57,7 @@ export class StoreFactory {
 
         const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
             ? userStoreParams.maxBlocksInCache
-            : this.gridOptionsWrapper.getMaxBlocksInCache();
+            : this.gridOptionsService.getNum('maxBlocksInCache');
 
         const maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
 

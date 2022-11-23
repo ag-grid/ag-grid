@@ -342,7 +342,7 @@ export class ClientSideNodeManager {
     }
 
     private isExpanded(level: any) {
-        const expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
+        const expandByDefault = this.gridOptionsService.getNum('groupDefaultExpanded');
         if (expandByDefault === -1) {
             return true;
         }

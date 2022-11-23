@@ -60,7 +60,7 @@ export class MenuItemMapper extends BeanStub {
 
     private getStockMenuItem(key: string, column: Column | null): MenuItemDef | string | null {
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
+        const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
 
         switch (key) {
             case 'pinSubMenu':

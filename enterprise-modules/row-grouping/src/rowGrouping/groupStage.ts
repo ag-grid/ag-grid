@@ -124,7 +124,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // to break is some angular add-on - which i never used. taking the parent out breaks
             // a cyclic dependency, hence this flag got introduced.
             includeParents: !this.gridOptionsService.is('suppressParentsInRowNodes'),
-            expandByDefault: this.gridOptionsWrapper.getGroupDefaultExpanded()!,
+            expandByDefault: this.gridOptionsService.getNum('groupDefaultExpanded')!,
             groupedCols: groupedCols!,
             rootNode: rowNode,
             pivotMode: this.columnModel.isPivotMode(),

@@ -21,7 +21,7 @@ export class RowNodeBlockLoader extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        const blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
+        const blockLoadDebounceMillis = this.gridOptionsService.getNum('blockLoadDebounceMillis');
 
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
             this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);

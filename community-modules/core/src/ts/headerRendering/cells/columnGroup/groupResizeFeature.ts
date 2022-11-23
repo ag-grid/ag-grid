@@ -54,7 +54,7 @@ export class GroupResizeFeature extends BeanStub {
         this.addDestroyFunc(finishedWithResizeFunc);
 
         if (!this.gridOptionsService.is('suppressAutoSize')) {
-            const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
+            const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
 
             this.eResize.addEventListener('dblclick', () => {
                 // get list of all the column keys we are responsible for

@@ -275,23 +275,6 @@ export class GridOptionsWrapper {
         }
     }
 
-    /**
-    * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
-    * @param callback User provided callback
-    * @returns Wrapped callback where the params object not require api, columnApi and context
-    */
-    private mergeGridCommonParams<P extends AgGridCommon<any>, T>(callback: ((params: P) => T) | undefined):
-        ((params: WithoutGridCommon<P>) => T) | undefined {
-        if (callback) {
-            const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
-                const mergedParams = { ...callbackParams, api: this.gridOptionsService.get('api')!, columnApi: this.gridOptionsService.get('columnApi')!, context: this.gridOptionsService.get('context') } as P;
-                return callback(mergedParams);
-            };
-            return wrapped;
-        }
-        return callback;
-    }
-
     public getDomDataKey(): string {
         return this.domDataKey;
     }
@@ -432,10 +415,6 @@ export class GridOptionsWrapper {
         return domLayout;
     }
 
-    public getUndoRedoCellEditingLimit(): number | undefined {
-        return toNumber(this.gridOptions.undoRedoCellEditingLimit);
-    }
-
     public isServerSideInfiniteScroll(): boolean {
         return isTrue(this.gridOptions.serverSideInfiniteScroll) || this.gridOptions.serverSideInfiniteScroll === 'legacy';
     }
@@ -444,14 +423,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.serverSideInfiniteScroll);
     }
 
-    public getBlockLoadDebounceMillis() {
-        return this.gridOptions.blockLoadDebounceMillis;
-    }
-
     public getInitialGroupOrderComparator() {
         const { initialGroupOrderComparator, defaultGroupOrderComparator } = this.gridOptions;
         if (initialGroupOrderComparator) {
-            return this.mergeGridCommonParams(initialGroupOrderComparator);
+            return this.gridOptionsService.mergeGridCommonParams(initialGroupOrderComparator);
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (defaultGroupOrderComparator) {
@@ -462,7 +437,7 @@ export class GridOptionsWrapper {
     public getIsFullWidthCellFunc() {
         const { isFullWidthRow, isFullWidthCell } = this.gridOptions;
         if (isFullWidthRow) {
-            return this.mergeGridCommonParams(isFullWidthRow);
+            return this.gridOptionsService.mergeGridCommonParams(isFullWidthRow);
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (isFullWidthCell) {
@@ -490,27 +465,11 @@ export class GridOptionsWrapper {
         return false;
     }
 
-    public getGroupDefaultExpanded(): number | undefined {
-        return this.gridOptions.groupDefaultExpanded;
-    }
-
     public getMaxConcurrentDatasourceRequests(): number | undefined {
         const res = toNumber(this.gridOptions.maxConcurrentDatasourceRequests);
         if (res == null) { return 2; } // 2 is the default
         if (res <= 0) { return; } // negative number, eg -1, means no max restriction
         return res;
-    }
-
-    public getMaxBlocksInCache(): number | undefined {
-        return this.gridOptions.maxBlocksInCache;
-    }
-
-    public getCacheOverflowSize(): number | undefined {
-        return this.gridOptions.cacheOverflowSize;
-    }
-
-    public getPaginationPageSize(): number | undefined {
-        return toNumber(this.gridOptions.paginationPageSize);
     }
 
     public isPaginateChildRows(): boolean {
@@ -521,10 +480,6 @@ export class GridOptionsWrapper {
 
     public getCacheBlockSize(): number | undefined {
         return oneOrGreater(this.gridOptions.cacheBlockSize);
-    }
-
-    public getInfiniteInitialRowCount(): number | undefined {
-        return this.gridOptions.infiniteInitialRowCount;
     }
 
     public getServerSideInitialRowCount(): number {
@@ -572,7 +527,7 @@ export class GridOptionsWrapper {
         const userValue = this.gridOptions.groupAggFiltering;
 
         if (typeof userValue === 'function') {
-            return this.mergeGridCommonParams(userValue);
+            return this.gridOptionsService.mergeGridCommonParams(userValue);
         }
 
         if (isTrue(userValue)) {
@@ -625,7 +580,7 @@ export class GridOptionsWrapper {
 
         const { getGroupRowAgg, groupRowAggNodes } = this.gridOptions;
         if (getGroupRowAgg) {
-            return this.mergeGridCommonParams(getGroupRowAgg);
+            return this.gridOptionsService.mergeGridCommonParams(getGroupRowAgg);
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (groupRowAggNodes) {
@@ -636,7 +591,7 @@ export class GridOptionsWrapper {
     public getRowIdFunc() {
         const { getRowId, getRowNodeId } = this.gridOptions;
         if (getRowId) {
-            return this.mergeGridCommonParams(getRowId);
+            return this.gridOptionsService.mergeGridCommonParams(getRowId);
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (getRowNodeId) {
@@ -727,7 +682,7 @@ export class GridOptionsWrapper {
     public getPostSortFunc() {
         const { postSortRows, postSort } = this.gridOptions;
         if (postSortRows) {
-            return this.mergeGridCommonParams(postSortRows);
+            return this.gridOptionsService.mergeGridCommonParams(postSortRows);
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (postSort) {
@@ -764,10 +719,6 @@ export class GridOptionsWrapper {
 
     public removeEventListener(key: string, listener: Function): void {
         this.propertyEventService.removeEventListener(key, listener);
-    }
-
-    public isSkipHeaderOnAutoSize(): boolean {
-        return !!this.gridOptions.skipHeaderOnAutoSize;
     }
 
     public getAutoSizePadding(): number {
@@ -1176,7 +1127,7 @@ export class GridOptionsWrapper {
                 data: rowNode.data
             };
 
-            const height = this.mergeGridCommonParams(this.gridOptions.getRowHeight)!(params);
+            const height = this.gridOptionsService.mergeGridCommonParams(this.gridOptions.getRowHeight)!(params);
 
             if (this.isNumeric(height)) {
                 if (height === 0) {
