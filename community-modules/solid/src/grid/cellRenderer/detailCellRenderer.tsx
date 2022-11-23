@@ -7,7 +7,7 @@ import { CssClasses } from '../core/utils';
 const DetailCellRenderer = (props: IDetailCellRendererParams) => {
 
     const {ctrlsFactory, context, 
-            gridOptionsWrapper, resizeObserverService, 
+        gridOptionsService, resizeObserverService, 
             clientSideRowModel, serverSideRowModel} = useContext(BeansContext);
 
     const [getCssClasses, setCssClasses] = createSignal<CssClasses>(new CssClasses());

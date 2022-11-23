@@ -11,7 +11,7 @@ const PopupEditorComp = (props: {
             children?: JSX.Element
         }) => {
 
-    const { context, popupService, gridOptionsWrapper, gridOptionsService } = useContext(BeansContext);
+    const {context, popupService, gridOptionsWrapper} = useContext(BeansContext);
 
     const {editDetails, cellCtrl, eParentCell} = props;
     const {compDetails} = editDetails;

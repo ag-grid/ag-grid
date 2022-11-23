@@ -7,7 +7,7 @@ import HeaderGroupCellComp from './headerGroupCellComp';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
-    const { gridOptionsWrapper, gridOptionsService } = useContext(BeansContext);
+    const { gridOptionsWrapper } = useContext(BeansContext);
 
     const [ getTransform, setTransform ] = createSignal<string>();
     const [ getHeight, setHeight ] = createSignal<string>();
