@@ -61,7 +61,23 @@ export class FilterManager extends BeanStub {
         this.setQuickFilterParts();
 
         this.allowShowChangeAfterFilter = this.gridOptionsService.is('allowShowChangeAfterFilter');
-        this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
+        this.externalFilterPresent = this.isExternalFilterPresentCallback();
+    }
+
+    private isExternalFilterPresentCallback() {
+        const isFilterPresent = this.gridOptionsService.getCallback('isExternalFilterPresent');
+        if (typeof isFilterPresent === 'function') {
+            return isFilterPresent({});
+        }
+        return false;
+    }
+
+    private doesExternalFilterPass(node: RowNode) {
+        const doesFilterPass = this.gridOptionsService.get('doesExternalFilterPass');
+        if (typeof doesFilterPass === 'function') {
+            return doesFilterPass(node);
+        }
+        return false;
     }
 
     private setQuickFilterParts(): void {
@@ -326,7 +342,7 @@ export class FilterManager extends BeanStub {
 
         this.updateActiveFilters();
         this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes);
-        this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
+        this.externalFilterPresent = this.isExternalFilterPresentCallback();
 
         this.allColumnFilters.forEach(filterWrapper => {
             if (!filterWrapper.filterPromise) { return; }
@@ -422,7 +438,7 @@ export class FilterManager extends BeanStub {
         }
 
         // secondly, give the client a chance to reject this row
-        if (this.isExternalFilterPresent() && !this.gridOptionsWrapper.doesExternalFilterPass(params.rowNode)) {
+        if (this.isExternalFilterPresent() && !this.doesExternalFilterPass(params.rowNode)) {
             return false;
         }
 

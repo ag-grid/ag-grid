@@ -3,7 +3,6 @@ import { ColDefUtil } from './components/colDefUtil';
 import { ComponentUtil } from './components/componentUtil';
 import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
-import { Column } from './entities/column';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
 import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
@@ -15,7 +14,7 @@ import { EventService } from './eventService';
 import { GridApi } from './gridApi';
 import { GridOptionsService } from './gridOptionsService';
 import { CsvExportParams } from './interfaces/exportParams';
-import { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
+import { WithoutGridCommon } from './interfaces/iCommon';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
@@ -24,46 +23,17 @@ import { getScrollbarWidth } from './utils/browser';
 import { doOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { exists, missing, values } from './utils/generic';
-import { isNumeric } from './utils/number';
+import { oneOrGreater } from './utils/number';
 import { iterateObject } from './utils/object';
 import { capitalise } from './utils/string';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
-const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
-const DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
-const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
 
-function toNumber(value: any): number | undefined {
-    if (typeof value == 'number') {
-        return value;
-    }
-
-    if (typeof value == 'string') {
-        return parseInt(value, 10);
-    }
-}
-
-function zeroOrGreater(value: any, defaultValue: number): number {
-    if (value >= 0) { return value; }
-
-    // zero gets returned if number is missing or the wrong type
-    return defaultValue;
-}
-
-function oneOrGreater(value: any, defaultValue?: number): number | undefined {
-    const valueNumber = parseInt(value, 10);
-
-    if (isNumeric(valueNumber) && valueNumber > 0) {
-        return valueNumber;
-    }
-
-    return defaultValue;
-}
 
 export interface PropertyChangedEvent extends AgEvent {
     currentValue: any;
@@ -337,13 +307,6 @@ export class GridOptionsWrapper {
     public useAsyncEvents() {
         return !isTrue(this.gridOptions.suppressAsyncEvents);
     }
-    public getCellFlashDelay(): number {
-        return this.gridOptions.cellFlashDelay || 500;
-    }
-
-    public getCellFadeDelay(): number {
-        return this.gridOptions.cellFadeDelay || 1000;
-    }
 
     public isColumnsSortingCoupledToGroup(): boolean {
         const autoGroupColumnDef = this.gridOptionsService.get('autoGroupColumnDef');
@@ -379,17 +342,6 @@ export class GridOptionsWrapper {
 
     public isMultiSortKeyCtrl() {
         return this.gridOptions.multiSortKey === 'ctrl';
-    }
-
-
-    public getRowDragText(column?: Column) {
-        if (column) {
-            const colDef = column.getColDef();
-            if (colDef.rowDragText) {
-                return colDef.rowDragText;
-            }
-        }
-        return this.gridOptions.rowDragText;
     }
 
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
@@ -445,39 +397,6 @@ export class GridOptionsWrapper {
         }
     }
 
-    public isImmutableData() {
-        // we used to have a property immutableData for this. however this was deprecated
-        // in favour of having Immutable Data on by default when getRowId is provided
-        const getRowIdProvided = this.gridOptions.getRowId != null;
-        const immutableData = isTrue(this.gridOptions.immutableData);
-        // this property is a backwards compatibility property, for those who want
-        // the old behaviour of Row ID's but NOT Immutable Data.
-        const resetRowDataOnUpdate = isTrue(this.gridOptions.resetRowDataOnUpdate);
-
-        if (resetRowDataOnUpdate) { return false; }
-        return getRowIdProvided || immutableData;
-    }
-
-    public isEnableCharts() {
-        if (isTrue(this.gridOptions.enableCharts)) {
-            return ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'enableCharts');
-        }
-        return false;
-    }
-
-    public getMaxConcurrentDatasourceRequests(): number | undefined {
-        const res = toNumber(this.gridOptions.maxConcurrentDatasourceRequests);
-        if (res == null) { return 2; } // 2 is the default
-        if (res <= 0) { return; } // negative number, eg -1, means no max restriction
-        return res;
-    }
-
-    public isPaginateChildRows(): boolean {
-        const shouldPaginate = this.gridOptionsService.is('groupRemoveSingleChildren') || this.gridOptionsService.is('groupRemoveLowestSingleChildren');
-        if (shouldPaginate) { return true; }
-        return isTrue(this.gridOptions.paginateChildRows);
-    }
-
     public getCacheBlockSize(): number | undefined {
         return oneOrGreater(this.gridOptions.cacheBlockSize);
     }
@@ -501,26 +420,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.animateRows);
     }
 
-    public isSuppressAggFilteredOnly() {
-        const isGroupAggFiltering = this.getGroupAggFiltering() !== undefined;
-        return isGroupAggFiltering || isTrue(this.gridOptions.suppressAggFilteredOnly);
-    }
-
     public isEnableRangeSelection(): boolean {
         return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
-    }
-
-    public getFillHandleDirection(): 'x' | 'y' | 'xy' {
-        const direction = this.gridOptions.fillHandleDirection;
-
-        if (!direction) { return 'xy'; }
-
-        if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
-            doOnce(() => console.warn(`AG Grid: valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`), 'warn invalid fill direction');
-            return 'xy';
-        }
-
-        return direction;
     }
 
     public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
@@ -545,15 +446,6 @@ export class GridOptionsWrapper {
         } else {
             return false;
         }
-    }
-
-    public getKeepDetailRowsCount(): number | undefined {
-        const keepDetailRowsCount = this.gridOptions.keepDetailRowsCount;
-        if (exists(keepDetailRowsCount) && keepDetailRowsCount > 0) {
-            return this.gridOptions.keepDetailRowsCount;
-        }
-
-        return DEFAULT_KEEP_DETAIL_ROW_COUNT;
     }
 
     public getDefaultExportParams(type: 'csv'): CsvExportParams | undefined;
@@ -599,11 +491,6 @@ export class GridOptionsWrapper {
         }
     }
 
-
-    public getGridTabIndex(): string {
-        return (this.gridOptions.tabIndex || 0).toString();
-    }
-
     public isTreeData(): boolean {
         const usingTreeData = isTrue(this.gridOptions.treeData);
 
@@ -612,22 +499,6 @@ export class GridOptionsWrapper {
         }
 
         return false;
-    }
-
-    public getProcessPivotResultColDefFunc() {
-        return this.gridOptions.processPivotResultColDef || this.gridOptions.processSecondaryColDef;
-    }
-
-    public getProcessPivotResultColGroupDefFunc() {
-        return this.gridOptions.processPivotResultColGroupDef || this.gridOptions.processSecondaryColGroupDef;
-    }
-
-    public getViewportRowModelPageSize(): number | undefined {
-        return oneOrGreater(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE);
-    }
-
-    public getViewportRowModelBufferSize(): number {
-        return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE);
     }
 
     public isServerSideSortAllLevels() {
@@ -695,9 +566,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
     }
 
-    public getClipboardDelimiter() {
-        return exists(this.gridOptions.clipboardDelimiter) ? this.gridOptions.clipboardDelimiter : '\t';
-    }
 
     public setProperty<K extends keyof GridOptions>(key: K, value: GridOptions[K], force = false): void {
         const previousValue = this.gridOptions[key];
@@ -765,38 +633,6 @@ export class GridOptionsWrapper {
         }
 
         return this.getGroupHeaderHeight();
-    }
-
-    public isExternalFilterPresent() {
-        if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
-            return this.gridOptions.isExternalFilterPresent({ api: this.gridOptionsService.get('api')!, columnApi: this.gridOptionsService.get('columnApi')!, context: this.gridOptionsService.get('context') });
-        }
-
-        return false;
-    }
-
-    public doesExternalFilterPass(node: RowNode) {
-        if (typeof this.gridOptions.doesExternalFilterPass === 'function') {
-            return this.gridOptions.doesExternalFilterPass(node);
-        }
-
-        return false;
-    }
-
-    public getTooltipDelay(type: 'show' | 'hide'): number | null {
-        const { tooltipShowDelay, tooltipHideDelay } = this.gridOptions;
-        const delay = type === 'show' ? tooltipShowDelay : tooltipHideDelay;
-        const capitalisedType = capitalise(type);
-
-        if (exists(delay)) {
-            if (delay < 0) {
-                doOnce(() => console.warn(`AG Grid: tooltip${capitalisedType}Delay should not be lower than 0`), `tooltip${capitalisedType}DelayWarn`);
-            }
-
-            return Math.max(200, delay);
-        }
-
-        return null;
     }
 
     public getDocument(): Document {

@@ -20,7 +20,7 @@ export class RowNodeBlockLoader extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
+        this.maxConcurrentRequests = this.getMaxConcurrentDatasourceRequests();
         const blockLoadDebounceMillis = this.gridOptionsService.getNum('blockLoadDebounceMillis');
 
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
@@ -30,6 +30,13 @@ export class RowNodeBlockLoader extends BeanStub {
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('RowNodeBlockLoader');
+    }
+
+    private getMaxConcurrentDatasourceRequests(): number | undefined {
+        const res = this.gridOptionsService.getNum('maxConcurrentDatasourceRequests');
+        if (res == null) { return 2; } // 2 is the default
+        if (res <= 0) { return; } // negative number, eg -1, means no max restriction
+        return res;
     }
 
     public addBlock(block: RowNodeBlock): void {

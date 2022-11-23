@@ -67,3 +67,20 @@ export function formatNumberCommas(value: number, thousandSeparator: string, dec
 export function sum(values: number[] | null) {
     return values == null ? null : values.reduce((total, value) => total + value, 0);
 }
+
+export function zeroOrGreater(value: any, defaultValue: number): number {
+    if (value >= 0) { return value; }
+
+    // zero gets returned if number is missing or the wrong type
+    return defaultValue;
+}
+
+export function oneOrGreater(value: any, defaultValue?: number): number | undefined {
+    const valueNumber = parseInt(value, 10);
+
+    if (isNumeric(valueNumber) && valueNumber > 0) {
+        return valueNumber;
+    }
+
+    return defaultValue;
+}

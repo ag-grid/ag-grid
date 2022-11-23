@@ -25,7 +25,16 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     }
 
     public isActive(): boolean {
-        return this.gridOptionsWrapper.isImmutableData();
+        // we used to have a property immutableData for this. however this was deprecated
+        // in favour of having Immutable Data on by default when getRowId is provided
+        const getRowIdProvided = this.gridOptionsService.getCallback('getRowId') != null;
+        const immutableData = this.gridOptionsService.is('immutableData');
+        // this property is a backwards compatibility property, for those who want
+        // the old behaviour of Row ID's but NOT Immutable Data.
+        const resetRowDataOnUpdate = this.gridOptionsService.is('resetRowDataOnUpdate');
+
+        if (resetRowDataOnUpdate) { return false; }
+        return getRowIdProvided || immutableData;
     }
 
     public setRowData(rowData: any[]): void {

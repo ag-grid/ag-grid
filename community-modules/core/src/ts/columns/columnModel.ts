@@ -3152,8 +3152,8 @@ export class ColumnModel extends BeanStub {
 
     private processSecondaryColumnDefinitions(colDefs: (ColDef | ColGroupDef)[] | null): (ColDef | ColGroupDef)[] | undefined {
 
-        const columnCallback = this.gridOptionsWrapper.getProcessPivotResultColDefFunc();
-        const groupCallback = this.gridOptionsWrapper.getProcessPivotResultColGroupDefFunc();
+        const columnCallback = this.gridOptionsService.get('processPivotResultColDef') || this.gridOptionsService.get('processSecondaryColDef');
+        const groupCallback = this.gridOptionsService.get('processPivotResultColGroupDef') || this.gridOptionsService.get('processSecondaryColGroupDef');
 
         if (!columnCallback && !groupCallback) { return undefined; }
 

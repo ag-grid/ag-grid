@@ -73,6 +73,7 @@ export interface RedrawRowsParams<TData = any> {
     rowNodes?: RowNode<TData>[];
 }
 
+const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
 
@@ -161,10 +162,19 @@ export class RowRenderer extends BeanStub {
 
     private initialiseCache(): void {
         if (this.gridOptionsService.is('keepDetailRows')) {
-            const countProp = this.gridOptionsWrapper.getKeepDetailRowsCount();
+            const countProp = this.getKeepDetailRowsCount();
             const count = countProp != null ? countProp : 3;
             this.cachedRowCtrls = new RowCtrlCache(count);
         }
+    }
+
+    private getKeepDetailRowsCount(): number | undefined {
+        const keepDetailRowsCount = this.gridOptionsService.getNum('keepDetailRowsCount');
+        if (exists(keepDetailRowsCount) && keepDetailRowsCount > 0) {
+            return keepDetailRowsCount;
+        }
+
+        return DEFAULT_KEEP_DETAIL_ROW_COUNT;
     }
 
     public getRowCtrls(): RowCtrl[] {

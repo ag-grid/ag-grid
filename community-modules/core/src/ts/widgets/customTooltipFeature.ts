@@ -8,6 +8,8 @@ import { UserComponentFactory } from "../components/framework/userComponentFacto
 import { exists } from "../utils/generic";
 import { isIOSUserAgent } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { capitalise } from "../utils/string";
+import { doOnce } from "../utils/function";
 
 export interface TooltipParentComp {
     getTooltipParams(): WithoutGridCommon<ITooltipParams>;
@@ -60,8 +62,8 @@ export class CustomTooltipFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.tooltipShowDelay = this.gridOptionsWrapper.getTooltipDelay('show') || this.DEFAULT_SHOW_TOOLTIP_DELAY;
-        this.tooltipHideDelay = this.gridOptionsWrapper.getTooltipDelay('hide') || this.DEFAULT_HIDE_TOOLTIP_DELAY;
+        this.tooltipShowDelay = this.getTooltipDelay('show') || this.DEFAULT_SHOW_TOOLTIP_DELAY;
+        this.tooltipHideDelay = this.getTooltipDelay('hide') || this.DEFAULT_HIDE_TOOLTIP_DELAY;
         this.tooltipMouseTrack = this.gridOptionsService.is('tooltipMouseTrack');
 
         const el = this.parentComp.getGui();
@@ -132,6 +134,24 @@ export class CustomTooltipFeature extends BeanStub {
     public onMouseDown(): void {
         this.setToDoNothing();
     }
+
+    private getTooltipDelay(type: 'show' | 'hide'): number | null {
+        const tooltipShowDelay = this.gridOptionsService.getNum('tooltipShowDelay');
+        const tooltipHideDelay = this.gridOptionsService.getNum('tooltipHideDelay');
+        const delay = type === 'show' ? tooltipShowDelay : tooltipHideDelay;
+        const capitalisedType = capitalise(type);
+
+        if (exists(delay)) {
+            if (delay < 0) {
+                doOnce(() => console.warn(`AG Grid: tooltip${capitalisedType}Delay should not be lower than 0`), `tooltip${capitalisedType}DelayWarn`);
+            }
+
+            return Math.max(200, delay);
+        }
+
+        return null;
+    }
+
 
     private hideTooltip(): void {
         // check if comp exists - due to async, although we asked for

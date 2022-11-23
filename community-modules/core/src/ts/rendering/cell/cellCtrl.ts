@@ -752,14 +752,14 @@ export class CellCtrl extends BeanStub {
     private animateCell(cssName: string, flashDelay?: number | null, fadeDelay?: number | null): void {
         const fullName = `ag-cell-${cssName}`;
         const animationFullName = `ag-cell-${cssName}-animation`;
-        const { gridOptionsWrapper } = this.beans;
+        const { gridOptionsService } = this.beans;
 
         if (!flashDelay) {
-            flashDelay = gridOptionsWrapper.getCellFlashDelay();
+            flashDelay = gridOptionsService.getNum('cellFlashDelay') || 500;
         }
 
         if (!exists(fadeDelay)) {
-            fadeDelay = gridOptionsWrapper.getCellFadeDelay();
+            fadeDelay = gridOptionsService.getNum('cellFadeDelay') || 1000;
         }
 
         // we want to highlight the cells, without any animation

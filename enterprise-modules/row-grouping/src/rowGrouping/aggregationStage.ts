@@ -72,10 +72,15 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         return aggDetails;
     }
 
+    private isSuppressAggFilteredOnly() {
+        const isGroupAggFiltering = this.gridOptionsWrapper.getGroupAggFiltering() !== undefined;
+        return isGroupAggFiltering || this.gridOptionsService.is('suppressAggFilteredOnly');
+    }
+
     private recursivelyCreateAggData(aggDetails: AggregationDetails) {
 
         // update prop, in case changed since last time
-        this.filteredOnly = !this.gridOptionsWrapper.isSuppressAggFilteredOnly();
+        this.filteredOnly = !this.isSuppressAggFilteredOnly();
 
         const callback = (rowNode: RowNode) => {
 

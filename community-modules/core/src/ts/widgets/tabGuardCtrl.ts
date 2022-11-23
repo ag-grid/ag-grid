@@ -170,7 +170,7 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     public getGridTabIndex(): string {
-        return this.gridOptionsWrapper.getGridTabIndex();
+        return (this.gridOptionsService.getNum('tabIndex') || 0).toString();
     }
 
     public focusInnerElement(fromBottom = false): void {

@@ -19,6 +19,9 @@ import {
 } from "@ag-grid-community/core";
 import { RowModelType } from "@ag-grid-community/core/src/ts/main";
 
+
+const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
+const DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 @Bean('rowModel')
 export class ViewportRowModel extends BeanStub implements IRowModel {
 
@@ -68,9 +71,17 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         this.lastRow = -1;
     }
 
+    private getViewportRowModelPageSize(): number | undefined {
+        return _.oneOrGreater(this.gridOptionsService.getNum('viewportRowModelPageSize'), DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE);
+    }
+
+    private getViewportRowModelBufferSize(): number {
+        return _.zeroOrGreater(this.gridOptionsService.getNum('viewportRowModelBufferSize'), DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE);
+    }
+
     private calculateFirstRow(firstRenderedRow: number): number {
-        const bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
-        const pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize()!;
+        const bufferSize = this.getViewportRowModelBufferSize();
+        const pageSize = this.getViewportRowModelPageSize()!;
         const afterBuffer = firstRenderedRow - bufferSize;
 
         if (afterBuffer < 0) { return 0; }
@@ -81,8 +92,8 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     private calculateLastRow(lastRenderedRow: number): number {
         if (lastRenderedRow === -1) { return lastRenderedRow; }
 
-        const bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
-        const pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize()!;
+        const bufferSize = this.getViewportRowModelBufferSize();
+        const pageSize = this.getViewportRowModelPageSize()!;
         const afterBuffer = lastRenderedRow + bufferSize;
         const result = Math.ceil(afterBuffer / pageSize) * pageSize;
         const lastRowIndex = this.rowCount - 1;
