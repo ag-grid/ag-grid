@@ -17,7 +17,6 @@ export interface ChartProxyParams {
     apiChartThemeOverrides?: AgChartThemeOverrides;
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
-    clickCallback: (event: any) => void;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes: SeriesChartType[];
@@ -97,7 +96,6 @@ export abstract class ChartProxy {
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
-        this.clickCallback = chartProxyParams.clickCallback;
         this.standaloneChartType = getSeriesType(this.chartType);
 
         const {chartOptionsToRestore, chartPaletteToRestore } = this.chartProxyParams;
@@ -141,8 +139,6 @@ export abstract class ChartProxy {
                 const resetFilters = true;
                 this.getChart().addEventListener('click', (e) => this.crossFilterCallback(e, resetFilters));
             }
-    
-            this.getChart().addEventListener('click', (e) => this.clickCallback(e));
         }
     }
 

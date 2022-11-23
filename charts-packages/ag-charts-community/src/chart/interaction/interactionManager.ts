@@ -167,10 +167,6 @@ export class InteractionManager {
                     console.error(e);
                 }
             });
-            if (listeners.length > 0) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
         }
     }
 
