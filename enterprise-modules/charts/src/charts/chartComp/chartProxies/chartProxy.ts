@@ -114,12 +114,6 @@ export abstract class ChartProxy {
 
         if (this.chart == null) {
             this.chart = AgChart.create(this.getCommonChartOptions());
-
-            if (this.crossFiltering) {
-                // add event listener to chart canvas to detect when user wishes to reset filters
-                const resetFilters = true;
-                this.getChart().addEventListener('click', (e) => this.crossFilterCallback(e, resetFilters));
-            }
         }
     }
 
@@ -222,7 +216,10 @@ export abstract class ChartProxy {
             overrides: {
                 [overrideType]: {
                     tooltip,
-                    legend
+                    legend,
+                    listeners: {
+                        click: (e: any) => this.crossFilterCallback(e, true),
+                    }
                 }
             }
         }, this.agChartTheme);
