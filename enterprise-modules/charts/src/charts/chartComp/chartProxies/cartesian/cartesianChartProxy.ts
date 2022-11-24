@@ -29,9 +29,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
             data: this.getData(params, axes),
             axes,
             series: this.getSeries(params),
-
-            ...(this.crossFiltering ? this.createCrossFilterTheme() : {})
-        }
+        };
 
         AgChart.update(this.getChartRef(), options);
     }
@@ -46,35 +44,6 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     private getDataTransformedData(params: UpdateChartParams, isCategoryAxis: boolean) {
         return this.transformData(params.data, params.category.id, isCategoryAxis);
-    }
-
-    private createCrossFilterTheme(): AgBaseChartOptions {
-        const chart = this.getChart();
-        const tooltip = {
-            delay: 500,
-        }
-
-        const legend = {
-            listeners: {
-                legendItemClick: (e: AgChartLegendClickEvent) => {
-                    chart.series.forEach(s => {
-                        s.toggleSeriesItem(e.itemId, e.enabled);
-                        s.toggleSeriesItem(`${e.itemId}-filtered-out` , e.enabled);
-                    });
-                }
-            }
-        }
-
-        return {
-            theme: {
-                overrides: {
-                    cartesian: {
-                        tooltip,
-                        legend
-                    }
-                }
-            }
-        };
     }
 
     protected getXAxisType(params: UpdateChartParams) {

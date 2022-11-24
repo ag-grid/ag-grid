@@ -1,4 +1,4 @@
-import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-community/core";
+import { _, AgChartThemeOverrides, ChartType, SeriesChartType, AgChartLegendClickEvent } from "@ag-grid-community/core";
 import { AgChart, AgChartTheme, AgChartThemePalette, AgChartInstance, _Theme, AgChartOptions } from "ag-charts-community";
 import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
@@ -201,6 +201,33 @@ export abstract class ChartProxy {
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     }
 
+    private createCrossFilterTheme(overrideType: 'cartesian' | 'pie'): AgChartTheme {
+        const tooltip = {
+            delay: 500,
+        }
+
+        const legend = {
+            listeners: {
+                legendItemClick: (e: AgChartLegendClickEvent) => {
+                    const chart = this.getChart();
+                    chart.series.forEach(s => {
+                        s.toggleSeriesItem(e.itemId, e.enabled);
+                        s.toggleSeriesItem(`${e.itemId}-filtered-out` , e.enabled);
+                    });
+                }
+            }
+        }
+
+        return deepMerge({
+            overrides: {
+                [overrideType]: {
+                    tooltip,
+                    legend
+                }
+            }
+        }, this.agChartTheme);
+    }
+
     public downloadChart(dimensions?: { width: number; height: number }, fileName?: string, fileFormat?: string) {
         const { chart } = this;
         const rawChart = deproxy(chart);
@@ -261,8 +288,11 @@ export abstract class ChartProxy {
     }
 
     protected getCommonChartOptions() {
+        const crossFilterThemeOverridePoint = this.standaloneChartType === 'pie' ? 'pie' : 'cartesian';
         return {
-            theme: this.agChartTheme,
+            theme: this.crossFiltering ?
+                this.createCrossFilterTheme(crossFilterThemeOverridePoint) :
+                this.agChartTheme,
             container: this.chartProxyParams.parentElement
         }
     }
