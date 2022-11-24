@@ -4,19 +4,13 @@ import {
     AgBaseChartOptions,
     AgBaseSeriesOptions,
     AgCartesianAxisOptions,
-    AgCartesianAxisType,
     AgCartesianChartOptions,
     AgChart,
-    AgChartInstance,
     AgChartLegendClickEvent,
     AgLineSeriesOptions,
 } from "ag-charts-community";
 
 export abstract class CartesianChartProxy extends ChartProxy {
-    protected supportsAxesUpdates = true;
-    protected xAxisType: AgCartesianAxisType;
-    protected yAxisType: AgCartesianAxisType;
-
     protected crossFilteringAllPoints = new Set<string>();
     protected crossFilteringSelectedPoints: string[] = [];
 
@@ -24,19 +18,16 @@ export abstract class CartesianChartProxy extends ChartProxy {
         super(params);
     }
 
-    abstract getData(params: UpdateChartParams): any[];
     abstract getAxes(params: UpdateChartParams): AgCartesianAxisOptions[];
     abstract getSeries(params: UpdateChartParams): AgBaseSeriesOptions<any>[];
 
     public update(params: UpdateChartParams): void {
-        if (this.supportsAxesUpdates) {
-            this.updateAxes(params);
-        }
+        const axes = this.getAxes(params);
 
         const options: AgCartesianChartOptions = {
             ...this.getCommonChartOptions(),
-            data: this.getData(params),
-            axes: this.getAxes(params),
+            data: this.getData(params, axes),
+            axes,
             series: this.getSeries(params),
 
             ...(this.crossFiltering ? this.createCrossFilterTheme() : {})
@@ -45,8 +36,15 @@ export abstract class CartesianChartProxy extends ChartProxy {
         AgChart.update(this.getChartRef(), options);
     }
 
-    protected getDataTransformedData(params: UpdateChartParams) {
-        const isCategoryAxis = this.xAxisType === 'category';
+    private getData(params: UpdateChartParams, axes: AgCartesianAxisOptions[]): any[] {
+        const supportsCrossFiltering = ['area', 'line'].includes(this.standaloneChartType);
+        const xAxisIsCategory = axes.filter(o => o.position === 'bottom')[0]?.type === 'category';
+        return this.crossFiltering && supportsCrossFiltering ?
+            this.getCrossFilterData(params) :
+            this.getDataTransformedData(params, xAxisIsCategory);
+    }
+
+    private getDataTransformedData(params: UpdateChartParams, isCategoryAxis: boolean) {
         return this.transformData(params.data, params.category.id, isCategoryAxis);
     }
 
@@ -79,20 +77,13 @@ export abstract class CartesianChartProxy extends ChartProxy {
         };
     }
 
-    protected updateAxes(params: UpdateChartParams): void {
-        // when grouping recreate chart if the axis is not a 'groupedCategory', otherwise return
+    protected getXAxisType(params: UpdateChartParams) {
         if (params.grouping) {
-            if (this.xAxisType !== 'groupedCategory') {
-                this.xAxisType = 'groupedCategory';
-            }
-            return;
+            return 'groupedCategory';
+        } else if (CartesianChartProxy.isTimeAxis(params)) {
+            return 'time';
         }
-
-        // only update axis has changed and recreate the chart, i.e. switching from 'category' to 'time' axis
-        const newXAxisType = CartesianChartProxy.isTimeAxis(params) ? 'time' : 'category';
-        if (newXAxisType !== this.xAxisType) {
-            this.xAxisType = newXAxisType;
-        }
+        return 'category';
     }
 
     private static isTimeAxis(params: UpdateChartParams): boolean {
@@ -156,7 +147,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
         });
     }
 
-    protected getLineAreaCrossFilterData(params: UpdateChartParams): any[] {
+    private getCrossFilterData(params: UpdateChartParams): any[] {
         this.crossFilteringAllPoints.clear();
         const colId = params.fields[0].colId;
         const filteredOutColId = `${colId}-filtered-out`;
