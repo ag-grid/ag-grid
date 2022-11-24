@@ -1,6 +1,5 @@
 import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
-import { Constants } from "./constants/constants";
 import { ColumnModel } from "./columns/columnModel";
 import { IRowModel } from "./interfaces/iRowModel";
 import { CellPosition } from "./entities/cellPosition";
@@ -110,10 +109,10 @@ export class CellNavigationService extends BeanStub {
         let rowNode: RowNode | undefined;
 
         switch (gridCell.rowPinned) {
-            case Constants.PINNED_TOP:
+            case 'top':
                 rowNode = this.pinnedRowModel.getPinnedTopRow(gridCell.rowIndex);
                 break;
-            case Constants.PINNED_BOTTOM:
+            case 'bottom':
                 rowNode = this.pinnedRowModel.getPinnedBottomRow(gridCell.rowIndex);
                 break;
             default:
@@ -160,25 +159,25 @@ export class CellNavigationService extends BeanStub {
         const pinned = rowPosition.rowPinned;
         if (this.isLastRowInContainer(rowPosition)) {
             switch (pinned) {
-                case Constants.PINNED_BOTTOM:
+                case 'bottom':
                     // never any rows after pinned bottom
                     return null;
-                case Constants.PINNED_TOP:
+                case 'top':
                     // if on last row of pinned top, then next row is main body (if rows exist),
                     // otherwise it's the pinned bottom
                     if (this.rowModel.isRowsToRender()) {
                         return { rowIndex: this.paginationProxy.getPageFirstRow(), rowPinned: null } as RowPosition;
                     }
 
-                    if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
-                        return { rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM } as RowPosition;
+                    if (this.pinnedRowModel.isRowsToRender('bottom')) {
+                        return { rowIndex: 0, rowPinned: 'bottom' } as RowPosition;
                     }
 
                     return null;
                 default:
                     // if in the main body, then try pinned bottom, otherwise return nothing
-                    if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
-                        return { rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM } as RowPosition;
+                    if (this.pinnedRowModel.isRowsToRender('bottom')) {
+                        return { rowIndex: 0, rowPinned: 'bottom' } as RowPosition;
                     }
                     return null;
             }
@@ -229,12 +228,12 @@ export class CellNavigationService extends BeanStub {
         const pinned = rowPosition.rowPinned;
         const index = rowPosition.rowIndex;
 
-        if (pinned === Constants.PINNED_TOP) {
+        if (pinned === 'top') {
             const lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
             return lastTopIndex <= index;
         }
 
-        if (pinned === Constants.PINNED_BOTTOM) {
+        if (pinned === 'bottom') {
             const lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
             return lastBottomIndex <= index;
         }
@@ -251,10 +250,10 @@ export class CellNavigationService extends BeanStub {
 
         // if already on top row, do nothing
         if (isFirstRow) {
-            if (pinned === Constants.PINNED_TOP) { return null; }
+            if (pinned === 'top') { return null; }
 
             if (!pinned) {
-                if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_TOP)) {
+                if (this.pinnedRowModel.isRowsToRender('top')) {
                     return this.getLastFloatingTopRow();
                 }
                 return null;
@@ -265,7 +264,7 @@ export class CellNavigationService extends BeanStub {
                 return this.getLastBodyCell();
             }
 
-            if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_TOP)) {
+            if (this.pinnedRowModel.isRowsToRender('top')) {
                 return this.getLastFloatingTopRow();
             }
 
@@ -307,7 +306,7 @@ export class CellNavigationService extends BeanStub {
     private getLastFloatingTopRow(): RowPosition {
         const lastFloatingRow = this.pinnedRowModel.getPinnedTopRowData().length - 1;
 
-        return { rowIndex: lastFloatingRow, rowPinned: Constants.PINNED_TOP } as RowPosition;
+        return { rowIndex: lastFloatingRow, rowPinned: 'top' } as RowPosition;
     }
 
     public getNextTabbedCell(gridCell: CellPosition, backwards: boolean): CellPosition | null {

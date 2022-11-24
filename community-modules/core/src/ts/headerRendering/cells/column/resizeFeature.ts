@@ -1,5 +1,4 @@
 import { ColumnModel } from "../../../columns/columnModel";
-import { Constants } from "../../../constants/constants";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
 import { Column, ColumnPinnedType } from "../../../entities/column";
@@ -123,8 +122,8 @@ export class ResizeFeature extends BeanStub {
     private normaliseResizeAmount(dragChange: number): number {
         let result = dragChange;
 
-        const notPinningLeft = this.pinned !== Constants.PINNED_LEFT;
-        const pinningRight = this.pinned === Constants.PINNED_RIGHT;
+        const notPinningLeft = this.pinned !== 'left';
+        const pinningRight = this.pinned === 'right';
 
         if (this.gridOptionsService.is('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left

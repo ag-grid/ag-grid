@@ -1,6 +1,5 @@
 import { ColumnModel } from "../../columns/columnModel";
 import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { Constants } from "../../constants/constants";
 import { KeyCode } from "../../constants/keyCode";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
@@ -204,8 +203,8 @@ export class GroupCellRendererCtrl extends BeanStub {
     private isEmbeddedRowMismatch(): boolean {
         if (!this.params.fullWidth || !this.gridOptionsService.is('embedFullWidthRows')) { return false; }
 
-        const pinnedLeftCell = this.params.pinned === Constants.PINNED_LEFT;
-        const pinnedRightCell = this.params.pinned === Constants.PINNED_RIGHT;
+        const pinnedLeftCell = this.params.pinned === 'left';
+        const pinnedRightCell = this.params.pinned === 'right';
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
         if (this.gridOptionsService.is('enableRtl')) {

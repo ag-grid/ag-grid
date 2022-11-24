@@ -1,5 +1,4 @@
 import { ColumnModel, ColumnResizeSet } from "../../../columns/columnModel";
-import { Constants } from "../../../constants/constants";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
 import { Column, ColumnPinnedType } from "../../../entities/column";
@@ -171,10 +170,10 @@ export class GroupResizeFeature extends BeanStub {
 
         if (this.gridOptionsService.is('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
-            if (this.pinned !== Constants.PINNED_LEFT) {
+            if (this.pinned !== 'left') {
                 result *= -1;
             }
-        } else if (this.pinned === Constants.PINNED_RIGHT) {
+        } else if (this.pinned === 'right') {
             // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
             result *= -1;
         }

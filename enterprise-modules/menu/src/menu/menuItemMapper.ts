@@ -6,7 +6,6 @@ import {
     ChartType,
     Column,
     ColumnModel,
-    Constants,
     GridApi,
     IAggFuncService,
     IChartService,
@@ -72,13 +71,13 @@ export class MenuItemMapper extends BeanStub {
             case 'pinLeft':
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: () => this.columnModel.setColumnPinned(column, Constants.PINNED_LEFT, "contextMenu"),
+                    action: () => this.columnModel.setColumnPinned(column, 'left', "contextMenu"),
                     checked: !!column && column.isPinnedLeft()
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: () => this.columnModel.setColumnPinned(column, Constants.PINNED_RIGHT, "contextMenu"),
+                    action: () => this.columnModel.setColumnPinned(column, 'right', "contextMenu"),
                     checked: !!column && column.isPinnedRight()
                 };
             case 'clearPinned':

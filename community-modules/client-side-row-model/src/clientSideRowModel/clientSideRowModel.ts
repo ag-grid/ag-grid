@@ -5,7 +5,6 @@ import {
     BeanStub,
     ChangedPath,
     ColumnModel,
-    Constants,
     Events,
     ExpandCollapseAllEvent,
     FilterChangedEvent,
@@ -164,7 +163,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
         // with these two layouts.
-        const allowEstimate = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
+        const allowEstimate = this.gridOptionsWrapper.getDomLayout() === 'normal';
 
         for (let i = 0; i < this.rowsToDisplay.length; i++) {
 

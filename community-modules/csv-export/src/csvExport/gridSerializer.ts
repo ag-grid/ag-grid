@@ -7,7 +7,7 @@ import {
     ColumnModel,
     ColumnGroup,
     IHeaderColumn,
-    Constants,
+    GROUP_AUTO_COLUMN_ID,
     DisplayedGroupCreator,
     ExportParams,
     GroupInstanceIdCreator,
@@ -275,7 +275,7 @@ export class GridSerializer extends BeanStub {
         if (allColumns && !isPivotMode) {
             // add auto group column for tree data
             const columns = this.gridOptionsWrapper.isTreeData()
-                ? this.columnModel.getGridColumns([Constants.GROUP_AUTO_COLUMN_ID])
+                ? this.columnModel.getGridColumns([GROUP_AUTO_COLUMN_ID])
                 : [];
 
             return columns.concat(this.columnModel.getAllPrimaryColumns() || []);

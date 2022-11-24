@@ -2,7 +2,6 @@ import {
     Autowired,
     ColumnModel,
     Component,
-    Constants,
     Events,
     PostConstruct,
     _
@@ -69,9 +68,9 @@ export class GridHeaderDropZones extends Component {
 
         const rowGroupPanelShow = this.gridOptionsService.get('rowGroupPanelShow');
 
-        if (rowGroupPanelShow === Constants.ALWAYS) {
+        if (rowGroupPanelShow === 'always') {
             this.rowGroupComp.setDisplayed(true);
-        } else if (rowGroupPanelShow === Constants.ONLY_WHEN_GROUPING) {
+        } else if (rowGroupPanelShow === 'onlyWhenGrouping') {
             const grouping = !this.columnModel.isRowGroupEmpty();
             this.rowGroupComp.setDisplayed(grouping);
         } else {

@@ -1,7 +1,6 @@
 import { EventService } from "../eventService";
 import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent } from "../events";
 import { Column } from "./column";
-import { Constants } from "../constants/constants";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { DetailGridInfo } from "../gridApi";
 import { exists, missing, missingOrEmpty } from "../utils/generic";
@@ -319,11 +318,11 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     public getRowIndexString(): string {
-        if (this.rowPinned === Constants.PINNED_TOP) {
+        if (this.rowPinned === 'top') {
             return 't-' + this.rowIndex;
         }
 
-        if (this.rowPinned === Constants.PINNED_BOTTOM) {
+        if (this.rowPinned === 'bottom') {
             return 'b-' + this.rowIndex;
         }
 
@@ -892,7 +891,7 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     public isRowPinned(): boolean {
-        return this.rowPinned === Constants.PINNED_TOP || this.rowPinned === Constants.PINNED_BOTTOM;
+        return this.rowPinned === 'top' || this.rowPinned === 'bottom';
     }
 
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters

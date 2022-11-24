@@ -15,7 +15,6 @@ import { GridBodyCtrl } from "./gridBodyCtrl";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 import { RowCtrl } from "../rendering/row/rowCtrl";
 import { doOnce, throttle } from "../utils/function";
-import { Constants } from "../constants/constants";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
@@ -626,11 +625,11 @@ export class NavigationService extends BeanStub {
     }
 
     private lookupRowNodeForCell(cell: CellPosition) {
-        if (cell.rowPinned === Constants.PINNED_TOP) {
+        if (cell.rowPinned === 'top') {
             return this.pinnedRowModel.getPinnedTopRow(cell.rowIndex);
         }
 
-        if (cell.rowPinned === Constants.PINNED_BOTTOM) {
+        if (cell.rowPinned === 'bottom') {
             return this.pinnedRowModel.getPinnedBottomRow(cell.rowIndex);
         }
 

@@ -8,7 +8,8 @@ import {
     IAggFunc,
     ColumnFunctionCallbackParams,
     RowSpanParams,
-    ColumnMenuTab
+    ColumnMenuTab,
+    SortDirection
 } from "./colDef";
 import { EventService } from "../eventService";
 import { Autowired, PostConstruct } from "../context/context";
@@ -19,7 +20,6 @@ import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ColumnEvent, ColumnEventType } from "../events";
 import { ColumnGroup } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
-import { Constants } from "../constants/constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
@@ -94,7 +94,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     private left: number | null;
     private oldLeft: number | null;
     private aggFunc: string | IAggFunc | null | undefined;
-    private sort: 'asc' | 'desc' | null | undefined;
+    private sort: SortDirection | undefined;
     private sortIndex: number | null | undefined;
     private moving = false;
     private menuVisible = false;
@@ -138,11 +138,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     private setState(colDef: ColDef): void {
         // sort
         if (colDef.sort !== undefined) {
-            if (colDef.sort === Constants.SORT_ASC || colDef.sort === Constants.SORT_DESC) {
+            if (colDef.sort === 'asc' || colDef.sort === 'desc') {
                 this.sort = colDef.sort;
             }
         } else {
-            if (colDef.initialSort === Constants.SORT_ASC || colDef.initialSort === Constants.SORT_DESC) {
+            if (colDef.initialSort === 'asc' || colDef.initialSort === 'desc') {
                 this.sort = colDef.initialSort;
             }
         }
@@ -452,11 +452,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     /** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */
-    public getSort(): 'asc' | 'desc' | null | undefined {
+    public getSort(): SortDirection | undefined {
         return this.sort;
     }
 
-    public setSort(sort: 'asc' | 'desc' | null | undefined, source: ColumnEventType = "api"): void {
+    public setSort(sort: SortDirection | undefined, source: ColumnEventType = "api"): void {
         if (this.sort !== sort) {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED, source));
@@ -475,11 +475,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public isSortAscending(): boolean {
-        return this.sort === Constants.SORT_ASC;
+        return this.sort === 'asc';
     }
 
     public isSortDescending(): boolean {
-        return this.sort === Constants.SORT_DESC;
+        return this.sort === 'desc';
     }
 
     public isSortNone(): boolean {
@@ -546,10 +546,10 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public setPinned(pinned: ColumnPinnedType): void {
-        if (pinned === true || pinned === Constants.PINNED_LEFT) {
-            this.pinned = Constants.PINNED_LEFT;
-        } else if (pinned === Constants.PINNED_RIGHT) {
-            this.pinned = Constants.PINNED_RIGHT;
+        if (pinned === true || pinned === 'left') {
+            this.pinned = 'left';
+        } else if (pinned === 'right') {
+            this.pinned = 'right';
         } else {
             this.pinned = null;
         }
@@ -578,15 +578,15 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public isPinned(): boolean {
-        return this.pinned === Constants.PINNED_LEFT || this.pinned === Constants.PINNED_RIGHT;
+        return this.pinned === 'left' || this.pinned === 'right';
     }
 
     public isPinnedLeft(): boolean {
-        return this.pinned === Constants.PINNED_LEFT;
+        return this.pinned === 'left';
     }
 
     public isPinnedRight(): boolean {
-        return this.pinned === Constants.PINNED_RIGHT;
+        return this.pinned === 'right';
     }
 
     public getPinned(): ColumnPinnedType {

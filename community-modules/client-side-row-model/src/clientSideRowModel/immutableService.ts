@@ -1,6 +1,6 @@
 import {
     Autowired,
-    Bean, BeanStub, Constants, IImmutableService,
+    Bean, BeanStub, IImmutableService,
     IRowModel,
     PostConstruct,
     RowDataTransaction,

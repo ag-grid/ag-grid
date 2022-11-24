@@ -13,7 +13,6 @@ import {
     IClipboardCopyRowsParams,
     Column,
     ColumnModel,
-    Constants,
     CsvExportParams,
     Events,
     FlashCellsEvent,
@@ -53,6 +52,9 @@ interface ColumnCallback {
 type CellsToFlashType = { [key: string]: boolean }
 type DataForCellRangesType = { data: string, cellsToFlash: CellsToFlashType }
 
+// Matches value in changeDetectionService
+const SOURCE_PASTE = 'paste';
+
 @Bean('clipboardService')
 export class ClipboardService extends BeanStub implements IClipboardService {
 
@@ -70,6 +72,10 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
+
+
+    private EXPORT_TYPE_DRAG_COPY = 'dragCopy';
+    private EXPORT_TYPE_CLIPBOARD = 'clipboard';
 
     private clientSideRowModel: IClientSideRowModel;
     private logger: Logger;
@@ -294,9 +300,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 }
 
                 const newValue = this.processCell(
-                    rowNode, column, currentRowData[idx], Constants.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                    rowNode, column, currentRowData[idx], this.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
 
-                rowNode.setDataValue(column, newValue, Constants.SOURCE_PASTE);
+                rowNode.setDataValue(column, newValue, SOURCE_PASTE);
 
                 if (changedPath) {
                     changedPath.addParentNode(rowNode.parent, [column]);
@@ -333,7 +339,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 updatedRowNodes,
                 columnsToPasteInto,
                 cellsToFlash,
-                Constants.EXPORT_TYPE_CLIPBOARD,
+                this.EXPORT_TYPE_CLIPBOARD,
                 changedPath);
         }
     }
@@ -351,7 +357,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[]) => {
             updatedRowNodes.push(rowNode);
             columns.forEach(column =>
-                this.updateCellValue(rowNode, column, value, cellsToFlash, Constants.EXPORT_TYPE_CLIPBOARD, changedPath));
+                this.updateCellValue(rowNode, column, value, cellsToFlash, this.EXPORT_TYPE_CLIPBOARD, changedPath));
         };
 
         this.iterateActiveRanges(false, rowCallback);
@@ -387,7 +393,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                             rowNode,
                             column,
                             this.valueService.getValue(column, rowNode),
-                            Constants.EXPORT_TYPE_DRAG_COPY,
+                            this.EXPORT_TYPE_DRAG_COPY,
                             processCellForClipboardFunc);
 
                         firstRowValues.push(value);
@@ -399,9 +405,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                         if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) { return; }
 
                         const firstRowValue = this.processCell(
-                            rowNode, column, firstRowValues[index], Constants.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                            rowNode, column, firstRowValues[index], this.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
 
-                        rowNode.setDataValue(column, firstRowValue, Constants.SOURCE_PASTE);
+                        rowNode.setDataValue(column, firstRowValue, SOURCE_PASTE);
 
                         if (changedPath) {
                             changedPath.addParentNode(rowNode.parent, [column]);
@@ -508,7 +514,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         ) { return; }
 
         const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'));
-        rowNode.setDataValue(column, processedValue, Constants.SOURCE_PASTE);
+        rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
 
         const cellId = this.cellPositionUtils.createIdFromValues(rowNode.rowIndex!, column, rowNode.rowPinned);
         cellsToFlash[cellId] = true;

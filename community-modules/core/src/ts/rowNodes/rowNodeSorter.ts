@@ -4,7 +4,6 @@ import { Autowired, Bean } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ValueService } from "../valueService/valueService";
 import { _ } from "../utils";
-import { Constants } from "../constants/constants";
 import { ColumnModel } from "../columns/columnModel";
 import { GridOptionsService } from "../gridOptionsService";
 
@@ -45,7 +44,7 @@ export class RowNodeSorter {
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
             const sortOption = sortOptions[i];
-            const isDescending = sortOption.sort === Constants.SORT_DESC;
+            const isDescending = sortOption.sort === 'desc';
 
             const valueA: any = this.getValue(nodeA, sortOption.column);
             const valueB: any = this.getValue(nodeB, sortOption.column);
@@ -65,7 +64,7 @@ export class RowNodeSorter {
             const validResult = !isNaN(comparatorResult);
 
             if (validResult && comparatorResult !== 0) {
-                return sortOption.sort === Constants.SORT_ASC ? comparatorResult : comparatorResult * -1;
+                return sortOption.sort === 'asc' ? comparatorResult : comparatorResult * -1;
             }
         }
         // All matched, we make is so that the original sort order is kept:

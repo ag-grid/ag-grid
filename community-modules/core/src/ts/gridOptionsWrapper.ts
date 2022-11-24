@@ -1,9 +1,8 @@
 import { ColumnApi } from './columns/columnApi';
 import { ColDefUtil } from './components/colDefUtil';
 import { ComponentUtil } from './components/componentUtil';
-import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
-import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
+import { DomLayoutType, GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
 import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
@@ -337,23 +336,19 @@ export class GridOptionsWrapper {
     }
 
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
-    public getDomLayout(): string {
-        const domLayout = this.gridOptions.domLayout || Constants.DOM_LAYOUT_NORMAL;
-        const validLayouts = [
-            Constants.DOM_LAYOUT_PRINT,
-            Constants.DOM_LAYOUT_AUTO_HEIGHT,
-            Constants.DOM_LAYOUT_NORMAL
-        ];
+    public getDomLayout(): DomLayoutType {
+        const domLayout: DomLayoutType = this.gridOptions.domLayout || 'normal';
+        const validLayouts: DomLayoutType[] = ['normal', 'print', 'autoHeight'];
 
         if (validLayouts.indexOf(domLayout) === -1) {
             doOnce(
                 () =>
                     console.warn(
-                        `AG Grid: ${domLayout} is not valid for DOM Layout, valid values are ${Constants.DOM_LAYOUT_NORMAL}, ${Constants.DOM_LAYOUT_AUTO_HEIGHT} and ${Constants.DOM_LAYOUT_PRINT}`
+                        `AG Grid: ${domLayout} is not valid for DOM Layout, valid values are 'normal', 'autoHeight', 'print'.`
                     ),
                 'warn about dom layout values'
             );
-            return Constants.DOM_LAYOUT_NORMAL;
+            return 'normal';
         }
 
         return domLayout;
@@ -402,7 +397,7 @@ export class GridOptionsWrapper {
     }
 
     public getAsyncTransactionWaitMillis(): number | undefined {
-        return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : Constants.BATCH_WAIT_MILLIS;
+        return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
     }
 
     public isAnimateRows() {
@@ -658,7 +653,7 @@ export class GridOptionsWrapper {
                 this.gridOptions.rowBuffer = rowBuffer = 0;
             }
         } else {
-            rowBuffer = Constants.ROW_BUFFER_SIZE;
+            rowBuffer = 10;
         }
 
         return rowBuffer;

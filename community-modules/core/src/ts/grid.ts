@@ -41,7 +41,6 @@ import { AutoGroupColService } from "./columns/autoGroupColService";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { PaginationAutoPageSizeService } from "./pagination/paginationAutoPageSizeService";
 import { IRowModel, RowModelType } from "./interfaces/iRowModel";
-import { Constants } from "./constants/constants";
 import { ValueCache } from "./valueService/valueCache";
 import { ChangeDetectionService } from "./valueService/changeDetectionService";
 import { AlignedGridsService } from "./alignedGridsService";

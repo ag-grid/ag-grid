@@ -10,7 +10,6 @@ import {
     ModelUpdatedEvent,
     ViewportChangedEvent
 } from "../events";
-import { Constants } from "../constants/constants";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
 import { FocusService } from "../focusService";
@@ -154,7 +153,7 @@ export class RowRenderer extends BeanStub {
         this.registerCellEventListeners();
 
         this.initialiseCache();
-        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        this.printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
         this.embedFullWidthRows = this.printLayout || this.gridOptionsService.is('embedFullWidthRows');
 
         this.redrawAfterModelUpdate();
@@ -190,7 +189,7 @@ export class RowRenderer extends BeanStub {
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
         const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-        const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
 
         if (isEnsureDomOrder || isPrintLayout) {
             liveList.sort((a, b) => a.getRowNode().rowIndex - b.getRowNode.rowIndex);
@@ -319,7 +318,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private onDomLayoutChanged(): void {
-        const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
         const embedFullWidthRows = printLayout || this.gridOptionsService.is('embedFullWidthRows');
 
         // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
@@ -705,9 +704,9 @@ export class RowRenderer extends BeanStub {
 
         rowNodes.forEach(rowNode => {
             const id = rowNode.id!;
-            if (rowNode.rowPinned === Constants.PINNED_TOP) {
+            if (rowNode.rowPinned === 'top') {
                 res.top[id] = rowNode;
-            } else if (rowNode.rowPinned === Constants.PINNED_BOTTOM) {
+            } else if (rowNode.rowPinned === 'bottom') {
                 res.bottom[id] = rowNode;
             } else {
                 res.normal[id] = rowNode;
@@ -722,11 +721,11 @@ export class RowRenderer extends BeanStub {
         const id = rowNode.id!;
         const floating = rowNode.rowPinned;
 
-        if (floating === Constants.PINNED_BOTTOM) {
+        if (floating === 'bottom') {
             return rowIdsMap.bottom[id] != null;
         }
 
-        if (floating === Constants.PINNED_TOP) {
+        if (floating === 'top') {
             return rowIdsMap.top[id] != null;
         }
 
@@ -1178,7 +1177,7 @@ export class RowRenderer extends BeanStub {
         // trying to render all the rows, eg 10,000+ rows. this will kill the browser. so instead of
         // killing the browser, we limit the number of rows. just in case some use case we didn't think
         // of, we also have a property to not do this operation.
-        const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
+        const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout() === 'normal';
         const suppressRowCountRestriction = this.gridOptionsService.is('suppressMaxRenderedRowRestriction');
         const rowBufferMaxSize = Math.max(this.gridOptionsWrapper.getRowBuffer(), 500);
 
@@ -1320,10 +1319,10 @@ export class RowRenderer extends BeanStub {
         let rowCtrl: RowCtrl | null;
         const {rowIndex} = rowPosition;
         switch (rowPosition.rowPinned) {
-            case Constants.PINNED_TOP:
+            case 'top':
                 rowCtrl = this.topRowCtrls[rowIndex];
                 break;
-            case Constants.PINNED_BOTTOM:
+            case 'bottom':
                 rowCtrl = this.bottomRowCtrls[rowIndex];
                 break;
             default:
@@ -1339,9 +1338,9 @@ export class RowRenderer extends BeanStub {
 
     public getRowNode(gridRow: RowPosition): RowNode | undefined {
         switch (gridRow.rowPinned) {
-            case Constants.PINNED_TOP:
+            case 'top':
                 return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
-            case Constants.PINNED_BOTTOM:
+            case 'bottom':
                 return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);

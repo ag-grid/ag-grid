@@ -15,7 +15,6 @@ import { NavigationService } from "./../navigationService";
 import { FocusService } from "../../focusService";
 import { KeyCode } from "../../constants/keyCode";
 import { UndoRedoService } from "../../undoRedo/undoRedoService";
-import { Constants } from "../../constants/constants";
 import { missingOrEmpty } from "../../utils/generic";
 import { last } from "../../utils/array";
 import { normaliseQwertyAzerty } from "../../utils/keyboard";
@@ -260,15 +259,14 @@ export class RowContainerEventsFeature extends BeanStub {
     private onCtrlAndA(event: KeyboardEvent): void {
 
         const { pinnedRowModel, paginationProxy, rangeService } = this;
-        const { PINNED_BOTTOM, PINNED_TOP } = Constants;
 
         if (rangeService && paginationProxy.isRowsToRender()) {
             const [isEmptyPinnedTop, isEmptyPinnedBottom] = [
-                pinnedRowModel.isEmpty(PINNED_TOP),
-                pinnedRowModel.isEmpty(PINNED_BOTTOM)
+                pinnedRowModel.isEmpty('top'),
+                pinnedRowModel.isEmpty('bottom')
             ];
 
-            const floatingStart: RowPinnedType = isEmptyPinnedTop ? null : PINNED_TOP;
+            const floatingStart: RowPinnedType = isEmptyPinnedTop ? null : 'top';
             let floatingEnd: RowPinnedType;
             let rowEnd: number;
 
@@ -276,7 +274,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 floatingEnd = null;
                 rowEnd = this.paginationProxy.getRowCount() - 1;
             } else {
-                floatingEnd = PINNED_BOTTOM;
+                floatingEnd = 'bottom';
                 rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
             }
 

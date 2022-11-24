@@ -1,4 +1,3 @@
-import { Constants } from "../constants/constants";
 import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BeanStub } from "../context/beanStub";
@@ -39,9 +38,9 @@ export class LayoutFeature extends BeanStub {
     private updateLayoutClasses(): void {
         const domLayout = this.gridOptionsWrapper.getDomLayout();
         const params = {
-            autoHeight: domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT,
-            normal: domLayout === Constants.DOM_LAYOUT_NORMAL,
-            print: domLayout === Constants.DOM_LAYOUT_PRINT
+            autoHeight: domLayout === 'autoHeight',
+            normal: domLayout === 'normal',
+            print: domLayout === 'print'
         };
         const cssClass = params.autoHeight ? LayoutCssClasses.AUTO_HEIGHT :
                             params.print ? LayoutCssClasses.PRINT : LayoutCssClasses.NORMAL;

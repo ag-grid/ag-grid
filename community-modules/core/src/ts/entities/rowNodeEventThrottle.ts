@@ -1,4 +1,3 @@
-import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowGroupOpenedEvent } from "../events";

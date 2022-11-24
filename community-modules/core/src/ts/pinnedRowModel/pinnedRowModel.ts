@@ -1,7 +1,6 @@
 import { RowNode, RowPinnedType } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events, PinnedRowDataChangedEvent } from "../events";
-import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
 import { missingOrEmpty } from "../utils/generic";
 import { last } from "../utils/array";
@@ -23,7 +22,7 @@ export class PinnedRowModel extends BeanStub {
     }
 
     public isEmpty(floating: RowPinnedType): boolean {
-        const rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
+        const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
         return missingOrEmpty(rows);
     }
 
@@ -32,7 +31,7 @@ export class PinnedRowModel extends BeanStub {
     }
 
     public getRowAtPixel(pixel: number, floating: RowPinnedType): number {
-        const rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
+        const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
         if (missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
@@ -75,7 +74,7 @@ export class PinnedRowModel extends BeanStub {
                 const idPrefix = isTop ? RowNode.ID_PREFIX_TOP_PINNED : RowNode.ID_PREFIX_BOTTOM_PINNED;
                 rowNode.id = idPrefix + index;
 
-                rowNode.rowPinned = isTop ? Constants.PINNED_TOP : Constants.PINNED_BOTTOM;
+                rowNode.rowPinned = isTop ? 'top' : 'bottom';
                 rowNode.setRowTop(nextRowTop);
                 rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
                 rowNode.setRowIndex(index);

@@ -1,4 +1,4 @@
-import { AbstractHeaderCellCtrl, Constants, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderGroupCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from 'ag-grid-community';
+import { AbstractHeaderCellCtrl, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderGroupCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from 'ag-grid-community';
 import { createMemo, createSignal, For, onMount, useContext } from 'solid-js';
 import { BeansContext } from '../core/beansContext';
 import HeaderCellComp from './headerCellComp';
@@ -27,7 +27,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     const setCellCtrlsMaintainOrder = (next: AbstractHeaderCellCtrl[]) => {
         const prev = getCellCtrls();
         const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
-        const isPrintLayout = gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const isPrintLayout = gridOptionsWrapper.getDomLayout() === 'print';
 
         // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
         if (isEnsureDomOrder || isPrintLayout) {

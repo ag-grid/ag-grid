@@ -16,6 +16,7 @@ import { LongTapEvent, TapEvent, TouchListener } from "../../../widgets/touchLis
 import { SortIndicatorComp } from "./sortIndicatorComp";
 import { ColumnModel } from "../../../columns/columnModel";
 import { Events } from "../../../eventKeys";
+import { SortDirection } from "../../../entities/colDef";
 
 export interface IHeaderParams<TData = any> extends AgGridCommon<TData> {
     /** The column the header is for. */
@@ -52,7 +53,7 @@ export interface IHeaderParams<TData = any> extends AgGridCommon<TData> {
      * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).
      * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click)
      */
-    setSort: (sort: 'asc' | 'desc' | null, multiSort?: boolean) => void;
+    setSort: (sort: SortDirection, multiSort?: boolean) => void;
 
     /** Custom header template if provided to `headerComponentParams`, otherwise will be `undefined`. See [Header Templates](https://ag-grid.com/javascript-data-grid/column-headers/#header-templates) */
     template?: string;

@@ -34,10 +34,9 @@ import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 import { Autowired, Bean, Optional, PostConstruct, Qualifier } from '../context/context';
 import { IAggFuncService } from '../interfaces/iAggFuncService';
 import { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { AutoGroupColService } from './autoGroupColService';
+import { AutoGroupColService, GROUP_AUTO_COLUMN_ID } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
-import { Constants } from '../constants/constants';
 import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { SortController } from "../sortController";
@@ -1564,9 +1563,9 @@ export class ColumnModel extends BeanStub {
 
     public getContainerWidth(pinned: ColumnPinnedType): number {
         switch (pinned) {
-            case Constants.PINNED_LEFT:
+            case 'left':
                 return this.leftWidth;
-            case Constants.PINNED_RIGHT:
+            case 'right':
                 return this.rightWidth;
             default:
                 return this.bodyWidth;
@@ -1634,9 +1633,9 @@ export class ColumnModel extends BeanStub {
 
     public getDisplayedColumns(type: ColumnPinnedType): Column[] {
         switch (type) {
-            case Constants.PINNED_LEFT:
+            case 'left':
                 return this.getDisplayedLeftColumns();
-            case Constants.PINNED_RIGHT:
+            case 'right':
                 return this.getDisplayedRightColumns();
             default:
                 return this.getDisplayedCenterColumns();
@@ -1700,10 +1699,10 @@ export class ColumnModel extends BeanStub {
         this.columnAnimationService.start();
 
         let actualPinned: ColumnPinnedType;
-        if (pinned === true || pinned === Constants.PINNED_LEFT) {
-            actualPinned = Constants.PINNED_LEFT;
-        } else if (pinned === Constants.PINNED_RIGHT) {
-            actualPinned = Constants.PINNED_RIGHT;
+        if (pinned === true || pinned === 'left') {
+            actualPinned = 'left';
+        } else if (pinned === 'right') {
+            actualPinned = 'right';
         } else {
             actualPinned = null;
         }
@@ -2036,7 +2035,7 @@ export class ColumnModel extends BeanStub {
                 const colId = state.colId || '';
 
                 // auto group columns are re-created so deferring syncing with ColumnState
-                const isAutoGroupColumn = colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
+                const isAutoGroupColumn = colId.startsWith(GROUP_AUTO_COLUMN_ID);
                 if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
                     unmatchedAndAutoStates.push(state);
@@ -2173,7 +2172,7 @@ export class ColumnModel extends BeanStub {
             const alreadyProcessed = processedColIds[colId] != null;
             if (alreadyProcessed) { return; }
 
-            const isAutoGroupCol = colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
+            const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
             if (isAutoGroupCol) {
                 // auto group columns, if missing from state list, are added to the start.
                 // it's common to have autoGroup missing, as grouping could be on by default
@@ -2430,7 +2429,7 @@ export class ColumnModel extends BeanStub {
 
         const sort = getValue('sort').value1;
         if (sort !== undefined) {
-            if (sort === Constants.SORT_DESC || sort === Constants.SORT_ASC) {
+            if (sort === 'desc' || sort === 'asc') {
                 column.setSort(sort, source);
             } else {
                 column.setSort(undefined, source);
@@ -3537,10 +3536,10 @@ export class ColumnModel extends BeanStub {
         let result: IHeaderColumn[];
 
         switch (type) {
-            case Constants.PINNED_LEFT:
+            case 'left':
                 result = this.viewportRowLeft[dept];
                 break;
-            case Constants.PINNED_RIGHT:
+            case 'right':
                 result = this.viewportRowRight[dept];
                 break;
             default:
@@ -3863,9 +3862,9 @@ export class ColumnModel extends BeanStub {
         const groupInstanceIdCreator = new GroupInstanceIdCreator();
 
         this.displayedTreeLeft = this.displayedGroupCreator.createDisplayedGroups(
-            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Constants.PINNED_LEFT, this.displayedTreeLeft);
+            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, 'left', this.displayedTreeLeft);
         this.displayedTreeRight = this.displayedGroupCreator.createDisplayedGroups(
-            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Constants.PINNED_RIGHT, this.displayedTreeRight);
+            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, 'right', this.displayedTreeRight);
         this.displayedTreeCentre = this.displayedGroupCreator.createDisplayedGroups(
             centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, null, this.displayedTreeCentre);
 

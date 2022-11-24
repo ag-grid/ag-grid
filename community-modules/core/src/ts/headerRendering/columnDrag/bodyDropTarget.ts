@@ -3,7 +3,6 @@ import { Autowired, PostConstruct } from "../../context/context";
 import { MoveColumnFeature } from "./moveColumnFeature";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnModel } from "../../columns/columnModel";
-import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { CtrlsService } from "../../ctrlsService";
 import { ColumnPinnedType } from "../../entities/column";
@@ -42,14 +41,14 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
             switch (this.pinned) {
-                case Constants.PINNED_LEFT:
+                case 'left':
                     this.eSecondaryContainers = [
                         [p.gridBodyCtrl.getBodyViewportElement(), p.leftRowContainerCtrl.getContainerElement()],
                         [p.bottomLeftRowContainerCtrl.getContainerElement()],
                         [p.topLeftRowContainerCtrl.getContainerElement()]
                     ];
                     break;
-                case Constants.PINNED_RIGHT:
+                case 'right':
                     this.eSecondaryContainers = [
                         [p.gridBodyCtrl.getBodyViewportElement(), p.rightRowContainerCtrl.getContainerElement()],
                         [p.bottomRightRowContainerCtrl.getContainerElement()],

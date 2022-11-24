@@ -1,7 +1,7 @@
 import React, { memo, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import {
-    IHeaderRowContainerComp, HeaderRowCtrl, HeaderRowContainerCtrl, Constants, ColumnPinnedType
+    IHeaderRowContainerComp, HeaderRowCtrl, HeaderRowContainerCtrl, ColumnPinnedType
 } from '@ag-grid-community/core';
 import { CssClasses } from '../utils';
 import HeaderRowComp from './headerRowComp';
@@ -20,8 +20,8 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
     const {context} = useContext(BeansContext);
     const eGui = useRef<HTMLDivElement>(null);
 
-    const pinnedLeft = props.pinned === Constants.PINNED_LEFT;
-    const pinnedRight = props.pinned === Constants.PINNED_RIGHT;
+    const pinnedLeft = props.pinned === 'left';
+    const pinnedRight = props.pinned === 'right';
     const centre = !pinnedLeft && !pinnedRight;
 
     useEffectOnce(() => {
