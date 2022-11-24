@@ -19,7 +19,8 @@ import {
     WithoutGridCommon,
     Column,
     ColumnModel,
-    IsApplyServerSideTransactionParams
+    IsApplyServerSideTransactionParams,
+    SelectionChangedEvent
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
@@ -141,6 +142,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             // in which case rows can't be out of place if not found
             if (!allRowsAreDiscoverable) {
                 this.refreshStore(false);
+                this.updateSelectionAfterTransaction(updatedNodes);
                 return {
                     status: ServerSideTransactionResultStatus.Applied,
                     update: updatedNodes,
@@ -151,11 +153,36 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
         }
 
+        this.updateSelectionAfterTransaction(updatedNodes, removedNodes);
         return {
             status: ServerSideTransactionResultStatus.Applied,
             update: updatedNodes,
             add: insertedNodes,
             remove: removedNodes,
+        }
+    }
+
+    private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
+        let fireSelectionUpdatedEvent = false;
+        updatedNodes?.forEach(node => {
+            if (node.isSelected() && !node.selectable) {
+                node.setSelected(false, false, true);
+                fireSelectionUpdatedEvent = true;
+            }
+        });
+
+        removedNodes?.forEach(node => {
+            if (node.isSelected()) {
+                node.setSelected(false, false, true);
+                fireSelectionUpdatedEvent = true;
+            }
+        });
+
+        if (fireSelectionUpdatedEvent) {
+            const event: WithoutGridCommon<SelectionChangedEvent> = {
+                type: Events.EVENT_SELECTION_CHANGED
+            };
+            this.eventService.dispatchEvent(event);
         }
     }
 
