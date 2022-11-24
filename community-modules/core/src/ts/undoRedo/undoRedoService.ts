@@ -7,7 +7,6 @@ import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { CellValueChange, RangeUndoRedoAction, LastFocusedCell, UndoRedoAction, UndoRedoStack } from "./undoRedoStack";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { RowNode } from "../entities/rowNode";
-import { Constants } from "../constants/constants";
 import { CellRange, CellRangeParams, IRangeService } from "../interfaces/IRangeService";
 import { BeanStub } from "../context/beanStub";
 import { CellPosition, CellPositionUtils } from "../entities/cellPosition";
@@ -319,9 +318,9 @@ export class UndoRedoService extends BeanStub {
 
     private getRowNode(gridRow: RowPosition): RowNode | undefined {
         switch (gridRow.rowPinned) {
-            case Constants.PINNED_TOP:
+            case 'top':
                 return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
-            case Constants.PINNED_BOTTOM:
+            case 'bottom':
                 return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);

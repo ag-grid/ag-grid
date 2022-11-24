@@ -1,7 +1,6 @@
 import { ProcessRowParams } from "../../entities/iCallbackParams";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
-import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { CellPosition } from "../../entities/cellPosition";
 import { Column, ColumnPinnedType } from "../../entities/column";
@@ -501,10 +500,10 @@ export class RowCtrl extends BeanStub {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
 
             const leftCols = columnModel.getDisplayedLeftColumnsForRow(this.rowNode);
-            this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols, Constants.PINNED_LEFT);
+            this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols, 'left');
 
             const rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
-            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, Constants.PINNED_RIGHT);
+            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, 'right');
         }
 
         this.allRowGuis.forEach(item => {
@@ -598,8 +597,8 @@ export class RowCtrl extends BeanStub {
 
         const fullWidthSuccess = tryRefresh(this.fullWidthGui, null);
         const centerSuccess = tryRefresh(this.centerGui, null);
-        const leftSuccess = tryRefresh(this.leftGui, Constants.PINNED_LEFT);
-        const rightSuccess = tryRefresh(this.rightGui, Constants.PINNED_RIGHT);
+        const leftSuccess = tryRefresh(this.leftGui, 'left');
+        const rightSuccess = tryRefresh(this.rightGui, 'right');
 
         const allFullWidthRowsRefreshed = fullWidthSuccess && centerSuccess && leftSuccess && rightSuccess;
 
@@ -1140,9 +1139,9 @@ export class RowCtrl extends BeanStub {
 
     private getPinnedForContainer(rowContainerType: RowContainerType): ColumnPinnedType {
         const pinned = rowContainerType === RowContainerType.LEFT
-            ? Constants.PINNED_LEFT
+            ? 'left'
             : rowContainerType === RowContainerType.RIGHT
-                ? Constants.PINNED_RIGHT
+                ? 'right'
                 : null;
         return pinned;
     }

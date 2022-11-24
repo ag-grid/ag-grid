@@ -2,7 +2,6 @@ import { Bean } from "../context/context";
 import { Autowired } from "../context/context";
 import { CellPosition } from "../entities/cellPosition";
 import { NumberSequence } from '../utils';
-import { Constants } from "../constants/constants";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
 import { getCtrlForEvent } from "../utils/event";
@@ -58,7 +57,7 @@ export class MouseEventService extends BeanStub {
     }
 
     public getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number, y: number; } {
-        const gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
+        const gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === 'normal';
         const e = event as MouseEvent;
         let x: number;
         let y: number;

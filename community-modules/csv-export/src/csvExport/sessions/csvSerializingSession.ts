@@ -1,4 +1,4 @@
-import { Column, ColumnGroup, Constants, CsvCustomContent, RowNode } from "@ag-grid-community/core";
+import { Column, ColumnGroup, CsvCustomContent, RowNode } from "@ag-grid-community/core";
 import { CsvSerializingParams, RowAccumulator, RowSpanningAccumulator } from "../interfaces";
 import { BaseGridSerializingSession } from "./baseGridSerializingSession";
 
@@ -95,7 +95,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, index, Constants.EXPORT_TYPE_CSV, node));
+        this.result += this.putInQuotes(this.extractRowCellValue(column, index, index, 'csv', node));
     }
 
     private putInQuotes(value: any): string {

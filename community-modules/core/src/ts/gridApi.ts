@@ -2,7 +2,6 @@ import { AlignedGridsService } from "./alignedGridsService";
 import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel, ISizeColumnsToFitParams } from "./columns/columnModel";
 import { FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
-import { Constants } from "./constants/constants";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";

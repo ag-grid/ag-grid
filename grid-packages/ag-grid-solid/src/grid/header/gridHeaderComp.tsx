@@ -1,4 +1,4 @@
-import { Constants, GridHeaderCtrl, IGridHeaderComp } from 'ag-grid-community';
+import { GridHeaderCtrl, IGridHeaderComp } from 'ag-grid-community';
 import { createMemo, createSignal, onCleanup, onMount, useContext } from 'solid-js';
 import { BeansContext } from '../core/beansContext';
 import { CssClasses } from '../core/utils';
@@ -43,9 +43,9 @@ const GridHeaderComp = ()=> {
 
     return (
         <div ref={eGui!} class={className()} style={style()} role="presentation">
-            <HeaderRowContainerComp pinned={Constants.PINNED_LEFT}/>
+            <HeaderRowContainerComp pinned={'left'} />
             <HeaderRowContainerComp pinned={null}/>
-            <HeaderRowContainerComp pinned={Constants.PINNED_RIGHT}/>
+            <HeaderRowContainerComp pinned={'right'} />
         </div>
     );
 };

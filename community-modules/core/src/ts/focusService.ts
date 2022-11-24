@@ -14,7 +14,6 @@ import { ColumnGroup } from "./entities/columnGroup";
 import { ManagedFocusFeature } from "./widgets/managedFocusFeature";
 import { getTabIndex } from './utils/browser';
 import { makeNull } from './utils/generic';
-import { Constants } from "./constants/constants";
 import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowCtrl } from "./rendering/row/rowCtrl";
@@ -24,6 +23,8 @@ import { AbstractHeaderCellCtrl } from "./headerRendering/cells/abstractCell/abs
 import { last } from "./utils/array";
 import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./entities/iCallbackParams";
 import { WithoutGridCommon } from "./interfaces/iCommon";
+import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR } from "./utils/dom";
+
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -382,8 +383,8 @@ export class FocusService extends BeanStub {
     }
 
     public findFocusableElements(rootNode: HTMLElement, exclude?: string | null, onlyUnmanaged = false): HTMLElement[] {
-        const focusableString = Constants.FOCUSABLE_SELECTOR;
-        let excludeString = Constants.FOCUSABLE_EXCLUDE;
+        const focusableString = FOCUSABLE_SELECTOR;
+        let excludeString = FOCUSABLE_EXCLUDE;
 
         if (exclude) {
             excludeString += ', ' + exclude;

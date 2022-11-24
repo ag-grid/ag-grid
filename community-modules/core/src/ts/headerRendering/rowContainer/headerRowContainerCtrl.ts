@@ -1,5 +1,4 @@
 import { ColumnModel } from "../../columns/columnModel";
-import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
@@ -183,8 +182,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private setupPinnedWidth(): void {
         if (this.pinned == null) { return; }
 
-        const pinningLeft = this.pinned === Constants.PINNED_LEFT;
-        const pinningRight = this.pinned === Constants.PINNED_RIGHT;
+        const pinningLeft = this.pinned === 'left';
+        const pinningRight = this.pinned === 'right';
 
         this.hidden = true;
 

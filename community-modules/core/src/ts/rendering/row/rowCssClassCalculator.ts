@@ -6,7 +6,6 @@ import { GridOptionsService } from "../../gridOptionsService";
 import { Autowired, Bean } from "../../context/context";
 import { StylingService } from "../../styling/stylingService";
 import { RowClassParams } from "../../entities/gridOptions";
-import { Constants } from "../../constants/constants";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { ColumnPinnedType } from "../../entities/column";
 
@@ -96,10 +95,10 @@ export class RowCssClassCalculator {
         }
 
         if (params.fullWidthRow) {
-            if (params.pinned === Constants.PINNED_LEFT) {
+            if (params.pinned === 'left') {
                 classes.push('ag-cell-last-left-pinned');
             }
-            if (params.pinned === Constants.PINNED_RIGHT) {
+            if (params.pinned === 'right') {
                 classes.push('ag-cell-first-right-pinned');
             }
         }

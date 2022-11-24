@@ -15,6 +15,7 @@ export { ColumnKeyCreator } from "./columns/columnKeyCreator";
 export { ColumnUtils } from "./columns/columnUtils";
 export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
+export { GROUP_AUTO_COLUMN_ID } from "./columns/autoGroupColService";
 
 // components
 export { ComponentUtil } from "./components/componentUtil";
@@ -287,7 +288,6 @@ export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
-export { Constants } from "./constants/constants";
 export { KeyCode } from "./constants/keyCode";
 export { Grid, GridParams, GridCoreCreator } from "./grid";
 export { GridApi, DetailGridInfo, StartEditingCellParams } from "./gridApi";
@@ -374,6 +374,7 @@ export {
     ToolPanelClassParams,
     ToolPanelClass,
     KeyCreatorParams,
+    SortDirection,
     // deprecated params
     IsColumnFunc,
     IsColumnFuncParams
@@ -406,6 +407,7 @@ export {
     TreeDataDisplayType,
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
+    DomLayoutType
 } from "./entities/gridOptions";
 
 export {

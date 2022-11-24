@@ -3,15 +3,13 @@ import { Column } from "../entities/column";
 import { ColDef } from "../entities/colDef";
 import { ColumnModel } from "./columnModel";
 import { ColumnFactory } from "./columnFactory";
-import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
 import { mergeDeep } from "../utils/object";
 import { missing } from "../utils/generic";
 
+export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
 @Bean('autoGroupColService')
 export class AutoGroupColService extends BeanStub {
-
-    public static GROUP_AUTO_COLUMN_BUNDLE_ID = Constants.GROUP_AUTO_COLUMN_ID;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
@@ -47,9 +45,9 @@ export class AutoGroupColService extends BeanStub {
         // if doing multi, set the field
         let colId: string;
         if (rowGroupCol) {
-            colId = `${Constants.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
+            colId = `${GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
         } else {
-            colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
+            colId = GROUP_AUTO_COLUMN_ID;
         }
 
         const userAutoColDef = this.gridOptionsService.get('autoGroupColumnDef');

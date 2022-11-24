@@ -1252,11 +1252,11 @@
     },
     "sort": {
       "description": "/** If sorting by default, set it here. Set to `asc` or `desc`. */",
-      "type": { "returnType": "'asc' | 'desc' | null", "optional": true }
+      "type": { "returnType": "SortDirection", "optional": true }
     },
     "initialSort": {
       "description": "/** Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions. */",
-      "type": { "returnType": "'asc' | 'desc' | null", "optional": true }
+      "type": { "returnType": "SortDirection", "optional": true }
     },
     "sortIndex": {
       "description": "/** If sorting more than one column by default, specifies order in which the sorting should be applied. */",
@@ -1268,7 +1268,7 @@
     },
     "sortingOrder": {
       "description": "/**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */",
-      "type": { "returnType": "('asc' | 'desc' | null)[]", "optional": true }
+      "type": { "returnType": "(SortDirection)[]", "optional": true }
     },
     "comparator": {
       "description": "/** Override the default sorting order by providing a custom sort comparator. \n     * \n     * - `valueA`, `valueB` are the values to compare.\n     * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.\n     * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.\n     * \n     * Return:\n     *  - `0`  valueA is the same as valueB\n     *  - `> 0` Sort valueA after valueB \n     *  - `< 0` Sort valueA before valueB\n     */",
@@ -2335,6 +2335,7 @@
       "type": { "returnType": "'over' | 'under'", "optional": true }
     }
   },
+  "SortDirection": {},
   "ColumnPinnedType": {},
   "GridOptions": {
     "statusBar": {
@@ -2889,10 +2890,7 @@
     },
     "domLayout": {
       "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n     * Default: `normal`\n     */",
-      "type": {
-        "returnType": "'normal' | 'autoHeight' | 'print'",
-        "optional": true
-      }
+      "type": { "returnType": "DomLayoutType", "optional": true }
     },
     "ensureDomOrder": {
       "description": "/** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false` */",
@@ -3262,7 +3260,7 @@
     },
     "sortingOrder": {
       "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */",
-      "type": { "returnType": "('asc' | 'desc' | null)[]", "optional": true }
+      "type": { "returnType": "(SortDirection)[]", "optional": true }
     },
     "accentedSort": {
       "description": "/** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */",
@@ -5251,6 +5249,7 @@
       "type": { "returnType": "any", "optional": true }
     }
   },
+  "DomLayoutType": {},
   "GetContextMenuItemsParams": {
     "defaultItems": {
       "description": "/** Names of the items that would be provided by default. */",
@@ -10998,10 +10997,7 @@
     "setSort": {
       "description": "/** Callback to set the sort for this column.\n     * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).\n     * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click)\n     */",
       "type": {
-        "arguments": {
-          "sort": "'asc' | 'desc' | null",
-          "multiSort?": "boolean"
-        },
+        "arguments": { "sort": "SortDirection", "multiSort?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -24881,10 +24877,7 @@
     },
     "domLayout": {
       "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n     * Default: `normal`\n     */",
-      "type": {
-        "returnType": "'normal' | 'autoHeight' | 'print'",
-        "optional": true
-      }
+      "type": { "returnType": "DomLayoutType", "optional": true }
     },
     "ensureDomOrder": {
       "description": "/** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false` */",
@@ -25254,7 +25247,7 @@
     },
     "sortingOrder": {
       "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */",
-      "type": { "returnType": "('asc' | 'desc' | null)[]", "optional": true }
+      "type": { "returnType": "(SortDirection)[]", "optional": true }
     },
     "accentedSort": {
       "description": "/** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */",
@@ -27601,10 +27594,7 @@
     },
     "domLayout": {
       "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n     * Default: `normal`\n     */",
-      "type": {
-        "returnType": "'normal' | 'autoHeight' | 'print'",
-        "optional": true
-      }
+      "type": { "returnType": "DomLayoutType", "optional": true }
     },
     "ensureDomOrder": {
       "description": "/** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false` */",
@@ -27974,7 +27964,7 @@
     },
     "sortingOrder": {
       "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */",
-      "type": { "returnType": "('asc' | 'desc' | null)[]", "optional": true }
+      "type": { "returnType": "(SortDirection)[]", "optional": true }
     },
     "accentedSort": {
       "description": "/** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */",
@@ -30327,10 +30317,7 @@
     },
     "domLayout": {
       "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n     * Default: `normal`\n     */",
-      "type": {
-        "returnType": "'normal' | 'autoHeight' | 'print'",
-        "optional": true
-      }
+      "type": { "returnType": "DomLayoutType", "optional": true }
     },
     "ensureDomOrder": {
       "description": "/** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false` */",
@@ -30700,7 +30687,7 @@
     },
     "sortingOrder": {
       "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */",
-      "type": { "returnType": "('asc' | 'desc' | null)[]", "optional": true }
+      "type": { "returnType": "(SortDirection)[]", "optional": true }
     },
     "accentedSort": {
       "description": "/** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */",

@@ -23,7 +23,7 @@ import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
 import { getElementSize } from "../../../utils/dom";
 import { ResizeObserverService } from "../../../misc/resizeObserverService";
-import { noop } from "../../../utils/function";
+import { SortDirection } from "../../../entities/colDef";
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -143,7 +143,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             progressSort: (multiSort?: boolean) => {
                 this.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
             },
-            setSort: (sort: 'asc' | 'desc' | null, multiSort?: boolean) => {
+            setSort: (sort: SortDirection, multiSort?: boolean) => {
                 this.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
             },
             api: this.gridApi,

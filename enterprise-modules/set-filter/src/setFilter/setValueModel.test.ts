@@ -1,5 +1,5 @@
 import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
-import { Constants, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams, ValueFormatterFunc, _ } from '@ag-grid-community/core';
+import { RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams, ValueFormatterFunc, _ } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 type ValueType = string | number | boolean | Date;

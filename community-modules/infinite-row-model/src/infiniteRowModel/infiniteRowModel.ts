@@ -3,7 +3,6 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    Constants,
     Events,
     FilterManager,
     IDatasource,

@@ -1,4 +1,3 @@
-import { Constants } from '../constants/constants';
 import { PostConstruct } from '../context/context';
 import { Component } from '../widgets/component';
 import { GridHeaderCtrl, IGridHeaderComp } from './gridHeaderCtrl';
@@ -32,8 +31,8 @@ export class GridHeaderComp extends Component {
             this.appendChild(container);
         };
 
-        addContainer(new HeaderRowContainerComp(Constants.PINNED_LEFT));
+        addContainer(new HeaderRowContainerComp('left'));
         addContainer(new HeaderRowContainerComp(null));
-        addContainer(new HeaderRowContainerComp(Constants.PINNED_RIGHT));
+        addContainer(new HeaderRowContainerComp('right'));
     }
 }

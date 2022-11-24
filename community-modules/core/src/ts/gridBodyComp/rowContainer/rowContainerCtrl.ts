@@ -16,7 +16,6 @@ import { SetHeightFeature } from "./setHeightFeature";
 import { DragListenerFeature } from "./dragListenerFeature";
 import { CenterWidthFeature } from "../centerWidthFeature";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
-import { Constants } from "../../constants/constants";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ColumnPinnedType } from "../../entities/column";
@@ -132,12 +131,12 @@ export class RowContainerCtrl extends BeanStub {
             case RowContainerName.TOP_LEFT:
             case RowContainerName.STICKY_TOP_LEFT:
             case RowContainerName.LEFT:
-                return Constants.PINNED_LEFT;
+                return 'left';
             case RowContainerName.BOTTOM_RIGHT:
             case RowContainerName.TOP_RIGHT:
             case RowContainerName.STICKY_TOP_RIGHT:
             case RowContainerName.RIGHT:
-                return Constants.PINNED_RIGHT;
+                return 'right';
             default:
                 return null;
         }
@@ -273,7 +272,7 @@ export class RowContainerCtrl extends BeanStub {
 
         const listener = () => {
             const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-            const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+            const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
             this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
         }
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
@@ -405,7 +404,7 @@ export class RowContainerCtrl extends BeanStub {
         const doesRowMatch = (rowCtrl: RowCtrl) => {
             const fullWidthRow = rowCtrl.isFullWidth();
 
-            const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+            const printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
 
             const embedFW = this.embedFullWidthRows || printLayout;
 

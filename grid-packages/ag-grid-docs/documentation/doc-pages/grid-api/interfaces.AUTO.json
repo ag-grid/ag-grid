@@ -601,11 +601,11 @@
       "allowedAggFuncs?": "string[]",
       "showRowGroup?": "string | boolean",
       "sortable?": "boolean",
-      "sort?": "'asc' | 'desc' | null",
-      "initialSort?": "'asc' | 'desc' | null",
+      "sort?": "SortDirection",
+      "initialSort?": "SortDirection",
       "sortIndex?": "number | null",
       "initialSortIndex?": "number",
-      "sortingOrder?": "('asc' | 'desc' | null)[]",
+      "sortingOrder?": "(SortDirection)[]",
       "comparator?": "(valueA: any, valueB: any, nodeA: RowNode<TData>, nodeB: RowNode<TData>, isDescending: boolean) => number",
       "unSortIcon?": "boolean",
       "colSpan?": "(params: ColSpanParams<TData>) => number",
@@ -1501,6 +1501,10 @@
       "popupPosition?": "/** Equivalent of setting `colDef.cellEditorPopupPosition` */"
     }
   },
+  "SortDirection": {
+    "meta": { "isTypeAlias": true },
+    "type": "'asc' | 'desc' | null"
+  },
   "ColumnPinnedType": {
     "meta": { "isTypeAlias": true },
     "type": "'left' | 'right' | boolean | null | undefined"
@@ -1638,7 +1642,7 @@
       "cellFlashDelay?": "number",
       "cellFadeDelay?": "number",
       "allowShowChangeAfterFilter?": "boolean",
-      "domLayout?": "'normal' | 'autoHeight' | 'print'",
+      "domLayout?": "DomLayoutType",
       "ensureDomOrder?": "boolean",
       "enableRtl?": "boolean",
       "suppressColumnVirtualisation?": "boolean",
@@ -1728,7 +1732,7 @@
       "enableFillHandle?": "boolean",
       "fillHandleDirection?": "'x' | 'y' | 'xy'",
       "suppressClearOnFillReduction?": "boolean",
-      "sortingOrder?": "('asc' | 'desc' | null)[]",
+      "sortingOrder?": "(SortDirection)[]",
       "accentedSort?": "boolean",
       "unSortIcon?": "boolean",
       "suppressMultiSort?": "boolean",
@@ -2483,6 +2487,10 @@
       "frameworkComponent?": "/** @deprecated As of v27, use `component` for framework components too. */",
       "params?": "/** Equivalent of setting `loadingCellRendererParams` */"
     }
+  },
+  "DomLayoutType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'normal' | 'autoHeight' | 'print'"
   },
   "GetContextMenuItemsParams": {
     "meta": { "typeParams": ["TData = any"] },
@@ -6260,7 +6268,7 @@
       "enableMenu": "boolean",
       "showColumnMenu": "(source: HTMLElement) => void",
       "progressSort": "(multiSort?: boolean) => void",
-      "setSort": "(sort: 'asc' | 'desc' | null, multiSort?: boolean) => void",
+      "setSort": "(sort: SortDirection, multiSort?: boolean) => void",
       "template?": "string",
       "eGridHeader": "HTMLElement",
       "api": "GridApi<TData>",
@@ -14187,7 +14195,7 @@
       "cellFlashDelay?": "number",
       "cellFadeDelay?": "number",
       "allowShowChangeAfterFilter?": "boolean",
-      "domLayout?": "'normal' | 'autoHeight' | 'print'",
+      "domLayout?": "DomLayoutType",
       "ensureDomOrder?": "boolean",
       "enableRtl?": "boolean",
       "suppressColumnVirtualisation?": "boolean",
@@ -14277,7 +14285,7 @@
       "enableFillHandle?": "boolean",
       "fillHandleDirection?": "'x' | 'y' | 'xy'",
       "suppressClearOnFillReduction?": "boolean",
-      "sortingOrder?": "('asc' | 'desc' | null)[]",
+      "sortingOrder?": "(SortDirection)[]",
       "accentedSort?": "boolean",
       "unSortIcon?": "boolean",
       "suppressMultiSort?": "boolean",
@@ -14929,7 +14937,7 @@
       "cellFlashDelay?": "number",
       "cellFadeDelay?": "number",
       "allowShowChangeAfterFilter?": "boolean",
-      "domLayout?": "'normal' | 'autoHeight' | 'print'",
+      "domLayout?": "DomLayoutType",
       "ensureDomOrder?": "boolean",
       "enableRtl?": "boolean",
       "suppressColumnVirtualisation?": "boolean",
@@ -15019,7 +15027,7 @@
       "enableFillHandle?": "boolean",
       "fillHandleDirection?": "'x' | 'y' | 'xy'",
       "suppressClearOnFillReduction?": "boolean",
-      "sortingOrder?": "('asc' | 'desc' | null)[]",
+      "sortingOrder?": "(SortDirection)[]",
       "accentedSort?": "boolean",
       "unSortIcon?": "boolean",
       "suppressMultiSort?": "boolean",
@@ -15673,7 +15681,7 @@
       "cellFlashDelay?": "number",
       "cellFadeDelay?": "number",
       "allowShowChangeAfterFilter?": "boolean",
-      "domLayout?": "'normal' | 'autoHeight' | 'print'",
+      "domLayout?": "DomLayoutType",
       "ensureDomOrder?": "boolean",
       "enableRtl?": "boolean",
       "suppressColumnVirtualisation?": "boolean",
@@ -15763,7 +15771,7 @@
       "enableFillHandle?": "boolean",
       "fillHandleDirection?": "'x' | 'y' | 'xy'",
       "suppressClearOnFillReduction?": "boolean",
-      "sortingOrder?": "('asc' | 'desc' | null)[]",
+      "sortingOrder?": "(SortDirection)[]",
       "accentedSort?": "boolean",
       "unSortIcon?": "boolean",
       "suppressMultiSort?": "boolean",

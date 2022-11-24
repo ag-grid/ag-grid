@@ -1,6 +1,5 @@
 import {
     ColDef,
-    Constants,
     IClientSideRowModel,
     ValueFormatterService,
     ISetFilterParams,

@@ -1,5 +1,4 @@
 import { Autowired, PostConstruct } from "../../context/context";
-import { Constants } from "../../constants/constants";
 import { ColumnModel } from "../../columns/columnModel";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../../dragAndDrop/dragAndDropService";
@@ -529,7 +528,7 @@ export class MoveColumnFeature implements DropListener {
             if (columnsThatCanPin.length > 0) {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
                 if (this.failedMoveAttempts > 7) {
-                    const pinType = this.needToMoveLeft ? Constants.PINNED_LEFT : Constants.PINNED_RIGHT;
+                    const pinType = this.needToMoveLeft ? 'left' : 'right';
                     this.setColumnsPinned(columnsThatCanPin, pinType, "uiColumnDragged");
                     this.dragAndDropService.nudge();
                 }

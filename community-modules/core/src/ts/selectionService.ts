@@ -8,7 +8,6 @@ import { Events, SelectionChangedEvent } from "./events";
 import { Autowired } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { PostConstruct } from "./context/context";
-import { Constants } from "./constants/constants";
 import { ChangedPath } from "./utils/changedPath";
 import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { iterateObject } from "./utils/object";

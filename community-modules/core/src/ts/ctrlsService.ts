@@ -5,7 +5,6 @@ import { RowContainerCtrl } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 import { FakeHScrollCtrl } from "./gridBodyComp/fakeHScrollCtrl";
 import { BeanStub } from "./context/beanStub";
 import { GridHeaderCtrl } from "./headerRendering/gridHeaderCtrl";
-import { Constants } from "./constants/constants";
 import { HeaderRowContainerCtrl } from "./headerRendering/rowContainer/headerRowContainerCtrl";
 import { ColumnPinnedType } from "./entities/column";
 
@@ -219,10 +218,10 @@ export class CtrlsService extends BeanStub {
 
     public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: ColumnPinnedType): void {
         switch (pinned) {
-            case Constants.PINNED_LEFT:
+            case 'left':
                 this.leftHeaderRowContainerCtrl = ctrl;
                 break;
-            case Constants.PINNED_RIGHT:
+            case 'right':
                 this.rightHeaderRowContainerCtrl = ctrl;
                 break;
             default: this.centerHeaderRowContainerCtrl = ctrl;
@@ -279,8 +278,8 @@ export class CtrlsService extends BeanStub {
 
     public getHeaderRowContainerCtrl(pinned?: ColumnPinnedType): HeaderRowContainerCtrl {
         switch (pinned) {
-            case Constants.PINNED_LEFT: return this.leftHeaderRowContainerCtrl;
-            case Constants.PINNED_RIGHT: return this.rightHeaderRowContainerCtrl;
+            case 'left': return this.leftHeaderRowContainerCtrl;
+            case 'right': return this.rightHeaderRowContainerCtrl;
             default: return this.centerHeaderRowContainerCtrl;
         }
     }

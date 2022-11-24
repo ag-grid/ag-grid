@@ -2,7 +2,6 @@ import { IHeaderColumn } from "../../entities/iHeaderColumn";
 import { Column } from "../../entities/column";
 import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
-import { Constants } from "../../constants/constants";
 import { PostConstruct } from "../../context/context";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
@@ -104,17 +103,17 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private modifyLeftForPrintLayout(colOrGroup: IHeaderColumn, leftPosition: number): number {
-        const printLayout = this.beans.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const printLayout = this.beans.gridOptionsWrapper.getDomLayout() === 'print';
 
         if (!printLayout) { return leftPosition; }
 
-        if (colOrGroup.getPinned() === Constants.PINNED_LEFT) {
+        if (colOrGroup.getPinned() === 'left') {
             return leftPosition;
         }
 
         const leftWidth = this.beans.columnModel.getDisplayedColumnsLeftWidth();
 
-        if (colOrGroup.getPinned() === Constants.PINNED_RIGHT) {
+        if (colOrGroup.getPinned() === 'right') {
             const bodyWidth = this.beans.columnModel.getBodyContainerWidth();
             return leftWidth + bodyWidth + leftPosition;
         }

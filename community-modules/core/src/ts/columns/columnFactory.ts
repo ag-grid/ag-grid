@@ -1,6 +1,6 @@
 import { Logger, LoggerFactory } from '../logger';
 import { ColumnUtils } from './columnUtils';
-import { AbstractColDef, ColDef, ColGroupDef } from "../entities/colDef";
+import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnKeyCreator } from "./columnKeyCreator";
 import { IProvidedColumn } from "../entities/iProvidedColumn";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
@@ -8,7 +8,6 @@ import { Column } from "../entities/column";
 import { Autowired, Bean, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { BeanStub } from "../context/beanStub";
-import { Constants } from "../constants/constants";
 import { iterateObject, mergeDeep } from '../utils/object';
 import { attrToNumber, attrToBoolean } from '../utils/generic';
 import { removeFromArray } from '../utils/array';
@@ -318,7 +317,7 @@ export class ColumnFactory extends BeanStub {
 
         // sort - anything but undefined will set sort, thus null or empty string will clear the sort
         if (colDef.sort !== undefined) {
-            if (colDef.sort == Constants.SORT_ASC || colDef.sort == Constants.SORT_DESC) {
+            if (colDef.sort == 'asc' || colDef.sort == 'desc') {
                 column.setSort(colDef.sort);
             } else {
                 column.setSort(undefined);

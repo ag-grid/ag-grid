@@ -1,11 +1,11 @@
 import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
-import { Constants } from "./constants/constants";
 import { ColumnModel } from "./columns/columnModel";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { SortOption } from "./rowNodes/rowNodeSorter";
 import { WithoutGridCommon } from "./interfaces/iCommon";
+import { SortDirection } from "./entities/colDef";
 
 export interface SortModelItem {
     /** Column Id to apply the sort to. */
@@ -17,7 +17,7 @@ export interface SortModelItem {
 @Bean('sortController')
 export class SortController extends BeanStub {
 
-    private static DEFAULT_SORTING_ORDER = [Constants.SORT_ASC, Constants.SORT_DESC, null];
+    private static DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 
     @Autowired('columnModel') private columnModel: ColumnModel;
 
@@ -26,9 +26,9 @@ export class SortController extends BeanStub {
         this.setSortForColumn(column, nextDirection, multiSort, source);
     }
 
-    public setSortForColumn(column: Column, sort: 'asc' | 'desc' | null, multiSort: boolean, source: ColumnEventType): void {
+    public setSortForColumn(column: Column, sort: SortDirection, multiSort: boolean, source: ColumnEventType): void {
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
-        if (sort !== Constants.SORT_ASC && sort !== Constants.SORT_DESC) {
+        if (sort !== 'asc' && sort !== 'desc') {
             sort = null;
         }
 
@@ -108,8 +108,8 @@ export class SortController extends BeanStub {
         });
     }
 
-    private getNextSortDirection(column: Column): 'asc' | 'desc' | null {
-        let sortingOrder: ('asc' | 'desc' | null)[] | null | undefined;
+    private getNextSortDirection(column: Column): SortDirection {
+        let sortingOrder: (SortDirection)[] | null | undefined;
 
         if (column.getColDef().sortingOrder) {
             sortingOrder = column.getColDef().sortingOrder;
@@ -127,7 +127,7 @@ export class SortController extends BeanStub {
         const currentIndex = sortingOrder.indexOf(column.getSort()!);
         const notInArray = currentIndex < 0;
         const lastItemInArray = currentIndex == sortingOrder.length - 1;
-        let result: 'asc' | 'desc' | null;
+        let result: SortDirection;
 
         if (notInArray || lastItemInArray) {
             result = sortingOrder[0];
@@ -222,7 +222,7 @@ export class SortController extends BeanStub {
         return isColumnSortCouplingActive && isGroupDisplayColumn;
     }
 
-    public getDisplaySortForColumn(column: Column): 'asc' | 'desc' | 'mixed' | null | undefined {
+    public getDisplaySortForColumn(column: Column): SortDirection | 'mixed' | undefined {
         const linkedColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
         if (!this.canColumnDisplayMixedSort(column) || !linkedColumns?.length) {
             return column.getSort();

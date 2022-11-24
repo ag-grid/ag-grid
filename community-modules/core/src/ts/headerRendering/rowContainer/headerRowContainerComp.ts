@@ -1,5 +1,4 @@
 import { ColumnPinnedType } from '../../entities/column';
-import { Constants } from '../../constants/constants';
 import { PostConstruct, PreDestroy } from '../../context/context';
 import { ensureDomOrder } from '../../utils/dom';
 import { getAllValuesInObject } from '../../utils/object';
@@ -60,8 +59,8 @@ export class HeaderRowContainerComp extends Component {
     }
 
     private selectAndSetTemplate(): void {
-        const pinnedLeft = this.pinned == Constants.PINNED_LEFT;
-        const pinnedRight = this.pinned == Constants.PINNED_RIGHT;
+        const pinnedLeft = this.pinned == 'left';
+        const pinnedRight = this.pinned == 'right';
 
         const template = pinnedLeft ? HeaderRowContainerComp.PINNED_LEFT_TEMPLATE :
                          pinnedRight ? HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE : HeaderRowContainerComp.CENTER_TEMPLATE;

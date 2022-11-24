@@ -464,11 +464,11 @@
   },
   "sort": {
     "description": "/** If sorting by default, set it here. Set to `asc` or `desc`. */",
-    "type": { "returnType": "'asc' | 'desc' | null" }
+    "type": { "returnType": "SortDirection" }
   },
   "initialSort": {
     "description": "/** Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions. */",
-    "type": { "returnType": "'asc' | 'desc' | null" }
+    "type": { "returnType": "SortDirection" }
   },
   "sortIndex": {
     "description": "/** If sorting more than one column by default, specifies order in which the sorting should be applied. */",
@@ -480,7 +480,7 @@
   },
   "sortingOrder": {
     "description": "/**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */",
-    "type": { "returnType": "('asc' | 'desc' | null)[]" }
+    "type": { "returnType": "(SortDirection)[]" }
   },
   "comparator": {
     "description": "/** Override the default sorting order by providing a custom sort comparator. \n     * \n     * - `valueA`, `valueB` are the values to compare.\n     * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.\n     * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.\n     * \n     * Return:\n     *  - `0`  valueA is the same as valueB\n     *  - `> 0` Sort valueA after valueB \n     *  - `< 0` Sort valueA before valueB\n     */",

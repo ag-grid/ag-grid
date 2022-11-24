@@ -1,6 +1,5 @@
 import { Autowired, Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { Constants } from "../constants/constants";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowNode, RowPinnedType } from "./rowNode";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
@@ -28,12 +27,12 @@ export class RowPositionUtils extends BeanStub {
         let rowPinned: RowPinnedType;
 
         if (this.pinnedRowModel.getPinnedTopRowCount()) {
-            rowPinned = Constants.PINNED_TOP;
+            rowPinned = 'top';
         } else if (this.rowModel.getRowCount()) {
             rowPinned = null;
             rowIndex = this.paginationProxy.getPageFirstRow();
         } else if (this.pinnedRowModel.getPinnedBottomRowCount()) {
-            rowPinned = Constants.PINNED_BOTTOM;
+            rowPinned = 'bottom';
         }
 
         return rowPinned === undefined ? null : { rowIndex, rowPinned };
@@ -47,13 +46,13 @@ export class RowPositionUtils extends BeanStub {
         const pinnedTopCount = this.pinnedRowModel.getPinnedTopRowCount();
 
         if (pinnedBottomCount) {
-            rowPinned = Constants.PINNED_BOTTOM;
+            rowPinned = 'bottom';
             rowIndex = pinnedBottomCount - 1;
         } else if (this.rowModel.getRowCount()) {
             rowPinned = null;
             rowIndex = this.paginationProxy.getPageLastRow();
         } else if (pinnedTopCount) {
-            rowPinned = Constants.PINNED_TOP;
+            rowPinned = 'top';
             rowIndex = pinnedTopCount - 1;
         }
 
@@ -62,9 +61,9 @@ export class RowPositionUtils extends BeanStub {
 
     public getRowNode(gridRow: RowPosition): RowNode | undefined {
         switch (gridRow.rowPinned) {
-            case Constants.PINNED_TOP:
+            case 'top':
                 return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
-            case Constants.PINNED_BOTTOM:
+            case 'bottom':
                 return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);
@@ -83,18 +82,18 @@ export class RowPositionUtils extends BeanStub {
     // tests if this row selection is before the other row selection
     public before(rowA: RowPosition, rowB: RowPosition): boolean {
         switch (rowA.rowPinned) {
-            case Constants.PINNED_TOP:
+            case 'top':
                 // we we are floating top, and other isn't, then we are always before
-                if (rowB.rowPinned !== Constants.PINNED_TOP) { return true; }
+                if (rowB.rowPinned !== 'top') { return true; }
                 break;
-            case Constants.PINNED_BOTTOM:
+            case 'bottom':
                 // if we are floating bottom, and the other isn't, then we are never before
-                if (rowB.rowPinned !== Constants.PINNED_BOTTOM) { return false; }
+                if (rowB.rowPinned !== 'bottom') { return false; }
                 break;
             default:
                 // if we are not floating, but the other one is floating...
                 if (exists(rowB.rowPinned)) {
-                    return rowB.rowPinned !== Constants.PINNED_TOP;
+                    return rowB.rowPinned !== 'top';
                 }
                 break;
         }

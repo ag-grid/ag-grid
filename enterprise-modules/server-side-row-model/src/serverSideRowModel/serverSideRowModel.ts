@@ -6,7 +6,6 @@ import {
     Column,
     ColumnModel,
     ColumnVO,
-    Constants,
     Events,
     FilterManager,
     IServerSideDatasource,

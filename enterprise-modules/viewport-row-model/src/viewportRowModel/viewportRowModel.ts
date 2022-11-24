@@ -3,7 +3,6 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    Constants,
     Events,
     IRowModel,
     IViewportDatasource,
@@ -15,9 +14,9 @@ import {
     RowRenderer,
     Beans,
     WithoutGridCommon,
-    FocusService
+    FocusService,
+    RowModelType
 } from "@ag-grid-community/core";
-import { RowModelType } from "@ag-grid-community/core/src/ts/main";
 
 
 const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;

@@ -8,7 +8,6 @@ import {
     ColumnApi,
     ColumnModel,
     ColumnMenuTab,
-    Constants,
     FilterManager,
     FilterWrapper,
     GridApi,

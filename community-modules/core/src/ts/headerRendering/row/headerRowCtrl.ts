@@ -1,5 +1,4 @@
 import { ColumnModel } from "../../columns/columnModel";
-import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, PreDestroy } from "../../context/context";
 import { Column, ColumnPinnedType } from "../../entities/column";
@@ -115,14 +114,14 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getWidthForRow(): number {
-        const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
 
         if (printLayout) {
             const pinned = this.pinned != null;
             if (pinned) { return 0; }
 
-            return this.columnModel.getContainerWidth(Constants.PINNED_RIGHT)
-                + this.columnModel.getContainerWidth(Constants.PINNED_LEFT)
+            return this.columnModel.getContainerWidth('right')
+                + this.columnModel.getContainerWidth('left')
                 + this.columnModel.getContainerWidth(null);
         }
 
@@ -248,7 +247,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getColumnsInViewport(): IHeaderColumn[] {
-        const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
         return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     }
 
@@ -259,7 +258,7 @@ export class HeaderRowCtrl extends BeanStub {
         let viewportColumns: IHeaderColumn[] = [];
         const actualDepth = this.getActualDepth();
 
-        [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
+        (['left', null, 'right'] as ColumnPinnedType[]).forEach(pinned => {
             const items = this.columnModel.getVirtualHeaderGroupRow(pinned, actualDepth);
             viewportColumns = viewportColumns.concat(items);
         });
