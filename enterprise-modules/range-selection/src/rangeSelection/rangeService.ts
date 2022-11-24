@@ -79,7 +79,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 getHorizontalPosition: () => gridBodyCtrl.getScrollFeature().getHScrollPosition().left,
                 setHorizontalPosition: (position) => gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(position),
                 shouldSkipVerticalScroll: () => this.gridOptionsWrapper.getDomLayout() !== 'normal',
-                shouldSkipHorizontalScroll: () => gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing()
+                shouldSkipHorizontalScroll: () => !gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing()
             });
         });
     }
