@@ -6,25 +6,16 @@ export class AreaChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-
-        this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
-        this.yAxisType = 'number';
-
-        this.recreateChart();
     }
 
-    public getData(params: UpdateChartParams): any[] {
-        return this.crossFiltering ? this.getLineAreaCrossFilterData(params) : this.getDataTransformedData(params);
-    }
-
-    public getAxes(): AgCartesianAxisOptions[] {
+    public getAxes(params: UpdateChartParams): AgCartesianAxisOptions[] {
         const axes: AgCartesianAxisOptions[] = [
             {
-                type: this.xAxisType,
+                type: this.getXAxisType(params),
                 position: 'bottom',
             },
             {
-                type: this.yAxisType,
+                type: 'number',
                 position: 'left',
             },
         ];

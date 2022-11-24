@@ -322,6 +322,8 @@ abstract class AgChartInternal {
 
         await chart.awaitUpdateCompletion();
 
+        if (chart.destroyed) return;
+
         debug('applying delta', processedOptions);
         applyChartOptions(chart, processedOptions, userOptions);
     }

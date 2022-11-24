@@ -9,27 +9,17 @@ export class BarChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-
-        // when the standalone chart type is 'bar' - xAxis is positioned to the 'left'
-        this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
-        this.yAxisType = 'number';
-
-        this.recreateChart();
     }
 
-    public getData(params: UpdateChartParams): any[] {
-        return this.getDataTransformedData(params);
-    }
-
-    public getAxes(): AgCartesianAxisOptions[] {
+    public getAxes(params: UpdateChartParams): AgCartesianAxisOptions[] {
         const isBar = this.standaloneChartType === 'bar';
         const axes: AgCartesianAxisOptions[] = [
             {
-                type: this.xAxisType,
+                type: this.getXAxisType(params),
                 position: isBar ? 'left' : 'bottom',
             },
             {
-                type: this.yAxisType,
+                type: 'number',
                 position: isBar ? 'bottom' : 'left',
             },
         ];

@@ -1,13 +1,10 @@
 import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateChartParams } from '../chartProxy';
 import {
     AgChart,
-    AgChartInstance,
-    AgChartLegendClickEvent,
     AgPieSeriesOptions,
     AgPolarChartOptions,
     AgPolarSeriesOptions,
     AgPieSeriesTooltipRendererParams,
-    AgBaseChartOptions,
 } from 'ag-charts-community';
 import { changeOpacity } from '../../utils/color';
 import { deepMerge } from '../../utils/object';
@@ -21,15 +18,6 @@ export class PieChartProxy extends ChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-        this.recreateChart();
-    }
-
-    protected createChart(): AgChartInstance {
-        return AgChart.create({
-            type: 'pie',
-            container: this.chartProxyParams.parentElement,
-            theme: this.agChartTheme
-        });
     }
 
     public update(params: UpdateChartParams): void {
@@ -39,11 +27,9 @@ export class PieChartProxy extends ChartProxy {
             ...this.getCommonChartOptions(),
             data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id),
             series: this.getSeries(params),
-
-            ...(this.crossFiltering ? this.createCrossFilterTheme() : {})
         }
 
-        AgChart.updateDelta(this.getChartRef(), options);
+        AgChart.update(this.getChartRef(), options);
     }
 
     private getSeries(params: UpdateChartParams): AgPolarSeriesOptions[] {
@@ -88,32 +74,6 @@ export class PieChartProxy extends ChartProxy {
         });
 
         return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
-    }
-
-    private createCrossFilterTheme(): AgBaseChartOptions {
-        const chart = this.getChart();
-        const tooltip = {
-            delay: 500,
-        };
-
-        const legend = {
-            listeners: {
-                legendItemClick: (e: AgChartLegendClickEvent) => {
-                    chart.series.forEach(s => s.toggleSeriesItem(e.itemId, e.enabled));
-                }
-            }
-        };
-
-        return {
-            theme: {
-                overrides: {
-                    pie: {
-                        tooltip,
-                        legend
-                    }
-                }
-            }
-        }
     }
 
     private getCrossFilterData(params: UpdateChartParams) {
