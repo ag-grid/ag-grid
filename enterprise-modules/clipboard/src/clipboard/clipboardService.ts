@@ -54,6 +54,8 @@ type DataForCellRangesType = { data: string, cellsToFlash: CellsToFlashType }
 
 // Matches value in changeDetectionService
 const SOURCE_PASTE = 'paste';
+const EXPORT_TYPE_DRAG_COPY = 'dragCopy';
+const EXPORT_TYPE_CLIPBOARD = 'clipboard';
 
 @Bean('clipboardService')
 export class ClipboardService extends BeanStub implements IClipboardService {
@@ -74,8 +76,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
 
-    private EXPORT_TYPE_DRAG_COPY = 'dragCopy';
-    private EXPORT_TYPE_CLIPBOARD = 'clipboard';
+
 
     private clientSideRowModel: IClientSideRowModel;
     private logger: Logger;
@@ -300,7 +301,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 }
 
                 const newValue = this.processCell(
-                    rowNode, column, currentRowData[idx], this.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                    rowNode, column, currentRowData[idx], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
 
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
 
@@ -339,7 +340,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 updatedRowNodes,
                 columnsToPasteInto,
                 cellsToFlash,
-                this.EXPORT_TYPE_CLIPBOARD,
+                EXPORT_TYPE_CLIPBOARD,
                 changedPath);
         }
     }
@@ -357,7 +358,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[]) => {
             updatedRowNodes.push(rowNode);
             columns.forEach(column =>
-                this.updateCellValue(rowNode, column, value, cellsToFlash, this.EXPORT_TYPE_CLIPBOARD, changedPath));
+                this.updateCellValue(rowNode, column, value, cellsToFlash, EXPORT_TYPE_CLIPBOARD, changedPath));
         };
 
         this.iterateActiveRanges(false, rowCallback);
@@ -393,7 +394,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                             rowNode,
                             column,
                             this.valueService.getValue(column, rowNode),
-                            this.EXPORT_TYPE_DRAG_COPY,
+                            EXPORT_TYPE_DRAG_COPY,
                             processCellForClipboardFunc);
 
                         firstRowValues.push(value);
@@ -405,7 +406,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                         if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) { return; }
 
                         const firstRowValue = this.processCell(
-                            rowNode, column, firstRowValues[index], this.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                            rowNode, column, firstRowValues[index], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
 
                         rowNode.setDataValue(column, firstRowValue, SOURCE_PASTE);
 
