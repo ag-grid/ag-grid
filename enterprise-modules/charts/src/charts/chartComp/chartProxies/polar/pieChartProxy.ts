@@ -104,9 +104,6 @@ export class PieChartProxy extends ChartProxy {
                 listeners: {
                     nodeClick: this.crossFilterCallback,
                 },
-                tooltip: {
-                    renderer: this.getCrossFilterTooltipRenderer(`${seriesOptions.angleName}`),
-                }
             };
         }
 
@@ -145,15 +142,6 @@ export class PieChartProxy extends ChartProxy {
 
     private getFields(params: UpdateChartParams): FieldDefinition[] {
         return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
-    }
-
-    private getCrossFilterTooltipRenderer(title: string) {
-        return (params: AgPieSeriesTooltipRendererParams) => {
-            const label = params.datum[params.calloutLabelKey as string];
-            const ratio = params.datum[params.radiusKey as string];
-            const totalValue = params.angleValue;
-            return { title, content: `${label}: ${totalValue * ratio}` };
-        }
     }
 
     public crossFilteringReset() {

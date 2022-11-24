@@ -1,6 +1,15 @@
-import { _, AgChartThemeOverrides, ChartType, SeriesChartType, AgChartLegendClickEvent } from "@ag-grid-community/core";
-import { AgChart, AgChartTheme, AgChartThemePalette, AgChartInstance, _Theme, AgChartOptions } from "ag-charts-community";
-import { deepMerge } from "../utils/object";
+import { _, AgChartThemeOverrides, ChartType, SeriesChartType, AgChartLegendClickEvent } from '@ag-grid-community/core';
+import {
+    AgChart,
+    AgChartTheme,
+    AgChartThemePalette,
+    AgChartInstance,
+    _Theme,
+    AgChartOptions,
+    AgPieSeriesTooltipRendererParams,
+    AgPolarSeriesTheme,
+} from 'ag-charts-community';
+import { deepMerge } from '../utils/object';
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";
@@ -195,11 +204,7 @@ export abstract class ChartProxy {
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     }
 
-    private createCrossFilterTheme(overrideType: 'cartesian' | 'pie'): AgChartTheme {
-        const tooltip = {
-            delay: 500,
-        }
-
+    private createCrossFilterTheme(overrideType: 'cartesian' | 'polar'): AgChartTheme {
         const legend = {
             listeners: {
                 legendItemClick: (e: AgChartLegendClickEvent) => {
@@ -212,17 +217,36 @@ export abstract class ChartProxy {
             }
         }
 
-        return deepMerge({
+        const series: AgPolarSeriesTheme = {};
+        if (overrideType === 'polar') {
+            series.pie = { 
+                tooltip: {
+                    renderer: ({ angleName, datum, calloutLabelKey, radiusKey, angleValue }: AgPieSeriesTooltipRendererParams) => {
+                        const title = angleName;
+                        const label = datum[calloutLabelKey as string];
+                        const ratio = datum[radiusKey as string];
+                        const totalValue = angleValue;
+                        return { title, content: `${label}: ${totalValue * ratio}` };
+                    },
+                },
+            };
+        }
+
+        const crossFilterTheme: AgChartTheme = {
             overrides: {
                 [overrideType]: {
-                    tooltip,
+                    tooltip: {
+                        delay: 500,
+                    },
                     legend,
                     listeners: {
                         click: (e: any) => this.crossFilterCallback(e, true),
-                    }
+                    },
+                    series,
                 }
             }
-        }, this.agChartTheme);
+        };
+        return deepMerge(crossFilterTheme, this.agChartTheme);
     }
 
     public downloadChart(dimensions?: { width: number; height: number }, fileName?: string, fileFormat?: string) {
@@ -239,7 +263,7 @@ export abstract class ChartProxy {
     }
 
     private getChartOptions(): AgChartOptions {
-        return this.getChart().getOptions();
+        return this.chart.getOptions();
     }
 
     public getChartThemeOverrides(): AgChartThemeOverrides { 
@@ -285,7 +309,7 @@ export abstract class ChartProxy {
     }
 
     protected getCommonChartOptions() {
-        const crossFilterThemeOverridePoint = this.standaloneChartType === 'pie' ? 'pie' : 'cartesian';
+        const crossFilterThemeOverridePoint = this.standaloneChartType === 'pie' ? 'polar' : 'cartesian';
         return {
             theme: this.crossFiltering ?
                 this.createCrossFilterTheme(crossFilterThemeOverridePoint) :
