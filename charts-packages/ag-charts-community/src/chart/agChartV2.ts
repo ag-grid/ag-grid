@@ -164,8 +164,19 @@ class AgChartInstanceProxy implements AgChartInstance {
         if (x instanceof AgChartInstanceProxy) {
             // Simple case.
             return true;
-        } else if (x.constructor?.name === 'AgChartInstanceProxy' && x.chart != null) {
+        }
+
+        if (x.constructor?.name === 'AgChartInstanceProxy' && x.chart != null) {
             // instanceof can fail if mixing bundles (e.g. grid all-modules vs. standalone).
+            return true;
+        }
+
+        const signatureProps = Object.keys(x.constructor?.prototype);
+        const heuristicTypeCheck = Object.keys(AgChartInstanceProxy.prototype).every((prop) =>
+            signatureProps.includes(prop)
+        );
+        if (heuristicTypeCheck && x.chart != null) {
+            // minimised code case - the constructor name is mangled but prototype names are not :P
             return true;
         }
 
