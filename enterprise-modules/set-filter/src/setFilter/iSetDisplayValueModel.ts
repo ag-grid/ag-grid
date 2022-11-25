@@ -23,3 +23,12 @@ export interface ISetDisplayValueModel<V, K> {
 
     refresh(): void;
 }
+
+export interface SetFilterModelTreeItem {
+    treeKey: string | null;
+    depth: number;
+    filterPasses: boolean;
+    expanded?: boolean;
+    children?: SetFilterModelTreeItem[];
+    key?: string | null;
+}

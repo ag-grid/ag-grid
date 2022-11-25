@@ -11464,7 +11464,9 @@
       "caseSensitive?": "boolean",
       "excelMode?": "'mac' | 'windows'",
       "convertValuesToStrings?": "boolean",
-      "getDataPath?": "(value: V) => (string | null)[]",
+      "treeList?": "boolean",
+      "treeListPathGetter?": "(value: V) => (string | null)[]",
+      "treeListFormatter?": "(pathKey: string | null, level: number) => string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -13762,6 +13764,17 @@
       "refresh()": "void"
     }
   },
+  "SetFilterModelTreeItem": {
+    "meta": {},
+    "type": {
+      "treeKey": "string | null",
+      "depth": "number",
+      "filterPasses": "boolean",
+      "expanded?": "boolean",
+      "children?": "SetFilterModelTreeItem[]",
+      "key?": "string | null"
+    }
+  },
   "ISetFilterLocaleText": {
     "meta": {},
     "type": {
@@ -13787,17 +13800,6 @@
     "meta": { "isEnum": true },
     "type": ["PROVIDED_LIST", "PROVIDED_CALLBACK", "TAKEN_FROM_GRID_VALUES"],
     "docs": [null, null, null]
-  },
-  "SetFilterModelTreeItem": {
-    "meta": {},
-    "type": {
-      "treeKey": "string | null",
-      "depth": "number",
-      "filterPasses": "boolean",
-      "expanded?": "boolean",
-      "children?": "SetFilterModelTreeItem[]",
-      "key?": "string | null"
-    }
   },
   "ToolPanelFiltersCompParams": {
     "meta": {},

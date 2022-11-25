@@ -20230,10 +20230,18 @@
       "description": "/** @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,\n     * as well as maintaining the type of primitives (e.g. number, boolean) when not used as keys.\n     * \n     * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.\n     * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "getDataPath": {
+    "treeList": { "type": { "returnType": "boolean", "optional": true } },
+    "treeListPathGetter": {
       "type": {
         "arguments": { "value": "V" },
         "returnType": "(string | null)[]",
+        "optional": true
+      }
+    },
+    "treeListFormatter": {
+      "type": {
+        "arguments": { "pathKey": "string | null", "level": "number" },
+        "returnType": "string",
         "optional": true
       }
     },
@@ -23862,6 +23870,16 @@
     },
     "meta": { "typeParams": ["V", "K"] }
   },
+  "SetFilterModelTreeItem": {
+    "treeKey": { "type": { "returnType": "string | null", "optional": false } },
+    "depth": { "type": { "returnType": "number", "optional": false } },
+    "filterPasses": { "type": { "returnType": "boolean", "optional": false } },
+    "expanded": { "type": { "returnType": "boolean", "optional": true } },
+    "children": {
+      "type": { "returnType": "SetFilterModelTreeItem[]", "optional": true }
+    },
+    "key": { "type": { "returnType": "string | null", "optional": true } }
+  },
   "ISetFilterLocaleText": {
     "loadingOoo": { "type": { "returnType": "string", "optional": false } },
     "blanks": { "type": { "returnType": "string", "optional": false } },
@@ -23887,16 +23905,6 @@
     }
   },
   "SetFilterModelValuesType": {},
-  "SetFilterModelTreeItem": {
-    "treeKey": { "type": { "returnType": "string | null", "optional": false } },
-    "depth": { "type": { "returnType": "number", "optional": false } },
-    "filterPasses": { "type": { "returnType": "boolean", "optional": false } },
-    "expanded": { "type": { "returnType": "boolean", "optional": true } },
-    "children": {
-      "type": { "returnType": "SetFilterModelTreeItem[]", "optional": true }
-    },
-    "key": { "type": { "returnType": "string | null", "optional": true } }
-  },
   "ToolPanelFiltersCompParams": {
     "suppressExpandAll": {
       "description": "/** To suppress Expand / Collapse All */",

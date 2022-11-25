@@ -1,16 +1,9 @@
-import { TextFormatter } from '@ag-grid-community/core';
-import { ISetDisplayValueModel } from './iSetDisplayValueModel';
-
-export interface SetFilterModelTreeItem {
-    treeKey: string | null;
-    depth: number;
-    filterPasses: boolean;
-    expanded?: boolean;
-    children?: SetFilterModelTreeItem[];
-    key?: string | null;
-}
+import { _, TextFormatter } from '@ag-grid-community/core';
+import { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 
 export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V, SetFilterModelTreeItem> {
+    private static readonly DATE_TREE_LIST_PATH_GETTER = (date: Date) => [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())];
+
     /** all displayed items in a tree structure */
     private allDisplayedItemsTree: SetFilterModelTreeItem[] = [];
     /** all displayed items flattened and filtered */
@@ -19,8 +12,8 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V, Set
     private groupsExist: boolean;
 
     constructor(
-        private readonly getDataPath: (value: V) => (string | null)[],
-        private readonly formatter: TextFormatter
+        private readonly formatter: TextFormatter,
+        private readonly treeListPathGetter?: (value: V) => (string | null)[]
     ) {};
 
     public updateDisplayedValuesToAllAvailable(allValues: Map<string | null, V | null>, availableKeys: Set<string | null>): void {
@@ -49,9 +42,11 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V, Set
     private generateItemTree(allValues: Map<string | null, V | null>, availableKeys: Set<string | null>): void {
         this.allDisplayedItemsTree = [];
         this.groupsExist = false;
+        
+        const treeListPathGetter = this.getTreeListPathGetter(allValues);
         availableKeys.forEach(key => {
             const value = allValues.get(key)!;
-            const dataPath = this.getDataPath(value) ?? [null];
+            const dataPath = treeListPathGetter(value) ?? [null];
             if (dataPath.length > 1) {
                 this.groupsExist = true;
             }
@@ -73,6 +68,28 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V, Set
                 children = item.children;
             })
         });
+    }
+
+    private getTreeListPathGetter(allValues: Map<string | null, V | null>): (value: V) => (string | null)[] {
+        if (this.treeListPathGetter) {
+            return this.treeListPathGetter;
+        }
+        if (/** tree data mode */false) {
+            // TODO - tree data version
+        }
+        if (/** normal grouping */false) {
+            // TODO - grouping version
+        }
+        // infer from data
+        const firstValue = allValues.values().next().value;
+        if (firstValue instanceof Date) {
+            return TreeSetDisplayValueModel.DATE_TREE_LIST_PATH_GETTER as any;
+        }
+        _.doOnce(
+            () => console.warn('AG Grid: property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.'),
+            'getTreeListPathGetter'
+        );
+        return (value) => [String(value)];
     }
 
     private flattenItems(): void {

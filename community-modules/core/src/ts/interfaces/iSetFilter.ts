@@ -199,6 +199,8 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.
      * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.
      */
-    convertValuesToStrings?: boolean
-    getDataPath?: (value: V) => (string | null)[];
+    convertValuesToStrings?: boolean;
+    treeList?: boolean,
+    treeListPathGetter?: (value: V) => (string | null)[],
+    treeListFormatter?: (pathKey: string | null, level: number) => string;
 }

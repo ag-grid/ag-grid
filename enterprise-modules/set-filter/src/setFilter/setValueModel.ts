@@ -88,7 +88,8 @@ export class SetValueModel<V> implements IEventEmitter {
             values,
             caseSensitive,
             convertValuesToStrings,
-            getDataPath,
+            treeList,
+            treeListPathGetter,
         } = filterParams;
 
         this.column = column;
@@ -125,9 +126,9 @@ export class SetValueModel<V> implements IEventEmitter {
             this.providedValues = values;
         }
 
-        this.displayValueModel = getDataPath ? new TreeSetDisplayValueModel(
-            getDataPath,
-            this.formatter
+        this.displayValueModel = treeList ? new TreeSetDisplayValueModel(
+            this.formatter,
+            treeListPathGetter
         ) : new FlatSetDisplayValueModel(
             this.valueFormatterService,
             this.valueFormatter,
