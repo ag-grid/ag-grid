@@ -35,7 +35,7 @@ export class PaginationProxy extends BeanStub {
         this.paginateChildRows = this.isPaginateChildRows();
 
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, 'paginationPageSize', this.onPaginationPageSizeChanged.bind(this));
+        this.addManagedPropertyListener('paginationPageSize', this.onPaginationPageSizeChanged.bind(this));
 
         this.onModelUpdated();
     }

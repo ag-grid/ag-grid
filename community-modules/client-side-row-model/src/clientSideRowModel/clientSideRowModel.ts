@@ -98,8 +98,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             animate
         });
 
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapListener);
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapListener);
+        this.addManagedPropertyListener('groupRemoveSingleChildren', refreshMapListener);
+        this.addManagedPropertyListener('groupRemoveLowestSingleChildren', refreshMapListener);
 
         this.rootNode = new RowNode(this.beans);
         this.nodeManager = new ClientSideNodeManager(this.rootNode,

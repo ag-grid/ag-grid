@@ -127,7 +127,7 @@ export abstract class BaseDropZonePanel extends Component {
         ));
 
         this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
-        this.addManagedListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
+        this.addManagedPropertyListener('functionsReadOnly', this.refreshGui.bind(this));
 
         this.setupDropTarget();
 

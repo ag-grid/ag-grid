@@ -18,7 +18,7 @@ export class CenterWidthFeature extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         const listener = this.setWidth.bind(this);
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
+        this.addManagedPropertyListener('domLayout', listener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, listener);
 
