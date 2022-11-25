@@ -1,4 +1,4 @@
-import { _ } from '@ag-grid-community/core';
+import { AgChartThemePalette, _ } from '@ag-grid-community/core';
 import {
     AgChartLegendClickEvent,
     AgChartTheme,
@@ -12,7 +12,7 @@ import { getSeriesType } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';
 
 export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: ChartProxy): AgChartTheme {
-    const { chartOptionsToRestore, chartPaletteToRestore } = chartProxyParams;
+    const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore } = chartProxyParams;
     const themeName = getSelectedTheme(chartProxyParams);
     const stockTheme = isStockTheme(themeName);
 
@@ -55,11 +55,27 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
             rootTheme
         );
 
-    if (chartPaletteToRestore) {
-        theme.palette = chartPaletteToRestore;
+    // Avoid explicitly setting the `theme.palette` property unless we're using the restored theme
+    // AND the palette is actually different.
+    if (chartPaletteToRestore && themeName === chartThemeToRestore) {
+        const rootThemePalette = _Theme.getChartTheme(rootTheme).palette;
+        if (!isIdenticalPalette(chartPaletteToRestore, rootThemePalette)) {
+            theme.palette = chartPaletteToRestore;
+        }
     }
 
     return theme;
+}
+
+function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThemePalette) {
+    const arrayCompare = (arrA: any[], arrB: any[]) => {
+        if (arrA.length !== arrB.length) return false;
+
+        return arrA.every((v: any, i) => v === arrB[i]);
+    };
+
+    return arrayCompare(paletteA.fills, paletteB.fills) &&
+        arrayCompare(paletteA.strokes, paletteB.strokes);
 }
 
 export function isStockTheme(themeName: string): boolean {

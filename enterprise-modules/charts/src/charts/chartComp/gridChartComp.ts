@@ -200,6 +200,7 @@ export class GridChartComp extends Component {
             crossFilterCallback,
             parentElement: this.eChart,
             grouping: this.chartController.isGrouping(),
+            chartThemeToRestore: this.params.chartThemeName,
             chartOptionsToRestore: this.params.chartOptionsToRestore,
             chartPaletteToRestore: this.params.chartPaletteToRestore,
             seriesChartTypes: this.chartController.getSeriesChartTypes(),

@@ -1,4 +1,4 @@
-import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from '@ag-grid-community/core';
+import { _, AgChartThemeOverrides, ChartType, SeriesChartType, AgChartThemeName } from '@ag-grid-community/core';
 import {
     AgChart,
     AgChartTheme,
@@ -24,6 +24,7 @@ export interface ChartProxyParams {
     apiChartThemeOverrides?: AgChartThemeOverrides;
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
+    chartThemeToRestore?: string;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes: SeriesChartType[];
@@ -55,7 +56,6 @@ export abstract class ChartProxy {
 
     protected readonly chart: AgChartInstance;
     protected readonly agChartTheme: AgChartTheme;
-    protected readonly inbuiltThemeOverrides: AgChartThemeOverrides;
     protected readonly crossFiltering: boolean;
     protected readonly crossFilterCallback: (event: any, reset?: boolean) => void;
 
