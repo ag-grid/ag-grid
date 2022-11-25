@@ -307,6 +307,8 @@ export class ChartController extends BeanStub {
                     type: ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED
                 }));
             }
+
+            this.raiseChartOptionsChangedEvent();
         }
     }
 
