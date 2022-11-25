@@ -178,7 +178,7 @@ export class ChartController extends BeanStub {
         const themeNames = this.gridOptionsWrapper.getChartThemes();
 
         return themeNames.map(themeName => {
-            const stockTheme = this.chartProxy.isStockTheme(themeName);
+            const stockTheme = ChartProxy.isStockTheme(themeName);
             const theme = stockTheme ? themeName : this.chartProxy.lookupCustomChartTheme(themeName);
             return _Theme.getChartTheme(theme).palette;
         });
