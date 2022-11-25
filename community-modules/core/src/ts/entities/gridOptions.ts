@@ -84,7 +84,7 @@ import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SortDirection } from "./colDef";
 import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "./iCallbackParams";
 import { RowNode } from "./rowNode";
-import { SideBarDef } from "./sideBar";
+import { SideBarDef } from "../interfaces/iSideBar";
 
 export interface GridOptions<TData = any> {
 

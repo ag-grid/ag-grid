@@ -5,10 +5,9 @@ import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context
 import { DomLayoutType, GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
 import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
-import { SideBarDef, SideBarDefParser } from './entities/sideBar';
+import { SideBarDef } from './interfaces/iSideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
 import { Events } from './eventKeys';
-import { AgEvent } from './events';
 import { EventService } from './eventService';
 import { GridApi } from './gridApi';
 import { GridOptionsService } from './gridOptionsService';
@@ -22,7 +21,6 @@ import { getScrollbarWidth } from './utils/browser';
 import { doOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { exists, missing, values } from './utils/generic';
-import { oneOrGreater } from './utils/number';
 import { iterateObject } from './utils/object';
 import { capitalise } from './utils/string';
 
@@ -31,12 +29,6 @@ const DEFAULT_DETAIL_ROW_HEIGHT = 300;
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
-}
-
-
-export interface PropertyChangedEvent extends AgEvent {
-    currentValue: any;
-    previousValue: any;
 }
 
 @Bean('gridOptionsWrapper')
@@ -79,11 +71,6 @@ export class GridOptionsWrapper {
         if (this.gridOptions.suppressPropertyNamesCheck !== true) {
             this.checkGridOptionsProperties();
             this.checkColumnDefProperties();
-        }
-
-        // parse side bar options into correct format
-        if (this.gridOptions.sideBar != null) {
-            this.gridOptions.sideBar = SideBarDefParser.parse(this.gridOptions.sideBar);
         }
 
         const async = this.useAsyncEvents();
@@ -364,10 +351,6 @@ export class GridOptionsWrapper {
         if (isFullWidthCell) {
             return (params: WithoutGridCommon<IsFullWidthRowParams>) => isFullWidthCell(params.rowNode);
         }
-    }
-
-    public getCacheBlockSize(): number | undefined {
-        return oneOrGreater(this.gridOptions.cacheBlockSize);
     }
 
     public getServerSideInitialRowCount(): number {

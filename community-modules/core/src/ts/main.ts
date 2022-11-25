@@ -96,7 +96,6 @@ export { Column, ColumnPinnedType } from "./entities/column";
 export { ColumnGroup } from "./entities/columnGroup";
 export { ProvidedColumnGroup } from "./entities/providedColumnGroup";
 export { RowNode, RowHighlightPosition, RowPinnedType } from "./entities/rowNode";
-export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
@@ -219,7 +218,7 @@ export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequ
 export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams, RefreshServerSideParams } from "./interfaces/iServerSideRowModel";
 export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupState, ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 
-export { ISideBar } from "./interfaces/iSideBar";
+export { ISideBar, SideBarDef, ToolPanelDef } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
 
 //styling

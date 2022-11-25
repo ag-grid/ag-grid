@@ -2,7 +2,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, Optional } from "../../context/context";
 import { CellEditorSelectorFunc, CellEditorSelectorResult, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
 import { GridOptions } from "../../entities/gridOptions";
-import { ToolPanelDef } from "../../entities/sideBar";
+import { ToolPanelDef } from "../../interfaces/iSideBar";
 import { IFloatingFilterParams } from "../../filter/floating/floatingFilter";
 import { IHeaderParams } from "../../headerRendering/cells/column/headerComp";
 import { IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/headerGroupComp";

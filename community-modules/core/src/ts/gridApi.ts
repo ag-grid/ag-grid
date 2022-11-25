@@ -1,7 +1,6 @@
 import { AlignedGridsService } from "./alignedGridsService";
 import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel, ISizeColumnsToFitParams } from "./columns/columnModel";
-import { FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
@@ -43,7 +42,6 @@ import {
     TabToNextHeaderParams
 } from "./entities/iCallbackParams";
 import { RowNode, RowPinnedType } from "./entities/rowNode";
-import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { AgEvent, ColumnEventType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
@@ -88,7 +86,7 @@ import {
     RefreshServerSideParams
 } from "./interfaces/iServerSideRowModel";
 import { ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
-import { ISideBar } from "./interfaces/iSideBar";
+import { ISideBar, SideBarDef } from "./interfaces/iSideBar";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanel } from "./interfaces/iStatusPanel";
 import { IToolPanel } from "./interfaces/iToolPanel";
@@ -182,7 +180,6 @@ export class GridApi<TData = any> {
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Optional('frameworkComponentWrapper') private frameworkComponentWrapper: FrameworkComponentWrapper;
 
     private overlayWrapperComp: OverlayWrapperComponent;
 
@@ -1235,7 +1232,7 @@ export class GridApi<TData = any> {
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     public getOpenedToolPanel(): string | null {
         if (this.assertSideBarLoaded('getOpenedToolPanel')) {
-            this.sideBarComp.openedItem()
+            return this.sideBarComp.openedItem()
         }
         return null;
     }
@@ -1265,13 +1262,16 @@ export class GridApi<TData = any> {
     }
 
     /** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */
-    public getSideBar(): SideBarDef {
-        return this.gridOptionsWrapper.getSideBar();
+    public getSideBar(): SideBarDef | undefined {
+        if (this.assertSideBarLoaded('getSideBar')) {
+            return this.sideBarComp.getDef();
+        }
+        return undefined;
     }
 
     /** Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config. */
     public setSideBar(def: SideBarDef | string | string[] | boolean): void {
-        this.gridOptionsService.set('sideBar', SideBarDefParser.parse(def));
+        this.gridOptionsService.set('sideBar', def);
     }
 
     public setSuppressClipboardPaste(value: boolean): void {
