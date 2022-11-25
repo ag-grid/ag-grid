@@ -41,6 +41,7 @@ export class ComponentUtil {
             ...ComponentUtil.ARRAY_PROPERTIES,
             ...ComponentUtil.OBJECT_PROPERTIES,
             ...ComponentUtil.STRING_PROPERTIES,
+            ...ComponentUtil.FUNCTION_PROPERTIES,
             ...ComponentUtil.getEventCallbacks(),
         ]
             .forEach((key: keyof GridOptions) => this.coercionLookup[key] = 'none');
