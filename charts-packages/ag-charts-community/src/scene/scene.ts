@@ -25,6 +25,7 @@ interface SceneLayer {
     zIndexSubOrder?: [string, number];
     canvas: HdpiOffscreenCanvas | HdpiCanvas;
     getComputedOpacity: () => number;
+    getVisibility: () => boolean;
 }
 
 export class Scene {
@@ -113,6 +114,7 @@ export class Scene {
         zIndexSubOrder?: [string, number];
         name?: string;
         getComputedOpacity: () => number;
+        getVisibility: () => boolean;
     }): HdpiCanvas | HdpiOffscreenCanvas | undefined {
         const { mode } = this.opts;
         const layeredModes = ['composite', 'dom-composite', 'adv-composite'];
@@ -120,7 +122,7 @@ export class Scene {
             return undefined;
         }
 
-        const { zIndex = this._nextZIndex++, name, zIndexSubOrder, getComputedOpacity } = opts;
+        const { zIndex = this._nextZIndex++, name, zIndexSubOrder, getComputedOpacity, getVisibility } = opts;
         const { width, height, overrideDevicePixelRatio } = this;
         const domLayer = mode === 'dom-composite';
         const advLayer = mode === 'adv-composite';
@@ -147,6 +149,7 @@ export class Scene {
             zIndexSubOrder,
             canvas,
             getComputedOpacity,
+            getVisibility,
         };
 
         if (zIndex >= this._nextZIndex) {
@@ -347,8 +350,8 @@ export class Scene {
         if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
             ctx.save();
             ctx.setTransform(1 / canvas.pixelRatio, 0, 0, 1 / canvas.pixelRatio, 0, 0);
-            layers.forEach(({ canvas: { imageSource, enabled }, getComputedOpacity }) => {
-                if (!enabled) {
+            layers.forEach(({ canvas: { imageSource, enabled }, getComputedOpacity, getVisibility }) => {
+                if (!enabled || !getVisibility()) {
                     return;
                 }
 

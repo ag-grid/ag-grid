@@ -3428,7 +3428,8 @@
       "zIndex": "number",
       "zIndexSubOrder?": "[ string, number ]",
       "canvas": "HdpiOffscreenCanvas | HdpiCanvas",
-      "getComputedOpacity": "() => number"
+      "getComputedOpacity": "() => number",
+      "getVisibility": "() => boolean"
     }
   },
   "ValueFn": {

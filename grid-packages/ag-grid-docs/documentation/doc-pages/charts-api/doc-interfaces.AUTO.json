@@ -4867,6 +4867,9 @@
     },
     "getComputedOpacity": {
       "type": { "arguments": {}, "returnType": "number", "optional": false }
+    },
+    "getVisibility": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     }
   },
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },
