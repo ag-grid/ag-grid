@@ -15,7 +15,7 @@ const options: AgChartOptions = {
       tooltip: {
         renderer: params => {
           return {
-            content: `<b>Change</b>: ${params.datum.colorValue.toFixed(2)}%`,
+            content: `<b>Change</b>: ${(params.datum[params.colorKey!]).toFixed(2)}%`,
           }
         },
       },

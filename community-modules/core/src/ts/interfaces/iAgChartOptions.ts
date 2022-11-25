@@ -1441,19 +1441,8 @@ export interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {
     padding?: number;
 }
 
-export interface AgTreemapNodeDatum<DatumType> {
-    datum: DatumType;
-    parent?: AgTreemapNodeDatum<DatumType>;
-    children?: AgTreemapNodeDatum<DatumType>[];
-    depth: number;
-    colorValue: number;
-    fill: CssColor;
-    label: string;
-    hasTitle: boolean;
-}
-
 export interface AgTreemapSeriesTooltipRendererParams<DatumType> {
-    datum: AgTreemapNodeDatum<DatumType>;
+    datum: DatumType;
     sizeKey?: string;
     labelKey?: string;
     valueKey?: string;

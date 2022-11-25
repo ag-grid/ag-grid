@@ -2508,23 +2508,10 @@
       "color?": "/** The colour to use for the labels. */"
     }
   },
-  "AgTreemapNodeDatum": {
-    "meta": { "typeParams": ["DatumType"] },
-    "type": {
-      "datum": "DatumType",
-      "parent?": "AgTreemapNodeDatum<DatumType>",
-      "children?": "AgTreemapNodeDatum<DatumType>[]",
-      "depth": "number",
-      "colorValue": "number",
-      "fill": "CssColor",
-      "label": "string",
-      "hasTitle": "boolean"
-    }
-  },
   "AgTreemapSeriesTooltipRendererParams": {
     "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "AgTreemapNodeDatum<DatumType>",
+      "datum": "DatumType",
       "sizeKey?": "string",
       "labelKey?": "string",
       "valueKey?": "string",
@@ -3197,24 +3184,23 @@
       "point?": "Readonly<SizedPoint>"
     }
   },
+  "TreeDatum": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ [prop: string]: any; children?: TreeDatum[]; }"
+  },
   "TreemapNodeDatum": {
     "meta": {},
     "type": {
-      "parent?": "TreemapNodeDatum",
-      "children?": "TreemapNodeDatum[]",
+      "datum": "TreeDatum",
       "value": "number",
-      "x0": "number",
-      "x1": "number",
-      "y0": "number",
-      "y1": "number",
       "depth": "number",
-      "fill": "string",
       "label": "string",
-      "hasTitle": "boolean",
-      "colorValue": "number",
+      "fill": "string",
+      "parent?": "TreemapNodeDatum",
+      "isLeaf": "boolean",
+      "children": "TreemapNodeDatum[]",
       "series": "Series<any>",
       "itemId?": "any",
-      "datum": "any",
       "point?": "Readonly<SizedPoint>"
     }
   },
@@ -3222,6 +3208,10 @@
     "meta": { "isEnum": true },
     "type": ["Name", "Value"],
     "docs": [null, null]
+  },
+  "TextMeta": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ text: string; style: Label; x: number; y: number; hAlign: CanvasTextAlign; vAlign: CanvasTextBaseline; }"
   },
   "PieNodeDatum": {
     "meta": {},
@@ -3332,17 +3322,6 @@
     }
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
-  "Node": {
-    "meta": {},
-    "type": {
-      "children": "Node[]",
-      "value": "number",
-      "x0": "number",
-      "x1": "number",
-      "y0": "number",
-      "y1": "number"
-    }
-  },
   "Scale": {
     "meta": { "typeParams": ["D", "R"] },
     "type": {
