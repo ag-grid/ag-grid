@@ -49,8 +49,6 @@ export class GridOptionsWrapper {
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
-    private propertyEventService: EventService = new EventService();
-
     private domDataKey = '__AG_' + Math.random().toString();
 
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
@@ -535,29 +533,6 @@ export class GridOptionsWrapper {
     public getChartThemes(): string[] {
         // return default themes if user hasn't supplied any
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
-    }
-
-
-    public setProperty<K extends keyof GridOptions>(key: K, value: GridOptions[K], force = false): void {
-        const previousValue = this.gridOptions[key];
-
-        if (force || previousValue !== value) {
-            this.gridOptions[key] = value;
-            const event: PropertyChangedEvent = {
-                type: key,
-                currentValue: value,
-                previousValue: previousValue
-            };
-            this.propertyEventService.dispatchEvent(event);
-        }
-    }
-
-    public addEventListener(key: string, listener: Function): void {
-        this.propertyEventService.addEventListener(key, listener);
-    }
-
-    public removeEventListener(key: string, listener: Function): void {
-        this.propertyEventService.removeEventListener(key, listener);
     }
 
     public getAutoSizePadding(): number {

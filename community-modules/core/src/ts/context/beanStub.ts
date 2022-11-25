@@ -91,7 +91,7 @@ export class BeanStub implements IEventEmitter {
     }
 
     public addManagedListener(
-        object: Window | HTMLElement | GridOptionsWrapper | IEventEmitter,
+        object: Window | HTMLElement | IEventEmitter,
         event: string,
         listener: (event?: any) => void
     ): (() => null) | undefined {

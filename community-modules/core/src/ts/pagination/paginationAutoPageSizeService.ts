@@ -44,7 +44,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
         if (bodyHeight > 0) {
             const newPageSize = Math.floor(bodyHeight / rowHeight);
-            this.gridOptionsWrapper.setProperty('paginationPageSize', newPageSize);
+            this.gridOptionsService.set('paginationPageSize', newPageSize);
         }
     }
 }
