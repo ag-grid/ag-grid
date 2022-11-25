@@ -60,7 +60,7 @@ export class LazyBlockLoader extends BeanStub {
     private getNodeRanges() {
         const ranges: { [startOfRange: string]: number } = {};
         this.getBlocksToLoad().forEach(index => {
-            const rangeSize = this.gridOptionsWrapper.getCacheBlockSize() || LazyBlockLoader.DEFAULT_BLOCK_SIZE;
+            const rangeSize = _.oneOrGreater(this.gridOptionsService.getNum('cacheBlockSize')) || LazyBlockLoader.DEFAULT_BLOCK_SIZE;
             const translatedIndex = index - (index % rangeSize);
             ranges[translatedIndex] = translatedIndex + rangeSize;
         });

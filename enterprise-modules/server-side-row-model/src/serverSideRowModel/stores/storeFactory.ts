@@ -87,7 +87,7 @@ export class StoreFactory {
 
         const blockSize = (userStoreParams && userStoreParams.cacheBlockSize != null)
             ? userStoreParams.cacheBlockSize
-            : this.gridOptionsWrapper.getCacheBlockSize();
+            : this.gridOptionsService.getNum('cacheBlockSize');
 
         if (blockSize != null && blockSize > 0) {
             return blockSize;

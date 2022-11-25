@@ -206,7 +206,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
             // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
             // server for one page at a time. so the default if not specified is 100.
-            blockSize: this.defaultIfInvalid(this.gridOptionsWrapper.getCacheBlockSize(), 100),
+            blockSize: this.defaultIfInvalid(this.gridOptionsService.getNum('cacheBlockSize'), 100),
 
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages
