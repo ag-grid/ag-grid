@@ -349,7 +349,7 @@ export class GridOptionsWrapper {
     public getInitialGroupOrderComparator() {
         const { initialGroupOrderComparator, defaultGroupOrderComparator } = this.gridOptions;
         if (initialGroupOrderComparator) {
-            return this.gridOptionsService.mergeGridCommonParams(initialGroupOrderComparator);
+            return this.gridOptionsService.getCallback('initialGroupOrderComparator');
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (defaultGroupOrderComparator) {
@@ -360,7 +360,7 @@ export class GridOptionsWrapper {
     public getIsFullWidthCellFunc() {
         const { isFullWidthRow, isFullWidthCell } = this.gridOptions;
         if (isFullWidthRow) {
-            return this.gridOptionsService.mergeGridCommonParams(isFullWidthRow);
+            return this.gridOptionsService.getCallback('isFullWidthRow');
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (isFullWidthCell) {
@@ -399,7 +399,7 @@ export class GridOptionsWrapper {
         const userValue = this.gridOptions.groupAggFiltering;
 
         if (typeof userValue === 'function') {
-            return this.gridOptionsService.mergeGridCommonParams(userValue);
+            this.gridOptionsService.getCallback('groupAggFiltering' as any)
         }
 
         if (isTrue(userValue)) {
@@ -443,7 +443,7 @@ export class GridOptionsWrapper {
 
         const { getGroupRowAgg, groupRowAggNodes } = this.gridOptions;
         if (getGroupRowAgg) {
-            return this.gridOptionsService.mergeGridCommonParams(getGroupRowAgg);
+            return this.gridOptionsService.getCallback('getGroupRowAgg');
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (groupRowAggNodes) {
@@ -454,7 +454,7 @@ export class GridOptionsWrapper {
     public getRowIdFunc() {
         const { getRowId, getRowNodeId } = this.gridOptions;
         if (getRowId) {
-            return this.gridOptionsService.mergeGridCommonParams(getRowId);
+            return this.gridOptionsService.getCallback('getRowId');
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (getRowNodeId) {
@@ -524,7 +524,7 @@ export class GridOptionsWrapper {
     public getPostSortFunc() {
         const { postSortRows, postSort } = this.gridOptions;
         if (postSortRows) {
-            return this.gridOptionsService.mergeGridCommonParams(postSortRows);
+            return this.gridOptionsService.getCallback('postSortRows');
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (postSort) {
@@ -934,7 +934,7 @@ export class GridOptionsWrapper {
                 data: rowNode.data
             };
 
-            const height = this.gridOptionsService.mergeGridCommonParams(this.gridOptions.getRowHeight)!(params);
+            const height = this.gridOptionsService.getCallback('getRowHeight')!(params);
 
             if (this.isNumeric(height)) {
                 if (height === 0) {

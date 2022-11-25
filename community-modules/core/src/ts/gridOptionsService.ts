@@ -87,7 +87,7 @@ export class GridOptionsService {
     * @param callback User provided callback
     * @returns Wrapped callback where the params object not require api, columnApi and context
     */
-    public mergeGridCommonParams<P extends AgGridCommon<any>, T>(callback: ((params: P) => T) | undefined):
+    private mergeGridCommonParams<P extends AgGridCommon<any>, T>(callback: ((params: P) => T) | undefined):
         ((params: WithoutGridCommon<P>) => T) | undefined {
         if (callback) {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
