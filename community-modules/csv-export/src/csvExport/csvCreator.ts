@@ -34,7 +34,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     protected getMergedParams(params?: CsvExportParams): CsvExportParams {
-        const baseParams = this.gridOptionsWrapper.getDefaultExportParams('csv');
+        const baseParams = this.gridOptionsService.get('defaultCsvExportParams');
         return Object.assign({}, baseParams, params);
     }
 

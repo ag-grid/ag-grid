@@ -460,7 +460,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
-        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
+        if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
             console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                 '- either turn off fullRowEdit, or stop using popup editors.');
         }

@@ -155,7 +155,7 @@ export class DropZoneColumnComp extends Component {
             this.eSortIndicator.setupSort(this.column, true);
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
-                const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+                const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
                 const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                 this.sortController.progressSort(this.column, multiSort, 'uiColumnSorted');
             };

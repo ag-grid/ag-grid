@@ -131,7 +131,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     }
 
     protected getMergedParams(params?: ExcelExportParams): ExcelExportParams {
-        const baseParams = this.gridOptionsWrapper.getDefaultExportParams('excel');
+        const baseParams = this.gridOptionsService.get('defaultExcelExportParams');
         return Object.assign({}, baseParams, params);
     }
 

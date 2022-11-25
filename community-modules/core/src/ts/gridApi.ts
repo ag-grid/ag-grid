@@ -281,7 +281,7 @@ export class GridApi<TData = any> {
     }
 
     private getExcelExportMode(params?: ExcelExportParams): 'xlsx' | 'xml' {
-        const baseParams = this.gridOptionsWrapper.getDefaultExportParams('excel');
+        const baseParams = this.gridOptionsService.get('defaultExcelExportParams');
         const mergedParams = Object.assign({ exportMode: 'xlsx' }, baseParams, params);
         return mergedParams.exportMode;
     }

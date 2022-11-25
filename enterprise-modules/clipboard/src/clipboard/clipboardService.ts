@@ -439,7 +439,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private fireRowChanged(rowNodes: RowNode[]): void {
-        if (!this.gridOptionsWrapper.isFullRowEdit()) { return; }
+        if (this.gridOptionsService.get('editType') !== 'fullRow') { return; }
 
         rowNodes.forEach(rowNode => {
             const event: WithoutGridCommon<RowValueChangedEvent> = {

@@ -11,6 +11,7 @@ import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { debounce } from "../utils/function";
 import { Beans } from "../rendering/beans";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { IsFullWidthRowParams } from "./iCallbackParams";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -922,7 +923,7 @@ export class RowNode<TData = any> implements IEventEmitter {
 
         if (rangeSelect && this.beans.selectionService.getLastSelectedNode()) {
             const newRowClicked = this.beans.selectionService.getLastSelectedNode() !== this;
-            const allowMultiSelect = this.beans.gridOptionsWrapper.isRowSelectionMulti();
+            const allowMultiSelect = this.beans.gridOptionsService.get('rowSelection') === 'multiple';
             if (newRowClicked && allowMultiSelect) {
                 const nodesChanged = this.doRowRangeSelection(params.newValue);
                 this.beans.selectionService.setLastSelectedNode(this);
@@ -951,7 +952,7 @@ export class RowNode<TData = any> implements IEventEmitter {
 
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
-            const clearOtherNodes = newValue && (clearSelection || !this.beans.gridOptionsWrapper.isRowSelectionMulti());
+            const clearOtherNodes = newValue && (clearSelection || this.beans.gridOptionsService.get('rowSelection') !== 'multiple');
             if (clearOtherNodes) {
                 updatedCount += this.beans.selectionService.clearOtherNodes(this);
             }
@@ -1117,8 +1118,20 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     public isFullWidthCell(): boolean {
-        const isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
+        const isFullWidthCellFunc = this.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
+    }
+
+    private getIsFullWidthCellFunc() {
+        const isFullWidthRow = this.beans.gridOptionsService.getCallback('isFullWidthRow');
+        if (isFullWidthRow) {
+            return isFullWidthRow;
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        const isFullWidthCell = this.beans.gridOptionsService.get('isFullWidthCell');
+        if (isFullWidthCell) {
+            return (params: WithoutGridCommon<IsFullWidthRowParams>) => isFullWidthCell(params.rowNode);
+        }
     }
 
     /**

@@ -3,17 +3,14 @@ import { ColDefUtil } from './components/colDefUtil';
 import { ComponentUtil } from './components/componentUtil';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { DomLayoutType, GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
+import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
-import { SideBarDef } from './interfaces/iSideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
 import { Events } from './eventKeys';
 import { EventService } from './eventService';
 import { GridApi } from './gridApi';
 import { GridOptionsService } from './gridOptionsService';
-import { CsvExportParams } from './interfaces/exportParams';
 import { WithoutGridCommon } from './interfaces/iCommon';
-import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
@@ -22,7 +19,6 @@ import { doOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { exists, missing, values } from './utils/generic';
 import { iterateObject } from './utils/object';
-import { capitalise } from './utils/string';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -81,7 +77,7 @@ export class GridOptionsWrapper {
         }
 
         if (this.gridOptionsService.is('groupSelectsChildren')) {
-            if (!this.isRowSelectionMulti()) {
+            if (this.gridOptionsService.get('rowSelection') !== 'multiple') {
                 console.warn("AG Grid: rowSelection must be 'multiple' for groupSelectsChildren to make sense");
             }
             if (this.isRowModelServerSide()) {
@@ -114,7 +110,7 @@ export class GridOptionsWrapper {
             }
         }
 
-        if (isTrue(this.gridOptions.enableRangeSelection)) {
+        if (this.gridOptionsService.is('enableRangeSelection')) {
             ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection');
         } else if (this.gridOptionsService.is('enableRangeHandle') || this.gridOptionsService.is('enableFillHandle')) {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
@@ -239,10 +235,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowSelection === 'single' || this.gridOptions.rowSelection === 'multiple';
     }
 
-    public isRowSelectionMulti() {
-        return this.gridOptions.rowSelection === 'multiple';
-    }
-
     public isRowModelServerSide() {
         return this.gridOptions.rowModelType === 'serverSide';
     }
@@ -252,20 +244,8 @@ export class GridOptionsWrapper {
             this.gridOptions.rowModelType === 'clientSide');
     }
 
-    public isFullRowEdit() {
-        return this.gridOptions.editType === 'fullRow';
-    }
-
-    public isShowToolPanel() {
-        return isTrue(this.gridOptions.sideBar && Array.isArray(this.getSideBar().toolPanels));
-    }
-
-    public getSideBar(): SideBarDef {
-        return this.gridOptions.sideBar as SideBarDef;
-    }
-
     public useAsyncEvents() {
-        return !isTrue(this.gridOptions.suppressAsyncEvents);
+        return !this.gridOptionsService.is('suppressAsyncEvents');
     }
 
     public isColumnsSortingCoupledToGroup(): boolean {
@@ -279,7 +259,7 @@ export class GridOptionsWrapper {
             return this.matchesGroupDisplayType('multipleColumns', this.gridOptions.groupDisplayType);
         }
         // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
-        return isTrue(this.gridOptions.groupHideOpenParents);
+        return this.gridOptionsService.is('groupHideOpenParents');
     }
 
     public isGroupUseEntireRow(pivotMode: boolean): boolean {
@@ -298,10 +278,6 @@ export class GridOptionsWrapper {
 
         return this.gridOptions.treeDataDisplayType ?
             this.matchesTreeDataDisplayType('custom', this.gridOptions.treeDataDisplayType) : false;
-    }
-
-    public isMultiSortKeyCtrl() {
-        return this.gridOptions.multiSortKey === 'ctrl';
     }
 
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
@@ -332,24 +308,14 @@ export class GridOptionsWrapper {
     }
 
     public getInitialGroupOrderComparator() {
-        const { initialGroupOrderComparator, defaultGroupOrderComparator } = this.gridOptions;
+        const initialGroupOrderComparator = this.gridOptionsService.getCallback('initialGroupOrderComparator');
         if (initialGroupOrderComparator) {
-            return this.gridOptionsService.getCallback('initialGroupOrderComparator');
+            return initialGroupOrderComparator;
         }
         // this is the deprecated way, so provide a proxy to make it compatible
+        const defaultGroupOrderComparator = this.gridOptionsService.get('defaultGroupOrderComparator');
         if (defaultGroupOrderComparator) {
             return (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => defaultGroupOrderComparator(params.nodeA, params.nodeB);
-        }
-    }
-
-    public getIsFullWidthCellFunc() {
-        const { isFullWidthRow, isFullWidthCell } = this.gridOptions;
-        if (isFullWidthRow) {
-            return this.gridOptionsService.getCallback('isFullWidthRow');
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        if (isFullWidthCell) {
-            return (params: WithoutGridCommon<IsFullWidthRowParams>) => isFullWidthCell(params.rowNode);
         }
     }
 
@@ -369,11 +335,11 @@ export class GridOptionsWrapper {
         // never allow animating if enforcing the row order
         if (this.gridOptionsService.is('ensureDomOrder')) { return false; }
 
-        return isTrue(this.gridOptions.animateRows);
+        return this.gridOptionsService.is('animateRows');
     }
 
     public isEnableRangeSelection(): boolean {
-        return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
+        return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && this.gridOptionsService.is('enableRangeSelection');
     }
 
     public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
@@ -391,136 +357,68 @@ export class GridOptionsWrapper {
     }
 
     public isMasterDetail() {
-        const masterDetail = isTrue(this.gridOptions.masterDetail);
-
-        if (masterDetail) {
-            return ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail');
-        } else {
-            return false;
-        }
-    }
-
-    public getDefaultExportParams(type: 'csv'): CsvExportParams | undefined;
-    public getDefaultExportParams(type: 'excel'): ExcelExportParams | undefined;
-    public getDefaultExportParams(type: 'csv' | 'excel'): CsvExportParams | ExcelExportParams | undefined {
-        if ((this.gridOptions as any).defaultExportParams) {
-            console.warn(`AG Grid: Since v25.2 \`defaultExportParams\`  has been replaced by \`default${capitalise(type)}ExportParams\`'`);
-            if (type === 'csv') {
-                return (this.gridOptions as any).defaultExportParams as CsvExportParams;
-            }
-            return (this.gridOptions as any).defaultExportParams as ExcelExportParams;
-        }
-
-        if (type === 'csv' && this.gridOptions.defaultCsvExportParams) {
-            return this.gridOptions.defaultCsvExportParams;
-        }
-
-        if (type === 'excel' && this.gridOptions.defaultExcelExportParams) {
-            return this.gridOptions.defaultExcelExportParams;
-        }
+        return this.gridOptionsService.is('masterDetail') && ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail');
     }
 
     public getGroupRowAggFunc() {
-
-        const { getGroupRowAgg, groupRowAggNodes } = this.gridOptions;
+        const getGroupRowAgg = this.gridOptionsService.getCallback('getGroupRowAgg');
         if (getGroupRowAgg) {
-            return this.gridOptionsService.getCallback('getGroupRowAgg');
+            return getGroupRowAgg;
         }
         // this is the deprecated way, so provide a proxy to make it compatible
+        const groupRowAggNodes = this.gridOptionsService.get('groupRowAggNodes');
         if (groupRowAggNodes) {
             return (params: WithoutGridCommon<GetGroupRowAggParams>) => groupRowAggNodes(params.nodes);
         }
     }
 
     public getRowIdFunc() {
-        const { getRowId, getRowNodeId } = this.gridOptions;
+        const getRowId = this.gridOptionsService.getCallback('getRowId');
         if (getRowId) {
-            return this.gridOptionsService.getCallback('getRowId');
+            return getRowId;
         }
         // this is the deprecated way, so provide a proxy to make it compatible
+        const getRowNodeId = this.gridOptionsService.get('getRowNodeId');
         if (getRowNodeId) {
             return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data);
         }
     }
 
     public isTreeData(): boolean {
-        const usingTreeData = isTrue(this.gridOptions.treeData);
+        return this.gridOptionsService.is('treeData') && ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
+    }
 
-        if (usingTreeData) {
-            return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
+    private assertRowModelIsServerSide(key: keyof GridOptions) {
+        if (this.gridOptionsService.get('rowModelType') !== 'serverSide') {
+            doOnce(() => console.warn(`AG Grid: The '${key}' property can only be used with the Server Side Row Model.`), key);
+            return false;
         }
-
-        return false;
+        return true;
+    }
+    private assertNotTreeData(key: keyof GridOptions) {
+        if (this.gridOptionsService.is('treeData')) {
+            doOnce(() => console.warn(`AG Grid: The '${key}' property cannot be used while using tree data.`), key + '_TreeData');
+            return false;
+        }
+        return true;
     }
 
     public isServerSideSortAllLevels() {
-        const isEnabled = isTrue(this.gridOptions.serverSideSortAllLevels);
-        if (!this.isRowModelServerSide() && isEnabled) {
-            doOnce(() => console.warn('AG Grid: The `serverSideSortAllLevels` property can only be used with the server side row model.'), 'serverSideSortAllLevels');
-            return false;
-        }
-        return isEnabled;
+        return this.gridOptionsService.is('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
     }
-
     public isServerSideFilterAllLevels() {
-        const isEnabled = isTrue(this.gridOptions.serverSideFilterAllLevels);
-        if (!this.isRowModelServerSide() && isEnabled) {
-            doOnce(() => console.warn('AG Grid: The `serverSideFilterAllLevels` property can only be used with the server side row model.'), 'serverSideFilterAllLevels');
-            return false;
-        }
-        return isEnabled;
+        return this.gridOptionsService.is('serverSideFilterAllLevels') && this.assertRowModelIsServerSide('serverSideFilterAllLevels');
     }
-
     public isServerSideSortOnServer() {
-        const isEnabled = isTrue(this.gridOptions.serverSideSortOnServer);
-
-        if (!this.isRowModelServerSide() && isEnabled) {
-            doOnce(() => console.warn('AG Grid: The `serverSideSortOnServer` property can only be used with the server side row model.'), 'serverSideSortOnServerRowModel');
-            return false;
-        }
-
-        if (this.isTreeData() && isEnabled) {
-            doOnce(() => console.warn('AG Grid: The `serverSideSortOnServer` property cannot be used while using tree data.'), 'serverSideSortOnServerTreeData');
-            return false;
-        }
-
-        return isEnabled;
+        return this.gridOptionsService.is('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
     }
-
     public isServerSideFilterOnServer() {
-        const isEnabled = isTrue(this.gridOptions.serverSideFilterOnServer);
-
-        if (!this.isRowModelServerSide() && isEnabled) {
-            doOnce(() => console.warn('AG Grid: The `serverSideFilterOnServer` property can only be used with the server side row model.'), 'serverSideFilterOnServerRowModel');
-            return false;
-        }
-
-        if (this.isTreeData() && isEnabled) {
-            doOnce(() => console.warn('AG Grid: The `serverSideFilterOnServer` property cannot be used while using tree data.'), 'serverSideFilterOnServerTreeData');
-            return false;
-        }
-
-        return isEnabled;
-    }
-    public getPostSortFunc() {
-        const { postSortRows, postSort } = this.gridOptions;
-        if (postSortRows) {
-            return this.gridOptionsService.getCallback('postSortRows');
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        if (postSort) {
-            return (params: WithoutGridCommon<PostSortRowsParams>) => postSort(params.nodes);
-        }
+        return this.gridOptionsService.is('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
     }
 
     public getChartThemes(): string[] {
         // return default themes if user hasn't supplied any
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
-    }
-
-    public getAutoSizePadding(): number {
-        const value = this.gridOptions.autoSizePadding;
-        return value != null && value >= 0 ? value : 20;
     }
 
     // properties

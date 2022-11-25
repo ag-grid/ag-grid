@@ -389,7 +389,7 @@ export class CellCtrl extends BeanStub {
 
     // pass in 'true' to cancel the editing.
     public stopRowOrCellEdit(cancel: boolean = false) {
-        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
+        if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
             this.rowCtrl.stopRowEditing(cancel);
         } else {
             this.stopEditing(cancel);
@@ -730,7 +730,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private navigateAfterEdit(): void {
-        const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
+        const fullRowEdit = this.beans.gridOptionsService.get('editType') === 'fullRow';
 
         if (fullRowEdit) { return; }
 
@@ -973,7 +973,7 @@ export class CellCtrl extends BeanStub {
     // called by rowRenderer when user navigates via tab key
     public startRowOrCellEdit(key?: string | null, charPress?: string | null, event: KeyboardEvent | MouseEvent | null = null): void {
         if (!this.cellComp) { return; }
-        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
+        if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
             this.rowCtrl.startRowEditing(key, charPress, this);
         } else {
             this.startEditing(key, charPress, true, event);
@@ -1056,7 +1056,7 @@ export class CellCtrl extends BeanStub {
         }
 
         // if another cell was focused, and we are editing, then stop editing
-        const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
+        const fullRowEdit = this.beans.gridOptionsService.get('editType') === 'fullRow';
 
         if (!cellFocused && !fullRowEdit && this.editing) {
             this.stopRowOrCellEdit();
