@@ -20,6 +20,7 @@ import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartProxy, UpdateChartParams } from "./chartProxies/chartProxy";
 import { _Theme } from "ag-charts-community";
 import { ChartSeriesType, getSeriesType } from "./utils/seriesTypeMapper";
+import { isStockTheme } from "./chartProxies/chartTheme";
 
 export class ChartController extends BeanStub {
 
@@ -178,7 +179,7 @@ export class ChartController extends BeanStub {
         const themeNames = this.gridOptionsWrapper.getChartThemes();
 
         return themeNames.map(themeName => {
-            const stockTheme = ChartProxy.isStockTheme(themeName);
+            const stockTheme = isStockTheme(themeName);
             const theme = stockTheme ? themeName : this.chartProxy.lookupCustomChartTheme(themeName);
             return _Theme.getChartTheme(theme).palette;
         });
