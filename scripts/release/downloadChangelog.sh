@@ -19,4 +19,4 @@ function checkFileExists {
 
 checkFileExists $SSH_LOCATION
 
-ssh -i $SSH_LOCATION -p 2022 aggrid@ag-grid.com "cd /home/aggrid/jira_reports && ./getChangelog.sh"
+ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "cd /home/ubuntu/jira_reports && ./getChangelog.sh"
