@@ -43,22 +43,6 @@ export interface PropertyChangedEvent extends AgEvent {
 export class GridOptionsWrapper {
     private static MIN_COL_WIDTH = 10;
 
-    public static PROP_GROUP_DISPLAY_TYPE: 'groupDisplayType' = 'groupDisplayType';
-    public static PROP_GROUP_REMOVE_SINGLE_CHILDREN: 'groupRemoveSingleChildren' = 'groupRemoveSingleChildren';
-    public static PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN: 'groupRemoveLowestSingleChildren' = 'groupRemoveLowestSingleChildren';
-
-    public static PROP_HEADER_HEIGHT: 'headerHeight' = 'headerHeight';
-    public static PROP_PIVOT_HEADER_HEIGHT: 'pivotHeaderHeight' = 'pivotHeaderHeight';
-    public static PROP_GROUP_HEADER_HEIGHT: 'groupHeaderHeight' = 'groupHeaderHeight';
-    public static PROP_PIVOT_GROUP_HEADER_HEIGHT: 'pivotGroupHeaderHeight' = 'pivotGroupHeaderHeight';
-    public static PROP_FLOATING_FILTERS_HEIGHT: 'floatingFiltersHeight' = 'floatingFiltersHeight';
-
-    public static PROP_DOM_LAYOUT: 'domLayout' = 'domLayout';
-    public static PROP_ROW_CLASS: 'rowClass' = 'rowClass';
-
-    public static PROP_AUTO_GROUP_COLUMN_DEF: 'autoGroupColumnDef' = 'autoGroupColumnDef';
-    public static PROP_DEFAULT_COL_DEF: 'defaultColDef' = 'defaultColDef';
-
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
     @Autowired('eventService') private readonly eventService: EventService;
@@ -365,7 +349,7 @@ export class GridOptionsWrapper {
     public getInitialGroupOrderComparator() {
         const { initialGroupOrderComparator, defaultGroupOrderComparator } = this.gridOptions;
         if (initialGroupOrderComparator) {
-            return this.gridOptionsService.mergeGridCommonParams(initialGroupOrderComparator);
+            return this.gridOptionsService.getCallback('initialGroupOrderComparator');
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (defaultGroupOrderComparator) {
@@ -376,7 +360,7 @@ export class GridOptionsWrapper {
     public getIsFullWidthCellFunc() {
         const { isFullWidthRow, isFullWidthCell } = this.gridOptions;
         if (isFullWidthRow) {
-            return this.gridOptionsService.mergeGridCommonParams(isFullWidthRow);
+            return this.gridOptionsService.getCallback('isFullWidthRow');
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (isFullWidthCell) {
@@ -415,7 +399,7 @@ export class GridOptionsWrapper {
         const userValue = this.gridOptions.groupAggFiltering;
 
         if (typeof userValue === 'function') {
-            return this.gridOptionsService.mergeGridCommonParams(userValue);
+            this.gridOptionsService.getCallback('groupAggFiltering' as any)
         }
 
         if (isTrue(userValue)) {
@@ -459,7 +443,7 @@ export class GridOptionsWrapper {
 
         const { getGroupRowAgg, groupRowAggNodes } = this.gridOptions;
         if (getGroupRowAgg) {
-            return this.gridOptionsService.mergeGridCommonParams(getGroupRowAgg);
+            return this.gridOptionsService.getCallback('getGroupRowAgg');
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (groupRowAggNodes) {
@@ -470,7 +454,7 @@ export class GridOptionsWrapper {
     public getRowIdFunc() {
         const { getRowId, getRowNodeId } = this.gridOptions;
         if (getRowId) {
-            return this.gridOptionsService.mergeGridCommonParams(getRowId);
+            return this.gridOptionsService.getCallback('getRowId');
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (getRowNodeId) {
@@ -540,7 +524,7 @@ export class GridOptionsWrapper {
     public getPostSortFunc() {
         const { postSortRows, postSort } = this.gridOptions;
         if (postSortRows) {
-            return this.gridOptionsService.mergeGridCommonParams(postSortRows);
+            return this.gridOptionsService.getCallback('postSortRows');
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (postSort) {
@@ -950,7 +934,7 @@ export class GridOptionsWrapper {
                 data: rowNode.data
             };
 
-            const height = this.gridOptionsService.mergeGridCommonParams(this.gridOptions.getRowHeight)!(params);
+            const height = this.gridOptionsService.getCallback('getRowHeight')!(params);
 
             if (this.isNumeric(height)) {
                 if (height === 0) {

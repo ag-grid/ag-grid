@@ -16,6 +16,10 @@
     "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
     "type": { "arguments": {}, "returnType": "Context" }
   },
+  "___setProperty": {
+    "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases\n     */",
+    "type": { "arguments": { "propertyName": "K", "value": "GridOptions[K]" } }
+  },
   "addDetailGridInfo": {
     "description": "/** Register a detail grid with the master grid when it is created. */",
     "type": {
@@ -506,9 +510,7 @@
   },
   "setDomLayout": {
     "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n     * Defaults to `normal` if no domLayout provided.\n     */",
-    "type": {
-      "arguments": { "domLayout?": "'normal' | 'autoHeight' | 'print'" }
-    }
+    "type": { "arguments": { "domLayout?": "DomLayoutType" } }
   },
   "setEnableCellTextSelection": {
     "description": "/** Sets the `enableCellTextSelection` property. */",
@@ -534,6 +536,7 @@
     "description": "/** Sets the height in pixels for the row containing header column groups when in pivot mode. */",
     "type": { "arguments": { "headerHeight?": "number" } }
   },
+  "setPivotMode": { "type": { "arguments": { "pivotMode": "boolean" } } },
   "setIsExternalFilterPresent": {
     "type": {
       "arguments": { "isExternalFilterPresentFunc": "() => boolean" },

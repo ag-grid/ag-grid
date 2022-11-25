@@ -6243,7 +6243,7 @@
   },
   "PropertyChangedListener": {
     "meta": { "isTypeAlias": true },
-    "type": "(event?: PropertyChangedEvent) => void"
+    "type": "(event: PropertyChangedEvent) => void"
   },
   "IAbstractHeaderCellComp": { "meta": {}, "type": {} },
   "IHeaderCellComp": {

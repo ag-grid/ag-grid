@@ -116,7 +116,7 @@ export class BeanStub implements IEventEmitter {
         return destroyFunc;
     }
 
-    public addManagedOptionsListener(
+    public addManagedPropertyListener(
         event: keyof GridOptions,
         listener: PropertyChangedListener
     ): (() => null) | undefined {

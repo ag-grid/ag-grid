@@ -31,7 +31,7 @@ export class LayoutFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClasses.bind(this));
+        this.addManagedPropertyListener('domLayout', this.updateLayoutClasses.bind(this));
         this.updateLayoutClasses();
     }
 

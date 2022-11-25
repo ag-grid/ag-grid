@@ -50,8 +50,8 @@ export class FakeHScrollCtrl extends BeanStub {
         const spacerWidthsListener = this.setFakeHScrollSpacerWidths.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, spacerWidthsListener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, spacerWidthsListener);
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, spacerWidthsListener);
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.addManagedPropertyListener('domLayout', spacerWidthsListener);
         this.onScrollVisibilityChanged();
 
         this.ctrlsService.registerFakeHScrollCtrl(this);
