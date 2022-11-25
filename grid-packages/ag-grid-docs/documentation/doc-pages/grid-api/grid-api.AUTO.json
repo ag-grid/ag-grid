@@ -902,7 +902,7 @@
   },
   "getSideBar": {
     "description": "/** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */",
-    "type": { "arguments": {}, "returnType": "SideBarDef" }
+    "type": { "arguments": {}, "returnType": "SideBarDef | undefined" }
   },
   "setSideBar": {
     "description": "/** Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config. */",

@@ -3070,48 +3070,6 @@
       "rowPinned": "/** Either 'top', 'bottom' or null/undefined (for not pinned) */"
     }
   },
-  "ToolPanelDef": {
-    "meta": {},
-    "type": {
-      "id": "string",
-      "labelKey": "string",
-      "labelDefault": "string",
-      "minWidth?": "number",
-      "maxWidth?": "number",
-      "width?": "number",
-      "iconKey": "string",
-      "toolPanel?": "any",
-      "toolPanelFramework?": "any",
-      "toolPanelParams?": "any"
-    },
-    "docs": {
-      "id": "/** The unique ID for this panel. Used in the API and elsewhere to refer to the panel. */",
-      "labelKey": "/** The key used for localisation for displaying the label. The label is displayed in the tab button. */",
-      "labelDefault": "/** The default label if `labelKey` is missing or does not map to valid text through localisation. */",
-      "minWidth?": "/** The min width of the tool panel. Default: `100` */",
-      "maxWidth?": "/** The max width of the tool panel. Default: `undefined` */",
-      "width?": "/** The initial width of the tool panel. Default: `$side-bar-panel-width (theme variable)` */",
-      "iconKey": "/** The key of the icon to be used as a graphical aid beside the label in the side bar. */",
-      "toolPanel?": "/** The tool panel component to use as the panel.\n     * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n     * To provide your own custom panel component, you reference it here.\n     */",
-      "toolPanelFramework?": "/** @deprecated Same as `toolPanel` but for framework specific components. As of v27, use toolPanel instead for Framework components */",
-      "toolPanelParams?": "/** Customise the parameters provided to the `toolPanel` component. */"
-    }
-  },
-  "SideBarDef": {
-    "meta": {},
-    "type": {
-      "toolPanels?": "(ToolPanelDef | string)[]",
-      "defaultToolPanel?": "string",
-      "hiddenByDefault?": "boolean",
-      "position?": "'left' | 'right'"
-    },
-    "docs": {
-      "toolPanels?": "/** A list of all the panels to place in the side bar. The panels will be displayed in the provided order from top to bottom.\n     */",
-      "defaultToolPanel?": "/** The panel (identified by ID) to open by default. If none specified, the side bar is initially displayed closed. */",
-      "hiddenByDefault?": "/** To hide the side bar by default, set this to `true`. If left undefined the side bar will be shown. */",
-      "position?": "/** Sets the side bar position relative to the grid. */"
-    }
-  },
   "SASS_PROPERTIES": {
     "meta": { "isTypeAlias": true },
     "type": "'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth'"
@@ -6238,7 +6196,11 @@
   },
   "PropertyChangedEvent": {
     "meta": {},
-    "type": { "currentValue": "any", "previousValue": "any", "type": "string" },
+    "type": {
+      "type": "keyof GridOptions",
+      "currentValue": "any",
+      "previousValue": "any"
+    },
     "docs": { "type": "/** Event identifier */" }
   },
   "PropertyChangedListener": {
@@ -11533,7 +11495,50 @@
       "getToolPanelInstance(key: string)": "IToolPanel | undefined",
       "close()": "void",
       "openedItem()": "string | null",
-      "isDisplayed()": "boolean"
+      "isDisplayed()": "boolean",
+      "getDef()": "SideBarDef | undefined"
+    }
+  },
+  "ToolPanelDef": {
+    "meta": {},
+    "type": {
+      "id": "string",
+      "labelKey": "string",
+      "labelDefault": "string",
+      "minWidth?": "number",
+      "maxWidth?": "number",
+      "width?": "number",
+      "iconKey": "string",
+      "toolPanel?": "any",
+      "toolPanelFramework?": "any",
+      "toolPanelParams?": "any"
+    },
+    "docs": {
+      "id": "/** The unique ID for this panel. Used in the API and elsewhere to refer to the panel. */",
+      "labelKey": "/** The key used for localisation for displaying the label. The label is displayed in the tab button. */",
+      "labelDefault": "/** The default label if `labelKey` is missing or does not map to valid text through localisation. */",
+      "minWidth?": "/** The min width of the tool panel. Default: `100` */",
+      "maxWidth?": "/** The max width of the tool panel. Default: `undefined` */",
+      "width?": "/** The initial width of the tool panel. Default: `$side-bar-panel-width (theme variable)` */",
+      "iconKey": "/** The key of the icon to be used as a graphical aid beside the label in the side bar. */",
+      "toolPanel?": "/** The tool panel component to use as the panel.\n     * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n     * To provide your own custom panel component, you reference it here.\n     */",
+      "toolPanelFramework?": "/** @deprecated Same as `toolPanel` but for framework specific components. As of v27, use toolPanel instead for Framework components */",
+      "toolPanelParams?": "/** Customise the parameters provided to the `toolPanel` component. */"
+    }
+  },
+  "SideBarDef": {
+    "meta": {},
+    "type": {
+      "toolPanels?": "(ToolPanelDef | string)[]",
+      "defaultToolPanel?": "string",
+      "hiddenByDefault?": "boolean",
+      "position?": "'left' | 'right'"
+    },
+    "docs": {
+      "toolPanels?": "/** A list of all the panels to place in the side bar. The panels will be displayed in the provided order from top to bottom.\n     */",
+      "defaultToolPanel?": "/** The panel (identified by ID) to open by default. If none specified, the side bar is initially displayed closed. */",
+      "hiddenByDefault?": "/** To hide the side bar by default, set this to `true`. If left undefined the side bar will be shown. */",
+      "position?": "/** Sets the side bar position relative to the grid. */"
     }
   },
   "ISparklineCellRendererParams": {
