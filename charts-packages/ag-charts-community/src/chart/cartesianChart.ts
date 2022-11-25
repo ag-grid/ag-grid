@@ -10,6 +10,9 @@ export class CartesianChart extends Chart {
     static className = 'CartesianChart';
     static type: 'cartesian' | 'groupedCategory' = 'cartesian';
 
+    /** Integrated Charts feature state - not used in Standalone Charts. */
+    public readonly paired: boolean = true;
+
     constructor(document = window.document, overrideDevicePixelRatio?: number, resources?: TransferableResources) {
         super(document, overrideDevicePixelRatio, resources);
 

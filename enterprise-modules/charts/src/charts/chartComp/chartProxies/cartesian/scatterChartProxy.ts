@@ -29,7 +29,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
     }
 
     public getSeries(params: UpdateChartParams): AgScatterSeriesOptions[] {
-        const paired = this.getIntegratedThemeOptions()[this.standaloneChartType]?.paired;
+        const paired = this.isPaired();
         const seriesDefinitions = this.getSeriesDefinitions(params.fields, paired);
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
 

@@ -93,13 +93,11 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public getPairedMode(): boolean {
-        const optionsType = getSeriesType(this.getChartType());
-        return _.get(this.chartController.getChartProxy().getIntegratedThemeOptions(), `${optionsType}.paired`, undefined);
+        return this.chartController.getChartProxy().isPaired();
     }
 
     public setPairedMode(paired: boolean): void {
-        const optionsType = getSeriesType(this.getChartType());
-        this.chartController.getChartProxy().setIntegratedThemeOptions(`${optionsType}.paired`, paired);
+        this.chartController.getChartProxy().setPaired(paired);
     }
 
     private getAxis(axisType: string): ChartAxis | undefined {
