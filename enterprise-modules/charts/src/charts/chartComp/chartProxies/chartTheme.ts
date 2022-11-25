@@ -34,7 +34,7 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
 
     // Overrides in ascending precedence ordering.
     const overrides: (AgChartThemeOverrides | undefined)[] = [
-        INBUILT_THEME_OVERRIDES,
+        stockTheme ? INBUILT_STOCK_THEME_OVERRIDES : undefined,
         crossFilteringOverrides,
         gridOptionsThemeOverrides,
         apiThemeOverrides,
@@ -82,7 +82,7 @@ export function isStockTheme(themeName: string): boolean {
     return _.includes(Object.keys(_Theme.themes), themeName);
 }
 
-const INBUILT_THEME_OVERRIDES: AgChartThemeOverrides = {
+const INBUILT_STOCK_THEME_OVERRIDES: AgChartThemeOverrides = {
     common: {
         padding: {
             top: 25,
