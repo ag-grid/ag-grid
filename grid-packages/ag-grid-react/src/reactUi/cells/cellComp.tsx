@@ -393,25 +393,32 @@ const CellComp = (props: {
 
     const cellInstanceId = useMemo(() => cellCtrl.getInstanceId(), []);
 
-    const showContents = () => (
-        <>
-        { 
-            renderDetails != null &&
-            jsxShowValue(
+    const showContents = () => {
+        if (renderDetails != null) {
+            return jsxShowValue(
                 renderDetails,
                 renderKey,
                 cellInstanceId,
                 cellRendererRef,
                 showCellWrapper,
                 reactCellRendererStateless,
-                setCellValueRef) 
+                setCellValueRef
+            );
         }
-        { 
-            editDetails != null &&
-            jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl, jsEditorComp)
+
+        if (editDetails != null) {
+            return jsxEditValue(
+                editDetails,
+                setInlineCellEditorRef,
+                setPopupCellEditorRef,
+                eGui.current!,
+                cellCtrl,
+                jsEditorComp
+            )
         }
-        </>
-    );
+
+        return null;
+    }
 
     return (
         <div
