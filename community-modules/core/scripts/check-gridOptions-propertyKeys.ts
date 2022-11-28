@@ -31,7 +31,7 @@ function checkGridOptionPropertyKeys() {
 
     const ignored = ['clipboardDeliminator', 'api', 'columnApi', 'TData']
     //Check our PropertyKeys is accurate via ComponentUtils
-    const keysToCheck = [...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENTS, ...ComponentUtil.getEventCallbacks(), ...ignored];
+    const keysToCheck = [...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENTS, ...ComponentUtil.EVENT_CALLBACKS, ...ignored];
     const missingPropertyKeys: string[] = [];
     gridOpsMembers.forEach(k => {
         if (k && !keysToCheck.includes(k)) {

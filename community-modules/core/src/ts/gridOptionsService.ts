@@ -64,7 +64,7 @@ export class GridOptionsService {
 
     @PostConstruct
     public init(): void {
-        this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.getEventCallbacks()]);
+        this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
     }
 
     public is(property: BooleanProps): boolean {

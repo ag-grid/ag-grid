@@ -156,7 +156,7 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
             }
         });
 
-        ComponentUtil.getEventCallbacks().forEach(funcName => {
+        ComponentUtil.EVENT_CALLBACKS.forEach(funcName => {
             if (prevProps[funcName] !== nextProps[funcName]) {
                 if (debugLogging) {
                     console.log(`agGridReact: [${funcName}] event callback changed`);
@@ -172,7 +172,7 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
 
     private processChanges(changes: {}) {
         this.processWhenReady( ()=>
-            ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi)
+            ComponentUtil.processOnChange(changes, this.api)
         );
     }
 

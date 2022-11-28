@@ -153,7 +153,7 @@ export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<T
             }
         });
 
-        ComponentUtil.getEventCallbacks().forEach(funcName => {
+        ComponentUtil.EVENT_CALLBACKS.forEach(funcName => {
             if (prevProps[funcName] !== nextProps[funcName]) {
                 if (debugLogging) {
                     console.log(`agGridReact: [${funcName}] event callback changed`);
@@ -197,7 +197,7 @@ export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<T
             })
 
             if(Object.keys(synchronousChanges).length > 0 && !!this.api) {
-                ComponentUtil.processOnChange(synchronousChanges, this.gridOptions, this.api, this.columnApi)
+                ComponentUtil.processOnChange(synchronousChanges, this.api)
             }
         }
         return asyncChanges;
@@ -208,7 +208,7 @@ export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<T
             window.setTimeout(() => {
                 // destroyed?
                 if (this.api) {
-                    ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi)
+                    ComponentUtil.processOnChange(changes, this.api)
                 }
             });
         }
@@ -219,7 +219,7 @@ AgGridReactLegacy.propTypes = {
     gridOptions: PropTypes.object
 };
 
-addProperties(ComponentUtil.getEventCallbacks(), PropTypes.func);
+addProperties(ComponentUtil.EVENT_CALLBACKS, PropTypes.func);
 addProperties(ComponentUtil.BOOLEAN_PROPERTIES, PropTypes.bool);
 addProperties(ComponentUtil.STRING_PROPERTIES, PropTypes.string);
 addProperties(ComponentUtil.OBJECT_PROPERTIES, PropTypes.object);
