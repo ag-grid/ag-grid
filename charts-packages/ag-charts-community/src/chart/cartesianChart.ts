@@ -112,6 +112,11 @@ export class CartesianChart extends Chart {
         }
 
         const stableWidths = <T extends typeof axisWidths>(other: T) => {
+            // Check for new axis positions.
+            if (Object.keys(other).some((k) => (axisWidths as any)[k] == null)) {
+                return false;
+            }
+            // Check for existing axis positions and equality.
             return Object.entries(axisWidths).every(([p, w]) => {
                 const otherW = (other as any)[p];
                 if (w != null || otherW != null) {
