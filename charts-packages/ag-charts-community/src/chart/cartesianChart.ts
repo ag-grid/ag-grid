@@ -196,9 +196,6 @@ export class CartesianChart extends Chart {
             Object.entries(axisWidths).forEach(([p, _]) => {
                 (newAxisWidths as any)[p] = 0;
             });
-        }
-
-        if (hideAxes) {
             return { clipSeries, seriesRect, axisWidths: newAxisWidths, hideAxes, hideCrossLines };
         }
 
@@ -263,7 +260,7 @@ export class CartesianChart extends Chart {
         const result = bounds.clone();
         const { top = 0, right = 0, bottom = 0, left = 0 } = crossLinePadding;
         if (result.width <= left + right || result.height <= top + bottom) {
-            // crossLines need to be hidden, don't consider crosslines padding for axisBound
+            // Not enough space for crossLines padding, hide crossLines and don't consider padding for axisBound
             return { axisBound: result, hideCrossLines: true };
         }
 
