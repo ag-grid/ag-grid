@@ -64,7 +64,7 @@ describe('HierarchyChart', () => {
             await compare(chart);
         });
 
-        const childAtDepth = [0, 3, 1, 0];
+        const childAtDepth = [0, 0, 0, 0];
         it.each([0, 1, 2, 3])(`should render highlight at depth %s`, async (depth) => {
             const options: AgChartOptions = { ...SIMPLIFIED_EXAMPLE };
             options.autoSize = false;

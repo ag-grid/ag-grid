@@ -9167,23 +9167,10 @@
       "color?": "/** The colour to use for the labels. */"
     }
   },
-  "AgTreemapNodeDatum": {
-    "meta": { "typeParams": ["DatumType"] },
-    "type": {
-      "datum": "DatumType",
-      "parent?": "AgTreemapNodeDatum<DatumType>",
-      "children?": "AgTreemapNodeDatum<DatumType>[]",
-      "depth": "number",
-      "colorValue": "number",
-      "fill": "CssColor",
-      "label": "string",
-      "hasTitle": "boolean"
-    }
-  },
   "AgTreemapSeriesTooltipRendererParams": {
     "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "AgTreemapNodeDatum<DatumType>",
+      "datum": "DatumType",
       "sizeKey?": "string",
       "labelKey?": "string",
       "valueKey?": "string",

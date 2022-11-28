@@ -15683,34 +15683,8 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
-  "AgTreemapNodeDatum": {
-    "datum": { "type": { "returnType": "DatumType", "optional": false } },
-    "parent": {
-      "type": {
-        "returnType": "AgTreemapNodeDatum<DatumType>",
-        "optional": true
-      }
-    },
-    "children": {
-      "type": {
-        "returnType": "AgTreemapNodeDatum<DatumType>[]",
-        "optional": true
-      }
-    },
-    "depth": { "type": { "returnType": "number", "optional": false } },
-    "colorValue": { "type": { "returnType": "number", "optional": false } },
-    "fill": { "type": { "returnType": "CssColor", "optional": false } },
-    "label": { "type": { "returnType": "string", "optional": false } },
-    "hasTitle": { "type": { "returnType": "boolean", "optional": false } },
-    "meta": { "typeParams": ["DatumType"] }
-  },
   "AgTreemapSeriesTooltipRendererParams": {
-    "datum": {
-      "type": {
-        "returnType": "AgTreemapNodeDatum<DatumType>",
-        "optional": false
-      }
-    },
+    "datum": { "type": { "returnType": "DatumType", "optional": false } },
     "sizeKey": { "type": { "returnType": "string", "optional": true } },
     "labelKey": { "type": { "returnType": "string", "optional": true } },
     "valueKey": { "type": { "returnType": "string", "optional": true } },
