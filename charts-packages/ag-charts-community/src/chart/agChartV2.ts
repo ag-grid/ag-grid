@@ -227,8 +227,10 @@ abstract class AgChartInternal {
         const chartToUpdate = chart;
         chartToUpdate.queuedUserOptions.push(userOptions);
         const dequeue = () => {
+            // If there are a lot of update calls, `requestFactoryUpdate()` may skip callbacks,
+            // so we need to remove all queue items up to the last successfully applied item.
             const queuedOptionsIdx = chartToUpdate.queuedUserOptions.indexOf(userOptions);
-            chartToUpdate.queuedUserOptions.splice(queuedOptionsIdx, 1);
+            chartToUpdate.queuedUserOptions.splice(0, queuedOptionsIdx);
         };
 
         chartToUpdate.requestFactoryUpdate(async () => {
