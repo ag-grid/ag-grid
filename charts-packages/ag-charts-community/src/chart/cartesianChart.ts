@@ -71,15 +71,19 @@ export class CartesianChart extends Chart {
         if (navigator.enabled) {
             const navigatorTotalHeight = navigator.height + navigator.margin;
             shrinkRect.height -= navigatorTotalHeight;
-            navigator.x = shrinkRect.x;
             navigator.y = shrinkRect.y + shrinkRect.height + navigator.margin;
-            navigator.width = shrinkRect.width;
         }
 
         const { seriesRect, hideSeries } = this.updateAxes(shrinkRect);
 
+        if (navigator.enabled && !hideSeries) {
+            navigator.x = seriesRect.x;
+            navigator.width = seriesRect.width;
+        }
+
         this.seriesRoot.visible = !hideSeries;
-        legend.group.visible = !hideSeries;
+        legend.group.visible = legend.enabled && !hideSeries;
+        navigator.rs.visible = navigator.enabled && !hideSeries;
 
         this.seriesRect = seriesRect;
         this.series.forEach((series) => {

@@ -4,7 +4,7 @@ import { BBox } from '../../scene/bbox';
 import { NavigatorMask } from './navigatorMask';
 import { NavigatorHandle } from './navigatorHandle';
 import { ChartUpdateType } from '../chart';
-import { NUMBER, Validate } from '../../util/validation';
+import { BOOLEAN, NUMBER, Validate } from '../../util/validation';
 import { InteractionManager } from '../interaction/interactionManager';
 
 interface Offset {
@@ -13,7 +13,7 @@ interface Offset {
 }
 
 export class Navigator {
-    private readonly rs = new RangeSelector();
+    readonly rs = new RangeSelector();
     private readonly chart: CartesianChart;
 
     readonly mask = new NavigatorMask(this.rs.mask);
@@ -26,11 +26,15 @@ export class Navigator {
 
     private changedCursor = false;
 
+    @Validate(BOOLEAN)
+    private _enabled = false;
     set enabled(value: boolean) {
+        this._enabled = value;
+
         this.rs.visible = value;
     }
-    get enabled(): boolean {
-        return this.rs.visible;
+    get enabled() {
+        return this._enabled;
     }
 
     set x(value: number) {
