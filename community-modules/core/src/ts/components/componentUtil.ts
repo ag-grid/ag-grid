@@ -2,25 +2,58 @@ import { GridOptions } from '../entities/gridOptions';
 import { GridApi } from '../gridApi';
 import { ComponentStateChangedEvent, Events } from '../events';
 import { PropertyKeys } from '../propertyKeys';
-import { ColumnApi } from '../columns/columnApi';
 import { iterateObject } from '../utils/object';
 import { includes } from '../utils/array';
 import { values } from '../utils/generic';
 import { WithoutGridCommon } from '../interfaces/iCommon';
-
 export class ComponentUtil {
 
-    // all the events are populated in here AFTER this class (at the bottom of the file).
-    public static EVENTS: string[] = [];
-
-    // events that are available for use by users of AG Grid and so should be documented
-    public static PUBLIC_EVENTS: string[] = [];
+    // all events
+    public static EVENTS: string[] = values<any>(Events);
 
     // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
-    public static EXCLUDED_INTERNAL_EVENTS: string[] = [];
+    /** Exclude the following internal events from code generation to prevent exposing these events via framework components */
+    public static EXCLUDED_INTERNAL_EVENTS: string[] = [
+        Events.EVENT_SCROLLBAR_WIDTH_CHANGED,
+        Events.EVENT_CHECKBOX_CHANGED,
+        Events.EVENT_HEIGHT_SCALE_CHANGED,
+        Events.EVENT_BODY_HEIGHT_CHANGED,
+        Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
+        Events.EVENT_SCROLL_VISIBILITY_CHANGED,
+        Events.EVENT_COLUMN_HOVER_CHANGED,
+        Events.EVENT_FLASH_CELLS,
+        Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED,
+        Events.EVENT_DISPLAYED_ROWS_CHANGED,
+        Events.EVENT_LEFT_PINNED_WIDTH_CHANGED,
+        Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED,
+        Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,
+        Events.EVENT_POPUP_TO_FRONT,
+        Events.EVENT_KEYBOARD_FOCUS,
+        Events.EVENT_MOUSE_FOCUS,
+        Events.EVENT_STORE_UPDATED,
+        Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
+        Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
+        Events.EVENT_FILL_START,
+        Events.EVENT_FILL_END,
+        Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START,
+        Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END,
+        Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
+        Events.EVENT_HEADER_HEIGHT_CHANGED,
+        Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED
+    ];
 
-    // function below fills this with onXXX methods, based on the above events
-    private static EVENT_CALLBACKS: string[];
+    // events that are available for use by users of AG Grid and so should be documented
+    /** EVENTS that should be exposed via code generation for the framework components.  */
+    public static PUBLIC_EVENTS: string[] = ComponentUtil.EVENTS.filter(e => !includes(ComponentUtil.EXCLUDED_INTERNAL_EVENTS, e));
+
+    public static getCallbackForEvent(eventName: string): string {
+        if (!eventName || eventName.length < 2) {
+            return eventName;
+        }
+        return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
+    }
+    // onXXX methods, based on the above events
+    public static EVENT_CALLBACKS: string[] = ComponentUtil.EVENTS.map(event => ComponentUtil.getCallbackForEvent(event));
 
     public static STRING_PROPERTIES = PropertyKeys.STRING_PROPERTIES;
     public static OBJECT_PROPERTIES = PropertyKeys.OBJECT_PROPERTIES;
@@ -30,37 +63,27 @@ export class ComponentUtil {
     public static FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
     public static ALL_PROPERTIES = PropertyKeys.ALL_PROPERTIES;
 
-    private static coercionLookup: Record<keyof GridOptions, 'number' | 'boolean' | 'none'>;
     private static getCoercionLookup() {
-        if (this.coercionLookup) {
-            return this.coercionLookup;
-        }
+        let coercionLookup = {} as any;
 
-        this.coercionLookup = {} as any
         [
             ...ComponentUtil.ARRAY_PROPERTIES,
             ...ComponentUtil.OBJECT_PROPERTIES,
             ...ComponentUtil.STRING_PROPERTIES,
             ...ComponentUtil.FUNCTION_PROPERTIES,
-            ...ComponentUtil.getEventCallbacks(),
+            ...ComponentUtil.EVENT_CALLBACKS,
         ]
-            .forEach((key: keyof GridOptions) => this.coercionLookup[key] = 'none');
+            .forEach((key: keyof GridOptions) => coercionLookup[key] = 'none');
         ComponentUtil.BOOLEAN_PROPERTIES
-            .forEach(key => this.coercionLookup[key] = 'boolean');
+            .forEach(key => coercionLookup[key] = 'boolean');
         ComponentUtil.NUMBER_PROPERTIES
-            .forEach(key => this.coercionLookup[key] = 'number');
-        return this.coercionLookup;
+            .forEach(key => coercionLookup[key] = 'number');
+        return coercionLookup;
     }
-
-    public static getEventCallbacks(): string[] {
-        if (!ComponentUtil.EVENT_CALLBACKS) {
-            ComponentUtil.EVENT_CALLBACKS = ComponentUtil.EVENTS.map(event => ComponentUtil.getCallbackForEvent(event));
-        }
-        return ComponentUtil.EVENT_CALLBACKS;
-    }
+    private static coercionLookup: Record<keyof GridOptions, 'number' | 'boolean' | 'none'> = ComponentUtil.getCoercionLookup();
 
     private static getValue(key: string, rawValue: any) {
-        const coercionStep = ComponentUtil.getCoercionLookup()[key as keyof GridOptions];
+        const coercionStep = ComponentUtil.coercionLookup[key as keyof GridOptions];
 
         if (coercionStep) {
             let newValue = rawValue;
@@ -81,7 +104,15 @@ export class ComponentUtil {
         return undefined;
     }
 
-    public static copyAttributesToGridOptions(gridOptions: GridOptions | undefined, component: any, skipEventDeprecationCheck: boolean = false): GridOptions {
+    private static getGridOptionKeys(component: any, isVue: boolean) {
+        // Vue does not have keys in prod so instead need to run through all the 
+        // gridOptions checking for presence of a gridOption key.
+        return isVue
+            ? Object.keys(ComponentUtil.coercionLookup)
+            : Object.keys(component);
+    }
+
+    public static copyAttributesToGridOptions(gridOptions: GridOptions | undefined, component: any, isVue: boolean = false): GridOptions {
 
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
@@ -89,8 +120,10 @@ export class ComponentUtil {
         }
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         const pGridOptions = gridOptions as any;
+        const keys = ComponentUtil.getGridOptionKeys(component, isVue);
         // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
-        Object.entries<GridOptions>(component).map(([key, value]) => {
+        keys.map(key => {
+            const value = component[key];
             if (typeof value !== 'undefined') {
                 const coercedValue = ComponentUtil.getValue(key, value);
                 if (coercedValue !== undefined) {
@@ -101,15 +134,9 @@ export class ComponentUtil {
         return gridOptions;
     }
 
-    public static getCallbackForEvent(eventName: string): string {
-        if (!eventName || eventName.length < 2) {
-            return eventName;
-        }
 
-        return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
-    }
 
-    public static processOnChange(changes: any, gridOptions: GridOptions, api: GridApi, columnApi: ColumnApi): void {
+    public static processOnChange(changes: any, api: GridApi, isVue: boolean = false): void {
         if (!changes) {
             return;
         }
@@ -191,38 +218,3 @@ export class ComponentUtil {
         }
     }
 }
-
-ComponentUtil.EVENTS = values<any>(Events);
-
-/** Exclude the following internal events from code generation to prevent exposing these events via framework components */
-ComponentUtil.EXCLUDED_INTERNAL_EVENTS = [
-    Events.EVENT_SCROLLBAR_WIDTH_CHANGED,
-    Events.EVENT_CHECKBOX_CHANGED,
-    Events.EVENT_HEIGHT_SCALE_CHANGED,
-    Events.EVENT_BODY_HEIGHT_CHANGED,
-    Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
-    Events.EVENT_SCROLL_VISIBILITY_CHANGED,
-    Events.EVENT_COLUMN_HOVER_CHANGED,
-    Events.EVENT_FLASH_CELLS,
-    Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED,
-    Events.EVENT_DISPLAYED_ROWS_CHANGED,
-    Events.EVENT_LEFT_PINNED_WIDTH_CHANGED,
-    Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED,
-    Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,
-    Events.EVENT_POPUP_TO_FRONT,
-    Events.EVENT_KEYBOARD_FOCUS,
-    Events.EVENT_MOUSE_FOCUS,
-    Events.EVENT_STORE_UPDATED,
-    Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
-    Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
-    Events.EVENT_FILL_START,
-    Events.EVENT_FILL_END,
-    Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START,
-    Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END,
-    Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
-    Events.EVENT_HEADER_HEIGHT_CHANGED,
-    Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED
-];
-
-/** EVENTS that should be exposed via code generation for the framework components.  */
-ComponentUtil.PUBLIC_EVENTS = ComponentUtil.EVENTS.filter(e => !includes(ComponentUtil.EXCLUDED_INTERNAL_EVENTS, e));
