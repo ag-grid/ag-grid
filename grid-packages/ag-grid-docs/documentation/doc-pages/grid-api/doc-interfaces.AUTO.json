@@ -21695,6 +21695,10 @@
     "update": {
       "description": "/** Rows to update */",
       "type": { "returnType": "any[]", "optional": true }
+    },
+    "storeVersion": {
+      "description": "/** Used by infinite scrolling to prevent lost transactions and race conditions.\n     * Determines whether the version of the store of these nodes is more up to date\n     * than existing nodes.\n     */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "ServerSideTransactionResult": {
@@ -23215,6 +23219,10 @@
     "groupLevelInfo": {
       "description": "/** Any extra information for the grid to associate with this load.\n     */",
       "type": { "returnType": "any", "optional": true }
+    },
+    "storeVersion": {
+      "description": "/** Used by infinite scrolling to prevent lost transactions and race conditions.\n     * Determines whether the version of the store of these nodes is more up to date\n     * than existing nodes.\n     */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "SortOption": {

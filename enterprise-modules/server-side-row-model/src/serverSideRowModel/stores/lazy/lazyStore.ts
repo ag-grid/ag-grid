@@ -20,18 +20,21 @@ import {
     Column,
     ColumnModel,
     IsApplyServerSideTransactionParams,
-    SelectionChangedEvent
+    SelectionChangedEvent,
+    RowNodeBlockLoader
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
 import { BlockUtils } from "../../blocks/blockUtils";
 import { LazyCache } from "./lazyCache";
+import { LazyBlockLoader } from "./lazyBlockLoader";
 
 export class LazyStore extends BeanStub implements IServerSideStore {
 
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
     // display indexes
     private displayIndexStart: number | undefined;
@@ -73,6 +76,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             numberOfRows = this.gridOptionsWrapper.getServerSideInitialRowCount();
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
+        this.addManagedListener(this.rowNodeBlockLoader, LazyBlockLoader.LOADING_FINISHED, () => this.flushTransactions());
 
         const usingTreeData = this.gridOptionsWrapper.isTreeData();
 
@@ -90,6 +94,16 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.destroyBean(this.cache);
     }
 
+    private transactionQueue: ServerSideTransaction[] = [];
+
+    private flushTransactions() {
+        if (this.transactionQueue.length) {
+            const queueCopy = [...this.transactionQueue];
+            this.transactionQueue = [];
+            queueCopy.forEach(transaction => this.applyTransaction(transaction));
+        }
+    }
+
     /**
      * Applies a given transaction to the data set within this store
      * 
@@ -102,6 +116,13 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             console.warn('AG Grid: getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
                 status: ServerSideTransactionResultStatus.Cancelled,
+            };
+        }
+        
+        if (transaction.storeVersion != null && this.cache.getRowLoader().isRequestPending()) {
+            this.transactionQueue.push(transaction);
+            return {
+                status: ServerSideTransactionResultStatus.Applied,
             };
         }
 
@@ -119,19 +140,20 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
+        const { update, add, addIndex, remove, storeVersion } = transaction;
         let updatedNodes: RowNode[] | undefined = undefined;
-        if (transaction.update?.length) {
-            updatedNodes = this.cache.updateRowNodes(transaction.update);
+        if (update?.length) {
+            updatedNodes = this.cache.updateRowNodes(update, storeVersion);
         }
 
         let insertedNodes: RowNode[] | undefined = undefined;
-        if (transaction.add?.length) {
-            insertedNodes = this.cache.insertRowNodes(transaction.add, transaction.addIndex);
+        if (add?.length) {
+            insertedNodes = this.cache.insertRowNodes(add, addIndex, storeVersion);
         }
 
         let removedNodes: RowNode[] | undefined = undefined;
-        if (transaction.remove?.length) {
-            const allIdsToRemove = transaction.remove.map(data => (
+        if (remove?.length) {
+            const allIdsToRemove = remove.map(data => (
                 idFunc({ level: this.level, parentKeys: this.parentRowNode.getGroupKeys(), data })
             ));
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
@@ -150,7 +172,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 };
             }
 
-            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
+            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, storeVersion);
         }
 
         this.updateSelectionAfterTransaction(updatedNodes, removedNodes);

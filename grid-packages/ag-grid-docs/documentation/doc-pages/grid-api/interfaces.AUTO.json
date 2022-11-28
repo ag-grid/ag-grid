@@ -12404,14 +12404,16 @@
       "addIndex?": "number",
       "add?": "any[]",
       "remove?": "any[]",
-      "update?": "any[]"
+      "update?": "any[]",
+      "storeVersion?": "number"
     },
     "docs": {
       "route?": "/** The Row Store to apply the transaction to, ie what group level.\n     * eg ['Ireland','2002'] to update the child store found after expanding Ireland and 2002 groups.\n     * Passing in blank to empty applies the transaction to the top level.\n     */",
       "addIndex?": "/** Index position to add at. If missing, rows will be added to the end. */",
       "add?": "/** Rows to add */",
       "remove?": "/** Rows to remove */",
-      "update?": "/** Rows to update */"
+      "update?": "/** Rows to update */",
+      "storeVersion?": "/** Used by infinite scrolling to prevent lost transactions and race conditions.\n     * Determines whether the version of the store of these nodes is more up to date\n     * than existing nodes.\n     */"
     }
   },
   "ServerSideTransactionResult": {
@@ -13309,13 +13311,15 @@
       "rowData": "any[]",
       "rowCount?": "number",
       "storeInfo?": "any",
-      "groupLevelInfo?": "any"
+      "groupLevelInfo?": "any",
+      "storeVersion?": "number"
     },
     "docs": {
       "rowData": "/** Data retrieved from the server as requested by the grid.\n     */",
       "rowCount?": "/** The last row, if known, to help Infinite Scroll.\n     */",
       "storeInfo?": "/** @deprecated use groupLevelInfo instead\n     */",
-      "groupLevelInfo?": "/** Any extra information for the grid to associate with this load.\n     */"
+      "groupLevelInfo?": "/** Any extra information for the grid to associate with this load.\n     */",
+      "storeVersion?": "/** Used by infinite scrolling to prevent lost transactions and race conditions.\n     * Determines whether the version of the store of these nodes is more up to date\n     * than existing nodes.\n     */"
     }
   },
   "SortOption": {

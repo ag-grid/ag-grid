@@ -143,6 +143,10 @@
     "description": "/** Used by server side row model, true if this row node requires reload */",
     "type": { "returnType": "boolean" }
   },
+  "version": {
+    "description": "/** Used by server side row model, infinite scrolling, used to ensure most up to date data */",
+    "type": { "returnType": "number" }
+  },
   "allLeafChildren": {
     "description": "/** All lowest level nodes beneath this node, no groups. */",
     "type": { "returnType": "RowNode<TData>[]" }

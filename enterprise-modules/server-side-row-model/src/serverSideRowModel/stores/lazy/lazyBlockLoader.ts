@@ -7,6 +7,7 @@ export class LazyBlockLoader extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
+    public static LOADING_FINISHED = 'loadingFinished';
     public static DEFAULT_BLOCK_SIZE = 100;
 
     private loadingNodes: Set<number> = new Set();
@@ -104,12 +105,20 @@ export class LazyBlockLoader extends BeanStub {
             this.rowNodeBlockLoader.loadComplete();
             this.cache.onLoadSuccess(startRow, endRow - startRow, params);
             removeNodesFromLoadingMap();
+
+            if (this.loadingNodes.size === 0) {
+                this.rowNodeBlockLoader.dispatchEvent({ type: LazyBlockLoader.LOADING_FINISHED });
+            }
         };
 
         const fail = () => {
             this.rowNodeBlockLoader.loadComplete();
             this.cache.onLoadFailed(startRow, endRow - startRow);
             removeNodesFromLoadingMap();
+
+            if (this.loadingNodes.size === 0) {
+                this.rowNodeBlockLoader.dispatchEvent({ type: LazyBlockLoader.LOADING_FINISHED });
+            }
         }
 
         const params: IServerSideGetRowsParams = {
@@ -191,5 +200,9 @@ export class LazyBlockLoader extends BeanStub {
         const startOfBlock = this.getBlockStartIndexForIndex(storeIndex);
         const blockSize = this.getBlockSize();
         return [startOfBlock, startOfBlock + blockSize];
+    }
+
+    public isRequestPending() {
+        return this.loadingNodes.size > 0;
     }
 }

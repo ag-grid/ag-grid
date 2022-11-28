@@ -23,6 +23,12 @@ export interface LoadSuccessParams {
      * Any extra information for the grid to associate with this load.
      */
     groupLevelInfo?: any;
+    /**
+     * Used by infinite scrolling to prevent lost transactions and race conditions.
+     * Determines whether the version of the store of these nodes is more up to date
+     * than existing nodes.
+     */
+    storeVersion?: number;
 }
 
 export abstract class RowNodeBlock extends BeanStub {

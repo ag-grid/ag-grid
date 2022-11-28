@@ -123,8 +123,15 @@ export class BlockUtils extends BeanStub {
         }
     }
 
-    public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
+    public updateDataIntoRowNode(rowNode: RowNode, data: any, version?: number): void {
+        const shouldApplyChange = version == null || rowNode.version == null || version > rowNode.version;
+
+        if (!shouldApplyChange) {
+            return;
+        }
+
         rowNode.updateData(data);
+        rowNode.version = version;
 
         if (this.usingTreeData) {
             this.setTreeGroupInfo(rowNode);

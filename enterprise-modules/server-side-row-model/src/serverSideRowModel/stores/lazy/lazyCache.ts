@@ -494,17 +494,19 @@ export class LazyCache extends BeanStub {
         
             // if stub, overwrite
             if (nodeFromCache?.stub) {
-                this.createRowAtIndex(rowIndex, data);
+                const newNode = this.createRowAtIndex(rowIndex, data);
+                newNode.version = response.storeVersion;
                 return;
             }
             
             if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache)) {
-                this.blockUtils.updateDataIntoRowNode(nodeFromCache, data);
+                this.blockUtils.updateDataIntoRowNode(nodeFromCache, data, response.storeVersion);
                 nodeFromCache.needsRefresh = false;
                 return;
             }
             // create row will handle deleting the overwritten row
-            this.createRowAtIndex(rowIndex, data);
+            const newNode = this.createRowAtIndex(rowIndex, data);
+            newNode.version = response.storeVersion;
         });
 
         if (response.rowCount != undefined && response.rowCount !== -1) {
@@ -603,11 +605,21 @@ export class LazyCache extends BeanStub {
         return this.getAllNodes().find(node => node.id === id) ?? null;
     }
 
-    public updateRowNodes(updates: any[]): RowNode[] {
+
+    private shouldApplyChange(node: RowNode, version?: number) {
+        // if no version supplied, always accept the update
+        if (version == null) {
+            return true;
+        }
+
+        return node.version == null || version > node.version;
+    }
+
+    public updateRowNodes(updates: any[], storeVersion?: number): RowNode[] {
         const updatedNodes: RowNode[] = [];
         updates.forEach(data => {
             const row = this.lookupRowNode(data);
-            if (row) {
+            if (row && this.shouldApplyChange(row, storeVersion)) {
                 this.blockUtils.updateDataIntoRowNode(row, data);
                 updatedNodes.push(row);
             }
@@ -615,7 +627,7 @@ export class LazyCache extends BeanStub {
         return updatedNodes;
     }
 
-    public insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[] {
+    public insertRowNodes(inserts: any[], indexToAdd?: number, storeVersion?: number): RowNode[] {
         // if missing and we know the last row, we're inserting at the end
         const addIndex = indexToAdd == null && this.isLastRowKnown ? this.store.getRowCount() : indexToAdd;
 
@@ -661,24 +673,35 @@ export class LazyCache extends BeanStub {
             }
 
             const newIndex = numericStoreIndex + numberOfInserts;
-            if (this.getRowByStoreIndex(newIndex)) {
-                // this shouldn't happen, why would a row already exist here
-                throw new Error('Ag Grid: Something went wrong, node in wrong place.');
-            } else {
-                this.nodeIndexMap[numericStoreIndex + numberOfInserts] = node;
-                delete this.nodeIndexMap[numericStoreIndex];
+            const existingRow = this.getRowByStoreIndex(newIndex);
+            if (existingRow) {
+                if (this.shouldApplyChange(existingRow, node.version)) {
+                    // node to move is more recent, clean up the overwritten node
+                    this.destroyRowAtIndex(newIndex);
+                } else {
+                    continue;
+                }
             }
+
+            this.nodeIndexMap[numericStoreIndex + numberOfInserts] = node;
+            delete this.nodeIndexMap[numericStoreIndex];
         }
                     
 
         // increase the store size to accommodate
+        // this may not be entirely correct in a race condition where getRows has already incremented this
+        // but as the row data is still correct this is fine
         this.numberOfRows += numberOfInserts;
 
         // finally insert the new rows
-        return uniqueInserts.map((data, uniqueInsertOffset) => this.createRowAtIndex(addIndex + uniqueInsertOffset, data));
+        return uniqueInserts.map((data, uniqueInsertOffset) => {
+            const newNode = this.createRowAtIndex(addIndex + uniqueInsertOffset, data);
+            newNode.version = storeVersion;
+            return newNode;
+        });
     }
 
-    public removeRowNodes(idsToRemove: string[]): RowNode[] {
+    public removeRowNodes(idsToRemove: string[], storeVersion?: number): RowNode[] {
         if (!this.isUsingRowIds()) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
             throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
@@ -688,12 +711,14 @@ export class LazyCache extends BeanStub {
 
         const allNodes = this.getNodeMapEntries();
 
-        // track how many nodes have been deleted, as when we pass other nodes we need to shift them up
-        let deletedNodeCount = 0;
-
         const remainingIdsToRemove = [...idsToRemove];
         for (let i = 0; i < allNodes.length; i++) {
             const [stringStoreIndex, node] = allNodes[i];
+
+            if (!this.shouldApplyChange(node, storeVersion)) {
+                // should this trigger a refresh if node === idToRemove
+                continue;
+            }
 
             // finding the index allows the use of splice which should be slightly faster than both a check and filter
             const matchIndex = remainingIdsToRemove.findIndex(idToRemove => idToRemove === node.id);
@@ -703,22 +728,25 @@ export class LazyCache extends BeanStub {
 
                 this.destroyRowAtIndex(Number(stringStoreIndex));
                 removedNodes.push(node);
-                deletedNodeCount += 1;
                 continue;
             }
 
             // no nodes removed and this node doesn't match, so no need to shift
-            if (deletedNodeCount === 0) {
+            if (removedNodes.length === 0) {
                 continue;
             }
 
             // shift normal node up by number of deleted prior to this point
             const numericStoreIndex = Number(stringStoreIndex);
-            this.nodeIndexMap[numericStoreIndex - deletedNodeCount] = this.nodeIndexMap[numericStoreIndex];
+            this.nodeIndexMap[numericStoreIndex - removedNodes.length] = this.nodeIndexMap[numericStoreIndex];
             delete this.nodeIndexMap[numericStoreIndex];
         }
 
-        this.numberOfRows -= deletedNodeCount;
+        this.numberOfRows -= removedNodes.length;
         return removedNodes;
+    }
+
+    public getRowLoader() {
+        return this.rowLoader;
     }
 }

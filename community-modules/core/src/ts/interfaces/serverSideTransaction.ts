@@ -15,6 +15,12 @@ export interface ServerSideTransaction {
     remove?: any[];
     /** Rows to update */
     update?: any[];
+    /**
+     * Used by infinite scrolling to prevent lost transactions and race conditions.
+     * Determines whether the version of the store of these nodes is more up to date
+     * than existing nodes.
+     */
+    storeVersion?: number;
 }
 
 export interface ServerSideTransactionResult {
