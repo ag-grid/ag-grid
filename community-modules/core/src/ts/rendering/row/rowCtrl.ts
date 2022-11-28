@@ -325,7 +325,7 @@ export class RowCtrl extends BeanStub {
             }, 'rowDragAndRangeSelectionEnabled');
             return;
         }
-        const translate = gow.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const rowDragComp = new RowDragComp(
             () => `1 ${translate('rowDragRow', 'row')}`,
             this.rowNode,
@@ -1209,7 +1209,7 @@ export class RowCtrl extends BeanStub {
             return undefined;
         }
 
-        const translate = this.beans.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
         const label = translate(
             selected ? 'ariaRowDeselect' : 'ariaRowSelect',
             `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`

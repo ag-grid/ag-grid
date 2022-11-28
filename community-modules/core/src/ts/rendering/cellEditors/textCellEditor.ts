@@ -76,7 +76,7 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
     }
 
     public afterGuiAttached(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const eInput = this.eInput;
 
         eInput.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));

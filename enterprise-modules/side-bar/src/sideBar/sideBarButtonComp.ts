@@ -46,7 +46,7 @@ export class SideBarButtonComp extends Component {
     }
     
     private setLabel(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const def = this.toolPanelDef;
         const label = translate(def.labelKey, def.labelDefault);
 

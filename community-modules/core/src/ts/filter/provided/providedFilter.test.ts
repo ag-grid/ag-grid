@@ -1,9 +1,9 @@
 import { ProvidedFilter, IProvidedFilterParams } from './providedFilter';
 import { ProvidedFilterModel, IDoesFilterPassParams } from '../../interfaces/iFilter';
 import { IRowModel, RowModelType } from '../../interfaces/iRowModel';
-import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { mock } from '../../test-utils/mock';
 import { AgPromise } from '../../utils';
+import { LocaleService } from '../../localeService';
 
 class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
     private uiModel: ProvidedFilterModel;
@@ -15,9 +15,9 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
         const eGui = mock<HTMLElement>('appendChild');
         this.setGui(eGui);
 
-        const gridOptionsWrapper = mock<GridOptionsWrapper>('getLocaleTextFunc');
-        gridOptionsWrapper.getLocaleTextFunc.mockReturnValue((_: string, defaultValue: string) => defaultValue);
-        (this as any).gridOptionsWrapper = gridOptionsWrapper;
+        const localeService = mock<LocaleService>('getLocaleTextFunc');
+        localeService.getLocaleTextFunc.mockReturnValue((_: string, defaultValue: string) => defaultValue);
+        (this as any).localeService = localeService;
 
         const rowModel = mock<IRowModel>('getType');
         rowModel.getType.mockReturnValue(rowModelType);

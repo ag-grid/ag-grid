@@ -85,7 +85,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             }
         };
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,

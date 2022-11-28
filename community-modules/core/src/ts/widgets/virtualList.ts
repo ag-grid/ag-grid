@@ -51,7 +51,7 @@ export class VirtualList extends TabGuardComp {
     }
 
     private setAriaProperties(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const listName = translate('ariaDefaultListName', this.listName || 'List');
         const ariaEl = this.eContainer;
 

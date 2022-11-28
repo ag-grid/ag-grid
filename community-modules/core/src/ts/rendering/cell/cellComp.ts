@@ -499,7 +499,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams)
 
-        const translate = this.beans.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         const addPopupRes = popupService.addPopup({
             modal: useModelPopup,

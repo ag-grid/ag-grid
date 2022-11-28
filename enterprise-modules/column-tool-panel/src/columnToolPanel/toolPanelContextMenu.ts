@@ -77,7 +77,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private buildMenuItemMap(): void {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         this.menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap.set('rowGroup', {
@@ -144,7 +144,7 @@ export class ToolPanelContextMenu extends Component {
         const eGui = this.getGui();
         const menuList = this.createBean(new AgMenuList());
         const menuItemsMapped: MenuItemDef[] = this.getMappedMenuItems();
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         let hideFunc = () => {};
 

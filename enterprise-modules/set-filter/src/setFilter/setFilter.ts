@@ -310,7 +310,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const filterListName = translate('ariaFilterList', 'Filter List');
 
         const virtualList = this.virtualList = this.createBean(new VirtualList('filter', 'listbox', filterListName));
@@ -390,8 +390,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        const { eMiniFilter, gridOptionsWrapper } = this;
-        const translate = gridOptionsWrapper.getLocaleTextFunc();
+        const { eMiniFilter, localeService } = this;
+        const translate = localeService.getLocaleTextFunc();
 
         eMiniFilter.setDisplayed(!this.setFilterParams.suppressMiniFilter);
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
@@ -738,7 +738,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private translateForSetFilter(key: keyof ISetFilterLocaleText): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
     }

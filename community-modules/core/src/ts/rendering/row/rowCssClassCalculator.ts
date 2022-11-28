@@ -1,7 +1,6 @@
 import { exists } from "../../utils/generic";
 import { RowNode } from "../../entities/rowNode";
 import { pushAll } from "../../utils/array";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { GridOptionsService } from "../../gridOptionsService";
 import { Autowired, Bean } from "../../context/context";
 import { StylingService } from "../../styling/stylingService";
@@ -29,7 +28,6 @@ export interface RowCssClassCalculatorParams {
 export class RowCssClassCalculator {
 
     @Autowired('stylingService') public stylingService: StylingService;
-    @Autowired('gridOptionsWrapper') public gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
 
     public getInitialRowClasses(params: RowCssClassCalculatorParams): string[] {

@@ -69,7 +69,7 @@ export class AgDialog extends AgPanel {
     protected renderComponent() {
         const eGui = this.getGui();
         const { alwaysOnTop, modal, title } = this.config as DialogOptions;
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal,

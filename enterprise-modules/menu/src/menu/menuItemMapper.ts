@@ -58,7 +58,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private getStockMenuItem(key: string, column: Column | null): MenuItemDef | string | null {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
 
         switch (key) {
@@ -221,7 +221,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private getChartItems(key: string) {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         const pivotChartMenuItem = (localeKey: string, defaultText: string, chartType: ChartType) => {
             return {
@@ -426,7 +426,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private createAggregationSubMenu(column: Column): MenuItemDef[] {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         let columnToUse: Column | undefined;
         if (column.isPrimary()) {

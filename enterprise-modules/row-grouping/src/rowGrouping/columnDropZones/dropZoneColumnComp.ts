@@ -97,7 +97,7 @@ export class DropZoneColumnComp extends Component {
     }
 
     private setupAria() {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
 
         const aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeperator', ' of ');
@@ -245,7 +245,7 @@ export class DropZoneColumnComp extends Component {
             const aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
-            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
             aggFuncName = localeTextFunc(aggFuncString, aggFuncString);
         }
 
@@ -290,7 +290,7 @@ export class DropZoneColumnComp extends Component {
             eGui.focus();
         };
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,
@@ -353,7 +353,7 @@ export class DropZoneColumnComp extends Component {
             }
         };
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
         const aggFuncString = value.toString();
         const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
         const comp = new AggItemComp(itemSelected, aggFuncStringTranslated);

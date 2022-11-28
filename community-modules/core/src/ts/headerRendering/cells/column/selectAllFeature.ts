@@ -128,7 +128,7 @@ export class SelectAllFeature extends BeanStub {
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
             this.cbSelectAll.setInputAriaLabel(null);
         } else {
-            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            const translate = this.localeService.getLocaleTextFunc();
             const checked = this.cbSelectAll.getValue();
             const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
             const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');

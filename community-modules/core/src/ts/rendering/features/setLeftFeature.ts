@@ -8,7 +8,6 @@ import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
 import { last } from "../../utils/array";
 import { exists } from "../../utils/generic";
 import { Events } from "../../eventKeys";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export class SetLeftFeature extends BeanStub {
 

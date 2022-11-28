@@ -42,7 +42,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @PostConstruct
     public postConstruct(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         this.eFilterTextField.onValueChange(this.onSearchTextChanged.bind(this));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
@@ -71,7 +71,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
     private showOrHideOptions(): void {
         const showFilterSearch = !this.params.suppressFilterSearch;
         const showExpand = !this.params.suppressExpandAll;
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 

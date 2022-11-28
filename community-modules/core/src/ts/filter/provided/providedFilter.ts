@@ -401,7 +401,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     protected translate(key: keyof IFilterLocaleText | keyof IFilterTitleLocaleText): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
     }

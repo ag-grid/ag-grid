@@ -105,7 +105,7 @@ export class RowDragComp extends Component {
         if (this.dragSource) { this.removeDragSource(); }
 
         const rowDragText = this.getRowDragText(this.column);
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         this.dragSource = {
             type: DragSourceType.RowDrag,

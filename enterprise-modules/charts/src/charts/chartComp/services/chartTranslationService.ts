@@ -118,7 +118,7 @@ export class ChartTranslationService extends BeanStub {
     };
 
     public translate(toTranslate: string, defaultText?: string): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const defaultTranslation = ChartTranslationService.DEFAULT_TRANSLATIONS[toTranslate] || defaultText;
         return translate(toTranslate, defaultTranslation as string);
     }

@@ -184,7 +184,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTap(): void {
-        const { gridOptionsWrapper: options, gridOptionsService } = this;
+        const { gridOptionsService } = this;
 
         if (gridOptionsService.is('suppressTouch')) { return; }
 

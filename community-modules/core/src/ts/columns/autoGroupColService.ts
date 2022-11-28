@@ -87,7 +87,7 @@ export class AutoGroupColService extends BeanStub {
 
     private generateDefaultColDef(rowGroupCol?: Column): ColDef {
         const userDef = this.gridOptionsService.get('autoGroupColumnDef');
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         const res: ColDef = {
             headerName: localeTextFunc('group', 'Group')

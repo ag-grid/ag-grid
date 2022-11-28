@@ -155,7 +155,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             }
         });
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is

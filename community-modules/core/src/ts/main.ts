@@ -304,6 +304,7 @@ export { Logger, LoggerFactory } from "./logger";
 export { SelectionService } from "./selectionService";
 export { SortController, SortModelItem } from "./sortController";
 export { TemplateService } from "./templateService";
+export { LocaleService } from './localeService';
 export * from "./utils";
 export { ColumnSortState } from "./utils/aria";
 export { ValueService } from "./valueService/valueService";
