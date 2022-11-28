@@ -342,13 +342,19 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             const label = (labelKey && (datum[labelKey] as string)) || '';
             const colorScaleValue = colorKey ? datum[colorKey] : depth;
             const isLeaf = !datum.children;
+            const fill =
+                typeof colorScaleValue === 'string'
+                    ? colorScaleValue
+                    : isLeaf || colorParents
+                    ? colorScale.convert(colorScaleValue)
+                    : '#272931';
             const nodeDatum: TreemapNodeDatum = {
                 datum,
                 depth,
                 parent,
                 value: 0,
                 label,
-                fill: isLeaf || colorParents ? colorScale.convert(colorScaleValue) : '#272931',
+                fill,
                 series: this,
                 isLeaf,
                 children: [] as TreemapNodeDatum[],
