@@ -224,13 +224,14 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
     /**
      * Squarified Treemap algorithm
+     * https://www.win.tue.nl/~vanwijk/stm.pdf
      */
     private squarify(
         nodeDatum: TreemapNodeDatum,
         bbox: BBox,
         outputNodesBoxes: Map<TreemapNodeDatum, BBox> = new Map()
     ) {
-        const targetCellRatio = 1;
+        const targetCellRatio = 1; // The width and height will tend to this ratio
 
         const padding = this.getNodePadding(nodeDatum, bbox);
         outputNodesBoxes.set(nodeDatum, bbox);
@@ -241,100 +242,76 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             return outputNodesBoxes;
         }
 
-        let colSum = 0;
-        let rowSum = 0;
-        let minRatioDiff = Infinity;
+        let stackSum = 0;
         let startIndex = 0;
+        let minRatioDiff = Infinity;
         let partitionSum = nodeDatum.value;
         const children = nodeDatum.children;
         const partition = new BBox(bbox.x + padding.left, bbox.y + padding.top, width, height);
 
         for (let i = 0; i < children.length; i++) {
             const value = children[i].value;
-            if (partition.width < partition.height) {
-                rowSum += value;
-                let rowHeight = (partition.height * rowSum) / partitionSum;
-                const firstCellWidth = (partition.width * children[startIndex].value) / rowSum;
-                const ratio = Math.max(firstCellWidth, rowHeight) / Math.min(firstCellWidth, rowHeight);
-                const diff = Math.abs(targetCellRatio - ratio);
-                if (diff > minRatioDiff) {
-                    rowHeight = (partition.height * (rowSum - value)) / partitionSum;
-                    rowSum -= value;
-                    let startX = partition.x;
-                    for (let j = startIndex; j < i; j++) {
-                        const childBox = new BBox(
-                            startX,
-                            partition.y,
-                            (partition.width * children[j].value) / rowSum,
-                            rowHeight
-                        );
-                        this.squarify(children[j], childBox, outputNodesBoxes);
-                        partitionSum -= children[j].value;
-                        startX += childBox.width;
-                    }
-                    partition.y += rowHeight;
-                    partition.height -= rowHeight;
-                    startIndex = i;
-                    i--;
-                    rowSum = 0;
-                    minRatioDiff = Infinity;
-                } else {
-                    minRatioDiff = diff;
-                }
-            } else {
-                colSum += value;
-                let colWidth = (partition.width * colSum) / partitionSum;
-                const firstCellHeight = (partition.height * children[startIndex].value) / colSum;
-                const ratio = Math.max(colWidth, firstCellHeight) / Math.min(colWidth, firstCellHeight);
-                const diff = Math.abs(targetCellRatio - ratio);
-                if (diff > minRatioDiff) {
-                    colWidth = (partition.width * (colSum - value)) / partitionSum;
-                    colSum -= value;
-                    let startY = partition.y;
-                    for (let j = startIndex; j < i; j++) {
-                        const childBox = new BBox(
-                            partition.x,
-                            startY,
-                            colWidth,
-                            (partition.height * children[j].value) / colSum
-                        );
-                        this.squarify(children[j], childBox, outputNodesBoxes);
-                        partitionSum -= children[j].value;
-                        startY += childBox.height;
-                    }
-                    partition.x += colWidth;
-                    partition.width -= colWidth;
-                    startIndex = i;
-                    i--;
-                    colSum = 0;
-                    minRatioDiff = Infinity;
-                } else {
-                    minRatioDiff = diff;
-                }
+            const firstValue = children[startIndex].value;
+            const isVertical = partition.width < partition.height;
+            stackSum += value;
+
+            const partThickness = isVertical ? partition.height : partition.width;
+            const partLength = isVertical ? partition.width : partition.height;
+            const firstCellLength = (partLength * firstValue) / stackSum;
+            let stackThickness = (partThickness * stackSum) / partitionSum;
+
+            const ratio = Math.max(firstCellLength, stackThickness) / Math.min(firstCellLength, stackThickness);
+            const diff = Math.abs(targetCellRatio - ratio);
+            if (diff < minRatioDiff) {
+                minRatioDiff = diff;
+                continue;
             }
+
+            // Go one step back and process the best match
+            stackSum -= value;
+            stackThickness = (partThickness * stackSum) / partitionSum;
+            let start = isVertical ? partition.x : partition.y;
+            for (let j = startIndex; j < i; j++) {
+                const child = children[j];
+
+                const x = isVertical ? start : partition.x;
+                const y = isVertical ? partition.y : start;
+                const length = (partLength * child.value) / stackSum;
+                const width = isVertical ? length : stackThickness;
+                const height = isVertical ? stackThickness : length;
+
+                const childBox = new BBox(x, y, width, height);
+                this.squarify(child, childBox, outputNodesBoxes);
+
+                partitionSum -= child.value;
+                start += length;
+            }
+
+            if (isVertical) {
+                partition.y += stackThickness;
+                partition.height -= stackThickness;
+            } else {
+                partition.x += stackThickness;
+                partition.width -= stackThickness;
+            }
+            startIndex = i;
+            stackSum = 0;
+            minRatioDiff = Infinity;
+            i--;
         }
-        let startX = partition.x;
-        let startY = partition.y;
+
+        // Process remaining space
+        const isVertical = partition.width < partition.height;
+        let start = isVertical ? partition.x : partition.y;
         for (let i = startIndex; i < children.length; i++) {
-            if (partition.width < partition.height) {
-                const childBox = new BBox(
-                    startX,
-                    partition.y,
-                    (partition.width * children[i].value) / partitionSum,
-                    partition.height
-                );
-                this.squarify(children[i], childBox, outputNodesBoxes);
-                startX += childBox.width;
-            } else {
-                const childBox = new BBox(
-                    partition.x,
-                    startY,
-                    partition.width,
-                    (partition.height * children[i].value) / partitionSum
-                );
-                this.squarify(children[i], childBox, outputNodesBoxes);
-                startY += childBox.height;
-            }
+            const x = isVertical ? start : partition.x;
+            const y = isVertical ? partition.y : start;
+            const part = children[i].value / partitionSum;
+            const width = partition.width * (isVertical ? part : 1);
+            const height = partition.height * (isVertical ? 1 : part);
+            const childBox = new BBox(x, y, width, height);
+            this.squarify(children[i], childBox, outputNodesBoxes);
+            start += isVertical ? width : height;
         }
 
         return outputNodesBoxes;
