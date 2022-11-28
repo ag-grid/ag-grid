@@ -441,9 +441,18 @@ export class MenuItemMapper extends BeanStub {
             const columnIsAlreadyAggValue = columnToUse.isValueActive();
             const funcNames = this.aggFuncService.getFuncNames(columnToUse);
 
+            result.push({
+                name: localeTextFunc('noAggregation', 'None'),
+                action: () => {
+                    this.columnModel.removeValueColumn(columnToUse!, "contextMenu");
+                    this.columnModel.setColumnAggFunc(columnToUse, undefined, "contextMenu");
+                },
+                checked: !columnIsAlreadyAggValue
+            })
+
             funcNames.forEach(funcName => {
                 result.push({
-                    name: localeTextFunc(funcName, funcName),
+                    name: localeTextFunc(funcName, _.capitalise(funcName)),
                     action: () => {
                         this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
                         this.columnModel.addValueColumn(columnToUse, "contextMenu");
