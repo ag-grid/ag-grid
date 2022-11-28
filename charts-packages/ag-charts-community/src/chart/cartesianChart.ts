@@ -76,11 +76,10 @@ export class CartesianChart extends Chart {
             navigator.width = shrinkRect.width;
         }
 
-        const { seriesRect, hideAxes } = this.updateAxes(shrinkRect);
+        const { seriesRect, hideSeries } = this.updateAxes(shrinkRect);
 
-        const visible = !hideAxes && seriesRect.width >= 1 && seriesRect.height >= 1;
-        this.seriesRoot.visible = visible;
-        legend.group.visible = visible;
+        this.seriesRoot.visible = !hideSeries;
+        legend.group.visible = !hideSeries;
 
         this.seriesRect = seriesRect;
         this.series.forEach((series) => {
@@ -161,6 +160,9 @@ export class CartesianChart extends Chart {
 
         this.seriesRoot.enabled = clipSeries;
 
+        const hideSeries = seriesRect.width < 1 || seriesRect.height < 1;
+        hideCrossLines = hideCrossLines || hideSeries;
+
         // update visibility of axes and crosslines
         this.axes.forEach((axis) => {
             axis.axisGroup.visible = !hideAxes;
@@ -170,7 +172,7 @@ export class CartesianChart extends Chart {
 
         this._lastAxisWidths = axisWidths;
 
-        return { seriesRect, hideAxes };
+        return { seriesRect, hideSeries };
     }
 
     private updateAxesPass(
