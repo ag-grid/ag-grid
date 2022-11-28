@@ -15724,9 +15724,12 @@
       "description": "/** The label configuration for the small leaf tiles. */",
       "type": { "returnType": "AgChartLabelOptions", "optional": true }
     },
-    "color": {
-      "description": "/** The configuration for the labels showing the value of the 'colorKey'. */",
-      "type": { "returnType": "AgChartLabelOptions", "optional": true }
+    "value": {
+      "description": "/** The configuration for the cell value label. */",
+      "type": {
+        "returnType": "{\n        /** A property to be used as a key to retrieve a value from datum. */\n        key?: string;\n        /** A function to generate a value label from datum. */\n        formatter?: (params: { datum: any }) => string | undefined;\n        /** The label's font and color style. */\n        style?: AgChartLabelOptions;\n    }",
+        "optional": true
+      }
     }
   },
   "AgTreemapSeriesOptions": {
