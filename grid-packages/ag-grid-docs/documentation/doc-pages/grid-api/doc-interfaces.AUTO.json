@@ -16408,20 +16408,34 @@
     }
   },
   "ChartFormatPanelGroup": {},
-  "ChartFormatPanelGroupDef": {
+  "ChartDataPanelGroup": {},
+  "ChartPanelGroupDef": {
     "type": {
-      "description": "/** The format panel group type */",
-      "type": { "returnType": "ChartFormatPanelGroup", "optional": false }
+      "description": "/** The panel group type */",
+      "type": { "returnType": "GroupType", "optional": false }
     },
     "isOpen": {
-      "description": "/** Whether the format panel group is open by default. If not specified, it is closed */",
+      "description": "/** Whether the panel group is open by default. If not specified, it is closed */",
       "type": { "returnType": "boolean", "optional": true }
-    }
+    },
+    "meta": { "typeParams": ["GroupType"] }
   },
   "ChartFormatPanel": {
     "groups": {
       "description": "/** The format panel group configurations, their order and whether they are shown. If not specified shows all groups */",
-      "type": { "returnType": "ChartFormatPanelGroupDef[]", "optional": true }
+      "type": {
+        "returnType": "ChartPanelGroupDef<ChartFormatPanelGroup>[]",
+        "optional": true
+      }
+    }
+  },
+  "ChartDataPanel": {
+    "groups": {
+      "description": "/** The data panel group configurations, their order and whether they are shown. If not specified shows all groups */",
+      "type": {
+        "returnType": "ChartPanelGroupDef<ChartDataPanelGroup>[]",
+        "optional": true
+      }
     }
   },
   "ChartToolPanelsDef": {
@@ -16432,6 +16446,10 @@
     "formatPanel": {
       "description": "/** Customisations for the format panel */",
       "type": { "returnType": "ChartFormatPanel", "optional": true }
+    },
+    "dataPanel": {
+      "description": "/** Customisations for the data panel */",
+      "type": { "returnType": "ChartDataPanel", "optional": true }
     },
     "panels": {
       "description": "/** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */",
