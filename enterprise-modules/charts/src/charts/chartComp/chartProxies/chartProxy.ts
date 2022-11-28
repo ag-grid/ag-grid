@@ -59,6 +59,8 @@ export abstract class ChartProxy {
     protected readonly crossFiltering: boolean;
     protected readonly crossFilterCallback: (event: any, reset?: boolean) => void;
 
+    protected clearThemeOverrides = false;
+    
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chart = chartProxyParams.chartInstance!;
         this.chartType = chartProxyParams.chartType;
@@ -70,6 +72,9 @@ export abstract class ChartProxy {
 
         if (this.chart == null) {
             this.chart = AgChart.create(this.getCommonChartOptions());
+        } else {
+            // On chart change, reset formatting panel changes.
+            this.clearThemeOverrides = true;
         }
     }
 
@@ -160,8 +165,15 @@ export abstract class ChartProxy {
     }
 
     private getActiveFormattingPanelOverrides(): AgChartThemeOverrides {
+        if (this.clearThemeOverrides) {
+            this.clearThemeOverrides = false;
+            return {};
+        }
+
         const inUseTheme = this.chart?.getOptions().theme as AgChartTheme;
-        return inUseTheme?.overrides ?? {};
+        const overrides = inUseTheme?.overrides ?? {};
+        
+        return overrides;
     }
 
     public destroy({ keepChartInstance = false } = {}): AgChartInstance | undefined {

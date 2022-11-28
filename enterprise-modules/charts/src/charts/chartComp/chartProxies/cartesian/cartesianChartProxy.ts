@@ -1,12 +1,10 @@
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import {
     AgAreaSeriesOptions,
-    AgBaseChartOptions,
     AgBaseSeriesOptions,
     AgCartesianAxisOptions,
     AgCartesianChartOptions,
     AgChart,
-    AgChartLegendClickEvent,
     AgLineSeriesOptions,
 } from "ag-charts-community";
 

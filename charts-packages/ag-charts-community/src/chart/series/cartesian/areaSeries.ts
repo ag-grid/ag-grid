@@ -30,6 +30,7 @@ import {
     STRING_ARRAY,
     COLOR_STRING_ARRAY,
     Validate,
+    OPT_NUMBER,
 } from '../../../util/validation';
 import {
     AgCartesianSeriesTooltipRendererParams,
@@ -205,7 +206,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     @Validate(STRING_ARRAY)
     yNames: string[] = [];
 
-    @Validate(NUMBER())
+    @Validate(OPT_NUMBER())
     private _normalizedTo?: number;
     set normalizedTo(value: number | undefined) {
         const absValue = value ? Math.abs(value) : undefined;
