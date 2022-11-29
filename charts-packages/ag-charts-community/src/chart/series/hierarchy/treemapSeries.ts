@@ -77,6 +77,20 @@ class TreemapSeriesLabel extends Label {
     padding = 10;
 }
 
+class TreemapValueLabel {
+    @Validate(OPT_STRING)
+    key?: string;
+
+    @Validate(OPT_FUNCTION)
+    formatter?: (params: { datum: any }) => string | undefined;
+
+    style = (() => {
+        const label = new Label();
+        label.color = 'white';
+        return label;
+    })();
+}
+
 enum TextNodeTag {
     Name,
     Value,
@@ -140,11 +154,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             label.fontSize = 10;
             return label;
         })(),
-        color: (() => {
-            const label = new Label();
-            label.color = 'white';
-            return label;
-        })(),
+        value: new TreemapValueLabel(),
     };
 
     @Validate(NUMBER(0))
@@ -584,7 +594,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     }
 
     buildLabelMeta(boxes: Map<TreemapNodeDatum, BBox>) {
-        const { labels, title, subtitle, nodePadding, colorKey, labelKey } = this;
+        const { labels, title, subtitle, nodePadding, labelKey } = this;
 
         type TextMeta = {
             text: string;
@@ -633,12 +643,16 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 labelText = `${labelText.substring(0, textLength)}…`;
             }
 
-            const valueStyle = labels.color;
+            const valueConfig = labels.value;
+            const valueStyle = valueConfig.style;
             const valueMargin = (labelStyle.fontSize + valueStyle.fontSize) / 8;
-            const valueText =
-                colorKey && datum.isLeaf && typeof datum.value === 'number' && isFinite(datum.value)
-                    ? `${toFixed(datum.datum[colorKey])}%`
-                    : '';
+            const valueText = datum.isLeaf
+                ? valueConfig.formatter
+                    ? valueConfig.formatter({ datum: datum.datum })
+                    : valueConfig.key
+                    ? datum.datum[valueConfig.key]
+                    : ''
+                : '';
             const valueSize = getTextSize(valueText, valueStyle);
             const hasValueText =
                 valueText &&

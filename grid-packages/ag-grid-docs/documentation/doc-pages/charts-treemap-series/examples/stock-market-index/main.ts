@@ -19,6 +19,11 @@ const options: AgChartOptions = {
           }
         },
       },
+      labels: {
+        value: {
+          formatter: params => `${params.datum.color.toFixed(2)}%`,
+        },
+      },
     },
   ],
   title: {
