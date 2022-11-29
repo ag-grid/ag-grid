@@ -35,6 +35,19 @@ export class LazyBlockLoader extends BeanStub {
         return index in this.loadingNodes;
     }
 
+    private doesRowNeedLoaded(index: number) {
+        // block already loading, don't duplicate request
+        if(this.loadingNodes.has(index)) {
+            return false;
+        }
+        const node = this.cache.getRowByStoreIndex(index);
+        if (!node) {
+            return false;
+        }
+        // if node is a loading stub, or has manually been marked as needsRefresh we refresh
+        return (node.stub && !node.failedLoad) || node.needsRefresh;
+    }
+
     private getBlocksToLoad() {
         const indexesToLoad = new Set<number>();
 
@@ -43,13 +56,8 @@ export class LazyBlockLoader extends BeanStub {
         this.cache.getNodeMapEntries().forEach(([stringIndex, node]) => {
             const numericIndex = Number(stringIndex);
             const blockStart = this.getBlockStartIndexForIndex(numericIndex);
-            if (this.loadingNodes.has(numericIndex)) {
-                // block already loading, don't duplicate request
-                return;
-            }
-
             // if node is a loading stub, or has manually been marked as needsRefresh we refresh
-            if ((node.stub && !node.failedLoad) || node.needsRefresh) {
+            if (this.doesRowNeedLoaded(numericIndex)) {
                 indexesToLoad.add(blockStart);
                 return;
             }
@@ -128,6 +136,26 @@ export class LazyBlockLoader extends BeanStub {
         this.cache.getSsrmParams().datasource?.getRows(params);
     }
 
+    private isBlockInViewport(blockStart: number, blockEnd: number) {
+        const firstRowInViewport = this.api.getFirstDisplayedRow();
+        const lastRowInViewport = this.api.getLastDisplayedRow();
+
+        const blockContainsViewport = blockStart <= firstRowInViewport && blockEnd >= lastRowInViewport;
+        const blockEndIsInViewport = blockEnd > firstRowInViewport && blockEnd < lastRowInViewport
+        const blockStartIsInViewport = blockStart > firstRowInViewport && blockStart < lastRowInViewport;
+        return blockContainsViewport || blockEndIsInViewport || blockStartIsInViewport;
+    }
+
+    private numberOfRowsToLoadInBlock(blockStart: number, blockEnd: number) {
+        let count = 0;
+        for(let i = blockStart; i < blockEnd; i++) {
+            if (this.doesRowNeedLoaded(i)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     private getNextBlockToLoad() {
         const ranges = this.getNodeRanges();
         const toLoad = Object.entries(ranges);
@@ -135,7 +163,30 @@ export class LazyBlockLoader extends BeanStub {
             return null;
         }
     
-        // prioritise this some way
+        const firstRowInViewport = this.api.getFirstDisplayedRow();
+        toLoad.sort(([aStart, aEnd], [bStart, bEnd]) => {
+            const isAInViewport = this.isBlockInViewport(Number(aStart), aEnd);
+            const isBInViewport = this.isBlockInViewport(Number(bStart), bEnd);
+
+            if (isAInViewport && isBInViewport) {
+                // sort based on number of loading rows in viewport
+
+                return this.numberOfRowsToLoadInBlock(Number(aStart), aEnd) - this.numberOfRowsToLoadInBlock(Number(bStart), bEnd);
+            }
+
+            // always prioritise loading blocks in viewport
+            if (isAInViewport) {
+                return -1;
+            }
+
+            // always prioritise loading blocks in viewport
+            if (isBInViewport) {
+                return 1;
+            }
+
+            // prioritise based on how close to the viewport the block is
+            return Math.abs(firstRowInViewport - Number(aStart)) - Math.abs(firstRowInViewport - Number(bStart));
+        });
         return toLoad[0];
     }
 
