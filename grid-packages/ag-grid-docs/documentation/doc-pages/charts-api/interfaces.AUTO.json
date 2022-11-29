@@ -2845,6 +2845,10 @@
     "meta": { "isTypeAlias": true },
     "type": "{ addEventListener(key: string, cb: SourceEventListener<any>): void; clearEventListeners(): void; }"
   },
+  "VisibilityMap": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ axes: boolean; crossLines: boolean; series: boolean; }"
+  },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
     "type": [

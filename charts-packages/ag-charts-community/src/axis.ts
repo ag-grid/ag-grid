@@ -290,6 +290,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
         });
     }
 
+    setVisible({ axis, crossLines }: { axis: boolean; crossLines: boolean }) {
+        this.axisGroup.visible = axis;
+        this.gridlineGroup.visible = axis;
+        this.crossLineGroup.visible = crossLines;
+    }
+
     /**
      * Checks if a point or an object is in range.
      * @param x A point (or object's starting point).

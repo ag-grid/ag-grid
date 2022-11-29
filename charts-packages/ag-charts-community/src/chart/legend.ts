@@ -163,8 +163,7 @@ export class Legend {
     private _data: LegendDatum[] = [];
     set data(value: LegendDatum[]) {
         this._data = value;
-
-        this.group.visible = value.length > 0 && this.enabled;
+        this.updateGroupVisibility();
     }
     get data() {
         return this._data;
@@ -174,8 +173,7 @@ export class Legend {
     private _enabled = true;
     set enabled(value: boolean) {
         this._enabled = value;
-
-        this.group.visible = value && this.data.length > 0;
+        this.updateGroupVisibility();
     }
     get enabled() {
         return this._enabled;
@@ -239,6 +237,19 @@ export class Legend {
     }
 
     readonly size: [number, number] = [0, 0];
+
+    private _visible: boolean = true;
+    set visible(value: boolean) {
+        this._visible = value;
+        this.updateGroupVisibility();
+    }
+    get visible() {
+        return this._visible;
+    }
+
+    private updateGroupVisibility() {
+        this.group.visible = this.enabled && this.visible && this.data.length > 0;
+    }
 
     /**
      * The method is given the desired size of the legend, which only serves as a hint.

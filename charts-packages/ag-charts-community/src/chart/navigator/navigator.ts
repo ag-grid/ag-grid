@@ -31,7 +31,7 @@ export class Navigator {
     set enabled(value: boolean) {
         this._enabled = value;
 
-        this.rs.visible = value;
+        this.updateGroupVisibility();
     }
     get enabled() {
         return this._enabled;
@@ -86,6 +86,19 @@ export class Navigator {
     }
     get max(): number {
         return this.rs.max;
+    }
+
+    private _visible: boolean = true;
+    set visible(value: boolean) {
+        this._visible = value;
+        this.updateGroupVisibility();
+    }
+    get visible() {
+        return this._visible;
+    }
+
+    private updateGroupVisibility() {
+        this.rs.visible = this.enabled && this.visible;
     }
 
     constructor(chart: CartesianChart, interactionManager: InteractionManager) {
