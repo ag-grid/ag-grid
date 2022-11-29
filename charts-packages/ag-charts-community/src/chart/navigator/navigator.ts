@@ -13,7 +13,7 @@ interface Offset {
 }
 
 export class Navigator {
-    readonly rs = new RangeSelector();
+    private readonly rs = new RangeSelector();
     private readonly chart: CartesianChart;
 
     readonly mask = new NavigatorMask(this.rs.mask);

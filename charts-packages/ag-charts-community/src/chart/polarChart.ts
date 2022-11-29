@@ -13,7 +13,8 @@ export class PolarChart extends Chart {
     constructor(document = window.document, overrideDevicePixelRatio?: number, resources?: TransferableResources) {
         super(document, overrideDevicePixelRatio, resources);
 
-        this.scene.root!.append(this.legend.group);
+        const root = this.scene.root!;
+        this.legend.attachLegend(root);
     }
 
     async performLayout() {

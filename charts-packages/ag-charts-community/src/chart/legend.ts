@@ -1,3 +1,4 @@
+import { Node } from '../scene/node';
 import { Group } from '../scene/group';
 import { Selection } from '../scene/selection';
 import { MarkerLabel } from './markerLabel';
@@ -147,7 +148,7 @@ export class Legend {
 
     onLayoutChange?: () => void;
 
-    readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
+    private readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
 
     private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(
         this.group
@@ -159,6 +160,20 @@ export class Legend {
     readonly listeners = new LegendListeners();
 
     truncatedItems: Set<string> = new Set();
+
+    set translationX(value: number) {
+        this.group.translationX = value;
+    }
+    get translationX(): number {
+        return this.group.translationX;
+    }
+
+    set translationY(value: number) {
+        this.group.translationY = value;
+    }
+    get translationY(): number {
+        return this.group.translationY;
+    }
 
     private _data: LegendDatum[] = [];
     set data(value: LegendDatum[]) {
@@ -249,6 +264,10 @@ export class Legend {
 
     private updateGroupVisibility() {
         this.group.visible = this.enabled && this.visible && this.data.length > 0;
+    }
+
+    attachLegend(node: Node) {
+        node.append(this.group);
     }
 
     /**
@@ -509,5 +528,9 @@ export class Legend {
         if (node && node.parent) {
             return node.parent.datum;
         }
+    }
+
+    computeBBox(): BBox {
+        return this.group.computeBBox();
     }
 }
