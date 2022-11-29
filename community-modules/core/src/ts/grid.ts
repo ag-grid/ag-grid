@@ -96,6 +96,7 @@ import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorC
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { GridOptionsService } from "./gridOptionsService";
 import { LocaleService } from "./localeService";
+import { GridOptionsValidator } from "./gridOptionsValidator";
 
 export interface GridParams {
     // used by Web Components
@@ -303,7 +304,7 @@ export class GridCoreCreator {
             rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            RowContainerHeightService, HorizontalResizeService, LocaleService,
+            RowContainerHeightService, HorizontalResizeService, LocaleService, GridOptionsValidator,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, GridOptionsService,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
