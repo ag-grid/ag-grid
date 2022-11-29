@@ -1,8 +1,6 @@
 import { Autowired, Bean, PostConstruct } from './context/context';
 import { DomLayoutType, GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetRowIdParams, InitialGroupOrderComparatorParams, RowHeightParams } from './entities/iCallbackParams';
-import { RowNode } from './entities/rowNode';
-import { Environment, SASS_PROPERTIES } from './environment';
+import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetRowIdParams, InitialGroupOrderComparatorParams } from './entities/iCallbackParams';
 import { Events } from './eventKeys';
 import { EventService } from './eventService';
 import { GridOptionsService } from './gridOptionsService';
@@ -13,8 +11,6 @@ import { getScrollbarWidth } from './utils/browser';
 import { doOnce } from './utils/function';
 import { exists, missing } from './utils/generic';
 
-const DEFAULT_ROW_HEIGHT = 25;
-const DEFAULT_DETAIL_ROW_HEIGHT = 300;
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
@@ -22,12 +18,10 @@ function isTrue(value: any): boolean {
 
 @Bean('gridOptionsWrapper')
 export class GridOptionsWrapper {
-    private static MIN_COL_WIDTH = 10;
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
     @Autowired('eventService') private readonly eventService: EventService;
-    @Autowired('environment') private readonly environment: Environment;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     private domDataKey = '__AG_' + Math.random().toString();
@@ -244,46 +238,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
     }
 
-    // properties
-    public getHeaderHeight(): number | null | undefined {
-        if (typeof this.gridOptions.headerHeight === 'number') {
-            return this.gridOptions.headerHeight;
-        }
-
-        return this.getFromTheme(25, 'headerHeight');
-    }
-
-    public getFloatingFiltersHeight(): number | null | undefined {
-        if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
-            return this.gridOptions.floatingFiltersHeight;
-        }
-
-        return this.getFromTheme(25, 'headerHeight');
-    }
-
-    public getGroupHeaderHeight(): number | null | undefined {
-        if (typeof this.gridOptions.groupHeaderHeight === 'number') {
-            return this.gridOptions.groupHeaderHeight;
-        }
-
-        return this.getHeaderHeight();
-    }
-
-    public getPivotHeaderHeight(): number | null | undefined {
-        if (typeof this.gridOptions.pivotHeaderHeight === 'number') {
-            return this.gridOptions.pivotHeaderHeight;
-        }
-
-        return this.getHeaderHeight();
-    }
-
-    public getPivotGroupHeaderHeight(): number | null | undefined {
-        if (typeof this.gridOptions.pivotGroupHeaderHeight === 'number') {
-            return this.gridOptions.pivotGroupHeaderHeight;
-        }
-
-        return this.getGroupHeaderHeight();
-    }
 
     public getDocument(): Document {
         // if user is providing document, we use the users one,
@@ -300,11 +254,6 @@ export class GridOptionsWrapper {
         }
 
         return document;
-    }
-
-    public getMinColWidth(): number {
-        const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
-        return exists(measuredMin) ? Math.max(measuredMin, GridOptionsWrapper.MIN_COL_WIDTH) : GridOptionsWrapper.MIN_COL_WIDTH;
     }
 
     public getRowBuffer(): number {
@@ -324,7 +273,7 @@ export class GridOptionsWrapper {
 
     public getRowBufferInPixels() {
         const rowsToBuffer = this.getRowBuffer();
-        const defaultRowHeight = this.getRowHeightAsNumber();
+        const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
 
         return rowsToBuffer * defaultRowHeight;
     }
@@ -347,114 +296,6 @@ export class GridOptionsWrapper {
         }
 
         return this.scrollbarWidth;
-    }
-
-    private setRowHeightVariable(height: number): void {
-        const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
-        const newRowHeight = `${height}px`;
-
-        if (oldRowHeight != newRowHeight) {
-            this.eGridDiv.style.setProperty('--ag-line-height', newRowHeight);
-        }
-    }
-
-    // we don't allow dynamic row height for virtual paging
-    public getRowHeightAsNumber(): number {
-        if (!this.gridOptions.rowHeight || missing(this.gridOptions.rowHeight)) {
-            return this.getDefaultRowHeight();
-        }
-
-        const rowHeight = this.gridOptions.rowHeight;
-
-        if (rowHeight && this.isNumeric(rowHeight)) {
-            this.setRowHeightVariable(rowHeight);
-            return rowHeight;
-        }
-
-        console.warn('AG Grid row height must be a number if not using standard row model');
-        return this.getDefaultRowHeight();
-    }
-
-    public isGetRowHeightFunction(): boolean {
-        return typeof this.gridOptions.getRowHeight === 'function';
-    }
-
-    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false, defaultRowHeight?: number): { height: number; estimated: boolean; } {
-        if (defaultRowHeight == null) {
-            defaultRowHeight = this.getDefaultRowHeight();
-        }
-
-        // check the function first, in case use set both function and
-        // number, when using virtual pagination then function can be
-        // used for pinned rows and the number for the body rows.
-
-        if (this.isGetRowHeightFunction()) {
-            if (allowEstimate) {
-                return { height: defaultRowHeight, estimated: true };
-            }
-
-            const params: WithoutGridCommon<RowHeightParams> = {
-                node: rowNode,
-                data: rowNode.data
-            };
-
-            const height = this.gridOptionsService.getCallback('getRowHeight')!(params);
-
-            if (this.isNumeric(height)) {
-                if (height === 0) {
-                    doOnce(() => console.warn('AG Grid: The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.'), 'invalidRowHeight');
-                }
-                return { height: Math.max(1, height), estimated: false };
-            }
-        }
-
-        if (rowNode.detail && this.isMasterDetail()) {
-            // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
-            // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
-            // (due to auto height) which looks bad, especially if doing row animation.
-            if (this.gridOptionsService.is('detailRowAutoHeight')) {
-                return { height: 1, estimated: false };
-            }
-
-            if (this.isNumeric(this.gridOptions.detailRowHeight)) {
-                return { height: this.gridOptions.detailRowHeight, estimated: false };
-            }
-
-            return { height: DEFAULT_DETAIL_ROW_HEIGHT, estimated: false };
-        }
-
-        const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
-
-        return { height: rowHeight, estimated: false };
-    }
-
-    public getListItemHeight() {
-        return this.getFromTheme(20, 'listItemHeight');
-
-    }
-
-    public chartMenuPanelWidth() {
-        return this.environment.chartMenuPanelWidth();
-    }
-
-    private isNumeric(value: any): value is number {
-        return !isNaN(value) && typeof value === 'number' && isFinite(value);
-    }
-
-    // Material data table has strict guidelines about whitespace, and these values are different than the ones
-    // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    private getFromTheme(defaultValue: number, sassVariableName: SASS_PROPERTIES): number;
-    private getFromTheme(defaultValue: null, sassVariableName: SASS_PROPERTIES): number | null | undefined;
-    private getFromTheme(defaultValue: any, sassVariableName: SASS_PROPERTIES): any {
-        const { theme } = this.environment.getTheme();
-        if (theme && theme.indexOf('ag-theme') === 0) {
-            return this.environment.getSassVariable(theme, sassVariableName);
-        }
-        return defaultValue;
-    }
-
-    public getDefaultRowHeight(): number {
-        return this.getFromTheme(DEFAULT_ROW_HEIGHT, 'rowHeight');
     }
 
     private matchesGroupDisplayType(toMatch: RowGroupingDisplayType, supplied?: string): boolean {

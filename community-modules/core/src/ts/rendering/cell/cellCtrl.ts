@@ -12,7 +12,6 @@ import {
     FlashCellsEvent,
     CellEditRequestEvent
 } from "../../events";
-import { GridOptionsService } from "../../gridOptionsService";
 import { CellRangeFeature } from "./cellRangeFeature";
 import { exists, makeNull } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
@@ -259,7 +258,7 @@ export class CellCtrl extends BeanStub {
         const eParentCell = eCellWrapper.parentElement!;
         // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
         // thus allowing different min heights for different rows.
-        const minRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
+        const minRowHeight = this.beans.gridOptionsService.getRowHeightForNode(this.rowNode).height;
 
         const measureHeight = (timesCalled: number) => {
             if (this.editing) { return; }

@@ -9,6 +9,7 @@ import { addSafePassiveEventListener } from "../utils/event";
 import { GridOptionsService, PropertyChangedListener } from "../gridOptionsService";
 import { GridOptions } from "../entities/gridOptions";
 import { LocaleService } from "../localeService";
+import { Environment } from "../environment";
 
 export class BeanStub implements IEventEmitter {
 
@@ -29,6 +30,7 @@ export class BeanStub implements IEventEmitter {
     @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
     @Autowired('localeService') protected readonly localeService: LocaleService;
+    @Autowired('environment') protected readonly environment: Environment;
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
     // not destroyed. to use, create a new grid, then api.destroy() before 5 seconds. then anything that gets printed

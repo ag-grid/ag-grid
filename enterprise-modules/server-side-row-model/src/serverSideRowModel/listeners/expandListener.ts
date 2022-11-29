@@ -64,7 +64,7 @@ export class ExpandListener extends BeanStub {
         detailNode.level = masterNode.level + 1;
 
         const defaultDetailRowHeight = 200;
-        const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode).height;
+        const rowHeight = this.gridOptionsService.getRowHeightForNode(detailNode).height;
 
         detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
         masterNode.detailNode = detailNode;

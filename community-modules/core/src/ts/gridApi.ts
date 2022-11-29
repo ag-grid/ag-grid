@@ -636,8 +636,8 @@ export class GridApi<TData = any> {
      */
     public getSizesForCurrentTheme() {
         return {
-            rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
-            headerHeight: this.gridOptionsWrapper.getHeaderHeight()
+            rowHeight: this.gridOptionsService.getRowHeightAsNumber(),
+            headerHeight: this.columnModel.getHeaderHeight()
         };
     }
 

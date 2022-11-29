@@ -2,12 +2,16 @@ import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
 import { GridOptions } from "./entities/gridOptions";
+import { RowHeightParams } from "./entities/iCallbackParams";
+import { RowNode } from "./entities/rowNode";
+import { Environment } from "./environment";
 import { AgEvent } from "./events";
 import { EventService } from "./eventService";
 import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { RowModelType } from "./interfaces/iRowModel";
 import { AnyGridOptions } from "./propertyKeys";
+import { doOnce } from "./utils/function";
 import { missing } from "./utils/generic";
 
 type GetKeys<T, U> = {
@@ -63,6 +67,7 @@ export class GridOptionsService {
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('eventService') private readonly eventService: EventService;
+    @Autowired('environment') private readonly environment: Environment;
 
     private destroyed = false;
 
@@ -166,5 +171,79 @@ export class GridOptionsService {
     public isRowModelType(rowModelType: RowModelType): boolean {
         return this.gridOptions.rowModelType === rowModelType ||
             (rowModelType === 'clientSide' && missing(this.gridOptions.rowModelType));
+    }
+
+    public isGetRowHeightFunction(): boolean {
+        return typeof this.gridOptions.getRowHeight === 'function';
+    }
+
+    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false, defaultRowHeight?: number): { height: number; estimated: boolean; } {
+        if (defaultRowHeight == null) {
+            defaultRowHeight = this.environment.getDefaultRowHeight();
+        }
+
+        // check the function first, in case use set both function and
+        // number, when using virtual pagination then function can be
+        // used for pinned rows and the number for the body rows.
+
+        if (this.isGetRowHeightFunction()) {
+            if (allowEstimate) {
+                return { height: defaultRowHeight, estimated: true };
+            }
+
+            const params: WithoutGridCommon<RowHeightParams> = {
+                node: rowNode,
+                data: rowNode.data
+            };
+
+            const height = this.getCallback('getRowHeight')!(params);
+
+            if (this.isNumeric(height)) {
+                if (height === 0) {
+                    doOnce(() => console.warn('AG Grid: The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.'), 'invalidRowHeight');
+                }
+                return { height: Math.max(1, height), estimated: false };
+            }
+        }
+
+        if (rowNode.detail && this.is('masterDetail')) {
+            // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
+            // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
+            // (due to auto height) which looks bad, especially if doing row animation.
+            if (this.is('detailRowAutoHeight')) {
+                return { height: 1, estimated: false };
+            }
+
+            if (this.isNumeric(this.gridOptions.detailRowHeight)) {
+                return { height: this.gridOptions.detailRowHeight, estimated: false };
+            }
+
+            return { height: 300, estimated: false };
+        }
+
+        const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
+
+        return { height: rowHeight, estimated: false };
+    }
+
+    // we don't allow dynamic row height for virtual paging
+    public getRowHeightAsNumber(): number {
+        if (!this.gridOptions.rowHeight || missing(this.gridOptions.rowHeight)) {
+            return this.environment.getDefaultRowHeight();
+        }
+
+        const rowHeight = this.gridOptions.rowHeight;
+
+        if (rowHeight && this.isNumeric(rowHeight)) {
+            this.environment.setRowHeightVariable(rowHeight);
+            return rowHeight;
+        }
+
+        console.warn('AG Grid row height must be a number if not using standard row model');
+        return this.environment.getDefaultRowHeight();
+    }
+
+    private isNumeric(value: any): value is number {
+        return !isNaN(value) && typeof value === 'number' && isFinite(value);
     }
 }

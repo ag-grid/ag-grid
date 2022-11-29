@@ -54,7 +54,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             return;
         }
 
-        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+        this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
 
         this.addEventListeners();
 
@@ -198,7 +198,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             // or a new datasource is set
             initialRowCount: this.defaultIfInvalid(this.gridOptionsService.getNum('infiniteInitialRowCount'), 1),
             maxBlocksInCache: this.gridOptionsService.getNum('maxBlocksInCache'),
-            rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
+            rowHeight: this.gridOptionsService.getRowHeightAsNumber(),
 
             // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
             // the current page and request first row of next page

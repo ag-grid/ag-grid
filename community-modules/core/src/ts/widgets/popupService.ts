@@ -1,7 +1,6 @@
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
-import { Environment } from "../environment";
 import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { getAbsoluteHeight, getAbsoluteWidth } from '../utils/dom';
@@ -98,7 +97,6 @@ export class PopupService extends BeanStub {
 
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
-    @Autowired('environment') private environment: Environment;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('resizeObserverService') public resizeObserverService: ResizeObserverService;

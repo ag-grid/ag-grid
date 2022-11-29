@@ -15,7 +15,6 @@ import {
     CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
-    Environment,
     GetChartImageDataUrlParams,
     IAggFunc,
     IChartService,
@@ -36,7 +35,6 @@ export class ChartService extends BeanStub implements IChartService {
 
     @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('environment') private environment: Environment;
 
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
     // those in developer provided containers.

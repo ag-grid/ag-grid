@@ -1,4 +1,4 @@
-import { Autowired, BeanStub, Events, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, ServerSideGroupLevelParams, StoreUpdatedEvent, WithoutGridCommon } from "@ag-grid-community/core";
+import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, ServerSideGroupLevelParams, StoreUpdatedEvent, WithoutGridCommon } from "@ag-grid-community/core";
 import { BlockUtils } from "src/serverSideRowModel/blocks/blockUtils";
 import { NodeManager } from "src/serverSideRowModel/nodeManager";
 import { LazyStore } from "./lazyStore";
@@ -132,7 +132,7 @@ export class LazyCache extends BeanStub {
     }
 
     private skipDisplayIndexes(numberOfRowsToSkip: number, displayIndexSeq: NumberSequence, nextRowTop: { value: number; }) {
-        const defaultRowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+        const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         displayIndexSeq.skip(numberOfRowsToSkip);
         nextRowTop.value += numberOfRowsToSkip * defaultRowHeight;
     }

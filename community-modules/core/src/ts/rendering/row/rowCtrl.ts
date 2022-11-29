@@ -1284,9 +1284,9 @@ export class RowCtrl extends BeanStub {
 
         const rowHeight = this.rowNode.rowHeight;
 
-        const defaultRowHeight = this.beans.gridOptionsWrapper.getDefaultRowHeight();
-        const isHeightFromFunc = this.beans.gridOptionsWrapper.isGetRowHeightFunction();
-        const heightFromFunc = isHeightFromFunc ? this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height : undefined;
+        const defaultRowHeight = this.beans.environment.getDefaultRowHeight();
+        const isHeightFromFunc = this.beans.gridOptionsService.isGetRowHeightFunction();
+        const heightFromFunc = isHeightFromFunc ? this.beans.gridOptionsService.getRowHeightForNode(this.rowNode).height : undefined;
         const lineHeight = heightFromFunc ? `${Math.min(defaultRowHeight, heightFromFunc) - 2}px` : undefined;
 
         this.forEachGui(gui, gui => {
@@ -1301,7 +1301,7 @@ export class RowCtrl extends BeanStub {
             // and we found using the autoHeight result causes a loop, where changing the
             // line-height them impacts the cell height, resulting in a new autoHeight,
             // resulting in a new line-height and so on loop.
-            // const heightFromFunc = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
+            // const heightFromFunc = this.beans.gridOptionsService.getRowHeightForNode(this.rowNode).height;
             if (lineHeight) {
                 gui.element.style.setProperty('--ag-line-height', lineHeight);
             }

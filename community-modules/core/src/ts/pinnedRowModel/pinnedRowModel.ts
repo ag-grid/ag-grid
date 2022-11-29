@@ -76,7 +76,7 @@ export class PinnedRowModel extends BeanStub {
 
                 rowNode.rowPinned = isTop ? 'top' : 'bottom';
                 rowNode.setRowTop(nextRowTop);
-                rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
+                rowNode.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode).height);
                 rowNode.setRowIndex(index);
                 nextRowTop += rowNode.rowHeight!;
                 rowNodes.push(rowNode);

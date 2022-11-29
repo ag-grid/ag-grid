@@ -8,7 +8,6 @@ import {
     Events,
     ExpandCollapseAllEvent,
     FilterChangedEvent,
-    GridOptionsWrapper,
     IClientSideRowModel,
     IRowNodeStage,
     ModelUpdatedEvent,
@@ -135,7 +134,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
                 const rowNode = this.getRow(rowIndex);
                 if (rowNode.rowHeightEstimated) {
-                    const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+                    const rowHeight = this.gridOptionsService.getRowHeightForNode(rowNode);
                     rowNode.setRowHeight(rowHeight.height);
                     atLeastOneChange = true;
                     res = true;
@@ -152,7 +151,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private setRowTopAndRowIndex(): Set<string> {
-        const defaultRowHeight = this.gridOptionsWrapper.getDefaultRowHeight();
+        const defaultRowHeight = this.environment.getDefaultRowHeight();
         let nextRowTop = 0;
 
         // mapping displayed rows is not needed for this method, however it's used in
@@ -174,7 +173,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
 
             if (rowNode.rowHeight == null) {
-                const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode, allowEstimate, defaultRowHeight);
+                const rowHeight = this.gridOptionsService.getRowHeightForNode(rowNode, allowEstimate, defaultRowHeight);
                 rowNode.setRowHeight(rowHeight.height, rowHeight.estimated);
             }
 

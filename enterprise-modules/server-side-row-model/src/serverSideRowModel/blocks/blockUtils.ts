@@ -30,7 +30,7 @@ export class BlockUtils extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+        this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
         this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }
@@ -166,7 +166,7 @@ export class BlockUtils extends BeanStub {
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true
         if (_.exists(data)) {
-            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
+            rowNode.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
         }
     }
 

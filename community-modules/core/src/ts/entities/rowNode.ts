@@ -619,7 +619,7 @@ export class RowNode<TData = any> implements IEventEmitter {
         // means more rows fit in) which looks crap. so best ignore small values and assume
         // we are still waiting for values to render.
         if (nonePresent || newRowHeight < 10) {
-            newRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this).height;
+            newRowHeight = this.beans.gridOptionsService.getRowHeightForNode(this).height;
         }
 
         if (newRowHeight == this.rowHeight) { return; }

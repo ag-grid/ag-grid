@@ -6,7 +6,6 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { IHeaderColumn } from "../../entities/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { FocusService } from "../../focusService";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { isBrowserSafari } from "../../utils/browser";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
 import { AbstractHeaderCellCtrl } from "../cells/abstractCell/abstractHeaderCellCtrl";
@@ -147,7 +146,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         sizes.push(headerHeight);
 
-        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight() as number); }
+        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.columnModel.getFloatingFiltersHeight() as number); }
 
         let topOffset = 0;
 

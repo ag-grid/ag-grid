@@ -3998,20 +3998,36 @@ export class ColumnModel extends BeanStub {
 
     public getColumnGroupHeaderRowHeight(): number {
         if (this.isPivotMode()) {
-            return this.gridOptionsWrapper.getPivotGroupHeaderHeight() as number;
+            return this.getPivotGroupHeaderHeight() as number;
         }
-        return this.gridOptionsWrapper.getGroupHeaderHeight() as number;
+        return this.getGroupHeaderHeight() as number;
     }
 
     public getColumnHeaderRowHeight(): number {
         const defaultHeight: number = (this.isPivotMode() ?
-            this.gridOptionsWrapper.getPivotHeaderHeight() :
-            this.gridOptionsWrapper.getHeaderHeight()) as number;
+            this.getPivotHeaderHeight() :
+            this.getHeaderHeight()) as number;
 
         const displayedHeights = this.getAllDisplayedColumns()
             .filter((col) => col.isAutoHeaderHeight())
             .map((col) => col.getAutoHeaderHeight() || 0);
 
         return Math.max(defaultHeight, ...displayedHeights);
+    }
+
+    public getHeaderHeight(): number | null | undefined {
+        return this.gridOptionsService.getNum('headerHeight') || this.environment.getFromTheme(25, 'headerHeight');
+    }
+    public getFloatingFiltersHeight(): number | null | undefined {
+        return this.gridOptionsService.getNum('floatingFiltersHeight') || this.environment.getFromTheme(25, 'headerHeight');
+    }
+    private getGroupHeaderHeight(): number | null | undefined {
+        return this.gridOptionsService.getNum('groupHeaderHeight') || this.getHeaderHeight();
+    }
+    private getPivotHeaderHeight(): number | null | undefined {
+        return this.gridOptionsService.getNum('pivotHeaderHeight') || this.getHeaderHeight();
+    }
+    private getPivotGroupHeaderHeight(): number | null | undefined {
+        return this.gridOptionsService.getNum('pivotGroupHeaderHeight') || this.getGroupHeaderHeight();
     }
 }

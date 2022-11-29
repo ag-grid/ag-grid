@@ -155,7 +155,7 @@ export class VirtualList extends TabGuardComp {
     }
 
     private getItemHeight(): number {
-        return this.gridOptionsWrapper.getListItemHeight();
+        return this.environment.getListItemHeight();
     }
 
     public ensureIndexVisible(index: number): void {
