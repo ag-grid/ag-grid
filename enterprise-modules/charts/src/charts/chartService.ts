@@ -1,6 +1,4 @@
 import {
-    AgChartThemeOverrides,
-    AgChartThemePalette,
     Autowired,
     Bean,
     BeanStub,
@@ -23,6 +21,7 @@ import {
     PreDestroy,
     SeriesChartType
 } from "@ag-grid-community/core";
+import { AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 import { CURRENT_VERSION, upgradeChartModel } from "./chartModelMigration";
 

@@ -106,7 +106,7 @@ series: [{
 
 ## API Reference
 
-<interface-documentation interfaceName='AgHistogramSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
+<interface-documentation interfaceName='AgHistogramSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ## Next Up
 

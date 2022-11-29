@@ -3,9 +3,9 @@ import {
   Grid,
   GridOptions,
   ValueParserParams,
-  AgCartesianSeriesTooltipRendererParams,
-  AgAxisLabelFormatterParams,
 } from '@ag-grid-community/core';
+import { AgCartesianSeriesTooltipRendererParams } from 'ag-charts-community';
+import '@ag-grid-enterprise/charts';
 import { getData } from "./data";
 declare var moment: any;
 
