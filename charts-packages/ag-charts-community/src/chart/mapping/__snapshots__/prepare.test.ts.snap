@@ -6390,14 +6390,6 @@ Object {
       },
       "labelKey": "name",
       "labels": Object {
-        "color": Object {
-          "color": "white",
-          "enabled": true,
-          "fontFamily": "Verdana, sans-serif",
-          "fontSize": 12,
-          "fontStyle": undefined,
-          "fontWeight": undefined,
-        },
         "large": Object {
           "color": "white",
           "enabled": true,
@@ -6421,6 +6413,17 @@ Object {
           "fontSize": 10,
           "fontStyle": undefined,
           "fontWeight": "bold",
+        },
+        "value": Object {
+          "formatter": [Function],
+          "style": Object {
+            "color": "white",
+            "enabled": true,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": undefined,
+            "fontWeight": undefined,
+          },
         },
       },
       "nodePadding": 2,
