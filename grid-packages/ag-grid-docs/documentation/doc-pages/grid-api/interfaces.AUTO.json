@@ -6685,6 +6685,13 @@
       "suppressFocus?": "/** Set to `true` to not have the component focus its default item. */"
     }
   },
+  "AgChartThemeOverrides": { "meta": {}, "type": {} },
+  "AgChartThemePalette": { "meta": {}, "type": {} },
+  "AgChartThemeDefinition": { "meta": {}, "type": {} },
+  "AgChartTheme": {
+    "meta": { "isTypeAlias": true },
+    "type": "string | AgChartThemeDefinition"
+  },
   "IAggFuncService": {
     "meta": {},
     "type": {

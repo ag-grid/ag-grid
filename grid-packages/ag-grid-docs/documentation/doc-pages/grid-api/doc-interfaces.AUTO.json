@@ -11837,6 +11837,10 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
+  "AgChartThemeOverrides": {},
+  "AgChartThemePalette": {},
+  "AgChartThemeDefinition": {},
+  "AgChartTheme": {},
   "IAggFuncService": {
     "addAggFuncs": {
       "type": {
