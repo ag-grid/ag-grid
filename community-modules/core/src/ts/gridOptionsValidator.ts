@@ -34,7 +34,7 @@ export class GridOptionsValidator {
             if (this.gridOptionsService.get('rowSelection') !== 'multiple') {
                 console.warn("AG Grid: rowSelection must be 'multiple' for groupSelectsChildren to make sense");
             }
-            if (this.gridOptionsService.get('rowModelType') === 'serverSide') {
+            if (this.gridOptionsService.isRowModelType('serverSide')) {
                 console.warn(
                     'AG Grid: group selects children is NOT support for Server Side Row Model. ' +
                     'This is because the rows are lazy loaded, so selecting a group is not possible as' +
@@ -49,7 +49,7 @@ export class GridOptionsValidator {
             );
         }
 
-        if (this.gridOptionsService.get('rowModelType') === 'serverSide') {
+        if (this.gridOptionsService.isRowModelType('serverSide')) {
             const msg = (prop: string, alt?: string) => (
                 `AG Grid: '${prop}' is not supported on the Server-Side Row Model.` + (alt ? ` Please use ${alt} instead.` : '')
             );
@@ -306,7 +306,7 @@ export class GridOptionsValidator {
                 );
             }
         }
-        if (this.gridOptionsService.get('rowModelType') === 'serverSide') {
+        if (this.gridOptionsService.isRowModelType('serverSide')) {
             if (missing(this.gridOptionsService.get('isServerSideGroup'))) {
                 console.warn(
                     'AG Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +

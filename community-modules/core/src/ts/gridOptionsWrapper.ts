@@ -212,7 +212,7 @@ export class GridOptionsWrapper {
     }
 
     private assertRowModelIsServerSide(key: keyof GridOptions) {
-        if (this.gridOptionsService.get('rowModelType') !== 'serverSide') {
+        if (!this.gridOptionsService.isRowModelType('serverSide')) {
             doOnce(() => console.warn(`AG Grid: The '${key}' property can only be used with the Server Side Row Model.`), key);
             return false;
         }

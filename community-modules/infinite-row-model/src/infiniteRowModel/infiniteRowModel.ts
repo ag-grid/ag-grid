@@ -50,7 +50,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     @PostConstruct
     public init(): void {
-        if (this.gridOptionsService.get('rowModelType') !== 'infinite') {
+        if (!this.gridOptionsService.isRowModelType('infinite')) {
             return;
         }
 
