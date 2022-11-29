@@ -75,7 +75,7 @@ The final result is shown in the example below.
 
 ## API Reference
 
-<interface-documentation interfaceName='AgCartesianSeriesMarker' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
+<interface-documentation interfaceName='AgCartesianSeriesMarker' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ## Next Up
 
