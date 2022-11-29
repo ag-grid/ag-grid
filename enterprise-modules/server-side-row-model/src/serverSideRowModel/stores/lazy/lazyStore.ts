@@ -143,6 +143,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             if (!allRowsAreDiscoverable) {
                 this.refreshStore(false);
                 this.updateSelectionAfterTransaction(updatedNodes);
+                // while no actual remove has been done, assume it has so we can prevent jittery scrollbar
+                this.cache.reduceRowCount(transaction.remove?.length ?? 0);
                 return {
                     status: ServerSideTransactionResultStatus.Applied,
                     update: updatedNodes,

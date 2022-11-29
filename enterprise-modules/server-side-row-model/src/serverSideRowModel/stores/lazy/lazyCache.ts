@@ -721,4 +721,8 @@ export class LazyCache extends BeanStub {
         this.numberOfRows -= deletedNodeCount;
         return removedNodes;
     }
+
+    public reduceRowCount(count: number) {
+        this.numberOfRows -= count;
+    }
 }
