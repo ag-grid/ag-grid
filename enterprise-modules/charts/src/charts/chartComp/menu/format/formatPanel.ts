@@ -2,10 +2,10 @@ import {
     _,
     ChartFormatPanel,
     ChartFormatPanelGroup,
-    ChartFormatPanelGroupDef,
     ChartType,
     Component,
-    PostConstruct
+    PostConstruct,
+    ChartPanelGroupDef
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";
@@ -68,7 +68,7 @@ export class FormatPanel extends Component {
 
         this.destroyPanels();
 
-        this.getFormatPanelDef().groups?.forEach((groupDef: ChartFormatPanelGroupDef) => {
+        this.getFormatPanelDef().groups?.forEach((groupDef: ChartPanelGroupDef<ChartFormatPanelGroup>) => {
             const group = groupDef.type;
 
             // ensure the group should be displayed for the current series type

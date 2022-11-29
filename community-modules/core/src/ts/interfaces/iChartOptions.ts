@@ -55,16 +55,23 @@ export interface ChartSettingsPanel {
 
 export type ChartFormatPanelGroup = 'chart' | 'legend' | 'axis' | 'series' | 'navigator';
 
-export interface ChartFormatPanelGroupDef {
-    /** The format panel group type */
-    type: ChartFormatPanelGroup,
-    /** Whether the format panel group is open by default. If not specified, it is closed */
+export type ChartDataPanelGroup = 'categories' | 'series' | 'seriesChartType';
+
+export interface ChartPanelGroupDef<GroupType> {
+    /** The panel group type */
+    type: GroupType,
+    /** Whether the panel group is open by default. If not specified, it is closed */
     isOpen?: boolean
 }
 
 export interface ChartFormatPanel {
     /** The format panel group configurations, their order and whether they are shown. If not specified shows all groups */
-    groups?: ChartFormatPanelGroupDef[];
+    groups?: ChartPanelGroupDef<ChartFormatPanelGroup>[];
+}
+
+export interface ChartDataPanel {
+    /** The data panel group configurations, their order and whether they are shown. If not specified shows all groups */
+    groups?: ChartPanelGroupDef<ChartDataPanelGroup>[];
 }
 
 export interface ChartToolPanelsDef {
@@ -72,6 +79,8 @@ export interface ChartToolPanelsDef {
     settingsPanel?: ChartSettingsPanel,
     /** Customisations for the format panel */
     formatPanel?: ChartFormatPanel,
+    /** Customisations for the data panel */
+    dataPanel?: ChartDataPanel,
     /** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */
     panels?: ChartToolPanelName[],
     /** The panel to open by default when the chart loads. If none specified, the tool panel is hidden by default and the first panel is open when triggered. */
