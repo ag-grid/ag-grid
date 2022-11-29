@@ -127,9 +127,15 @@ export class SetFilterListItem<V> extends Component {
         const cellRendererPromise = compDetails ? compDetails.newAgStackInstance() : undefined;
 
         if (cellRendererPromise == null) {
-            const valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
-
-            this.eCheckbox.setLabel(valueToRender == null ? this.translate('blanks') : valueToRender);
+            let valueToRender = (params.valueFormatted == null ? params.value : params.valueFormatted) ?? this.translate('blanks');
+            if (typeof valueToRender !== 'string') {
+                _.doOnce(() => console.warn(
+                        'AG Grid: Set Filter Value Formatter must return string values. Check that complex objects are being handled correctly, or enable convertValuesToStrings.'
+                    ), 'setFilterComplexObjectsValueFormatter'
+                );
+                valueToRender = '';
+            }
+            this.eCheckbox.setLabel(valueToRender);
 
             return;
         }
