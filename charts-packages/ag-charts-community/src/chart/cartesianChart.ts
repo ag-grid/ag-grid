@@ -307,8 +307,8 @@ export class CartesianChart extends Chart {
         result.height -= (top ?? 0) + (bottom ?? 0);
 
         // Width and height should not be negative.
-        result.width = Math.max(0, result.width);
-        result.height = Math.max(0, result.height);
+        result.width = Math.max(0, Math.round(result.width));
+        result.height = Math.max(0, Math.round(result.height));
 
         return result;
     }
