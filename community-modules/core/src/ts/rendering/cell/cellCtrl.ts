@@ -1136,7 +1136,7 @@ export class CellCtrl extends BeanStub {
     ): RowDragComp | undefined {
         const pagination = this.beans.gridOptionsService.is('pagination');
         const rowDragManaged = this.beans.gridOptionsService.is('rowDragManaged');
-        const clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
+        const clientSideRowModelActive = this.beans.gridOptionsService.isRowModelType('clientSide');
 
         if (rowDragManaged) {
             // row dragging only available in default row model

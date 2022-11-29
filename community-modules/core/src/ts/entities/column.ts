@@ -302,7 +302,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             }, key);
         }
 
-        const usingCSRM = this.gridOptionsWrapper.isRowModelDefault();
+        const usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
         if (usingCSRM && !ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
             const rowGroupingItems: (keyof ColDef)[] = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(item => {

@@ -6,7 +6,9 @@ import { AgEvent } from "./events";
 import { EventService } from "./eventService";
 import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
+import { RowModelType } from "./interfaces/iRowModel";
 import { AnyGridOptions } from "./propertyKeys";
+import { missing } from "./utils/generic";
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
@@ -156,5 +158,13 @@ export class GridOptionsService {
         if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
             (this.gridOptions as any)[callbackMethodName](event);
         }
+    }
+
+    // *************** Helper methods ************************** //
+    // Methods to share common GridOptions related logic that goes above accessing a single property
+
+    public isRowModelType(rowModelType: RowModelType): boolean {
+        return this.gridOptions.rowModelType === rowModelType ||
+            (rowModelType === 'clientSide' && missing(this.gridOptions.rowModelType));
     }
 }

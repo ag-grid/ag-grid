@@ -35,7 +35,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     @PostConstruct
     private postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gridOptionsWrapper.isRowModelServerSide()) { return; }
+        if (!this.gridOptionsService.isRowModelType('serverSide')) { return; }
     }
 
     public applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {

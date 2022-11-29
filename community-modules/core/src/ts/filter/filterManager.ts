@@ -292,7 +292,7 @@ export class FilterManager extends BeanStub {
             return null;
         }
 
-        if (!this.gridOptionsWrapper.isRowModelDefault()) {
+        if (!this.gridOptionsService.isRowModelType('clientSide')) {
             console.warn('AG Grid - Quick filtering only works with the Client-Side Row Model');
             return null;
         }

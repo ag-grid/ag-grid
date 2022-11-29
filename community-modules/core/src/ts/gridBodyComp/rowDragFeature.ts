@@ -76,7 +76,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.gridOptionsWrapper.isRowModelDefault()) {
+        if (this.gridOptionsService.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 

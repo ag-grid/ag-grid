@@ -26,7 +26,7 @@ export class SortListener extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gridOptionsWrapper.isRowModelServerSide()) { return; }
+        if (!this.gridOptionsService.isRowModelType('serverSide')) { return; }
 
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
