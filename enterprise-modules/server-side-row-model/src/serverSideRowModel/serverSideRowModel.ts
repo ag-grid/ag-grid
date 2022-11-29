@@ -221,7 +221,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
         const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
 
-        const dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
+        const dynamicRowHeight = this.gridOptionsWrapper.isGetRowHeightFunction();
 
         const params: SSRMParams = {
             // the columns the user has grouped and aggregated by

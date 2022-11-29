@@ -1,14 +1,12 @@
-import { ColumnApi } from './columns/columnApi';
 import { ColDefUtil } from './components/colDefUtil';
 import { ComponentUtil } from './components/componentUtil';
-import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
+import { Autowired, Bean, PostConstruct } from './context/context';
 import { DomLayoutType, GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
 import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
 import { Environment, SASS_PROPERTIES } from './environment';
 import { Events } from './eventKeys';
 import { EventService } from './eventService';
-import { GridApi } from './gridApi';
 import { GridOptionsService } from './gridOptionsService';
 import { WithoutGridCommon } from './interfaces/iCommon';
 import { ModuleNames } from './modules/moduleNames';
@@ -42,35 +40,14 @@ export class GridOptionsWrapper {
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
 
-    private destroyed = false;
-
-    private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
-        this.gridOptions.api = gridApi;
-        this.gridOptions.columnApi = columnApi;
-        this.checkForDeprecated();
-        this.checkForViolations();
-    }
-
-    @PreDestroy
-    private destroy(): void {
-        // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
-        // remove the references in case the user keeps the grid options, we want the rest
-        // of the grid to be picked up by the garbage collector
-        this.gridOptions.api = null;
-        this.gridOptions.columnApi = null;
-
-        this.destroyed = true;
-    }
-
     @PostConstruct
     public init(): void {
+        this.checkForDeprecated();
+        this.checkForViolations();
         if (this.gridOptions.suppressPropertyNamesCheck !== true) {
             this.checkGridOptionsProperties();
             this.checkColumnDefProperties();
         }
-
-        const async = this.useAsyncEvents();
-        this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
         if (this.gridOptionsService.is('groupSelectsChildren') && this.gridOptionsService.is('suppressParentsInRowNodes')) {
             console.warn("AG Grid: 'groupSelectsChildren' does not work with 'suppressParentsInRowNodes', this selection method needs the part in rowNode to work");
@@ -728,19 +705,6 @@ export class GridOptionsWrapper {
         };
     }
 
-    // responsible for calling the onXXX functions on gridOptions
-    public globalEventHandler(eventName: string, event?: any): void {
-        // prevent events from being fired _after_ the grid has been destroyed
-        if (this.destroyed) {
-            return;
-        }
-
-        const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
-        if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
-            (this.gridOptions as any)[callbackMethodName](event);
-        }
-    }
-
     private setRowHeightVariable(height: number): void {
         const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
         const newRowHeight = `${height}px`;
@@ -818,10 +782,6 @@ export class GridOptionsWrapper {
         const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
 
         return { height: rowHeight, estimated: false };
-    }
-
-    public isDynamicRowHeight(): boolean {
-        return typeof this.gridOptions.getRowHeight === 'function';
     }
 
     public getListItemHeight() {
