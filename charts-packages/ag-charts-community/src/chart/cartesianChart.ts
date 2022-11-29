@@ -282,7 +282,9 @@ export class CartesianChart extends Chart {
     ) {
         const result = bounds.clone();
         const { top = 0, right = 0, bottom = 0, left = 0 } = crossLinePadding;
-        if (result.width <= left + right || result.height <= top + bottom) {
+        const horizontalPadding = left + right;
+        const verticalPadding = top + bottom;
+        if (result.width <= horizontalPadding || result.height <= verticalPadding) {
             // Not enough space for crossLines padding, hide crossLines and don't consider padding for axisBound
             visibility.crossLines = false;
             return result;
@@ -290,8 +292,8 @@ export class CartesianChart extends Chart {
 
         result.x += left;
         result.y += top;
-        result.width -= left + right;
-        result.height -= top + bottom;
+        result.width -= horizontalPadding;
+        result.height -= verticalPadding;
 
         return result;
     }
