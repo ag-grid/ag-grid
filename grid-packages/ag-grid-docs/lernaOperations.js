@@ -466,7 +466,7 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
 };
 
 // exports.rebuildPackagesBasedOnChangeState =     rebuildPackagesBasedOnChangeState;
-// exports.rebuildBasedOnState =                   rebuildPackagesBasedOnChangeState.bind(null, false, false, false, false, false, true);
+exports.rebuildBasedOnState =                   rebuildPackagesBasedOnChangeState.bind(null, false, false, false, false, false, true, false);
 // exports.rebuildPackageBasedOnState =            rebuildPackagesBasedOnChangeState.bind(null, false, false, true,  false, false, true);
 
 //                                                                  runUnitTests, includeExamples, skipPackageExamples, runPackage, runE2ETests, cumulativeBuild, skipDocs
