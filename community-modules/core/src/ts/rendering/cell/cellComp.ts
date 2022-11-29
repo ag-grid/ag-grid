@@ -139,6 +139,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if display template has changed, means any previous Cell Renderer is in the wrong location
         const controlWrapperChanged = this.refreshWrapper(false);
+        this.refreshEditStyles(false);
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         if (compDetails) {
@@ -427,17 +428,24 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const cellEditorInPopup = popup || (cellEditor.isPopup !== undefined && cellEditor.isPopup());
         if (cellEditorInPopup) {
-            if (!popup) {
-                this.cellCtrl.hackSayEditingInPopup();
-            }
             this.addPopupCellEditor(params, position);
         } else {
             this.addInCellEditor();
         }
 
+        this.refreshEditStyles(true, cellEditorInPopup);
+
         if (cellEditor.afterGuiAttached) {
             cellEditor.afterGuiAttached();
         }
+    }
+
+    private refreshEditStyles(editing: boolean, isPopup?: boolean): void {
+        this.addOrRemoveCssClass('ag-cell-inline-editing', editing && !isPopup);
+        this.addOrRemoveCssClass('ag-cell-popup-editing', editing && !!isPopup);
+        this.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
+
+        this.rowCtrl?.setInlineEditingCss(editing);
     }
 
     private addInCellEditor(): void {

@@ -9197,13 +9197,13 @@
       "large?": "AgChartLabelOptions",
       "medium?": "AgChartLabelOptions",
       "small?": "AgChartLabelOptions",
-      "color?": "AgChartLabelOptions"
+      "value?": "{ key?: string; formatter?: (params: { datum: any; }) => string | undefined; style?: AgChartLabelOptions; }"
     },
     "docs": {
       "large?": "/** The label configuration for the large leaf tiles. */",
       "medium?": "/** The label configuration for the medium-sized leaf tiles. */",
       "small?": "/** The label configuration for the small leaf tiles. */",
-      "color?": "/** The configuration for the labels showing the value of the 'colorKey'. */"
+      "value?": "/** The configuration for the cell value label. */"
     }
   },
   "AgTreemapSeriesOptions": {
@@ -9586,19 +9586,30 @@
     "meta": { "isTypeAlias": true },
     "type": "'chart' | 'legend' | 'axis' | 'series' | 'navigator'"
   },
-  "ChartFormatPanelGroupDef": {
-    "meta": {},
-    "type": { "type": "ChartFormatPanelGroup", "isOpen?": "boolean" },
+  "ChartDataPanelGroup": {
+    "meta": { "isTypeAlias": true },
+    "type": "'categories' | 'series' | 'seriesChartType'"
+  },
+  "ChartPanelGroupDef": {
+    "meta": { "typeParams": ["GroupType"] },
+    "type": { "type": "GroupType", "isOpen?": "boolean" },
     "docs": {
-      "type": "/** The format panel group type */",
-      "isOpen?": "/** Whether the format panel group is open by default. If not specified, it is closed */"
+      "type": "/** The panel group type */",
+      "isOpen?": "/** Whether the panel group is open by default. If not specified, it is closed */"
     }
   },
   "ChartFormatPanel": {
     "meta": {},
-    "type": { "groups?": "ChartFormatPanelGroupDef[]" },
+    "type": { "groups?": "ChartPanelGroupDef<ChartFormatPanelGroup>[]" },
     "docs": {
       "groups?": "/** The format panel group configurations, their order and whether they are shown. If not specified shows all groups */"
+    }
+  },
+  "ChartDataPanel": {
+    "meta": {},
+    "type": { "groups?": "ChartPanelGroupDef<ChartDataPanelGroup>[]" },
+    "docs": {
+      "groups?": "/** The data panel group configurations, their order and whether they are shown. If not specified shows all groups */"
     }
   },
   "ChartToolPanelsDef": {
@@ -9606,12 +9617,14 @@
     "type": {
       "settingsPanel?": "ChartSettingsPanel",
       "formatPanel?": "ChartFormatPanel",
+      "dataPanel?": "ChartDataPanel",
       "panels?": "ChartToolPanelName[]",
       "defaultToolPanel?": "ChartToolPanelName"
     },
     "docs": {
       "settingsPanel?": "/** Customisations for the settings panel */",
       "formatPanel?": "/** Customisations for the format panel */",
+      "dataPanel?": "/** Customisations for the data panel */",
       "panels?": "/** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */",
       "defaultToolPanel?": "/** The panel to open by default when the chart loads. If none specified, the tool panel is hidden by default and the first panel is open when triggered. */"
     }

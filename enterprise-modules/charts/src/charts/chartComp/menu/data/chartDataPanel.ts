@@ -9,6 +9,7 @@ import {
     AutoScrollService,
     Autowired,
     ChartType,
+    ChartDataPanel as ChartDataPanelType,
     Column,
     Component,
     DragAndDropService,
@@ -17,12 +18,21 @@ import {
     DragSourceType,
     DropTarget,
     PostConstruct,
-    SeriesChartType
+    SeriesChartType,
+    ChartDataPanelGroup
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../chartDataModel";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartOptionsService } from "../../services/chartOptionsService";
+
+const DefaultDataPanelDef: ChartDataPanelType = {
+    groups: [
+        { type: 'categories', isOpen: true },
+        { type: 'series', isOpen: true },
+        { type: 'seriesChartType', isOpen: true }
+    ]
+};
 
 export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
@@ -83,26 +93,54 @@ export class ChartDataPanel extends Component {
             // recreate series chart type group if it exists as series may be added or removed via series group panel
             _.removeFromParent(this.getGui().querySelector('#seriesChartTypeGroup'));
             this.seriesChartTypeGroupComp = this.destroyBean(this.seriesChartTypeGroupComp);
-            this.createSeriesChartTypeGroup(valueCols);
 
+            const seriesChartTypeIndex = this.getDataPanelDef().groups?.reduce((prevVal, { type }, index) => {
+                if (type === 'seriesChartType') {
+                    return index;
+                };
+
+                return prevVal;
+            }, -1);
+            if (seriesChartTypeIndex !== -1) {
+                this.createSeriesChartTypeGroup(valueCols, seriesChartTypeIndex);
+            }
         } else {
             // otherwise, we re-create everything
             this.clearComponents();
 
-            this.createCategoriesGroup(dimensionCols);
-            this.createSeriesGroup(valueCols);
-            this.createSeriesChartTypeGroup(valueCols);
+            this.getDataPanelDef().groups?.forEach(({ type }) => {
+                if (type === 'categories') {
+                    this.createCategoriesGroup(dimensionCols);
+    
+                } else if (type === 'series') {
+                    this.createSeriesGroup(valueCols);
+    
+                } else if (type === 'seriesChartType') {
+                    this.createSeriesChartTypeGroup(valueCols);
+    
+                } else {
+                    console.warn(`AG Grid: invalid charts data panel group name supplied: '${type}'`);
+                }
+            })
         }
 
         this.restoreGroupExpandedState(groupExpandedState);
     }
 
     private getGroupExpandedState(): boolean[] {
-        return [
-            this.categoriesGroupComp,
-            this.seriesGroupComp,
-            this.seriesChartTypeGroupComp
-        ].map(group => !group ? true : group.isExpanded());
+        const groups: {
+            groupType: ChartDataPanelGroup,
+            comp?: AgGroupComponent
+        }[] = [
+            { groupType: 'categories', comp: this.categoriesGroupComp },
+            { groupType: 'series', comp: this.seriesGroupComp },
+            { groupType: 'seriesChartType', comp: this.seriesChartTypeGroupComp }
+        ];
+
+        return groups.map(({ groupType, comp }) => {
+            const defaultExpanded = Boolean(this.getDataPanelDef().groups?.find(({ type }) => type === groupType)?.isOpen);
+            return !comp ? defaultExpanded : comp.isExpanded()
+        });
     }
 
     private restoreGroupExpandedState(groupExpandedState: boolean[]): void {
@@ -126,12 +164,23 @@ export class ChartDataPanel extends Component {
         });
     }
 
-    private addComponent(parent: HTMLElement, component: AgGroupComponent, id: string): void {
+    private createComponent(component: AgGroupComponent, id: string) {
         const eDiv = document.createElement('div');
         eDiv.id = id;
         eDiv.className = 'ag-chart-data-section';
         eDiv.appendChild(component.getGui());
+
+        return eDiv;
+    }
+
+    private addComponent(parent: HTMLElement, component: AgGroupComponent, id: string): void {
+        const eDiv = this.createComponent(component, id);
         parent.appendChild(eDiv);
+    }
+
+    private addComponentAtIndex(parent: HTMLElement, component: AgGroupComponent, id: string, index: number): void {
+        const eDiv = this.createComponent(component, id);
+        parent.insertBefore(eDiv, parent.children[index]);
     }
 
     private addChangeListener(component: AgRadioButton | AgCheckbox, columnState: ColState) {
@@ -224,7 +273,7 @@ export class ChartDataPanel extends Component {
         this.dragAndDropService.addDropTarget(dropTarget);
     }
 
-    private createSeriesChartTypeGroup(columns: ColState[]): void {
+    private createSeriesChartTypeGroup(columns: ColState[], index?: number): void {
         if (!this.chartController.isComboChart()) { return; }
 
         this.seriesChartTypeGroupComp = this.createManagedBean(new AgGroupComponent({
@@ -286,7 +335,11 @@ export class ChartDataPanel extends Component {
             this.seriesChartTypeGroupComp!.addItem(seriesItemGroup);
         });
 
-        this.addComponent(this.getGui(), this.seriesChartTypeGroupComp, 'seriesChartTypeGroup');
+        if (index === undefined) {
+            this.addComponent(this.getGui(), this.seriesChartTypeGroupComp, 'seriesChartTypeGroup');
+        } else {
+            this.addComponentAtIndex(this.getGui(), this.seriesChartTypeGroupComp, 'seriesChartTypeGroup', index);
+        }
     }
 
     private addDragHandle(comp: AgCheckbox, col: ColState): void {
@@ -353,6 +406,11 @@ export class ChartDataPanel extends Component {
 
     private getSeriesGroupTitle() {
         return this.chartTranslationService.translate(this.chartController.isActiveXYChart() ? 'xyValues' : 'series');
+    }
+
+    private getDataPanelDef() {
+        const userProvidedDataPanelDef = this.gridOptionsService.get('chartToolPanelsDef')?.dataPanel;
+        return userProvidedDataPanelDef ? userProvidedDataPanelDef : DefaultDataPanelDef;
     }
 
     private isInPairedMode() {

@@ -130,8 +130,10 @@ export class DarkTheme extends ChartTheme {
                             small: {
                                 color: fontColor,
                             },
-                            color: {
-                                color: fontColor,
+                            value: {
+                                style: {
+                                    color: fontColor,
+                                },
                             },
                         },
                     },

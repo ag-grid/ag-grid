@@ -2538,13 +2538,13 @@
       "large?": "AgChartLabelOptions",
       "medium?": "AgChartLabelOptions",
       "small?": "AgChartLabelOptions",
-      "color?": "AgChartLabelOptions"
+      "value?": "{ key?: string; formatter?: (params: { datum: any; }) => string | undefined; style?: AgChartLabelOptions; }"
     },
     "docs": {
       "large?": "/** The label configuration for the large leaf tiles. */",
       "medium?": "/** The label configuration for the medium-sized leaf tiles. */",
       "small?": "/** The label configuration for the small leaf tiles. */",
-      "color?": "/** The configuration for the labels showing the value of the 'colorKey'. */"
+      "value?": "/** The configuration for the cell value label. */"
     }
   },
   "AgTreemapSeriesOptions": {
