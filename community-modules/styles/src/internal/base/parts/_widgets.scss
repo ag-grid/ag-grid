@@ -163,10 +163,12 @@
     }
 
     .ag-rich-select-value {
-        padding: 0 var(--ag-grid-size) 0 var(--ag-cell-horizontal-padding);
         height: var(--ag-row-height);
-
         border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+        padding-top: 0;
+        padding-bottom: 0;
+        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
+        @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));
     }
 
     .ag-rich-select-virtual-list-item {
@@ -183,7 +185,7 @@
     }
 
     .ag-rich-select-row {
-        padding-left: var(--ag-cell-horizontal-padding);
+        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
     }
 
     .ag-rich-select-row-selected {
