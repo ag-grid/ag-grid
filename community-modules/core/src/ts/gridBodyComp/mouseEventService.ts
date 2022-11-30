@@ -27,7 +27,7 @@ export class MouseEventService extends BeanStub {
     }
 
     public getRenderedCellForEvent(event: Event): CellCtrl | null {
-        return getCtrlForEvent<CellCtrl>(this.gridOptionsWrapper, event, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        return getCtrlForEvent<CellCtrl>(this.gridOptionsService, event, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
     }
 
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
@@ -57,7 +57,7 @@ export class MouseEventService extends BeanStub {
     }
 
     public getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number, y: number; } {
-        const gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === 'normal';
+        const gridPanelHasScrolls = this.gridOptionsService.isDomLayout('normal');
         const e = event as MouseEvent;
         let x: number;
         let y: number;

@@ -7,7 +7,6 @@ import {
     ExcelExportParams,
     ExcelFactoryMode,
     ExcelStyle,
-    GridOptionsWrapper,
     GridOptionsService,
     IExcelCreator,
     PostConstruct,
@@ -116,7 +115,6 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     @Autowired('stylingService') private stylingService: StylingService;
 
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
 
     private exportMode: string = 'xlsx';
@@ -125,7 +123,6 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,
-            gridOptionsWrapper: this.gridOptionsWrapper,
             gridOptionsService: this.gridOptionsService
         });
     }
@@ -220,7 +217,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     }
 
     public createSerializingSession(params: ExcelExportParams): SerializingSession {
-        const { columnModel, valueService, gridOptionsWrapper, gridOptionsService } = this;
+        const { columnModel, valueService, gridOptionsService } = this;
         const isXlsx = this.getExportMode() === 'xlsx';
 
         let sheetName = 'ag-grid';
@@ -233,7 +230,6 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
             sheetName,
             columnModel,
             valueService,
-            gridOptionsWrapper,
             gridOptionsService,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles: this.gridOptionsService.get('excelStyles') || [],

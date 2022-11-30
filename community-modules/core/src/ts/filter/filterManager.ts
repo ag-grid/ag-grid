@@ -215,7 +215,7 @@ export class FilterManager extends BeanStub {
             return filter.isFilterActive();
         };
 
-        const groupFilterEnabled = !!this.gridOptionsWrapper.getGroupAggFiltering();
+        const groupFilterEnabled = !!this.gridOptionsService.getGroupAggFiltering();
 
         const isAggFilter = (column: Column) => {
 
@@ -316,7 +316,7 @@ export class FilterManager extends BeanStub {
     }
 
     public refreshFiltersForAggregations() {
-        const isAggFiltering = this.gridOptionsWrapper.getGroupAggFiltering();
+        const isAggFiltering = this.gridOptionsService.getGroupAggFiltering();
         if (isAggFiltering) {
             this.onFilterChanged();
         }

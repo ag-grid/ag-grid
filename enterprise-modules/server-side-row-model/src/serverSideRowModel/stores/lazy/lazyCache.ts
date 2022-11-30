@@ -571,11 +571,11 @@ export class LazyCache extends BeanStub {
     }
 
     private isUsingRowIds() {
-        return this.gridOptionsWrapper.getRowIdFunc() != null;
+        return this.gridOptionsService.getRowIdFunc() != null;
     }
 
     private getRowId(data: any) {
-        const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
 
         if (getRowIdFunc == null) {
             return null;

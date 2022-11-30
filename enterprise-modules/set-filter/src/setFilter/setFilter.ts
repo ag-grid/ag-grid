@@ -95,7 +95,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private handleKeySpace(e: KeyboardEvent): void {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         if (!this.eSetFilterList.contains(eDocument.activeElement) || !this.virtualList) { return; }
 
         const currentItem = this.virtualList.getLastFocusedRow();

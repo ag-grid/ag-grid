@@ -121,7 +121,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
     // duplicated method, it's also in floatingRowModel
     private addRowNodeToRowsToDisplay(rowNode: RowNode, result: RowNode[], nextRowTop: NumberWrapper, uiLevel: number): void {
-        const isGroupMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
+        const isGroupMultiAutoColumn = this.gridOptionsService.isGroupMultiAutoColumn();
 
         result.push(rowNode);
         rowNode.setUiLevel(isGroupMultiAutoColumn ? 0 : uiLevel);

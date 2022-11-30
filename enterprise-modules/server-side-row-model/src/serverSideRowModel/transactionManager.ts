@@ -46,7 +46,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     }
 
     private scheduleExecuteAsync(): void {
-        const waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
+        const waitMillis = this.gridOptionsService.getAsyncTransactionWaitMillis();
         this.asyncTransactionsTimeout = window.setTimeout(() => {
             this.executeAsyncTransactions();
         }, waitMillis);

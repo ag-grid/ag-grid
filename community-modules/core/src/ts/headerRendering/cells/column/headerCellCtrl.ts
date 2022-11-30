@@ -460,7 +460,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = this.beans.gridOptionsWrapper.getDocument();
+                const doc = this.beans.gridOptionsService.getDocument();
                 const notYetInDom = !doc || !doc.contains(wrapperElement);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'

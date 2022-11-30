@@ -11,7 +11,7 @@ import { getFunctionName } from "../utils/function";
 // 4. initialise the model
 // 5. initialise the view
 // 6. boot??? (not sure if this is needed)
-// each bean is responsible for initialising itself, taking items from the gridOptionsWrapper
+// each bean is responsible for initialising itself, taking items from the gridOptionsService
 
 export interface ContextParams {
     providedBeanInstances: any;

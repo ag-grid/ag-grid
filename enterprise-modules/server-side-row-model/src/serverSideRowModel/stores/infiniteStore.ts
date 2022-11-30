@@ -86,7 +86,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     private postConstruct(): void {
         this.defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         const isRootStore = this.parentRowNode.level === -1;
-        const initialRowCount = isRootStore ? this.gridOptionsWrapper.getServerSideInitialRowCount() : InfiniteStore.INITIAL_ROW_COUNT;
+        const initialRowCount = isRootStore ? this.storeUtils.getServerSideInitialRowCount() : InfiniteStore.INITIAL_ROW_COUNT;
         this.rowCount = initialRowCount;
     }
 
@@ -768,7 +768,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     }
 
     public refreshAfterFilter(params: StoreRefreshAfterParams): void {
-        const serverFiltersAllLevels = this.gridOptionsWrapper.isServerSideFilterAllLevels();
+        const serverFiltersAllLevels = this.storeUtils.isServerSideFilterAllLevels();
         if (serverFiltersAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             this.resetStore();
             return;
@@ -780,7 +780,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     }
 
     public refreshAfterSort(params: StoreRefreshAfterParams): void {
-        const serverSortsAllLevels = this.gridOptionsWrapper.isServerSideSortAllLevels();
+        const serverSortsAllLevels = this.storeUtils.isServerSideSortAllLevels();
         if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             this.resetStore();
             return;

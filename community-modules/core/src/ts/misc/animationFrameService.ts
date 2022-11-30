@@ -175,7 +175,7 @@ export class AnimationFrameService extends BeanStub {
         // check for the existence of requestAnimationFrame, and if
         // it's missing, then we polyfill it with setTimeout()
         const callback = this.executeFrame.bind(this, 60);
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const win = (eDocument.defaultView || window) as any;
 
         if (win.requestAnimationFrame) {

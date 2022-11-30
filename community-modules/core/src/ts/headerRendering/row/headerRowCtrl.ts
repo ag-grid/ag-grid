@@ -110,7 +110,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getWidthForRow(): number {
-        const printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
+        const printLayout = this.gridOptionsService.isDomLayout('print');
 
         if (printLayout) {
             const pinned = this.pinned != null;
@@ -243,7 +243,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getColumnsInViewport(): IHeaderColumn[] {
-        const printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
+        const printLayout = this.gridOptionsService.isDomLayout('print');
         return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     }
 

@@ -1,6 +1,5 @@
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { EventService } from "../eventService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
@@ -27,7 +26,6 @@ export class BeanStub implements IEventEmitter {
     @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
     @Autowired('context') protected readonly context: Context;
     @Autowired('eventService') protected readonly eventService: EventService;
-    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
     @Autowired('localeService') protected readonly localeService: LocaleService;
     @Autowired('environment') protected readonly environment: Environment;

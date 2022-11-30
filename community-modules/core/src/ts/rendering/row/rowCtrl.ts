@@ -215,7 +215,6 @@ export class RowCtrl extends BeanStub {
     }
 
     private initialiseRowComp(gui: RowGui): void {
-        const gow = this.beans.gridOptionsWrapper;
         const gos = this.beans.gridOptionsService;
 
         this.onRowHeightChanged(gui);
@@ -223,7 +222,7 @@ export class RowCtrl extends BeanStub {
         this.setFocusedClasses(gui);
         this.setStylesFromGridOptions(gui);
 
-        if (gow.isRowSelection() && this.rowNode.selectable) {
+        if (gos.isRowSelection() && this.rowNode.selectable) {
             this.onRowSelected(gui);
         }
 
@@ -255,9 +254,9 @@ export class RowCtrl extends BeanStub {
         }
 
         // DOM DATA
-        gow.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
+        gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
         this.addDestroyFunc(
-            () => gow.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null)
+            () => gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null)
         );
 
         // adding hover functionality adds listener to this row, so we
@@ -317,9 +316,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private addRowDraggerToRow(gui: RowGui) {
-        const gow = this.beans.gridOptionsWrapper;
-
-        if (gow.isEnableRangeSelection()) {
+        if (this.beans.gridOptionsService.isEnableRangeSelection()) {
             doOnce(() => {
                 console.warn('AG Grid: Setting `rowDragEntireRow: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
             }, 'rowDragAndRangeSelectionEnabled');
@@ -409,7 +406,7 @@ export class RowCtrl extends BeanStub {
         // so each can be set independently (as a customer complained about footers getting full width, hence
         // introducing this logic)
         const isGroupRow = !!this.rowNode.group && !this.rowNode.footer;
-        const isFullWidthGroup = isGroupRow && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
+        const isFullWidthGroup = isGroupRow && this.beans.gridOptionsService.isGroupUseEntireRow(pivotMode);
 
         if (isStub) {
             this.rowType = RowType.FullWidthLoading;
@@ -903,7 +900,7 @@ export class RowCtrl extends BeanStub {
             // we also don't allow selection of pinned rows
             this.rowNode.rowPinned ||
             // if no selection method enabled, do nothing
-            !this.beans.gridOptionsWrapper.isRowSelection() ||
+            !this.beans.gridOptionsService.isRowSelection() ||
             // if click selection suppressed, do nothing
             this.beans.gridOptionsService.is('suppressRowClickSelection')
         ) {

@@ -17,8 +17,8 @@ export class AutoGroupColService extends BeanStub {
     public createAutoGroupColumns(existingCols: Column[], rowGroupColumns: Column[]): Column[] {
         const groupAutoColumns: Column[] = [];
 
-        const doingTreeData = this.gridOptionsWrapper.isTreeData();
-        let doingMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
+        const doingTreeData = this.gridOptionsService.isTreeData();
+        let doingMultiAutoColumn = this.gridOptionsService.isGroupMultiAutoColumn();
 
         if (doingTreeData && doingMultiAutoColumn) {
             console.warn('AG Grid: you cannot mix groupDisplayType = "multipleColumns" with treeData, only one column can be used to display groups when doing tree data');
@@ -58,7 +58,7 @@ export class AutoGroupColService extends BeanStub {
         defaultAutoColDef.colId = colId;
 
         // For tree data the filter is always allowed
-        if (!this.gridOptionsWrapper.isTreeData()) {
+        if (!this.gridOptionsService.isTreeData()) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             const noFieldOrValueGetter = missing(defaultAutoColDef.field) && missing(defaultAutoColDef.valueGetter) && missing(defaultAutoColDef.filterValueGetter);

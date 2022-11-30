@@ -102,7 +102,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         this.rootNode = new RowNode(this.beans);
         this.nodeManager = new ClientSideNodeManager(this.rootNode,
-            this.gridOptionsWrapper, this.gridOptionsService,
+            this.gridOptionsService,
             this.eventService, this.columnModel,
             this.selectionService, this.beans);
     }
@@ -162,7 +162,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
         // with these two layouts.
-        const allowEstimate = this.gridOptionsWrapper.getDomLayout() === 'normal';
+        const allowEstimate = this.gridOptionsService.isDomLayout('normal');
 
         for (let i = 0; i < this.rowsToDisplay.length; i++) {
 
@@ -350,13 +350,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public onRowGroupOpened(): void {
-        const animate = this.gridOptionsWrapper.isAnimateRows();
+        const animate = this.gridOptionsService.isAnimateRows();
         this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
     }
 
     private onFilterChanged(event: FilterChangedEvent): void {
         if (event.afterDataChange) { return; }
-        const animate = this.gridOptionsWrapper.isAnimateRows();
+        const animate = this.gridOptionsService.isAnimateRows();
 
         const primaryOrQuickFilterChanged = event.columns.length === 0 || event.columns.some(col => col.isPrimary());
         const step: ClientSideRowModelSteps = primaryOrQuickFilterChanged ? ClientSideRowModelSteps.FILTER : ClientSideRowModelSteps.FILTER_AGGREGATES;
@@ -364,7 +364,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private onSortChanged(): void {
-        const animate = this.gridOptionsWrapper.isAnimateRows();
+        const animate = this.gridOptionsService.isAnimateRows();
         this.refreshModel({ step: ClientSideRowModelSteps.SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true });
     }
 
@@ -394,7 +394,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         const changedPath = new ChangedPath(false, this.rootNode);
 
-        if (noTransactions || this.gridOptionsWrapper.isTreeData()) {
+        if (noTransactions || this.gridOptionsService.isTreeData()) {
             changedPath.setInactive();
         }
 
@@ -678,7 +678,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     // + gridApi.expandAll()
     // + gridApi.collapseAll()
     public expandOrCollapseAll(expand: boolean): void {
-        const usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const usingTreeData = this.gridOptionsService.isTreeData();
         const usingPivotMode = this.columnModel.isPivotActive();
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
@@ -861,7 +861,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
         if (this.applyAsyncTransactionsTimeout == null) {
             this.rowDataTransactionBatch = [];
-            const waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
+            const waitMillis = this.gridOptionsService.getAsyncTransactionWaitMillis();
             this.applyAsyncTransactionsTimeout = window.setTimeout(() => {
                 this.executeBatchUpdateRowData();
             }, waitMillis);

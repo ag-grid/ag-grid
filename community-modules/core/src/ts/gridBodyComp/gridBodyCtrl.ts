@@ -244,7 +244,7 @@ export class GridBodyCtrl extends BeanStub {
     public isVerticalScrollShowing(): boolean {
         const show = this.gridOptionsService.is('alwaysShowVerticalScroll');
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
-        const allowVerticalScroll = this.gridOptionsWrapper.getDomLayout() === 'normal';
+        const allowVerticalScroll = this.gridOptionsService.isDomLayout('normal');
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
         return show || (allowVerticalScroll && isVerticalScrollShowing(this.eBodyViewport));
     }
@@ -253,7 +253,7 @@ export class GridBodyCtrl extends BeanStub {
         const listener = () => {
             // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
             // when scaling and doing row animation.
-            const animateRows = this.gridOptionsWrapper.isAnimateRows() && !this.rowContainerHeightService.isStretching();
+            const animateRows = this.gridOptionsService.isAnimateRows() && !this.rowContainerHeightService.isStretching();
             const animateRowsCssClass = animateRows ? RowAnimationCssClasses.ANIMATION_ON : RowAnimationCssClasses.ANIMATION_OFF;
             this.comp.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
         };
@@ -391,7 +391,7 @@ export class GridBodyCtrl extends BeanStub {
         if (!vScrollVisible) {
             this.comp.setStickyTopWidth('100%');
         } else {
-            const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
+            const scrollbarWidth = this.gridOptionsService.getScrollbarWidth();
             this.comp.setStickyTopWidth(`calc(100% - ${scrollbarWidth}px)`);
         }
     }
@@ -420,7 +420,7 @@ export class GridBodyCtrl extends BeanStub {
         nextTimeout?: number,
     ) {
         const removeScrollWidth = this.isVerticalScrollShowing();
-        const scrollWidthToRemove = removeScrollWidth ? this.gridOptionsWrapper.getScrollbarWidth() : 0;
+        const scrollWidthToRemove = removeScrollWidth ? this.gridOptionsService.getScrollbarWidth() : 0;
         const bodyViewportWidth = getInnerWidth(this.eBodyViewport);
         const availableWidth = bodyViewportWidth - scrollWidthToRemove;
 

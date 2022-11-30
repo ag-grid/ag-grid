@@ -86,7 +86,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     @PostConstruct
     private postConstruct(): void {
-        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.usingTreeData = this.gridOptionsService.isTreeData();
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
         if (!this.usingTreeData && this.groupLevel) {
@@ -98,7 +98,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         let initialRowCount = 1;
         const isRootStore = this.parentRowNode.level === -1;
-        const userInitialRowCount = this.gridOptionsWrapper.getServerSideInitialRowCount();
+        const userInitialRowCount = this.storeUtils.getServerSideInitialRowCount();
         if (isRootStore && userInitialRowCount !== undefined) {
             initialRowCount = userInitialRowCount;
         }
@@ -241,7 +241,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const lookupNodeToRecycle = (data: any): RowNode | undefined => {
             if (!nodesToRecycle) { return undefined; }
 
-            const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+            const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
             if (!getRowIdFunc) { return undefined; }
 
             const parentKeys = this.parentRowNode.getGroupKeys();
@@ -290,7 +290,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private sortRowNodes(): void {
-        const serverIsSorting = this.gridOptionsWrapper.isServerSideSortAllLevels() || this.gridOptionsWrapper.isServerSideSortOnServer();
+        const serverIsSorting = this.storeUtils.isServerSideSortAllLevels() || this.storeUtils.isServerSideSortOnServer();
         const sortOptions = this.sortController.getSortOptions();
         const noSortApplied = !sortOptions || sortOptions.length == 0;
         if (serverIsSorting || noSortApplied) {
@@ -302,7 +302,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private filterRowNodes(): void {
-        const serverIsFiltering = this.gridOptionsWrapper.isServerSideFilterAllLevels() || this.gridOptionsWrapper.isServerSideFilterOnServer();
+        const serverIsFiltering = this.storeUtils.isServerSideFilterAllLevels() || this.storeUtils.isServerSideFilterOnServer();
         // filtering for InFullStore only works at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         const groupLevel = this.groupLevel;
@@ -464,9 +464,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshAfterFilter(params: StoreRefreshAfterParams): void {
-        const serverIsFiltering = this.gridOptionsWrapper.isServerSideFilterOnServer();
+        const serverIsFiltering = this.storeUtils.isServerSideFilterOnServer();
         const storeIsImpacted = this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params);
-        const serverIsFilteringAllLevels = this.gridOptionsWrapper.isServerSideFilterAllLevels();
+        const serverIsFilteringAllLevels = this.storeUtils.isServerSideFilterAllLevels();
         if (serverIsFilteringAllLevels || (serverIsFiltering && storeIsImpacted)) {
             this.refreshStore(true);
             this.sortRowNodes();
@@ -479,9 +479,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshAfterSort(params: StoreRefreshAfterParams): void {
-        const serverIsSorting = this.gridOptionsWrapper.isServerSideSortOnServer();
+        const serverIsSorting = this.storeUtils.isServerSideSortOnServer();
         const storeIsImpacted = this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params);
-        const serverIsSortingAllLevels = this.gridOptionsWrapper.isServerSideSortAllLevels();
+        const serverIsSortingAllLevels = this.storeUtils.isServerSideSortAllLevels();
         if (serverIsSortingAllLevels || (serverIsSorting && storeIsImpacted)) {
             this.refreshStore(true);
             this.filterRowNodes();
@@ -626,7 +626,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
 
         let rowNode: RowNode;
         if (getRowIdFunc != null) {

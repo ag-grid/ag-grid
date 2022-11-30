@@ -37,7 +37,7 @@ export class SelectAllFeature extends BeanStub {
 
     public onSpaceKeyPressed(e: KeyboardEvent): void {
         const checkbox = this.cbSelectAll;
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
 
         if (checkbox.isDisplayed() && !checkbox.getGui().contains(eDocument.activeElement)) {
             e.preventDefault();

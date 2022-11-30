@@ -70,11 +70,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private init() {
         let numberOfRows = 1;
         if (this.level === 0) {
-            numberOfRows = this.gridOptionsWrapper.getServerSideInitialRowCount();
+            numberOfRows = this.storeUtils.getServerSideInitialRowCount();
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
 
-        const usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const usingTreeData = this.gridOptionsService.isTreeData();
 
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
@@ -97,7 +97,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns an object determining the status of this transaction and effected nodes
      */
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        const idFunc = this.gridOptionsWrapper.getRowIdFunc();
+        const idFunc = this.gridOptionsService.getRowIdFunc();
         if (!idFunc) {
             console.warn('AG Grid: getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
@@ -446,7 +446,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param params a set of properties pertaining to the sort changes
      */
     refreshAfterSort(params: StoreRefreshAfterParams) {
-        const serverSortsAllLevels = this.gridOptionsWrapper.isServerSideSortAllLevels();
+        const serverSortsAllLevels = this.storeUtils.isServerSideSortAllLevels();
         if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             this.refreshStore(true);
             return;
@@ -465,7 +465,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param params a set of properties pertaining to the filter changes
      */
     refreshAfterFilter(params: StoreRefreshAfterParams) {
-        const serverFiltersAllLevels = this.gridOptionsWrapper.isServerSideFilterAllLevels();
+        const serverFiltersAllLevels = this.storeUtils.isServerSideFilterAllLevels();
         if (serverFiltersAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             this.destroyBean(this.cache);
             this.cache = this.createManagedBean(new LazyCache(this, 1, this.storeParams));

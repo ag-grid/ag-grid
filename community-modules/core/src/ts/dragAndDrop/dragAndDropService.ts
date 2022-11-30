@@ -336,7 +336,7 @@ export class DragAndDropService extends BeanStub {
         if (len === 0) { return  null; }
         if (len === 1) { return validDropTargets[0]; }
 
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
 
         // elementsFromPoint return a list of elements under
         // the mouseEvent sorted from topMost to bottomMost
@@ -449,7 +449,7 @@ export class DragAndDropService extends BeanStub {
         let top = event.pageY - (ghostHeight / 2);
         let left = event.pageX - 10;
 
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const win = (eDocument.defaultView || window);
         const windowScrollY = win.pageYOffset || eDocument.documentElement.scrollTop;
         const windowScrollX = win.pageXOffset || eDocument.documentElement.scrollLeft;
@@ -510,7 +510,7 @@ export class DragAndDropService extends BeanStub {
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
 
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         let targetEl: HTMLElement | null = null;
 
         try {

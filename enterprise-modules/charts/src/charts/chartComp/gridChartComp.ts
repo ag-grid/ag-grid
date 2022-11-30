@@ -23,7 +23,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
-import { ChartController } from "./chartController";
+import { ChartController, DEFAULT_THEMES } from "./chartController";
 import { ChartDataModel, ChartModelParams } from "./chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
 import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
@@ -101,7 +101,7 @@ export class GridChartComp extends Component {
 
     @PostConstruct
     public init(): void {
-        const availableChartThemes = this.gridOptionsWrapper.getChartThemes();
+        const availableChartThemes = this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
 
         if (availableChartThemes.length < 1) {
             throw new Error('Cannot create chart: no chart themes are available to be used.');
@@ -159,7 +159,7 @@ export class GridChartComp extends Component {
     }
 
     private validateCustomThemes() {
-        const suppliedThemes = this.gridOptionsWrapper.getChartThemes();
+        const suppliedThemes = this.getChartThemes();
         const customChartThemes = this.gridOptionsService.get('customChartThemes');
         if (customChartThemes) {
             _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {

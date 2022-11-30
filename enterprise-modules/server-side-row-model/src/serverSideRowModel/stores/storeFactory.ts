@@ -2,7 +2,6 @@ import {
     _,
     Autowired,
     Bean,
-    GridOptionsWrapper,
     IServerSideStore,
     RowNode,
     ServerSideGroupLevelParams,
@@ -19,14 +18,13 @@ import { LazyStore } from "./lazy/lazyStore";
 @Bean('ssrmStoreFactory')
 export class StoreFactory {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
 
-        const InfiniteScrollStore = !!this.gridOptionsWrapper.isServerSideNewInfiniteScroll() ? LazyStore : InfiniteStore;
+        const InfiniteScrollStore = !!this.isServerSideNewInfiniteScroll() ? LazyStore : InfiniteStore;
         const CacheClass = storeParams.infiniteScroll ? InfiniteScrollStore : FullStore;
 
         return new CacheClass(ssrmParams, storeParams, parentNode);
@@ -120,7 +118,15 @@ export class StoreFactory {
     private isInfiniteScroll(storeParams?: ServerSideGroupLevelParams): boolean {
         const res = (storeParams && storeParams.infiniteScroll != null)
             ? storeParams.infiniteScroll
-            : this.gridOptionsWrapper.isServerSideInfiniteScroll();
+            : this.isServerSideInfiniteScroll();
         return res;
+    }
+
+    private isServerSideInfiniteScroll(): boolean {
+        return this.gridOptionsService.is('serverSideInfiniteScroll' as any) || this.gridOptionsService.get('serverSideInfiniteScroll') === 'legacy';
+    }
+
+    private isServerSideNewInfiniteScroll(): boolean {
+        return this.gridOptionsService.is('serverSideInfiniteScroll' as any);
     }
 }

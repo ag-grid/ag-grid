@@ -32,7 +32,7 @@ export class SortController extends BeanStub {
             sort = null;
         }
 
-        const isColumnsSortingCoupledToGroup = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        const isColumnsSortingCoupledToGroup = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         let columnsToUpdate = [column];
         if (isColumnsSortingCoupledToGroup) {
             if (column.getColDef().showRowGroup) {
@@ -61,7 +61,7 @@ export class SortController extends BeanStub {
     }
 
     private updateSortIndex(lastColToChange: Column) {
-        const isCoupled = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        const isCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         const groupParent = this.columnModel.getGroupDisplayColumnForGroup(lastColToChange.getId());
         const lastSortIndexCol = isCoupled ? groupParent || lastColToChange : lastColToChange;
 
@@ -176,7 +176,7 @@ export class SortController extends BeanStub {
     }
 
     private getIndexableColumnsOrdered(): Column[] {{}
-        if (!this.gridOptionsWrapper.isColumnsSortingCoupledToGroup()) {
+        if (!this.gridOptionsService.isColumnsSortingCoupledToGroup()) {
             return this.getColumnsWithSortingOrdered();
         }
 
@@ -217,7 +217,7 @@ export class SortController extends BeanStub {
     }
 
     public canColumnDisplayMixedSort(column: Column): boolean {
-        const isColumnSortCouplingActive = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        const isColumnSortCouplingActive = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         const isGroupDisplayColumn = !!column.getColDef().showRowGroup;
         return isColumnSortCouplingActive && isGroupDisplayColumn;
     }
@@ -242,7 +242,7 @@ export class SortController extends BeanStub {
     }
 
     public getDisplaySortIndexForColumn(column: Column): number | null | undefined {
-        const isColumnSortCouplingActive = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        const isColumnSortCouplingActive = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (!isColumnSortCouplingActive) {
             return this.getColumnsWithSortingOrdered().indexOf(column);
         }

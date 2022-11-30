@@ -1,18 +1,22 @@
 import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
-import { GridOptions } from "./entities/gridOptions";
-import { RowHeightParams } from "./entities/iCallbackParams";
+import { DomLayoutType, GetRowIdFunc, GridOptions } from "./entities/gridOptions";
+import { GetGroupAggFilteringParams, GetRowIdParams, RowHeightParams } from "./entities/iCallbackParams";
 import { RowNode } from "./entities/rowNode";
 import { Environment } from "./environment";
-import { AgEvent } from "./events";
+import { AgEvent, Events } from "./events";
 import { EventService } from "./eventService";
 import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { RowModelType } from "./interfaces/iRowModel";
 import { AnyGridOptions } from "./propertyKeys";
 import { doOnce } from "./utils/function";
-import { missing } from "./utils/generic";
+import { exists, missing } from "./utils/generic";
+import { getScrollbarWidth } from './utils/browser';
+import { ModuleRegistry } from "./modules/moduleRegistry";
+import { ModuleNames } from "./modules/moduleNames";
+import { matchesGroupDisplayType } from "./gridOptionsValidator";
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
@@ -68,8 +72,12 @@ export class GridOptionsService {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
+    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     private destroyed = false;
+    // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
+    private scrollbarWidth: number;
+    private domDataKey = '__AG_' + Math.random().toString();
 
     private propertyEventService: EventService = new EventService();
     private gridOptionLookup: Set<string>;
@@ -84,6 +92,9 @@ export class GridOptionsService {
         this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
         const async = !this.is('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
+
+        // sets an initial calculation for the scrollbar width
+        this.getScrollbarWidth();
 
     }
     @PreDestroy
@@ -112,6 +123,11 @@ export class GridOptionsService {
     public getCallback<K extends CallbackProps>(property: K): WrappedCallback<K, GridOptions[K]> {
         return this.mergeGridCommonParams(this.gridOptions[property]);
     }
+
+    public exists(property: keyof GridOptions): boolean {
+        return exists(this.gridOptions[property]);
+    }
+
     /**
     * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
     * @param callback User provided callback
@@ -168,9 +184,43 @@ export class GridOptionsService {
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property
 
+
+    // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
+    // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
+    // allow the user to provide the scroll width before we work it out.
+    public getScrollbarWidth() {
+        if (this.scrollbarWidth == null) {
+            const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
+            const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+
+            if (scrollbarWidth != null) {
+                this.scrollbarWidth = scrollbarWidth;
+
+                this.eventService.dispatchEvent({
+                    type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED
+                });
+            }
+        }
+
+        return this.scrollbarWidth;
+    }
+
     public isRowModelType(rowModelType: RowModelType): boolean {
         return this.gridOptions.rowModelType === rowModelType ||
             (rowModelType === 'clientSide' && missing(this.gridOptions.rowModelType));
+    }
+
+    public isDomLayout(domLayout: DomLayoutType) {
+        const gridLayout = this.get('domLayout') ?? 'normal';
+        return gridLayout === domLayout;
+    }
+
+    public isRowSelection() {
+        return this.gridOptions.rowSelection === 'single' || this.gridOptions.rowSelection === 'multiple';
+    }
+
+    public useAsyncEvents() {
+        return !this.is('suppressAsyncEvents');
     }
 
     public isGetRowHeightFunction(): boolean {
@@ -245,5 +295,111 @@ export class GridOptionsService {
 
     private isNumeric(value: any): value is number {
         return !isNaN(value) && typeof value === 'number' && isFinite(value);
+    }
+
+    public getDomDataKey(): string {
+        return this.domDataKey;
+    }
+
+    // returns the dom data, or undefined if not found
+    public getDomData(element: Node | null, key: string): any {
+        const domData = (element as any)[this.getDomDataKey()];
+
+        return domData ? domData[key] : undefined;
+    }
+
+    public setDomData(element: Element, key: string, value: any): any {
+        const domDataKey = this.getDomDataKey();
+        let domData = (element as any)[domDataKey];
+
+        if (missing(domData)) {
+            domData = {};
+            (element as any)[domDataKey] = domData;
+        }
+        domData[key] = value;
+    }
+
+    public getDocument(): Document {
+        // if user is providing document, we use the users one,
+        // otherwise we use the document on the global namespace.
+        let result: Document | null = null;
+        if (this.gridOptions.getDocument && exists(this.gridOptions.getDocument)) {
+            result = this.gridOptions.getDocument();
+        } else if (this.eGridDiv) {
+            result = this.eGridDiv.ownerDocument;
+        }
+
+        if (result && exists(result)) {
+            return result;
+        }
+
+        return document;
+    }
+
+    public getRowIdFunc(): ((params: WithoutGridCommon<GetRowIdParams>) => string) | undefined {
+        const getRowId = this.getCallback('getRowId');
+        if (getRowId) {
+            return getRowId;
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        const getRowNodeId = this.get('getRowNodeId');
+        if (getRowNodeId) {
+            return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data);
+        }
+    }
+
+    public getAsyncTransactionWaitMillis(): number | undefined {
+        return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
+    }
+
+    public isAnimateRows() {
+        // never allow animating if enforcing the row order
+        if (this.is('ensureDomOrder')) { return false; }
+
+        return this.is('animateRows');
+    }
+
+    public isTreeData(): boolean {
+        return this.is('treeData') && ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
+    }
+    public isMasterDetail() {
+        return this.is('masterDetail') && ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail');
+    }
+    public isEnableRangeSelection(): boolean {
+        return this.is('enableRangeSelection') && ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule);
+    }
+
+    public isColumnsSortingCoupledToGroup(): boolean {
+        const autoGroupColumnDef = this.get('autoGroupColumnDef');
+        const isClientSideRowModel = this.isRowModelType('clientSide');
+        return isClientSideRowModel && !autoGroupColumnDef?.comparator;
+    }
+
+    public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
+        const userValue = this.gridOptions.groupAggFiltering;
+
+        if (typeof userValue === 'function') {
+            this.getCallback('groupAggFiltering' as any)
+        }
+
+        if (isTrue(userValue)) {
+            return () => true;
+        }
+
+        return undefined;
+    }
+    public isGroupMultiAutoColumn() {
+        if (this.gridOptions.groupDisplayType) {
+            return matchesGroupDisplayType('multipleColumns', this.gridOptions.groupDisplayType);
+        }
+        // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
+        return this.is('groupHideOpenParents');
+    }
+
+    public isGroupUseEntireRow(pivotMode: boolean): boolean {
+        // we never allow groupDisplayType = 'groupRows' if in pivot mode, otherwise we won't see the pivot values.
+        if (pivotMode) { return false; }
+
+        return this.gridOptions.groupDisplayType ? matchesGroupDisplayType('groupRows', this.gridOptions.groupDisplayType) : false;
     }
 }

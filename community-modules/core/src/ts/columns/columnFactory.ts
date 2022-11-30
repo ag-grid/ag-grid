@@ -406,7 +406,7 @@ export class ColumnFactory extends BeanStub {
         mergeDeep(colDefMerged, colDef, false, true);
 
         const autoGroupColDef = this.gridOptionsService.get('autoGroupColumnDef');
-        const isSortingCoupled = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
             mergeDeep(colDefMerged, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef, false, true);

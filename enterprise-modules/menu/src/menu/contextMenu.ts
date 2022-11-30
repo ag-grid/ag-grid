@@ -252,7 +252,7 @@ class ContextMenu extends Component {
 
         if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
-            const doc = this.gridOptionsWrapper.getDocument();
+            const doc = this.gridOptionsService.getDocument();
 
             if (doc.activeElement === doc.body) {
                 this.focusService.setFocusedCell({ rowIndex, column, rowPinned, forceBrowserFocus: true });

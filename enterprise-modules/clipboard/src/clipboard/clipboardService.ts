@@ -467,7 +467,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsWrapper.isTreeData();
+        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.isTreeData();
 
         const getNextGoodRowNode = () => {
             while (true) {
@@ -806,7 +806,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private copyDataToClipboardLegacy(data: string): void {
         // method 3 - if all else fails, the old school hack
         this.executeOnTempElement(element => {
-            const eDocument = this.gridOptionsWrapper.getDocument();
+            const eDocument = this.gridOptionsService.getDocument();
             const focusedElementBefore = eDocument.activeElement as HTMLElement;
 
             element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
@@ -831,7 +831,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         callbackNow: (element: HTMLTextAreaElement) => void,
         callbackAfter?: (element: HTMLTextAreaElement) => void
     ): void {
-        const eDoc = this.gridOptionsWrapper.getDocument();
+        const eDoc = this.gridOptionsService.getDocument();
         const eTempInput = eDoc.createElement('textarea');
         eTempInput.style.width = '1px';
         eTempInput.style.height = '1px';

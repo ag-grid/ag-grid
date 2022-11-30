@@ -116,7 +116,7 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortUnSort', this.eSortMixed, this.column);
 
         const isColumnShowingRowGroup = this.column.getColDef().showRowGroup;
-        const areGroupsCoupled = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        const areGroupsCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (areGroupsCoupled && isColumnShowingRowGroup) {
             // Watch global events, as row group columns can effect their display column.
             this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.updateMultiSortIndicator());

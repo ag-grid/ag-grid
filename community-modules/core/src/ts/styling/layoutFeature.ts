@@ -1,6 +1,7 @@
-import { Autowired, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
+import { DomLayoutType } from "../entities/gridOptions";
+import { doOnce } from "../utils/function";
 
 export interface LayoutView {
     updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams): void;
@@ -19,9 +20,6 @@ export interface UpdateLayoutClassesParams {
 }
 
 export class LayoutFeature extends BeanStub {
-
-    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
-
     private view: LayoutView;
 
     constructor(view: LayoutView) {
@@ -36,7 +34,7 @@ export class LayoutFeature extends BeanStub {
     }
 
     private updateLayoutClasses(): void {
-        const domLayout = this.gridOptionsWrapper.getDomLayout();
+        const domLayout = this.getDomLayout();
         const params = {
             autoHeight: domLayout === 'autoHeight',
             normal: domLayout === 'normal',
@@ -45,6 +43,25 @@ export class LayoutFeature extends BeanStub {
         const cssClass = params.autoHeight ? LayoutCssClasses.AUTO_HEIGHT :
                             params.print ? LayoutCssClasses.PRINT : LayoutCssClasses.NORMAL;
         this.view.updateLayoutClasses(cssClass, params);
+    }
+
+    // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
+    private getDomLayout(): DomLayoutType {
+        const domLayout: DomLayoutType = this.gridOptionsService.get('domLayout') ?? 'normal';
+        const validLayouts: DomLayoutType[] = ['normal', 'print', 'autoHeight'];
+
+        if (validLayouts.indexOf(domLayout) === -1) {
+            doOnce(
+                () =>
+                    console.warn(
+                        `AG Grid: ${domLayout} is not valid for DOM Layout, valid values are 'normal', 'autoHeight', 'print'.`
+                    ),
+                'warn about dom layout values'
+            );
+            return 'normal';
+        }
+
+        return domLayout;
     }
 
 }

@@ -1,7 +1,6 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Events } from "../eventKeys";
 
 export class CenterWidthFeature extends BeanStub {
@@ -28,7 +27,7 @@ export class CenterWidthFeature extends BeanStub {
     private setWidth(): void {
         const {columnModel} = this;
 
-        const printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
+        const printLayout = this.gridOptionsService.isDomLayout('print');
 
         const centerWidth = columnModel.getBodyContainerWidth();
         const leftWidth = columnModel.getDisplayedColumnsLeftWidth();

@@ -102,7 +102,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private modifyLeftForPrintLayout(colOrGroup: IHeaderColumn, leftPosition: number): number {
-        const printLayout = this.beans.gridOptionsWrapper.getDomLayout() === 'print';
+        const printLayout = this.beans.gridOptionsService.isDomLayout('print');
 
         if (!printLayout) { return leftPosition; }
 

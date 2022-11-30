@@ -42,7 +42,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
 
     public showPicker() {
         const listGui = this.listComponent.getGui();
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
 
         const destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e: MouseEvent) => {
             if (!listGui.contains(e.target as HTMLElement) && this.hideList) {

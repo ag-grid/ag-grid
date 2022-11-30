@@ -3,7 +3,6 @@ import { ColumnApi } from "../columns/columnApi";
 import { ColumnModel } from "../columns/columnModel";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { GridApi } from "../gridApi";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ExpressionService } from "../valueService/expressionService";
 import { RowRenderer } from "./rowRenderer";
 import { TemplateService } from "../templateService";
@@ -57,7 +56,6 @@ export class Beans {
     @Autowired('context') public context: Context;
     @Autowired('columnApi') public columnApi: ColumnApi;
     @Autowired('gridApi') public gridApi: GridApi;
-    @Autowired('gridOptionsWrapper') public gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') public gridOptionsService: GridOptionsService;
     @Autowired('expressionService') public expressionService: ExpressionService;
     @Autowired('environment') public environment: Environment;
@@ -104,7 +102,7 @@ export class Beans {
 
     @PostConstruct
     private postConstruct(): void {
-        this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+        this.doingMasterDetail = this.gridOptionsService.isMasterDetail();
 
         if (this.gridOptionsService.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;

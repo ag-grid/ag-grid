@@ -13,7 +13,7 @@ export class PopupEditorWrapper extends PopupComponent {
 
     @PostConstruct
     private postConstruct(): void {
-        this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+        this.gridOptionsService.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
         this.addKeyDownListener();
     }
 

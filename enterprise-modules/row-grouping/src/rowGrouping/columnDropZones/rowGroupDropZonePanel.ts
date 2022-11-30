@@ -26,7 +26,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     @PostConstruct
     private passBeansUp(): void {
         super.setBeans({
-            gridOptionsWrapper: this.gridOptionsWrapper,
             gridOptionsService: this.gridOptionsService,
             eventService: this.eventService,
             context: this.getContext(),

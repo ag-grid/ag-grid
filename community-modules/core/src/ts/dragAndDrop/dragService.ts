@@ -148,7 +148,7 @@ export class DragService extends BeanStub {
 
         this.mouseStartEvent = mouseEvent;
 
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
 
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseMove(event, params.eElement);
         const mouseUpEvent = (event: MouseEvent) => this.onMouseUp(event, params.eElement);

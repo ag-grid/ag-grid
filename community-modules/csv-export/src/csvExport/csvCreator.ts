@@ -4,7 +4,6 @@ import {
     ColumnModel,
     CsvCustomContent,
     CsvExportParams,
-    GridOptionsWrapper,
     GridOptionsService,
     ICsvCreator,
     PostConstruct,
@@ -21,14 +20,12 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
 
     @PostConstruct
     public postConstruct(): void {
         this.setBeans({
             gridSerializer: this.gridSerializer,
-            gridOptionsWrapper: this.gridOptionsWrapper,
             gridOptionsService: this.gridOptionsService
         });
     }
@@ -75,7 +72,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { columnModel, valueService, gridOptionsWrapper, gridOptionsService } = this;
+        const { columnModel, valueService, gridOptionsService } = this;
         const {
             processCellCallback,
             processHeaderCallback,
@@ -88,7 +85,6 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         return new CsvSerializingSession({
             columnModel: columnModel,
             valueService,
-            gridOptionsWrapper,
             gridOptionsService,
             processCellCallback: processCellCallback || undefined,
             processHeaderCallback: processHeaderCallback || undefined,

@@ -190,7 +190,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private isFromThisGrid(draggingEvent: DraggingEvent) {
         const { dragSourceDomDataKey } = draggingEvent.dragSource;
 
-        return dragSourceDomDataKey === this.gridOptionsWrapper.getDomDataKey();
+        return dragSourceDomDataKey === this.gridOptionsService.getDomDataKey();
     }
 
     private isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
@@ -255,7 +255,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             });
             this.moveRows(rowNodes!, pixel, increment);
         } else {
-            const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+            const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
 
             let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 

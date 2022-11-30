@@ -50,7 +50,6 @@ import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 import { GridOptionsService } from "./gridOptionsService";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
@@ -155,7 +154,6 @@ export class GridApi<TData = any> {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectionService') private selectionService: SelectionService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
@@ -1349,25 +1347,25 @@ export class GridApi<TData = any> {
 
     /** Add an event listener for the specified `eventType`. Works similar to `addEventListener` for a browser DOM element. */
     public addEventListener(eventType: string, listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.addEventListener(eventType, listener, async);
     }
 
     /** Add an event listener for all event types coming from the grid. */
     public addGlobalListener(listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.addGlobalListener(listener, async);
     }
 
     /** Remove an event listener. */
     public removeEventListener(eventType: string, listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.removeEventListener(eventType, listener, async);
     }
 
     /** Remove a global event listener. */
     public removeGlobalListener(listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.removeGlobalListener(listener, async);
     }
 

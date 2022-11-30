@@ -1,7 +1,7 @@
 import { ColDefUtil } from './components/colDefUtil';
 import { ComponentUtil } from './components/componentUtil';
 import { Autowired, Bean, PostConstruct } from './context/context';
-import { GridOptions } from './entities/gridOptions';
+import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
 import { GridOptionsService } from './gridOptionsService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
@@ -9,7 +9,6 @@ import { PropertyKeys } from './propertyKeys';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { exists, missing } from './utils/generic';
 import { iterateObject } from './utils/object';
-
 
 @Bean('gridOptionsValidator')
 export class GridOptionsValidator {
@@ -322,4 +321,22 @@ export class GridOptionsValidator {
         }
     }
 
+}
+
+export function matchesGroupDisplayType(toMatch: RowGroupingDisplayType, supplied?: string): boolean {
+    const groupDisplayTypeValues: RowGroupingDisplayType[] = ['groupRows', 'multipleColumns', 'custom', 'singleColumn'];
+    if ((groupDisplayTypeValues as (string | undefined)[]).indexOf(supplied) < 0) {
+        console.warn(`AG Grid: '${supplied}' is not a valid groupDisplayType value - possible values are: '${groupDisplayTypeValues.join("', '")}'`);
+        return false;
+    }
+    return supplied === toMatch;
+}
+
+export function matchesTreeDataDisplayType(toMatch: TreeDataDisplayType, supplied?: string): boolean {
+    const treeDataDisplayTypeValues: TreeDataDisplayType[] = ['auto', 'custom'];
+    if ((treeDataDisplayTypeValues as (string | undefined)[]).indexOf(supplied) < 0) {
+        console.warn(`AG Grid: '${supplied}' is not a valid treeDataDisplayType value - possible values are: '${treeDataDisplayTypeValues.join("', '")}'`);
+        return false;
+    }
+    return supplied === toMatch;
 }

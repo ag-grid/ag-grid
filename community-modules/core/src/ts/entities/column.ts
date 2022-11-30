@@ -13,7 +13,6 @@ import {
 } from "./colDef";
 import { EventService } from "../eventService";
 import { Autowired, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnUtils } from "../columns/columnUtils";
 import { RowNode } from "./rowNode";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -68,7 +67,6 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     // + toolpanel, for gui updates
     public static EVENT_VALUE_CHANGED = 'columnValueChanged';
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
 
@@ -222,7 +220,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return this.originalParent;
     }
 
-    // this is done after constructor as it uses gridOptionsWrapper
+    // this is done after constructor as it uses gridOptionsService
     @PostConstruct
     private initialise(): void {
         this.initMinAndMaxWidths();
@@ -316,7 +314,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             ModuleRegistry.assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor)
         }
 
-        if (this.gridOptionsWrapper.isTreeData()) {
+        if (this.gridOptionsService.isTreeData()) {
             const itemsNotAllowedWithTreeData: (keyof ColDef)[] = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {
                 if (exists(colDefAny[item])) {

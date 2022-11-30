@@ -1,5 +1,4 @@
 import { GridOptions } from "./entities/gridOptions";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { SelectionService } from "./selectionService";
 import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel } from "./columns/columnModel";
@@ -305,7 +304,7 @@ export class GridCoreCreator {
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, HorizontalResizeService, LocaleService, GridOptionsValidator,
-            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, GridOptionsService,
+            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,

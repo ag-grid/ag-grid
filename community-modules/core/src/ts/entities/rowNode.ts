@@ -382,7 +382,7 @@ export class RowNode<TData = any> implements IEventEmitter {
 
     public setId(id?: string): void {
         // see if user is providing the id's
-        const getRowIdFunc = this.beans.gridOptionsWrapper.getRowIdFunc();
+        const getRowIdFunc = this.beans.gridOptionsService.getRowIdFunc();
 
         if (getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.

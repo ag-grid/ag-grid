@@ -292,7 +292,6 @@ export { Grid, GridParams, GridCoreCreator } from "./grid";
 export { GridApi, DetailGridInfo, StartEditingCellParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
-export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { GridOptionsService } from "./gridOptionsService";
 export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
