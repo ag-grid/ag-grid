@@ -15,7 +15,7 @@ import { SetFilter } from './setFilter';
 import { SetValueModel } from './setValueModel';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
 
-export class SetFloatingFilterComp extends Component implements IFloatingFilter {
+export class SetFloatingFilterComp<K extends string | string[] = string, V = string> extends Component implements IFloatingFilter {
     @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
     @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
@@ -49,11 +49,11 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         this.params = params;
     }
 
-    public onParentModelChanged(parentModel: SetFilterModel): void {
+    public onParentModelChanged(parentModel: SetFilterModel<K>): void {
         this.updateFloatingFilterText(parentModel);
     }
 
-    private parentSetFilterInstance(cb: (instance: SetFilter<unknown>) => void): void {
+    private parentSetFilterInstance(cb: (instance: SetFilter<K, V>) => void): void {
         this.params.parentFilterInstance((filter) => {
             if (!(filter instanceof SetFilter)) {
                 throw new Error('AG Grid - SetFloatingFilter expects SetFilter as its parent');
@@ -81,7 +81,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         this.availableValuesListenerAdded = true;
     }
 
-    private updateFloatingFilterText(parentModel?: SetFilterModel | null): void {
+    private updateFloatingFilterText(parentModel?: SetFilterModel<K> | null): void {
         if (!this.availableValuesListenerAdded) {
             this.addAvailableValuesListener();
         }

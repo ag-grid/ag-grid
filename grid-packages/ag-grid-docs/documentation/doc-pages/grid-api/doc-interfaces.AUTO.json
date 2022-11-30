@@ -19980,26 +19980,29 @@
       "type": { "returnType": "number", "optional": true }
     }
   },
-  "SetFilterModelValue": {},
+  "SetFilterModelValue": {
+    "meta": { "typeParams": ["K extends string | string[] = string"] }
+  },
   "SetFilterModel": {
     "filterType": { "type": { "returnType": "'set'", "optional": true } },
     "values": {
-      "type": { "returnType": "SetFilterModelValue", "optional": false }
-    }
+      "type": { "returnType": "SetFilterModelValue<K>", "optional": false }
+    },
+    "meta": { "typeParams": ["K extends string | string[] = string"] }
   },
   "ISetFilter": {
     "getModel": {
       "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n     * not active.\n     */",
       "type": {
         "arguments": {},
-        "returnType": "SetFilterModel | null",
+        "returnType": "SetFilterModel<K> | null",
         "optional": false
       }
     },
     "setModel": {
       "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n     * de-activate the filter.\n     * \n     * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)\n     * to the Set Filter, you need to wait for these changes to be applied before performing any further\n     * actions by waiting on the returned grid promise, e.g. \n     * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`\n     */",
       "type": {
-        "arguments": { "model": "SetFilterModel | null" },
+        "arguments": { "model": "SetFilterModel<K> | null" },
         "returnType": "void | AgPromise<void>",
         "optional": false
       }
@@ -20008,7 +20011,7 @@
       "description": "/** @deprecated As of v29 use `getFilterValues` to get the values in the Set Filter\n     * (e.g. complex objects if provided), or `getFilterKeys` to get the string keys\n     * \n     * Returns the full list of unique keys used by the Set Filter.\n     */",
       "type": {
         "arguments": {},
-        "returnType": "SetFilterModelValue",
+        "returnType": "SetFilterModelValue<K>",
         "optional": false
       }
     },
@@ -20016,7 +20019,7 @@
       "description": "/** Returns the full list of unique keys used by the Set Filter. */",
       "type": {
         "arguments": {},
-        "returnType": "SetFilterModelValue",
+        "returnType": "SetFilterModelValue<K>",
         "optional": false
       }
     },
@@ -20064,11 +20067,13 @@
       "description": "/** Returns the current UI state (potentially un-applied). */",
       "type": {
         "arguments": {},
-        "returnType": "SetFilterModel | null",
+        "returnType": "SetFilterModel<K> | null",
         "optional": false
       }
     },
-    "meta": { "typeParams": ["V = string"] },
+    "meta": {
+      "typeParams": ["K extends string | string[] = string", "V = string"]
+    },
     "applyModel": {
       "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
@@ -23811,8 +23816,8 @@
     "updateDisplayedValuesToAllAvailable": {
       "type": {
         "arguments": {
-          "allValues": "Map<string | null, V | null>",
-          "availableKeys": "Set<string | null>"
+          "getValue": "(key: K | null) => V",
+          "availableKeys": "Iterable<K | null>"
         },
         "returnType": "void",
         "optional": false
@@ -23821,8 +23826,8 @@
     "updateDisplayedValuesToMatchMiniFilter": {
       "type": {
         "arguments": {
-          "allValues": "Map<string | null, V | null>",
-          "availableKeys": "Set<string | null>",
+          "getValue": "(key: K | null) => V",
+          "availableKeys": "Iterable<K | null>",
           "matchesFilter": "(valueToCheck: string | null) => boolean",
           "nullMatchesFilter": "boolean",
           "fromMiniFilter?": "boolean"
@@ -23834,30 +23839,30 @@
     "getDisplayedValueCount": {
       "type": { "arguments": {}, "returnType": "number", "optional": false }
     },
-    "getDisplayedKey": {
+    "getDisplayedItem": {
       "type": {
         "arguments": { "index": "number" },
-        "returnType": "K | null",
+        "returnType": "K | SetFilterModelTreeItem<K> | null",
         "optional": false
       }
     },
     "getDisplayedKeys": {
       "type": {
         "arguments": {},
-        "returnType": "(string | null)[]",
+        "returnType": "(K | null)[]",
         "optional": false
       }
     },
     "forEachDisplayedKey": {
       "type": {
-        "arguments": { "func": "(key: string | null) => void" },
+        "arguments": { "func": "(key: K | null) => void" },
         "returnType": "void",
         "optional": false
       }
     },
     "someDisplayedKey": {
       "type": {
-        "arguments": { "func": "(key: string | null) => boolean" },
+        "arguments": { "func": "(key: K | null) => boolean" },
         "returnType": "boolean",
         "optional": false
       }
@@ -23868,7 +23873,7 @@
     "refresh": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
-    "meta": { "typeParams": ["V", "K"] }
+    "meta": { "typeParams": ["K extends string | string[]", "V"] }
   },
   "SetFilterModelTreeItem": {
     "treeKey": { "type": { "returnType": "string | null", "optional": false } },
@@ -23876,9 +23881,10 @@
     "filterPasses": { "type": { "returnType": "boolean", "optional": false } },
     "expanded": { "type": { "returnType": "boolean", "optional": true } },
     "children": {
-      "type": { "returnType": "SetFilterModelTreeItem[]", "optional": true }
+      "type": { "returnType": "SetFilterModelTreeItem<K>[]", "optional": true }
     },
-    "key": { "type": { "returnType": "string | null", "optional": true } }
+    "key": { "type": { "returnType": "K | null", "optional": true } },
+    "meta": { "typeParams": ["K"] }
   },
   "ISetFilterLocaleText": {
     "loadingOoo": { "type": { "returnType": "string", "optional": false } },
@@ -23889,6 +23895,26 @@
       "type": { "returnType": "string", "optional": false }
     },
     "noMatches": { "type": { "returnType": "string", "optional": false } }
+  },
+  "AppliedModel": {
+    "applyModel": {
+      "type": {
+        "arguments": { "appliedModel": "SetFilterModel<K> | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "has": {
+      "type": {
+        "arguments": { "key": "K | null" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "exists": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "meta": { "typeParams": ["K extends string | string[]"] }
   },
   "SetFilterListItemSelectionChangedEvent": {
     "isSelected": { "type": { "returnType": "boolean", "optional": false } },
@@ -23905,6 +23931,137 @@
     }
   },
   "SetFilterModelValuesType": {},
+  "SetFilterModelValues": {
+    "isKeySelected": {
+      "type": {
+        "arguments": { "key": "K | null" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "selectKey": {
+      "type": {
+        "arguments": { "key": "K | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "deselectKey": {
+      "type": {
+        "arguments": { "key": "K | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getSelectedKeyCount": {
+      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    },
+    "selectAll": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "clearSelectedKeys": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "getSelectedKeys": {
+      "type": {
+        "arguments": {},
+        "returnType": "(K | null)[]",
+        "optional": false
+      }
+    },
+    "setSelectedKeys": {
+      "type": {
+        "arguments": { "keys": "Iterable<K | null>" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setSelectedKeysThatExist": {
+      "type": {
+        "arguments": { "keys": "(K | null)[]" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getKeys": {
+      "type": {
+        "arguments": {},
+        "returnType": "(K | null)[]",
+        "optional": false
+      }
+    },
+    "getAllKeyCount": {
+      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    },
+    "getValues": {
+      "type": {
+        "arguments": {},
+        "returnType": "(V | null)[]",
+        "optional": false
+      }
+    },
+    "getValue": {
+      "type": {
+        "arguments": { "key": "K | null" },
+        "returnType": "V | null",
+        "optional": false
+      }
+    },
+    "uniqueValues": {
+      "type": {
+        "arguments": { "values": "(V | null)[]" },
+        "returnType": "A",
+        "optional": false
+      }
+    },
+    "setAllValues": {
+      "type": {
+        "arguments": { "allValues": "A | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getValuesFromRows": {
+      "type": {
+        "arguments": {
+          "clientSideValuesExtractor": "ClientSideValuesExtractor<V>",
+          "predicate": "(node: RowNode) => boolean",
+          "checkExistingValue": "boolean"
+        },
+        "returnType": "A",
+        "optional": false
+      }
+    },
+    "sortKeys": {
+      "type": {
+        "arguments": { "values": "A | null" },
+        "returnType": "(K | null)[]",
+        "optional": false
+      }
+    },
+    "isKeyAvailable": {
+      "type": {
+        "arguments": { "key": "K | null" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "setAvailableKeys": {
+      "type": {
+        "arguments": { "keys": "Iterable<K | null>" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getAvailableKeys": {
+      "type": {
+        "arguments": {},
+        "returnType": "Iterable<K | null>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["K extends string | string[]", "V", "A"] }
+  },
   "ToolPanelFiltersCompParams": {
     "suppressExpandAll": {
       "description": "/** To suppress Expand / Collapse All */",

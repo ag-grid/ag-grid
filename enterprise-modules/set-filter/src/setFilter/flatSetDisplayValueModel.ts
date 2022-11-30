@@ -1,7 +1,7 @@
-import { Column, TextFormatter, ValueFormatterParams, ValueFormatterService, _ } from '@ag-grid-community/core';
+import { Column, TextFormatter, ValueFormatterParams, ValueFormatterService } from '@ag-grid-community/core';
 import { ISetDisplayValueModel } from './iSetDisplayValueModel';
 
-export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V, string> {
+export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<string, V> {
     /** All keys that are currently displayed, after the mini-filter has been applied. */
     private displayedKeys: (string | null)[] = [];
 
@@ -12,25 +12,25 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V, str
         private readonly column: Column
     ) {}
 
-    public updateDisplayedValuesToAllAvailable(allValues: Map<string | null, V | null>, availableKeys: Set<string | null>): void {
-        this.displayedKeys = _.values(availableKeys);
+    public updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>): void {
+        this.displayedKeys = Array.from(availableKeys);
     }
 
     public updateDisplayedValuesToMatchMiniFilter(
-        allValues: Map<string | null, V | null>,
-        availableKeys: Set<string | null>,
+        getValue: (key: string | null) => V,
+        availableKeys: Iterable<string | null>,
         matchesFilter: (valueToCheck: string | null) => boolean,
         nullMatchesFilter: boolean
     ): void {
         this.displayedKeys = [];
 
-        availableKeys.forEach(key => {
+        for (let key of availableKeys) {
             if (key == null) {
                 if (nullMatchesFilter) {
                     this.displayedKeys.push(key);
                 }
             } else {
-                const value = allValues.get(key);
+                const value = getValue(key);
                 const valueFormatterValue = this.valueFormatterService.formatValue(
                     this.column, null, value, this.valueFormatter, false);
 
@@ -40,14 +40,14 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V, str
                     this.displayedKeys.push(key);
                 }
             }
-        });
+        }
     }
 
     public getDisplayedValueCount(): number {
         return this.displayedKeys.length;
     }
 
-    public getDisplayedKey(index: number): string | null {
+    public getDisplayedItem(index: number): string | null {
         return this.displayedKeys[index];
     }
 

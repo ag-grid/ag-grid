@@ -11351,30 +11351,33 @@
     }
   },
   "SetFilterModelValue": {
-    "meta": { "isTypeAlias": true },
-    "type": "(string | null)[]"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["K extends string | string[] = string"]
+    },
+    "type": "(K | null)[]"
   },
   "SetFilterModel": {
-    "meta": {},
-    "type": { "filterType?": "'set'", "values": "SetFilterModelValue" }
+    "meta": { "typeParams": ["K extends string | string[] = string"] },
+    "type": { "filterType?": "'set'", "values": "SetFilterModelValue<K>" }
   },
   "ISetFilter": {
     "meta": {
-      "typeParams": ["V = string"],
+      "typeParams": ["K extends string | string[] = string", "V = string"],
       "doc": "/** Interface contract for the public aspects of the SetFilter implementation. \n * @param V type of value in the Set Filter\n*/"
     },
     "type": {
-      "getModel()": "SetFilterModel | null",
-      "setModel(model: SetFilterModel | null)": "void | AgPromise<void>",
-      "getValues()": "SetFilterModelValue",
-      "getFilterKeys()": "SetFilterModelValue",
+      "getModel()": "SetFilterModel<K> | null",
+      "setModel(model: SetFilterModel<K> | null)": "void | AgPromise<void>",
+      "getValues()": "SetFilterModelValue<K>",
+      "getFilterKeys()": "SetFilterModelValue<K>",
       "getFilterValues()": "(V | null)[]",
       "setFilterValues(values: (V | null)[])": "void",
       "refreshFilterValues()": "void",
       "resetFilterValues()": "void",
       "getMiniFilter()": "string | null",
       "setMiniFilter(newMiniFilter: string | null)": "void",
-      "getModelFromUi()": "SetFilterModel | null",
+      "getModelFromUi()": "SetFilterModel<K> | null",
       "applyModel()": "boolean",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
@@ -11386,7 +11389,7 @@
     },
     "docs": {
       "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n     * not active.\n     */",
-      "setModel(model: SetFilterModel | null)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n     * de-activate the filter.\n     * \n     * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)\n     * to the Set Filter, you need to wait for these changes to be applied before performing any further\n     * actions by waiting on the returned grid promise, e.g. \n     * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`\n     */",
+      "setModel(model: SetFilterModel<K> | null)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n     * de-activate the filter.\n     * \n     * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)\n     * to the Set Filter, you need to wait for these changes to be applied before performing any further\n     * actions by waiting on the returned grid promise, e.g. \n     * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`\n     */",
       "getValues()": "/** @deprecated As of v29 use `getFilterValues` to get the values in the Set Filter\n     * (e.g. complex objects if provided), or `getFilterKeys` to get the string keys\n     * \n     * Returns the full list of unique keys used by the Set Filter.\n     */",
       "getFilterKeys()": "/** Returns the full list of unique keys used by the Set Filter. */",
       "getFilterValues()": "/** Returns the full list of unique values used by the Set Filter. */",
@@ -13751,28 +13754,28 @@
     }
   },
   "ISetDisplayValueModel": {
-    "meta": { "typeParams": ["V", "K"] },
+    "meta": { "typeParams": ["K extends string | string[]", "V"] },
     "type": {
-      "updateDisplayedValuesToAllAvailable(allValues: Map<string | null, V | null>, availableKeys: Set<string | null>)": "void",
-      "updateDisplayedValuesToMatchMiniFilter(allValues: Map<string | null, V | null>, availableKeys: Set<string | null>, matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean, fromMiniFilter?: boolean)": "void",
+      "updateDisplayedValuesToAllAvailable(getValue: (key: K | null) => V, availableKeys: Iterable<K | null>)": "void",
+      "updateDisplayedValuesToMatchMiniFilter(getValue: (key: K | null) => V, availableKeys: Iterable<K | null>, matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean, fromMiniFilter?: boolean)": "void",
       "getDisplayedValueCount()": "number",
-      "getDisplayedKey(index: number)": "K | null",
-      "getDisplayedKeys()": "(string | null)[]",
-      "forEachDisplayedKey(func: (key: string | null) => void)": "void",
-      "someDisplayedKey(func: (key: string | null) => boolean)": "boolean",
+      "getDisplayedItem(index: number)": "K | SetFilterModelTreeItem<K> | null",
+      "getDisplayedKeys()": "(K | null)[]",
+      "forEachDisplayedKey(func: (key: K | null) => void)": "void",
+      "someDisplayedKey(func: (key: K | null) => boolean)": "boolean",
       "hasGroups()": "boolean",
       "refresh()": "void"
     }
   },
   "SetFilterModelTreeItem": {
-    "meta": {},
+    "meta": { "typeParams": ["K"] },
     "type": {
       "treeKey": "string | null",
       "depth": "number",
       "filterPasses": "boolean",
       "expanded?": "boolean",
-      "children?": "SetFilterModelTreeItem[]",
-      "key?": "string | null"
+      "children?": "SetFilterModelTreeItem<K>[]",
+      "key?": "K | null"
     }
   },
   "ISetFilterLocaleText": {
@@ -13784,6 +13787,14 @@
       "selectAll": "string",
       "selectAllSearchResults": "string",
       "noMatches": "string"
+    }
+  },
+  "AppliedModel": {
+    "meta": { "typeParams": ["K extends string | string[]"] },
+    "type": {
+      "applyModel(appliedModel: SetFilterModel<K> | null)": "void",
+      "has(key: K | null)": "boolean",
+      "exists()": "boolean"
     }
   },
   "SetFilterListItemSelectionChangedEvent": {
@@ -13800,6 +13811,31 @@
     "meta": { "isEnum": true },
     "type": ["PROVIDED_LIST", "PROVIDED_CALLBACK", "TAKEN_FROM_GRID_VALUES"],
     "docs": [null, null, null]
+  },
+  "SetFilterModelValues": {
+    "meta": { "typeParams": ["K extends string | string[]", "V", "A"] },
+    "type": {
+      "isKeySelected(key: K | null)": "boolean",
+      "selectKey(key: K | null)": "void",
+      "deselectKey(key: K | null)": "void",
+      "getSelectedKeyCount()": "number",
+      "selectAll()": "void",
+      "clearSelectedKeys()": "void",
+      "getSelectedKeys()": "(K | null)[]",
+      "setSelectedKeys(keys: Iterable<K | null>)": "void",
+      "setSelectedKeysThatExist(keys: (K | null)[])": "void",
+      "getKeys()": "(K | null)[]",
+      "getAllKeyCount()": "number",
+      "getValues()": "(V | null)[]",
+      "getValue(key: K | null)": "V | null",
+      "uniqueValues(values: (V | null)[])": "A",
+      "setAllValues(allValues: A | null)": "void",
+      "getValuesFromRows(clientSideValuesExtractor: ClientSideValuesExtractor<V>, predicate: (node: RowNode) => boolean, checkExistingValue: boolean)": "A",
+      "sortKeys(values: A | null)": "(K | null)[]",
+      "isKeyAvailable(key: K | null)": "boolean",
+      "setAvailableKeys(keys: Iterable<K | null>)": "void",
+      "getAvailableKeys()": "Iterable<K | null>"
+    }
   },
   "ToolPanelFiltersCompParams": {
     "meta": {},

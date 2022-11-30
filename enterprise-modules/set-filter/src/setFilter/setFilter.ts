@@ -23,6 +23,9 @@ import {
     RowNode,
     SetFilterModelValue,
     ValueFormatterParams,
+    ColumnModel,
+    ValueService,
+    GetDataPath,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
@@ -30,7 +33,7 @@ import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 import { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 
 /** @param V type of value in the Set Filter */
-export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
+export class SetFilter<K extends string | string[] = string, V = string> extends ProvidedFilter<SetFilterModel<K>, V> implements ISetFilter<K, V> {
     public static readonly SELECT_ALL_VALUE = '__AG_SELECT_ALL__';
 
     @RefSelector('eMiniFilter') private readonly eMiniFilter: AgInputTextField;
@@ -39,17 +42,21 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     @RefSelector('eFilterNoMatches') private readonly eNoMatches: HTMLElement;
 
     @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('valueService') private readonly valueService: ValueService;
 
-    private valueModel: SetValueModel<V> | null = null;
+    private valueModel: SetValueModel<K, V> | null = null;
     private setFilterParams: ISetFilterParams<any, V> | null = null;
     private virtualList: VirtualList | null = null;
     private positionableFeature: PositionableFeature;
     private caseSensitive: boolean = false;
     private convertValuesToStrings: boolean = false;
+    private treeDataTreeList = false;
+    private getDataPath?: GetDataPath<any>;
+    private groupingTreeList = false;
 
-    // To make the filtering super fast, we store the keys in an Set rather than using the default array
-    private appliedModelKeys: Set<string | null> | null = null;
     private noAppliedModelKeys: boolean = false;
+    private appliedModelWrapper: AppliedModel<K>;
 
     private createKey: (value: V | null, node?: RowNode | null) => string | null;
 
@@ -150,7 +157,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return 'set-filter';
     }
 
-    public setModel(model: SetFilterModel | null): AgPromise<void> {
+    public setModel(model: SetFilterModel<K> | null): AgPromise<void> {
         if (model == null && this.valueModel?.getModel() == null) {
             // refreshing is expensive. if new and old model are both null (e.g. nothing set), skip.
             // mini filter isn't contained within the model, so always reset
@@ -160,7 +167,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return super.setModel(model);
     }
 
-    private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
+    private setModelAndRefresh(values: SetFilterModelValue<K> | null): AgPromise<void> {
         return this.valueModel ? this.valueModel.setModel(values).then(() => this.refresh()) : AgPromise.resolve();
     }
 
@@ -170,14 +177,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.setModelAndRefresh(null);
     }
 
-    protected setModelIntoUi(model: SetFilterModel | null): AgPromise<void> {
+    protected setModelIntoUi(model: SetFilterModel<K> | null): AgPromise<void> {
         this.setMiniFilter(null);
 
         const values = model == null ? null : model.values;
         return this.setModelAndRefresh(values);
     }
 
-    public getModelFromUi(): SetFilterModel | null {
+    public getModelFromUi(): SetFilterModel<K> | null {
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         const values = this.valueModel.getModel();
@@ -191,11 +198,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return 'set';
     }
 
-    public getValueModel(): SetValueModel<V> | null {
+    public getValueModel(): SetValueModel<K, V> | null {
         return this.valueModel;
     }
 
-    protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
+    protected areModelsEqual(a: SetFilterModel<K>, b: SetFilterModel<K>): boolean {
         // both are missing
         if (a == null && b == null) { return true; }
 
@@ -213,6 +220,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         let keyCreator = params.keyCreator ?? params.colDef.keyCreator;
         this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings);
         this.setCreateKey(keyCreator, this.convertValuesToStrings);
+        this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList;
+        this.getDataPath = this.gridOptionsService.get('getDataPath');
+        this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length;
+
+        this.appliedModelWrapper = this.treeDataTreeList || this.groupingTreeList ? new AppliedModelGroupKeys() : new AppliedModelKeys(this.caseFormat) as any;
 
         this.valueModel = new SetValueModel(
             params,
@@ -222,7 +234,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             v => this.caseFormat(v),
             this.createKey,
             this.valueFormatter,
-            !!keyCreator
+            !!keyCreator,
+            this.gridOptionsService,
+            this.columnModel,
+            this.valueService,
+            this.treeDataTreeList,
+            this.groupingTreeList
         );
 
         this.initialiseFilterBodyUi();
@@ -345,7 +362,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             virtualList.setRowHeight(cellHeight);
         }
 
-        const componentCreator = (item: SetFilterModelTreeItem | string | null, listItemElement: HTMLElement) => this.createSetListItem(item, isTree, listItemElement);
+        const componentCreator = (item: SetFilterModelTreeItem<K> | K | null, listItemElement: HTMLElement) => this.createSetListItem(item, isTree, listItemElement);
         virtualList.setComponentCreator(componentCreator);
 
         let model: VirtualListModel;
@@ -372,7 +389,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.translateForSetFilter(key);
     }
 
-    private createSetListItem(item: SetFilterModelTreeItem | typeof SetFilter.SELECT_ALL_VALUE | string | null, isTree: boolean, listItemElement: HTMLElement): Component {
+    private createSetListItem(item: SetFilterModelTreeItem<K> | typeof SetFilter.SELECT_ALL_VALUE | K | null, isTree: boolean, listItemElement: HTMLElement): Component {
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
@@ -425,7 +442,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             return listItem;
         }
 
-        let depth: number, expanded: boolean, value: V | string | null, key: string | null;
+        let depth: number, expanded: boolean, value: V | string | null, key: K | null;
         if (this.isSetFilterModelTreeItem(item)) {
             depth = item.depth;
             expanded = !!item.expanded;
@@ -459,7 +476,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return listItem;
     }
 
-    private isSetFilterModelTreeItem(item: any): item is SetFilterModelTreeItem {
+    private isSetFilterModelTreeItem(item: any): item is SetFilterModelTreeItem<K> {
         return item?.treeKey !== undefined;
     }
 
@@ -530,29 +547,22 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         const result = super.applyModel();
 
-        // keep appliedModelKeys in sync with the applied model
+        // keep appliedModelWrapper in sync with the applied model
         const appliedModel = this.getModel();
 
-        if (appliedModel) {
-            this.appliedModelKeys = new Set();
-            appliedModel.values.forEach(value => {
-                this.appliedModelKeys!.add(this.caseFormat(value));
-            });
-        } else {
-            this.appliedModelKeys = null;
-        }
+        this.appliedModelWrapper.applyModel(appliedModel);
 
         this.noAppliedModelKeys = appliedModel?.values.length === 0;
 
         return result;
     }
 
-    protected isModelValid(model: SetFilterModel): boolean {
+    protected isModelValid(model: SetFilterModel<K>): boolean {
         return this.setFilterParams && this.setFilterParams.excelMode ? model == null || model.values.length > 0 : true;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        if (!this.setFilterParams || !this.valueModel || !this.appliedModelKeys) { return true; }
+        if (!this.setFilterParams || !this.valueModel || !this.appliedModelWrapper.exists()) { return true; }
 
         // if nothing selected, don't need to check value
         if (this.noAppliedModelKeys) {
@@ -560,9 +570,43 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         const { node, data } = params;
-        const { valueGetter, api, colDef, column, columnApi, context } = this.setFilterParams;
+        if (this.treeDataTreeList) {
+            if (node.childrenAfterGroup?.length) {
+                // only perform checking on leaves. The core filtering logic for tree data won't work properly otherwise
+                return false;
+            }
+            return this.appliedModelWrapper.has(this.getDataPath!(data) as any);
+        }
+        if (this.groupingTreeList) {
+            const dataPath = this.columnModel.getRowGroupColumns().map(groupCol => this.valueService.getKeyForNode(groupCol, node));
+            dataPath.push(_.toStringOrNull(_.makeNull(this.getValueFromNode(node, data))));
+            return this.appliedModelWrapper.has(dataPath as any);
+        }
 
-        let value = valueGetter({
+        
+        let value = this.getValueFromNode(node, data);
+
+        if (this.convertValuesToStrings) {
+            // for backwards compatibility - keeping separate as it will eventually be removed
+            const key = this.createKey(value, node);
+            if (key != null && Array.isArray(key)) {
+                return key.some(v => this.appliedModelWrapper.has(v));
+            }
+
+            return this.appliedModelWrapper.has(key as any);
+        } else {
+            if (value != null && Array.isArray(value)) {
+                return value.some(v => this.appliedModelWrapper.has(this.createKey(v, node) as any));
+            }
+    
+            return this.appliedModelWrapper.has(this.createKey(value, node) as any);
+        }
+    }
+
+    private getValueFromNode(node: RowNode, data: any): V | null {
+        const { valueGetter, api, colDef, column, columnApi, context } = this.setFilterParams!;
+
+        return valueGetter({
             api,
             colDef,
             column,
@@ -572,22 +616,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             getValue: (field) => data[field],
             node: node,
         });
-
-        if (this.convertValuesToStrings) {
-            // for backwards compatibility - keeping separate as it will eventually be removed
-            const key = this.createKey(value, node);
-            if (key != null && Array.isArray(key)) {
-                return key.some(v => this.appliedModelKeys!.has(this.caseFormat(v)));
-            }
-
-            return this.appliedModelKeys!.has(this.caseFormat(key));
-        } else {
-            if (value != null && Array.isArray(value)) {
-                return value.some(v => this.appliedModelKeys!.has(this.caseFormat(this.createKey(v, node))));
-            }
-    
-            return this.appliedModelKeys!.has(this.caseFormat(this.createKey(value, node)));
-        }
     }
 
     private getKeyCreatorParams(value: V | null, node: RowNode | null = null): KeyCreatorParams {
@@ -758,8 +786,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.refreshAfterSelection();
     }
 
-    private onGroupItemSelected(item: SetFilterModelTreeItem, isSelected: boolean): void {
-        const recursiveGroupSelection = (i: SetFilterModelTreeItem) => {
+    private onGroupItemSelected(item: SetFilterModelTreeItem<K>, isSelected: boolean): void {
+        const recursiveGroupSelection = (i: SetFilterModelTreeItem<K>) => {
             if (i.children) {
                 i.children.forEach(childItem => recursiveGroupSelection(childItem));
             } else {
@@ -772,7 +800,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.refreshAfterSelection();
     }
 
-    private onItemSelected(key: string | null, isSelected: boolean): void {
+    private onItemSelected(key: K | null, isSelected: boolean): void {
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
         if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
 
@@ -781,7 +809,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.refreshAfterSelection();
     }
 
-    private selectItem(key: string | null, isSelected: boolean): void {
+    private selectItem(key: K | null, isSelected: boolean): void {
         if (isSelected) {
             this.valueModel!.selectKey(key);
         } else {
@@ -789,7 +817,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
     }
 
-    private onExpandedChanged(item: SetFilterModelTreeItem, isExpanded: boolean): void {
+    private onExpandedChanged(item: SetFilterModelTreeItem<K>, isExpanded: boolean): void {
         item.expanded = isExpanded;
 
         const focusedRow = this.virtualList!.getLastFocusedRow();
@@ -823,7 +851,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.virtualList.refresh();
     }
 
-    public getFilterKeys(): SetFilterModelValue {
+    public getFilterKeys(): SetFilterModelValue<K> {
         return this.valueModel ? this.valueModel.getKeys() : [];
     }
 
@@ -831,7 +859,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.valueModel ? this.valueModel.getValues() : [];
     }
 
-    public getValues(): SetFilterModelValue {
+    public getValues(): SetFilterModelValue<K> {
         return this.getFilterKeys();
     }
 
@@ -875,8 +903,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return undefined;
     }
 
-    private areAllChildrenSelected(item: SetFilterModelTreeItem): boolean | undefined {
-        const recursiveChildSelectionCheck = (i: SetFilterModelTreeItem): boolean | undefined => {
+    private areAllChildrenSelected(item: SetFilterModelTreeItem<K>): boolean | undefined {
+        const recursiveChildSelectionCheck = (i: SetFilterModelTreeItem<K>): boolean | undefined => {
             if (i.children) {
                 let someTrue = false;
                 let someFalse = false;
@@ -926,16 +954,16 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 }
 
-class ModelWrapper<V> implements VirtualListModel {
-    constructor(private readonly model: SetValueModel<V>) {
+class ModelWrapper<K extends string | string[], V> implements VirtualListModel {
+    constructor(private readonly model: SetValueModel<K, V>) {
     }
 
     public getRowCount(): number {
         return this.model.getDisplayedValueCount();
     }
 
-    public getRow(index: number): string | null {
-        return this.model.getDisplayedKey(index);
+    public getRow(index: number): K | null {
+        return this.model.getDisplayedItem(index) as any;
     }
 
     public isRowSelected(index: number): boolean {
@@ -943,9 +971,9 @@ class ModelWrapper<V> implements VirtualListModel {
     }
 }
 
-class ModelWrapperWithSelectAll<V> implements VirtualListModel {
+class ModelWrapperWithSelectAll<K extends string | string[], V> implements VirtualListModel {
     constructor(
-        private readonly model: SetValueModel<V>,
+        private readonly model: SetValueModel<K, V>,
         private readonly isSelectAllSelected: (() => boolean | undefined)) {
     }
 
@@ -953,8 +981,8 @@ class ModelWrapperWithSelectAll<V> implements VirtualListModel {
         return this.model.getDisplayedValueCount() + 1;
     }
 
-    public getRow(index: number): string | null {
-        return index === 0 ? SetFilter.SELECT_ALL_VALUE : this.model.getDisplayedKey(index - 1);
+    public getRow(index: number): K | null {
+        return index === 0 ? SetFilter.SELECT_ALL_VALUE as any : this.model.getDisplayedItem(index - 1);
     }
 
     public isRowSelected(index: number): boolean | undefined {
@@ -963,14 +991,85 @@ class ModelWrapperWithSelectAll<V> implements VirtualListModel {
 }
 
 // isRowSelected is used by VirtualList to add aria tags for flat lists. We want to suppress this when using trees
-class TreeModelWrapper<V> implements VirtualListModel {
+class TreeModelWrapper<K extends string | string[]> implements VirtualListModel {
     constructor(private readonly model: VirtualListModel) {}
 
     public getRowCount(): number {
         return this.model.getRowCount();
     }
 
-    public getRow(index: number): string | null {
+    public getRow(index: number): SetFilterModelTreeItem<K> | null {
         return this.model.getRow(index);
+    }
+}
+
+interface AppliedModel<K extends string | string[]> {
+    applyModel(appliedModel: SetFilterModel<K> | null): void;
+
+    has(key: K | null): boolean;
+
+    exists(): boolean;
+}
+
+class AppliedModelKeys implements AppliedModel<string> {
+    private appliedModelKeys: Set<string | null> | null = null;
+
+    constructor(private readonly caseFormat:<T extends string | number | null>(valueToFormat: T) => typeof valueToFormat) {}
+
+    public applyModel(appliedModel: SetFilterModel<string> | null): void {
+        if (appliedModel) {
+            this.appliedModelKeys = new Set();
+            appliedModel.values.forEach(key => {
+                this.appliedModelKeys!.add(this.caseFormat(key));
+            });
+        } else {
+            this.appliedModelKeys = null;
+        }
+    }
+
+    public has(key: string | null): boolean {
+        return !!this.appliedModelKeys?.has(this.caseFormat(key));
+    }
+
+    public exists(): boolean {
+        return !!this.appliedModelKeys;
+    }
+}
+
+class AppliedModelGroupKeys implements AppliedModel<string[]> {
+    private appliedModelGroupKeys: Map<string | null, (string[] | null)[]> | null = null;
+
+    public applyModel(appliedModel: SetFilterModel<string[]> | null): void {
+        if (appliedModel) {
+            this.appliedModelGroupKeys = new Map();
+            appliedModel.values.forEach(key => {
+                const childKey = this.getChildKey(key);
+                let groupKeys = this.appliedModelGroupKeys!.get(childKey);
+                if (!groupKeys) {
+                    groupKeys = [];
+                    this.appliedModelGroupKeys!.set(childKey, groupKeys);
+                }
+                groupKeys!.push(key);
+            });
+        } else {
+            this.appliedModelGroupKeys = null;
+        }
+    }
+
+    public has(key: string[] | null): boolean {
+        const childKey = this.getChildKey(key);
+        const groupKeys = this.appliedModelGroupKeys?.get(childKey);
+        if (!groupKeys) {
+            return false;
+        }
+        return groupKeys.some(groupKey => _.areEqual(groupKey, key));
+    }
+
+    public exists(): boolean {
+        return !!this.appliedModelGroupKeys;
+    }
+
+    private getChildKey(key: string[] | null): string | null {
+        return key ? _.last(key) : null;
     }
 }

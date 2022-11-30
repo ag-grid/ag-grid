@@ -1,4 +1,4 @@
-import { IClientSideRowModel, ISetFilterParams, RowNode, _ } from '@ag-grid-community/core';
+import { ColumnModel, GetDataPath, IClientSideRowModel, ISetFilterParams, RowNode, ValueService, _ } from '@ag-grid-community/core';
 
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor<V> {
@@ -6,7 +6,11 @@ export class ClientSideValuesExtractor<V> {
         private readonly rowModel: IClientSideRowModel,
         private readonly filterParams: ISetFilterParams<any, V>,
         private readonly createKey: (value: V | null, node?: RowNode) => string | null,
-        private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat
+        private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
+        private readonly columnModel: ColumnModel,
+        private readonly valueService: ValueService,
+        private readonly treeData: boolean,
+        private readonly getDataPath?: GetDataPath
     ) {
     }
 
@@ -36,17 +40,7 @@ export class ClientSideValuesExtractor<V> {
             // only pull values from rows that have data. this means we skip filler group nodes.
             if (!node.data || !predicate(node)) { return; }
 
-            const {api, colDef, column, columnApi, context} = this.filterParams;
-            let value: V | null = this.filterParams.valueGetter({
-                api,
-                colDef,
-                column,
-                columnApi,
-                context,
-                data: node.data,
-                getValue: (field) => node.data[field],
-                node,
-            });
+            let value = this.getValue(node);
 
             if (this.filterParams.convertValuesToStrings) {
                 // for backwards compatibility - keeping separate as it will eventually be removed
@@ -71,6 +65,41 @@ export class ClientSideValuesExtractor<V> {
         });
 
         return values;
+    }
+
+    public extractTreeValues(predicate: (node: RowNode) => boolean): (string[] | null)[] {
+        const values: (string[] | null)[] = [];
+        const treeData = this.treeData && !!this.getDataPath;
+        const groupedCols = this.columnModel.getRowGroupColumns()
+
+        this.rowModel.forEachLeafNode(node => {
+            // only extract leaves. The core filtering logic for tree data won't work properly otherwise
+            if (node.childrenAfterGroup?.length || !predicate(node)) { return; }
+
+            if (treeData) {
+                values.push(this.getDataPath!(node.data) as any);
+            } else {
+                const dataPath = groupedCols.map(groupCol => this.valueService.getKeyForNode(groupCol, node));
+                dataPath.push(_.toStringOrNull(_.makeNull(this.getValue(node))));
+                values.push(dataPath);
+            }
+        });
+
+        return values;
+    }
+
+    private getValue(node: RowNode): V | null {
+        const {api, colDef, column, columnApi, context} = this.filterParams;
+        return this.filterParams.valueGetter({
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            data: node.data,
+            getValue: (field) => node.data[field],
+            node,
+        });
     }
 
     private extractExistingFormattedKeys(existingValues?: Map<string | null, V | null>): Map<string | null, string | null> | null {

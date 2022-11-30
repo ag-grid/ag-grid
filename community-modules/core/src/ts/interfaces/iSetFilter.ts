@@ -6,22 +6,22 @@ import { ColumnApi } from '../columns/columnApi';
 import { ProvidedFilterModel } from './iFilter';
 import { AgPromise } from '../utils/promise';
 
-export type SetFilterModelValue = (string | null)[];
-export interface SetFilterModel extends ProvidedFilterModel {
+export type SetFilterModelValue<K extends string | string[] = string> = (K | null)[];
+export interface SetFilterModel<K extends string | string[] = string> extends ProvidedFilterModel {
     filterType?: 'set';
-    values: SetFilterModelValue;
+    values: SetFilterModelValue<K>;
 }
 
 /**
  * Interface contract for the public aspects of the SetFilter implementation. 
  * @param V type of value in the Set Filter
 */
-export interface ISetFilter<V = string> extends IProvidedFilter {
+export interface ISetFilter<K extends string | string[] = string, V = string> extends IProvidedFilter {
     /**
      * Returns a model representing the current state of the filter, or `null` if the filter is
      * not active.
      */
-    getModel(): SetFilterModel | null;
+    getModel(): SetFilterModel<K> | null;
 
     /**
      * Sets the state of the filter using the supplied model. Providing `null` as the model will
@@ -32,7 +32,7 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
      * actions by waiting on the returned grid promise, e.g. 
      * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`
      */
-    setModel(model: SetFilterModel | null): void | AgPromise<void>;
+    setModel(model: SetFilterModel<K> | null): void | AgPromise<void>;
 
     /**
      * @deprecated As of v29 use `getFilterValues` to get the values in the Set Filter
@@ -40,10 +40,10 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
      * 
      * Returns the full list of unique keys used by the Set Filter.
      */
-    getValues(): SetFilterModelValue;
+    getValues(): SetFilterModelValue<K>;
 
     /** Returns the full list of unique keys used by the Set Filter. */
-    getFilterKeys(): SetFilterModelValue;
+    getFilterKeys(): SetFilterModelValue<K>;
 
     /** Returns the full list of unique values used by the Set Filter. */
     getFilterValues(): (V | null)[];
@@ -68,7 +68,7 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
     setMiniFilter(newMiniFilter: string | null): void;
 
     /** Returns the current UI state (potentially un-applied). */
-    getModelFromUi(): SetFilterModel | null;
+    getModelFromUi(): SetFilterModel<K> | null;
 }
 
 /** 
