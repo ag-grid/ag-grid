@@ -516,6 +516,10 @@ export class ChartTheme {
                 colorDomain: [-5, 5],
                 colorRange: ['#cb4b3f', '#6acb64'],
                 groupFill: '#272931',
+                groupStroke: 'black',
+                groupStrokeWidth: 1,
+                tileStroke: 'black',
+                tileStrokeWidth: 1,
                 gradient: true,
                 nodePadding: 2,
                 title: {

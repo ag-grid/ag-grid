@@ -1496,6 +1496,14 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     colorRange?: string[];
     /** The group fill color. If undefined the value based on `colorKey` will be used. */
     groupFill?: string;
+    /** The group's stroke color. */
+    groupStroke?: string;
+    /** The group's stroke width. */
+    groupStrokeWidth?: number;
+    /** The tile's stroke color. */
+    tileStroke?: string;
+    /** The tile's stroke width. */
+    tileStrokeWidth?: number;
     /** Series-specific tooltip configuration. */
     tooltip?: AgTreemapSeriesTooltip<DatumType>;
     /** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */
@@ -1512,6 +1520,8 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
 export interface AgTreemapSeriesFormatterParams<DataValue = any> {
     /** Datum from the series data array that the treemap tile is being rendered for. */
     readonly datum: DataValue;
+    /** The depth of the datum in the hierarchy. */
+    readonly depth: number;
     /** labelKey as specified on series options. */
     readonly labelKey: string;
     /** sizeKey as specified on series options. */

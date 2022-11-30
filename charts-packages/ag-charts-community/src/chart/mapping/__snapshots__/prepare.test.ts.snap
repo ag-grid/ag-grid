@@ -6377,8 +6377,11 @@ Object {
         "#6acb64",
       ],
       "cursor": "default",
+      "formatter": [Function],
       "gradient": true,
       "groupFill": "#272931",
+      "groupStroke": "black",
+      "groupStrokeWidth": 1,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6438,6 +6441,8 @@ Object {
         "fontWeight": undefined,
         "padding": 13,
       },
+      "tileStroke": "black",
+      "tileStrokeWidth": 1,
       "title": Object {
         "color": "white",
         "enabled": true,
