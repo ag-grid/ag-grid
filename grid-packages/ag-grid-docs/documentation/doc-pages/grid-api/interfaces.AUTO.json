@@ -6207,6 +6207,10 @@
     "meta": { "isTypeAlias": true },
     "type": "(event: PropertyChangedEvent) => void"
   },
+  "DeprecatedReference": {
+    "meta": { "isTypeAlias": true },
+    "type": "Record<string, { newProp?: keyof GridOptions; version: string; message?: string; copyToNewProp?: true; newPropValue?: any; }>"
+  },
   "IAbstractHeaderCellComp": { "meta": {}, "type": {} },
   "IHeaderCellComp": {
     "meta": {},

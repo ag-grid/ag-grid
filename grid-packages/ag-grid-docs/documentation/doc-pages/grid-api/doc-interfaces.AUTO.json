@@ -10841,6 +10841,7 @@
     "previousValue": { "type": { "returnType": "any", "optional": false } }
   },
   "PropertyChangedListener": {},
+  "DeprecatedReference": {},
   "IAbstractHeaderCellComp": {},
   "IHeaderCellComp": {
     "setWidth": {
