@@ -69,7 +69,7 @@ export class ComboChartProxy extends CartesianChartProxy {
         }
 
         // Allow toggling of axis titles by theme overrides.
-        return axes.map((axis) => ({ ...axis, title: { ...axis.title, enabledFromTheme: true }}));
+        return axes.map((axis) => ({ ...axis, title: { ...axis.title, _enabledFromTheme: true }}));
     }
 
     public getSeries(params: UpdateChartParams): any {
