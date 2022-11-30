@@ -446,25 +446,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     protected _axes: ChartAxis[] = [];
     set axes(values: ChartAxis[]) {
-        this._axes.forEach((axis) => this.detachAxis(axis));
+        const root = this.scene.root!;
+        this._axes.forEach((axis) => axis.detachAxis(root));
         // make linked axes go after the regular ones (simulates stable sort by `linkedTo` property)
         this._axes = values.filter((a) => !a.linkedTo).concat(values.filter((a) => a.linkedTo));
-        this._axes.forEach((axis) => this.attachAxis(axis));
+        this._axes.forEach((axis) => axis.attachAxis(root));
     }
     get axes(): ChartAxis[] {
         return this._axes;
-    }
-
-    protected attachAxis(axis: ChartAxis) {
-        this.scene.root!.insertBefore(axis.gridlineGroup, this.seriesRoot);
-        this.scene.root!.insertBefore(axis.axisGroup, this.seriesRoot);
-        this.scene.root!.insertBefore(axis.crossLineGroup, this.seriesRoot);
-    }
-
-    protected detachAxis(axis: ChartAxis) {
-        this.scene.root!.removeChild(axis.axisGroup);
-        this.scene.root!.removeChild(axis.gridlineGroup);
-        this.scene.root!.removeChild(axis.crossLineGroup);
     }
 
     protected _series: Series[] = [];
@@ -767,7 +756,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         const width = this.width;
         const height = this.height - captionAutoPadding;
-        const legendGroup = legend.group;
         const legendSpacing = legend.spacing;
 
         let translationX = 0;
@@ -777,10 +765,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         switch (legend.position) {
             case 'bottom':
                 legend.performLayout(width - legendSpacing * 2, 0);
-                legendBBox = legendGroup.computeBBox();
-                legendGroup.visible = legendBBox.height < Math.floor(height * 0.5); // Remove legend if it takes up more than 50% of the chart height.
+                legendBBox = legend.computeBBox();
+                legend.visible = legendBBox.height < Math.floor(height * 0.5); // Remove legend if it takes up more than 50% of the chart height.
 
-                if (legendGroup.visible) {
+                if (legend.visible) {
                     translationX = (width - legendBBox.width) / 2 - legendBBox.x;
                     translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendSpacing;
 
@@ -793,10 +781,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
             case 'top':
                 legend.performLayout(width - legendSpacing * 2, 0);
-                legendBBox = legendGroup.computeBBox();
-                legendGroup.visible = legendBBox.height < Math.floor(height * 0.5);
+                legendBBox = legend.computeBBox();
+                legend.visible = legendBBox.height < Math.floor(height * 0.5);
 
-                if (legendGroup.visible) {
+                if (legend.visible) {
                     translationX = (width - legendBBox.width) / 2 - legendBBox.x;
                     translationY = captionAutoPadding + legendSpacing - legendBBox.y;
 
@@ -809,10 +797,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
             case 'left':
                 legend.performLayout(width, height - legendSpacing * 2);
-                legendBBox = legendGroup.computeBBox();
-                legendGroup.visible = legendBBox.width < Math.floor(width * 0.5); // Remove legend if it takes up more than 50% of the chart width.
+                legendBBox = legend.computeBBox();
+                legend.visible = legendBBox.width < Math.floor(width * 0.5); // Remove legend if it takes up more than 50% of the chart width.
 
-                if (legendGroup.visible) {
+                if (legend.visible) {
                     translationX = legendSpacing - legendBBox.x;
                     translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
@@ -825,10 +813,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
             default: // case 'right':
                 legend.performLayout(width, height - legendSpacing * 2);
-                legendBBox = legendGroup.computeBBox();
-                legendGroup.visible = legendBBox.width < Math.floor(width * 0.5);
+                legendBBox = legend.computeBBox();
+                legend.visible = legendBBox.width < Math.floor(width * 0.5);
 
-                if (legendGroup.visible) {
+                if (legend.visible) {
                     translationX = width - legendBBox.width - legendBBox.x - legendSpacing;
                     translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
@@ -840,12 +828,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 break;
         }
 
-        if (legendGroup.visible) {
+        if (legend.visible) {
             // Round off for pixel grid alignment to work properly.
-            legendGroup.translationX = Math.floor(translationX + legendGroup.translationX);
-            legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
+            legend.translationX = Math.floor(translationX + legend.translationX);
+            legend.translationY = Math.floor(translationY + legend.translationY);
 
-            this.legendBBox = legendGroup.computeBBox();
+            this.legendBBox = legend.computeBBox();
         }
     }
 

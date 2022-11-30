@@ -1,4 +1,5 @@
 import { Scale } from './scale/scale';
+import { Node } from './scene/node';
 import { Group } from './scene/group';
 import { Selection } from './scene/selection';
 import { Line } from './scene/shape/line';
@@ -220,8 +221,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._scale;
     }
 
-    readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: Layers.AXIS_ZINDEX });
-    readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
+    protected readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: Layers.AXIS_ZINDEX });
+    private readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
 
     private readonly lineGroup = this.axisGroup.appendChild(new Group({ name: `${this.id}-Line` }));
     private readonly tickGroup = this.axisGroup.appendChild(new Group({ name: `${this.id}-Tick` }));
@@ -229,7 +230,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     private tickGroupSelection = Selection.select(this.tickGroup).selectAll<Group>();
     private lineNode = this.lineGroup.appendChild(new Line());
 
-    readonly gridlineGroup = new Group({
+    protected readonly gridlineGroup = new Group({
         name: `${this.id}-gridline`,
         layer: true,
         zIndex: Layers.AXIS_GRIDLINES_ZINDEX,
@@ -288,6 +289,24 @@ export class Axis<S extends Scale<D, number>, D = any> {
         this.crossLines?.forEach((crossLine) => {
             crossLine.clippedRange = [rr[0], rr[1]];
         });
+    }
+
+    setVisible({ axis, crossLines }: { axis: boolean; crossLines: boolean }) {
+        this.axisGroup.visible = axis;
+        this.gridlineGroup.visible = axis;
+        this.crossLineGroup.visible = crossLines;
+    }
+
+    attachAxis(node: Node, nextNode?: Node | null) {
+        node.insertBefore(this.gridlineGroup, nextNode);
+        node.insertBefore(this.axisGroup, nextNode);
+        node.insertBefore(this.crossLineGroup, nextNode);
+    }
+
+    detachAxis(node: Node) {
+        node.removeChild(this.axisGroup);
+        node.removeChild(this.gridlineGroup);
+        node.removeChild(this.crossLineGroup);
     }
 
     /**

@@ -2832,6 +2832,10 @@
     "meta": { "isTypeAlias": true },
     "type": "{ addEventListener(key: string, cb: SourceEventListener<any>): void; clearEventListeners(): void; }"
   },
+  "VisibilityMap": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ axes: boolean; crossLines: boolean; series: boolean; }"
+  },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
     "type": [
@@ -3407,7 +3411,8 @@
       "zIndex": "number",
       "zIndexSubOrder?": "[ string, number ]",
       "canvas": "HdpiOffscreenCanvas | HdpiCanvas",
-      "getComputedOpacity": "() => number"
+      "getComputedOpacity": "() => number",
+      "getVisibility": "() => boolean"
     }
   },
   "ValueFn": {

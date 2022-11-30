@@ -4,7 +4,7 @@ import { BBox } from '../../scene/bbox';
 import { NavigatorMask } from './navigatorMask';
 import { NavigatorHandle } from './navigatorHandle';
 import { ChartUpdateType } from '../chart';
-import { NUMBER, Validate } from '../../util/validation';
+import { BOOLEAN, NUMBER, Validate } from '../../util/validation';
 import { InteractionManager } from '../interaction/interactionManager';
 
 interface Offset {
@@ -26,11 +26,15 @@ export class Navigator {
 
     private changedCursor = false;
 
+    @Validate(BOOLEAN)
+    private _enabled = false;
     set enabled(value: boolean) {
-        this.rs.visible = value;
+        this._enabled = value;
+
+        this.updateGroupVisibility();
     }
-    get enabled(): boolean {
-        return this.rs.visible;
+    get enabled() {
+        return this._enabled;
     }
 
     set x(value: number) {
@@ -82,6 +86,19 @@ export class Navigator {
     }
     get max(): number {
         return this.rs.max;
+    }
+
+    private _visible: boolean = true;
+    set visible(value: boolean) {
+        this._visible = value;
+        this.updateGroupVisibility();
+    }
+    get visible() {
+        return this._visible;
+    }
+
+    private updateGroupVisibility() {
+        this.rs.visible = this.enabled && this.visible;
     }
 
     constructor(chart: CartesianChart, interactionManager: InteractionManager) {

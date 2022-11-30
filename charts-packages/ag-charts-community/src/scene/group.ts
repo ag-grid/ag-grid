@@ -65,7 +65,8 @@ export class Group extends Node {
         if (scene && this.opts?.layer) {
             const { zIndex, zIndexSubOrder, name } = this.opts || {};
             const getComputedOpacity = () => this.getComputedOpacity();
-            this.layer = scene.addLayer({ zIndex, zIndexSubOrder, name, getComputedOpacity });
+            const getVisibility = () => this.getVisibility();
+            this.layer = scene.addLayer({ zIndex, zIndexSubOrder, name, getComputedOpacity, getVisibility });
         }
     }
 
@@ -78,6 +79,18 @@ export class Group extends Node {
             }
         } while ((node = node.parent));
         return opacity;
+    }
+
+    protected getVisibility() {
+        let node: Node | undefined = this;
+        let visible = this.visible;
+        while ((node = node.parent)) {
+            if (node.visible) {
+                continue;
+            }
+            visible = node.visible;
+        }
+        return visible;
     }
 
     protected visibilityChanged() {
