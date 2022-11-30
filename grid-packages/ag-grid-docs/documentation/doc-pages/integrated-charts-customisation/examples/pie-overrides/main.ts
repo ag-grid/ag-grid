@@ -1,5 +1,4 @@
 import { CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
-import '@ag-grid-enterprise/charts';
 import { getData } from "./data";
 
 const gridOptions: GridOptions = {

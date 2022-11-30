@@ -1,5 +1,4 @@
 import { Grid, ChartMenuOptions, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
-import '@ag-grid-enterprise/charts';
 declare var moment: any;
 
 const gridOptions: GridOptions = {
