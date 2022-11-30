@@ -107,11 +107,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private verifyProps(): void {
-        if (this.gridOptionsWrapper.getInitialGroupOrderComparator() != null) {
+        if (this.gridOptionsService.exists('initialGroupOrderComparator') || this.gridOptionsService.exists('defaultGroupOrderComparator')) {
             const message = `AG Grid: initialGroupOrderComparator cannot be used with Server Side Row Model. If using Full Store, then provide the rows to the grid in the desired sort order. If using Infinite Scroll, then sorting is done on the server side, nothing to do with the client.`;
             _.doOnce(() => console.warn(message), 'SSRM.InitialGroupOrderComparator');
         }
-        if (this.gridOptionsWrapper.isRowSelection() && this.gridOptionsWrapper.getRowIdFunc() == null) {
+        if (this.gridOptionsService.isRowSelection() && !this.gridOptionsService.exists('getRowId')) {
             const message = `AG Grid: getRowId callback must be provided for Server Side Row Model selection to work correctly.`;
             _.doOnce(() => console.warn(message), 'SSRM.SelectionNeedsRowNodeIdFunc');
         }
@@ -221,7 +221,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
         const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
 
-        const dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
+        const dynamicRowHeight = this.gridOptionsService.isGetRowHeightFunction();
 
         const params: SSRMParams = {
             // the columns the user has grouped and aggregated by
@@ -354,7 +354,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public getRowBounds(index: number): RowBounds {
         const rootStore = this.getRootStore();
         if (!rootStore) {
-            const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+            const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
             return {
                 rowTop: 0,
                 rowHeight: rowHeight

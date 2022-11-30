@@ -155,7 +155,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             }
         });
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
@@ -399,7 +399,7 @@ export class EnterpriseMenu extends BeanStub {
 
         const isInMemoryRowModel = this.rowModel.getType() === 'clientSide';
 
-        const usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const usingTreeData = this.gridOptionsService.isTreeData();
 
         const allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns
@@ -478,7 +478,7 @@ export class EnterpriseMenu extends BeanStub {
         // this method only gets called when the menu was closed by selection an option
         // in this case we highlight the cell that was previously highlighted
         const focusedCell = this.focusService.getFocusedCell();
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
 
         if (eDocument.activeElement === eDocument.body && focusedCell) {
             const { rowIndex, rowPinned, column } = focusedCell;

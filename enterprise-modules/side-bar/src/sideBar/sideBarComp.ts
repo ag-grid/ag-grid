@@ -71,7 +71,7 @@ export class SideBarComp extends Component implements ISideBar {
         const { focusService, sideBarButtonsComp } = this;
         const eGui = this.getGui();
         const sideBarGui = sideBarButtonsComp.getGui();
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const activeElement = eDocument.activeElement as HTMLElement;
         const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
 
@@ -84,7 +84,7 @@ export class SideBarComp extends Component implements ISideBar {
         } else {
             if (!focusService.isFocusUnderManagedComponent(openPanel) && e.shiftKey) {
                 const firstFocusableEl = focusService.findFocusableElements(openPanel)[0];
-                const eDocument = this.gridOptionsWrapper.getDocument();
+                const eDocument = this.gridOptionsService.getDocument();
                 if (eDocument.activeElement === firstFocusableEl) {
                     const selectedButton = sideBarGui.querySelector('.ag-selected button') as HTMLElement;
 
@@ -99,7 +99,7 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         if (!this.sideBarButtonsComp.getGui().contains(eDocument.activeElement)) { return; }
         const sideBarGui = this.sideBarButtonsComp.getGui();
         const buttons: HTMLElement[] = Array.prototype.slice.call(sideBarGui.querySelectorAll('.ag-side-button'));

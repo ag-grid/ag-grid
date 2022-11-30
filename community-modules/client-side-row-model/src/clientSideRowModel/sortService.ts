@@ -27,7 +27,7 @@ export class SortService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.postSortFunc = this.gridOptionsWrapper.getPostSortFunc();
+        this.postSortFunc = this.getPostSortFunc();
     }
 
     public sort(
@@ -95,6 +95,18 @@ export class SortService extends BeanStub {
         }
 
         this.updateGroupDataForHideOpenParents(changedPath);
+    }
+
+    private getPostSortFunc() {
+        const postSortRows = this.gridOptionsService.getCallback('postSortRows');
+        if (postSortRows) {
+            return postSortRows;
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        const postSort = this.gridOptionsService.get('postSort');
+        if (postSort) {
+            return (params: WithoutGridCommon<PostSortRowsParams>) => postSort(params.nodes);
+        }
     }
 
     private calculateDirtyNodes(rowNodeTransactions?: RowNodeTransaction[] | null): { [nodeId: string]: true } {
@@ -214,7 +226,7 @@ export class SortService extends BeanStub {
             return;
         }
 
-        if (this.gridOptionsWrapper.isTreeData()) {
+        if (this.gridOptionsService.isTreeData()) {
             const msg = `AG Grid: The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them (as opposed to Row Grouping, which only has Aggregated Values at the group level).`;
             _.doOnce(() => console.warn(msg), 'sortService.hideOpenParentsWithTreeData');
             return false;

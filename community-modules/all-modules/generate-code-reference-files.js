@@ -9,7 +9,7 @@ const prettierJs = require('prettier');
 
 const { formatNode, findNode, getJsDoc } = getFormatterForTS(ts);
 
-const EVENT_LOOKUP = ComponentUtil.getEventCallbacks();
+const EVENT_LOOKUP = ComponentUtil.EVENT_CALLBACKS;
 
 const VERIFY_MODE = process.argv.some(v => v === '--check');
 

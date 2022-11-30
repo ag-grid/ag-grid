@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RowCtrl } from "./row/rowCtrl";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
@@ -141,7 +140,7 @@ export class RowRenderer extends BeanStub {
         if (this.gridOptionsService.is('groupRowsSticky')) {
             if (this.rowModel.getType() != 'clientSide') {
                 doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
-            } else if (this.gridOptionsWrapper.isTreeData()) {
+            } else if (this.gridOptionsService.isTreeData()) {
                 doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups does not work with Tree Data.'), 'rowRenderer.stickyDoesNotWorkWithTreeData');
             }  else {
                 this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
@@ -154,7 +153,7 @@ export class RowRenderer extends BeanStub {
         this.registerCellEventListeners();
 
         this.initialiseCache();
-        this.printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
+        this.printLayout = this.gridOptionsService.isDomLayout('print');
         this.embedFullWidthRows = this.printLayout || this.gridOptionsService.is('embedFullWidthRows');
 
         this.redrawAfterModelUpdate();
@@ -190,7 +189,7 @@ export class RowRenderer extends BeanStub {
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
         const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-        const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
+        const isPrintLayout = this.gridOptionsService.isDomLayout('print');
 
         if (isEnsureDomOrder || isPrintLayout) {
             liveList.sort((a, b) => a.getRowNode().rowIndex - b.getRowNode.rowIndex);
@@ -234,7 +233,7 @@ export class RowRenderer extends BeanStub {
             }
         });
 
-        const rangeSelectionEnabled = this.gridOptionsWrapper.isEnableRangeSelection();
+        const rangeSelectionEnabled = this.gridOptionsService.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
 
             this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
@@ -319,7 +318,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private onDomLayoutChanged(): void {
-        const printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
+        const printLayout = this.gridOptionsService.isDomLayout('print');
         const embedFullWidthRows = printLayout || this.gridOptionsService.is('embedFullWidthRows');
 
         // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
@@ -464,10 +463,10 @@ export class RowRenderer extends BeanStub {
         // has the focus and not the cell div. therefore, when the refresh is finished, the grid will focus
         // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
         // the focus is lost from the text field. we do not want this.
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const activeElement = eDocument.activeElement;
-        const cellDomData = this.gridOptionsWrapper.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowDomData = this.gridOptionsWrapper.getDomData(activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+        const cellDomData = this.gridOptionsService.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const rowDomData = this.gridOptionsService.getDomData(activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
 
         const gridElementFocused = cellDomData || rowDomData;
 
@@ -491,7 +490,7 @@ export class RowRenderer extends BeanStub {
         // never recycle rows on layout change as rows could change from normal DOM layout
         // back to the grid's row positioning.
         const recycleRows: boolean = !params.domLayoutChanged && !!params.recycleRows;
-        const animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
+        const animate = params.animate && this.gridOptionsService.isAnimateRows();
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
         // however we can reuse the rows, so we keep them but index by rowNode.id
@@ -1113,6 +1112,29 @@ export class RowRenderer extends BeanStub {
         }
     }
 
+    private getRowBuffer(): number {
+        let rowBuffer = this.gridOptionsService.getNum('rowBuffer');
+
+        if (typeof rowBuffer === 'number') {
+            if (rowBuffer < 0) {
+                doOnce(() => console.warn(`AG Grid: rowBuffer should not be negative`), 'warn rowBuffer negative');
+                rowBuffer = 0;
+                this.gridOptionsService.set('rowBuffer', 0);
+            }
+        } else {
+            rowBuffer = 10;
+        }
+
+        return rowBuffer;
+    }
+
+    private getRowBufferInPixels() {
+        const rowsToBuffer = this.getRowBuffer();
+        const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
+
+        return rowsToBuffer * defaultRowHeight;
+    }
+
     private workOutFirstAndLastRowsToRender(): void {
         let newFirst: number;
         let newLast: number;
@@ -1124,7 +1146,7 @@ export class RowRenderer extends BeanStub {
             newFirst = this.paginationProxy.getPageFirstRow();
             newLast = this.paginationProxy.getPageLastRow();
         } else {
-            const bufferPixels = this.gridOptionsWrapper.getRowBufferInPixels();
+            const bufferPixels = this.getRowBufferInPixels();
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
             const suppressRowVirtualisation = this.gridOptionsService.is('suppressRowVirtualisation');
 
@@ -1178,9 +1200,9 @@ export class RowRenderer extends BeanStub {
         // trying to render all the rows, eg 10,000+ rows. this will kill the browser. so instead of
         // killing the browser, we limit the number of rows. just in case some use case we didn't think
         // of, we also have a property to not do this operation.
-        const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout() === 'normal';
+        const rowLayoutNormal = this.gridOptionsService.isDomLayout('normal');
         const suppressRowCountRestriction = this.gridOptionsService.is('suppressMaxRenderedRowRestriction');
-        const rowBufferMaxSize = Math.max(this.gridOptionsWrapper.getRowBuffer(), 500);
+        const rowBufferMaxSize = Math.max(this.getRowBuffer(), 500);
 
         if (rowLayoutNormal && !suppressRowCountRestriction) {
             if (newLast - newFirst > rowBufferMaxSize) {

@@ -201,7 +201,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         this.frameworkComponentWrapper.setComponentFactoryResolver(this.componentFactoryResolver);
         this.angularFrameworkOverrides.setEmitterUsedCallback(this.isEmitterUsed.bind(this));
 
-        this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
+         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
@@ -232,7 +232,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     public ngOnChanges(changes: any): void {
         if (this._initialised) {
-            ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+             ComponentUtil.processOnChange(changes, this.api);
         }
     }
 

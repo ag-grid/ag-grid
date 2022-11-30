@@ -39,7 +39,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
             return;
         }
 
-        const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+        const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
         const bodyHeight = this.centerRowContainerCon.getViewportSizeFeature()!.getBodyHeight();
 
         if (bodyHeight > 0) {

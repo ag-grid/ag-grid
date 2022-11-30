@@ -1,4 +1,4 @@
-import { Autowired, BeanStub, Events, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, ServerSideGroupLevelParams, StoreUpdatedEvent, WithoutGridCommon } from "@ag-grid-community/core";
+import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, ServerSideGroupLevelParams, StoreUpdatedEvent, WithoutGridCommon } from "@ag-grid-community/core";
 import { BlockUtils } from "src/serverSideRowModel/blocks/blockUtils";
 import { NodeManager } from "src/serverSideRowModel/nodeManager";
 import { LazyStore } from "./lazyStore";
@@ -132,7 +132,7 @@ export class LazyCache extends BeanStub {
     }
 
     private skipDisplayIndexes(numberOfRowsToSkip: number, displayIndexSeq: NumberSequence, nextRowTop: { value: number; }) {
-        const defaultRowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+        const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         displayIndexSeq.skip(numberOfRowsToSkip);
         nextRowTop.value += numberOfRowsToSkip * defaultRowHeight;
     }
@@ -571,11 +571,11 @@ export class LazyCache extends BeanStub {
     }
 
     private isUsingRowIds() {
-        return this.gridOptionsWrapper.getRowIdFunc() != null;
+        return this.gridOptionsService.getRowIdFunc() != null;
     }
 
     private getRowId(data: any) {
-        const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
 
         if (getRowIdFunc == null) {
             return null;
@@ -634,7 +634,6 @@ export class LazyCache extends BeanStub {
         inserts.forEach(data => {
             const dataId = this.getRowId(data)!;
             if (dataId && this.isNodeInCache(dataId)) {
-                console.warn(`AG Grid: Ignoring add transaction for a new row with rowId=${dataId} as this row is already in the grid.`);
                 return;
             }
             
@@ -720,5 +719,9 @@ export class LazyCache extends BeanStub {
 
         this.numberOfRows -= deletedNodeCount;
         return removedNodes;
+    }
+
+    public reduceRowCount(count: number) {
+        this.numberOfRows -= count;
     }
 }

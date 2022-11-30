@@ -73,7 +73,7 @@ export class SetValueModel<V> implements IEventEmitter {
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
         private readonly createKey: (value: V | null, node?: RowNode) => string | null,
         private readonly valueFormatter: (params: ValueFormatterParams) => string,
-        usingComplexObjects: boolean
+        private readonly usingComplexObjects: boolean
     ) {
         const {
             column,
@@ -184,7 +184,7 @@ export class SetValueModel<V> implements IEventEmitter {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
                 case SetFilterModelValuesType.PROVIDED_LIST: {
                     const values = this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ?
-                        this.getValuesFromRows(false) : this.uniqueValues(this.providedValues as (V | null)[]);
+                        this.getValuesFromRows(false) : this.uniqueValues(this.validateProvidedValues(this.providedValues as (V | null)[]));
                     const sortedKeys = this.sortKeys(values);
 
                     this.allValues = values;
@@ -201,7 +201,7 @@ export class SetValueModel<V> implements IEventEmitter {
                     const { columnApi, api, context, column, colDef } = this.filterParams;
                     const params: SetFilterValuesFuncParams<any, V> = {
                         success: values => {
-                            const processedValues = this.uniqueValues(values);
+                            const processedValues = this.uniqueValues(this.validateProvidedValues(values));
 
                             this.setIsLoading(false);
 
@@ -232,6 +232,27 @@ export class SetValueModel<V> implements IEventEmitter {
         this.allValuesPromise.then(values => this.updateAvailableKeys(values || [])).then(() => this.initialised = true);
 
         return this.allValuesPromise;
+    }
+
+    private validateProvidedValues(values: (V | null)[]): (V | null)[]{
+        if (this.usingComplexObjects && values?.length) {
+            const firstValue = values[0];
+            if (firstValue && typeof firstValue !== 'object' && typeof firstValue !== 'function') {
+                const firstKey = this.createKey(firstValue);
+                if  (firstKey == null) {
+                    _.doOnce(() => console.warn(
+                            'AG Grid: Set Filter Key Creator is returning null for provided values and provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?'
+                        ), 'setFilterComplexObjectsProvidedNull'
+                    );
+                } else {
+                    _.doOnce(() => console.warn(
+                            'AG Grid: Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?'
+                        ), 'setFilterComplexObjectsProvidedPrimitive'
+                    );
+                }
+            }
+        }
+        return values;
     }
 
     public setValuesType(value: SetFilterModelValuesType) {

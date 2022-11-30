@@ -373,7 +373,7 @@ export class GridBodyScrollFeature extends BeanStub {
     //    if row is already in view, grid does not scroll
     public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
         // if for print or auto height, everything is always visible
-        if (this.gridOptionsWrapper.getDomLayout() === 'print') { return; }
+        if (this.gridOptionsService.isDomLayout('print')) { return; }
 
         const rowCount = this.paginationProxy.getRowCount();
 

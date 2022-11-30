@@ -3,7 +3,6 @@ import {
     BeanStub,
     ColumnApi,
     DetailGridInfo,
-    Environment,
     GridApi,
     IDetailCellRendererCtrl,
     RowNode,
@@ -18,7 +17,6 @@ import {
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
 
-    @Autowired('environment') private environment: Environment;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Autowired('focusService') private readonly focusService: FocusService;
 

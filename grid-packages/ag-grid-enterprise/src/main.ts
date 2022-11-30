@@ -39,6 +39,9 @@ ModuleRegistry.register(ClipboardModule as any, false);
 export { LicenseManager } from "@ag-grid-enterprise/core";
 export { exportMultipleSheetsAsExcel, getMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 export { SetFilter } from "@ag-grid-enterprise/set-filter";
+export * from "@ag-grid-enterprise/charts";
+export * from "ag-charts-community";
+
 /* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */
 export { AbstractColDef,
 AbstractHeaderCellCtrl,
@@ -245,7 +248,6 @@ GridHeaderComp,
 GridHeaderCtrl,
 GridOptions,
 GridOptionsService,
-GridOptionsWrapper,
 GridParams,
 GridSerializer,
 GridSerializingParams,
@@ -423,6 +425,7 @@ LoadCompleteEvent,
 LoadSuccessParams,
 LoadingCellRendererSelectorFunc,
 LoadingCellRendererSelectorResult,
+LocaleService,
 Logger,
 LoggerFactory,
 LongTapEvent,
@@ -604,3 +607,4 @@ ZipContainer,
 getRowContainerTypeForName,
 simpleHttpRequest } from "ag-grid-community";
 /* COMMUNITY_EXPORTS_END_DO_NOT_DELETE */
+

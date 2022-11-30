@@ -1441,19 +1441,8 @@ export interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {
     padding?: number;
 }
 
-export interface AgTreemapNodeDatum<DatumType> {
-    datum: DatumType;
-    parent?: AgTreemapNodeDatum<DatumType>;
-    children?: AgTreemapNodeDatum<DatumType>[];
-    depth: number;
-    colorValue: number;
-    fill: CssColor;
-    label: string;
-    hasTitle: boolean;
-}
-
 export interface AgTreemapSeriesTooltipRendererParams<DatumType> {
-    datum: AgTreemapNodeDatum<DatumType>;
+    datum: DatumType;
     sizeKey?: string;
     labelKey?: string;
     valueKey?: string;
@@ -1475,8 +1464,15 @@ export interface AgTreemapSeriesLabelsOptions {
     medium?: AgChartLabelOptions;
     /** The label configuration for the small leaf tiles. */
     small?: AgChartLabelOptions;
-    /** The configuration for the labels showing the value of the 'colorKey'. */
-    color?: AgChartLabelOptions;
+    /** The configuration for the cell value label. */
+    value?: {
+        /** A property to be used as a key to retrieve a value from datum. */
+        key?: string;
+        /** A function to generate a value label from datum. */
+        formatter?: (params: { datum: any }) => string | undefined;
+        /** The label's font and color style. */
+        style?: AgChartLabelOptions;
+    };
 }
 
 /** Configuration for the treemap series. */

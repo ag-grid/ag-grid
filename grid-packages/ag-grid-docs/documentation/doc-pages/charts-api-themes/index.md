@@ -8,6 +8,6 @@ A theme can be provided to a chart by specifying an inbuilt theme name or a cust
 
 For ease of use, The `AgChartTheme` interface is displayed in an interactive, expandable JSON structure below.
 
-<expandable-snippet interfaceName='AgChartTheme' overrideSrc="charts-api/api.json" breadcrumbs='["options", "theme"]' config='{"excludeProperties": ["theme", "data", "container"], "expandedProperties": ["overrides"]}'></expandable-snippet>
+<expandable-snippet interfaceName='AgChartTheme' overrideSrc="charts-api/api.json" breadcrumbs='["options", "theme"]' config='{"excludeProperties": ["theme", "data", "container"], "expandedProperties": ["overrides"], "lookupRoot": "charts-api"}'></expandable-snippet>
 
 You can find more details about AG Charts themes in the [Themes](/charts-themes/) section.

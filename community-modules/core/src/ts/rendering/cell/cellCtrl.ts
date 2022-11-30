@@ -12,7 +12,6 @@ import {
     FlashCellsEvent,
     CellEditRequestEvent
 } from "../../events";
-import { GridOptionsService } from "../../gridOptionsService";
 import { CellRangeFeature } from "./cellRangeFeature";
 import { exists, makeNull } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
@@ -43,8 +42,6 @@ const CSS_CELL_FOCUS = 'ag-cell-focus';
 const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
 const CSS_CELL_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
 const CSS_CELL_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
-const CSS_CELL_INLINE_EDITING = 'ag-cell-inline-editing';
-const CSS_CELL_POPUP_EDITING = 'ag-cell-popup-editing';
 const CSS_COLUMN_HOVER = 'ag-column-hover';
 const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
 
@@ -140,7 +137,7 @@ export class CellCtrl extends BeanStub {
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.rowCtrl);
         this.addDestroyFunc(() => this.cellKeyboardListenerFeature.destroy());
 
-        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
+        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsService.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
             this.addDestroyFunc(() => this.cellRangeFeature.destroy());
@@ -261,7 +258,7 @@ export class CellCtrl extends BeanStub {
         const eParentCell = eCellWrapper.parentElement!;
         // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
         // thus allowing different min heights for different rows.
-        const minRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
+        const minRowHeight = this.beans.gridOptionsService.getRowHeightForNode(this.rowNode).height;
 
         const measureHeight = (timesCalled: number) => {
             if (this.editing) { return; }
@@ -276,7 +273,7 @@ export class CellCtrl extends BeanStub {
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = this.beans.gridOptionsWrapper.getDocument();
+                const doc = this.beans.gridOptionsService.getDocument();
                 const notYetInDom = !doc || !doc.contains(eCellWrapper);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
@@ -371,25 +368,23 @@ export class CellCtrl extends BeanStub {
         const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup ;
         const position: 'over' | 'under' | undefined = compDetails?.popupPositionFromSelector != null ? compDetails.popupPositionFromSelector : colDef.cellEditorPopupPosition;
 
-        this.setEditing(true, popup);
+        this.setEditing(true);
         this.cellComp.setEditDetails(compDetails!, popup, position);
 
         const e: CellEditingStartedEvent = this.createEvent(event, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(e);
     }
 
-    private setEditing(editing: boolean, inPopup = false): void {
+    private setEditing(editing: boolean): void {
         if (this.editing === editing) { return; }
 
         this.editing = editing;
-        this.editingInPopup = inPopup;
-        this.setInlineEditingClass();
         this.refreshHandle();
     }
 
     // pass in 'true' to cancel the editing.
     public stopRowOrCellEdit(cancel: boolean = false) {
-        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
+        if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
             this.rowCtrl.stopRowEditing(cancel);
         } else {
             this.stopEditing(cancel);
@@ -487,6 +482,7 @@ export class CellCtrl extends BeanStub {
 
         this.setEditing(false);
         this.cellComp.setEditDetails(); // passing nothing stops editing
+
         this.updateAndFormatValue();
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
         this.dispatchEditingStoppedEvent(oldValue, newValue, !cancel && !!valueChanged);
@@ -503,43 +499,6 @@ export class CellCtrl extends BeanStub {
         };
 
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
-    }
-
-    // if we are editing inline, then we don't have the padding in the cell (set in the themes)
-    // to allow the text editor full access to the entire cell
-    private setInlineEditingClass(): void {
-        if (!this.isAlive()) { return; }
-
-        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
-        // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
-        if (!this.cellComp) {
-            this.onCellCompAttachedFuncs.push(() => { this.setInlineEditingClass(); });
-            return;
-        }
-
-        // ag-cell-inline-editing - appears when user is inline editing
-        // ag-cell-not-inline-editing - appears when user is no inline editing
-        // ag-cell-popup-editing - appears when user is editing cell in popup (appears on the cell, not on the popup)
-
-        // note: one of {ag-cell-inline-editing, ag-cell-not-inline-editing} is always present, they toggle.
-        //       however {ag-cell-popup-editing} shows when popup, so you have both {ag-cell-popup-editing}
-        //       and {ag-cell-not-inline-editing} showing at the same time.
-        const editingInline = this.editing && !this.editingInPopup;
-        const popupEditorShowing = this.editing && this.editingInPopup;
-
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_INLINE_EDITING, editingInline);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, !editingInline);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_POPUP_EDITING, popupEditorShowing);
-
-        this.rowCtrl.setInlineEditingCss(this.editing);
-    }
-
-    // this is needed as the JS CellComp still allows isPopup() on the CellEditor class, so
-    // it's possible the editor is in a popup even though it's not configured via the colDef as so
-    public hackSayEditingInPopup(): void {
-        if (this.editingInPopup) { return; }
-        this.editingInPopup = true;
-        this.setInlineEditingClass();
     }
 
     private createCellEditorParams(key: string | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
@@ -730,7 +689,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private navigateAfterEdit(): void {
-        const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
+        const fullRowEdit = this.beans.gridOptionsService.get('editType') === 'fullRow';
 
         if (fullRowEdit) { return; }
 
@@ -866,8 +825,8 @@ export class CellCtrl extends BeanStub {
     private addDomData(): void {
         const element = this.getGui();
 
-        this.beans.gridOptionsWrapper.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
-        this.addDestroyFunc(() => this.beans.gridOptionsWrapper.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
+        this.beans.gridOptionsService.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
+        this.addDestroyFunc(() => this.beans.gridOptionsService.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
     public createEvent(domEvent: Event | null, eventType: string): CellEvent {
@@ -973,7 +932,7 @@ export class CellCtrl extends BeanStub {
     // called by rowRenderer when user navigates via tab key
     public startRowOrCellEdit(key?: string | null, charPress?: string | null, event: KeyboardEvent | MouseEvent | null = null): void {
         if (!this.cellComp) { return; }
-        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
+        if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
             this.rowCtrl.startRowEditing(key, charPress, this);
         } else {
             this.startEditing(key, charPress, true, event);
@@ -1056,7 +1015,7 @@ export class CellCtrl extends BeanStub {
         }
 
         // if another cell was focused, and we are editing, then stop editing
-        const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
+        const fullRowEdit = this.beans.gridOptionsService.get('editType') === 'fullRow';
 
         if (!cellFocused && !fullRowEdit && this.editing) {
             this.stopRowOrCellEdit();
@@ -1176,7 +1135,7 @@ export class CellCtrl extends BeanStub {
     ): RowDragComp | undefined {
         const pagination = this.beans.gridOptionsService.is('pagination');
         const rowDragManaged = this.beans.gridOptionsService.is('rowDragManaged');
-        const clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
+        const clientSideRowModelActive = this.beans.gridOptionsService.isRowModelType('clientSide');
 
         if (rowDragManaged) {
             // row dragging only available in default row model

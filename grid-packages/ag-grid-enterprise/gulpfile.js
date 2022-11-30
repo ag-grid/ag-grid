@@ -11,6 +11,7 @@ const header = require('gulp-header');
 const concat = require('gulp-concat');
 const pkg = require('./package.json');
 const replace = require('gulp-replace');
+const addSource = require('gulp-add-src');
 
 const dtsHeaderTemplate =
     '// Type definitions for <%= pkg.name %> v<%= pkg.version %>\n' +
@@ -26,6 +27,9 @@ const exportedEnterpriseModules = fs.readFileSync('./src/main.ts').toString().sp
     .filter(line => line.includes('export ') && line.includes('@ag-grid-enterprise'))
     .map(line => line.substring(line.indexOf("@ag-grid-enterprise"), line.lastIndexOf('"') === -1 ? line.lastIndexOf('\'') : line.lastIndexOf('"')))
 
+const exportedChartsModules = fs.readFileSync('./src/main.ts').toString().split("\n")
+    .filter(line => line.includes('export ') && line.includes('ag-charts-community'))
+    .map(line => line.substring(line.indexOf("ag-charts-community"), line.lastIndexOf('"') === -1 ? line.lastIndexOf('\'') : line.lastIndexOf('"')))
 
 function updateBetweenStrings(
     fileContents,
@@ -73,7 +77,7 @@ const tscMainTask = () => {
 
     let result = tsResult.dts.pipe(replace("@ag-grid-enterprise/core", "./dist/lib/main"));
 
-    exportedEnterpriseModules.forEach(exportedEnterpriseModule => result = result.pipe(replace(exportedEnterpriseModule, "./dist/lib/main")));
+    exportedEnterpriseModules.concat(exportedChartsModules).forEach(exportedEnterpriseModule => result = result.pipe(replace(exportedEnterpriseModule, "./dist/lib/main")));
 
     return result.pipe(header(dtsHeaderTemplate, {pkg: pkg}))
         .pipe(rename("main.d.ts"))
@@ -106,12 +110,17 @@ const copyGridCoreStyles = (done) => {
 };
 
 const copyAndConcatMainTypings = () => {
-    const typingsDirs = exportedEnterpriseModules.map(exportedEnterpriseModule => `./node_modules/${exportedEnterpriseModule}/typings/main.*`)
+    const typingsDirs = exportedEnterpriseModules
+        .filter(exportedEnterpriseModule => exportedEnterpriseModule !== "@ag-grid-enterprise/charts")
+        .map(exportedEnterpriseModule => `./node_modules/${exportedEnterpriseModule}/typings/main.*`);
 
     return gulp.src([
         './node_modules/@ag-grid-enterprise/core/typings/main.*',
-        ...typingsDirs
+        ...typingsDirs,
+        './dist/lib/agGridCoreExtension.d.ts'
     ])
+         // the next line is specifically for AgChartThemeOverrides etc
+        .pipe(replace("import * as agCharts from 'ag-charts-community';", 'import * as agCharts from "./chart/agChartOptions";'))
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
 };
@@ -121,13 +130,13 @@ const copyGridCoreTypings = (done) => {
         done("node_modules/@ag-grid-enterprise/core/typings doesn't exist - exiting")
     }
 
-    exportedEnterpriseModules.forEach(exportedEnterpriseModule => {
+    exportedEnterpriseModules.concat(exportedChartsModules).forEach(exportedEnterpriseModule => {
         if (!fs.existsSync(`./node_modules/${exportedEnterpriseModule}/typings`)) {
             done(`./node_modules/${exportedEnterpriseModule}/typings doesn't exist - exiting`)
         }
     })
 
-    const typingsDirs = exportedEnterpriseModules.map(exportedEnterpriseModule =>
+    const typingsDirs = exportedEnterpriseModules.concat(exportedChartsModules).map(exportedEnterpriseModule =>
         [
             `./node_modules/${exportedEnterpriseModule}/typings/**/*`,
             `!./node_modules/${exportedEnterpriseModule}/typings/main.*`,

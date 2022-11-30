@@ -155,6 +155,7 @@ The example below demonstrates Server-side Filtering using the Set Filter and In
 
 - The **Country** and **Sport** columns have Set Filters defined using `filter: 'agSetColumnFilter'`.
 - Set Filter values are fetched asynchronously and supplied via the `params.success(values)` callback.
+- The filter for the **Country** column is using [complex objects](/filter-set-filter-list/#complex-objects). The country name is shown in the Filter List, but the `filterModel` (and request) use the country code.
 - The filter for the **Sport** column only shows the values which are available for the selected countries.
 When the filter for the **Country** column is changed, the values for the **Sport** filter are updated.
 - The server uses the metadata contained in the `filterModel` to filter the rows.

@@ -2,7 +2,6 @@ import {
     Column,
     ColumnGroup,
     ColumnModel,
-    GridOptionsWrapper,
     GridOptionsService,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -15,7 +14,6 @@ import { GridSerializer } from "../gridSerializer";
 
 export interface BaseCreatorBeans {
     gridSerializer: GridSerializer;
-    gridOptionsWrapper: GridOptionsWrapper;
     gridOptionsService: GridOptionsService;
 }
 
@@ -30,7 +28,6 @@ export interface RowSpanningAccumulator {
 export interface GridSerializingParams {
     columnModel: ColumnModel;
     valueService: ValueService;
-    gridOptionsWrapper: GridOptionsWrapper;
     gridOptionsService: GridOptionsService;
     processCellCallback?: (params: ProcessCellForExportParams) => string;
     processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;

@@ -17,7 +17,6 @@ import { DragListenerFeature } from "./dragListenerFeature";
 import { CenterWidthFeature } from "../centerWidthFeature";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { RowRenderer } from "../../rendering/rowRenderer";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ColumnPinnedType } from "../../entities/column";
 
 export enum RowContainerName {
@@ -272,7 +271,7 @@ export class RowContainerCtrl extends BeanStub {
 
         const listener = () => {
             const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-            const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
+            const isPrintLayout = this.gridOptionsService.isDomLayout('print');
             this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
         }
         this.addManagedPropertyListener('domLayout', listener);
@@ -301,7 +300,7 @@ export class RowContainerCtrl extends BeanStub {
         if (this.name !== RowContainerName.CENTER) { return; }
 
         const visible = this.scrollVisibleService.isHorizontalScrollShowing();
-        const scrollbarWidth = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
+        const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         const height = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
         this.comp.setViewportHeight(height);
     }
@@ -404,7 +403,7 @@ export class RowContainerCtrl extends BeanStub {
         const doesRowMatch = (rowCtrl: RowCtrl) => {
             const fullWidthRow = rowCtrl.isFullWidth();
 
-            const printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
+            const printLayout = this.gridOptionsService.isDomLayout('print');
 
             const embedFW = this.embedFullWidthRows || printLayout;
 

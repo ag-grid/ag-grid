@@ -215,7 +215,7 @@ export class FilterManager extends BeanStub {
             return filter.isFilterActive();
         };
 
-        const groupFilterEnabled = !!this.gridOptionsWrapper.getGroupAggFiltering();
+        const groupFilterEnabled = !!this.gridOptionsService.getGroupAggFiltering();
 
         const isAggFilter = (column: Column) => {
 
@@ -292,7 +292,7 @@ export class FilterManager extends BeanStub {
             return null;
         }
 
-        if (!this.gridOptionsWrapper.isRowModelDefault()) {
+        if (!this.gridOptionsService.isRowModelType('clientSide')) {
             console.warn('AG Grid - Quick filtering only works with the Client-Side Row Model');
             return null;
         }
@@ -316,7 +316,7 @@ export class FilterManager extends BeanStub {
     }
 
     public refreshFiltersForAggregations() {
-        const isAggFiltering = this.gridOptionsWrapper.getGroupAggFiltering();
+        const isAggFiltering = this.gridOptionsService.getGroupAggFiltering();
         if (isAggFiltering) {
             this.onFilterChanged();
         }

@@ -153,7 +153,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             nudgeY: 1
         };
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,
@@ -252,7 +252,7 @@ class ContextMenu extends Component {
 
         if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
-            const doc = this.gridOptionsWrapper.getDocument();
+            const doc = this.gridOptionsService.getDocument();
 
             if (doc.activeElement === doc.body) {
                 this.focusService.setFocusedCell({ rowIndex, column, rowPinned, forceBrowserFocus: true });

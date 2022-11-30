@@ -184,7 +184,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTap(): void {
-        const { gridOptionsWrapper: options, gridOptionsService } = this;
+        const { gridOptionsService } = this;
 
         if (gridOptionsService.is('suppressTouch')) { return; }
 
@@ -290,7 +290,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+        const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
 
         // keep track of last time the moving changed flag was set
         this.addManagedListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {

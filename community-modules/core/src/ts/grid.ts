@@ -1,5 +1,4 @@
 import { GridOptions } from "./entities/gridOptions";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { SelectionService } from "./selectionService";
 import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel } from "./columns/columnModel";
@@ -95,6 +94,8 @@ import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu
 import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { GridOptionsService } from "./gridOptionsService";
+import { LocaleService } from "./localeService";
+import { GridOptionsValidator } from "./gridOptionsValidator";
 
 export interface GridParams {
     // used by Web Components
@@ -302,8 +303,8 @@ export class GridCoreCreator {
             rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            RowContainerHeightService, HorizontalResizeService,
-            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, GridOptionsService,
+            RowContainerHeightService, HorizontalResizeService, LocaleService, GridOptionsValidator,
+            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,

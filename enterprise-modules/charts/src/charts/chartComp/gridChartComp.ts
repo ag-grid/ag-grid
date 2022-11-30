@@ -1,7 +1,5 @@
 import {
     _,
-    AgChartThemeOverrides,
-    AgChartThemePalette,
     AgDialog,
     Autowired,
     CellRange,
@@ -21,9 +19,10 @@ import {
     WithoutGridCommon,
     CHART_TOOL_PANEL_MENU_OPTIONS
 } from "@ag-grid-community/core";
+import { AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
-import { ChartController } from "./chartController";
+import { ChartController, DEFAULT_THEMES } from "./chartController";
 import { ChartDataModel, ChartModelParams } from "./chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
 import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
@@ -101,7 +100,7 @@ export class GridChartComp extends Component {
 
     @PostConstruct
     public init(): void {
-        const availableChartThemes = this.gridOptionsWrapper.getChartThemes();
+        const availableChartThemes = this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
 
         if (availableChartThemes.length < 1) {
             throw new Error('Cannot create chart: no chart themes are available to be used.');
@@ -159,7 +158,7 @@ export class GridChartComp extends Component {
     }
 
     private validateCustomThemes() {
-        const suppliedThemes = this.gridOptionsWrapper.getChartThemes();
+        const suppliedThemes = this.getChartThemes();
         const customChartThemes = this.gridOptionsService.get('customChartThemes');
         if (customChartThemes) {
             _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
@@ -194,7 +193,7 @@ export class GridChartComp extends Component {
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
             customChartThemes: this.gridOptionsService.get('customChartThemes'),
-            getGridOptionsChartThemeOverrides: this.getGridOptionsChartThemeOverrides.bind(this),
+            getGridOptionsChartThemeOverrides: () => this.getGridOptionsChartThemeOverrides(),
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             crossFiltering: this.params.crossFiltering,
             crossFilterCallback,

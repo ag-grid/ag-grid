@@ -76,9 +76,14 @@ export class AutoWidthCalculator extends BeanStub {
 
         // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
         // user can configure the grid to add a few more pixels after the calculated width
-        const autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
+        const autoSizePadding = this.getAutoSizePadding();
 
         return dummyContainerWidth + autoSizePadding;
+    }
+
+    private getAutoSizePadding(): number {
+        const value = this.gridOptionsService.getNum('autoSizePadding');
+        return value != null && value >= 0 ? value : 20;
     }
 
     /* tslint:disable */

@@ -164,6 +164,37 @@ The example below shows a reordering of chart groups with some chart groups and 
 
 <grid-example title='Customising settings panel chart groups' name='customise-chart-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
+### Customising data panel groups
+
+The groups shown on the data panel can be customised using the `chartToolPanelsDef.dataPanel.groups` grid option. The list specified also indicates the order the groups are shown and whether they are open by default. If `chartToolPanelsDef.dataPanel.groups` is not specified, all groups are shown and are open by default.
+
+The default list and order of data groups are as follows:
+
+<snippet>
+const gridOptions = {
+    chartToolPanelsDef: {
+        dataPanel: {
+            groups: [
+                { type: 'categories', isOpen: true },
+                { type: 'series', isOpen: true },
+                { type: 'seriesChartType', isOpen: true }
+            ]
+        }
+    }
+}
+</snippet>
+
+[[note]]
+| The `seriesChartType` group is only shown for [Combination Charts](/charts-combination-series/).
+
+The following example shows the data panel with:
+
+* `series` group closed by default
+* `categories` not shown
+* `seriesChartType` group shown above `series` and open by default, but only shown if a combination chart is chosen in the settings panel
+
+<grid-example title='Customising data panel groups' name='customise-data-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
 ### Customising format panel groups
 
 The groups shown on the format panel can be customised using the `chartToolPanelsDef.formatPanel.groups` grid option. The list specified also indicates the order the groups are shown and whether they are open by default. If `chartToolPanelsDef.formatPanel.groups` is not specified, all groups are shown and are closed by default.

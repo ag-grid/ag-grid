@@ -1,4 +1,4 @@
-import { CellCtrl, ICellComp } from "./cellCtrl";
+import { CellCtrl } from "./cellCtrl";
 import { Column } from "../../entities/column";
 import { areEqual, last } from "../../utils/array";
 import { Events } from "../../eventKeys";
@@ -153,7 +153,7 @@ export class CellPositionFeature extends BeanStub {
 
         if (this.rowSpan === 1) { return; }
 
-        const singleRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
+        const singleRowHeight = this.beans.gridOptionsService.getRowHeightAsNumber();
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
         this.eGui.style.height = `${totalRowHeight}px`;

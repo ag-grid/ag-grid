@@ -8,7 +8,6 @@ import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
 import { last } from "../../utils/array";
 import { exists } from "../../utils/generic";
 import { Events } from "../../eventKeys";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export class SetLeftFeature extends BeanStub {
 
@@ -103,7 +102,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private modifyLeftForPrintLayout(colOrGroup: IHeaderColumn, leftPosition: number): number {
-        const printLayout = this.beans.gridOptionsWrapper.getDomLayout() === 'print';
+        const printLayout = this.beans.gridOptionsService.isDomLayout('print');
 
         if (!printLayout) { return leftPosition; }
 

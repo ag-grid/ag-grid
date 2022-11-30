@@ -32,7 +32,7 @@ export class ValueService extends BeanStub {
         this.eventService.addEventListener(
             Events.EVENT_CELL_VALUE_CHANGED,
             (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event),
-            this.gridOptionsWrapper.useAsyncEvents(),
+            this.gridOptionsService.useAsyncEvents(),
         );
     }
 
@@ -65,11 +65,11 @@ export class ValueService extends BeanStub {
 
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
-        } else if (this.gridOptionsWrapper.isTreeData() && aggDataExists) {
+        } else if (this.gridOptionsService.isTreeData() && aggDataExists) {
             result = rowNode.aggData[colId];
-        } else if (this.gridOptionsWrapper.isTreeData() && colDef.valueGetter) {
+        } else if (this.gridOptionsService.isTreeData() && colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (this.gridOptionsWrapper.isTreeData() && (field && data)) {
+        } else if (this.gridOptionsService.isTreeData() && (field && data)) {
             result = getValueUsingField(data, field, column.isFieldContainsDots());
         } else if (groupDataExists) {
             result = rowNode.groupData![colId];

@@ -1,7 +1,6 @@
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ValueService } from "../valueService/valueService";
 import { _ } from "../utils";
 import { ColumnModel } from "../columns/columnModel";
@@ -22,7 +21,6 @@ export interface SortedRowNode {
 @Bean('rowNodeSorter')
 export class RowNodeSorter {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -95,14 +93,14 @@ export class RowNodeSorter {
     }
 
     private getValue(node: RowNode, column: Column): any {
-        const primaryColumnsSortGroups = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        const primaryColumnsSortGroups = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (!primaryColumnsSortGroups) {
             return this.valueService.getValue(column, node, false, false);
         }
 
         const isNodeGroupedAtLevel = node.rowGroupColumn === column;
         if (isNodeGroupedAtLevel) {
-            const isGroupRows = this.gridOptionsWrapper.isGroupUseEntireRow(this.columnModel.isPivotActive());
+            const isGroupRows = this.gridOptionsService.isGroupUseEntireRow(this.columnModel.isPivotActive());
             if (isGroupRows) {
                 // if the column has a provided a keyCreator, we have to use the key, as the group could be
                 // irrelevant to the column value

@@ -350,7 +350,7 @@ describe('Chart', () => {
                 return [datum[series.labelKey], datum[series.sizeKey]];
             },
             getTooltipRenderedValues: (params) => {
-                const { datum } = params.datum;
+                const { datum } = params;
                 return [datum[params.labelKey], datum[params.sizeKey]];
             },
             getHighlightNode: (series) => {

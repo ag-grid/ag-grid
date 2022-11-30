@@ -1,7 +1,6 @@
 import { Bean, Qualifier } from "./context/context";
 import { AgEvent, AgGridEvent } from "./events";
 import { GridOptionsService } from "./gridOptionsService";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { IEventEmitter } from "./interfaces/iEventEmitter";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { LoggerFactory } from "./logger";
@@ -35,7 +34,6 @@ export class EventService implements IEventEmitter {
     // class) then it is not a bean, and this setBeans method is not called.
     public setBeans(
         @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
-        @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
         @Qualifier('gridOptionsService') gridOptionsService: GridOptionsService,
         @Qualifier('frameworkOverrides') frameworkOverrides: IFrameworkOverrides,
         @Qualifier('globalEventListener') globalEventListener: Function | null = null) {
@@ -43,7 +41,7 @@ export class EventService implements IEventEmitter {
         this.gridOptionsService = gridOptionsService;
 
         if (globalEventListener) {
-            const async = gridOptionsWrapper.useAsyncEvents();
+            const async = gridOptionsService.useAsyncEvents();
             this.addGlobalListener(globalEventListener, async);
         }
     }
@@ -96,8 +94,8 @@ export class EventService implements IEventEmitter {
     public dispatchEvent(event: AgEvent): void {
         let agEvent = event;
         if (this.gridOptionsService) {
-            // Apply common properties to all dispatched events if this event service has had its beans set with gridOptionsWrapper.
-            // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsWrapper. 
+            // Apply common properties to all dispatched events if this event service has had its beans set with gridOptionsService.
+            // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsService. 
             agEvent = {
                 ...event,
                 api: this.gridOptionsService.get('api')!,

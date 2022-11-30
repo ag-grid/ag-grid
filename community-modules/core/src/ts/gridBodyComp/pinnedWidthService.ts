@@ -1,6 +1,6 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+
 import { Events } from "../eventKeys";
 import { ColumnModel } from "../columns/columnModel";
 
@@ -22,7 +22,7 @@ export class PinnedWidthService extends BeanStub {
 
     private checkContainerWidths() {
 
-        const printLayout = this.gridOptionsWrapper.getDomLayout() === 'print';
+        const printLayout = this.gridOptionsService.isDomLayout('print');
 
         const newLeftWidth = printLayout ? 0 : this.columnModel.getDisplayedColumnsLeftWidth();
         const newRightWidth = printLayout ? 0 : this.columnModel.getDisplayedColumnsRightWidth();

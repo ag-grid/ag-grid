@@ -58,7 +58,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private getStockMenuItem(key: string, column: Column | null): MenuItemDef | string | null {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
 
         switch (key) {
@@ -221,7 +221,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private getChartItems(key: string) {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         const pivotChartMenuItem = (localeKey: string, defaultText: string, chartType: ChartType) => {
             return {
@@ -426,7 +426,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private createAggregationSubMenu(column: Column): MenuItemDef[] {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         let columnToUse: Column | undefined;
         if (column.isPrimary()) {
@@ -441,9 +441,18 @@ export class MenuItemMapper extends BeanStub {
             const columnIsAlreadyAggValue = columnToUse.isValueActive();
             const funcNames = this.aggFuncService.getFuncNames(columnToUse);
 
+            result.push({
+                name: localeTextFunc('noAggregation', 'None'),
+                action: () => {
+                    this.columnModel.removeValueColumn(columnToUse!, "contextMenu");
+                    this.columnModel.setColumnAggFunc(columnToUse, undefined, "contextMenu");
+                },
+                checked: !columnIsAlreadyAggValue
+            })
+
             funcNames.forEach(funcName => {
                 result.push({
-                    name: localeTextFunc(funcName, funcName),
+                    name: localeTextFunc(funcName, _.capitalise(funcName)),
                     action: () => {
                         this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
                         this.columnModel.addValueColumn(columnToUse, "contextMenu");

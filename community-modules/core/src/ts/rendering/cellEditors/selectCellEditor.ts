@@ -54,7 +54,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
 
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
-        if (!this.gridOptionsWrapper.isFullRowEdit()) {
+        if (this.gridOptionsService.get('editType') !== 'fullRow') {
             this.eSelect.onValueChange(() => params.stopEditing());
         }
     }

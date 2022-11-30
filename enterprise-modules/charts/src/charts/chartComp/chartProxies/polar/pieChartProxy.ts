@@ -4,7 +4,6 @@ import {
     AgPieSeriesOptions,
     AgPolarChartOptions,
     AgPolarSeriesOptions,
-    AgPieSeriesTooltipRendererParams,
 } from 'ag-charts-community';
 import { changeOpacity } from '../../utils/color';
 import { deepMerge } from '../../utils/object';

@@ -3,7 +3,6 @@ import { ColumnApi } from "../columns/columnApi";
 import { ColumnModel } from "../columns/columnModel";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { GridApi } from "../gridApi";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ExpressionService } from "../valueService/expressionService";
 import { RowRenderer } from "./rowRenderer";
 import { TemplateService } from "../templateService";
@@ -41,6 +40,8 @@ import { UserComponentRegistry } from "../components/framework/userComponentRegi
 import { ValueCache } from "../valueService/valueCache";
 import { RowNodeEventThrottle } from "../entities/rowNodeEventThrottle";
 import { GridOptionsService } from "../gridOptionsService";
+import { LocaleService } from "../localeService";
+import { Environment } from "../environment";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -55,9 +56,9 @@ export class Beans {
     @Autowired('context') public context: Context;
     @Autowired('columnApi') public columnApi: ColumnApi;
     @Autowired('gridApi') public gridApi: GridApi;
-    @Autowired('gridOptionsWrapper') public gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') public gridOptionsService: GridOptionsService;
     @Autowired('expressionService') public expressionService: ExpressionService;
+    @Autowired('environment') public environment: Environment;
     @Autowired('rowRenderer') public rowRenderer: RowRenderer;
     @Autowired('templateService') public templateService: TemplateService;
     @Autowired('valueService') public valueService: ValueService;
@@ -92,6 +93,7 @@ export class Beans {
     @Autowired('agStackComponentsRegistry') public agStackComponentsRegistry: AgStackComponentsRegistry;
     @Autowired('valueCache') public valueCache: ValueCache;
     @Autowired('rowNodeEventThrottle') public rowNodeEventThrottle: RowNodeEventThrottle;
+    @Autowired('localeService') public localeService: LocaleService;
 
     public doingMasterDetail: boolean;
 
@@ -100,12 +102,12 @@ export class Beans {
 
     @PostConstruct
     private postConstruct(): void {
-        this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+        this.doingMasterDetail = this.gridOptionsService.isMasterDetail();
 
-        if (this.gridOptionsWrapper.isRowModelDefault()) {
+        if (this.gridOptionsService.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
-        if (this.gridOptionsWrapper.isRowModelServerSide()) {
+        if (this.gridOptionsService.isRowModelType('serverSide')) {
             this.serverSideRowModel = this.rowModel as IServerSideRowModel;
         }
     }

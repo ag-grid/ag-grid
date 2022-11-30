@@ -561,13 +561,15 @@ export class ChartTheme {
                         fontFamily: 'Verdana, sans-serif',
                         color: 'white',
                     },
-                    color: {
-                        enabled: true,
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif',
-                        color: 'white',
+                    value: {
+                        style: {
+                            enabled: true,
+                            fontStyle: undefined,
+                            fontWeight: undefined,
+                            fontSize: 12,
+                            fontFamily: 'Verdana, sans-serif',
+                            color: 'white',
+                        },
                     },
                 },
             },

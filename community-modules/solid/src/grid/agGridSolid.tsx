@@ -71,7 +71,7 @@ const AgGridSolid = (props: AgGridSolidProps) => {
         });
 
         if (changesExist) {
-            ComponentUtil.processOnChange(changes, gridOptions, gridOptions.api!, gridOptions.columnApi!);
+            ComponentUtil.processOnChange(changes, gridOptions.api!);
         }
     });
 

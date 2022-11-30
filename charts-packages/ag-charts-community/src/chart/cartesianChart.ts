@@ -130,9 +130,14 @@ export class CartesianChart extends Chart {
             otherAxisWidths: T,
             otherVisibility: Partial<VisibilityMap>
         ) => {
+            // Check for new axis positions.
+            if (Object.keys(otherAxisWidths).some((k) => (axisWidths as any)[k] == null)) {
+                return false;
+            }
             return (
                 visibility.axes === otherVisibility.axes &&
                 visibility.crossLines === visibility.crossLines &&
+                // Check for existing axis positions and equality.
                 Object.entries(axisWidths).every(([p, w]) => {
                     const otherW = (otherAxisWidths as any)[p];
                     if (w != null || otherW != null) {

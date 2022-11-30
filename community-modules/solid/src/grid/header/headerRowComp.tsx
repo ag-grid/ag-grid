@@ -7,7 +7,7 @@ import HeaderGroupCellComp from './headerGroupCellComp';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
-    const { gridOptionsWrapper, gridOptionsService } = useContext(BeansContext);
+    const { gridOptionsService } = useContext(BeansContext);
 
     const [ getTransform, setTransform ] = createSignal<string>();
     const [ getHeight, setHeight ] = createSignal<string>();
@@ -27,7 +27,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     const setCellCtrlsMaintainOrder = (next: AbstractHeaderCellCtrl[]) => {
         const prev = getCellCtrls();
         const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
-        const isPrintLayout = gridOptionsWrapper.getDomLayout() === 'print';
+        const isPrintLayout = gridOptionsService.isDomLayout('print');
 
         // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
         if (isEnsureDomOrder || isPrintLayout) {

@@ -1,6 +1,5 @@
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { EventService } from "../eventService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
@@ -8,6 +7,8 @@ import { Component } from "../widgets/component";
 import { addSafePassiveEventListener } from "../utils/event";
 import { GridOptionsService, PropertyChangedListener } from "../gridOptionsService";
 import { GridOptions } from "../entities/gridOptions";
+import { LocaleService } from "../localeService";
+import { Environment } from "../environment";
 
 export class BeanStub implements IEventEmitter {
 
@@ -25,8 +26,9 @@ export class BeanStub implements IEventEmitter {
     @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
     @Autowired('context') protected readonly context: Context;
     @Autowired('eventService') protected readonly eventService: EventService;
-    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
+    @Autowired('localeService') protected readonly localeService: LocaleService;
+    @Autowired('environment') protected readonly environment: Environment;
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
     // not destroyed. to use, create a new grid, then api.destroy() before 5 seconds. then anything that gets printed

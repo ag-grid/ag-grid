@@ -1,7 +1,6 @@
 import {
     Column,
     ColumnModel,
-    GridOptionsWrapper,
     GridOptionsService,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -17,7 +16,6 @@ import { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpann
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public columnModel: ColumnModel;
     public valueService: ValueService;
-    public gridOptionsWrapper: GridOptionsWrapper;
     public gridOptionsService: GridOptionsService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
     public processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
@@ -28,14 +26,13 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     constructor(config: GridSerializingParams) {
         const {
-            columnModel, valueService, gridOptionsWrapper, gridOptionsService, processCellCallback,
+            columnModel, valueService, gridOptionsService, processCellCallback,
             processHeaderCallback, processGroupHeaderCallback,
             processRowGroupCallback
         } = config;
 
         this.columnModel = columnModel;
         this.valueService = valueService;
-        this.gridOptionsWrapper = gridOptionsWrapper;
         this.gridOptionsService = gridOptionsService;
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
@@ -88,7 +85,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             return true;
         }
 
-        const isGroupUseEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow(this.columnModel.isPivotMode());
+        const isGroupUseEntireRow = this.gridOptionsService.isGroupUseEntireRow(this.columnModel.isPivotMode());
 
         return currentColumnIndex === 0 && isGroupUseEntireRow;
     }
@@ -117,7 +114,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         }
         const keys = [node.key];
 
-        if (!this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
+        if (!this.gridOptionsService.isGroupMultiAutoColumn()) {
             while (node.parent) {
                 node = node.parent;
                 keys.push(node.key);

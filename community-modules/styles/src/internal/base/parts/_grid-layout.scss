@@ -206,6 +206,10 @@
         padding: var(--ag-cell-horizontal-padding);
     }
 
+    .ag-rtl .ag-large-text-input textarea {
+        resize: none;
+    }
+
     .ag-details-row {
         padding: calc(var(--ag-grid-size) * 5);
         background-color: var(--ag-background-color);

@@ -50,7 +50,6 @@ import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 import { GridOptionsService } from "./gridOptionsService";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
@@ -155,7 +154,6 @@ export class GridApi<TData = any> {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectionService') private selectionService: SelectionService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
@@ -281,7 +279,7 @@ export class GridApi<TData = any> {
     }
 
     private getExcelExportMode(params?: ExcelExportParams): 'xlsx' | 'xml' {
-        const baseParams = this.gridOptionsWrapper.getDefaultExportParams('excel');
+        const baseParams = this.gridOptionsService.get('defaultExcelExportParams');
         const mergedParams = Object.assign({ exportMode: 'xlsx' }, baseParams, params);
         return mergedParams.exportMode;
     }
@@ -381,7 +379,7 @@ export class GridApi<TData = any> {
 
     /** Set new datasource for Infinite Row Model. */
     public setDatasource(datasource: IDatasource) {
-        if (this.gridOptionsService.get('rowModelType') === 'infinite') {
+        if (this.gridOptionsService.isRowModelType('infinite')) {
             (this.rowModel as IInfiniteRowModel).setDatasource(datasource);
         } else {
             this.logMissingRowModel('setDatasource', 'infinite');
@@ -390,7 +388,7 @@ export class GridApi<TData = any> {
 
     /** Set new datasource for Viewport Row Model. */
     public setViewportDatasource(viewportDatasource: IViewportDatasource) {
-        if (this.gridOptionsService.get('rowModelType') === 'viewport') {
+        if (this.gridOptionsService.isRowModelType('viewport')) {
             // this is bad coding, because it's using an interface that's exposed in the enterprise.
             // really we should create an interface in the core for viewportDatasource and let
             // the enterprise implement it, rather than casting to 'any' here
@@ -636,8 +634,8 @@ export class GridApi<TData = any> {
      */
     public getSizesForCurrentTheme() {
         return {
-            rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
-            headerHeight: this.gridOptionsWrapper.getHeaderHeight()
+            rowHeight: this.gridOptionsService.getRowHeightAsNumber(),
+            headerHeight: this.columnModel.getHeaderHeight()
         };
     }
 
@@ -1349,25 +1347,25 @@ export class GridApi<TData = any> {
 
     /** Add an event listener for the specified `eventType`. Works similar to `addEventListener` for a browser DOM element. */
     public addEventListener(eventType: string, listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.addEventListener(eventType, listener, async);
     }
 
     /** Add an event listener for all event types coming from the grid. */
     public addGlobalListener(listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.addGlobalListener(listener, async);
     }
 
     /** Remove an event listener. */
     public removeEventListener(eventType: string, listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.removeEventListener(eventType, listener, async);
     }
 
     /** Remove a global event listener. */
     public removeGlobalListener(listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.removeGlobalListener(listener, async);
     }
 

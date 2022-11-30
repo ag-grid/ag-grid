@@ -48,7 +48,7 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onSelectionChanged(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
         const stateName = state === undefined
             ? translate('ariaIndeterminate', 'indeterminate')

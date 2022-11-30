@@ -15,7 +15,7 @@ const PopupEditorComp = (props: {
 
     const [popupEditorWrapper, setPopupEditorWrapper] = useState<PopupEditorWrapper>();
 
-    const { context, popupService, gridOptionsWrapper, gridOptionsService } = useContext(BeansContext);
+    const { context, popupService, localeService, gridOptionsService } = useContext(BeansContext);
 
     useEffectOnce( () => {
         const {editDetails, cellCtrl, eParentCell} = props;
@@ -45,7 +45,7 @@ const PopupEditorComp = (props: {
 
         const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams);
 
-        const translate = gridOptionsWrapper.getLocaleTextFunc();
+        const translate = localeService.getLocaleTextFunc();
     
         const addPopupRes = popupService.addPopup({
             modal: useModelPopup,

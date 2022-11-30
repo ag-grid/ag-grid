@@ -229,6 +229,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
         this.interactionManager.addListener('leave', () => this.togglePointer(false));
 
+        background.width = this.scene.width;
+        background.height = this.scene.height;
+
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
 

@@ -1,6 +1,5 @@
 import {
     _,
-    AgChartThemePalette,
     Autowired,
     BeanStub,
     CellRange,
@@ -18,10 +17,11 @@ import {
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartProxy, UpdateChartParams } from "./chartProxies/chartProxy";
-import { _Theme } from "ag-charts-community";
+import { _Theme, AgChartThemePalette } from "ag-charts-community";
 import { ChartSeriesType, getSeriesType } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
 
+export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
 export class ChartController extends BeanStub {
 
     public static EVENT_CHART_UPDATED = 'chartUpdated';
@@ -172,11 +172,11 @@ export class ChartController extends BeanStub {
     }
 
     public getThemes(): string[] {
-        return this.gridOptionsWrapper.getChartThemes();
+        return this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
     }
 
     public getPalettes(): AgChartThemePalette[] {
-        const themeNames = this.gridOptionsWrapper.getChartThemes();
+        const themeNames = this.getThemes();
 
         return themeNames.map(themeName => {
             const stockTheme = isStockTheme(themeName);

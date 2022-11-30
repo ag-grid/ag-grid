@@ -27,7 +27,6 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     @PostConstruct
     private passBeansUp(): void {
         super.setBeans({
-            gridOptionsWrapper: this.gridOptionsWrapper,
             gridOptionsService: this.gridOptionsService,
             eventService: this.eventService,
             context: this.getContext(),
@@ -35,7 +34,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
             dragAndDropService: this.dragAndDropService
         });
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to set column labels');
         const title = localeTextFunc('pivots', 'Column Labels');
 
@@ -54,7 +53,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getAriaLabel(): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const label = translate('ariaPivotDropZonePanelLabel', 'Column Labels');
 
         return label;

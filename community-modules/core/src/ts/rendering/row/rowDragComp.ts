@@ -71,7 +71,7 @@ export class RowDragComp extends Component {
     // returns true if all compatibility items work out
     private checkCompatibility(): void {
         const managed = this.beans.gridOptionsService.is('rowDragManaged');
-        const treeData = this.beans.gridOptionsWrapper.isTreeData();
+        const treeData = this.beans.gridOptionsService.isTreeData();
 
         if (treeData && managed) {
             doOnce(() =>
@@ -105,7 +105,7 @@ export class RowDragComp extends Component {
         if (this.dragSource) { this.removeDragSource(); }
 
         const rowDragText = this.getRowDragText(this.column);
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         this.dragSource = {
             type: DragSourceType.RowDrag,
@@ -122,7 +122,7 @@ export class RowDragComp extends Component {
             },
             getDragItem: () => this.getDragItem(),
             dragStartPixels,
-            dragSourceDomDataKey: this.beans.gridOptionsWrapper.getDomDataKey()
+            dragSourceDomDataKey: this.beans.gridOptionsService.getDomDataKey()
         };
 
         this.beans.dragAndDropService.addDragSource(this.dragSource, true);

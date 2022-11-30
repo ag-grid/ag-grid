@@ -80,7 +80,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private setAggregationComponentValue(aggFuncName: string, value: number | null, visible: boolean) {
         const statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
         if (_.exists(statusBarValueComponent) && statusBarValueComponent) {
-            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
             const thousandSeparator = localeTextFunc('thousandSeparator', ',');
             const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
