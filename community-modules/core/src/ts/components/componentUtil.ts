@@ -88,15 +88,20 @@ export class ComponentUtil {
         if (coercionStep) {
             let newValue = rawValue;
             switch (coercionStep) {
-                case 'number':
+                case 'number': {
                     newValue = ComponentUtil.toNumber(rawValue);
-                case 'boolean':
+                    break;
+                }
+                case 'boolean': {
                     newValue = ComponentUtil.toBoolean(rawValue);
+                    break;
+                }                    
                 case 'none': {
                     // if groupAggFiltering exists and isn't a function, handle as a boolean.
                     if (key === 'groupAggFiltering' && typeof rawValue !== 'function') {
                         newValue = ComponentUtil.toBoolean(rawValue);
                     }
+                    break;
                 }
             }
             return newValue;
