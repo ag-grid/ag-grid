@@ -146,16 +146,6 @@ export class LazyBlockLoader extends BeanStub {
         return blockContainsViewport || blockEndIsInViewport || blockStartIsInViewport;
     }
 
-    private numberOfRowsToLoadInBlock(blockStart: number, blockEnd: number) {
-        let count = 0;
-        for(let i = blockStart; i < blockEnd; i++) {
-            if (this.doesRowNeedLoaded(i)) {
-                count++;
-            }
-        }
-        return count;
-    }
-
     private getNextBlockToLoad() {
         const ranges = this.getNodeRanges();
         const toLoad = Object.entries(ranges);
@@ -167,12 +157,6 @@ export class LazyBlockLoader extends BeanStub {
         toLoad.sort(([aStart, aEnd], [bStart, bEnd]) => {
             const isAInViewport = this.isBlockInViewport(Number(aStart), aEnd);
             const isBInViewport = this.isBlockInViewport(Number(bStart), bEnd);
-
-            if (isAInViewport && isBInViewport) {
-                // sort based on number of loading rows in viewport
-
-                return this.numberOfRowsToLoadInBlock(Number(aStart), aEnd) - this.numberOfRowsToLoadInBlock(Number(bStart), bEnd);
-            }
 
             // always prioritise loading blocks in viewport
             if (isAInViewport) {
