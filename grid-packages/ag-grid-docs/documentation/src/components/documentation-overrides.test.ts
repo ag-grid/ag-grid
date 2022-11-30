@@ -18,7 +18,6 @@ jest.mock('./use-json-file-nodes');
  * ```
  */
 const OVERRIDES_TO_TEST = [
-    'charts-api/api.json',
     'component-date/resources/dateParams.json',
     'filter-date/resources/date-filter-params.json',
     'filter-number/resources/number-filter-params.json',
@@ -38,17 +37,15 @@ const OVERRIDES_TO_TEST = [
     'sparklines-line-customisation/resources/line-sparkline-api.json',
     'sparklines-tooltips/resources/sparkline-tooltip-api.json',
 ];
+const CHARTS_OVERRIDES_TO_TEST = [
+    'charts-api/api.json',
+];
 const BASE_PATH = './doc-pages';
 
 describe('Documentation Overrides Sanity Check', () => {
     let interfaces: {};
     let docInterfaces: {};
     let originalConsoleWarn;
-
-    beforeAll(() => {
-        interfaces = JSON.parse(fs.readFileSync(`${BASE_PATH}/grid-api/interfaces.AUTO.json`).toString());
-        docInterfaces = JSON.parse(fs.readFileSync(`${BASE_PATH}/grid-api/doc-interfaces.AUTO.json`).toString());
-    });
 
     beforeEach(() => {
         originalConsoleWarn = console.warn;
@@ -59,19 +56,49 @@ describe('Documentation Overrides Sanity Check', () => {
         console.warn = originalConsoleWarn;
     });
 
-    describe.each(OVERRIDES_TO_TEST)('Verify %s', (override) => {
-        beforeEach(() => {
-            const overrides = JSON.parse(fs.readFileSync(`${BASE_PATH}/${override}`).toString());
-
-            (getJsonFromFile as any)
-                .mockReturnValueOnce(interfaces)
-                .mockReturnValueOnce(docInterfaces)
-                .mockReturnValueOnce(overrides);
+    describe('for Grid', () => {
+        beforeAll(() => {
+            interfaces = JSON.parse(fs.readFileSync(`${BASE_PATH}/grid-api/interfaces.AUTO.json`).toString());
+            docInterfaces = JSON.parse(fs.readFileSync(`${BASE_PATH}/grid-api/doc-interfaces.AUTO.json`).toString());
         });
+    
+        describe.each(OVERRIDES_TO_TEST)('Verify %s', (override) => {
+            beforeEach(() => {
+                const overrides = JSON.parse(fs.readFileSync(`${BASE_PATH}/${override}`).toString());
+    
+                (getJsonFromFile as any)
+                    .mockReturnValueOnce(interfaces)
+                    .mockReturnValueOnce(docInterfaces)
+                    .mockReturnValueOnce(overrides);
+            });
+    
+            it('should load and parse without error', () => {
+                expect(() => loadLookups('test', {}, override)).not.toThrowError();
+                expect(console.warn).not.toBeCalled();
+            });
+        });
+    });
 
-        it('should load and parse without error', () => {
-            expect(() => loadLookups('test', {}, override)).not.toThrowError();
-            expect(console.warn).not.toBeCalled();
+    describe('for Charts', () => {
+        beforeAll(() => {
+            interfaces = JSON.parse(fs.readFileSync(`${BASE_PATH}/charts-api/interfaces.AUTO.json`).toString());
+            docInterfaces = JSON.parse(fs.readFileSync(`${BASE_PATH}/charts-api/doc-interfaces.AUTO.json`).toString());
+        });
+    
+        describe.each(CHARTS_OVERRIDES_TO_TEST)('Verify %s', (override) => {
+            beforeEach(() => {
+                const overrides = JSON.parse(fs.readFileSync(`${BASE_PATH}/${override}`).toString());
+    
+                (getJsonFromFile as any)
+                    .mockReturnValueOnce(interfaces)
+                    .mockReturnValueOnce(docInterfaces)
+                    .mockReturnValueOnce(overrides);
+            });
+    
+            it('should load and parse without error', () => {
+                expect(() => loadLookups('test', {}, override)).not.toThrowError();
+                expect(console.warn).not.toBeCalled();
+            });
         });
     });
 });

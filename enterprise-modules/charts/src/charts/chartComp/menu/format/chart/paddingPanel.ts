@@ -1,5 +1,4 @@
 import {
-    AgChartPaddingOptions,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSlider,
@@ -11,6 +10,7 @@ import {
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
+import { AgChartPaddingOptions } from "ag-charts-community";
 
 export class PaddingPanel extends Component {
 

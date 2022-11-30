@@ -60,12 +60,14 @@
     "updateAndRebuild": "npm i && npm run bootstrap && npm run build",
     "updateAndRebuildProd": "npm i && npm run bootstrap && npm run build-prod",
     "cleanAndRebuild": "npm run clean && npm run updateAndRebuild",
+    "buildChangedModules": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildBasedOnState()'",
     "buildAndUnitTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildAndUnitTestBasedOnState()'",
     "buildPackageAndFullyTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildAndTestsEverythingBasedOnState()'",
     "buildPackageNoTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackageSkipDocsBasedOnState()'",
     "ciUpdateBuildAndUnitTest": "npm i && npm run bootstrap && npm run buildAndUnitTest",
     "ciUpdateBuildPackageAndFullyTest": "npm i && npm run bootstrap && npm run buildPackageAndFullyTest",
-    "ciUpdateRebuildAndPackage": "npm i && npm run bootstrap && npm run buildPackageNoTest"
+    "ciUpdateRebuildAndPackage": "npm i && npm run bootstrap && npm run buildPackageNoTest",
+    "ciUpdateRebuild": "npm i && npm run bootstrap && npm run buildChangedModules"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.3.0",

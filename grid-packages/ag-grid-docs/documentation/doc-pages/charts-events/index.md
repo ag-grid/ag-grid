@@ -37,13 +37,13 @@ state in combination with a `series[].marker.formatter`:
 
 All series event options have the same interface contract.
 
-<interface-documentation interfaceName='AgSeriesListeners' names='["nodeClick"]'></interface-documentation>
+<interface-documentation interfaceName='AgSeriesListeners' names='["nodeClick"] ' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
 
 #### Histogram series
 
 Unlike other series, the `nodeClick` event `datum` parameter for Histogram series contains a model for the computed histogram bin:
 
-<interface-documentation interfaceName='AgHistogramBinDatum'></interface-documentation>
+<interface-documentation interfaceName='AgHistogramBinDatum' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
 
 ## Chart Event - seriesNodeClick
 

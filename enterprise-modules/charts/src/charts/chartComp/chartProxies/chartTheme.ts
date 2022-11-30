@@ -1,5 +1,6 @@
-import { AgChartThemePalette, _ } from '@ag-grid-community/core';
+import { _ } from '@ag-grid-community/core';
 import {
+    AgChartThemePalette,
     AgChartLegendClickEvent,
     AgChartTheme,
     AgChartThemeName,
@@ -16,7 +17,7 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
     const themeName = getSelectedTheme(chartProxyParams);
     const stockTheme = isStockTheme(themeName);
 
-    const rootTheme: AgChartTheme = stockTheme
+    const rootTheme = stockTheme
         ? { baseTheme: themeName as AgChartThemeName }
         : lookupCustomChartTheme(chartProxyParams, themeName) ?? {};
 
@@ -163,7 +164,7 @@ function getSelectedTheme(chartProxyParams: ChartProxyParams): string {
     return chartThemeName;
 }
 
-export function lookupCustomChartTheme(chartProxyParams: ChartProxyParams, name: string) {
+export function lookupCustomChartTheme(chartProxyParams: ChartProxyParams, name: string): AgChartTheme {
     const { customChartThemes } = chartProxyParams;
     const customChartTheme = customChartThemes && customChartThemes[name];
 
@@ -174,5 +175,5 @@ export function lookupCustomChartTheme(chartProxyParams: ChartProxyParams, name:
         );
     }
 
-    return customChartTheme;
+    return customChartTheme as AgChartTheme;
 }

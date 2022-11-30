@@ -1,7 +1,5 @@
 import {
     _,
-    AgChartThemeOverrides,
-    AgChartThemePalette,
     AgDialog,
     Autowired,
     CellRange,
@@ -21,6 +19,7 @@ import {
     WithoutGridCommon,
     CHART_TOOL_PANEL_MENU_OPTIONS
 } from "@ag-grid-community/core";
+import { AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
 import { ChartController, DEFAULT_THEMES } from "./chartController";

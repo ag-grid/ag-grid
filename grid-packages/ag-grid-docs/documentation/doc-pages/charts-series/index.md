@@ -40,7 +40,7 @@ See other available options in the [API reference](#api-reference).
 
 ## API Reference
 
-<interface-documentation interfaceName='AgBaseSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
+<interface-documentation interfaceName='AgBaseSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ## Next Up
 

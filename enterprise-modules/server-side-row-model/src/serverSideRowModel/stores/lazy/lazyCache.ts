@@ -634,7 +634,6 @@ export class LazyCache extends BeanStub {
         inserts.forEach(data => {
             const dataId = this.getRowId(data)!;
             if (dataId && this.isNodeInCache(dataId)) {
-                console.warn(`AG Grid: Ignoring add transaction for a new row with rowId=${dataId} as this row is already in the grid.`);
                 return;
             }
             

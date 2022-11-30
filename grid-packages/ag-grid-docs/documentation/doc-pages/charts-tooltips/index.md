@@ -191,28 +191,28 @@ Notice that the tooltip renderer in the example below:
 
 ### Bar/Column Tooltips
 
-<interface-documentation interfaceName='AgBarSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
+<interface-documentation interfaceName='AgBarSeriesTooltip' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ### Area Tooltips
 
-<interface-documentation interfaceName='AgAreaSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
+<interface-documentation interfaceName='AgAreaSeriesTooltip' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 
 ### Line Tooltips
 
-<interface-documentation interfaceName='AgLineSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
+<interface-documentation interfaceName='AgLineSeriesTooltip' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ### Scatter/Bubble Tooltips
 
-<interface-documentation interfaceName='AgScatterSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
+<interface-documentation interfaceName='AgScatterSeriesTooltip' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ### Pie/Doughnut Tooltips
 
-<interface-documentation interfaceName='AgPieSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
+<interface-documentation interfaceName='AgPieSeriesTooltip' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ### Histogram Tooltips
 
-<interface-documentation interfaceName='AgHistogramSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
+<interface-documentation interfaceName='AgHistogramSeriesTooltip' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ## Next Up
 
