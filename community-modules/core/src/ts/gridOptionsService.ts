@@ -108,22 +108,42 @@ export class GridOptionsService {
         this.destroyed = true;
     }
 
+    /**
+     * Is the given GridOption property set to true.
+     * @param property GridOption property that has the type `boolean | undefined`
+     */
     public is(property: BooleanProps): boolean {
         return isTrue(this.gridOptions[property]);
     }
 
+    /**
+     * Get the raw value of the GridOptions property provided.
+     * @param property
+     */
     public get<K extends NonPrimitiveProps>(property: K): GridOptions[K] {
         return this.gridOptions[property];
     }
 
+    /**
+     * Get the GridOption property as a number, raw value is returned via a toNumber coercion function.
+     * @param property GridOption property that has the type `number | undefined`
+     */
     public getNum<K extends NumberProps>(property: K): number | undefined {
         return toNumber(this.gridOptions[property]);
     }
 
+    /**
+     * Get the GridOption callback but wrapped so that the common params of api,columnApi and context are automatically applied to the params.
+     * @param property GridOption callback properties based on the fact that this property has a callback with params extending AgGridCommon
+     */
     public getCallback<K extends CallbackProps>(property: K): WrappedCallback<K, GridOptions[K]> {
         return this.mergeGridCommonParams(this.gridOptions[property]);
     }
 
+    /**
+     * Returns `true` if a value has been specified for this GridOption.
+     * @param property GridOption property
+     */
     public exists(property: keyof GridOptions): boolean {
         return exists(this.gridOptions[property]);
     }
@@ -145,6 +165,13 @@ export class GridOptionsService {
         return callback;
     }
 
+    /**
+     *
+     * @param key - key of the GridOption property to update
+     * @param newValue - new value for this property
+     * @param force - force the property change Event to be fired even if the value has not changed
+     * @param eventParams - additional params to merge into the property changed event
+     */
     public set<K extends keyof GridOptions>(key: K, newValue: GridOptions[K], force = false, eventParams: object = {}): void {
         if (this.gridOptionLookup.has(key)) {
             const previousValue = this.gridOptions[key];
