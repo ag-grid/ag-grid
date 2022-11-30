@@ -316,10 +316,18 @@ function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptio
     jsonWalk(
         options,
         (_, userOpts, mergedOpts) => {
-            if (!mergedOpts) {
-                return;
+            if (!mergedOpts) return;
+
+            const { enabledFromTheme = false } = mergedOptions;
+            if ('enabledFromTheme' in mergedOptions) {
+                // Do not apply special handling, base enablement on theme.
+                delete mergedOptions['enabledFromTheme'];
             }
-            if ('enabled' in mergedOpts && userOpts.enabled == null) {
+
+            if (!('enabled' in mergedOpts)) return;
+            if (enabledFromTheme) return;
+
+            if (userOpts.enabled == null) {
                 mergedOpts.enabled = true;
             }
         },

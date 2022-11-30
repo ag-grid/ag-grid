@@ -1,7 +1,7 @@
 {
-  "extends": "./tsconfig.cjs.es5.json",
-  "compilerOptions": {
-    "declaration": true,
-    "outDir": "typings/",
-  }
+    "extends": "./tsconfig.cjs.es5.json",
+    "compilerOptions": {
+        "declaration": true,
+        "outDir": "typings/"
+    }
 }
