@@ -515,7 +515,7 @@ export class ChartTheme {
                 colorKey: 'color',
                 colorDomain: [-5, 5],
                 colorRange: ['#cb4b3f', '#6acb64'],
-                colorParents: false,
+                groupFill: '#272931',
                 gradient: true,
                 nodePadding: 2,
                 title: {

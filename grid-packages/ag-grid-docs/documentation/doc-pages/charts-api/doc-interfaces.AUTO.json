@@ -3939,9 +3939,9 @@
       "description": "/** The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'. */",
       "type": { "returnType": "string[]", "optional": true }
     },
-    "colorParents": {
-      "description": "/** Whether or not to assign colors to non-leaf nodes based on 'colorKey'. */",
-      "type": { "returnType": "boolean", "optional": true }
+    "groupFill": {
+      "description": "/** The group fill color. If undefined the value based on `colorKey` will be used. */",
+      "type": { "returnType": "string", "optional": true }
     },
     "tooltip": {
       "description": "/** Series-specific tooltip configuration. */",

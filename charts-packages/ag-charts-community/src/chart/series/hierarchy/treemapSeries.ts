@@ -175,8 +175,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     @Validate(COLOR_STRING_ARRAY)
     colorRange: string[] = ['#cb4b3f', '#6acb64'];
 
-    @Validate(BOOLEAN)
-    colorParents: boolean = false;
+    @Validate(OPT_STRING)
+    groupFill: string = 'red';
 
     @Validate(BOOLEAN)
     gradient: boolean = true;
@@ -332,7 +332,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             return;
         }
 
-        const { data, sizeKey, labelKey, colorKey, colorDomain, colorRange, colorParents } = this;
+        const { data, sizeKey, labelKey, colorKey, colorDomain, colorRange, groupFill } = this;
 
         const colorScale = new LinearScale();
         colorScale.domain = colorDomain;
@@ -345,9 +345,9 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             const fill =
                 typeof colorScaleValue === 'string'
                     ? colorScaleValue
-                    : isLeaf || colorParents
+                    : isLeaf || !groupFill
                     ? colorScale.convert(colorScaleValue)
-                    : '#272931';
+                    : groupFill;
             const nodeDatum: TreemapNodeDatum = {
                 datum,
                 depth,

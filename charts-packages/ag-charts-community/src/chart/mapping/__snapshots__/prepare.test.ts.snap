@@ -6372,13 +6372,13 @@ Object {
         5,
       ],
       "colorKey": "color",
-      "colorParents": false,
       "colorRange": Array [
         "#cb4b3f",
         "#6acb64",
       ],
       "cursor": "default",
       "gradient": true,
+      "groupFill": "#272931",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
