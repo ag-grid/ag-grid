@@ -10700,16 +10700,6 @@
     "type": { "selected": "boolean", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
-  "ColorPickerConfig": {
-    "meta": {},
-    "type": {
-      "color": "string",
-      "label?": "HTMLElement | string",
-      "labelWidth?": "number | 'flex'",
-      "labelSeparator?": "string",
-      "labelAlignment?": "LabelAlignment"
-    }
-  },
   "DialogOptions": {
     "meta": {},
     "type": {

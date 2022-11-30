@@ -63,11 +63,9 @@ import { AgPanel } from "./widgets/agPanel";
 import { AgInputTextField } from "./widgets/agInputTextField";
 import { AgInputTextArea } from "./widgets/agInputTextArea";
 import { AgSlider } from "./widgets/agSlider";
-import { AgColorPicker } from "./widgets/agColorPicker";
 import { AgInputNumberField } from "./widgets/agInputNumberField";
 import { AgInputRange } from "./widgets/agInputRange";
 import { AgSelect } from "./widgets/agSelect";
-import { AgAngleSelect } from "./widgets/agAngleSelect";
 import { AgToggleButton } from "./widgets/agToggleButton";
 import { RowPositionUtils } from "./entities/rowPosition";
 import { CellPositionUtils } from "./entities/cellPosition";
@@ -270,8 +268,6 @@ export class GridCoreCreator {
             { componentName: 'AgInputRange', componentClass: AgInputRange },
             { componentName: 'AgSelect', componentClass: AgSelect },
             { componentName: 'AgSlider', componentClass: AgSlider },
-            { componentName: 'AgAngleSelect', componentClass: AgAngleSelect },
-            { componentName: 'AgColorPicker', componentClass: AgColorPicker },
             { componentName: 'AgGridBody', componentClass: GridBodyComp },
             { componentName: 'AgHeaderRoot', componentClass: GridHeaderComp },
             { componentName: 'AgSortIndicator', componentClass: SortIndicatorComp },

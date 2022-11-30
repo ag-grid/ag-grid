@@ -1,13 +1,7 @@
-import { AgAbstractLabel, IAgLabel } from "./agAbstractLabel";
-import { RefSelector } from "./componentAnnotations";
-import { Autowired } from "../context/context";
-import { DragService, DragListenerParams } from "../dragAndDrop/dragService";
-import { AgInputNumberField } from "./agInputNumberField";
-import { AgAbstractField } from "./agAbstractField";
-import { exists } from "../utils/generic";
-import { setFixedWidth } from "../utils/dom";
+import { AgAbstractField, AgInputNumberField, Autowired, DragService, Internal, RefSelector, _ } from "@ag-grid-community/core";
 
-export class AgAngleSelect extends AgAbstractLabel {
+
+export class AgAngleSelect extends Internal.AgAbstractLabel {
 
     private static TEMPLATE = /* html */
         `<div class="ag-angle-select">
@@ -34,9 +28,9 @@ export class AgAngleSelect extends AgAbstractLabel {
     private radius: number = 0;
     private offsetX: number = 0;
     private offsetY: number = 0;
-    private dragListener: DragListenerParams;
+    private dragListener: Internal.DragListenerParams;
 
-    constructor(config?: IAgLabel) {
+    constructor(config?: Internal.IAgLabel) {
         super(config, AgAngleSelect.TEMPLATE);
     }
 
@@ -76,7 +70,7 @@ export class AgAngleSelect extends AgAbstractLabel {
 
         this.updateNumberInput();
 
-        if (exists(this.getValue())) {
+        if (_.exists(this.getValue())) {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
 
@@ -226,7 +220,7 @@ export class AgAngleSelect extends AgAbstractLabel {
     }
 
     public setWidth(width: number): this {
-        setFixedWidth(this.getGui(), width);
+        _.setFixedWidth(this.getGui(), width);
         return this;
     }
 

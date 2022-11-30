@@ -1,14 +1,11 @@
 import { AgColorPanel } from "./agColorPanel";
-import { AgDialog } from "./agDialog";
-import { IAgLabel } from "./agAbstractLabel";
-import { AgPickerField } from "./agPickerField";
-import { setAriaExpanded } from "../utils/aria";
+import { _, Internal } from "@ag-grid-community/core";
 
-interface ColorPickerConfig extends IAgLabel {
+interface ColorPickerConfig extends Internal.IAgLabel {
     color: string;
 }
 
-export class AgColorPicker extends AgPickerField<HTMLElement, string> {
+export class AgColorPicker extends Internal.AgPickerField<HTMLElement, string> {
     constructor(config?: ColorPickerConfig) {
         super(config, 'ag-color-picker', 'colorPicker');
 
@@ -27,7 +24,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
 
     public showPicker() {
         const eGuiRect = this.getGui().getBoundingClientRect();
-        const colorDialog = this.createBean(new AgDialog({
+        const colorDialog = this.createBean(new Internal.AgDialog({
             closable: false,
             modal: true,
             hideTitleBar: true,
@@ -41,7 +38,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
         this.isPickerDisplayed = true;
 
         colorDialog.addCssClass('ag-color-dialog');
-        setAriaExpanded(this.eWrapper, true);
+        _.setAriaExpanded(this.eWrapper, true);
 
         const colorPanel = this.createBean(new AgColorPanel({ picker: this }));
 
@@ -69,7 +66,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             }
 
             if (this.isAlive()) {
-                setAriaExpanded(this.eWrapper, false);
+                _.setAriaExpanded(this.eWrapper, false);
                 this.getFocusableElement().focus();
             }
 
@@ -83,7 +80,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
         if (this.value === color) { return this; }
 
         this.eDisplayField.style.backgroundColor = color;
-
+        console.log('setting vlaues')
         return super.setValue(color);
     }
 

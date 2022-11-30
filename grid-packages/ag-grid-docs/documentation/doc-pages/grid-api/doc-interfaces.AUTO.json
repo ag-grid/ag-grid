@@ -19046,19 +19046,6 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "ColorPickerConfig": {
-    "color": { "type": { "returnType": "string", "optional": false } },
-    "label": {
-      "type": { "returnType": "HTMLElement | string", "optional": true }
-    },
-    "labelWidth": {
-      "type": { "returnType": "number | 'flex'", "optional": true }
-    },
-    "labelSeparator": { "type": { "returnType": "string", "optional": true } },
-    "labelAlignment": {
-      "type": { "returnType": "LabelAlignment", "optional": true }
-    }
-  },
   "DialogOptions": {
     "eWrapper": { "type": { "returnType": "HTMLElement", "optional": true } },
     "modal": { "type": { "returnType": "boolean", "optional": true } },

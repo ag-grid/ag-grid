@@ -1,9 +1,5 @@
-import { Component } from "./component";
-import { Color } from "../utils";
-import { RefSelector } from "./componentAnnotations";
-import { PostConstruct } from "../context/context";
+import { Color, Component, PostConstruct, RefSelector, _ } from "@ag-grid-community/core";
 import { AgColorPicker } from "./agColorPicker";
-import { exists } from "../utils/generic";
 
 export class AgColorPanel extends Component {
     private H = 1; // in the [0, 1] range
@@ -271,7 +267,7 @@ export class AgColorPanel extends Component {
     private onRecentColorClick(e: MouseEvent) {
         const target = e.target as HTMLElement;
 
-        if (!exists(target.id)) {
+        if (!_.exists(target.id)) {
             return;
         }
 

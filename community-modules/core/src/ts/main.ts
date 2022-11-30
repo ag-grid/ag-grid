@@ -236,8 +236,6 @@ export { AgInputNumberField } from "./widgets/agInputNumberField";
 export { AgInputRange } from "./widgets/agInputRange";
 export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
-export { AgAngleSelect } from "./widgets/agAngleSelect";
-export { AgColorPicker } from "./widgets/agColorPicker";
 export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
 export { AgMenuItemComponent, MenuItemActivatedEvent, MenuItemSelectedEvent } from "./widgets/agMenuItemComponent";
 export { AgMenuList } from "./widgets/agMenuList";
@@ -477,3 +475,5 @@ export { ModuleRegistry } from "./modules/moduleRegistry";
 
 //  events
 export * from "./events";
+
+export * as Internal from './internals';
