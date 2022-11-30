@@ -126,12 +126,13 @@ export class CartesianChart extends Chart {
             }
         }
 
-        const stableWidths = <T extends typeof axisWidths>(
+        const stableOutputs = <T extends typeof axisWidths>(
             otherAxisWidths: T,
             otherVisibility: Partial<VisibilityMap>
         ) => {
             return (
                 visibility.axes === otherVisibility.axes &&
+                visibility.crossLines === visibility.crossLines &&
                 Object.entries(axisWidths).every(([p, w]) => {
                     const otherW = (otherAxisWidths as any)[p];
                     if (w != null || otherW != null) {
@@ -173,7 +174,7 @@ export class CartesianChart extends Chart {
                 console.warn('AG Charts - unable to find stable axis layout.');
                 break;
             }
-        } while (!stableWidths(lastPassAxisWidths, lastPassVisibility));
+        } while (!stableOutputs(lastPassAxisWidths, lastPassVisibility));
 
         this.seriesRoot.enabled = clipSeries;
 
