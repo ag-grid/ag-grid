@@ -34,7 +34,8 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     private getData(params: UpdateChartParams, axes: AgCartesianAxisOptions[]): any[] {
         const supportsCrossFiltering = ['area', 'line'].includes(this.standaloneChartType);
-        const xAxisIsCategory = axes.filter(o => o.position === 'bottom')[0]?.type === 'category';
+        const xPosition = this.standaloneChartType === 'bar' ? 'left' : 'bottom';
+        const xAxisIsCategory = axes.find(o => o.position === xPosition)?.type === 'category';
         return this.crossFiltering && supportsCrossFiltering ?
             this.getCrossFilterData(params) :
             this.getDataTransformedData(params, xAxisIsCategory);
