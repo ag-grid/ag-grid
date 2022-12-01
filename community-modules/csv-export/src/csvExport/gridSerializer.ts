@@ -89,7 +89,7 @@ export class GridSerializer extends BeanStub {
         // if it's not a leaf group
         const nodeIsRootNode = node.level === -1;
 
-        if (nodeIsRootNode && !node.leafGroup && (!node.footer || !isClipboardExport)) { 
+        if (nodeIsRootNode && !node.leafGroup && !node.footer) { 
             return;
         }
 
@@ -215,7 +215,7 @@ export class GridSerializer extends BeanStub {
                     .forEach(processRow);
             } else if (this.columnModel.isPivotMode()) {
                 if (usingCsrm) {
-                    (rowModel as IClientSideRowModel).forEachPivotNode(processRow);
+                    (rowModel as IClientSideRowModel).forEachPivotNode(processRow, true);
                 } else {
                     // must be enterprise, so we can just loop through all the nodes
                     rowModel.forEachNode(processRow);
@@ -236,7 +236,7 @@ export class GridSerializer extends BeanStub {
                     if (exportedRows === 'all') {
                         rowModel.forEachNode(processRow);
                     } else if (usingCsrm) {
-                        (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow);
+                        (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow, true);
                     } else if (usingSsrm) {
                         (rowModel as IServerSideRowModel).forEachNodeAfterFilterAndSort(processRow);
                     } else {

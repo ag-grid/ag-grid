@@ -216,7 +216,6 @@ export class ColumnGroup implements IHeaderColumn {
         return result;
     }
 
-    // why two methods here doing the same thing?
     public getDefinition(): AbstractColDef | null {
         return this.providedColumnGroup.getColGroupDef();
     }

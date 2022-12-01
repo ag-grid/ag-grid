@@ -12494,23 +12494,32 @@
         "optional": false
       }
     },
-    "forEachNode": {
-      "type": {
-        "arguments": { "callback": "(node: RowNode, index: number) => void" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "forEachNodeAfterFilter": {
       "type": {
-        "arguments": { "callback": "(node: RowNode, index: number) => void" },
+        "arguments": {
+          "callback": "(node: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
+        },
         "returnType": "void",
         "optional": false
       }
     },
     "forEachNodeAfterFilterAndSort": {
       "type": {
-        "arguments": { "callback": "(node: RowNode, index: number) => void" },
+        "arguments": {
+          "callback": "(node: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "forEachPivotNode": {
+      "type": {
+        "arguments": {
+          "callback": "(node: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
+        },
         "returnType": "void",
         "optional": false
       }
@@ -12551,13 +12560,6 @@
       "type": {
         "arguments": {},
         "returnType": "RowNode[] | null",
-        "optional": false
-      }
-    },
-    "forEachPivotNode": {
-      "type": {
-        "arguments": { "callback": "(node: RowNode, index: number) => void" },
-        "returnType": "void",
         "optional": false
       }
     },
@@ -12661,6 +12663,17 @@
       "type": {
         "arguments": { "first": "RowNode", "last": "RowNode | null" },
         "returnType": "RowNode[]",
+        "optional": false
+      }
+    },
+    "forEachNode": {
+      "description": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
+      "type": {
+        "arguments": {
+          "callback": "(rowNode: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
+        },
+        "returnType": "void",
         "optional": false
       }
     },
@@ -14193,7 +14206,8 @@
       "description": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
       "type": {
         "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void"
+          "callback": "(rowNode: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -14973,7 +14987,8 @@
       "description": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
       "type": {
         "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void"
+          "callback": "(rowNode: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -15340,7 +15355,8 @@
       "description": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
       "type": {
         "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void"
+          "callback": "(rowNode: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
         },
         "returnType": "void",
         "optional": false
