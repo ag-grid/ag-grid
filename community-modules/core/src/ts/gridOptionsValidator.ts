@@ -49,7 +49,9 @@ export class GridOptionsValidator {
         suppressReactUi: { version: '28', message: 'The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.' },
         processSecondaryColDef: { version: '28', newProp: 'processPivotResultColDef', copyToNewProp: true },
         processSecondaryColGroupDef: { version: '28', newProp: 'processPivotResultColGroupDef', copyToNewProp: true },
-        getServerSideStoreParams: { version: '28', newProp: 'getServerSideGroupLevelParams', copyToNewProp: true }
+        getServerSideStoreParams: { version: '28', newProp: 'getServerSideGroupLevelParams', copyToNewProp: true },
+
+        enableChartToolPanelsButton: { version: '29', newProp: 'suppressChartToolPanelsButton', message: 'The Chart Tool Panels are now enabled by default. To turn it off, set suppressChartToolPanelsButton=true.' }
     }
 
     private pickOneWarning(prop1: keyof GridOptions, prop2: keyof GridOptions) {
