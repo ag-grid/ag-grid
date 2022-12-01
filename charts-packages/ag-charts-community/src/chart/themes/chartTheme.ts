@@ -587,7 +587,7 @@ export class ChartTheme {
         options = deepMerge({}, options || {}, mergeOptions) as AgChartThemeOptions;
         const { overrides = null, palette = null } = options;
 
-        let defaults = this.createChartConfigPerSeries(this.getDefaults());
+        let defaults = this.createChartConfigPerChartType(this.getDefaults());
 
         if (overrides) {
             const { common, cartesian, polar, hierarchy } = overrides;
@@ -609,13 +609,11 @@ export class ChartTheme {
             applyOverrides('polar', ChartTheme.polarSeriesTypes, polar);
             applyOverrides('hierarchy', ChartTheme.hierarchySeriesTypes, hierarchy);
 
-            const seriesOverridesMap: { [key: string]: any } = {};
             ChartTheme.seriesTypes.forEach((seriesType) => {
                 const chartConfig = overrides[seriesType];
                 if (chartConfig) {
                     if (chartConfig.series) {
-                        seriesOverridesMap[seriesType] = chartConfig.series;
-                        chartConfig.series = seriesOverridesMap;
+                        (chartConfig as any).series = { [seriesType]: chartConfig.series };
                     }
                     defaults[seriesType] = deepMerge(defaults[seriesType], chartConfig, mergeOptions);
                 }
@@ -640,7 +638,7 @@ export class ChartTheme {
         .concat(ChartTheme.polarSeriesTypes)
         .concat(ChartTheme.hierarchySeriesTypes);
 
-    private createChartConfigPerSeries(config: ChartThemeDefaults) {
+    private createChartConfigPerChartType(config: ChartThemeDefaults) {
         const typeToAliases = {
             cartesian: ChartTheme.cartesianSeriesTypes,
             polar: ChartTheme.polarSeriesTypes,
