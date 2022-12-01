@@ -12,6 +12,10 @@ export class ModuleRegistry {
     public static register(module: Module, moduleBased = true): void {
         ModuleRegistry.modulesMap[module.moduleName] = module;
 
+        ModuleRegistry.setModuleBased(moduleBased);
+    }
+
+    private static setModuleBased(moduleBased: boolean) {
         if (ModuleRegistry.moduleBased === undefined) {
             ModuleRegistry.moduleBased = moduleBased;
         } else {
@@ -28,6 +32,8 @@ export class ModuleRegistry {
 
     // noinspection JSUnusedGlobalSymbols
     public static registerModules(modules: Module[], moduleBased = true): void {
+        ModuleRegistry.setModuleBased(moduleBased);
+
         if (!modules) {
             return;
         }
