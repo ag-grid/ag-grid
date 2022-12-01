@@ -227,12 +227,6 @@
       "type": { "returnType": "boolean", "optional": false }
     }
   },
-  "DeprecatedComponentName": {
-    "propertyHolder": { "type": { "returnType": "string", "optional": false } },
-    "newComponentName": {
-      "type": { "returnType": "string", "optional": false }
-    }
-  },
   "ContextParams": {
     "providedBeanInstances": {
       "type": { "returnType": "any", "optional": false }

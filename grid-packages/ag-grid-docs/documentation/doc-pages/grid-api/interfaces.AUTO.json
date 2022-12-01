@@ -156,10 +156,6 @@
     },
     "type": { "component": "any", "componentFromFramework": "boolean" }
   },
-  "DeprecatedComponentName": {
-    "meta": {},
-    "type": { "propertyHolder": "string", "newComponentName": "string" }
-  },
   "ContextParams": {
     "meta": {},
     "type": {
