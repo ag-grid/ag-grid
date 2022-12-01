@@ -1,4 +1,4 @@
-import { FontStyle, FontWeight, getFont } from '../../scene/shape/text';
+import { FontStyle, FontWeight } from 'ag-charts-community';
 import { Observable, reactive } from '../../util/observable';
 
 export class Label extends Observable {
@@ -8,10 +8,6 @@ export class Label extends Observable {
     @reactive('change') fontStyle?: FontStyle;
     @reactive('change') fontWeight?: FontWeight;
     @reactive('change') color = 'rgba(70, 70, 70, 1)';
-
-    getFont(): string {
-        return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
-    }
 
     constructor() {
         super();

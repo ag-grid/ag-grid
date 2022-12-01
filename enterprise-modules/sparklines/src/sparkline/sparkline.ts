@@ -1,5 +1,4 @@
-import { Group } from '../scene/group';
-import { Scene } from '../scene/scene';
+import { _Scene } from 'ag-charts-community';
 import { Observable } from '../util/observable';
 import { createId } from '../util/id';
 import { Padding } from '../util/padding';
@@ -44,9 +43,9 @@ export class SparklineAxis extends Observable {
 export abstract class Sparkline extends Observable {
     readonly id: string = createId(this);
 
-    readonly scene: Scene;
+    readonly scene: _Scene.Scene;
     readonly canvasElement: HTMLCanvasElement;
-    readonly rootGroup: Group;
+    readonly rootGroup: _Scene.Group;
 
     // Only one tooltip instance for all sparkline instances.
     tooltip!: SparklineTooltip;
@@ -128,13 +127,13 @@ export abstract class Sparkline extends Observable {
     protected constructor() {
         super();
 
-        const root = new Group();
+        const root = new _Scene.Group();
         this.rootGroup = root;
 
         const element = document.createElement('div');
         element.setAttribute('class', 'ag-sparkline-wrapper');
 
-        const scene = new Scene(document);
+        const scene = new _Scene.Scene({ document });
         this.scene = scene;
         this.canvasElement = scene.canvas.element;
         scene.root = root;
@@ -321,6 +320,7 @@ export abstract class Sparkline extends Observable {
         ) {
             this.highlightDatum(closestDatum);
             this.updateCrosshairs();
+            this.scene.render();
         }
 
         if (this.tooltip.enabled) {
@@ -335,6 +335,7 @@ export abstract class Sparkline extends Observable {
     private onMouseOut(event: MouseEvent) {
         this.dehighlightDatum();
         this.tooltip.toggle(false);
+        this.scene.render();
     }
 
     protected smallestInterval?: { x: number, y: number } = undefined;
@@ -448,6 +449,8 @@ export abstract class Sparkline extends Observable {
 
         // produce data joins and update selection's nodes
         this.update();
+
+        this.scene.render();
     }
 
     /**
@@ -521,6 +524,8 @@ export abstract class Sparkline extends Observable {
 
             // produce data joins and update selection's nodes
             this.update();
+
+            this.scene.render();
 
             this.layoutId = 0;
         });
