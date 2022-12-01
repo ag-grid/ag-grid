@@ -35,7 +35,7 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
 
     // Overrides in ascending precedence ordering.
     const overrides: (AgChartThemeOverrides | undefined)[] = [
-        stockTheme ? INBUILT_STOCK_THEME_OVERRIDES : undefined,
+        stockTheme ? inbuiltStockThemeOverrides(chartProxyParams) : undefined,
         crossFilteringOverrides,
         gridOptionsThemeOverrides,
         apiThemeOverrides,
@@ -82,24 +82,6 @@ function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThem
 export function isStockTheme(themeName: string): boolean {
     return _.includes(Object.keys(_Theme.themes), themeName);
 }
-
-const INBUILT_STOCK_THEME_OVERRIDES: AgChartThemeOverrides = {
-    common: {
-        padding: {
-            top: 25,
-            right: 20,
-            bottom: 20,
-            left: 20,
-        },
-    },
-    pie: {
-        series: {
-            sectorLabel: {
-                enabled: false,
-            },
-        },
-    },
-};
 
 function createCrossFilterThemeOverrides(
     proxy: ChartProxy,
@@ -150,6 +132,31 @@ function createCrossFilterThemeOverrides(
             },
             series,
         },
+    };
+}
+
+const STATIC_INBUILT_STOCK_THEME_OVERRIDES: AgChartThemeOverrides = {
+    pie: {
+        series: {
+            sectorLabel: {
+                enabled: false,
+            },
+        },
+    },
+};
+
+function inbuiltStockThemeOverrides(params: ChartProxyParams) {
+    const extraPadding = params.getExtraPaddingRequired();
+    return {
+        common: {
+            padding: {
+                top: 20 + (extraPadding.top ?? 0),
+                right: 20 + (extraPadding.right ?? 0),
+                bottom: 20 + (extraPadding.bottom ?? 0),
+                left: 20 + (extraPadding.left ?? 0),
+            },
+        },
+        ...STATIC_INBUILT_STOCK_THEME_OVERRIDES,
     };
 }
 
