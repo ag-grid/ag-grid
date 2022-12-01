@@ -3,7 +3,7 @@ import { BandScale } from '../../scale/bandScale';
 import { isNumber } from '../../util/value';
 import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
 
-export interface ColumnNodeDatum extends RectNodeDatum { }
+interface ColumnNodeDatum extends RectNodeDatum { }
 export class ColumnSparkline extends BarColumnSparkline {
     static className = 'ColumnSparkline';
 

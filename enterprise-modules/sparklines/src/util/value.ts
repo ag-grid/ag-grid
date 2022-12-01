@@ -7,11 +7,11 @@ export function isNumber(value: any): boolean {
     return Number.isFinite(value);
 }
 
-export function isNumberObject(value: any): boolean {
+function isNumberObject(value: any): boolean {
     return !!value && value.hasOwnProperty('valueOf') && isNumber(value.valueOf());
 }
 
-export function isNumeric(value: any): boolean {
+function isNumeric(value: any): boolean {
     return isNumber(value) || isNumberObject(value);
 }
 
@@ -25,10 +25,6 @@ export function isString(value: any): boolean {
 
 export function isStringObject(value: any): boolean {
     return !!value && value.hasOwnProperty('toString') && isString(value.toString());
-}
-
-export function isDiscrete(value: any): boolean {
-    return isString(value) || isStringObject(value);
 }
 
 export function isContinuous(value: any): boolean {

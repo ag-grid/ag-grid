@@ -1,5 +1,4 @@
 import { _Scene } from 'ag-charts-community';
-import { Observable } from '../util/observable';
 import { createId } from '../util/id';
 import { Padding } from '../util/padding';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
@@ -35,12 +34,12 @@ type DataType = 'number' | 'array' | 'object' | undefined;
 type AxisType = 'number' | 'category' | 'time';
 type ScaleType = LinearScale | TimeScale | BandScale<string>;
 
-export class SparklineAxis extends Observable {
+export class SparklineAxis {
     type?: AxisType = 'category';
     stroke: string = 'rgb(204, 214, 235)';
     strokeWidth: number = 1;
 }
-export abstract class Sparkline extends Observable {
+export abstract class Sparkline {
     readonly id: string = createId(this);
 
     readonly scene: _Scene.Scene;
@@ -125,8 +124,6 @@ export abstract class Sparkline extends Observable {
     };
 
     protected constructor() {
-        super();
-
         const root = new _Scene.Group();
         this.rootGroup = root;
 

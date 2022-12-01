@@ -1,8 +1,7 @@
 import { Color } from '../../util/color';
-import { Observable } from '../../util/observable';
 import { TooltipRendererResult, TooltipRendererParams } from '@ag-grid-community/core';
 
-export interface TooltipMeta {
+interface TooltipMeta {
     pageX: number;
     pageY: number;
 }
@@ -57,7 +56,7 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
     }
 }
 
-export class SparklineTooltip extends Observable {
+export class SparklineTooltip {
     element: HTMLElement = document.createElement('div');
 
     static class: string = 'ag-sparkline-tooltip';
@@ -68,7 +67,6 @@ export class SparklineTooltip extends Observable {
     renderer?: (params: TooltipRendererParams) => string | TooltipRendererResult = undefined;
 
     constructor() {
-        super();
         const tooltipRoot = document.body;
         tooltipRoot.appendChild(this.element);
     }

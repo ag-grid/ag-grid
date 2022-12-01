@@ -14,5 +14,5 @@ function field(date: Date): number {
     return date.getMonth();
 }
 
-export const month = new CountableTimeInterval(floor, offset, count, field);
+const month = new CountableTimeInterval(floor, offset, count, field);
 export default month;

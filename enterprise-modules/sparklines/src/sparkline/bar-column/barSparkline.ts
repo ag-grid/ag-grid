@@ -4,7 +4,7 @@ import { isNumber } from '../../util/value';
 import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
 import { Point } from '../sparkline';
 
-export interface BarNodeDatum extends RectNodeDatum { }
+interface BarNodeDatum extends RectNodeDatum { }
 export class BarSparkline extends BarColumnSparkline {
     static className = 'BarSparkline';
 
