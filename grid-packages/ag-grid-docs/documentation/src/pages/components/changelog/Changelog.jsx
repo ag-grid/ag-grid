@@ -15,9 +15,8 @@ const COLUMN_DEFS = [
     {
         field: "key",
         headerName: "Issue",
-        suppressSizeToFit: true,
+        width: 140,
         headerClass: styles["header-padding-class"],
-        width: 131,
         filter: false,
         cellRendererSelector: params => {
             if (
@@ -37,41 +36,39 @@ const COLUMN_DEFS = [
     {
         field: "versions",
         headerName: "Version",
-        width: 112,
+        width:100,
     },
-
     {
         field: "summary",
         tooltipField: "summary",
+        flex: 1,
         filter: false,
-        width: 635,
     },
     {
         field: "issueType",
-        width: 175,
-        suppressSizeToFit: true,
         valueFormatter: params => params.value === "Bug" ? "Defect" : "Feature Request",
         filterParams: {
             valueFormatter: params => params.colDef.valueFormatter(params),
         },
-        cellRenderer: 'issueTypeCellRenderer'
+        cellRenderer: 'issueTypeCellRenderer',
+        width: 180
     },
     {
         field: "status",
-        width: 100,
         valueGetter: params => {
             return params.data.resolution
         },
+        width: 100
     },
     {
         field: "features",
         headerName: "Feature",
-        width: 142,
         valueFormatter: params => !!params.value ? params.value.toString().replaceAll("_", " ") : undefined,
         tooltipValueGetter: params => params.colDef.valueFormatter(params),
         filterParams: {
             valueFormatter: params => params.colDef.valueFormatter(params),
         },
+        width: 160
     },
     {
         field: "deprecated",
@@ -87,7 +84,6 @@ const COLUMN_DEFS = [
 ]
 
 const defaultColDef = {
-    flex: 1,
     filter: true,
     sortable: true,
     resizable: true,
@@ -320,7 +316,7 @@ const Changelog = ({location}) => {
         setFixVersion(fixVersion)
         let url = new URL(window.location)
         url.searchParams.set('fixVersion', fixVersion)
-        window.history.pushState({},'',url ) 
+        window.history.pushState({},'',url )
     }
 
     return (
@@ -387,7 +383,6 @@ const Changelog = ({location}) => {
                         onGridReady={gridReady}
                         onFirstDataRendered={() => {
                             applyFixVersionFilter();
-                            gridApi.sizeColumnsToFit()
                         }}
                     ></Grid>
                 </div>
