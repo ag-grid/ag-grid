@@ -348,12 +348,6 @@
                 "url": "/integrated-charts-user-created/#enabling-user-created-charts"
             }
         },
-        "enableChartToolPanelsButton": {
-            "more": {
-                "name": "Enabling Chart Tool Panels Button",
-                "url": "/integrated-charts-toolbar/#chart-tool-panels-button"
-            }
-        },
         "suppressChartToolPanelsButton": {
             "more": {
                 "name": "Suppress Chart Tool Panels Button",

@@ -18,7 +18,6 @@ enum LoadingType { Loading, NoRows }
 export class OverlayWrapperComponent extends Component implements LayoutView {
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
-    // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
     private static TEMPLATE = /* html */`
         <div class="ag-overlay" aria-hidden="true">
             <div class="ag-overlay-panel">
