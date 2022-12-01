@@ -1,4 +1,0 @@
-@if not global-variable-exists("ag-suppress-all-theme-deprecation-warnings") {
-    @warn "You are importing ag-theme-material/sass/ag-theme-material.scss. This import path is deprecated and will be removed in a future major version release. To continue using the Material theme, please update your imports to either ag-theme-material/sass/legacy/ag-theme-material-v22-compat.scss (if you want to continue using v22 global variables for configuration), or ag-theme-material/sass/ag-theme-material-mixin.scss (if you want to transition to the new theme configuration system). See https://www.ag-grid.com/archive/23.0.0/javascript-grid-themes-v23-migration/";
-}
-@import "./legacy/ag-theme-material-v22-compat.scss";
