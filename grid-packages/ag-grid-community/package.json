@@ -8,6 +8,7 @@
     "clean": "rimraf dist main.d.ts src/styles .hash",
     "build": "npx gulp build && npm run rollup && npm run hash",
     "build-prod": "npm run build",
+    "test:e2e": "npx jest",
     "package": "npx gulp package",
     "rollup": "mkdir -p dist && node build.js",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
@@ -54,6 +55,10 @@
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {},
   "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "jest": "^25.4.0",
+    "sass": "^1.35.1",
+    "ts-jest": "^25.4.0",
     "@ag-grid-community/all-modules": "~28.2.1",
     "@ag-grid-community/core": "~28.2.1",
     "@ag-grid-community/client-side-row-model": "~28.2.1",

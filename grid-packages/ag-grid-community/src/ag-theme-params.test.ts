@@ -7,7 +7,7 @@ import * as child_process from 'child_process';
 describe('ag-param', () => {
     it('resolves derived values', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  x: ag-derived(a),
                  a: ag-derived(b, $times: c, $plus: 2),
@@ -29,7 +29,7 @@ describe('ag-param', () => {
 
     it('applies all maths operators', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: 1,
                  b: 2,
@@ -71,7 +71,7 @@ describe('ag-param', () => {
 
     it('applies all color operators', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: rgb(100, 100, 100),
                  b: red,
@@ -114,7 +114,7 @@ describe('ag-param', () => {
 
     it('does not throw an error when used with a color property in regular use', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  my-color: red
             ));
@@ -135,7 +135,7 @@ describe('ag-param', () => {
 describe('ag-color-property', () => {
     it('emits a color property with CSS var override', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: red,
                  suppress-css-var-overrides: false
@@ -156,7 +156,7 @@ describe('ag-color-property', () => {
 
     it('allows CSS variable overrides to be disabled', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: ag-derived(b),
                  b: ag-derived(c),
@@ -178,7 +178,7 @@ describe('ag-color-property', () => {
 
     it('implements ag-derived default value cascades using CSS variable default values', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: ag-derived(b),
                  b: ag-derived(c),
@@ -201,7 +201,7 @@ describe('ag-color-property', () => {
 
     it('disables the runtime variable cascade when an ag-derived value modifies a color', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: ag-derived(b),
                  b: ag-derived(c, $opacity: 0.5),
@@ -224,7 +224,7 @@ describe('ag-color-property', () => {
 
     it('stops the runtime variable cascade when an ag-derived value in the chain modifies a color', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: ag-derived(b, $opacity: 0.5),
                  b: red,
@@ -246,7 +246,7 @@ describe('ag-color-property', () => {
 
     it('emits a var with no default value when value is null', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: null,
                  suppress-css-var-overrides: false
@@ -266,7 +266,7 @@ describe('ag-color-property', () => {
 
     it('emits a variable cascade with no default value when a value resolves to null', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: ag-derived(c),
                  c: null,
@@ -287,7 +287,7 @@ describe('ag-color-property', () => {
 
     it('emits a var with no default value when a value resolves to null through an ag-derived that performs color modification', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: ag-derived(b),
                  b: ag-derived(c, $opacity: 0.5),
@@ -309,7 +309,7 @@ describe('ag-color-property', () => {
 
     it('Allows color values to be CSS variables', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: var(--foo),
                  suppress-css-var-overrides: false
@@ -330,7 +330,7 @@ describe('ag-color-property', () => {
 
     it('Allows color values to resolve to CSS variables if they are not modified', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: ag-derived(b),
                  b: var(--foo),
@@ -352,7 +352,7 @@ describe('ag-color-property', () => {
 
     it('warns when attempting to modify a CSS color variable', () => {
         const rendered = renderScss(`
-            @import "../../styles/mixins/ag-theme-params";
+            @import "./styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: ag-derived(b),
                  b: ag-derived(c, $opacity: 0.5),
@@ -380,7 +380,7 @@ const renderScss = (scss: string) => {
     const tmpFile = path.join(os.tmpdir(), `ag-theme-params-test-${Math.random()}.scss`);
     fs.writeFileSync(tmpFile, scss);
     try {
-        const process = child_process.spawnSync(path.join(__dirname, '../../../node_modules/.bin/sass'), [
+        const process = child_process.spawnSync(path.join(__dirname, '../node_modules/.bin/sass'), [
             tmpFile,
             '--load-path',
             __dirname,
