@@ -41,7 +41,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
             && this.gridOptionsService.is('groupIncludeTotalFooter');
 
         if (includeGroupTotalFooter) {
-            this.ensureFooterNodeExists(rootNode);
+            rootNode.createFooter();
             this.addRowNodeToRowsToDisplay(rootNode.sibling, result, nextRowTop, 0);
         }
 
@@ -108,7 +108,6 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
                     // put a footer in if user is looking for it
                     if (this.gridOptionsService.is('groupIncludeFooter')) {
-                        this.ensureFooterNodeExists(rowNode);
                         this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevel);
                     }
                 }
@@ -125,35 +124,6 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
         result.push(rowNode);
         rowNode.setUiLevel(isGroupMultiAutoColumn ? 0 : uiLevel);
-    }
-
-    private ensureFooterNodeExists(groupNode: RowNode): void {
-        // only create footer node once, otherwise we have daemons and
-        // the animate screws up with the daemons hanging around
-        if (_.exists(groupNode.sibling)) { return; }
-
-        const footerNode = new RowNode(this.beans);
-
-        Object.keys(groupNode).forEach(function(key) {
-            (footerNode as any)[key] = (groupNode as any)[key];
-        });
-
-        footerNode.footer = true;
-        footerNode.setRowTop(null);
-        footerNode.setRowIndex(null);
-
-        // manually set oldRowTop to null so we discard any
-        // previous information about its position.
-        footerNode.oldRowTop = null;
-
-        if (_.exists(footerNode.id)) {
-            footerNode.id = 'rowGroupFooter_' + footerNode.id;
-        }
-        // get both header and footer to reference each other as siblings. this is never undone,
-        // only overwritten. so if a group is expanded, then contracted, it will have a ghost
-        // sibling - but that's fine, as we can ignore this if the header is contracted.
-        footerNode.sibling = groupNode;
-        groupNode.sibling = footerNode;
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
