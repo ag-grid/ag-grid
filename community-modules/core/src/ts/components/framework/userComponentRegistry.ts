@@ -86,8 +86,12 @@ export class UserComponentRegistry extends BeanStub {
     private enterpriseAgDefaultCompsModule: Record<string, ModuleNames> = {
         agSetColumnFilter: ModuleNames.SetFilterModule,
         agSetColumnFloatingFilter: ModuleNames.SetFilterModule,
+        agMultiColumnFilter: ModuleNames.MultiFilterModule,
+        agMultiColumnFloatingFilter: ModuleNames.MultiFilterModule,
+        agRichSelect: ModuleNames.RichSelectModule,
         agRichSelectCellEditor: ModuleNames.RichSelectModule,
-        agDetailCellRenderer: ModuleNames.MasterDetailModule
+        agDetailCellRenderer: ModuleNames.MasterDetailModule,
+        agSparklineCellRenderer: ModuleNames.SparklinesModule
     }
 
     private deprecatedAgGridDefaults: Record<string, string> = {
