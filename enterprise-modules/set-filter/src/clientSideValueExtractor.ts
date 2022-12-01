@@ -1,4 +1,4 @@
-import { ColumnModel, GetDataPath, IClientSideRowModel, ISetFilterParams, RowNode, ValueService, _ } from '@ag-grid-community/core';
+import { Column, ColumnModel, GetDataPath, IClientSideRowModel, ISetFilterParams, RowNode, ValueService, _ } from '@ag-grid-community/core';
 
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor<V> {
@@ -9,6 +9,7 @@ export class ClientSideValuesExtractor<V> {
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
         private readonly columnModel: ColumnModel,
         private readonly valueService: ValueService,
+        private readonly treeDataOrGrouping: boolean,
         private readonly treeData: boolean,
         private readonly getDataPath?: GetDataPath
     ) {
@@ -18,6 +19,8 @@ export class ClientSideValuesExtractor<V> {
         const values: Map<string | null, V | null> = new Map();
         const existingFormattedKeys = this.extractExistingFormattedKeys(existingValues);
         const formattedKeys: Set<string | null> = new Set();
+        const treeData = this.treeData && !!this.getDataPath;
+        const groupedCols = this.columnModel.getRowGroupColumns();
 
         const addValue = (unformattedKey: string | null, value: V | null) => {
             const formattedKey = this.caseFormat(unformattedKey);
@@ -39,53 +42,57 @@ export class ClientSideValuesExtractor<V> {
         this.rowModel.forEachLeafNode(node => {
             // only pull values from rows that have data. this means we skip filler group nodes.
             if (!node.data || !predicate(node)) { return; }
+            if (this.treeDataOrGrouping) {
+                this.addValueForTreeDataOrGrouping(node, treeData, groupedCols, addValue);
+                return;
+            }
 
             let value = this.getValue(node);
 
             if (this.filterParams.convertValuesToStrings) {
                 // for backwards compatibility - keeping separate as it will eventually be removed
-                const key = this.createKey(value, node);
-                if (key != null && Array.isArray(key)) {
-                    key.forEach(part => {
-                        const processedPart = _.toStringOrNull(_.makeNull(part));
-                        addValue(processedPart, processedPart as any);
-                    });
-                } else {
-                    addValue(key, key as any);
-                }
+                this.addValueForConvertValuesToString(node, value, addValue);
+                return;
+            }
+
+            if (value != null && Array.isArray(value)) {
+                value.forEach(x => {
+                    addValue(this.createKey(x, node), x);
+                });
             } else {
-                if (value != null && Array.isArray(value)) {
-                    value.forEach(x => {
-                        addValue(this.createKey(x, node), x);
-                    });
-                } else {
-                    addValue(this.createKey(value, node), value);
-                }
+                addValue(this.createKey(value, node), value);
             }
         });
 
         return values;
     }
 
-    public extractTreeValues(predicate: (node: RowNode) => boolean): (string[] | null)[] {
-        const values: (string[] | null)[] = [];
-        const treeData = this.treeData && !!this.getDataPath;
-        const groupedCols = this.columnModel.getRowGroupColumns()
+    private addValueForConvertValuesToString(node: RowNode, value: V | null, addValue: (unformattedKey: string | null, value: V | null) => void): void {
+        const key = this.createKey(value, node);
+        if (key != null && Array.isArray(key)) {
+            key.forEach(part => {
+                const processedPart = _.toStringOrNull(_.makeNull(part));
+                addValue(processedPart, processedPart as any);
+            });
+        } else {
+            addValue(key, key as any);
+        }
+    }
 
-        this.rowModel.forEachLeafNode(node => {
-            // only extract leaves. The core filtering logic for tree data won't work properly otherwise
-            if (node.childrenAfterGroup?.length || !predicate(node)) { return; }
+    private addValueForTreeDataOrGrouping(node: RowNode, treeData: boolean, groupedCols: Column[], addValue: (unformattedKey: string | null, value: V | null) => void): void {
+        let dataPath: string[] | null;
+        if (treeData) {
+            if (node.childrenAfterGroup?.length) { return; }
+            dataPath = this.getDataPath!(node.data);
+        } else {
+            dataPath = groupedCols.map(groupCol => this.valueService.getKeyForNode(groupCol, node));
+            dataPath.push(_.toStringOrNull(_.makeNull(this.getValue(node)))!);
+        }
+        addValue(this.generateDataPathKey(dataPath), dataPath as any);
+    }
 
-            if (treeData) {
-                values.push(this.getDataPath!(node.data) as any);
-            } else {
-                const dataPath = groupedCols.map(groupCol => this.valueService.getKeyForNode(groupCol, node));
-                dataPath.push(_.toStringOrNull(_.makeNull(this.getValue(node))));
-                values.push(dataPath);
-            }
-        });
-
-        return values;
+    private generateDataPathKey(dataPath: string[] | null): string | null {
+        return dataPath ? dataPath.map(k => k.replace(new RegExp('#', 'g'), '')).join('#').toUpperCase() : null;
     }
 
     private getValue(node: RowNode): V | null {

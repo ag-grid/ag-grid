@@ -1,7 +1,7 @@
 import { Column, TextFormatter, ValueFormatterParams, ValueFormatterService } from '@ag-grid-community/core';
 import { ISetDisplayValueModel } from './iSetDisplayValueModel';
 
-export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<string, V> {
+export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     /** All keys that are currently displayed, after the mini-filter has been applied. */
     private displayedKeys: (string | null)[] = [];
 

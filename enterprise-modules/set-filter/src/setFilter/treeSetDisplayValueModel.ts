@@ -1,31 +1,31 @@
 import { _, TextFormatter } from '@ag-grid-community/core';
 import { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 
-export class TreeSetDisplayValueModel<K extends string | string[], V> implements ISetDisplayValueModel<K, V> {
+export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     private static readonly DATE_TREE_LIST_PATH_GETTER = (date: Date) => [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())];
 
     /** all displayed items in a tree structure */
-    private allDisplayedItemsTree: SetFilterModelTreeItem<K>[] = [];
+    private allDisplayedItemsTree: SetFilterModelTreeItem[] = [];
     /** all displayed items flattened and filtered */
-    private activeDisplayedItemsFlat: SetFilterModelTreeItem<K>[] = [];
+    private activeDisplayedItemsFlat: SetFilterModelTreeItem[] = [];
 
     private groupsExist: boolean;
 
     constructor(
         private readonly formatter: TextFormatter,
         private readonly treeListPathGetter?: (value: V) => (string | null)[],
-        private readonly treeDataOrGroup?: boolean
+        private readonly treeDataOrGrouping?: boolean
     ) {};
 
-    public updateDisplayedValuesToAllAvailable(getValue: (key: K | null) => V, availableKeys: Iterable<K | null>): void {
+    public updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>): void {
         this.generateItemTree(getValue, availableKeys);
 
         this.flattenItems();
     }
 
     public updateDisplayedValuesToMatchMiniFilter(
-        getValue: (key: K | null) => V,
-        availableKeys: Iterable<K | null>,
+        getValue: (key: string | null) => V,
+        availableKeys: Iterable<string | null>,
         matchesFilter: (valueToCheck: string | null) => boolean,
         nullMatchesFilter: boolean,
         fromMiniFilter?: boolean
@@ -40,7 +40,7 @@ export class TreeSetDisplayValueModel<K extends string | string[], V> implements
         this.flattenItems();
     }
 
-    private generateItemTree(getValue: (key: K | null) => V, availableKeys: Iterable<K | null>): void {
+    private generateItemTree(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>): void {
         this.allDisplayedItemsTree = [];
         this.groupsExist = false;
         
@@ -51,14 +51,14 @@ export class TreeSetDisplayValueModel<K extends string | string[], V> implements
             if (dataPath.length > 1) {
                 this.groupsExist = true;
             }
-            let children: SetFilterModelTreeItem<K>[] | undefined = this.allDisplayedItemsTree;
-            let item: SetFilterModelTreeItem<K> | undefined;
+            let children: SetFilterModelTreeItem[] | undefined = this.allDisplayedItemsTree;
+            let item: SetFilterModelTreeItem | undefined;
             dataPath.forEach((treeKey, depth) => {
                 if (!children) {
                     children = [];
                     item!.children = children;
                 }
-                item = children.find(child => child.treeKey === treeKey);
+                item = children.find(child => child.treeKey?.toUpperCase() === treeKey?.toUpperCase());
                 if (!item) {
                     item = { treeKey, depth, filterPasses: true, expanded: true };
                     if (depth === dataPath.length - 1) {
@@ -71,11 +71,11 @@ export class TreeSetDisplayValueModel<K extends string | string[], V> implements
         }
     }
 
-    private getTreeListPathGetter(getValue: (key: K | null) => V, availableKeys: Iterable<K | null>): (value: V) => (string | null)[] {
+    private getTreeListPathGetter(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>): (value: V) => (string | null)[] {
         if (this.treeListPathGetter) {
             return this.treeListPathGetter;
         }
-        if (this.treeDataOrGroup) {
+        if (this.treeDataOrGrouping) {
             return value => value as any;
         }
         // infer from data
@@ -92,7 +92,7 @@ export class TreeSetDisplayValueModel<K extends string | string[], V> implements
 
     private flattenItems(): void {
         this.activeDisplayedItemsFlat = [];
-        const recursivelyFlattenDisplayedItems = (items: SetFilterModelTreeItem<K>[]) => {
+        const recursivelyFlattenDisplayedItems = (items: SetFilterModelTreeItem[]) => {
             items.forEach(item => {
                 if (!item.filterPasses) { return; }
                 this.activeDisplayedItemsFlat.push(item);
@@ -105,7 +105,7 @@ export class TreeSetDisplayValueModel<K extends string | string[], V> implements
     }
 
     private updateFilter(matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean) {
-        const passesFilter = (item: SetFilterModelTreeItem<K>) => {
+        const passesFilter = (item: SetFilterModelTreeItem) => {
             if (item.treeKey == null) {
                 return nullMatchesFilter;
             }
@@ -113,7 +113,7 @@ export class TreeSetDisplayValueModel<K extends string | string[], V> implements
             return matchesFilter(this.formatter(item.treeKey));
         };
 
-        const recursiveFilterCheck = (item: SetFilterModelTreeItem<K>, parentPasses: boolean) => {
+        const recursiveFilterCheck = (item: SetFilterModelTreeItem, parentPasses: boolean) => {
             let atLeastOneChildPassed = false;
             if (item.children) {
                 item.children.forEach(child => {
@@ -134,16 +134,16 @@ export class TreeSetDisplayValueModel<K extends string | string[], V> implements
         return this.activeDisplayedItemsFlat.length;
     }
  
-    public getDisplayedItem(index: number): SetFilterModelTreeItem<K> | null {
+    public getDisplayedItem(index: number): SetFilterModelTreeItem | null {
         return this.activeDisplayedItemsFlat[index];
     }
  
-    public getDisplayedKeys(): (K | null)[] {
+    public getDisplayedKeys(): (string | null)[] {
         return this.activeDisplayedItemsFlat.map(({ treeKey }) => treeKey) as any;
     }
 
-    public forEachDisplayedKey(func: (key: K | null) => void): void {
-        const recursiveForEachItem = (item: SetFilterModelTreeItem<K>, topParentExpanded: boolean) => {
+    public forEachDisplayedKey(func: (key: string | null) => void): void {
+        const recursiveForEachItem = (item: SetFilterModelTreeItem, topParentExpanded: boolean) => {
             if (item.children) {
                 if (!item.expanded || !topParentExpanded) {
                     // if the parent is not expanded, we need to iterate the entire tree
@@ -161,8 +161,8 @@ export class TreeSetDisplayValueModel<K extends string | string[], V> implements
         this.activeDisplayedItemsFlat.forEach(item => recursiveForEachItem(item, true));
     }
 
-    public someDisplayedKey(func: (key: K | null) => boolean): boolean {
-        const recursiveSomeItem = (item: SetFilterModelTreeItem<K>, topParentExpanded: boolean): boolean => {
+    public someDisplayedKey(func: (key: string | null) => boolean): boolean {
+        const recursiveSomeItem = (item: SetFilterModelTreeItem, topParentExpanded: boolean): boolean => {
             if (item.children) {
                 if (!item.expanded || !topParentExpanded) {
                     // if the parent is not expanded, we need to iterate the entire tree
