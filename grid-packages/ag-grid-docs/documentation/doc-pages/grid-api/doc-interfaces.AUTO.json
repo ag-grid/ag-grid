@@ -17994,10 +17994,6 @@
       "description": "/** Callback to enable different innerRenderers to be used based of value of params. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
     },
-    "padding": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "number", "optional": false }
-    },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
