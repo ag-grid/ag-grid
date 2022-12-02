@@ -93,5 +93,5 @@ The example below shows lock visible. The following can be noted:
 - If you make a group visible or hidden in the tool panel, the locked columns are not impacted.
 - If you drag a group (e.g. the **Athlete** group) out of the grid, all normal columns in the group are removed and all locked columns in the group are left intact.
 
-<grid-example title='Lock Visible' name='lock-visible' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
+<grid-example title='Lock Visible' name='lock-visible' type='generated' options='{ "exampleHeight": 550, "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel" ] }'></grid-example>
 

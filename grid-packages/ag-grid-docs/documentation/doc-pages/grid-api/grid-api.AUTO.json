@@ -629,7 +629,7 @@
     }
   },
   "setGetRowNodeId": {
-    "description": "/** @deprecated v27.1 Use `getRowId` instead  */",
+    "description": "/** @deprecated v27.1 Use `setGetRowId` instead  */",
     "type": {
       "arguments": { "getRowNodeIdFunc": "GetRowNodeIdFunc" },
       "returnType": "void"
