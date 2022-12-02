@@ -88,11 +88,7 @@ export class ClientSideValuesExtractor<V> {
             dataPath = groupedCols.map(groupCol => this.valueService.getKeyForNode(groupCol, node));
             dataPath.push(_.toStringOrNull(_.makeNull(this.getValue(node)))!);
         }
-        addValue(this.generateDataPathKey(dataPath), dataPath as any);
-    }
-
-    private generateDataPathKey(dataPath: string[] | null): string | null {
-        return dataPath ? dataPath.map(k => k.replace(new RegExp('#', 'g'), '')).join('#').toUpperCase() : null;
+        addValue(this.createKey(dataPath as any), dataPath as any);
     }
 
     private getValue(node: RowNode): V | null {

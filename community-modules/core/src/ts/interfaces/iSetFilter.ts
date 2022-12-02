@@ -203,15 +203,10 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     /**
      * If `true`, the Set Filter List will be displayed in a tree format. If enabled, one of the following must be true:
      * 
-     * 1) A `treeListPathGetter` is provided to get the tree path for the column values.
-     * 
-     * 2) The column values are of type `Date`, in which case the tree will be year -> month -> day.
-     * 
-     * 3) Tree Data mode is enabled and the column is the group column. The Filter List will match the tree structure.
-     * A Key Creator must be supplied.
-     * 
-     * 4) Grouping is enabled and the column is the group column. The Filter List will match the group structure.
-     * A Key Creator must be supplied.
+     * - A `treeListPathGetter` is provided to get the tree path for the column values.
+     * - The column values are of type `Date`, in which case the tree will be year -> month -> day.
+     * - Tree Data mode is enabled and the column is the group column. The Filter List will match the tree structure. A Key Creator must be supplied.
+     * - Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied.
      */
     treeList?: boolean,
     /**

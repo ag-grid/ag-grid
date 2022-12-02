@@ -15901,7 +15901,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "treeList": {
-      "description": "/** If `true`, the Set Filter List will be displayed in a tree format. If enabled, one of the following must be true:\n     * \n     * 1) A `treeListPathGetter` is provided to get the tree path for the column values.\n     * \n     * 2) The column values are of type `Date`, in which case the tree will be year -> month -> day.\n     * \n     * 3) Tree Data mode is enabled and the column is the group column. The Filter List will match the tree structure.\n     * A Key Creator must be supplied.\n     * \n     * 4) Grouping is enabled and the column is the group column. The Filter List will match the group structure.\n     * A Key Creator must be supplied.\n     */",
+      "description": "/** If `true`, the Set Filter List will be displayed in a tree format. If enabled, one of the following must be true:\n     * \n     * - A `treeListPathGetter` is provided to get the tree path for the column values.\n     * - The column values are of type `Date`, in which case the tree will be year -> month -> day.\n     * - Tree Data mode is enabled and the column is the group column. The Filter List will match the tree structure. A Key Creator must be supplied.\n     * - Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "treeListPathGetter": {

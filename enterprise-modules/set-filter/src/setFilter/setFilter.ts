@@ -220,7 +220,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.convertValuesToStrings = !!params.convertValuesToStrings;
         this.caseSensitive = !!params.caseSensitive;
         let keyCreator = params.keyCreator ?? params.colDef.keyCreator;
-        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings);
+        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList);
         const isGroupCol = params.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList && isGroupCol;
         this.getDataPath = this.gridOptionsService.get('getDataPath');
@@ -251,11 +251,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private setValueFormatter(
         providedValueFormatter: ((params: ValueFormatterParams) => string) | undefined,
         keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined,
-        convertValuesToStrings: boolean
+        convertValuesToStrings: boolean,
+        treeList: boolean
     ) {
         let valueFormatter = providedValueFormatter;
         if (!valueFormatter) {
-            if (keyCreator && !convertValuesToStrings) {
+            if (keyCreator && !convertValuesToStrings && !treeList) {
                 throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
             }
             valueFormatter = params => _.toStringOrNull(params.value)!;

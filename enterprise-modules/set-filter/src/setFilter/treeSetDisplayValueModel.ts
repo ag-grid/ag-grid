@@ -67,7 +67,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                     children.push(item);
                 }
                 children = item.children;
-            })
+            });
         }
     }
 
