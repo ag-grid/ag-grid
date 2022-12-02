@@ -18,7 +18,9 @@ import {
     BOOLEAN,
     NUMBER,
     NUMBER_ARRAY,
+    OPT_COLOR_STRING,
     OPT_FUNCTION,
+    OPT_NUMBER,
     OPT_STRING,
     STRING,
     COLOR_STRING_ARRAY,
@@ -175,8 +177,20 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     @Validate(COLOR_STRING_ARRAY)
     colorRange: string[] = ['#cb4b3f', '#6acb64'];
 
-    @Validate(BOOLEAN)
-    colorParents: boolean = false;
+    @Validate(OPT_STRING)
+    groupFill: string = '#272931';
+
+    @Validate(OPT_COLOR_STRING)
+    groupStroke: string = 'black';
+
+    @Validate(OPT_NUMBER(0))
+    groupStrokeWidth: number = 1;
+
+    @Validate(OPT_COLOR_STRING)
+    tileStroke: string = 'black';
+
+    @Validate(OPT_NUMBER(0))
+    tileStrokeWidth: number = 1;
 
     @Validate(BOOLEAN)
     gradient: boolean = true;
@@ -241,7 +255,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         bbox: BBox,
         outputNodesBoxes: Map<TreemapNodeDatum, BBox> = new Map()
     ) {
-        const targetCellRatio = 1; // The width and height will tend to this ratio
+        const targetTileAspectRatio = 1; // The width and height will tend to this ratio
 
         const padding = this.getNodePadding(nodeDatum, bbox);
         outputNodesBoxes.set(nodeDatum, bbox);
@@ -267,11 +281,11 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
             const partThickness = isVertical ? partition.height : partition.width;
             const partLength = isVertical ? partition.width : partition.height;
-            const firstCellLength = (partLength * firstValue) / stackSum;
+            const firstTileLength = (partLength * firstValue) / stackSum;
             let stackThickness = (partThickness * stackSum) / partitionSum;
 
-            const ratio = Math.max(firstCellLength, stackThickness) / Math.min(firstCellLength, stackThickness);
-            const diff = Math.abs(targetCellRatio - ratio);
+            const ratio = Math.max(firstTileLength, stackThickness) / Math.min(firstTileLength, stackThickness);
+            const diff = Math.abs(targetTileAspectRatio - ratio);
             if (diff < minRatioDiff) {
                 minRatioDiff = diff;
                 continue;
@@ -332,7 +346,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             return;
         }
 
-        const { data, sizeKey, labelKey, colorKey, colorDomain, colorRange, colorParents } = this;
+        const { data, sizeKey, labelKey, colorKey, colorDomain, colorRange, groupFill } = this;
 
         const colorScale = new LinearScale();
         colorScale.domain = colorDomain;
@@ -342,13 +356,19 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             const label = (labelKey && (datum[labelKey] as string)) || '';
             const colorScaleValue = colorKey ? datum[colorKey] : depth;
             const isLeaf = !datum.children;
+            const fill =
+                typeof colorScaleValue === 'string'
+                    ? colorScaleValue
+                    : isLeaf || !groupFill
+                    ? colorScale.convert(colorScaleValue)
+                    : groupFill;
             const nodeDatum: TreemapNodeDatum = {
                 datum,
                 depth,
                 parent,
                 value: 0,
                 label,
-                fill: isLeaf || colorParents ? colorScale.convert(colorScaleValue) : '#272931',
+                fill,
                 series: this,
                 isLeaf,
                 children: [] as TreemapNodeDatum[],
@@ -442,6 +462,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             colorKey,
             labelKey,
             sizeKey,
+            tileStroke,
+            tileStrokeWidth,
+            groupStroke,
+            groupStrokeWidth,
         } = this;
 
         const seriesRect = this.chart.getSeriesRect()!;
@@ -460,17 +484,22 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined
                     ? highlightedStroke
-                    : datum.depth < 2
-                    ? undefined
-                    : 'black';
+                    : datum.isLeaf
+                    ? tileStroke
+                    : groupStroke;
             const strokeWidth =
-                isDatumHighlighted && highlightedDatumStrokeWidth !== undefined ? highlightedDatumStrokeWidth : 1;
+                isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                    ? highlightedDatumStrokeWidth
+                    : datum.isLeaf
+                    ? tileStrokeWidth
+                    : groupStrokeWidth;
 
             let format: AgTreemapSeriesFormat | undefined;
             if (formatter) {
                 format = formatter({
                     seriesId: this.id,
                     datum: datum.datum,
+                    depth: datum.depth,
                     colorKey,
                     sizeKey,
                     labelKey,
@@ -633,7 +662,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             const availTextHeight = box.height - 2 * nodePadding;
             const minSizeRatio = 3;
             if (labelStyle.fontSize > box.width / minSizeRatio || labelStyle.fontSize > box.height / minSizeRatio) {
-                // Avoid labels on too small cells
+                // Avoid labels on too small tiles
                 return;
             }
 

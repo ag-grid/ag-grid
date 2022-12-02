@@ -15,5 +15,5 @@ function field(date: Date): number {
     return date.getDate() - 1;
 }
 
-export const day = new CountableTimeInterval(floor, offset, count, field);
+const day = new CountableTimeInterval(floor, offset, count, field);
 export default day;

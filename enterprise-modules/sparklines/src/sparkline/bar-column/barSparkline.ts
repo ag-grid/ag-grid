@@ -1,10 +1,10 @@
+import { _Scene } from 'ag-charts-community';
 import { BandScale } from '../../scale/bandScale';
 import { isNumber } from '../../util/value';
 import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
-import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { Point } from '../sparkline';
 
-export interface BarNodeDatum extends RectNodeDatum { }
+interface BarNodeDatum extends RectNodeDatum { }
 export class BarSparkline extends BarColumnSparkline {
     static className = 'BarSparkline';
 
@@ -122,7 +122,7 @@ export class BarSparkline extends BarColumnSparkline {
                 labelX = x + (isPositiveY ? width - labelPadding : labelPadding);
                 labelTextAlign = isPositiveY ? 'end' : 'start';
 
-                const textSize = HdpiCanvas.getTextSize(labelText, labelFontFamily);
+                const textSize = _Scene.HdpiCanvas.getTextSize(labelText, labelFontFamily);
                 const textWidth = textSize.width || 20;
                 const positiveBoundary = yZero + textWidth;
                 const negativeBoundary = yZero - textWidth;

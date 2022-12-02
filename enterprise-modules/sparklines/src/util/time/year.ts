@@ -14,5 +14,5 @@ function field(date: Date): number {
     return date.getFullYear();
 }
 
-export const year = new CountableTimeInterval(floor, offset, count, field);
+const year = new CountableTimeInterval(floor, offset, count, field);
 export default year;

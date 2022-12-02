@@ -10,7 +10,7 @@ const COLUMN_DEFS = [
     {
         field: 'key',
         headerName: 'Issue',
-        width: 131,
+        width: 140,
         filter: false,
         headerClass: styles['header-padding-class'],
         cellRendererSelector: (params) => {
@@ -31,13 +31,12 @@ const COLUMN_DEFS = [
     {
         field: 'summary',
         tooltipField: 'summary',
-        width: 737,
+        flex: 1,
         filter: false,
     },
     {
         field: 'issueType',
-        width: 175,
-        suppressSizeToFit: true,
+        width: 180,
         valueFormatter: (params) => (params.value === 'Bug' ? 'Defect' : 'Feature Request'),
         filterParams: {
             valueFormatter: (params) => {
@@ -48,7 +47,7 @@ const COLUMN_DEFS = [
     },
     {
         field: 'status',
-        width: 131,
+        width: 135,
         valueGetter: (params) => {
             let fixVersionsArr = params.data.versions;
             let hasFixVersion = fixVersionsArr.length > 0;
@@ -73,7 +72,7 @@ const COLUMN_DEFS = [
     {
         field: 'features',
         headerName: 'Feature',
-        width: 127,
+        width: 195,
         valueFormatter: (params) => {
             let isValue = !!params.value;
             return isValue ? params.value.toString().replaceAll('_', ' ') : undefined;
@@ -90,7 +89,6 @@ const COLUMN_DEFS = [
 ];
 
 const defaultColDef = {
-    flex: 1,
     resizable: true,
     filter: true,
     sortable: true,

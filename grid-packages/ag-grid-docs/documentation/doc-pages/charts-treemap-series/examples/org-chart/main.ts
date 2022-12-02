@@ -10,13 +10,13 @@ const options: AgChartOptions = {
     {
       type: 'treemap',
       labelKey: 'orgHierarchy',
-      colorParents: true,
       gradient: false,
       nodePadding: 5,
       sizeKey: undefined, // make all siblings within a parent the same size
       colorKey: undefined, // if undefined, depth will be used an the value, where root has 0 depth
       colorDomain: [0, 2, 4],
       colorRange: ['#d73027', '#fee08b', '#1a9850'],
+      groupFill: undefined,
       formatter: ({ datum, labelKey, highlighted }) => {
         if (datum[labelKey] === 'Joel Cooper') {
           return { fill: highlighted ? 'white' : 'orchid' };

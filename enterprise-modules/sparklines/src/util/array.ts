@@ -1,22 +1,3 @@
-// Custom `Array.find` implementation for legacy browsers.
-export function find<T>(arr: T[], predicate: (item: T, index: number, arr: T[]) => boolean): T | undefined {
-    for (let i = 0; i < arr.length; i++) {
-        const value = arr[i];
-        if (predicate(value, i, arr)) {
-            return value;
-        }
-    }
-}
-
-export function findIndex<T>(arr: T[], predicate: (item: T, index: number, arr: T[]) => boolean): number {
-    for (let i = 0; i < arr.length; i++) {
-        if (predicate(arr[i], i, arr)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
 function identity<T>(value: T): T {
     return value;
 }
@@ -50,36 +31,4 @@ export function extent<T, K>(values: T[], predicate: (value: T) => boolean, map?
     }
 
     return min === undefined || max === undefined ? undefined : [transform(min), transform(max)];
-}
-
-/**
- * finds the min and max using a process appropriate for stacked values. Ie,
- * summing up the positive and negative numbers, and returning the totals of each
- */
-export function findMinMax(values: number[]): { min: number, max: number } {
-    let min = 0;
-    let max = 0;
-
-    for (const value of values) {
-        if (value < 0) {
-            min += value;
-        } else {
-            max += value;
-        }
-    }
-
-    return { min, max };
-}
-
-export function copy(array: any[], start: number = 0, count: number = array.length): any[] {
-    const result = [];
-    const n = array.length;
-
-    if (n) {
-        for (let i = 0; i < count; i++) {
-            result.push(array[(start + i) % n]);
-        }
-    }
-
-    return result;
 }

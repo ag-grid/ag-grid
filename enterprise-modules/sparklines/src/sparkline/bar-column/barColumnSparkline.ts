@@ -1,16 +1,10 @@
+import { FontStyle, FontWeight, _Scene } from 'ag-charts-community';
 import { SeriesNodeDatum, Sparkline } from '../sparkline';
-import { Group } from '../../scene/group';
-import { Line } from '../../scene/shape/line';
-import { Selection } from '../../scene/selection';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
-import { Rectangle } from './rectangle';
 import { extent } from '../../util/array';
 import { isNumber } from '../../util/value';
 import { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
-import { FontStyle, FontWeight } from '../../scene/shape/text';
 import { Label } from '../label/label';
-import { Text } from '../label/text';
-import { PointerEvents } from '../../scene/node';
 
 export interface RectNodeDatum extends SeriesNodeDatum {
     readonly x: number;
@@ -60,19 +54,19 @@ export abstract class BarColumnSparkline extends Sparkline {
     valueAxisDomain: [number, number] | undefined = undefined;
     formatter?: (params: ColumnFormatterParams) => ColumnFormat = undefined;
 
-    protected axisLine: Line = new Line();
+    protected axisLine: _Scene.Line = new _Scene.Line();
     protected bandWidth: number = 0;
 
-    private sparklineGroup: Group = new Group();
-    private rectGroup: Group = new Group();
-    private labelGroup: Group = new Group();
+    private sparklineGroup: _Scene.Group = new _Scene.Group();
+    private rectGroup: _Scene.Group = new _Scene.Group();
+    private labelGroup: _Scene.Group = new _Scene.Group();
 
-    private rectSelection: Selection<Rectangle, Group, RectNodeDatum, RectNodeDatum> = Selection.select(
+    private rectSelection: _Scene.Selection<_Scene.Rect, _Scene.Group, RectNodeDatum, RectNodeDatum> = _Scene.Selection.select(
         this.rectGroup
-    ).selectAll<Rectangle>();
-    private labelSelection: Selection<Text, Group, RectNodeDatum, RectNodeDatum> = Selection.select(
+    ).selectAll<_Scene.Rect>();
+    private labelSelection: _Scene.Selection<_Scene.Text, _Scene.Group, RectNodeDatum, RectNodeDatum> = _Scene.Selection.select(
         this.labelGroup
-    ).selectAll<Text>();
+    ).selectAll<_Scene.Text>();
 
     private nodeSelectionData: RectNodeDatum[] = [];
 
@@ -173,7 +167,7 @@ export abstract class BarColumnSparkline extends Sparkline {
     private updateRectSelection(selectionData: RectNodeDatum[]): void {
         const updateRectSelection = this.rectSelection.setData(selectionData);
 
-        const enterRectSelection = updateRectSelection.enter.append(Rectangle);
+        const enterRectSelection = updateRectSelection.enter.append(_Scene.Rect);
 
         updateRectSelection.exit.remove();
 
@@ -238,8 +232,8 @@ export abstract class BarColumnSparkline extends Sparkline {
     private updateLabelSelection(selectionData: RectNodeDatum[]): void {
         const updateLabels = this.labelSelection.setData(selectionData);
 
-        const enterLabels = updateLabels.enter.append(Text).each((text) => {
-            (text.tag = BarColumnNodeTag.Label), (text.pointerEvents = PointerEvents.None);
+        const enterLabels = updateLabels.enter.append(_Scene.Text).each((text) => {
+            (text.tag = BarColumnNodeTag.Label), (text.pointerEvents = _Scene.PointerEvents.None);
         });
 
         updateLabels.exit.remove();

@@ -5,8 +5,8 @@ import Scale, {
     Reinterpolator
 } from './scale';
 
-export const constant = (x: any) => () => x;
-export const identity = (x: any) => x;
+const constant = (x: any) => () => x;
+const identity = (x: any) => x;
 
 function clamper(domain: number[]): (x: number) => number {
     let a = domain[0];
@@ -17,22 +17,6 @@ function clamper(domain: number[]): (x: number) => number {
     }
 
     return x => Math.max(a, Math.min(b, x));
-}
-
-/**
- * An Interpolator factory returns an interpolator function.
- *
- * The first generic corresponds to the data type of the interpolation boundaries.
- * The second generic corresponds to the data type of the return type of the interpolator.
- */
-export interface InterpolatorFactory<T, U> {
-    /**
-     * Construct a new interpolator function, based on the provided interpolation boundaries.
-     *
-     * @param a Start boundary of the interpolation interval.
-     * @param b End boundary of the interpolation interval.
-     */
-    (a: T, b: T): ((t: number) => U);
 }
 
 export default abstract class ContinuousScale implements Scale<any, any> {

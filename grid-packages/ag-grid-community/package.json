@@ -8,7 +8,7 @@
     "clean": "rimraf dist main.d.ts src/styles .hash",
     "build": "npx gulp build && npm run rollup && npm run hash",
     "build-prod": "npm run build",
-    "test:e2e": "npx jest",
+    "test:e2ez": "npx jest",
     "package": "npx gulp package",
     "rollup": "mkdir -p dist && node build.js",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
