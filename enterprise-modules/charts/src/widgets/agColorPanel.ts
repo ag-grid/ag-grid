@@ -1,5 +1,6 @@
-import { Color, Component, PostConstruct, RefSelector, _ } from "@ag-grid-community/core";
+import { Component, PostConstruct, RefSelector, _ } from "@ag-grid-community/core";
 import { AgColorPicker } from "./agColorPicker";
+import { Color } from 'ag-charts-community';
 
 export class AgColorPanel extends Component {
     private H = 1; // in the [0, 1] range

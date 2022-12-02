@@ -1,4 +1,4 @@
-import { Color } from "@ag-grid-community/core";
+import { Color } from "ag-charts-community";
 
 export function hexToRGBA(hex: string, alpha: string) {
     const r = parseInt(hex.slice(1, 3), 16);
