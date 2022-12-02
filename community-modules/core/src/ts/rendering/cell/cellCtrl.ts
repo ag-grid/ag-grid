@@ -524,12 +524,8 @@ export class CellCtrl extends BeanStub {
     }
 
     private createCellRendererParams(): ICellRendererParams {
-        const addRowCompListener = (eventType: string, listener: Function) => {
-            console.warn('AG Grid: since AG Grid v26, params.addRowCompListener() is deprecated. If you need this functionality, please contact AG Grid support and advise why so that we can revert with an appropriate workaround, as we dont have any valid use cases for it. This method was originally provided as a work around to know when cells were destroyed in AG Grid before custom Cell Renderers could be provided.');
-            this.rowCtrl.addEventListener(eventType, listener);
-        };
 
-        const res: any = {
+        const res: ICellRendererParams = {
             value: this.value,
             valueFormatted: this.valueFormatted,
             getValue: this.getValueFromValueService.bind(this),
@@ -541,8 +537,8 @@ export class CellCtrl extends BeanStub {
             colDef: this.column.getColDef(),
             column: this.column,
             rowIndex: this.getCellPosition().rowIndex,
-            api: this.beans.gridOptionsService.get('api'),
-            columnApi: this.beans.gridOptionsService.get('columnApi'),
+            api: this.beans.gridOptionsService.get('api')!,
+            columnApi: this.beans.gridOptionsService.get('columnApi')!,
             context: this.beans.gridOptionsService.get('context'),
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.getGui(),
@@ -550,15 +546,9 @@ export class CellCtrl extends BeanStub {
 
             registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels: number, value?: string, suppressVisibilityChange?: boolean) => this.registerRowDragger(rowDraggerElement, dragStartPixels, suppressVisibilityChange),
 
-            // this function is not documented anywhere, so we could drop it
-            // it was in the olden days to allow user to register for when rendered
-            // row was removed (the row comp was removed), however now that the user
-            // can provide components for cells, the destroy method gets call when this
-            // happens so no longer need to fire event.
-            addRowCompListener: addRowCompListener
-        };
+        } as ICellRendererParams;
 
-        return res as ICellRendererParams;
+        return res;
     }
 
     private parseValue(newValue: any): any {
