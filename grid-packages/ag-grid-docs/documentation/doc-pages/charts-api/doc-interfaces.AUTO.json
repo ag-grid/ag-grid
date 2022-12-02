@@ -1985,6 +1985,12 @@
       "type": { "returnType": "PixelSize", "optional": true }
     }
   },
+  "AgSeriesHighlightTextStyle": {
+    "color": {
+      "description": "/** The colour of an item's text when tapped or hovered over. Use `undefined` for no highlight. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    }
+  },
   "AgSeriesHighlightSeriesStyle": {
     "enabled": { "type": { "returnType": "boolean", "optional": true } },
     "dimOpacity": {
@@ -2004,6 +2010,10 @@
     "series": {
       "description": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */",
       "type": { "returnType": "AgSeriesHighlightSeriesStyle", "optional": true }
+    },
+    "text": {
+      "description": "/** Highlight style used for a text when item is tapped or hovered over. */",
+      "type": { "returnType": "AgSeriesHighlightTextStyle", "optional": true }
     }
   },
   "AgSeriesNodeClickParams": {
@@ -3928,7 +3938,7 @@
     "value": {
       "description": "/** The configuration for the cell value label. */",
       "type": {
-        "returnType": "{\n        /** A property to be used as a key to retrieve a value from datum. */\n        key?: string;\n        /** A function to generate a value label from datum. */\n        formatter?: (params: { datum: any }) => string | undefined;\n        /** The label's font and color style. */\n        style?: AgChartLabelOptions;\n    }",
+        "returnType": "{\n        /** A property to be used as a key to retrieve a value from datum. */\n        key?: string;\n        /** A name of a datum value. */\n        name?: string;\n        /** A function to generate a value label from datum. */\n        formatter?: (params: { datum: any }) => string | undefined;\n        /** The label's font and color style. */\n        style?: AgChartLabelOptions;\n    }",
         "optional": true
       }
     }
@@ -4000,6 +4010,18 @@
     },
     "gradient": {
       "description": "/** Whether or not to use gradients for treemap tiles. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "tileShadow": {
+      "description": "/** Configuration for the shadow used behind the treemap tiles. */",
+      "type": { "returnType": "AgDropShadowOptions", "optional": true }
+    },
+    "labelShadow": {
+      "description": "/** Configuration for the shadow used behind the treemap labels. */",
+      "type": { "returnType": "AgDropShadowOptions", "optional": true }
+    },
+    "highlightGroups": {
+      "description": "/** Determines whether the groups will be highlighted by cursor. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "formatter": {

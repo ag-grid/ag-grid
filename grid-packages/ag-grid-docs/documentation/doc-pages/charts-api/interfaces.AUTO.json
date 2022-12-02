@@ -1295,6 +1295,13 @@
       "strokeWidth?": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */"
     }
   },
+  "AgSeriesHighlightTextStyle": {
+    "meta": {},
+    "type": { "color?": "CssColor" },
+    "docs": {
+      "color?": "/** The colour of an item's text when tapped or hovered over. Use `undefined` for no highlight. */"
+    }
+  },
   "AgSeriesHighlightSeriesStyle": {
     "meta": {},
     "type": {
@@ -1311,11 +1318,13 @@
     "meta": {},
     "type": {
       "item?": "AgSeriesHighlightMarkerStyle",
-      "series?": "AgSeriesHighlightSeriesStyle"
+      "series?": "AgSeriesHighlightSeriesStyle",
+      "text?": "AgSeriesHighlightTextStyle"
     },
     "docs": {
       "item?": "/** Highlight style used for an individual marker when tapped or hovered over. */",
-      "series?": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */"
+      "series?": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */",
+      "text?": "/** Highlight style used for a text when item is tapped or hovered over. */"
     }
   },
   "AgSeriesNodeClickParams": {
@@ -2550,7 +2559,7 @@
       "large?": "AgChartLabelOptions",
       "medium?": "AgChartLabelOptions",
       "small?": "AgChartLabelOptions",
-      "value?": "{ key?: string; formatter?: (params: { datum: any; }) => string | undefined; style?: AgChartLabelOptions; }"
+      "value?": "{ key?: string; name?: string; formatter?: (params: { datum: any; }) => string | undefined; style?: AgChartLabelOptions; }"
     },
     "docs": {
       "large?": "/** The label configuration for the large leaf tiles. */",
@@ -2582,6 +2591,9 @@
       "tooltip?": "AgTreemapSeriesTooltip<DatumType>",
       "nodePadding?": "PixelSize",
       "gradient?": "boolean",
+      "tileShadow?": "AgDropShadowOptions",
+      "labelShadow?": "AgDropShadowOptions",
+      "highlightGroups?": "boolean",
       "formatter?": "(params: AgTreemapSeriesFormatterParams<DataValue>) => AgTreemapSeriesFormat",
       "listeners?": "AgSeriesListeners<DatumType>",
       "id?": "string",
@@ -2608,6 +2620,9 @@
       "tooltip?": "/** Series-specific tooltip configuration. */",
       "nodePadding?": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
       "gradient?": "/** Whether or not to use gradients for treemap tiles. */",
+      "tileShadow?": "/** Configuration for the shadow used behind the treemap tiles. */",
+      "labelShadow?": "/** Configuration for the shadow used behind the treemap labels. */",
+      "highlightGroups?": "/** Determines whether the groups will be highlighted by cursor. */",
       "formatter?": "/** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */",
       "listeners?": "/** A map of event names to event listeners. */",
       "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",

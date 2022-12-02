@@ -132,6 +132,9 @@ export class ChartTheme {
                 series: {
                     dimOpacity: 1,
                 },
+                text: {
+                    color: 'black',
+                },
             },
         };
     }
@@ -521,6 +524,21 @@ export class ChartTheme {
                 tileStroke: 'black',
                 tileStrokeWidth: 1,
                 gradient: true,
+                tileShadow: {
+                    enabled: false,
+                    color: 'rgba(0, 0, 0, 0.5)',
+                    xOffset: 3,
+                    yOffset: 3,
+                    blur: 5,
+                },
+                labelShadow: {
+                    enabled: true,
+                    color: 'rgba(0, 0, 0, 0.4)',
+                    xOffset: 1.5,
+                    yOffset: 1.5,
+                    blur: 5,
+                },
+                highlightGroups: true,
                 nodePadding: 2,
                 title: {
                     enabled: true,

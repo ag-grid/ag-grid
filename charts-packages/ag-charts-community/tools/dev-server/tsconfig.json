@@ -5,6 +5,7 @@
         "checkJs": true,
         "lib": ["DOM", "ESNext"],
         "noEmit": true,
+        "baseUrl": "./",
         "paths": {
             "ag-charts-community": ["../../src/main.ts"]
         },

@@ -180,6 +180,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -233,6 +236,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -285,6 +291,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -607,6 +616,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -669,6 +681,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -939,6 +954,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 3,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -992,6 +1010,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 3,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -1047,6 +1068,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 3,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -1100,6 +1124,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 3,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -1155,6 +1182,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 3,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -1209,6 +1239,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 3,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -1262,6 +1295,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 3,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -1551,6 +1587,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -1833,6 +1872,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -2066,6 +2108,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -2118,6 +2163,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -2172,6 +2220,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -2224,6 +2275,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -2499,6 +2553,9 @@ Object {
           "dimOpacity": 0.1,
           "strokeWidth": 3,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -2568,6 +2625,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.1,
           "strokeWidth": 3,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -2639,6 +2699,9 @@ Object {
           "dimOpacity": 0.1,
           "strokeWidth": 3,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -2709,6 +2772,9 @@ Object {
           "dimOpacity": 0.1,
           "strokeWidth": 3,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -2778,6 +2844,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.1,
           "strokeWidth": 3,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -3068,6 +3137,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -3324,6 +3396,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "white",
@@ -3561,6 +3636,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -3800,6 +3878,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -4042,6 +4123,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 0.3,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -4323,6 +4407,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -4611,6 +4698,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -4913,6 +5003,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -5149,6 +5242,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -5202,6 +5298,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -5257,6 +5356,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -5310,6 +5412,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -5365,6 +5470,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -5418,6 +5526,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -5473,6 +5584,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -5526,6 +5640,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -5581,6 +5698,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -5634,6 +5754,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -5689,6 +5812,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -5742,6 +5868,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -5797,6 +5926,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -5850,6 +5982,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -5905,6 +6040,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -5958,6 +6096,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 4,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -6255,6 +6396,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -6382,6 +6526,7 @@ Object {
       "groupFill": "#272931",
       "groupStroke": "black",
       "groupStrokeWidth": 1,
+      "highlightGroups": true,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6390,8 +6535,18 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "labelKey": "name",
+      "labelShadow": Object {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.4)",
+        "enabled": true,
+        "xOffset": 1.5,
+        "yOffset": 1.5,
+      },
       "labels": Object {
         "large": Object {
           "color": "white",
@@ -6440,6 +6595,13 @@ Object {
         "fontStyle": undefined,
         "fontWeight": undefined,
         "padding": 13,
+      },
+      "tileShadow": Object {
+        "blur": 5,
+        "color": "rgba(0, 0, 0, 0.5)",
+        "enabled": false,
+        "xOffset": 3,
+        "yOffset": 3,
       },
       "tileStroke": "black",
       "tileStrokeWidth": 1,
@@ -6666,6 +6828,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.3,
           "strokeWidth": 4,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -6966,6 +7131,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -7255,6 +7423,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 0.3,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -7554,6 +7725,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -7619,6 +7793,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -7686,6 +7863,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -7751,6 +7931,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -8016,6 +8199,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "#eeeeee",
@@ -8169,6 +8355,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "innerLabels": Array [
@@ -8450,6 +8639,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -8686,6 +8878,9 @@ Object {
           "dimOpacity": 0.2,
           "strokeWidth": 3,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -8739,6 +8934,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.2,
           "strokeWidth": 3,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -8905,6 +9103,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "innerRadiusOffset": 0,
@@ -9160,6 +9361,9 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -9402,6 +9606,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 0.2,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -9710,6 +9917,9 @@ Object {
           "dimOpacity": 0.3,
           "strokeWidth": 1,
         },
+        "text": Object {
+          "color": "black",
+        },
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -9990,6 +10200,9 @@ Object {
         "series": Object {
           "dimOpacity": 0.3,
           "strokeWidth": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
@@ -10297,6 +10510,9 @@ Object {
         },
         "series": Object {
           "dimOpacity": 1,
+        },
+        "text": Object {
+          "color": "black",
         },
       },
       "label": Object {
