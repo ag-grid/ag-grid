@@ -1,11 +1,11 @@
 import { AgColorPanel } from "./agColorPanel";
-import { _, Internal } from "@ag-grid-community/core";
+import { _, IAgLabel, AgPickerField, AgDialog } from "@ag-grid-community/core";
 
-interface ColorPickerConfig extends Internal.IAgLabel {
+interface ColorPickerConfig extends IAgLabel {
     color: string;
 }
 
-export class AgColorPicker extends Internal.AgPickerField<HTMLElement, string> {
+export class AgColorPicker extends AgPickerField<HTMLElement, string> {
     constructor(config?: ColorPickerConfig) {
         super(config, 'ag-color-picker', 'colorPicker');
 
@@ -24,7 +24,7 @@ export class AgColorPicker extends Internal.AgPickerField<HTMLElement, string> {
 
     public showPicker() {
         const eGuiRect = this.getGui().getBoundingClientRect();
-        const colorDialog = this.createBean(new Internal.AgDialog({
+        const colorDialog = this.createBean(new AgDialog({
             closable: false,
             modal: true,
             hideTitleBar: true,

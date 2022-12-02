@@ -1,7 +1,7 @@
-import { AgAbstractField, AgInputNumberField, Autowired, DragService, Internal, RefSelector, _ } from "@ag-grid-community/core";
+import { AgAbstractField, AgInputNumberField, Autowired, DragService, AgAbstractLabel, DragListenerParams, IAgLabel, RefSelector, _ } from "@ag-grid-community/core";
 
 
-export class AgAngleSelect extends Internal.AgAbstractLabel {
+export class AgAngleSelect extends AgAbstractLabel {
 
     private static TEMPLATE = /* html */
         `<div class="ag-angle-select">
@@ -28,9 +28,9 @@ export class AgAngleSelect extends Internal.AgAbstractLabel {
     private radius: number = 0;
     private offsetX: number = 0;
     private offsetY: number = 0;
-    private dragListener: Internal.DragListenerParams;
+    private dragListener: DragListenerParams;
 
-    constructor(config?: Internal.IAgLabel) {
+    constructor(config?: IAgLabel) {
         super(config, AgAngleSelect.TEMPLATE);
     }
 
