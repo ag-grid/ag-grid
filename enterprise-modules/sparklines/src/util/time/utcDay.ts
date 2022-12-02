@@ -14,5 +14,5 @@ function field(date: Date): number {
     return date.getUTCDate() - 1;
 }
 
-export const utcDay = new CountableTimeInterval(floor, offset, count, field);
+const utcDay = new CountableTimeInterval(floor, offset, count, field);
 export default utcDay;

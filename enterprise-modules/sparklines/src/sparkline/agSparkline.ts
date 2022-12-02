@@ -25,7 +25,7 @@ export type SparklineFactoryOptions = SparklineOptions & {
     container?: HTMLElement;
 };
 
-export type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline | BarSparkline;
+type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline | BarSparkline;
 
 type Validators = {
     [property: string] : ValidatorFunc;
@@ -236,7 +236,7 @@ const doOnceFlags: { [key: string]: boolean; } = {};
  * @param {Function} func
  * @param {string} key
  */
- export function doOnce(func: () => void, key: string) {
+function doOnce(func: () => void, key: string) {
     if (doOnceFlags[key]) { return; }
 
     func();

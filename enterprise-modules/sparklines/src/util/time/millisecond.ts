@@ -10,5 +10,5 @@ function count(start: Date, end: Date): number {
     return end.getTime() - start.getTime();
 }
 
-export const millisecond = new CountableTimeInterval(floor, offset, count);
+const millisecond = new CountableTimeInterval(floor, offset, count);
 export default millisecond;
