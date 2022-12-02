@@ -114,6 +114,8 @@ export class DarkTheme extends ChartTheme {
                 ...chartDefaults,
                 series: {
                     treemap: {
+                        tileStroke: 'white',
+                        groupStroke: 'white',
                         title: {
                             color: fontColor,
                         },
