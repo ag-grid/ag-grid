@@ -8,6 +8,7 @@ import { Autowired } from "../context/context";
 import { AgEvent } from "../events";
 import { last } from "../utils/array";
 import { GridOptionsService } from "../gridOptionsService";
+import { logDeprecation } from "../gridOptionsValidator";
 
 export class ColumnGroup implements IHeaderColumn {
 
@@ -273,9 +274,9 @@ export class ColumnGroup implements IHeaderColumn {
         return this.providedColumnGroup;
     }
 
-    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getOriginalColumnGroup. */
+    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
     public getOriginalColumnGroup(): ProvidedColumnGroup {
-        console.warn('AG Grid: Since v27 columnGroup.getOriginalColumnGroup() is deprecated due to a method rename, use columnGroup.getProvidedColumnGroup() instead');
+        logDeprecation<ColumnGroup>('27', 'getOriginalColumnGroup', 'getProvidedColumnGroup')
         return this.getProvidedColumnGroup();
     }
 

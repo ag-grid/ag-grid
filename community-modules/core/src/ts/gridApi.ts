@@ -50,6 +50,7 @@ import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 import { GridOptionsService } from "./gridOptionsService";
+import { logDeprecation } from "./gridOptionsValidator";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
@@ -1039,6 +1040,7 @@ export class GridApi<TData = any> {
     }
     /** @deprecated v27.2 - Use `setGetGroupRowAgg` instead. */
     public setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: RowNode[]) => any): void {
+        logDeprecation<GridApi>('27.2', 'setGroupRowAggNodes', 'setGetGroupRowAgg');
         this.gridOptionsService.set('groupRowAggNodes', groupRowAggNodesFunc);
     }
     public setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void {
@@ -1057,8 +1059,9 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('processRowPostCreate', processRowPostCreateFunc);
     }
 
-    /** @deprecated v27.1 Use `getRowId` instead  */
+    /** @deprecated v27.1 Use `setGetRowId` instead  */
     public setGetRowNodeId(getRowNodeIdFunc: GetRowNodeIdFunc): void {
+        logDeprecation<GridApi>('27.1', 'setGetRowNodeId', 'setGetRowId');
         this.gridOptionsService.set('getRowNodeId', getRowNodeIdFunc);
     }
     public setGetRowId(getRowIdFunc: GetRowIdFunc): void {
@@ -1071,6 +1074,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v27.2 Use `setIsFullWidthRow` instead. */
     public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: RowNode) => boolean): void {
+        logDeprecation<GridApi>('27.2', 'setIsFullWidthCell', 'setIsFullWidthRow');
         this.gridOptionsService.set('isFullWidthCell', isFullWidthCellFunc);
     }
     public setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void {
@@ -1087,6 +1091,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v27.2 Use `setPostSortRows` instead */
     public setPostSort(postSortFunc: (nodes: RowNode[]) => void): void {
+        logDeprecation<GridApi>('27.2', 'setPostSort', 'setPostSortRows');
         this.gridOptionsService.set('postSort', postSortFunc);
     }
     public setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void {
@@ -1119,13 +1124,13 @@ export class GridApi<TData = any> {
 
     /** @deprecated v28 use `setProcessPivotResultColDef` instead */
     public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void {
-        console.warn('AG Grid: since version 28.0.x setProcessSecondaryColDef has been renamed, please use setProcessPivotResultColDef instead');
+        logDeprecation<GridApi>('28.0', 'setProcessSecondaryColDef', 'setProcessPivotResultColDef')
         this.setProcessPivotResultColDef(processSecondaryColDefFunc);
     }
 
     /** @deprecated v28 use `setProcessPivotResultColGroupDef` instead */
     public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
-        console.warn('AG Grid: since version 28.0.x setProcessSecondaryColGroupDef has been renamed, please use setProcessPivotResultColGroupDef instead');
+        logDeprecation<GridApi>('28.0', 'setProcessSecondaryColGroupDef', 'setProcessPivotResultColGroupDef')
         this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
     }
 
@@ -1143,6 +1148,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v27.2 - Use `setInitialGroupOrderComparator` instead */
     public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number): void {
+        logDeprecation<GridApi>('27.2', 'setDefaultGroupOrderComparator', 'setInitialGroupOrderComparator');
         this.gridOptionsService.set('defaultGroupOrderComparator', defaultGroupOrderComparatorFunc);
     }
     public setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void {
@@ -1159,6 +1165,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v28 use setGetServerSideGroupLevelParams instead */
     public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
+        logDeprecation<GridApi>('28.0', 'setGetServerSideStoreParams', 'setGetServerSideGroupLevelParams');
         this.setGetServerSideGroupLevelParams(getServerSideStoreParamsFunc);
     }
 
@@ -1793,15 +1800,13 @@ export class GridApi<TData = any> {
 
     /** @deprecated v28 use `refreshServerSide` instead */
     public refreshServerSideStore(params?: RefreshServerSideParams): void {
-        const message = `AG Grid: Grid API refreshServerSideStore() was renamed to refreshServerSide() in v28.0`;
-        doOnce(() => console.warn(message), 'refreshServerSideStore-renamed');
+        logDeprecation<GridApi>('28.0', 'refreshServerSideStore', 'refreshServerSide');
         return this.refreshServerSide(params);
     }
 
     /** @deprecated v28 use `getServerSideGroupLevelState` instead */
     public getServerSideStoreState(): ServerSideGroupLevelState[] {
-        const message = `AG Grid: Grid API getServerSideStoreState() was renamed to getServerSideGroupLevelState() in v28.0`;
-        doOnce(() => console.warn(message), 'getServerSideStoreState-renamed');
+        logDeprecation<GridApi>('28.0', 'getServerSideStoreState', 'getServerSideGroupLevelState');
         return this.getServerSideGroupLevelState();
     }
 

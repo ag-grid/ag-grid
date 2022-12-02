@@ -6,10 +6,16 @@ import { GridOptionsService } from './gridOptionsService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
+import { doOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { iterateObject } from './utils/object';
 
-type DeprecatedReference = Record<string, { newProp?: keyof GridOptions, version: string, message?: string, copyToNewProp?: true, newPropValue?: any }>
+type DeprecatedReference<T> = { [key: string]: { newProp?: keyof T, version: string, message?: string, copyToNewProp?: true, newPropValue?: any } }
+
+export function logDeprecation<T extends {}>(version: string, oldProp: keyof T, newProp?: keyof T, message?: string) {
+    const newPropMsg = newProp ? `Please use '${newProp}' instead. ` : '';
+    doOnce(() => console.warn(`AG Grid: since v${version}, '${oldProp}' is deprecated. ${newPropMsg}${message ?? ''}`), `Deprecated_${oldProp}`);
+}
 
 @Bean('gridOptionsValidator')
 export class GridOptionsValidator {
@@ -17,7 +23,7 @@ export class GridOptionsValidator {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
 
-    private deprecatedProperties: DeprecatedReference = {
+    private deprecatedProperties: DeprecatedReference<GridOptions> = {
         rememberGroupStateWhenNewData: { version: '24', message: 'Now that transaction updates are possible and they keep group state, this feature is no longer needed.' },
 
         suppressEnterpriseResetOnNewColumns: { version: '25', message: 'Now that it is possible to dynamically change columns in the grid, this is no longer needed.' },
@@ -200,14 +206,14 @@ export class GridOptionsValidator {
         const options: any = this.gridOptions;
 
         Object.entries(this.deprecatedProperties).map(([oldProp, details]) => {
-            if (options[oldProp] != null) {
-                const newPropMsg = details.newProp ? `Please use '${details.newProp}' instead. ` : '';
-                console.warn(`AG Grid: since v${details.version}, '${oldProp}' is deprecated. ${newPropMsg}${details.message ?? ''}`);
+            const oldPropValue = (options as any)[oldProp];
+            if (oldPropValue) {
+                logDeprecation(details.version, oldProp, details.newProp, details.message);
                 if (details.copyToNewProp && details.newProp && options[details.newProp] == null) {
-                    options[details.newProp] = details.newPropValue ?? options[oldProp];
+                    options[details.newProp] = details.newPropValue ?? oldPropValue;
                 }
             }
-        })
+        });
 
         if (options.groupSuppressAutoColumn) {
             const propName = options.treeData ? 'treeDataDisplayType' : 'groupDisplayType';
