@@ -5,7 +5,6 @@ import { extent } from '../../util/array';
 import { isNumber } from '../../util/value';
 import { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
 import { Label } from '../label/label';
-type NewType = FontWeight;
 
 export interface RectNodeDatum extends SeriesNodeDatum {
     readonly x: number;
@@ -20,7 +19,7 @@ export interface RectNodeDatum extends SeriesNodeDatum {
         readonly y: number;
         readonly text: string;
         readonly fontStyle?: FontStyle;
-        readonly fontWeight?: NewType;
+        readonly fontWeight?: FontWeight;
         readonly fontSize: number;
         readonly fontFamily: string;
         readonly textAlign: CanvasTextAlign;
