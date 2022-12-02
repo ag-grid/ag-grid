@@ -208,11 +208,11 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * - Tree Data mode is enabled and the column is the group column. The Filter List will match the tree structure. A Key Creator must be supplied.
      * - Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied.
      */
-    treeList?: boolean,
+    treeList?: boolean;
     /**
      * Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.
      */
-    treeListPathGetter?: (value: V) => (string | null)[],
+    treeListPathGetter?: (value: V) => (string | null)[];
     /**
      * Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.
      * `level` refers to the level of the tree (starting at 0).
