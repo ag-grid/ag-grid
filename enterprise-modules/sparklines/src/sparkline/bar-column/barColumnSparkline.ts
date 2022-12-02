@@ -1,7 +1,8 @@
+import { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
 import { FontStyle, FontWeight, _Scene, _Util } from 'ag-charts-community';
+
 import { SeriesNodeDatum, Sparkline } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
-import { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
 import { Label } from '../label/label';
 
 const { extent, isNumber } = _Util;

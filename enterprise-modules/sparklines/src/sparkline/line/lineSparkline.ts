@@ -1,13 +1,13 @@
-import { _Scene, _Util } from 'ag-charts-community';
-import { BandScale } from '../../scale/bandScale';
+import { MarkerFormat, MarkerFormatterParams, CrosshairLineOptions } from '@ag-grid-community/core';
+import { _Scale, _Scene, _Util } from 'ag-charts-community';
+
 import { Point, SeriesNodeDatum, Sparkline } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
-import { MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
-import { CrosshairLineOptions } from '@ag-grid-community/core';
 import { getLineDash } from '../../util/lineDash';
 
 const { extent, isNumber } = _Util;
+const { BandScale } = _Scale;
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: Point;

@@ -1,13 +1,11 @@
-import { _Scene, _Util } from 'ag-charts-community';
+import { HighlightStyleOptions } from '@ag-grid-community/core';
+import { _Scale, _Scene, _Util } from 'ag-charts-community';
+
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
-import { HighlightStyleOptions } from '@ag-grid-community/core';
-import { LinearScale } from '../scale/linearScale';
-import { TimeScale } from '../scale/timeScale';
-import { BandScale } from '../scale/bandScale';
-import { locale } from '../util/time/format/defaultLocale';
 
 const { extent, isNumber, isContinuous, isString, isStringObject, isDate, createId, Padding } = _Util;
+const { LinearScale, BandScale, TimeScale } = _Scale;
 
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;
@@ -30,7 +28,7 @@ type Container = HTMLElement | undefined | null;
 type Data = any[] | undefined | null;
 type DataType = 'number' | 'array' | 'object' | undefined;
 type AxisType = 'number' | 'category' | 'time';
-type ScaleType = LinearScale | TimeScale | BandScale<string>;
+type ScaleType = _Scale.LinearScale | _Scale.TimeScale | _Scale.BandScale<string>;
 
 export class SparklineAxis {
     type?: AxisType = 'category';
@@ -111,7 +109,7 @@ export abstract class Sparkline {
     protected max: number | undefined = undefined;
 
     protected xScale!: ScaleType;
-    protected yScale: LinearScale = new LinearScale();
+    protected yScale: _Scale.LinearScale = new LinearScale();
 
     readonly axis = new SparklineAxis();
     readonly highlightStyle: HighlightStyleOptions = {
@@ -626,7 +624,9 @@ export abstract class Sparkline {
         return String(Math.round(datum * 10) / 10);
     }
 
-    private defaultDateFormatter = locale.format('%m/%d/%y, %H:%M:%S');
+    private defaultDateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'short', timeStyle: 'medium', hour12: false } as any);
+    
+    // locale.format('%m/%d/%y, %H:%M:%S');
 
     protected formatDatum(datum: any): string {
         const type = this.axis.type || 'category';
@@ -634,7 +634,7 @@ export abstract class Sparkline {
         if (type === 'number' && typeof datum === 'number') {
             return this.formatNumericDatum(datum);
         } else if (type === 'time' && (datum instanceof Date || isNumber(datum))) {
-            return this.defaultDateFormatter(datum);
+            return this.defaultDateFormatter.format(datum);
         } else {
             return String(datum);
         }
