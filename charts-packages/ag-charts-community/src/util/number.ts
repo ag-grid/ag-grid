@@ -24,7 +24,9 @@ export function toFixed(value: number, fractionOrSignificantDigits: number = 2):
  * NOT modulus, which is why this is needed.
  */
 export function mod(n: number, m: number) {
-    // https://stackoverflow.com/a/13163436
-    const remain = n % m;
-    return remain >= 0 ? remain : remain + m;
+    if (n >= 0) {
+        return Math.floor(n % m);
+    }
+
+    return Math.floor((n % m) + m);
 }
