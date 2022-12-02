@@ -1,4 +1,4 @@
-import { ColumnPinnedType, Constants, HeaderRowContainerCtrl, HeaderRowCtrl, IHeaderRowContainerComp } from '@ag-grid-community/core';
+import { ColumnPinnedType, HeaderRowContainerCtrl, HeaderRowCtrl, IHeaderRowContainerComp } from '@ag-grid-community/core';
 import { createMemo, createSignal, For, onCleanup, onMount, useContext } from 'solid-js';
 import { BeansContext } from '../core/beansContext';
 import { CssClasses } from '../core/utils';
@@ -16,8 +16,8 @@ const HeaderRowContainerComp = (props: {pinned: ColumnPinnedType | null})=> {
     const {context} = useContext(BeansContext);
     let eGui: HTMLDivElement;
 
-    const pinnedLeft = props.pinned === Constants.PINNED_LEFT;
-    const pinnedRight = props.pinned === Constants.PINNED_RIGHT;
+    const pinnedLeft = props.pinned === 'left';
+    const pinnedRight = props.pinned === 'right';
     const centre = !pinnedLeft && !pinnedRight;
 
     const destroyFuncs: (()=>void)[] = [];

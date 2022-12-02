@@ -4,7 +4,6 @@ import { Autowired } from "../context/context";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { Events } from "../eventKeys";
 import { ColumnModel } from "../columns/columnModel";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { CtrlsService } from "../ctrlsService";
 import { BodyScrollEvent } from "../events";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
@@ -50,8 +49,8 @@ export class FakeHScrollCtrl extends BeanStub {
         const spacerWidthsListener = this.setFakeHScrollSpacerWidths.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, spacerWidthsListener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, spacerWidthsListener);
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, spacerWidthsListener);
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.addManagedPropertyListener('domLayout', spacerWidthsListener);
         this.onScrollVisibilityChanged();
 
         this.ctrlsService.registerFakeHScrollCtrl(this);
@@ -125,7 +124,7 @@ export class FakeHScrollCtrl extends BeanStub {
         // b) if v scroll is showing on the right (normal position of scroll)
         let rightSpacing = this.columnModel.getDisplayedColumnsRightWidth();
         const scrollOnRight = !this.enableRtl && vScrollShowing;
-        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
+        const scrollbarWidth = this.gridOptionsService.getScrollbarWidth();
 
         if (scrollOnRight) {
             rightSpacing += scrollbarWidth;
@@ -150,7 +149,7 @@ export class FakeHScrollCtrl extends BeanStub {
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
         const isSuppressHorizontalScroll = this.gridOptionsService.is('suppressHorizontalScroll');
-        const scrollbarWidth = hScrollShowing ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
+        const scrollbarWidth = hScrollShowing ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 15 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
 

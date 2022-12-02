@@ -53,13 +53,13 @@ export class ChartDatasource extends BeanStub {
                 return {chartData: [], columnNames: {}};
             }
 
-            if (!this.gridOptionsWrapper.isRowModelDefault()) {
+            if (!this.gridOptionsService.isRowModelType('clientSide')) {
                 console.warn("AG Grid: crossing filtering is only supported in the client side row model.");
                 return {chartData: [], columnNames: {}};
             }
         }
 
-        const isServerSide = this.gridOptionsWrapper.isRowModelServerSide();
+        const isServerSide = this.gridOptionsService.isRowModelType('serverSide');
         if (isServerSide && params.pivoting) {
             this.updatePivotKeysForSSRM();
         }

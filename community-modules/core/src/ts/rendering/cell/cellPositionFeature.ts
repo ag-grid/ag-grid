@@ -1,9 +1,8 @@
-import { CellCtrl, ICellComp } from "./cellCtrl";
+import { CellCtrl } from "./cellCtrl";
 import { Column } from "../../entities/column";
 import { areEqual, last } from "../../utils/array";
 import { Events } from "../../eventKeys";
 import { missing } from "../../utils/generic";
-import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
@@ -135,13 +134,13 @@ export class CellPositionFeature extends BeanStub {
     }
 
     private modifyLeftForPrintLayout(leftPosition: number | null): number | null {
-        if (!this.cellCtrl.isPrintLayout() || this.column.getPinned() === Constants.PINNED_LEFT) {
+        if (!this.cellCtrl.isPrintLayout() || this.column.getPinned() === 'left') {
             return leftPosition;
         }
 
         const leftWidth = this.beans.columnModel.getDisplayedColumnsLeftWidth();
 
-        if (this.column.getPinned() === Constants.PINNED_RIGHT) {
+        if (this.column.getPinned() === 'right') {
             const bodyWidth = this.beans.columnModel.getBodyContainerWidth();
             return leftWidth + bodyWidth + (leftPosition || 0);
         }
@@ -154,7 +153,7 @@ export class CellPositionFeature extends BeanStub {
 
         if (this.rowSpan === 1) { return; }
 
-        const singleRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
+        const singleRowHeight = this.beans.gridOptionsService.getRowHeightAsNumber();
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
         this.eGui.style.height = `${totalRowHeight}px`;

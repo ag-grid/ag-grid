@@ -13,7 +13,7 @@ import { ColDef } from "../entities/colDef";
 export class ColumnUtils extends BeanStub {
 
     public calculateColMinWidth(colDef: ColDef): number {
-        return colDef.minWidth != null ? colDef.minWidth : this.gridOptionsWrapper.getMinColWidth();
+        return colDef.minWidth != null ? colDef.minWidth : this.environment.getMinColWidth();
     }
 
     public calculateColMaxWidth(colDef: ColDef): number {

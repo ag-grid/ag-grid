@@ -1,12 +1,15 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource, ISetFilter, SetFilterValuesFuncParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IServerSideDatasource, ISetFilter, SetFilterValuesFuncParams, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
 
 declare var FakeServer: any;
 const columnDefs: ColDef[] = [
   {
     field: 'country',
     filter: 'agSetColumnFilter',
+    valueFormatter: countryValueFormatter,
     filterParams: {
       values: getCountryValuesAsync,
+      keyCreator: countryCodeKeyCreator,
+      valueFormatter: countryValueFormatter,
     },
     menuTabs: ['filterMenuTab'],
   },
@@ -19,7 +22,15 @@ const columnDefs: ColDef[] = [
     menuTabs: ['filterMenuTab'],
   },
   { field: 'athlete', menuTabs: undefined },
-]
+];
+
+function countryCodeKeyCreator(params: KeyCreatorParams): string {
+  return params.value.code;
+}
+
+function countryValueFormatter(params: ValueFormatterParams): string {
+  return params.value.name;
+}
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
@@ -124,6 +135,11 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
+      data.forEach((row: any) => {
+        row.countryName = row.country;
+        row.countryCode = row.country.substring(0, 2).toUpperCase();
+        delete row.country;
+      });
       // setup the fake server with entire dataset
       fakeServer = new FakeServer(data)
 

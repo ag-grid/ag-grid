@@ -1,4 +1,5 @@
-import { Grid, ChartType, ColDef, CreateRangeChartParams, GetRowIdParams, GridOptions, ValueFormatterParams, AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams, ChartMenuOptions } from '@ag-grid-community/core'
+import { Grid, ChartType, ColDef, CreateRangeChartParams, GetRowIdParams, GridOptions, ValueFormatterParams, ChartMenuOptions } from '@ag-grid-community/core'
+import { AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams } from 'ag-charts-community';
 declare var __basePath: string;
 
 const columnDefs: ColDef[] = [

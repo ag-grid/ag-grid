@@ -8,18 +8,17 @@ import {
     IAggFunc,
     ColumnFunctionCallbackParams,
     RowSpanParams,
-    ColumnMenuTab
+    ColumnMenuTab,
+    SortDirection
 } from "./colDef";
 import { EventService } from "../eventService";
 import { Autowired, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnUtils } from "../columns/columnUtils";
 import { RowNode } from "./rowNode";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ColumnEvent, ColumnEventType } from "../events";
 import { ColumnGroup } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
-import { Constants } from "../constants/constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
@@ -68,7 +67,6 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     // + toolpanel, for gui updates
     public static EVENT_VALUE_CHANGED = 'columnValueChanged';
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
 
@@ -94,7 +92,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     private left: number | null;
     private oldLeft: number | null;
     private aggFunc: string | IAggFunc | null | undefined;
-    private sort: 'asc' | 'desc' | null | undefined;
+    private sort: SortDirection | undefined;
     private sortIndex: number | null | undefined;
     private moving = false;
     private menuVisible = false;
@@ -138,11 +136,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     private setState(colDef: ColDef): void {
         // sort
         if (colDef.sort !== undefined) {
-            if (colDef.sort === Constants.SORT_ASC || colDef.sort === Constants.SORT_DESC) {
+            if (colDef.sort === 'asc' || colDef.sort === 'desc') {
                 this.sort = colDef.sort;
             }
         } else {
-            if (colDef.initialSort === Constants.SORT_ASC || colDef.initialSort === Constants.SORT_DESC) {
+            if (colDef.initialSort === 'asc' || colDef.initialSort === 'desc') {
                 this.sort = colDef.initialSort;
             }
         }
@@ -222,7 +220,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return this.originalParent;
     }
 
-    // this is done after constructor as it uses gridOptionsWrapper
+    // this is done after constructor as it uses gridOptionsService
     @PostConstruct
     private initialise(): void {
         this.initMinAndMaxWidths();
@@ -302,21 +300,20 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             }, key);
         }
 
-        const usingCSRM = this.gridOptionsWrapper.isRowModelDefault();
+        const usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
         if (usingCSRM && !ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
             const rowGroupingItems: (keyof ColDef)[] = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
-            rowGroupingItems.forEach(item => {
-                if (exists(colDefAny[item])) {
-                    ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'colDef.' + item);                    
-                }
-            });
+            const itemsUsed = rowGroupingItems.filter(x => exists(colDefAny[x]));
+            if (itemsUsed.length > 0) {
+                ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, itemsUsed.map(i => 'colDef.' + i).join(', '));
+            }
         }
 
         if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
             ModuleRegistry.assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor)
         }
 
-        if (this.gridOptionsWrapper.isTreeData()) {
+        if (this.gridOptionsService.isTreeData()) {
             const itemsNotAllowedWithTreeData: (keyof ColDef)[] = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {
                 if (exists(colDefAny[item])) {
@@ -452,11 +449,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     /** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */
-    public getSort(): 'asc' | 'desc' | null | undefined {
+    public getSort(): SortDirection | undefined {
         return this.sort;
     }
 
-    public setSort(sort: 'asc' | 'desc' | null | undefined, source: ColumnEventType = "api"): void {
+    public setSort(sort: SortDirection | undefined, source: ColumnEventType = "api"): void {
         if (this.sort !== sort) {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED, source));
@@ -475,11 +472,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public isSortAscending(): boolean {
-        return this.sort === Constants.SORT_ASC;
+        return this.sort === 'asc';
     }
 
     public isSortDescending(): boolean {
-        return this.sort === Constants.SORT_DESC;
+        return this.sort === 'desc';
     }
 
     public isSortNone(): boolean {
@@ -546,10 +543,10 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public setPinned(pinned: ColumnPinnedType): void {
-        if (pinned === true || pinned === Constants.PINNED_LEFT) {
-            this.pinned = Constants.PINNED_LEFT;
-        } else if (pinned === Constants.PINNED_RIGHT) {
-            this.pinned = Constants.PINNED_RIGHT;
+        if (pinned === true || pinned === 'left') {
+            this.pinned = 'left';
+        } else if (pinned === 'right') {
+            this.pinned = 'right';
         } else {
             this.pinned = null;
         }
@@ -578,15 +575,15 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public isPinned(): boolean {
-        return this.pinned === Constants.PINNED_LEFT || this.pinned === Constants.PINNED_RIGHT;
+        return this.pinned === 'left' || this.pinned === 'right';
     }
 
     public isPinnedLeft(): boolean {
-        return this.pinned === Constants.PINNED_LEFT;
+        return this.pinned === 'left';
     }
 
     public isPinnedRight(): boolean {
-        return this.pinned === Constants.PINNED_RIGHT;
+        return this.pinned === 'right';
     }
 
     public getPinned(): ColumnPinnedType {

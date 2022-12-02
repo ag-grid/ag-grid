@@ -66,7 +66,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         this.params = params;
         this.filterParams = params.filterParams;
         this.createDateComponent();
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         this.eReadOnlyText
             .setDisabled(true)
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));

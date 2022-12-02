@@ -6372,13 +6372,16 @@ Object {
         5,
       ],
       "colorKey": "color",
-      "colorParents": false,
       "colorRange": Array [
         "#cb4b3f",
         "#6acb64",
       ],
       "cursor": "default",
+      "formatter": [Function],
       "gradient": true,
+      "groupFill": "#272931",
+      "groupStroke": "black",
+      "groupStrokeWidth": 1,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6390,14 +6393,6 @@ Object {
       },
       "labelKey": "name",
       "labels": Object {
-        "color": Object {
-          "color": "white",
-          "enabled": true,
-          "fontFamily": "Verdana, sans-serif",
-          "fontSize": 12,
-          "fontStyle": undefined,
-          "fontWeight": undefined,
-        },
         "large": Object {
           "color": "white",
           "enabled": true,
@@ -6422,6 +6417,17 @@ Object {
           "fontStyle": undefined,
           "fontWeight": "bold",
         },
+        "value": Object {
+          "formatter": [Function],
+          "style": Object {
+            "color": "white",
+            "enabled": true,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": undefined,
+            "fontWeight": undefined,
+          },
+        },
       },
       "nodePadding": 2,
       "showInLegend": false,
@@ -6435,6 +6441,8 @@ Object {
         "fontWeight": undefined,
         "padding": 13,
       },
+      "tileStroke": "black",
+      "tileStrokeWidth": 1,
       "title": Object {
         "color": "white",
         "enabled": true,

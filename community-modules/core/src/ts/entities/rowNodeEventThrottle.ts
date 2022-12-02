@@ -1,4 +1,3 @@
-import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowGroupOpenedEvent } from "../events";
@@ -20,7 +19,7 @@ export class RowNodeEventThrottle extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.rowModel.getType() == Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() == 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
     }

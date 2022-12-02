@@ -4,7 +4,7 @@ import {
     Bean,
     BeanStub,
     ColumnModel,
-    Constants,
+    GROUP_AUTO_COLUMN_ID,
     Events,
     PostConstruct,
     SortController,
@@ -26,7 +26,7 @@ export class SortListener extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gridOptionsWrapper.isRowModelServerSide()) { return; }
+        if (!this.gridOptionsService.isRowModelType('serverSide')) { return; }
 
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
@@ -36,7 +36,7 @@ export class SortListener extends BeanStub {
 
         // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
         // into it's constitute group columns as they are not defined up front and can vary per node.
-        if (this.gridOptionsWrapper.isTreeData()) {
+        if (this.gridOptionsService.isTreeData()) {
             return sortModel;
         }
 
@@ -49,8 +49,8 @@ export class SortListener extends BeanStub {
     }
 
     private removeMultiColumnPrefixOnColumnIds(sortModel: SortModelItem[]): void {
-        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
-            const multiColumnPrefix = Constants.GROUP_AUTO_COLUMN_ID + "-";
+        if (this.gridOptionsService.isGroupMultiAutoColumn()) {
+            const multiColumnPrefix = GROUP_AUTO_COLUMN_ID + "-";
 
             for (let i = 0; i < sortModel.length; ++i) {
                 if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
@@ -62,7 +62,7 @@ export class SortListener extends BeanStub {
 
     private replaceAutoGroupColumnWithActualRowGroupColumns(sortModel: SortModelItem[]): void {
         // find index of auto group column in sort model
-        const autoGroupSortModel = sortModel.find(sm => sm.colId == Constants.GROUP_AUTO_COLUMN_ID);
+        const autoGroupSortModel = sortModel.find(sm => sm.colId == GROUP_AUTO_COLUMN_ID);
 
         // replace auto column with individual group columns
         if (autoGroupSortModel) {

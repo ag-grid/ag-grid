@@ -8,7 +8,8 @@ import { SolarLight } from '../themes/solarLight';
 import { SolarDark } from '../themes/solarDark';
 import { VividLight } from '../themes/vividLight';
 import { VividDark } from '../themes/vividDark';
-import { AgChartTheme, AgChartThemeName } from '../agChartOptions';
+import { AgChartTheme, AgChartThemeName, AgChartThemeOverrides } from '../agChartOptions';
+import { jsonMerge } from '../../util/json';
 
 type ThemeMap = { [key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme };
 
@@ -52,10 +53,30 @@ export function getChartTheme(value?: string | ChartTheme | AgChartTheme): Chart
 
     value = value as AgChartTheme;
 
-    if (value.baseTheme || value.overrides || value.palette) {
-        const baseTheme: any = getChartTheme(value.baseTheme);
+    // Flatten recursive themes.
+    const overrides: AgChartThemeOverrides[] = [];
+    let palette;
+    while (typeof value === 'object') {
+        overrides.push(value.overrides ?? {});
 
-        return new baseTheme.constructor(value);
+        // Use first palette found, they can't be merged.
+        if (value.palette && palette == null) {
+            palette = value.palette;
+        }
+
+        value = value.baseTheme;
+    }
+    overrides.reverse();
+
+    const flattenedTheme = {
+        baseTheme: value,
+        overrides: jsonMerge(overrides),
+        ...(palette ? { palette } : {}),
+    };
+
+    if (flattenedTheme.baseTheme || flattenedTheme.overrides) {
+        const baseTheme: any = getChartTheme(flattenedTheme.baseTheme);
+        return new baseTheme.constructor(flattenedTheme);
     }
 
     return lightTheme;

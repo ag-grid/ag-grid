@@ -153,7 +153,7 @@ export class AgMenuItemComponent extends Component {
         const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
             { eventSource: eGui, ePopup });
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,

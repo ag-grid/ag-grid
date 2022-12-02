@@ -1,19 +1,18 @@
 import {
     ColDef,
-    Constants,
     IClientSideRowModel,
     ValueFormatterService,
     ISetFilterParams,
     Context,
     AgInputTextField,
     AgCheckbox,
-    GridOptionsWrapper,
     EventService,
     VirtualList,
     IRowModel,
     SetFilterModel,
     GridOptionsService,
     ColumnModel,
+    LocaleService
 } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 import { SetFilter } from './setFilter';
@@ -22,7 +21,7 @@ import { SetValueModel } from './setValueModel';
 let rowModel: jest.Mocked<IRowModel>;
 let eventService: jest.Mocked<EventService>;
 let valueFormatterService: jest.Mocked<ValueFormatterService>;
-let gridOptionsWrapper: jest.Mocked<GridOptionsWrapper>;
+let localeService: jest.Mocked<LocaleService>;
 let context: jest.Mocked<Context>;
 let eMiniFilter: jest.Mocked<AgInputTextField>;
 let eGui: jest.Mocked<HTMLElement>;
@@ -34,15 +33,15 @@ let setValueModel: jest.Mocked<SetValueModel<string>>;
 
 beforeEach(() => {
     rowModel = mock<IClientSideRowModel>('getType', 'forEachLeafNode');
-    rowModel.getType.mockReturnValue(Constants.ROW_MODEL_TYPE_CLIENT_SIDE);
+    rowModel.getType.mockReturnValue('clientSide');
 
     eventService = mock<EventService>('addEventListener');
 
     valueFormatterService = mock<ValueFormatterService>('formatValue');
     valueFormatterService.formatValue.mockImplementation((_1, _2, value) => value);
 
-    gridOptionsWrapper = mock<GridOptionsWrapper>('getLocaleTextFunc');
-    gridOptionsWrapper.getLocaleTextFunc.mockImplementation(() => ((_: string, defaultValue: string) => defaultValue));
+    localeService = mock<LocaleService>('getLocaleTextFunc');
+    localeService.getLocaleTextFunc.mockImplementation(() => ((_: string, defaultValue: string) => defaultValue));
 
     context = mock<Context>('createBean');
     context.createBean.mockImplementation(bean => bean);
@@ -87,7 +86,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
 
     const setFilter = new SetFilter();
     (setFilter as any).eventService = eventService;
-    (setFilter as any).gridOptionsWrapper = gridOptionsWrapper;
+    (setFilter as any).localeService = localeService;
     (setFilter as any).valueFormatterService = valueFormatterService;
     (setFilter as any).rowModel = rowModel;
     (setFilter as any).context = context;

@@ -1,3 +1,4 @@
+import { Node } from '../scene/node';
 import { Group } from '../scene/group';
 import { Selection } from '../scene/selection';
 import { MarkerLabel } from './markerLabel';
@@ -147,7 +148,7 @@ export class Legend {
 
     onLayoutChange?: () => void;
 
-    readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
+    private readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
 
     private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(
         this.group
@@ -160,11 +161,24 @@ export class Legend {
 
     truncatedItems: Set<string> = new Set();
 
+    set translationX(value: number) {
+        this.group.translationX = value;
+    }
+    get translationX(): number {
+        return this.group.translationX;
+    }
+
+    set translationY(value: number) {
+        this.group.translationY = value;
+    }
+    get translationY(): number {
+        return this.group.translationY;
+    }
+
     private _data: LegendDatum[] = [];
     set data(value: LegendDatum[]) {
         this._data = value;
-
-        this.group.visible = value.length > 0 && this.enabled;
+        this.updateGroupVisibility();
     }
     get data() {
         return this._data;
@@ -174,8 +188,7 @@ export class Legend {
     private _enabled = true;
     set enabled(value: boolean) {
         this._enabled = value;
-
-        this.group.visible = value && this.data.length > 0;
+        this.updateGroupVisibility();
     }
     get enabled() {
         return this._enabled;
@@ -239,6 +252,23 @@ export class Legend {
     }
 
     readonly size: [number, number] = [0, 0];
+
+    private _visible: boolean = true;
+    set visible(value: boolean) {
+        this._visible = value;
+        this.updateGroupVisibility();
+    }
+    get visible() {
+        return this._visible;
+    }
+
+    private updateGroupVisibility() {
+        this.group.visible = this.enabled && this.visible && this.data.length > 0;
+    }
+
+    attachLegend(node: Node) {
+        node.append(this.group);
+    }
 
     /**
      * The method is given the desired size of the legend, which only serves as a hint.
@@ -498,5 +528,9 @@ export class Legend {
         if (node && node.parent) {
             return node.parent.datum;
         }
+    }
+
+    computeBBox(): BBox {
+        return this.group.computeBBox();
     }
 }

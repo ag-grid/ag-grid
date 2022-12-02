@@ -23,7 +23,7 @@ import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
 import { getElementSize } from "../../../utils/dom";
 import { ResizeObserverService } from "../../../misc/resizeObserverService";
-import { noop } from "../../../utils/function";
+import { SortDirection } from "../../../entities/colDef";
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -143,7 +143,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             progressSort: (multiSort?: boolean) => {
                 this.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
             },
-            setSort: (sort: 'asc' | 'desc' | null, multiSort?: boolean) => {
+            setSort: (sort: SortDirection, multiSort?: boolean) => {
                 this.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
             },
             api: this.gridApi,
@@ -460,7 +460,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = this.beans.gridOptionsWrapper.getDocument();
+                const doc = this.beans.gridOptionsService.getDocument();
                 const notYetInDom = !doc || !doc.contains(wrapperElement);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
@@ -524,7 +524,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private refreshAriaSort(): void {
         if (this.sortable) {
-            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            const translate = this.localeService.getLocaleTextFunc();
             this.comp.setAriaSort(getAriaSortState(this.column));
             this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort.'));
         } else {
@@ -535,7 +535,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private refreshAriaMenu(): void {
         if (this.menuEnabled) {
-            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            const translate = this.localeService.getLocaleTextFunc();
             this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
         } else {
             this.setAriaDescriptionProperty('menu', null);

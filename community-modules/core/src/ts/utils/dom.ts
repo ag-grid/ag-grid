@@ -2,7 +2,6 @@ import { browserSupportsPreventScroll, isBrowserChrome, isBrowserSafari } from '
 import { exists } from './generic';
 import { isNonNullObject } from './object';
 import { hyphenToCamelCase } from './string';
-import { Constants } from '../constants/constants';
 import { setAriaHidden } from './aria';
 
 let rtlNegativeScroll: boolean;
@@ -29,12 +28,16 @@ export function radioCssClass(element: HTMLElement, elementClass: string | null,
     }
 }
 
+export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
+export const FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *';
+
 export function isFocusableFormField(element: HTMLElement): boolean {
     const matches: (str: string) => boolean =
         Element.prototype.matches || (Element as any).prototype.msMatchesSelector;
 
-    const isFocusable = matches.call(element, Constants.INPUT_SELECTOR);
-    const isNotFocusable = matches.call(element, Constants.FOCUSABLE_EXCLUDE);
+    const inputSelector = 'input, select, button, textarea';
+    const isFocusable = matches.call(element, inputSelector);
+    const isNotFocusable = matches.call(element, FOCUSABLE_EXCLUDE);
     const isElementVisible = isVisible(element);
 
     const focusable = isFocusable && !isNotFocusable && isElementVisible;

@@ -14,32 +14,29 @@ The following page provides information that is relevant when using older versio
  | 6 - 7   | 18 - 22   |                   |
  | 8       | 18 - 27   | 28                |
  | 9       | 23 - 27   | 28                |
- | 10 - 11 | 24 - 27   | 28+               |
- | 12+     | 25 - 28+  | N/A               |
+ | 10 - 11 | 24 - 27   | 28 - 29           |
+ | 12+     | 25 - 29+  | N/A               |
 
  ## Future Support of Angular versions
 
-AG Grid currently supports Angular v8 and above. However, over the next two major releases we will be dropping support for older versions of Angular as follows: 
-
- - In v29 (release date TBC) the minimum Angular version will be v10.
- - In v30 (release date TBC) the minimum Angular version will be v12.
+AG Grid currently supports Angular v10 and above. However, in the next major release (v30) we will not be publishing a new version of the AG Grid Legacy package which means the minimum supported Angular version will be v12.
 
 ## AG Grid Legacy
 
 [[note]]
-| AG Grid Legacy is only required for apps on Angular v8-11 that wish to use AG Grid v28+.
+| AG Grid Legacy is only required for apps on Angular v8-11 that wish to use AG Grid v28 or v29.
 
-In AG Grid v28 the package `ag-grid-angular` was migrated to the Ivy distribution format. This is the [recommended](https://angular.io/guide/creating-libraries#publishing-libraries) format for Angular libraries from v12. As a result, v28 of AG Grid will only compile in Angular v12+.
+In AG Grid v28 the package `ag-grid-angular` was migrated to the Ivy distribution format. This is the [recommended](https://angular.io/guide/creating-libraries#publishing-libraries) format for Angular libraries from v12. As a result, v28+ of AG Grid will only compile in Angular v12+.
 
-To enable applications on Angular v8-11 to use AG Grid v28 features, the `ag-grid-angular-legacy` package has been created. This package is published in the legacy View Engine format. It can be consumed by older versions of Angular via the `ngcc` compiler.
+To enable applications on Angular v8-11 to use AG Grid v28 or Angular applications on v10-11 to use AG Grid v29 features, the `ag-grid-angular-legacy` package has been created. This package is published in the legacy View Engine format. It can be consumed by older versions of Angular via the `ngcc` compiler.
 
 If you are using [AG Grid Modules](https://ag-grid.com/angular-data-grid/packages-modules/) the same change as been applied to `@ag-grid-community/angular` and the corresponding legacy module is `@ag-grid-community/angular-legacy`.
 
-### Migration to AG Grid v28
+### Migration to AG Grid v28+
 
 #### Angular v12+
 
-To migrate applications on Angular v12+ to AG Grid v28 requires no dependency changes. There are [breaking changes](https://ag-grid.com/changelog/?fixVersion=28.0.0), notably `AgGridModule` no longer supports `.withComponents()` as it is not required any more.
+To migrate applications on Angular v12+ to AG Grid v28+ requires no dependency changes. There are [breaking changes](https://ag-grid.com/changelog/?fixVersion=28.0.0), notably `AgGridModule` no longer supports `.withComponents()` as it is not required any more.
 
  ```diff
  @NgModule({
@@ -51,7 +48,7 @@ To migrate applications on Angular v12+ to AG Grid v28 requires no dependency ch
  ```
 
 #### Angular v8-11
-To migrate an application on Angular v8-11 to AG Grid v28 the following changes are required in `package.json`.
+To migrate an application on Angular v8-11 to AG Grid v28+ the following changes are required in `package.json`.
 
  ```diff
 "dependencies": {

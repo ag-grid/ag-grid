@@ -1,6 +1,5 @@
 import { ColumnModel } from "../../columns/columnModel";
 import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { Constants } from "../../constants/constants";
 import { KeyCode } from "../../constants/keyCode";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
@@ -204,8 +203,8 @@ export class GroupCellRendererCtrl extends BeanStub {
     private isEmbeddedRowMismatch(): boolean {
         if (!this.params.fullWidth || !this.gridOptionsService.is('embedFullWidthRows')) { return false; }
 
-        const pinnedLeftCell = this.params.pinned === Constants.PINNED_LEFT;
-        const pinnedRightCell = this.params.pinned === Constants.PINNED_RIGHT;
+        const pinnedLeftCell = this.params.pinned === 'left';
+        const pinnedRightCell = this.params.pinned === 'right';
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
         if (this.gridOptionsService.is('enableRtl')) {
@@ -439,7 +438,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isShowRowGroupForThisRow(): boolean {
-        if (this.gridOptionsWrapper.isTreeData()) { return true; }
+        if (this.gridOptionsService.isTreeData()) { return true; }
 
         const rowGroupColumn = this.displayedGroupNode.rowGroupColumn;
 
@@ -603,7 +602,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const rowNode: RowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
         const fullWithRow = !!params.colDef;
-        const treeData = this.gridOptionsWrapper.isTreeData();
+        const treeData = this.gridOptionsService.isTreeData();
         const manyDimensionThisColumn = !fullWithRow || treeData || params.colDef!.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
         const userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;

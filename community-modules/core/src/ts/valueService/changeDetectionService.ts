@@ -5,10 +5,11 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ChangedPath } from "../utils/changedPath";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowRenderer } from "../rendering/rowRenderer";
-import { Constants } from "../constants/constants";
 import { CellValueChangedEvent, Events } from "../events";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 
+// Matches value in clipboard module
+const SOURCE_PASTE = 'paste';
 @Bean('changeDetectionService')
 export class ChangeDetectionService extends BeanStub {
 
@@ -19,7 +20,7 @@ export class ChangeDetectionService extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
@@ -34,7 +35,7 @@ export class ChangeDetectionService extends BeanStub {
         // this doChangeDetection would get called 100 times (once for each cell), instead clipboard
         // service executes the logic we have here once (in essence batching up all cell changes
         // into one change detection).
-        if (event.source === Constants.SOURCE_PASTE) { return; }
+        if (event.source === SOURCE_PASTE) { return; }
 
         this.doChangeDetection(event.node, event.column);
     }

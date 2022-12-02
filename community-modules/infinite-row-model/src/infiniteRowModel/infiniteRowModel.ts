@@ -3,7 +3,6 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    Constants,
     Events,
     FilterManager,
     IDatasource,
@@ -51,11 +50,11 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     @PostConstruct
     public init(): void {
-        if (!this.gridOptionsWrapper.isRowModelInfinite()) {
+        if (!this.gridOptionsService.isRowModelType('infinite')) {
             return;
         }
 
-        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+        this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
 
         this.addEventListeners();
 
@@ -65,7 +64,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     private verifyProps(): void {
-        if (this.gridOptionsWrapper.getInitialGroupOrderComparator() != null) {
+        if (this.gridOptionsService.exists('initialGroupOrderComparator') || this.gridOptionsService.exists('defaultGroupOrderComparator')) {
             const message = `AG Grid: initialGroupOrderComparator cannot be used with Infinite Row Model. If using Infinite Row Model, then sorting is done on the server side, nothing to do with the client.`;
             _.doOnce(() => console.warn(message), 'IRM.InitialGroupOrderComparator');
         }
@@ -120,7 +119,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public getType(): RowModelType {
-        return Constants.ROW_MODEL_TYPE_INFINITE;
+        return 'infinite';
     }
 
     public setDatasource(datasource: IDatasource | undefined): void {
@@ -155,7 +154,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
-        const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
@@ -199,7 +198,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             // or a new datasource is set
             initialRowCount: this.defaultIfInvalid(this.gridOptionsService.getNum('infiniteInitialRowCount'), 1),
             maxBlocksInCache: this.gridOptionsService.getNum('maxBlocksInCache'),
-            rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
+            rowHeight: this.gridOptionsService.getRowHeightAsNumber(),
 
             // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
             // the current page and request first row of next page
@@ -207,7 +206,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
             // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
             // server for one page at a time. so the default if not specified is 100.
-            blockSize: this.defaultIfInvalid(this.gridOptionsWrapper.getCacheBlockSize(), 100),
+            blockSize: this.defaultIfInvalid(this.gridOptionsService.getNum('cacheBlockSize'), 100),
 
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages

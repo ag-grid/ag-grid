@@ -61,6 +61,7 @@ import {
     ComponentStateChangedEvent,
     CsvExportParams,
     DisplayedColumnsChangedEvent,
+    DomLayoutType,
     DragStartedEvent,
     DragStoppedEvent,
     ExcelExportParams,
@@ -144,6 +145,7 @@ import {
     ServerSideStoreType,
     SideBarDef,
     SortChangedEvent,
+    SortDirection,
     StatusPanelDef,
     TabToNextCellParams,
     TabToNextHeaderParams,
@@ -199,7 +201,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         this.frameworkComponentWrapper.setComponentFactoryResolver(this.componentFactoryResolver);
         this.angularFrameworkOverrides.setEmitterUsedCallback(this.isEmitterUsed.bind(this));
 
-        this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
+         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
@@ -230,7 +232,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     public ngOnChanges(changes: any): void {
         if (this._initialised) {
-            ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+             ComponentUtil.processOnChange(changes, this.api);
         }
     }
 
@@ -587,7 +589,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Switch between layout options: `normal`, `autoHeight`, `print`.
          * Default: `normal`
          */
-    @Input() public domLayout: 'normal' | 'autoHeight' | 'print' | undefined = undefined;
+    @Input() public domLayout: DomLayoutType | undefined = undefined;
     /** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false`     */
     @Input() public ensureDomOrder: boolean | undefined = undefined;
     /** Set to `true` to operate the grid in RTL (Right to Left) mode. Default: `false`     */
@@ -819,7 +821,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/
     @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`      */
-    @Input() public sortingOrder: ('asc' | 'desc' | null)[] | undefined = undefined;
+    @Input() public sortingOrder: (SortDirection)[] | undefined = undefined;
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false`     */
     @Input() public accentedSort: boolean | undefined = undefined;
     /** Set to `true` to show the 'no sort' icon. Default: `false`     */

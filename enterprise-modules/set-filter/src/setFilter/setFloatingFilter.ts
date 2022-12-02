@@ -39,7 +39,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
     public init(params: IFloatingFilterParams): void {
         const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         this.eFloatingFilterText
             .setDisabled(true)
@@ -95,7 +95,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
                 return;
             }
 
-            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
             const availableKeys = values.filter(v => valueModel.isKeyAvailable(v))!;
 
             const valueFormatter = setFilter.getValueFormatter();

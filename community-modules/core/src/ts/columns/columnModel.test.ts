@@ -1,9 +1,9 @@
 import { ColumnModel } from './columnModel';
 
-function createModel(gridOptionsWrapper: any): ColumnModel {
+function createModel(gridOptionsService: any): ColumnModel {
     const columnModel = new ColumnModel();
 
-    (columnModel as any).gridOptionsWrapper = gridOptionsWrapper;
+    (columnModel as any).gridOptionsService = gridOptionsService;
 
     return columnModel;
 }

@@ -307,7 +307,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         const suppressFocus = filters && filters.some(filter => filter.display! && filter.display !== 'inline');
 
         this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const activeEl = eDocument.activeElement;
 
         // if suppress focus is true, we might run into two scenarios:

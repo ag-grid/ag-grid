@@ -106,7 +106,7 @@ export class PrimaryColsListPanel extends Component {
 
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const columnListName = translate('ariaColumnList', 'Column List');
 
         this.virtualList = this.createManagedBean(new VirtualList('column-select', 'tree', columnListName));

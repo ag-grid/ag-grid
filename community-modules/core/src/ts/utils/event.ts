@@ -1,4 +1,4 @@
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { GridOptionsService } from '../gridOptionsService';
 import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { includes } from './array';
 
@@ -48,11 +48,11 @@ export const isEventSupported = (() => {
     return eventChecker;
 })();
 
-export function getCtrlForEvent<T>(gridOptionsWrapper: GridOptionsWrapper, event: Event, type: string): T | null {
+export function getCtrlForEvent<T>(gridOptionsService: GridOptionsService, event: Event, type: string): T | null {
     let sourceElement = event.target as HTMLElement;
 
     while (sourceElement) {
-        const renderedComp = gridOptionsWrapper.getDomData(sourceElement, type);
+        const renderedComp = gridOptionsService.getDomData(sourceElement, type);
 
         if (renderedComp) {
             return renderedComp as T;

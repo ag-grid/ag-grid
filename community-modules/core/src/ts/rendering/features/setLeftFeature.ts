@@ -2,14 +2,12 @@ import { IHeaderColumn } from "../../entities/iHeaderColumn";
 import { Column } from "../../entities/column";
 import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
-import { Constants } from "../../constants/constants";
 import { PostConstruct } from "../../context/context";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
 import { last } from "../../utils/array";
 import { exists } from "../../utils/generic";
 import { Events } from "../../eventKeys";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export class SetLeftFeature extends BeanStub {
 
@@ -56,7 +54,7 @@ export class SetLeftFeature extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onLeftChanged.bind(this));
 
         // setting left has a dependency on print layout
-        this.addManagedListener(this.beans.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onLeftChanged.bind(this));
+        this.addManagedPropertyListener('domLayout', this.onLeftChanged.bind(this));
     }
 
     private setLeftFirstTime(): void {
@@ -104,17 +102,17 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private modifyLeftForPrintLayout(colOrGroup: IHeaderColumn, leftPosition: number): number {
-        const printLayout = this.beans.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const printLayout = this.beans.gridOptionsService.isDomLayout('print');
 
         if (!printLayout) { return leftPosition; }
 
-        if (colOrGroup.getPinned() === Constants.PINNED_LEFT) {
+        if (colOrGroup.getPinned() === 'left') {
             return leftPosition;
         }
 
         const leftWidth = this.beans.columnModel.getDisplayedColumnsLeftWidth();
 
-        if (colOrGroup.getPinned() === Constants.PINNED_RIGHT) {
+        if (colOrGroup.getPinned() === 'right') {
             const bodyWidth = this.beans.columnModel.getBodyContainerWidth();
             return leftWidth + bodyWidth + leftPosition;
         }

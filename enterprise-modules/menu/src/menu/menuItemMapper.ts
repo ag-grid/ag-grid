@@ -6,7 +6,6 @@ import {
     ChartType,
     Column,
     ColumnModel,
-    Constants,
     GridApi,
     IAggFuncService,
     IChartService,
@@ -59,7 +58,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private getStockMenuItem(key: string, column: Column | null): MenuItemDef | string | null {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
 
         switch (key) {
@@ -67,18 +66,18 @@ export class MenuItemMapper extends BeanStub {
                 return {
                     name: localeTextFunc('pinColumn', 'Pin Column'),
                     icon: _.createIconNoSpan('menuPin', this.gridOptionsService, null),
-                    subMenu: ['pinLeft', 'pinRight', 'clearPinned']
+                    subMenu: ['clearPinned', 'pinLeft', 'pinRight']
                 };
             case 'pinLeft':
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: () => this.columnModel.setColumnPinned(column, Constants.PINNED_LEFT, "contextMenu"),
+                    action: () => this.columnModel.setColumnPinned(column, 'left', "contextMenu"),
                     checked: !!column && column.isPinnedLeft()
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: () => this.columnModel.setColumnPinned(column, Constants.PINNED_RIGHT, "contextMenu"),
+                    action: () => this.columnModel.setColumnPinned(column, 'right', "contextMenu"),
                     checked: !!column && column.isPinnedRight()
                 };
             case 'clearPinned':
@@ -222,7 +221,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private getChartItems(key: string) {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         const pivotChartMenuItem = (localeKey: string, defaultText: string, chartType: ChartType) => {
             return {
@@ -427,7 +426,7 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private createAggregationSubMenu(column: Column): MenuItemDef[] {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         let columnToUse: Column | undefined;
         if (column.isPrimary()) {
@@ -442,9 +441,18 @@ export class MenuItemMapper extends BeanStub {
             const columnIsAlreadyAggValue = columnToUse.isValueActive();
             const funcNames = this.aggFuncService.getFuncNames(columnToUse);
 
+            result.push({
+                name: localeTextFunc('noAggregation', 'None'),
+                action: () => {
+                    this.columnModel.removeValueColumn(columnToUse!, "contextMenu");
+                    this.columnModel.setColumnAggFunc(columnToUse, undefined, "contextMenu");
+                },
+                checked: !columnIsAlreadyAggValue
+            })
+
             funcNames.forEach(funcName => {
                 result.push({
-                    name: localeTextFunc(funcName, funcName),
+                    name: localeTextFunc(funcName, _.capitalise(funcName)),
                     action: () => {
                         this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
                         this.columnModel.addValueColumn(columnToUse, "contextMenu");

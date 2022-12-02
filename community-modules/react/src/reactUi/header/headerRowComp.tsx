@@ -1,4 +1,4 @@
-import { AbstractHeaderCellCtrl, HeaderGroupCellCtrl, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _, Constants } from '@ag-grid-community/core';
+import { AbstractHeaderCellCtrl, HeaderGroupCellCtrl, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import HeaderCellComp from './headerCellComp';
@@ -8,7 +8,7 @@ import { useEffectOnce } from '../useEffectOnce';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
-    const { gridOptionsWrapper, gridOptionsService } = useContext(BeansContext);
+    const { gridOptionsService } = useContext(BeansContext);
 
     const [ transform, setTransform ] = useState<string>();
     const [ height, setHeight ] = useState<string>();
@@ -27,7 +27,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     const setCellCtrlsMaintainOrder = useCallback( (prev: AbstractHeaderCellCtrl[], next: AbstractHeaderCellCtrl[]) => {
         const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
-        const isPrintLayout = gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const isPrintLayout = gridOptionsService.isDomLayout('print');
 
         // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
         if (isEnsureDomOrder || isPrintLayout) {

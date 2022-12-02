@@ -213,12 +213,12 @@ const requoteRe = /[\\^$*+?|[\]().{}]/g;
  * Prepends any character in the `requoteRe` set with a backslash.
  * @param s
  */
-export const requote = (s: string) => s.replace(requoteRe, '\\$&'); // $& - matched substring
+const requote = (s: string) => s.replace(requoteRe, '\\$&'); // $& - matched substring
 /**
  * Returns a RegExp that matches any string that starts with any of the given names (case insensitive).
  * @param names
  */
-export const formatRe = (names: string[]) => new RegExp('^(?:' + names.map(requote).join('|') + ')', 'i');
+const formatRe = (names: string[]) => new RegExp('^(?:' + names.map(requote).join('|') + ')', 'i');
 
 // A map of padding modifiers to padding strings. Default is `0`.
 const pads: { [key in string]: string } = {
@@ -227,7 +227,7 @@ const pads: { [key in string]: string } = {
     '0': '0'
 };
 
-export function pad(value: number, fill: string, width: number): string {
+function pad(value: number, fill: string, width: number): string {
     const sign = value < 0 ? '-' : '';
     const string = String(sign ? -value : value);
     const length = string.length;

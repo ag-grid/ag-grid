@@ -26,7 +26,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     @PostConstruct
     private passBeansUp(): void {
         super.setBeans({
-            gridOptionsWrapper: this.gridOptionsWrapper,
             gridOptionsService: this.gridOptionsService,
             eventService: this.eventService,
             context: this.getContext(),
@@ -34,7 +33,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
             dragAndDropService: this.dragAndDropService
         });
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
         const title = localeTextFunc('groups', 'Row Groups');
 
@@ -49,7 +48,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getAriaLabel(): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const label = translate('ariaRowGroupDropZonePanelLabel', 'Row Groups');
 
         return label;

@@ -1,5 +1,4 @@
 import { ColumnModel } from "../../columns/columnModel";
-import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
@@ -183,8 +182,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private setupPinnedWidth(): void {
         if (this.pinned == null) { return; }
 
-        const pinningLeft = this.pinned === Constants.PINNED_LEFT;
-        const pinningRight = this.pinned === Constants.PINNED_RIGHT;
+        const pinningLeft = this.pinned === 'left';
+        const pinningRight = this.pinned === 'right';
 
         this.hidden = true;
 
@@ -195,7 +194,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
             const hidden = (width == 0);
             const hiddenChanged = this.hidden !== hidden;
             const isRtl = this.gridOptionsService.is('enableRtl');
-            const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
+            const scrollbarWidth = this.gridOptionsService.getScrollbarWidth();
 
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,

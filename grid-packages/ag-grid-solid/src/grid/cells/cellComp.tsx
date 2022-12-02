@@ -150,7 +150,14 @@ const CellComp = (props: {
     });
 
     createEffect(() => {
+        const isEditing = !!editDetails();
+        const isPopup = isEditing && !!editDetails()?.popup;
+
         cssClassManager.addOrRemoveCssClass('ag-cell-value', !showCellWrapper());
+        cssClassManager.addOrRemoveCssClass('ag-cell-inline-editing', isEditing && !isPopup);
+        cssClassManager.addOrRemoveCssClass('ag-cell-popup-editing', isEditing && isPopup);
+        cssClassManager.addOrRemoveCssClass('ag-cell-not-inline-editing', !isEditing || isPopup);
+        cellCtrl.getRowCtrl()?.setInlineEditingCss(isEditing);
     });
 
     // we only do refreshing for JS Comps. for SolidJS, the props will change for the cell renderer.

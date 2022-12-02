@@ -139,6 +139,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if display template has changed, means any previous Cell Renderer is in the wrong location
         const controlWrapperChanged = this.refreshWrapper(false);
+        this.refreshEditStyles(false);
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         if (compDetails) {
@@ -427,17 +428,24 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const cellEditorInPopup = popup || (cellEditor.isPopup !== undefined && cellEditor.isPopup());
         if (cellEditorInPopup) {
-            if (!popup) {
-                this.cellCtrl.hackSayEditingInPopup();
-            }
             this.addPopupCellEditor(params, position);
         } else {
             this.addInCellEditor();
         }
 
+        this.refreshEditStyles(true, cellEditorInPopup);
+
         if (cellEditor.afterGuiAttached) {
             cellEditor.afterGuiAttached();
         }
+    }
+
+    private refreshEditStyles(editing: boolean, isPopup?: boolean): void {
+        this.addOrRemoveCssClass('ag-cell-inline-editing', editing && !isPopup);
+        this.addOrRemoveCssClass('ag-cell-popup-editing', editing && !!isPopup);
+        this.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
+
+        this.rowCtrl?.setInlineEditingCss(editing);
     }
 
     private addInCellEditor(): void {
@@ -445,7 +453,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        const eDocument = this.beans.gridOptionsWrapper.getDocument();
+        const eDocument = this.beans.gridOptionsService.getDocument();
         if (eGui.contains(eDocument.activeElement)) {
             eGui.focus();
         }
@@ -460,7 +468,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
-        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
+        if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
             console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                 '- either turn off fullRowEdit, or stop using popup editors.');
         }
@@ -499,7 +507,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams)
 
-        const translate = this.beans.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.beans.localeService.getLocaleTextFunc();
 
         const addPopupRes = popupService.addPopup({
             modal: useModelPopup,
@@ -539,7 +547,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        const eDocument = this.beans.gridOptionsWrapper.getDocument();
+        const eDocument = this.beans.gridOptionsService.getDocument();
         if (eGui.contains(eDocument.activeElement) && browserSupportsPreventScroll()) {
             eGui.focus({ preventScroll: true });
         }

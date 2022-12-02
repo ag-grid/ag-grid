@@ -8,7 +8,6 @@ import { Events, SelectionChangedEvent } from "./events";
 import { Autowired } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { PostConstruct } from "./context/context";
-import { Constants } from "./constants/constants";
 import { ChangedPath } from "./utils/changedPath";
 import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { iterateObject } from "./utils/object";
@@ -82,7 +81,7 @@ export class SelectionService extends BeanStub {
             return;
         }
         // also only do it if CSRM (code should never allow this anyway)
-        if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() !== 'clientSide') {
             return;
         }
 
@@ -200,7 +199,7 @@ export class SelectionService extends BeanStub {
     // Designed for use with 'children' as the group selection type,
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection(): RowNode[] | undefined {
-        if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() !== 'clientSide') {
             // Error logged as part of gridApi as that is only call point for this method.
             return;
         }
@@ -253,7 +252,7 @@ export class SelectionService extends BeanStub {
 
     public deselectAllRowNodes(justFiltered = false) {
         const callback = (rowNode: RowNode) => rowNode.selectThisNode(false);
-        const rowModelClientSide = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+        const rowModelClientSide = this.rowModel.getType() === 'clientSide';
 
         if (justFiltered) {
             if (!rowModelClientSide) {
@@ -286,7 +285,7 @@ export class SelectionService extends BeanStub {
     }
 
     public selectAllRowNodes(justFiltered = false) {
-        if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() !== 'clientSide') {
             throw new Error(`selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`);
         }
 
@@ -300,7 +299,7 @@ export class SelectionService extends BeanStub {
         }
 
         // the above does not clean up the parent rows if they are selected
-        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE && this.groupSelectsChildren) {
+        if (this.rowModel.getType() === 'clientSide' && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
 

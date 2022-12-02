@@ -7,7 +7,7 @@ import {
     ColumnModel,
     ColumnGroup,
     IHeaderColumn,
-    Constants,
+    GROUP_AUTO_COLUMN_ID,
     DisplayedGroupCreator,
     ExportParams,
     GroupInstanceIdCreator,
@@ -89,7 +89,7 @@ export class GridSerializer extends BeanStub {
         // if it's not a leaf group
         const nodeIsRootNode = node.level === -1;
 
-        if (nodeIsRootNode && !node.leafGroup && (!node.footer || !isClipboardExport)) { 
+        if (nodeIsRootNode && !node.leafGroup && !node.footer) { 
             return;
         }
 
@@ -198,8 +198,8 @@ export class GridSerializer extends BeanStub {
             // when in pivot mode, we always render cols on screen, never 'all columns'
             const rowModel = this.rowModel;
             const rowModelType = rowModel.getType();
-            const usingCsrm = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
-            const usingSsrm = rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+            const usingCsrm = rowModelType === 'clientSide';
+            const usingSsrm = rowModelType === 'serverSide';
             const onlySelectedNonStandardModel = !usingCsrm && params.onlySelected;
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
             const {
@@ -215,7 +215,7 @@ export class GridSerializer extends BeanStub {
                     .forEach(processRow);
             } else if (this.columnModel.isPivotMode()) {
                 if (usingCsrm) {
-                    (rowModel as IClientSideRowModel).forEachPivotNode(processRow);
+                    (rowModel as IClientSideRowModel).forEachPivotNode(processRow, true);
                 } else {
                     // must be enterprise, so we can just loop through all the nodes
                     rowModel.forEachNode(processRow);
@@ -236,7 +236,7 @@ export class GridSerializer extends BeanStub {
                     if (exportedRows === 'all') {
                         rowModel.forEachNode(processRow);
                     } else if (usingCsrm) {
-                        (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow);
+                        (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow, true);
                     } else if (usingSsrm) {
                         (rowModel as IServerSideRowModel).forEachNodeAfterFilterAndSort(processRow);
                     } else {
@@ -274,8 +274,8 @@ export class GridSerializer extends BeanStub {
 
         if (allColumns && !isPivotMode) {
             // add auto group column for tree data
-            const columns = this.gridOptionsWrapper.isTreeData()
-                ? this.columnModel.getGridColumns([Constants.GROUP_AUTO_COLUMN_ID])
+            const columns = this.gridOptionsService.isTreeData()
+                ? this.columnModel.getGridColumns([GROUP_AUTO_COLUMN_ID])
                 : [];
 
             return columns.concat(this.columnModel.getAllPrimaryColumns() || []);

@@ -1,5 +1,4 @@
 import { ColumnModel } from "../../columns/columnModel";
-import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, PreDestroy } from "../../context/context";
 import { Column, ColumnPinnedType } from "../../entities/column";
@@ -7,7 +6,6 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { IHeaderColumn } from "../../entities/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { FocusService } from "../../focusService";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { isBrowserSafari } from "../../utils/browser";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
 import { AbstractHeaderCellCtrl } from "../cells/abstractCell/abstractHeaderCellCtrl";
@@ -73,20 +71,17 @@ export class HeaderRowCtrl extends BeanStub {
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
 
         // when print layout changes, it changes what columns are in what section
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDisplayedColumnsChanged.bind(this));
-
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-
-        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
-
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedPropertyListener('headerHeight', this.onRowHeightChanged.bind(this));
+        this.addManagedPropertyListener('pivotHeaderHeight', this.onRowHeightChanged.bind(this));
+        this.addManagedPropertyListener('groupHeaderHeight', this.onRowHeightChanged.bind(this));
+        this.addManagedPropertyListener('pivotGroupHeaderHeight', this.onRowHeightChanged.bind(this));
+        this.addManagedPropertyListener('floatingFiltersHeight', this.onRowHeightChanged.bind(this));
     }
 
     public getHeaderCellCtrl(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
@@ -115,14 +110,14 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getWidthForRow(): number {
-        const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const printLayout = this.gridOptionsService.isDomLayout('print');
 
         if (printLayout) {
             const pinned = this.pinned != null;
             if (pinned) { return 0; }
 
-            return this.columnModel.getContainerWidth(Constants.PINNED_RIGHT)
-                + this.columnModel.getContainerWidth(Constants.PINNED_LEFT)
+            return this.columnModel.getContainerWidth('right')
+                + this.columnModel.getContainerWidth('left')
                 + this.columnModel.getContainerWidth(null);
         }
 
@@ -151,7 +146,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         sizes.push(headerHeight);
 
-        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight() as number); }
+        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.columnModel.getFloatingFiltersHeight() as number); }
 
         let topOffset = 0;
 
@@ -248,7 +243,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getColumnsInViewport(): IHeaderColumn[] {
-        const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const printLayout = this.gridOptionsService.isDomLayout('print');
         return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     }
 
@@ -259,7 +254,7 @@ export class HeaderRowCtrl extends BeanStub {
         let viewportColumns: IHeaderColumn[] = [];
         const actualDepth = this.getActualDepth();
 
-        [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
+        (['left', null, 'right'] as ColumnPinnedType[]).forEach(pinned => {
             const items = this.columnModel.getVirtualHeaderGroupRow(pinned, actualDepth);
             viewportColumns = viewportColumns.concat(items);
         });

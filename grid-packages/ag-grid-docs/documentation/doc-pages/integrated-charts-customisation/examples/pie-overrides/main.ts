@@ -1,7 +1,6 @@
 import { CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', width: 150, chartDataType: 'category' },

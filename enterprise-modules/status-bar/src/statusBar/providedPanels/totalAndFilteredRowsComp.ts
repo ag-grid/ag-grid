@@ -32,7 +32,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     }
 
     private onDataChanged() {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
@@ -42,7 +42,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
         if (rowCount === totalRowCount) {
             this.setValue(rowCount);
         } else {
-            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
             this.setValue(`${rowCount} ${localeTextFunc('of', 'of')} ${totalRowCount}`);
         }
     }

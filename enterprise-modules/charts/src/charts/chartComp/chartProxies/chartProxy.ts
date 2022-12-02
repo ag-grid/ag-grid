@@ -1,22 +1,24 @@
-import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { AgChart, AgChartTheme, AgChartThemePalette, AgChartInstance, _Theme, AgChartOptions } from "ag-charts-community";
-import { deepMerge } from "../utils/object";
+import { _, ChartType, AgChartTheme as GridAgChartTheme, SeriesChartType } from "@ag-grid-community/core";
+import { AgChart, AgChartTheme, AgChartThemeOverrides, AgChartThemePalette, AgChartInstance, _Theme, AgChartOptions, AgChartPaddingOptions } from "ag-charts-community";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";
+import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
 
 export interface ChartProxyParams {
     chartInstance?: AgChartInstance;
     chartType: ChartType;
-    customChartThemes?: { [name: string]: AgChartTheme; };
+    customChartThemes?: { [name: string]: AgChartTheme | GridAgChartTheme };
     parentElement: HTMLElement;
     grouping: boolean;
     getChartThemeName: () => string;
     getChartThemes: () => string[];
     getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
+    getExtraPaddingRequired: () => AgChartPaddingOptions;
     apiChartThemeOverrides?: AgChartThemeOverrides;
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
+    chartThemeToRestore?: string;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes: SeriesChartType[];
@@ -42,54 +44,16 @@ export interface UpdateChartParams {
     seriesChartTypes: SeriesChartType[];
 }
 
-type IntegratedThemeOptions = AgChartThemeOverrides & {
-    scatter: {
-        paired?: boolean
-    }
-}
-
 export abstract class ChartProxy {
-    /**
-     * Integrated Charts specific chart theme overrides
-     */
-    private readonly integratedThemeOverrides: AgChartThemeOverrides = {
-        common: {
-            padding: {
-                top: 25,
-                right: 20,
-                bottom: 20,
-                left: 20,
-            }
-        },
-        pie: {
-            series: {
-                sectorLabel: {
-                    enabled: false,
-                }
-            }
-        }
-    };
-    /**
-     * Integrated Charts specific chart options
-     */
-    private integratedThemeOptions: IntegratedThemeOptions = {
-        scatter: {
-            // Special handling to make scatter charts operate in paired mode by default, where 
-            // columns alternate between being X and Y (and size for bubble). In standard mode,
-            // the first column is used for X and every other column is treated as Y
-            // (or alternates between Y and size for bubble)
-            paired: true
-        }
-    };
-
     protected readonly chartType: ChartType;
     protected readonly standaloneChartType: ChartSeriesType;
 
-    protected chart: AgChartInstance;
-    protected agChartTheme?: AgChartTheme;
-    protected crossFiltering: boolean;
-    protected crossFilterCallback: (event: any, reset?: boolean) => void;
+    protected readonly chart: AgChartInstance;
+    protected readonly crossFiltering: boolean;
+    protected readonly crossFilterCallback: (event: any, reset?: boolean) => void;
 
+    protected clearThemeOverrides = false;
+    
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chart = chartProxyParams.chartInstance!;
         this.chartType = chartProxyParams.chartType;
@@ -97,29 +61,11 @@ export abstract class ChartProxy {
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
         this.standaloneChartType = getSeriesType(this.chartType);
 
-        const {chartOptionsToRestore, chartPaletteToRestore } = this.chartProxyParams;
-        if (this.chartProxyParams.chartOptionsToRestore) {
-            this.agChartTheme = {
-                palette: chartPaletteToRestore,
-                overrides: chartOptionsToRestore
-            };
-        } else if (this.chart != null) {
-            this.agChartTheme = this.getChartTheme();
-            this.agChartTheme.baseTheme = this.getSelectedTheme() as any;
-        } else {
-            this.agChartTheme = this.createAgChartTheme();
-        }
-        
-        this.updateIntegratedThemeOptions();
-
         if (this.chart == null) {
             this.chart = AgChart.create(this.getCommonChartOptions());
-
-            if (this.crossFiltering) {
-                // add event listener to chart canvas to detect when user wishes to reset filters
-                const resetFilters = true;
-                this.getChart().addEventListener('click', (e) => this.crossFilterCallback(e, resetFilters));
-            }
+        } else {
+            // On chart change, reset formatting panel changes.
+            this.clearThemeOverrides = true;
         }
     }
 
@@ -127,78 +73,12 @@ export abstract class ChartProxy {
 
     public abstract update(params: UpdateChartParams): void;
 
-    /**
-     * Update `agChartTheme` and `integratedThemeOptions` for Integrated Charts specific chart options
-     */
-    private updateIntegratedThemeOptions() {
-        // Special handling to extract paired state from `chartOptionsToRestore`
-        const { scatter } = this.agChartTheme?.overrides as IntegratedThemeOptions;
-        if (scatter?.paired !== undefined) {
-            this.integratedThemeOptions.scatter.paired = scatter?.paired;
-            delete (this.agChartTheme?.overrides as IntegratedThemeOptions)?.scatter?.paired;
-        }
-    }
-
     public getChart() {
         return deproxy(this.chart);
     }
 
     public getChartRef() {
         return this.chart;
-    }
-
-    private createAgChartTheme(): undefined | AgChartTheme {
-        const themeName = this.getSelectedTheme();
-        const stockTheme = this.isStockTheme(themeName);
-        const gridOptionsThemeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
-        const apiThemeOverrides = this.chartProxyParams.apiChartThemeOverrides;
-
-        if (gridOptionsThemeOverrides || apiThemeOverrides) {
-            const themeOverrides = ChartProxy.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides);
-            const mergedThemeOverrides = deepMerge(this.integratedThemeOverrides, themeOverrides);
-
-            return stockTheme
-                ? { baseTheme: themeName, overrides: mergedThemeOverrides }
-                : deepMerge(this.lookupCustomChartTheme(themeName), {      
-                    overrides: mergedThemeOverrides
-                });
-        }
-
-        const theme = stockTheme ? { baseTheme: themeName } as AgChartTheme : this.lookupCustomChartTheme(themeName);
-        return deepMerge({ overrides: this.integratedThemeOverrides }, theme);
-    }
-
-    public isStockTheme(themeName: string): boolean {
-        return _.includes(Object.keys(_Theme.themes), themeName);
-    }
-
-    private getSelectedTheme(): string {
-        let chartThemeName = this.chartProxyParams.getChartThemeName();
-        const availableThemes = this.chartProxyParams.getChartThemes();
-
-        if (!_.includes(availableThemes, chartThemeName)) {
-            chartThemeName = availableThemes[0];
-        }
-
-        return chartThemeName;
-    }
-
-    public lookupCustomChartTheme(name: string) {
-        const { customChartThemes } = this.chartProxyParams;
-        const customChartTheme = customChartThemes && customChartThemes[name];
-
-        if (!customChartTheme) {
-            console.warn(`AG Grid: no stock theme exists with the name '${name}' and no ` +
-                "custom chart theme with that name was supplied to 'customChartThemes'");
-        }
-
-        return customChartTheme;
-    }
-
-    private static mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides): AgChartThemeOverrides | undefined {
-        if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
-        if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
-        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     }
 
     public downloadChart(dimensions?: { width: number; height: number }, fileName?: string, fileFormat?: string) {
@@ -215,32 +95,34 @@ export abstract class ChartProxy {
     }
 
     private getChartOptions(): AgChartOptions {
-        return this.getChart().getOptions();
+        return this.chart.getOptions();
     }
 
     public getChartThemeOverrides(): AgChartThemeOverrides { 
-        return this.getChartTheme().overrides || {};
-    }
-
-    public getChartTheme(): AgChartTheme { 
-        const chartOptionsTheme = this.getChartOptions().theme;
-        const chartTheme = typeof chartOptionsTheme === 'string'
-            ? { baseTheme: chartOptionsTheme } as AgChartTheme
-            : deepMerge(chartOptionsTheme, { overrides: this.integratedThemeOptions })
-
-        return chartTheme;
+        const chartOptionsTheme = this.getChartOptions().theme as AgChartTheme;
+        return chartOptionsTheme.overrides ?? {};
     }
 
     public getChartPalette(): AgChartThemePalette | undefined {
         return _Theme.getChartTheme(this.getChartOptions().theme).palette;
     }
 
-    public getIntegratedThemeOptions(): AgChartThemeOverrides {
-        return this.integratedThemeOptions;
+    public setPaired(paired: boolean) {
+        // Special handling to make scatter charts operate in paired mode by default, where 
+        // columns alternate between being X and Y (and size for bubble). In standard mode,
+        // the first column is used for X and every other column is treated as Y
+        // (or alternates between Y and size for bubble)
+        const seriesType = getSeriesType(this.chartProxyParams.chartType);
+        AgChart.updateDelta(this.chart, { theme: { overrides: { [seriesType]: { paired }}}});
     }
 
-    public setIntegratedThemeOptions(expression: string, value: any) {
-        _.set(this.integratedThemeOptions, expression, value);
+    public isPaired(): boolean {
+        const seriesType = getSeriesType(this.chartProxyParams.chartType);
+        return _.get(this.getChartThemeOverrides(), `${seriesType}.paired`, true);
+    }
+
+    public lookupCustomChartTheme(themeName: string) {
+        return lookupCustomChartTheme(this.chartProxyParams, themeName);
     }
 
     protected transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[] {
@@ -261,10 +143,28 @@ export abstract class ChartProxy {
     }
 
     protected getCommonChartOptions() {
+        // Only apply active overrides if chart is initialised.
+        const formattingPanelOverrides = this.chart != null ?
+            { overrides: this.getActiveFormattingPanelOverrides() } : {};
         return {
-            theme: this.agChartTheme,
+            theme: {
+                ...createAgChartTheme(this.chartProxyParams, this),
+                ...formattingPanelOverrides,
+            },
             container: this.chartProxyParams.parentElement
         }
+    }
+
+    private getActiveFormattingPanelOverrides(): AgChartThemeOverrides {
+        if (this.clearThemeOverrides) {
+            this.clearThemeOverrides = false;
+            return {};
+        }
+
+        const inUseTheme = this.chart?.getOptions().theme as AgChartTheme;
+        const overrides = inUseTheme?.overrides ?? {};
+        
+        return overrides;
     }
 
     public destroy({ keepChartInstance = false } = {}): AgChartInstance | undefined {

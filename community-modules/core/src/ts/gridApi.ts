@@ -1,8 +1,6 @@
 import { AlignedGridsService } from "./alignedGridsService";
 import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel, ISizeColumnsToFitParams } from "./columns/columnModel";
-import { FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
-import { Constants } from "./constants/constants";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
@@ -11,12 +9,14 @@ import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { Column } from "./entities/column";
 import {
     ChartRef,
+    DomLayoutType,
     GetChartToolbarItems,
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowIdFunc,
     GetRowNodeIdFunc,
     GetServerSideGroupKey,
+    GridOptions,
     IsApplyServerSideTransaction,
     IsRowMaster,
     IsRowSelectable,
@@ -42,7 +42,6 @@ import {
     TabToNextHeaderParams
 } from "./entities/iCallbackParams";
 import { RowNode, RowPinnedType } from "./entities/rowNode";
-import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { AgEvent, ColumnEventType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
@@ -51,7 +50,7 @@ import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 import { GridOptionsService } from "./gridOptionsService";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { logDeprecation } from "./gridOptionsValidator";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
@@ -87,7 +86,7 @@ import {
     RefreshServerSideParams
 } from "./interfaces/iServerSideRowModel";
 import { ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
-import { ISideBar } from "./interfaces/iSideBar";
+import { ISideBar, SideBarDef } from "./interfaces/iSideBar";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanel } from "./interfaces/iStatusPanel";
 import { IToolPanel } from "./interfaces/iToolPanel";
@@ -156,7 +155,6 @@ export class GridApi<TData = any> {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectionService') private selectionService: SelectionService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
@@ -181,7 +179,6 @@ export class GridApi<TData = any> {
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Optional('frameworkComponentWrapper') private frameworkComponentWrapper: FrameworkComponentWrapper;
 
     private overlayWrapperComp: OverlayWrapperComponent;
 
@@ -208,13 +205,13 @@ export class GridApi<TData = any> {
     @PostConstruct
     private init(): void {
         switch (this.rowModel.getType()) {
-            case Constants.ROW_MODEL_TYPE_CLIENT_SIDE:
+            case 'clientSide':
                 this.clientSideRowModel = this.rowModel as IClientSideRowModel;
                 break;
-            case Constants.ROW_MODEL_TYPE_INFINITE:
+            case 'infinite':
                 this.infiniteRowModel = this.rowModel as IInfiniteRowModel;
                 break;
-            case Constants.ROW_MODEL_TYPE_SERVER_SIDE:
+            case 'serverSide':
                 this.serverSideRowModel = this.rowModel as IServerSideRowModel;
                 break;
         }
@@ -232,6 +229,13 @@ export class GridApi<TData = any> {
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getContext(): Context {
         return this.context;
+    }
+
+    /**
+     * Used internally by grid. Not intended to be used by the client. Interface may change between releases
+     */
+    public __setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]) {
+        this.gridOptionsService.set(propertyName, value);
     }
 
     /** Register a detail grid with the master grid when it is created. */
@@ -276,7 +280,7 @@ export class GridApi<TData = any> {
     }
 
     private getExcelExportMode(params?: ExcelExportParams): 'xlsx' | 'xml' {
-        const baseParams = this.gridOptionsWrapper.getDefaultExportParams('excel');
+        const baseParams = this.gridOptionsService.get('defaultExcelExportParams');
         const mergedParams = Object.assign({ exportMode: 'xlsx' }, baseParams, params);
         return mergedParams.exportMode;
     }
@@ -367,7 +371,7 @@ export class GridApi<TData = any> {
      * */
     public setCacheBlockSize(blockSize: number) {
         if (this.serverSideRowModel) {
-            this.gridOptionsWrapper.setProperty('cacheBlockSize', blockSize);
+            this.gridOptionsService.set('cacheBlockSize', blockSize);
             this.serverSideRowModel.resetRootStore();
         } else {
             this.logMissingRowModel('setCacheBlockSize', 'serverSide');
@@ -376,7 +380,7 @@ export class GridApi<TData = any> {
 
     /** Set new datasource for Infinite Row Model. */
     public setDatasource(datasource: IDatasource) {
-        if (this.gridOptionsWrapper.isRowModelInfinite()) {
+        if (this.gridOptionsService.isRowModelType('infinite')) {
             (this.rowModel as IInfiniteRowModel).setDatasource(datasource);
         } else {
             this.logMissingRowModel('setDatasource', 'infinite');
@@ -385,7 +389,7 @@ export class GridApi<TData = any> {
 
     /** Set new datasource for Viewport Row Model. */
     public setViewportDatasource(viewportDatasource: IViewportDatasource) {
-        if (this.gridOptionsWrapper.isRowModelViewport()) {
+        if (this.gridOptionsService.isRowModelType('viewport')) {
             // this is bad coding, because it's using an interface that's exposed in the enterprise.
             // really we should create an interface in the core for viewportDatasource and let
             // the enterprise implement it, rather than casting to 'any' here
@@ -449,16 +453,18 @@ export class GridApi<TData = any> {
      */
     public setColumnDefs(colDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = "api") {
         this.columnModel.setColumnDefs(colDefs, source);
+        // Keep gridOptions.columnDefs in sync
+        this.gridOptionsService.set('columnDefs', colDefs, true, { source });
     }
 
     /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
     public setAutoGroupColumnDef(colDef: ColDef, source: ColumnEventType = "api") {
-        this.gridOptionsWrapper.setProperty('autoGroupColumnDef', colDef, true);
+        this.gridOptionsService.set('autoGroupColumnDef', colDef, true, { source });
     }
 
     /** Call to set new Default Column Definition. */
     public setDefaultColDef(colDef: ColDef, source: ColumnEventType = "api") {
-        this.gridOptionsWrapper.setProperty('defaultColDef', colDef, true);
+        this.gridOptionsService.set('defaultColDef', colDef, true, { source });
     }
 
     public expireValueCache(): void {
@@ -485,12 +491,12 @@ export class GridApi<TData = any> {
 
     /** If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary. */
     public setAlwaysShowHorizontalScroll(show: boolean) {
-        this.gridOptionsWrapper.setProperty('alwaysShowHorizontalScroll', show);
+        this.gridOptionsService.set('alwaysShowHorizontalScroll', show);
     }
 
     /** If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary. */
     public setAlwaysShowVerticalScroll(show: boolean) {
-        this.gridOptionsWrapper.setProperty('alwaysShowVerticalScroll', show);
+        this.gridOptionsService.set('alwaysShowVerticalScroll', show);
     }
 
     /** Performs change detection on all cells, refreshing cells where required. */
@@ -510,7 +516,7 @@ export class GridApi<TData = any> {
     }
 
     public setFunctionsReadOnly(readOnly: boolean) {
-        this.gridOptionsWrapper.setProperty('functionsReadOnly', readOnly);
+        this.gridOptionsService.set('functionsReadOnly', readOnly);
     }
 
     /** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */
@@ -629,8 +635,8 @@ export class GridApi<TData = any> {
      */
     public getSizesForCurrentTheme() {
         return {
-            rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
-            headerHeight: this.gridOptionsWrapper.getHeaderHeight()
+            rowHeight: this.gridOptionsService.getRowHeightAsNumber(),
+            headerHeight: this.columnModel.getHeaderHeight()
         };
     }
 
@@ -926,17 +932,17 @@ export class GridApi<TData = any> {
 
     /** Sets the `suppressRowDrag` property. */
     public setSuppressRowDrag(value: boolean): void {
-        this.gridOptionsWrapper.setProperty('suppressRowDrag', value);
+        this.gridOptionsService.set('suppressRowDrag', value);
     }
 
     /** Sets the `suppressMoveWhenRowDragging` property. */
     public setSuppressMoveWhenRowDragging(value: boolean): void {
-        this.gridOptionsWrapper.setProperty('suppressMoveWhenRowDragging', value);
+        this.gridOptionsService.set('suppressMoveWhenRowDragging', value);
     }
 
     /** Sets the `suppressRowClickSelection` property. */
     public setSuppressRowClickSelection(value: boolean): void {
-        this.gridOptionsWrapper.setProperty('suppressRowClickSelection', value);
+        this.gridOptionsService.set('suppressRowClickSelection', value);
     }
 
     /** Adds a drop zone outside of the grid where rows can be dropped. */
@@ -960,15 +966,15 @@ export class GridApi<TData = any> {
 
     /** Sets the height in pixels for the row containing the column label header. */
     public setHeaderHeight(headerHeight?: number) {
-        this.gridOptionsWrapper.setProperty('headerHeight', headerHeight);
+        this.gridOptionsService.set('headerHeight', headerHeight);
     }
 
     /**
      * Switch between layout options: `normal`, `autoHeight`, `print`.
      * Defaults to `normal` if no domLayout provided.
      */
-    public setDomLayout(domLayout?: 'normal' | 'autoHeight' | 'print') {
-        this.gridOptionsWrapper.setProperty('domLayout', domLayout);
+    public setDomLayout(domLayout?: DomLayoutType) {
+        this.gridOptionsService.set('domLayout', domLayout);
     }
 
     /** Sets the `enableCellTextSelection` property. */
@@ -978,207 +984,217 @@ export class GridApi<TData = any> {
 
     /** Sets the preferred direction for the selection fill handle. */
     public setFillHandleDirection(direction: 'x' | 'y' | 'xy') {
-        this.gridOptionsWrapper.setProperty('fillHandleDirection', direction);
+        this.gridOptionsService.set('fillHandleDirection', direction);
     }
 
     /** Sets the height in pixels for the rows containing header column groups. */
     public setGroupHeaderHeight(headerHeight?: number) {
-        this.gridOptionsWrapper.setProperty('groupHeaderHeight', headerHeight);
+        this.gridOptionsService.set('groupHeaderHeight', headerHeight);
     }
 
     /** Sets the height in pixels for the row containing the floating filters. */
     public setFloatingFiltersHeight(headerHeight?: number) {
-        this.gridOptionsWrapper.setProperty('floatingFiltersHeight', headerHeight);
+        this.gridOptionsService.set('floatingFiltersHeight', headerHeight);
     }
 
     /** Sets the height in pixels for the row containing the columns when in pivot mode. */
     public setPivotHeaderHeight(headerHeight?: number) {
-        this.gridOptionsWrapper.setProperty('pivotHeaderHeight', headerHeight);
+        this.gridOptionsService.set('pivotHeaderHeight', headerHeight);
     }
 
     /** Sets the height in pixels for the row containing header column groups when in pivot mode. */
     public setPivotGroupHeaderHeight(headerHeight?: number) {
-        this.gridOptionsWrapper.setProperty('pivotGroupHeaderHeight', headerHeight);
+        this.gridOptionsService.set('pivotGroupHeaderHeight', headerHeight);
+    }
+
+    public setPivotMode(pivotMode: boolean) {
+        this.columnModel.setPivotMode(pivotMode);
     }
 
     public setIsExternalFilterPresent(isExternalFilterPresentFunc: () => boolean): void {
-        this.gridOptionsWrapper.setProperty('isExternalFilterPresent', isExternalFilterPresentFunc);
+        this.gridOptionsService.set('isExternalFilterPresent', isExternalFilterPresentFunc);
     }
 
     public setDoesExternalFilterPass(doesExternalFilterPassFunc: (node: RowNode) => boolean): void {
-        this.gridOptionsWrapper.setProperty('doesExternalFilterPass', doesExternalFilterPassFunc);
+        this.gridOptionsService.set('doesExternalFilterPass', doesExternalFilterPassFunc);
     }
 
     public setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => (CellPosition | null)): void {
-        this.gridOptionsWrapper.setProperty('navigateToNextCell', navigateToNextCellFunc);
+        this.gridOptionsService.set('navigateToNextCell', navigateToNextCellFunc);
     }
 
     public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => (CellPosition | null)): void {
-        this.gridOptionsWrapper.setProperty('tabToNextCell', tabToNextCellFunc);
+        this.gridOptionsService.set('tabToNextCell', tabToNextCellFunc);
     }
 
     public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => (HeaderPosition | null)): void {
-        this.gridOptionsWrapper.setProperty('tabToNextHeader', tabToNextHeaderFunc);
+        this.gridOptionsService.set('tabToNextHeader', tabToNextHeaderFunc);
     }
 
     public setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => (HeaderPosition | null)): void {
-        this.gridOptionsWrapper.setProperty('navigateToNextHeader', navigateToNextHeaderFunc);
+        this.gridOptionsService.set('navigateToNextHeader', navigateToNextHeaderFunc);
     }
 
     public setRowGroupPanelShow(rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never'): void {
-        this.gridOptionsWrapper.setProperty('rowGroupPanelShow', rowGroupPanelShow);
+        this.gridOptionsService.set('rowGroupPanelShow', rowGroupPanelShow);
     }
     /** @deprecated v27.2 - Use `setGetGroupRowAgg` instead. */
     public setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: RowNode[]) => any): void {
-        this.gridOptionsWrapper.setProperty('groupRowAggNodes', groupRowAggNodesFunc);
+        logDeprecation<GridApi>('27.2', 'setGroupRowAggNodes', 'setGetGroupRowAgg');
+        this.gridOptionsService.set('groupRowAggNodes', groupRowAggNodesFunc);
     }
     public setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void {
-        this.gridOptionsWrapper.setProperty('getGroupRowAgg', getGroupRowAggFunc);
+        this.gridOptionsService.set('getGroupRowAgg', getGroupRowAggFunc);
     }
 
     public setGetBusinessKeyForNode(getBusinessKeyForNodeFunc: (nodes: RowNode) => string): void {
-        this.gridOptionsWrapper.setProperty('getBusinessKeyForNode', getBusinessKeyForNodeFunc);
+        this.gridOptionsService.set('getBusinessKeyForNode', getBusinessKeyForNodeFunc);
     }
 
     public setGetChildCount(getChildCountFunc: (dataItem: any) => number): void {
-        this.gridOptionsWrapper.setProperty('getChildCount', getChildCountFunc);
+        this.gridOptionsService.set('getChildCount', getChildCountFunc);
     }
 
     public setProcessRowPostCreate(processRowPostCreateFunc: (params: ProcessRowParams) => void): void {
-        this.gridOptionsWrapper.setProperty('processRowPostCreate', processRowPostCreateFunc);
+        this.gridOptionsService.set('processRowPostCreate', processRowPostCreateFunc);
     }
 
-    /** @deprecated v27.1 Use `getRowId` instead  */
+    /** @deprecated v27.1 Use `setGetRowId` instead  */
     public setGetRowNodeId(getRowNodeIdFunc: GetRowNodeIdFunc): void {
-        this.gridOptionsWrapper.setProperty('getRowNodeId', getRowNodeIdFunc);
+        logDeprecation<GridApi>('27.1', 'setGetRowNodeId', 'setGetRowId');
+        this.gridOptionsService.set('getRowNodeId', getRowNodeIdFunc);
     }
     public setGetRowId(getRowIdFunc: GetRowIdFunc): void {
-        this.gridOptionsWrapper.setProperty('getRowId', getRowIdFunc);
+        this.gridOptionsService.set('getRowId', getRowIdFunc);
     }
 
     public setGetRowClass(rowClassFunc: (params: RowClassParams) => string | string[]): void {
-        this.gridOptionsWrapper.setProperty('getRowClass', rowClassFunc);
+        this.gridOptionsService.set('getRowClass', rowClassFunc);
     }
 
     /** @deprecated v27.2 Use `setIsFullWidthRow` instead. */
     public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: RowNode) => boolean): void {
-        this.gridOptionsWrapper.setProperty('isFullWidthCell', isFullWidthCellFunc);
+        logDeprecation<GridApi>('27.2', 'setIsFullWidthCell', 'setIsFullWidthRow');
+        this.gridOptionsService.set('isFullWidthCell', isFullWidthCellFunc);
     }
     public setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void {
-        this.gridOptionsWrapper.setProperty('isFullWidthRow', isFullWidthRowFunc);
+        this.gridOptionsService.set('isFullWidthRow', isFullWidthRowFunc);
     }
 
     public setIsRowSelectable(isRowSelectableFunc: IsRowSelectable): void {
-        this.gridOptionsWrapper.setProperty('isRowSelectable', isRowSelectableFunc);
+        this.gridOptionsService.set('isRowSelectable', isRowSelectableFunc);
     }
 
     public setIsRowMaster(isRowMasterFunc: IsRowMaster): void {
-        this.gridOptionsWrapper.setProperty('isRowMaster', isRowMasterFunc);
+        this.gridOptionsService.set('isRowMaster', isRowMasterFunc);
     }
 
     /** @deprecated v27.2 Use `setPostSortRows` instead */
     public setPostSort(postSortFunc: (nodes: RowNode[]) => void): void {
-        this.gridOptionsWrapper.setProperty('postSort', postSortFunc);
+        logDeprecation<GridApi>('27.2', 'setPostSort', 'setPostSortRows');
+        this.gridOptionsService.set('postSort', postSortFunc);
     }
     public setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void {
-        this.gridOptionsWrapper.setProperty('postSortRows', postSortRowsFunc);
+        this.gridOptionsService.set('postSortRows', postSortRowsFunc);
     }
 
     public setGetDocument(getDocumentFunc: () => Document): void {
-        this.gridOptionsWrapper.setProperty('getDocument', getDocumentFunc);
+        this.gridOptionsService.set('getDocument', getDocumentFunc);
     }
 
     public setGetContextMenuItems(getContextMenuItemsFunc: GetContextMenuItems): void {
-        this.gridOptionsWrapper.setProperty('getContextMenuItems', getContextMenuItemsFunc);
+        this.gridOptionsService.set('getContextMenuItems', getContextMenuItemsFunc);
     }
 
     public setGetMainMenuItems(getMainMenuItemsFunc: GetMainMenuItems): void {
-        this.gridOptionsWrapper.setProperty('getMainMenuItems', getMainMenuItemsFunc);
+        this.gridOptionsService.set('getMainMenuItems', getMainMenuItemsFunc);
     }
 
     public setProcessCellForClipboard(processCellForClipboardFunc: (params: ProcessCellForExportParams) => any): void {
-        this.gridOptionsWrapper.setProperty('processCellForClipboard', processCellForClipboardFunc);
+        this.gridOptionsService.set('processCellForClipboard', processCellForClipboardFunc);
     }
 
     public setSendToClipboard(sendToClipboardFunc: (params: { data: string }) => void): void {
-        this.gridOptionsWrapper.setProperty('sendToClipboard', sendToClipboardFunc);
+        this.gridOptionsService.set('sendToClipboard', sendToClipboardFunc);
     }
 
     public setProcessCellFromClipboard(processCellFromClipboardFunc: (params: ProcessCellForExportParams) => any): void {
-        this.gridOptionsWrapper.setProperty('processCellFromClipboard', processCellFromClipboardFunc);
+        this.gridOptionsService.set('processCellFromClipboard', processCellFromClipboardFunc);
     }
 
     /** @deprecated v28 use `setProcessPivotResultColDef` instead */
     public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void {
-        console.warn('AG Grid: since version 28.0.x setProcessSecondaryColDef has been renamed, please use setProcessPivotResultColDef instead');
+        logDeprecation<GridApi>('28.0', 'setProcessSecondaryColDef', 'setProcessPivotResultColDef')
         this.setProcessPivotResultColDef(processSecondaryColDefFunc);
     }
 
     /** @deprecated v28 use `setProcessPivotResultColGroupDef` instead */
     public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
-        console.warn('AG Grid: since version 28.0.x setProcessSecondaryColGroupDef has been renamed, please use setProcessPivotResultColGroupDef instead');
+        logDeprecation<GridApi>('28.0', 'setProcessSecondaryColGroupDef', 'setProcessPivotResultColGroupDef')
         this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
     }
 
     public setProcessPivotResultColDef(processPivotResultColDefFunc: (colDef: ColDef) => void): void {
-        this.gridOptionsWrapper.setProperty('processPivotResultColDef', processPivotResultColDefFunc);
+        this.gridOptionsService.set('processPivotResultColDef', processPivotResultColDefFunc);
     }
 
     public setProcessPivotResultColGroupDef(processPivotResultColGroupDefFunc: (colDef: ColDef) => void): void {
-        this.gridOptionsWrapper.setProperty('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
+        this.gridOptionsService.set('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
     }
 
     public setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void): void {
-        this.gridOptionsWrapper.setProperty('postProcessPopup', postProcessPopupFunc);
+        this.gridOptionsService.set('postProcessPopup', postProcessPopupFunc);
     }
 
     /** @deprecated v27.2 - Use `setInitialGroupOrderComparator` instead */
     public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number): void {
-        this.gridOptionsWrapper.setProperty('defaultGroupOrderComparator', defaultGroupOrderComparatorFunc);
+        logDeprecation<GridApi>('27.2', 'setDefaultGroupOrderComparator', 'setInitialGroupOrderComparator');
+        this.gridOptionsService.set('defaultGroupOrderComparator', defaultGroupOrderComparatorFunc);
     }
     public setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void {
-        this.gridOptionsWrapper.setProperty('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
+        this.gridOptionsService.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
     }
 
     public setGetChartToolbarItems(getChartToolbarItemsFunc: GetChartToolbarItems): void {
-        this.gridOptionsWrapper.setProperty('getChartToolbarItems', getChartToolbarItemsFunc);
+        this.gridOptionsService.set('getChartToolbarItems', getChartToolbarItemsFunc);
     }
 
     public setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string): void {
-        this.gridOptionsWrapper.setProperty('paginationNumberFormatter', paginationNumberFormatterFunc);
+        this.gridOptionsService.set('paginationNumberFormatter', paginationNumberFormatterFunc);
     }
 
     /** @deprecated v28 use setGetServerSideGroupLevelParams instead */
     public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
+        logDeprecation<GridApi>('28.0', 'setGetServerSideStoreParams', 'setGetServerSideGroupLevelParams');
         this.setGetServerSideGroupLevelParams(getServerSideStoreParamsFunc);
     }
 
     public setGetServerSideGroupLevelParams(getServerSideGroupLevelParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
-        this.gridOptionsWrapper.setProperty('getServerSideGroupLevelParams', getServerSideGroupLevelParamsFunc);
+        this.gridOptionsService.set('getServerSideGroupLevelParams', getServerSideGroupLevelParamsFunc);
     }
 
     public setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc: (params: IsServerSideGroupOpenByDefaultParams) => boolean): void {
-        this.gridOptionsWrapper.setProperty('isServerSideGroupOpenByDefault', isServerSideGroupOpenByDefaultFunc);
+        this.gridOptionsService.set('isServerSideGroupOpenByDefault', isServerSideGroupOpenByDefaultFunc);
     }
 
     public setIsApplyServerSideTransaction(isApplyServerSideTransactionFunc: IsApplyServerSideTransaction): void {
-        this.gridOptionsWrapper.setProperty('isApplyServerSideTransaction', isApplyServerSideTransactionFunc);
+        this.gridOptionsService.set('isApplyServerSideTransaction', isApplyServerSideTransactionFunc);
     }
 
     public setIsServerSideGroup(isServerSideGroupFunc: IsServerSideGroup): void {
-        this.gridOptionsWrapper.setProperty('isServerSideGroup', isServerSideGroupFunc);
+        this.gridOptionsService.set('isServerSideGroup', isServerSideGroupFunc);
     }
 
     public setGetServerSideGroupKey(getServerSideGroupKeyFunc: GetServerSideGroupKey): void {
-        this.gridOptionsWrapper.setProperty('getServerSideGroupKey', getServerSideGroupKeyFunc);
+        this.gridOptionsService.set('getServerSideGroupKey', getServerSideGroupKeyFunc);
     }
 
     public setGetRowStyle(rowStyleFunc: (params: RowClassParams) => {}): void {
-        this.gridOptionsWrapper.setProperty('getRowStyle', rowStyleFunc);
+        this.gridOptionsService.set('getRowStyle', rowStyleFunc);
     }
 
     public setGetRowHeight(rowHeightFunc: (params: RowHeightParams) => number): void {
-        this.gridOptionsWrapper.setProperty('getRowHeight', rowHeightFunc);
+        this.gridOptionsService.set('getRowHeight', rowHeightFunc);
     }
 
     private assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
@@ -1221,7 +1237,7 @@ export class GridApi<TData = any> {
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     public getOpenedToolPanel(): string | null {
         if (this.assertSideBarLoaded('getOpenedToolPanel')) {
-            this.sideBarComp.openedItem()
+            return this.sideBarComp.openedItem()
         }
         return null;
     }
@@ -1251,17 +1267,20 @@ export class GridApi<TData = any> {
     }
 
     /** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */
-    public getSideBar(): SideBarDef {
-        return this.gridOptionsWrapper.getSideBar();
+    public getSideBar(): SideBarDef | undefined {
+        if (this.assertSideBarLoaded('getSideBar')) {
+            return this.sideBarComp.getDef();
+        }
+        return undefined;
     }
 
     /** Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config. */
     public setSideBar(def: SideBarDef | string | string[] | boolean): void {
-        this.gridOptionsWrapper.setProperty('sideBar', SideBarDefParser.parse(def));
+        this.gridOptionsService.set('sideBar', def);
     }
 
     public setSuppressClipboardPaste(value: boolean): void {
-        this.gridOptionsWrapper.setProperty('suppressClipboardPaste', value);
+        this.gridOptionsService.set('suppressClipboardPaste', value);
     }
 
     /** Tells the grid to recalculate the row heights. */
@@ -1276,23 +1295,23 @@ export class GridApi<TData = any> {
     }
 
     public setGroupRemoveSingleChildren(value: boolean) {
-        this.gridOptionsWrapper.setProperty('groupRemoveSingleChildren', value);
+        this.gridOptionsService.set('groupRemoveSingleChildren', value);
     }
 
     public setGroupRemoveLowestSingleChildren(value: boolean) {
-        this.gridOptionsWrapper.setProperty('groupRemoveLowestSingleChildren', value);
+        this.gridOptionsService.set('groupRemoveLowestSingleChildren', value);
     }
 
     public setGroupDisplayType(value: RowGroupingDisplayType) {
-        this.gridOptionsWrapper.setProperty('groupDisplayType', value);
+        this.gridOptionsService.set('groupDisplayType', value);
     }
 
     public setRowClass(className: string | undefined): void {
-        this.gridOptionsWrapper.setProperty('rowClass', className);
+        this.gridOptionsService.set('rowClass', className);
     }
     /** Sets the `deltaSort` property */
     public setDeltaSort(enable: boolean): void {
-        this.gridOptionsWrapper.setProperty('deltaSort', enable);
+        this.gridOptionsService.set('deltaSort', enable);
     }
     /**
      * Sets the `rowCount` and `lastRowIndexKnown` properties.
@@ -1335,25 +1354,25 @@ export class GridApi<TData = any> {
 
     /** Add an event listener for the specified `eventType`. Works similar to `addEventListener` for a browser DOM element. */
     public addEventListener(eventType: string, listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.addEventListener(eventType, listener, async);
     }
 
     /** Add an event listener for all event types coming from the grid. */
     public addGlobalListener(listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.addGlobalListener(listener, async);
     }
 
     /** Remove an event listener. */
     public removeEventListener(eventType: string, listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.removeEventListener(eventType, listener, async);
     }
 
     /** Remove a global event listener. */
     public removeGlobalListener(listener: Function): void {
-        const async = this.gridOptionsWrapper.useAsyncEvents();
+        const async = this.gridOptionsService.useAsyncEvents();
         this.eventService.removeGlobalListener(listener, async);
     }
 
@@ -1453,16 +1472,14 @@ export class GridApi<TData = any> {
 
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     public getChartModels(): ChartModel[] | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartModels') &&
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels')) {
             return this.chartService.getChartModels();
         }
     }
 
     /** Returns the `ChartRef` using the supplied `chartId`. */
     public getChartRef(chartId: string): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartRef') &&
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef')) {
             return this.chartService.getChartRef(chartId);
         }
     }
@@ -1497,32 +1514,28 @@ export class GridApi<TData = any> {
 
     /** Used to programmatically create charts from a range. */
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createRangeChart') &&
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart')) {
             return this.chartService.createRangeChart(params);
         }
     }
 
     /** Used to programmatically create cross filter charts from a range. */
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createCrossFilterChart') &&
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart')) {
             return this.chartService.createCrossFilterChart(params);
         }
     }
 
     /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
     public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.restoreChart') &&
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart')) {
             return this.chartService.restoreChart(chartModel, chartContainer);
         }
     }
 
     /** Used to programmatically create pivot charts from a grid. */
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createPivotChart') &&
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart')) {
             return this.chartService.createPivotChart(params);
         }
     }
@@ -1591,7 +1604,7 @@ export class GridApi<TData = any> {
 
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */
     public setPopupParent(ePopupParent: HTMLElement): void {
-        this.gridOptionsWrapper.setProperty('popupParent', ePopupParent);
+        this.gridOptionsService.set('popupParent', ePopupParent);
     }
 
     /** Navigates the grid focus to the next cell, as if tabbing. */
@@ -1787,15 +1800,13 @@ export class GridApi<TData = any> {
 
     /** @deprecated v28 use `refreshServerSide` instead */
     public refreshServerSideStore(params?: RefreshServerSideParams): void {
-        const message = `AG Grid: Grid API refreshServerSideStore() was renamed to refreshServerSide() in v28.0`;
-        doOnce(() => console.warn(message), 'refreshServerSideStore-renamed');
+        logDeprecation<GridApi>('28.0', 'refreshServerSideStore', 'refreshServerSide');
         return this.refreshServerSide(params);
     }
 
     /** @deprecated v28 use `getServerSideGroupLevelState` instead */
     public getServerSideStoreState(): ServerSideGroupLevelState[] {
-        const message = `AG Grid: Grid API getServerSideStoreState() was renamed to getServerSideGroupLevelState() in v28.0`;
-        doOnce(() => console.warn(message), 'getServerSideStoreState-renamed');
+        logDeprecation<GridApi>('28.0', 'getServerSideStoreState', 'getServerSideGroupLevelState');
         return this.getServerSideGroupLevelState();
     }
 
@@ -1869,7 +1880,7 @@ export class GridApi<TData = any> {
 
     /** Sets the `paginationPageSize`, then re-paginates the grid so the changes are applied immediately. */
     public paginationSetPageSize(size?: number): void {
-        this.gridOptionsWrapper.setProperty('paginationPageSize', size);
+        this.gridOptionsService.set('paginationPageSize', size);
     }
 
     /** Returns the 0-based index of the page which is showing. */

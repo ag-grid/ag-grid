@@ -1,6 +1,6 @@
 import {
     Autowired,
-    Bean, BeanStub, Constants, IImmutableService,
+    Bean, BeanStub, IImmutableService,
     IRowModel,
     PostConstruct,
     RowDataTransaction,
@@ -19,7 +19,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as ClientSideRowModel;
         }
     }
@@ -27,7 +27,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     public isActive(): boolean {
         // we used to have a property immutableData for this. however this was deprecated
         // in favour of having Immutable Data on by default when getRowId is provided
-        const getRowIdProvided = this.gridOptionsService.getCallback('getRowId') != null;
+        const getRowIdProvided = this.gridOptionsService.exists('getRowId');
         const immutableData = this.gridOptionsService.is('immutableData');
         // this property is a backwards compatibility property, for those who want
         // the old behaviour of Row ID's but NOT Immutable Data.
@@ -57,7 +57,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
             return;
         }
 
-        const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
         if (getRowIdFunc == null) {
             console.error('AG Grid: ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
             return;

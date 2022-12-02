@@ -90,7 +90,7 @@ export class AgGroupComponent extends Component {
             this.addItems(initialItems);
         }
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.cbGroupEnabled.setLabel(localeTextFunc('enabled', 'Enabled'));
 
         if (this.title) {

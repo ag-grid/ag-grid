@@ -52,7 +52,7 @@ export class TabbedLayout extends Component {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         switch (e.key) {
             case KeyCode.RIGHT:
             case KeyCode.LEFT:
@@ -82,7 +82,7 @@ export class TabbedLayout extends Component {
         if (e.defaultPrevented) { return; }
 
         const { focusService, eHeader, eBody, activeItem } = this;
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const activeElement = eDocument.activeElement as HTMLElement;
 
         e.preventDefault();

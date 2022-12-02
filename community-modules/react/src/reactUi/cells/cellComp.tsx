@@ -387,29 +387,40 @@ const CellComp = (props: {
         return !!res;
     }, [renderDetails]);
 
-    if (eGui.current && !showCellWrapper) {
+    useEffect(() => {
+        if (!eGui.current) { return; }
         cssClassManager.addOrRemoveCssClass('ag-cell-value', !showCellWrapper);
-    }
+        cssClassManager.addOrRemoveCssClass('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
+        cssClassManager.addOrRemoveCssClass('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
+        cssClassManager.addOrRemoveCssClass('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
+        cellCtrl.getRowCtrl()?.setInlineEditingCss(!!editDetails);
+    });
 
     const cellInstanceId = useMemo(() => cellCtrl.getInstanceId(), []);
 
     const showContents = () => (
         <>
-        { 
-            renderDetails != null &&
-            jsxShowValue(
-                renderDetails,
-                renderKey,
-                cellInstanceId,
-                cellRendererRef,
-                showCellWrapper,
-                reactCellRendererStateless,
-                setCellValueRef) 
-        }
-        { 
-            editDetails != null &&
-            jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl, jsEditorComp)
-        }
+            {
+                (renderDetails != null && jsxShowValue(
+                    renderDetails,
+                    renderKey,
+                    cellInstanceId,
+                    cellRendererRef,
+                    showCellWrapper,
+                    reactCellRendererStateless,
+                    setCellValueRef
+                ))
+            }
+            {
+                (editDetails != null && jsxEditValue(
+                    editDetails,
+                    setInlineCellEditorRef,
+                    setPopupCellEditorRef,
+                    eGui.current!,
+                    cellCtrl,
+                    jsEditorComp
+                ))
+            }
         </>
     );
 

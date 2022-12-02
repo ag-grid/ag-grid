@@ -7,7 +7,6 @@ import {
     ChartType,
     Column,
     ColumnModel,
-    Constants,
     IAggFunc,
     IRangeService,
     PostConstruct,
@@ -250,7 +249,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     public isGrouping(): boolean {
-        const usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const usingTreeData = this.gridOptionsService.isTreeData();
         const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
         const isGroupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
 
@@ -326,7 +325,7 @@ export class ChartDataModel extends BeanStub {
             // when the last row the cell range is a pinned 'bottom' row, the `endRow` index is set to -1 which results
             // in the ChartDatasource processing all non pinned rows from the `startRow` index.
             const endRowPosition = rangeService.getRangeEndRow(range);
-            endRow = endRowPosition.rowPinned === Constants.PINNED_BOTTOM ? -1 : endRowPosition.rowIndex;
+            endRow = endRowPosition.rowPinned === 'bottom' ? -1 : endRowPosition.rowIndex;
         }
 
         return { startRow, endRow };

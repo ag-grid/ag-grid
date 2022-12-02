@@ -2,7 +2,7 @@ import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "
 import { ICellEditorParams } from "../interfaces/iCellEditor";
 import { AgGridCommon } from "../interfaces/iCommon";
 import { IFilterDef } from '../interfaces/iFilter';
-import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
+import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ITooltipParams } from "../rendering/tooltipComponent";
 import { Column } from "./column";
@@ -399,15 +399,15 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
     /** Set to `true` to allow sorting on this column. Default: `false` */
     sortable?: boolean;
     /** If sorting by default, set it here. Set to `asc` or `desc`. */
-    sort?: 'asc' | 'desc' | null;
+    sort?: SortDirection;
     /** Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions. */
-    initialSort?: 'asc' | 'desc' | null;
+    initialSort?: SortDirection;
     /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
     sortIndex?: number | null;
     /** Same as `sortIndex`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialSortIndex?: number;
     /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */
-    sortingOrder?: ('asc' | 'desc' | null)[];
+    sortingOrder?: (SortDirection)[];
     /**
      * Override the default sorting order by providing a custom sort comparator. 
      * 
@@ -696,3 +696,5 @@ export interface CellEditorSelectorResult {
     /** Equivalent of setting `colDef.cellEditorPopupPosition` */
     popupPosition?: 'over' | 'under';
 }
+
+export type SortDirection = 'asc' | 'desc' | null;

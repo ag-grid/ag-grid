@@ -20,10 +20,12 @@ export const defaultTooltipCss = `
 
 .ag-sparkline-tooltip-content {
     padding: 0 7px;
+    opacity: 1;
 }
 
 .ag-sparkline-tooltip-title {
     padding-left: 7px;
+    opacity: 1;
 }
 
 .ag-sparkline-tooltip-wrapper-hidden {

@@ -286,7 +286,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const columnLabel = translate('ariaColumnGroup', 'Column Group');
         const checkboxValue = this.cbSelect.getValue();
         const state = checkboxValue === undefined ?

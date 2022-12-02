@@ -1,7 +1,6 @@
 import {
     IClientSideRowModel,
     Column,
-    Constants,
     ISetFilterParams,
     AgPromise,
     SetFilterValues,
@@ -66,6 +65,7 @@ export class SetValueModel<V> implements IEventEmitter {
     private readonly translate: (key: keyof ISetFilterLocaleText) => string;
     private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
     private readonly createKey: (value: V | null, node?: RowNode) => string | null;
+    private readonly usingComplexObjects: boolean;
 
     private valuesType: SetFilterModelValuesType;
     private miniFilterText: string | null = null;
@@ -119,6 +119,7 @@ export class SetValueModel<V> implements IEventEmitter {
         this.translate = params.translate;
         this.caseFormat = params.caseFormat;
         this.createKey = params.createKey;
+        this.usingComplexObjects = !!params.usingComplexObjects;
         this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
@@ -132,7 +133,7 @@ export class SetValueModel<V> implements IEventEmitter {
         const getDataPath = gridOptionsService.get('getDataPath');
         const treeDataOrGrouping = !!treeDataTreeList || !!groupingTreeList;
 
-        if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (rowModel.getType() === 'clientSide') {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
                 rowModel as IClientSideRowModel,
                 this.filterParams,
@@ -268,13 +269,34 @@ export class SetValueModel<V> implements IEventEmitter {
     }
 
     private processAllKeys(getFromRows: boolean, providedValues: (V | null)[] | null): (string | null)[] {
-        const values = getFromRows ? this.getValuesFromRows(false) : this.uniqueValues(providedValues);
+        const values = getFromRows ? this.getValuesFromRows(false) : this.uniqueValues(this.validateProvidedValues(providedValues!));
 
         const sortedKeys = this.sortKeys(values);
 
         this.allValues = values ?? new Map();
         
         return sortedKeys;
+    }
+
+    private validateProvidedValues(values: (V | null)[]): (V | null)[]{
+        if (this.usingComplexObjects && values?.length) {
+            const firstValue = values[0];
+            if (firstValue && typeof firstValue !== 'object' && typeof firstValue !== 'function') {
+                const firstKey = this.createKey(firstValue);
+                if  (firstKey == null) {
+                    _.doOnce(() => console.warn(
+                            'AG Grid: Set Filter Key Creator is returning null for provided values and provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?'
+                        ), 'setFilterComplexObjectsProvidedNull'
+                    );
+                } else {
+                    _.doOnce(() => console.warn(
+                            'AG Grid: Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?'
+                        ), 'setFilterComplexObjectsProvidedPrimitive'
+                    );
+                }
+            }
+        }
+        return values;
     }
 
     public setValuesType(value: SetFilterModelValuesType) {

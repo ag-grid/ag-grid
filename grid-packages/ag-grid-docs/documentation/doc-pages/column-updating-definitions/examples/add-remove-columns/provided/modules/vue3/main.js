@@ -10,15 +10,15 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const colDefsMedalsIncluded = [
     { field: 'athlete' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' },
     { field: 'age' },
     { field: 'country' },
     { field: 'sport' },
     { field: 'year' },
     { field: 'date' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' }
 ];
 
 const colDefsMedalsExcluded = [

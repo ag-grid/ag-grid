@@ -1,5 +1,5 @@
 import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
-import { Constants, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams, ValueFormatterFunc, _, GridOptionsService, ColumnModel, ValueService } from '@ag-grid-community/core';
+import { RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams, ValueFormatterFunc, _, GridOptionsService, ColumnModel, ValueService } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 type ValueType = string | number | boolean | Date;
@@ -48,7 +48,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     const { values, filterParams, doesRowPassOtherFilters, suppressSorting, simulateCaseSensitivity} = { ...DEFAULT_OPTS, ...opts };
 
     const rowModel = {
-        getType: () => Constants.ROW_MODEL_TYPE_CLIENT_SIDE,
+        getType: () => 'clientSide',
         forEachLeafNode: (callback: (node: RowNode) => void) => {
             for (const value of values) {
                 callback(({ data: { value } } as any));

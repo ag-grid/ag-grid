@@ -1,13 +1,9 @@
 import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateChartParams } from '../chartProxy';
 import {
     AgChart,
-    AgChartInstance,
-    AgChartLegendClickEvent,
     AgPieSeriesOptions,
     AgPolarChartOptions,
     AgPolarSeriesOptions,
-    AgPieSeriesTooltipRendererParams,
-    AgBaseChartOptions,
 } from 'ag-charts-community';
 import { changeOpacity } from '../../utils/color';
 import { deepMerge } from '../../utils/object';
@@ -30,8 +26,6 @@ export class PieChartProxy extends ChartProxy {
             ...this.getCommonChartOptions(),
             data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id),
             series: this.getSeries(params),
-
-            ...(this.crossFiltering ? this.createCrossFilterTheme() : {})
         }
 
         AgChart.update(this.getChartRef(), options);
@@ -81,32 +75,6 @@ export class PieChartProxy extends ChartProxy {
         return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
     }
 
-    private createCrossFilterTheme(): AgBaseChartOptions {
-        const chart = this.getChart();
-        const tooltip = {
-            delay: 500,
-        };
-
-        const legend = {
-            listeners: {
-                legendItemClick: (e: AgChartLegendClickEvent) => {
-                    chart.series.forEach(s => s.toggleSeriesItem(e.itemId, e.enabled));
-                }
-            }
-        };
-
-        return {
-            theme: {
-                overrides: {
-                    pie: {
-                        tooltip,
-                        legend
-                    }
-                }
-            }
-        }
-    }
-
     private getCrossFilterData(params: UpdateChartParams) {
         const colId = params.fields[0].colId;
         const filteredOutColId = `${colId}-filtered-out`;
@@ -135,9 +103,6 @@ export class PieChartProxy extends ChartProxy {
                 listeners: {
                     nodeClick: this.crossFilterCallback,
                 },
-                tooltip: {
-                    renderer: this.getCrossFilterTooltipRenderer(`${seriesOptions.angleName}`),
-                }
             };
         }
 
@@ -176,15 +141,6 @@ export class PieChartProxy extends ChartProxy {
 
     private getFields(params: UpdateChartParams): FieldDefinition[] {
         return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
-    }
-
-    private getCrossFilterTooltipRenderer(title: string) {
-        return (params: AgPieSeriesTooltipRendererParams) => {
-            const label = params.datum[params.calloutLabelKey as string];
-            const ratio = params.datum[params.radiusKey as string];
-            const totalValue = params.angleValue;
-            return { title, content: `${label}: ${totalValue * ratio}` };
-        }
     }
 
     public crossFilteringReset() {

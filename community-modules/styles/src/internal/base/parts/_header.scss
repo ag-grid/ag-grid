@@ -92,11 +92,18 @@
         position: absolute;
         z-index: 1;
         display: var(--ag-header-column-resize-handle-display);
-        left: calc(50% - var(--ag-header-column-resize-handle-width));
         width: var(--ag-header-column-resize-handle-width);
         height: var(--ag-header-column-resize-handle-height);
         top: calc(50% - var(--ag-header-column-resize-handle-height) * 0.5);
         background-color: var(--ag-header-column-resize-handle-color);
+    }
+
+    .ag-header-viewport .ag-header-cell-resize::after {
+        @include ag.unthemed-rtl(( left: calc(50% - var(--ag-header-column-resize-handle-width)) ));
+    }
+
+    .ag-pinned-left-header .ag-header-cell-resize::after {
+        left: calc(50% - var(--ag-header-column-resize-handle-width));
     }
 
     .ag-pinned-right-header .ag-header-cell-resize::after {

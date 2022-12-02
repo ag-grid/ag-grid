@@ -2508,23 +2508,10 @@
       "color?": "/** The colour to use for the labels. */"
     }
   },
-  "AgTreemapNodeDatum": {
-    "meta": { "typeParams": ["DatumType"] },
-    "type": {
-      "datum": "DatumType",
-      "parent?": "AgTreemapNodeDatum<DatumType>",
-      "children?": "AgTreemapNodeDatum<DatumType>[]",
-      "depth": "number",
-      "colorValue": "number",
-      "fill": "CssColor",
-      "label": "string",
-      "hasTitle": "boolean"
-    }
-  },
   "AgTreemapSeriesTooltipRendererParams": {
     "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "datum": "AgTreemapNodeDatum<DatumType>",
+      "datum": "DatumType",
       "sizeKey?": "string",
       "labelKey?": "string",
       "valueKey?": "string",
@@ -2551,13 +2538,13 @@
       "large?": "AgChartLabelOptions",
       "medium?": "AgChartLabelOptions",
       "small?": "AgChartLabelOptions",
-      "color?": "AgChartLabelOptions"
+      "value?": "{ key?: string; formatter?: (params: { datum: any; }) => string | undefined; style?: AgChartLabelOptions; }"
     },
     "docs": {
       "large?": "/** The label configuration for the large leaf tiles. */",
       "medium?": "/** The label configuration for the medium-sized leaf tiles. */",
       "small?": "/** The label configuration for the small leaf tiles. */",
-      "color?": "/** The configuration for the labels showing the value of the 'colorKey'. */"
+      "value?": "/** The configuration for the cell value label. */"
     }
   },
   "AgTreemapSeriesOptions": {
@@ -2575,7 +2562,11 @@
       "colorKey?": "string",
       "colorDomain?": "number[]",
       "colorRange?": "string[]",
-      "colorParents?": "boolean",
+      "groupFill?": "string",
+      "groupStroke?": "string",
+      "groupStrokeWidth?": "number",
+      "tileStroke?": "string",
+      "tileStrokeWidth?": "number",
       "tooltip?": "AgTreemapSeriesTooltip<DatumType>",
       "nodePadding?": "PixelSize",
       "gradient?": "boolean",
@@ -2597,7 +2588,11 @@
       "colorKey?": "/** The name of the node key containing the color value. This value (along with `colorDomain` and `colorRange` configs) will be used to determine the tile color. */",
       "colorDomain?": "/** The domain the 'colorKey' values belong to. The domain can contain more than two stops, for example `[-5, 0, -5]`. In that case the 'colorRange' should also use a matching number of colors. */",
       "colorRange?": "/** The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'. */",
-      "colorParents?": "/** Whether or not to assign colors to non-leaf nodes based on 'colorKey'. */",
+      "groupFill?": "/** The group fill color. If undefined the value based on `colorKey` will be used. */",
+      "groupStroke?": "/** The group's stroke color. */",
+      "groupStrokeWidth?": "/** The group's stroke width. */",
+      "tileStroke?": "/** The tile's stroke color. */",
+      "tileStrokeWidth?": "/** The tile's stroke width. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
       "nodePadding?": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
       "gradient?": "/** Whether or not to use gradients for treemap tiles. */",
@@ -2618,6 +2613,7 @@
     },
     "type": {
       "datum": "DataValue",
+      "depth": "number",
       "labelKey": "string",
       "sizeKey?": "string",
       "colorKey?": "string",
@@ -2632,6 +2628,7 @@
     },
     "docs": {
       "datum": "/** Datum from the series data array that the treemap tile is being rendered for. */",
+      "depth": "/** The depth of the datum in the hierarchy. */",
       "labelKey": "/** labelKey as specified on series options. */",
       "sizeKey?": "/** sizeKey as specified on series options. */",
       "colorKey?": "/** colorKey as specified on series options. */",
@@ -2844,6 +2841,10 @@
   "ObservableLike": {
     "meta": { "isTypeAlias": true },
     "type": "{ addEventListener(key: string, cb: SourceEventListener<any>): void; clearEventListeners(): void; }"
+  },
+  "VisibilityMap": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ axes: boolean; crossLines: boolean; series: boolean; }"
   },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
@@ -3197,24 +3198,23 @@
       "point?": "Readonly<SizedPoint>"
     }
   },
+  "TreeDatum": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ [prop: string]: any; children?: TreeDatum[]; }"
+  },
   "TreemapNodeDatum": {
     "meta": {},
     "type": {
-      "parent?": "TreemapNodeDatum",
-      "children?": "TreemapNodeDatum[]",
+      "datum": "TreeDatum",
       "value": "number",
-      "x0": "number",
-      "x1": "number",
-      "y0": "number",
-      "y1": "number",
       "depth": "number",
-      "fill": "string",
       "label": "string",
-      "hasTitle": "boolean",
-      "colorValue": "number",
+      "fill": "string",
+      "parent?": "TreemapNodeDatum",
+      "isLeaf": "boolean",
+      "children": "TreemapNodeDatum[]",
       "series": "Series<any>",
       "itemId?": "any",
-      "datum": "any",
       "point?": "Readonly<SizedPoint>"
     }
   },
@@ -3222,6 +3222,10 @@
     "meta": { "isEnum": true },
     "type": ["Name", "Value"],
     "docs": [null, null]
+  },
+  "TextMeta": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ text: string; style: Label; x: number; y: number; hAlign: CanvasTextAlign; vAlign: CanvasTextBaseline; }"
   },
   "PieNodeDatum": {
     "meta": {},
@@ -3332,17 +3336,6 @@
     }
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
-  "Node": {
-    "meta": {},
-    "type": {
-      "children": "Node[]",
-      "value": "number",
-      "x0": "number",
-      "x1": "number",
-      "y0": "number",
-      "y1": "number"
-    }
-  },
   "Scale": {
     "meta": { "typeParams": ["D", "R"] },
     "type": {
@@ -3428,7 +3421,8 @@
       "zIndex": "number",
       "zIndexSubOrder?": "[ string, number ]",
       "canvas": "HdpiOffscreenCanvas | HdpiCanvas",
-      "getComputedOpacity": "() => number"
+      "getComputedOpacity": "() => number",
+      "getVisibility": "() => boolean"
     }
   },
   "ValueFn": {

@@ -13,7 +13,6 @@ import {
     EventService,
     FocusService,
     GridOptionsService,
-    GridOptionsWrapper,
     KeyCode,
     LoggerFactory,
     ManagedFocusFeature,
@@ -31,7 +30,6 @@ export interface BaseDropZonePanelParams {
 }
 
 export interface BaseDropZonePanelBeans {
-    gridOptionsWrapper: GridOptionsWrapper;
     gridOptionsService: GridOptionsService;
     eventService: EventService;
     context: Context;
@@ -127,7 +125,7 @@ export abstract class BaseDropZonePanel extends Component {
         ));
 
         this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
-        this.addManagedListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
+        this.addManagedPropertyListener('functionsReadOnly', this.refreshGui.bind(this));
 
         this.setupDropTarget();
 
@@ -433,7 +431,7 @@ export abstract class BaseDropZonePanel extends Component {
 
     private getFocusedItem(): number {
         const eGui = this.getGui();
-        const activeElement = this.gridOptionsWrapper.getDocument().activeElement;
+        const activeElement = this.gridOptionsService.getDocument().activeElement;
 
         if (!eGui.contains(activeElement)) { return - 1; }
 

@@ -34,10 +34,9 @@ import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 import { Autowired, Bean, Optional, PostConstruct, Qualifier } from '../context/context';
 import { IAggFuncService } from '../interfaces/iAggFuncService';
 import { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { AutoGroupColService } from './autoGroupColService';
+import { AutoGroupColService, GROUP_AUTO_COLUMN_ID } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
-import { Constants } from '../constants/constants';
 import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { SortController } from "../sortController";
@@ -51,7 +50,7 @@ import { doOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { matchesGroupDisplayType, matchesTreeDataDisplayType } from '../gridOptionsValidator';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -267,11 +266,11 @@ export class ColumnModel extends BeanStub {
             this.pivotMode = pivotMode;
         }
 
-        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.usingTreeData = this.gridOptionsService.isTreeData();
 
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_DISPLAY_TYPE, () => this.onAutoGroupColumnDefChanged());
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_AUTO_GROUP_COLUMN_DEF, () => this.onAutoGroupColumnDefChanged());
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DEFAULT_COL_DEF, () => this.onDefaultColDefChanged());
+        this.addManagedPropertyListener('groupDisplayType', () => this.onAutoGroupColumnDefChanged());
+        this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
+        this.addManagedPropertyListener('defaultColDef', () => this.onDefaultColDefChanged());
     }
 
     public onAutoGroupColumnDefChanged() {
@@ -469,7 +468,7 @@ export class ColumnModel extends BeanStub {
     }
 
     private isPivotSettingAllowed(pivot: boolean): boolean {
-        if (pivot && this.gridOptionsWrapper.isTreeData()) {
+        if (pivot && this.gridOptionsService.isTreeData()) {
             console.warn("AG Grid: Pivot mode not available in conjunction Tree Data i.e. 'gridOptions.treeData: true'");
             return false;
         }
@@ -1564,9 +1563,9 @@ export class ColumnModel extends BeanStub {
 
     public getContainerWidth(pinned: ColumnPinnedType): number {
         switch (pinned) {
-            case Constants.PINNED_LEFT:
+            case 'left':
                 return this.leftWidth;
-            case Constants.PINNED_RIGHT:
+            case 'right':
                 return this.rightWidth;
             default:
                 return this.bodyWidth;
@@ -1634,9 +1633,9 @@ export class ColumnModel extends BeanStub {
 
     public getDisplayedColumns(type: ColumnPinnedType): Column[] {
         switch (type) {
-            case Constants.PINNED_LEFT:
+            case 'left':
                 return this.getDisplayedLeftColumns();
-            case Constants.PINNED_RIGHT:
+            case 'right':
                 return this.getDisplayedRightColumns();
             default:
                 return this.getDisplayedCenterColumns();
@@ -1693,17 +1692,17 @@ export class ColumnModel extends BeanStub {
     }
 
     public setColumnsPinned(keys: (string | Column)[], pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
-        if (this.gridOptionsWrapper.getDomLayout() === 'print') {
+        if (this.gridOptionsService.isDomLayout('print')) {
             console.warn(`AG Grid: Changing the column pinning status is not allowed with domLayout='print'`);
             return;
         }
         this.columnAnimationService.start();
 
         let actualPinned: ColumnPinnedType;
-        if (pinned === true || pinned === Constants.PINNED_LEFT) {
-            actualPinned = Constants.PINNED_LEFT;
-        } else if (pinned === Constants.PINNED_RIGHT) {
-            actualPinned = Constants.PINNED_RIGHT;
+        if (pinned === true || pinned === 'left') {
+            actualPinned = 'left';
+        } else if (pinned === 'right') {
+            actualPinned = 'right';
         } else {
             actualPinned = null;
         }
@@ -1854,20 +1853,6 @@ export class ColumnModel extends BeanStub {
         return ([] as Column[]).concat(...[
             this.primaryColumns || [],
             this.groupAutoColumns || [],
-            this.secondaryColumns || [],
-        ]);
-    }
-
-    private getPrimaryAndAutoGroupCols(): Column[] {
-        return ([] as Column[]).concat(...[
-            this.primaryColumns || [],
-            this.groupAutoColumns || [],
-        ]);
-    }
-
-    private getPrimaryAndSecondaryColumns(): Column[] {
-        return ([] as Column[]).concat(...[
-            this.primaryColumns || [],
             this.secondaryColumns || [],
         ]);
     }
@@ -2036,7 +2021,7 @@ export class ColumnModel extends BeanStub {
                 const colId = state.colId || '';
 
                 // auto group columns are re-created so deferring syncing with ColumnState
-                const isAutoGroupColumn = colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
+                const isAutoGroupColumn = colId.startsWith(GROUP_AUTO_COLUMN_ID);
                 if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
                     unmatchedAndAutoStates.push(state);
@@ -2173,7 +2158,7 @@ export class ColumnModel extends BeanStub {
             const alreadyProcessed = processedColIds[colId] != null;
             if (alreadyProcessed) { return; }
 
-            const isAutoGroupCol = colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
+            const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
             if (isAutoGroupCol) {
                 // auto group columns, if missing from state list, are added to the start.
                 // it's common to have autoGroup missing, as grouping could be on by default
@@ -2430,7 +2415,7 @@ export class ColumnModel extends BeanStub {
 
         const sort = getValue('sort').value1;
         if (sort !== undefined) {
-            if (sort === Constants.SORT_DESC || sort === Constants.SORT_ASC) {
+            if (sort === 'desc' || sort === 'asc') {
                 column.setSort(sort, source);
             } else {
                 column.setSort(undefined, source);
@@ -2708,7 +2693,7 @@ export class ColumnModel extends BeanStub {
 
         if (aggFuncFound) {
             const aggFuncString = (typeof aggFunc === 'string') ? aggFunc : 'func';
-            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
             const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
             return `${aggFuncStringTranslated}(${headerName})`;
         }
@@ -3260,7 +3245,7 @@ export class ColumnModel extends BeanStub {
             this.autoHeightActiveAtLeastOnce = true;
 
             const rowModelType = this.rowModel.getType();
-            const supportedRowModel = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE || rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+            const supportedRowModel = rowModelType === 'clientSide' || rowModelType === 'serverSide';
             if (!supportedRowModel) {
                 const message = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model.';
                 doOnce(() => console.warn(message), 'autoHeightActive.wrongRowModel');
@@ -3537,10 +3522,10 @@ export class ColumnModel extends BeanStub {
         let result: IHeaderColumn[];
 
         switch (type) {
-            case Constants.PINNED_LEFT:
+            case 'left':
                 result = this.viewportRowLeft[dept];
                 break;
-            case Constants.PINNED_RIGHT:
+            case 'right':
                 result = this.viewportRowRight[dept];
                 break;
             default:
@@ -3719,7 +3704,7 @@ export class ColumnModel extends BeanStub {
         // on getting the grid width, which only happens after attached after ResizeObserver fires)
         // we get get rows to re-calc their heights.
         if (!this.flexColsCalculatedAtLestOnce) {
-            if (this.gridOptionsWrapper.isRowModelDefault()) {
+            if (this.gridOptionsService.isRowModelType('clientSide')) {
                 (this.rowModel as IClientSideRowModel).resetRowHeights();
             }
             this.flexColsCalculatedAtLestOnce = true;
@@ -3863,9 +3848,9 @@ export class ColumnModel extends BeanStub {
         const groupInstanceIdCreator = new GroupInstanceIdCreator();
 
         this.displayedTreeLeft = this.displayedGroupCreator.createDisplayedGroups(
-            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Constants.PINNED_LEFT, this.displayedTreeLeft);
+            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, 'left', this.displayedTreeLeft);
         this.displayedTreeRight = this.displayedGroupCreator.createDisplayedGroups(
-            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Constants.PINNED_RIGHT, this.displayedTreeRight);
+            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, 'right', this.displayedTreeRight);
         this.displayedTreeCentre = this.displayedGroupCreator.createDisplayedGroups(
             centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, null, this.displayedTreeCentre);
 
@@ -3914,7 +3899,7 @@ export class ColumnModel extends BeanStub {
 
         this.autoGroupsNeedBuilding = false;
 
-        const groupFullWidthRow = this.gridOptionsWrapper.isGroupUseEntireRow(this.pivotMode);
+        const groupFullWidthRow = this.gridOptionsService.isGroupUseEntireRow(this.pivotMode);
         // we need to allow suppressing auto-column separately for group and pivot as the normal situation
         // is CSRM and user provides group column themselves for normal view, but when they go into pivot the
         // columns are generated by the grid so no opportunity for user to provide group column. so need a way
@@ -3922,7 +3907,7 @@ export class ColumnModel extends BeanStub {
         // however if using Viewport RM or SSRM and user is providing the columns, the user may wish full control
         // of the group column in this instance.
         const suppressAutoColumn = this.pivotMode ?
-            this.gridOptionsService.is('pivotSuppressAutoColumn') : this.gridOptionsWrapper.isGroupSuppressAutoColumn();
+            this.gridOptionsService.is('pivotSuppressAutoColumn') : this.isGroupSuppressAutoColumn();
 
         const groupingActive = this.rowGroupColumns.length > 0 || this.usingTreeData;
         const needAutoColumns = groupingActive && !suppressAutoColumn && !groupFullWidthRow;
@@ -3941,6 +3926,15 @@ export class ColumnModel extends BeanStub {
             this.groupAutoColumns = null;
         }
         return false;
+    }
+
+    public isGroupSuppressAutoColumn() {
+        const groupDisplayType = this.gridOptionsService.get('groupDisplayType')
+        const isCustomRowGroups = groupDisplayType ? matchesGroupDisplayType('custom', groupDisplayType) : false;
+
+        if (isCustomRowGroups) { return true; }
+        const treeDataDisplayType = this.gridOptionsService.get('treeDataDisplayType')
+        return treeDataDisplayType ? matchesTreeDataDisplayType('custom', treeDataDisplayType) : false;
     }
 
     private autoColsEqual(colsA: Column[] | null, colsB: Column[] | null): boolean {
@@ -3999,20 +3993,36 @@ export class ColumnModel extends BeanStub {
 
     public getColumnGroupHeaderRowHeight(): number {
         if (this.isPivotMode()) {
-            return this.gridOptionsWrapper.getPivotGroupHeaderHeight() as number;
+            return this.getPivotGroupHeaderHeight() as number;
         }
-        return this.gridOptionsWrapper.getGroupHeaderHeight() as number;
+        return this.getGroupHeaderHeight() as number;
     }
 
     public getColumnHeaderRowHeight(): number {
         const defaultHeight: number = (this.isPivotMode() ?
-            this.gridOptionsWrapper.getPivotHeaderHeight() :
-            this.gridOptionsWrapper.getHeaderHeight()) as number;
+            this.getPivotHeaderHeight() :
+            this.getHeaderHeight()) as number;
 
         const displayedHeights = this.getAllDisplayedColumns()
             .filter((col) => col.isAutoHeaderHeight())
             .map((col) => col.getAutoHeaderHeight() || 0);
 
         return Math.max(defaultHeight, ...displayedHeights);
+    }
+
+    public getHeaderHeight(): number | null | undefined {
+        return this.gridOptionsService.getNum('headerHeight') || this.environment.getFromTheme(25, 'headerHeight');
+    }
+    public getFloatingFiltersHeight(): number | null | undefined {
+        return this.gridOptionsService.getNum('floatingFiltersHeight') || this.environment.getFromTheme(25, 'headerHeight');
+    }
+    private getGroupHeaderHeight(): number | null | undefined {
+        return this.gridOptionsService.getNum('groupHeaderHeight') || this.getHeaderHeight();
+    }
+    private getPivotHeaderHeight(): number | null | undefined {
+        return this.gridOptionsService.getNum('pivotHeaderHeight') || this.getHeaderHeight();
+    }
+    private getPivotGroupHeaderHeight(): number | null | undefined {
+        return this.gridOptionsService.getNum('pivotGroupHeaderHeight') || this.getGroupHeaderHeight();
     }
 }

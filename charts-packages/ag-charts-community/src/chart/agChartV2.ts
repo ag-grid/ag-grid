@@ -164,8 +164,19 @@ class AgChartInstanceProxy implements AgChartInstance {
         if (x instanceof AgChartInstanceProxy) {
             // Simple case.
             return true;
-        } else if (x.constructor?.name === 'AgChartInstanceProxy' && x.chart != null) {
+        }
+
+        if (x.constructor?.name === 'AgChartInstanceProxy' && x.chart != null) {
             // instanceof can fail if mixing bundles (e.g. grid all-modules vs. standalone).
+            return true;
+        }
+
+        const signatureProps = Object.keys(x.constructor?.prototype);
+        const heuristicTypeCheck = Object.keys(AgChartInstanceProxy.prototype).every((prop) =>
+            signatureProps.includes(prop)
+        );
+        if (heuristicTypeCheck && x.chart != null) {
+            // minimised code case - the constructor name is mangled but prototype names are not :P
             return true;
         }
 
@@ -216,8 +227,10 @@ abstract class AgChartInternal {
         const chartToUpdate = chart;
         chartToUpdate.queuedUserOptions.push(userOptions);
         const dequeue = () => {
+            // If there are a lot of update calls, `requestFactoryUpdate()` may skip callbacks,
+            // so we need to remove all queue items up to the last successfully applied item.
             const queuedOptionsIdx = chartToUpdate.queuedUserOptions.indexOf(userOptions);
-            chartToUpdate.queuedUserOptions.splice(queuedOptionsIdx, 1);
+            chartToUpdate.queuedUserOptions.splice(0, queuedOptionsIdx);
         };
 
         chartToUpdate.requestFactoryUpdate(async () => {
@@ -321,6 +334,8 @@ abstract class AgChartInternal {
         }
 
         await chart.awaitUpdateCompletion();
+
+        if (chart.destroyed) return;
 
         debug('applying delta', processedOptions);
         applyChartOptions(chart, processedOptions, userOptions);

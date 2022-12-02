@@ -116,26 +116,32 @@ export class ToolPanelFilterComp extends Component {
         this.expanded = true;
         _.setAriaExpanded(this.eFilterToolPanelHeader, true);
 
-        const container = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
-        const filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR')?.filterPromise;
+        _.setDisplayed(this.eExpandChecked, true);
+        _.setDisplayed(this.eExpandUnchecked, false);
 
-        if (filterPromise) {
-            filterPromise.then(filter => {
-                this.underlyingFilter = filter;
+        const filterPanelWrapper = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
+        const filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR');
 
-                if (!filter) { return; }
-                container.appendChild(filter.getGui());
+        if (!filterWrapper) { return; }
 
-                this.agFilterToolPanelBody.appendChild(container);
+        const { filterPromise, guiPromise } = filterWrapper;
+
+        filterPromise?.then(filter => {
+            this.underlyingFilter = filter;
+
+            if (!filter) { return; }
+            guiPromise.then(filterContainerEl => {
+                if (filterContainerEl) {
+                    filterPanelWrapper.appendChild(filterContainerEl);
+                }
+
+                this.agFilterToolPanelBody.appendChild(filterPanelWrapper);
 
                 if (filter.afterGuiAttached) {
                     filter.afterGuiAttached({ container: 'toolPanel' });
                 }
             });
-        }
-
-        _.setDisplayed(this.eExpandChecked, true);
-        _.setDisplayed(this.eExpandUnchecked, false);
+        });
     }
 
     public collapse(): void {

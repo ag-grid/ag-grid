@@ -5,10 +5,10 @@ import { AbstractColDef } from "./colDef";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { EventService } from "../eventService";
 import { Autowired } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { last } from "../utils/array";
 import { GridOptionsService } from "../gridOptionsService";
+import { logDeprecation } from "../gridOptionsValidator";
 
 export class ColumnGroup implements IHeaderColumn {
 
@@ -23,7 +23,6 @@ export class ColumnGroup implements IHeaderColumn {
         return groupId + '_' + instanceId;
     }
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
 
     // all the children of this group, regardless of whether they are opened or closed
@@ -218,7 +217,6 @@ export class ColumnGroup implements IHeaderColumn {
         return result;
     }
 
-    // why two methods here doing the same thing?
     public getDefinition(): AbstractColDef | null {
         return this.providedColumnGroup.getColGroupDef();
     }
@@ -275,9 +273,9 @@ export class ColumnGroup implements IHeaderColumn {
         return this.providedColumnGroup;
     }
 
-    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getOriginalColumnGroup. */
+    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
     public getOriginalColumnGroup(): ProvidedColumnGroup {
-        console.warn('AG Grid: Since v27 columnGroup.getOriginalColumnGroup() is deprecated due to a method rename, use columnGroup.getProvidedColumnGroup() instead');
+        logDeprecation<ColumnGroup>('27', 'getOriginalColumnGroup', 'getProvidedColumnGroup')
         return this.getProvidedColumnGroup();
     }
 

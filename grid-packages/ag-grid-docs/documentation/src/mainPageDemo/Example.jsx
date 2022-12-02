@@ -67,18 +67,6 @@ function currencyCssFunc(params) {
     return {};
 }
 
-const countryCellRenderer = (props) => {
-    //get flags from here: http://www.freeflagicons.com/
-    if (props.value === null || props.value === "" || props.value === '(Select All)') {
-        return props.value;
-    } else if (props.value === undefined) {
-        return null
-    }
-
-    return <><img className={styles['flag']} alt="${props.value}" border="0" width="15" height="10"
-                  src={`https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[props.value]}.png`}/> {props.value}</>;
-}
-
 export class CountryCellRendererJs {
     eGui;
 
@@ -86,18 +74,17 @@ export class CountryCellRendererJs {
         this.eGui = document.createElement('span')
         this.eGui.style.cursor = 'default'
 
-        //get flags from here: http://www.freeflagicons.com/
-        if (
+        if (params.value === undefined) {
+            return null
+        } else if (
             params.value == null ||
             params.value === '' ||
             params.value === '(Select All)'
         ) {
             this.eGui.innerHTML = params.value
         } else {
-            var flag =
-                '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' +
-                COUNTRY_CODES[params.value] +
-                '.png">'
+            // Get flags from here: http://www.freeflagicons.com/
+            var flag = `<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[params.value]}.png">`
             this.eGui.innerHTML = flag + ' ' + params.value
         }
     }

@@ -3856,34 +3856,8 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
-  "AgTreemapNodeDatum": {
-    "datum": { "type": { "returnType": "DatumType", "optional": false } },
-    "parent": {
-      "type": {
-        "returnType": "AgTreemapNodeDatum<DatumType>",
-        "optional": true
-      }
-    },
-    "children": {
-      "type": {
-        "returnType": "AgTreemapNodeDatum<DatumType>[]",
-        "optional": true
-      }
-    },
-    "depth": { "type": { "returnType": "number", "optional": false } },
-    "colorValue": { "type": { "returnType": "number", "optional": false } },
-    "fill": { "type": { "returnType": "CssColor", "optional": false } },
-    "label": { "type": { "returnType": "string", "optional": false } },
-    "hasTitle": { "type": { "returnType": "boolean", "optional": false } },
-    "meta": { "typeParams": ["DatumType"] }
-  },
   "AgTreemapSeriesTooltipRendererParams": {
-    "datum": {
-      "type": {
-        "returnType": "AgTreemapNodeDatum<DatumType>",
-        "optional": false
-      }
-    },
+    "datum": { "type": { "returnType": "DatumType", "optional": false } },
     "sizeKey": { "type": { "returnType": "string", "optional": true } },
     "labelKey": { "type": { "returnType": "string", "optional": true } },
     "valueKey": { "type": { "returnType": "string", "optional": true } },
@@ -3923,9 +3897,12 @@
       "description": "/** The label configuration for the small leaf tiles. */",
       "type": { "returnType": "AgChartLabelOptions", "optional": true }
     },
-    "color": {
-      "description": "/** The configuration for the labels showing the value of the 'colorKey'. */",
-      "type": { "returnType": "AgChartLabelOptions", "optional": true }
+    "value": {
+      "description": "/** The configuration for the cell value label. */",
+      "type": {
+        "returnType": "{\n        /** A property to be used as a key to retrieve a value from datum. */\n        key?: string;\n        /** A function to generate a value label from datum. */\n        formatter?: (params: { datum: any }) => string | undefined;\n        /** The label's font and color style. */\n        style?: AgChartLabelOptions;\n    }",
+        "optional": true
+      }
     }
   },
   "AgTreemapSeriesOptions": {
@@ -3962,9 +3939,25 @@
       "description": "/** The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'. */",
       "type": { "returnType": "string[]", "optional": true }
     },
-    "colorParents": {
-      "description": "/** Whether or not to assign colors to non-leaf nodes based on 'colorKey'. */",
-      "type": { "returnType": "boolean", "optional": true }
+    "groupFill": {
+      "description": "/** The group fill color. If undefined the value based on `colorKey` will be used. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "groupStroke": {
+      "description": "/** The group's stroke color. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "groupStrokeWidth": {
+      "description": "/** The group's stroke width. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "tileStroke": {
+      "description": "/** The tile's stroke color. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "tileStrokeWidth": {
+      "description": "/** The tile's stroke width. */",
+      "type": { "returnType": "number", "optional": true }
     },
     "tooltip": {
       "description": "/** Series-specific tooltip configuration. */",
@@ -4023,6 +4016,10 @@
     "datum": {
       "description": "/** Datum from the series data array that the treemap tile is being rendered for. */",
       "type": { "returnType": "DataValue", "optional": false }
+    },
+    "depth": {
+      "description": "/** The depth of the datum in the hierarchy. */",
+      "type": { "returnType": "number", "optional": false }
     },
     "labelKey": {
       "description": "/** labelKey as specified on series options. */",
@@ -4355,6 +4352,7 @@
     }
   },
   "ObservableLike": {},
+  "VisibilityMap": {},
   "ChartUpdateType": {},
   "OptionalHTMLElement": {},
   "TransferableResources": {},
@@ -4613,31 +4611,28 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
+  "TreeDatum": {},
   "TreemapNodeDatum": {
+    "datum": { "type": { "returnType": "TreeDatum", "optional": false } },
+    "value": { "type": { "returnType": "number", "optional": false } },
+    "depth": { "type": { "returnType": "number", "optional": false } },
+    "label": { "type": { "returnType": "string", "optional": false } },
+    "fill": { "type": { "returnType": "string", "optional": false } },
     "parent": {
       "type": { "returnType": "TreemapNodeDatum", "optional": true }
     },
+    "isLeaf": { "type": { "returnType": "boolean", "optional": false } },
     "children": {
-      "type": { "returnType": "TreemapNodeDatum[]", "optional": true }
+      "type": { "returnType": "TreemapNodeDatum[]", "optional": false }
     },
-    "value": { "type": { "returnType": "number", "optional": false } },
-    "x0": { "type": { "returnType": "number", "optional": false } },
-    "x1": { "type": { "returnType": "number", "optional": false } },
-    "y0": { "type": { "returnType": "number", "optional": false } },
-    "y1": { "type": { "returnType": "number", "optional": false } },
-    "depth": { "type": { "returnType": "number", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": false } },
-    "label": { "type": { "returnType": "string", "optional": false } },
-    "hasTitle": { "type": { "returnType": "boolean", "optional": false } },
-    "colorValue": { "type": { "returnType": "number", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
   "TextNodeTag": {},
+  "TextMeta": {},
   "PieNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "radius": { "type": { "returnType": "number", "optional": false } },
@@ -4756,14 +4751,6 @@
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
-  "Node": {
-    "children": { "type": { "returnType": "Node[]", "optional": false } },
-    "value": { "type": { "returnType": "number", "optional": false } },
-    "x0": { "type": { "returnType": "number", "optional": false } },
-    "x1": { "type": { "returnType": "number", "optional": false } },
-    "y0": { "type": { "returnType": "number", "optional": false } },
-    "y1": { "type": { "returnType": "number", "optional": false } }
-  },
   "Scale": {
     "domain": { "type": { "returnType": "D[]", "optional": false } },
     "range": { "type": { "returnType": "R[]", "optional": false } },
@@ -4867,6 +4854,9 @@
     },
     "getComputedOpacity": {
       "type": { "arguments": {}, "returnType": "number", "optional": false }
+    },
+    "getVisibility": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     }
   },
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },

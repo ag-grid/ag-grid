@@ -82,6 +82,7 @@ const AG_GRID_LOCALE_EN = {
     pinRight: 'Pin Right',
     noPin: 'No Pin',
     valueAggregation: 'Value Aggregation',
+    noAggregation: 'None',
     autosizeThiscolumn: 'Autosize This Column',
     autosizeAllColumns: 'Autosize All Columns',
     groupBy: 'Group by',

@@ -6,7 +6,6 @@ import {
     CellPositionUtils,
     Column,
     ColumnModel,
-    Constants,
     Events,
     IRangeService,
     IRowModel,
@@ -79,8 +78,8 @@ export class RangeService extends BeanStub implements IRangeService {
                 setVerticalPosition: (position) => gridBodyCtrl.getScrollFeature().setVerticalScrollPosition(position),
                 getHorizontalPosition: () => gridBodyCtrl.getScrollFeature().getHScrollPosition().left,
                 setHorizontalPosition: (position) => gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(position),
-                shouldSkipVerticalScroll: () => this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL,
-                shouldSkipHorizontalScroll: () => gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing()
+                shouldSkipVerticalScroll: () => !this.gridOptionsService.isDomLayout('normal'),
+                shouldSkipHorizontalScroll: () => !gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing()
             });
         });
     }
@@ -143,7 +142,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 cellRange.startRow : cellRange.endRow;
         }
 
-        const rowPinned = this.pinnedRowModel.getPinnedTopRowCount() > 0 ? Constants.PINNED_TOP : null;
+        const rowPinned = this.pinnedRowModel.getPinnedTopRowCount() > 0 ? 'top' : null;
 
         return { rowIndex: 0, rowPinned };
     }
@@ -160,7 +159,7 @@ export class RangeService extends BeanStub implements IRangeService {
         if (pinnedBottom) {
             return {
                 rowIndex: pinnedBottomRowCount - 1,
-                rowPinned: Constants.PINNED_BOTTOM
+                rowPinned: 'bottom'
             };
         }
 
@@ -171,7 +170,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+        if (!this.gridOptionsService.isEnableRangeSelection()) { return; }
 
         const columns = this.calculateColumnsBetween(cell.column, cell.column);
 
@@ -306,7 +305,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public setCellRange(params: CellRangeParams): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.isEnableRangeSelection()) {
             return;
         }
 
@@ -398,7 +397,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public addCellRange(params: CellRangeParams): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.isEnableRangeSelection()) {
             return;
         }
 
@@ -581,7 +580,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+        if (!this.gridOptionsService.isEnableRangeSelection()) { return; }
 
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
 

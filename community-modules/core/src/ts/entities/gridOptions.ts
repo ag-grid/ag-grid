@@ -81,10 +81,10 @@ import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPosition";
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
+import { ColDef, ColGroupDef, IAggFunc, SortDirection } from "./colDef";
 import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "./iCallbackParams";
 import { RowNode } from "./rowNode";
-import { SideBarDef } from "./sideBar";
+import { SideBarDef } from "../interfaces/iSideBar";
 
 export interface GridOptions<TData = any> {
 
@@ -468,7 +468,7 @@ export interface GridOptions<TData = any> {
      * Switch between layout options: `normal`, `autoHeight`, `print`.
      * Default: `normal`
      */
-    domLayout?: 'normal' | 'autoHeight' | 'print';
+    domLayout?: DomLayoutType;
     /** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false` */
     ensureDomOrder?: boolean;
     /** Set to `true` to operate the grid in RTL (Right to Left) mode. Default: `false` */
@@ -746,7 +746,7 @@ export interface GridOptions<TData = any> {
 
     // *** Sorting *** //
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */
-    sortingOrder?: ('asc' | 'desc' | null)[];
+    sortingOrder?: (SortDirection)[];
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */
     accentedSort?: boolean;
     /** Set to `true` to show the 'no sort' icon. Default: `false` */
@@ -1270,3 +1270,5 @@ export interface LoadingCellRendererSelectorResult {
     /** Equivalent of setting `loadingCellRendererParams` */
     params?: any;
 }
+
+export type DomLayoutType = 'normal' | 'autoHeight' | 'print';

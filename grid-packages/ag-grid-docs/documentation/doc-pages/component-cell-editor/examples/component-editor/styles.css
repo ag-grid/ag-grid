@@ -20,8 +20,19 @@
 
 .doubling-input,
 .numeric-input {
+    font-size: calc(var(--ag-font-size) + 1px);
+    padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
     box-sizing: border-box;
-    padding-left: var(--ag-grid-size);
     width: 100%;
+    height: 100%;
+}
+
+/* Completely fill the space for number arrow buttons */
+.doubling-input::-webkit-outer-spin-button, 
+.doubling-input::-webkit-inner-spin-button {
+    width: 25px;
+    position: absolute;
+    top: 0px;
+    right: 1px;
     height: 100%;
 }

@@ -74,10 +74,7 @@ export class AgGridVue extends Vue {
                 currentValue,
                 previousValue,
             };
-            ComponentUtil.processOnChange(changes,
-                this.gridOptions,
-                this.gridOptions.api!,
-                this.gridOptions.columnApi!);
+            ComponentUtil.processOnChange(changes, this.gridOptions.api!);
         }
     }
 
@@ -90,7 +87,7 @@ export class AgGridVue extends Vue {
         }, 20);
 
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
-        const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
+        const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
 
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();

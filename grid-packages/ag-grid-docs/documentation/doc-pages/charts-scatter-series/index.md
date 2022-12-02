@@ -90,7 +90,7 @@ label placement.
 
 ## API Reference
 
-<interface-documentation interfaceName='AgScatterSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
+<interface-documentation interfaceName='AgScatterSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ## Next Up
 

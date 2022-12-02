@@ -3,7 +3,6 @@ import {
     ColumnGroup,
     ColumnWidthCallbackParams,
     RowHeightCallbackParams,
-    Constants,
     ExcelCell,
     ExcelColumn,
     ExcelData,
@@ -222,7 +221,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             if (!this.config.gridOptionsService.is('groupHideOpenParents') && node.level) {
                 _.last(this.rows).outlineLevel = node.level;
             }
-            const valueForCell = this.extractRowCellValue(column, index, rowIndex, Constants.EXPORT_TYPE_EXCEL, node);
+            const valueForCell = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
             const styleIds: string[] = this.config.styleLinker({ rowType: RowType.BODY, rowIndex, value: valueForCell, column, node });
             const excelStyleId: string | null = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);

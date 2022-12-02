@@ -15,6 +15,12 @@ const options: AgChartOptions = {
       tooltip: {
         renderer: tooltipRenderer,
       },
+      formatter: params => ({ stroke: params.depth < 2 ? 'transparent' : 'black' }),
+      labels: {
+        value: {
+          formatter: params => `${params.datum.color.toFixed(2)}%`,
+        },
+      },
     },
   ],
   title: {

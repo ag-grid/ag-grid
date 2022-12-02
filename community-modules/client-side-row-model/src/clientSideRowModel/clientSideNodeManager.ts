@@ -1,7 +1,6 @@
 import {
     Beans, ColumnModel, Events,
     EventService,
-    GridOptionsWrapper,
     IsRowMaster,
     RowDataTransaction,
     RowNode,
@@ -18,7 +17,6 @@ export class ClientSideNodeManager {
 
     private readonly rootNode: RowNode;
 
-    private gridOptionsWrapper: GridOptionsWrapper;
     private gridOptionsService: GridOptionsService;
     private eventService: EventService;
     private columnModel: ColumnModel;
@@ -38,10 +36,9 @@ export class ClientSideNodeManager {
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: { [id: string]: RowNode } = {};
 
-    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, gridOptionsService: GridOptionsService, eventService: EventService,
+    constructor(rootNode: RowNode, gridOptionsService: GridOptionsService, eventService: EventService,
         columnModel: ColumnModel, selectionService: SelectionService, beans: Beans) {
         this.rootNode = rootNode;
-        this.gridOptionsWrapper = gridOptionsWrapper;
         this.gridOptionsService = gridOptionsService;
         this.eventService = eventService;
         this.columnModel = columnModel;
@@ -66,8 +63,8 @@ export class ClientSideNodeManager {
         // func below doesn't have 'this' pointer, so need to pull out these bits
         this.suppressParentsInRowNodes = this.gridOptionsService.is('suppressParentsInRowNodes');
         this.isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
-        this.doingTreeData = this.gridOptionsWrapper.isTreeData();
-        this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+        this.doingTreeData = this.gridOptionsService.isTreeData();
+        this.doingMasterDetail = this.gridOptionsService.isMasterDetail();
     }
 
     public getCopyOfNodesMap(): { [id: string]: RowNode } {
@@ -263,7 +260,7 @@ export class ClientSideNodeManager {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
 
         let rowNode: RowNode | undefined;
         if (getRowIdFunc) {

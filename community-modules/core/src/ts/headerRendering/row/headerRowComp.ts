@@ -1,5 +1,4 @@
 import { PostConstruct, PreDestroy } from '../../context/context';
-import { Constants } from '../../constants/constants';
 import { setAriaRowIndex } from '../../utils/aria';
 import { setDomChildOrder } from '../../utils/dom';
 import { getAllValuesInObject, iterateObject } from '../../utils/object';
@@ -83,7 +82,7 @@ export class HeaderRowComp extends Component {
         });
 
         const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-        const isPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const isPrintLayout = this.gridOptionsService.isDomLayout('print');
 
         if (isEnsureDomOrder || isPrintLayout) {
             const comps = getAllValuesInObject(this.headerComps);

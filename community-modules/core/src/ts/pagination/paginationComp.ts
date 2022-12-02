@@ -102,7 +102,7 @@ export class PaginationComp extends Component {
             return userFunc(params);
         }
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 
@@ -110,7 +110,7 @@ export class PaginationComp extends Component {
     }
 
     private getTemplate(): string {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         const strPage = localeTextFunc('page', 'Page');
         const strTo = localeTextFunc('to', 'to');
@@ -249,7 +249,7 @@ export class PaginationComp extends Component {
             this.lbTotal.innerHTML = this.formatNumber(totalPages);
             this.lbRecordCount.innerHTML = this.formatNumber(rowCount!);
         } else {
-            const moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
+            const moreText = this.localeService.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;
             this.lbRecordCount.innerHTML = moreText;
         }

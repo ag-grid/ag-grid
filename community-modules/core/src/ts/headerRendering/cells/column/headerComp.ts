@@ -16,6 +16,7 @@ import { LongTapEvent, TapEvent, TouchListener } from "../../../widgets/touchLis
 import { SortIndicatorComp } from "./sortIndicatorComp";
 import { ColumnModel } from "../../../columns/columnModel";
 import { Events } from "../../../eventKeys";
+import { SortDirection } from "../../../entities/colDef";
 
 export interface IHeaderParams<TData = any> extends AgGridCommon<TData> {
     /** The column the header is for. */
@@ -52,7 +53,7 @@ export interface IHeaderParams<TData = any> extends AgGridCommon<TData> {
      * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).
      * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click)
      */
-    setSort: (sort: 'asc' | 'desc' | null, multiSort?: boolean) => void;
+    setSort: (sort: SortDirection, multiSort?: boolean) => void;
 
     /** Custom header template if provided to `headerComponentParams`, otherwise will be `undefined`. See [Header Templates](https://ag-grid.com/javascript-data-grid/column-headers/#header-templates) */
     template?: string;
@@ -183,7 +184,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTap(): void {
-        const { gridOptionsWrapper: options, gridOptionsService } = this;
+        const { gridOptionsService } = this;
 
         if (gridOptionsService.is('suppressTouch')) { return; }
 
@@ -289,7 +290,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+        const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
 
         // keep track of last time the moving changed flag was set
         this.addManagedListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {

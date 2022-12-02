@@ -54,7 +54,7 @@ export class AbstractHeaderCellCtrl extends BeanStub {
     }
 
     protected getWrapperHasFocus(): boolean {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const activeEl = eDocument.activeElement;
 
         return activeEl === this.eGui;
@@ -81,8 +81,8 @@ export class AbstractHeaderCellCtrl extends BeanStub {
 
     private addDomData(): void {
         const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
-        this.gridOptionsWrapper.setDomData(this.eGui, key, this);
-        this.addDestroyFunc(() => this.gridOptionsWrapper.setDomData(this.eGui, key, null));
+        this.gridOptionsService.setDomData(this.eGui, key, this);
+        this.addDestroyFunc(() => this.gridOptionsService.setDomData(this.eGui, key, null));
     }
 
     public getGui(): HTMLElement {

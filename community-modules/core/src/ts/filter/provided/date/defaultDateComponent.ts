@@ -24,7 +24,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public init(params: IDateParams): void {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const inputElement = this.eDateInput.getInputElement();
 
         if (this.shouldUseBrowserDatePicker(params)) {

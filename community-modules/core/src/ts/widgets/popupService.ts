@@ -1,7 +1,6 @@
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
-import { Environment } from "../environment";
 import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { getAbsoluteHeight, getAbsoluteWidth } from '../utils/dom';
@@ -17,7 +16,7 @@ import { setAriaLabel, setAriaRole } from "../utils/aria";
 import { PostProcessPopupParams } from "../entities/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ResizeObserverService } from "../misc/resizeObserverService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+
 
 export interface PopupPositionParams {
     ePopup: HTMLElement,
@@ -98,11 +97,9 @@ export class PopupService extends BeanStub {
 
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
-    @Autowired('environment') private environment: Environment;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('resizeObserverService') public resizeObserverService: ResizeObserverService;
-    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
 
     private gridCtrl: GridCtrl;
 
@@ -297,7 +294,7 @@ export class PopupService extends BeanStub {
         // returns the rect outside the borders, but the 0,0 coordinate for absolute
         // positioning is inside the border, leading the popup to be off by the width
         // of the border
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         let popupParent = this.getPopupParent();
 
         if (popupParent === eDocument.body) {
@@ -328,7 +325,7 @@ export class PopupService extends BeanStub {
         const offsetProperty = isVertical ? 'offsetHeight' : 'offsetWidth';
         const scrollPositionProperty = isVertical ? 'scrollTop' : 'scrollLeft';
 
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
@@ -420,7 +417,7 @@ export class PopupService extends BeanStub {
             ariaLabel
         } = params;
 
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
 
         let destroyPositionTracker: AgPromise<() => void> = new AgPromise(resolve => resolve(() => { }));
 
@@ -608,7 +605,7 @@ export class PopupService extends BeanStub {
     }
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         while (el && el !== eDocument.body) {
             if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
                 return true;

@@ -18,7 +18,8 @@ import {
     ValueService,
     Beans,
     SelectionService,
-    WithoutGridCommon
+    WithoutGridCommon,
+    InitialGroupOrderComparatorParams
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -70,7 +71,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     @PostConstruct
     private postConstruct(): void {
-        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.usingTreeData = this.gridOptionsService.isTreeData();
         if (this.usingTreeData) {
             this.getDataPath = this.gridOptionsService.get('getDataPath');
         }
@@ -193,7 +194,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // we don't do group sorting for tree data
         if (this.usingTreeData) { return; }
 
-        const comparator = this.gridOptionsWrapper.getInitialGroupOrderComparator();
+        const comparator = this.getInitialGroupOrderComparator();
         if (_.exists(comparator)) { recursiveSort(rootNode); }
 
         function recursiveSort(rowNode: RowNode): void {
@@ -205,6 +206,18 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 rowNode.childrenAfterGroup!.sort((nodeA, nodeB) => comparator!({ nodeA, nodeB }));
                 rowNode.childrenAfterGroup!.forEach((childNode: RowNode) => recursiveSort(childNode));
             }
+        }
+    }
+
+    private getInitialGroupOrderComparator() {
+        const initialGroupOrderComparator = this.gridOptionsService.getCallback('initialGroupOrderComparator');
+        if (initialGroupOrderComparator) {
+            return initialGroupOrderComparator;
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        const defaultGroupOrderComparator = this.gridOptionsService.get('defaultGroupOrderComparator');
+        if (defaultGroupOrderComparator) {
+            return (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => defaultGroupOrderComparator(params.nodeA, params.nodeB);
         }
     }
 
@@ -617,6 +630,10 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.parent = details.includeParents ? parent : null;
 
         this.setExpandedInitialValue(details, groupNode);
+
+        if (this.gridOptionsService.is('groupIncludeFooter')) {
+            groupNode.createFooter();
+        }
 
         return groupNode;
     }

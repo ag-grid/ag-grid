@@ -20,6 +20,7 @@ import {
     WithoutGridCommon
 } from "@ag-grid-community/core";
 import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
+import { SideBarDefParser } from "./sideBarDefParser";
 import { ToolPanelWrapper } from "./toolPanelWrapper";
 
 export interface IToolPanelChildComp extends IComponent<any> {
@@ -33,6 +34,7 @@ export class SideBarComp extends Component implements ISideBar {
     @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
+    private sideBar: SideBarDef | undefined;
 
     private static readonly TEMPLATE = /* html */
         `<div class="ag-side-bar ag-unselectable">
@@ -48,7 +50,7 @@ export class SideBarComp extends Component implements ISideBar {
         this.sideBarButtonsComp.addEventListener(SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED, this.onToolPanelButtonClicked.bind(this));
         this.setSideBarDef();
 
-        this.gridOptionsWrapper.addEventListener('sideBar', () => {
+        this.addManagedPropertyListener('sideBar', () => {
             this.clearDownUi();
             this.setSideBarDef();
         });
@@ -69,7 +71,7 @@ export class SideBarComp extends Component implements ISideBar {
         const { focusService, sideBarButtonsComp } = this;
         const eGui = this.getGui();
         const sideBarGui = sideBarButtonsComp.getGui();
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const activeElement = eDocument.activeElement as HTMLElement;
         const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
 
@@ -82,7 +84,7 @@ export class SideBarComp extends Component implements ISideBar {
         } else {
             if (!focusService.isFocusUnderManagedComponent(openPanel) && e.shiftKey) {
                 const firstFocusableEl = focusService.findFocusableElements(openPanel)[0];
-                const eDocument = this.gridOptionsWrapper.getDocument();
+                const eDocument = this.gridOptionsService.getDocument();
                 if (eDocument.activeElement === firstFocusableEl) {
                     const selectedButton = sideBarGui.querySelector('.ag-selected button') as HTMLElement;
 
@@ -97,7 +99,7 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         if (!this.sideBarButtonsComp.getGui().contains(eDocument.activeElement)) { return; }
         const sideBarGui = this.sideBarButtonsComp.getGui();
         const buttons: HTMLElement[] = Array.prototype.slice.call(sideBarGui.querySelectorAll('.ag-side-button'));
@@ -147,22 +149,26 @@ export class SideBarComp extends Component implements ISideBar {
         // initially hide side bar
         this.setDisplayed(false);
 
-        const sideBar: SideBarDef = this.gridOptionsWrapper.getSideBar();
-        const sideBarExists = !!sideBar && !!sideBar.toolPanels;
+        const sideBarRaw = this.gridOptionsService.get('sideBar');
+        this.sideBar = SideBarDefParser.parse(sideBarRaw);
 
-        if (!sideBarExists) { return; }
+        if (!!this.sideBar && !!this.sideBar.toolPanels) {
+            const shouldDisplaySideBar = !this.sideBar.hiddenByDefault;
+            this.setDisplayed(shouldDisplaySideBar);
 
-        const shouldDisplaySideBar = sideBarExists && !sideBar.hiddenByDefault;
-        this.setDisplayed(shouldDisplaySideBar);
+            const toolPanelDefs = this.sideBar.toolPanels as ToolPanelDef[];
+            this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
+            this.setupToolPanels(toolPanelDefs);
+            this.setSideBarPosition(this.sideBar.position);
 
-        const toolPanelDefs = sideBar.toolPanels as ToolPanelDef[];
-        this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
-        this.setupToolPanels(toolPanelDefs);
-        this.setSideBarPosition(sideBar.position);
-
-        if (!sideBar.hiddenByDefault) {
-            this.openToolPanel(sideBar.defaultToolPanel);
+            if (!this.sideBar.hiddenByDefault) {
+                this.openToolPanel(this.sideBar.defaultToolPanel);
+            }
         }
+    }
+
+    public getDef() {
+        return this.sideBar;
     }
 
     public setSideBarPosition(position?: 'left' | 'right'): this {

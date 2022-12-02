@@ -125,15 +125,12 @@
   "isMoving": { "type": { "arguments": {}, "returnType": "boolean" } },
   "getSort": {
     "description": "/** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */",
-    "type": {
-      "arguments": {},
-      "returnType": "'asc' | 'desc' | null | undefined"
-    }
+    "type": { "arguments": {}, "returnType": "SortDirection | undefined" }
   },
   "setSort": {
     "type": {
       "arguments": {
-        "sort": "'asc' | 'desc' | null | undefined",
+        "sort": "SortDirection | undefined",
         "source": "ColumnEventType = \"api\""
       },
       "returnType": "void"

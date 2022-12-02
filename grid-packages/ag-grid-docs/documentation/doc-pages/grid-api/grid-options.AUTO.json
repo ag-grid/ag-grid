@@ -523,7 +523,7 @@
   },
   "domLayout": {
     "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n     * Default: `normal`\n     */",
-    "type": { "returnType": "'normal' | 'autoHeight' | 'print'" }
+    "type": { "returnType": "DomLayoutType" }
   },
   "ensureDomOrder": {
     "description": "/** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false` */",
@@ -886,7 +886,7 @@
   },
   "sortingOrder": {
     "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */",
-    "type": { "returnType": "('asc' | 'desc' | null)[]" }
+    "type": { "returnType": "(SortDirection)[]" }
   },
   "accentedSort": {
     "description": "/** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */",

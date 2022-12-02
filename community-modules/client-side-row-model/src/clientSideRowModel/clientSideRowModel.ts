@@ -5,11 +5,9 @@ import {
     BeanStub,
     ChangedPath,
     ColumnModel,
-    Constants,
     Events,
     ExpandCollapseAllEvent,
     FilterChangedEvent,
-    GridOptionsWrapper,
     IClientSideRowModel,
     IRowNodeStage,
     ModelUpdatedEvent,
@@ -99,12 +97,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             animate
         });
 
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapListener);
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapListener);
+        this.addManagedPropertyListener('groupRemoveSingleChildren', refreshMapListener);
+        this.addManagedPropertyListener('groupRemoveLowestSingleChildren', refreshMapListener);
 
         this.rootNode = new RowNode(this.beans);
         this.nodeManager = new ClientSideNodeManager(this.rootNode,
-            this.gridOptionsWrapper, this.gridOptionsService,
+            this.gridOptionsService,
             this.eventService, this.columnModel,
             this.selectionService, this.beans);
     }
@@ -136,7 +134,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
                 const rowNode = this.getRow(rowIndex);
                 if (rowNode.rowHeightEstimated) {
-                    const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+                    const rowHeight = this.gridOptionsService.getRowHeightForNode(rowNode);
                     rowNode.setRowHeight(rowHeight.height);
                     atLeastOneChange = true;
                     res = true;
@@ -153,7 +151,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private setRowTopAndRowIndex(): Set<string> {
-        const defaultRowHeight = this.gridOptionsWrapper.getDefaultRowHeight();
+        const defaultRowHeight = this.environment.getDefaultRowHeight();
         let nextRowTop = 0;
 
         // mapping displayed rows is not needed for this method, however it's used in
@@ -164,7 +162,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
         // with these two layouts.
-        const allowEstimate = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
+        const allowEstimate = this.gridOptionsService.isDomLayout('normal');
 
         for (let i = 0; i < this.rowsToDisplay.length; i++) {
 
@@ -175,7 +173,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
 
             if (rowNode.rowHeight == null) {
-                const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode, allowEstimate, defaultRowHeight);
+                const rowHeight = this.gridOptionsService.getRowHeightForNode(rowNode, allowEstimate, defaultRowHeight);
                 rowNode.setRowHeight(rowHeight.height, rowHeight.estimated);
             }
 
@@ -352,13 +350,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public onRowGroupOpened(): void {
-        const animate = this.gridOptionsWrapper.isAnimateRows();
+        const animate = this.gridOptionsService.isAnimateRows();
         this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
     }
 
     private onFilterChanged(event: FilterChangedEvent): void {
         if (event.afterDataChange) { return; }
-        const animate = this.gridOptionsWrapper.isAnimateRows();
+        const animate = this.gridOptionsService.isAnimateRows();
 
         const primaryOrQuickFilterChanged = event.columns.length === 0 || event.columns.some(col => col.isPrimary());
         const step: ClientSideRowModelSteps = primaryOrQuickFilterChanged ? ClientSideRowModelSteps.FILTER : ClientSideRowModelSteps.FILTER_AGGREGATES;
@@ -366,12 +364,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private onSortChanged(): void {
-        const animate = this.gridOptionsWrapper.isAnimateRows();
+        const animate = this.gridOptionsService.isAnimateRows();
         this.refreshModel({ step: ClientSideRowModelSteps.SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true });
     }
 
     public getType(): RowModelType {
-        return Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+        return 'clientSide';
     }
 
     private onValueChanged(): void {
@@ -396,7 +394,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         const changedPath = new ChangedPath(false, this.rootNode);
 
-        if (noTransactions || this.gridOptionsWrapper.isTreeData()) {
+        if (noTransactions || this.gridOptionsService.isTreeData()) {
             changedPath.setInactive();
         }
 
@@ -606,20 +604,44 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
     }
 
-    public forEachNode(callback: (node: RowNode, index: number) => void): void {
-        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterGroup, callback, RecursionType.Normal, 0);
+    public forEachNode(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
+        this.recursivelyWalkNodesAndCallback({
+            nodes: [...(this.rootNode.childrenAfterGroup || [])], 
+            callback,
+            recursionType: RecursionType.Normal, 
+            index: 0,
+            includeFooterNodes
+        });
     }
 
-    public forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void): void {
-        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterAggFilter, callback, RecursionType.AfterFilter, 0);
+    public forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
+        this.recursivelyWalkNodesAndCallback({
+            nodes: [...(this.rootNode.childrenAfterAggFilter || [])],
+            callback,
+            recursionType: RecursionType.AfterFilter, 
+            index: 0,
+            includeFooterNodes
+        });
     }
 
-    public forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void {
-        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterSort, callback, RecursionType.AfterFilterAndSort, 0);
+    public forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
+        this.recursivelyWalkNodesAndCallback({
+            nodes: [this.rootNode],
+            callback,
+            recursionType: RecursionType.AfterFilterAndSort,
+            index: 0,
+            includeFooterNodes
+        });
     }
 
-    public forEachPivotNode(callback: (node: RowNode, index: number) => void): void {
-        this.recursivelyWalkNodesAndCallback([this.rootNode], callback, RecursionType.PivotNodes, 0);
+    public forEachPivotNode(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
+        this.recursivelyWalkNodesAndCallback({
+            nodes: [this.rootNode],
+            callback,
+            recursionType: RecursionType.PivotNodes,
+            index: 0,
+            includeFooterNodes
+        });
     }
 
     // iterates through each item in memory, and calls the callback function
@@ -627,14 +649,27 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     // callback - the user provided callback
     // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
     // index - works similar to the index in forEach in javascript's array function
-    private recursivelyWalkNodesAndCallback(nodes: RowNode[] | null, callback: (node: RowNode, index: number) => void, recursionType: RecursionType, index: number) {
-        if (!nodes) { return index; }
+    private recursivelyWalkNodesAndCallback(params: {
+        nodes: RowNode[];
+        callback: (node: RowNode, index: number) => void;
+        recursionType: RecursionType;
+        index: number;
+        includeFooterNodes: boolean
+    }) {
+        const { nodes, callback, recursionType, includeFooterNodes } = params;
+        let { index } = params;
+
+        const firstNode = nodes[0];
+
+        if (includeFooterNodes && firstNode?.parent?.sibling) {
+            nodes.push(firstNode.parent.sibling);
+        } 
 
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
             callback(node, index++);
             // go to the next level if it is a group
-            if (node.hasChildren()) {
+            if (node.hasChildren() && !node.footer) {
                 // depending on the recursion type, we pick a difference set of children
                 let nodeChildren: RowNode[] | null = null;
                 switch (recursionType) {
@@ -653,7 +688,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                         break;
                 }
                 if (nodeChildren) {
-                    index = this.recursivelyWalkNodesAndCallback(nodeChildren, callback, recursionType, index);
+                    index = this.recursivelyWalkNodesAndCallback({
+                        nodes: [...nodeChildren],
+                        callback,
+                        recursionType,
+                        index,
+                        includeFooterNodes
+                    });
                 }
             }
         }
@@ -680,7 +721,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     // + gridApi.expandAll()
     // + gridApi.collapseAll()
     public expandOrCollapseAll(expand: boolean): void {
-        const usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const usingTreeData = this.gridOptionsService.isTreeData();
         const usingPivotMode = this.columnModel.isPivotActive();
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
@@ -863,7 +904,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
         if (this.applyAsyncTransactionsTimeout == null) {
             this.rowDataTransactionBatch = [];
-            const waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
+            const waitMillis = this.gridOptionsService.getAsyncTransactionWaitMillis();
             this.applyAsyncTransactionsTimeout = window.setTimeout(() => {
                 this.executeBatchUpdateRowData();
             }, waitMillis);

@@ -15,6 +15,7 @@ export { ColumnKeyCreator } from "./columns/columnKeyCreator";
 export { ColumnUtils } from "./columns/columnUtils";
 export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
+export { GROUP_AUTO_COLUMN_ID } from "./columns/autoGroupColService";
 
 // components
 export { ComponentUtil } from "./components/componentUtil";
@@ -95,7 +96,6 @@ export { Column, ColumnPinnedType } from "./entities/column";
 export { ColumnGroup } from "./entities/columnGroup";
 export { ProvidedColumnGroup } from "./entities/providedColumnGroup";
 export { RowNode, RowHighlightPosition, RowPinnedType } from "./entities/rowNode";
-export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
@@ -159,8 +159,6 @@ export { AnimationFrameService } from "./misc/animationFrameService";
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
 export { LargeTextCellEditor } from "./rendering/cellEditors/largeTextCellEditor";
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
-export { PopupSelectCellEditor } from "./rendering/cellEditors/popupSelectCellEditor";
-export { PopupTextCellEditor } from "./rendering/cellEditors/popupTextCellEditor";
 export { SelectCellEditor } from "./rendering/cellEditors/selectCellEditor";
 export { TextCellEditor } from "./rendering/cellEditors/textCellEditor";
 
@@ -218,7 +216,7 @@ export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequ
 export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams, RefreshServerSideParams } from "./interfaces/iServerSideRowModel";
 export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupState, ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 
-export { ISideBar } from "./interfaces/iSideBar";
+export { ISideBar, SideBarDef, ToolPanelDef } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
 
 //styling
@@ -287,13 +285,11 @@ export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
-export { Constants } from "./constants/constants";
 export { KeyCode } from "./constants/keyCode";
 export { Grid, GridParams, GridCoreCreator } from "./grid";
 export { GridApi, DetailGridInfo, StartEditingCellParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
-export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { GridOptionsService } from "./gridOptionsService";
 export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
@@ -305,6 +301,7 @@ export { Logger, LoggerFactory } from "./logger";
 export { SelectionService } from "./selectionService";
 export { SortController, SortModelItem } from "./sortController";
 export { TemplateService } from "./templateService";
+export { LocaleService } from './localeService';
 export * from "./utils";
 export { ColumnSortState } from "./utils/aria";
 export { ValueService } from "./valueService/valueService";
@@ -374,6 +371,7 @@ export {
     ToolPanelClassParams,
     ToolPanelClass,
     KeyCreatorParams,
+    SortDirection,
     // deprecated params
     IsColumnFunc,
     IsColumnFuncParams
@@ -406,6 +404,7 @@ export {
     TreeDataDisplayType,
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
+    DomLayoutType
 } from "./entities/gridOptions";
 
 export {

@@ -7,7 +7,6 @@ import { debounce } from "../utils/function";
 import { BodyScrollEvent, BodyScrollEndEvent } from "../events";
 import { isIOSUserAgent } from "../utils/browser";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { Constants } from "../constants/constants";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
@@ -374,7 +373,7 @@ export class GridBodyScrollFeature extends BeanStub {
     //    if row is already in view, grid does not scroll
     public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
         // if for print or auto height, everything is always visible
-        if (this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT) { return; }
+        if (this.gridOptionsService.isDomLayout('print')) { return; }
 
         const rowCount = this.paginationProxy.getRowCount();
 

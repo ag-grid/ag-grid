@@ -13,31 +13,23 @@ export class ScatterChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-
-        this.supportsAxesUpdates = false;
-        this.xAxisType = 'number';
-        this.yAxisType = 'number';
     }
 
-    public getData(params: UpdateChartParams): any[] {
-        return this.getDataTransformedData(params);
-    }
-
-    public getAxes(): AgCartesianAxisOptions[] {
+    public getAxes(_params: UpdateChartParams): AgCartesianAxisOptions[] {
         return [
             {
-                type: this.xAxisType,
+                type: 'number',
                 position: 'bottom',
             },
             {
-                type: this.yAxisType,
+                type: 'number',
                 position: 'left',
             },
         ];
     }
 
     public getSeries(params: UpdateChartParams): AgScatterSeriesOptions[] {
-        const paired = this.getIntegratedThemeOptions()[this.standaloneChartType]?.paired;
+        const paired = this.isPaired();
         const seriesDefinitions = this.getSeriesDefinitions(params.fields, paired);
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
 

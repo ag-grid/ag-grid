@@ -22,6 +22,7 @@ import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
 import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartOptionsService } from "../services/chartOptionsService";
+import { AgChartPaddingOptions } from "ag-charts-community";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]
@@ -57,6 +58,7 @@ export class ChartMenu extends Component {
     private tabbedMenu: TabbedChartMenu;
     private menuPanel?: AgPanel;
     private menuVisible = false;
+    private chartToolbarOptions: ChartMenuOptions[];
 
     constructor(
         private readonly eChartContainer: HTMLElement,
@@ -89,6 +91,21 @@ export class ChartMenu extends Component {
 
     public isVisible(): boolean {
         return this.menuVisible;
+    }
+
+    public getExtraPaddingRequired(): AgChartPaddingOptions {
+        const topItems: ChartMenuOptions[] = ['chartLink', 'chartUnlink', 'chartDownload'];
+        const rightItems: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat'];
+
+        const result: AgChartPaddingOptions = {};
+        if (topItems.some(v => this.chartToolbarOptions.includes(v))) {
+            result.top = 10;
+        }
+        if (rightItems.some(v => this.chartToolbarOptions.includes(v))) {
+            result.right = 15;
+        }
+
+        return result;
     }
 
     private getToolbarOptions(): ChartMenuOptions[] {
@@ -202,10 +219,10 @@ export class ChartMenu extends Component {
     }
 
     private createButtons(): void {
-        const chartToolbarOptions = this.getToolbarOptions();
+        this.chartToolbarOptions = this.getToolbarOptions();
         const menuEl = this.eMenu;
 
-        chartToolbarOptions.forEach(button => {
+        this.chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
             const [iconName, callback] = buttonConfig;
             const buttonEl = _.createIconNoSpan(
@@ -233,7 +250,7 @@ export class ChartMenu extends Component {
     }
 
     private createMenuPanel(defaultTab: number): AgPromise<AgPanel> {
-        const width = this.gridOptionsWrapper.chartMenuPanelWidth();
+        const width = this.environment.chartMenuPanelWidth();
 
         const menuPanel = this.menuPanel = this.createBean(new AgPanel({
             minWidth: width,

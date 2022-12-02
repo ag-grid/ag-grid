@@ -190,7 +190,7 @@ export class SetFilterListItem<V> extends Component {
 
     private refreshVariableAriaLabels(): void {
         if (!this.isTree) { return; }
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const checkboxValue = this.eCheckbox.getValue();
         const state = checkboxValue === undefined ?
             translate('ariaIndeterminate', 'indeterminate') : 
@@ -201,7 +201,7 @@ export class SetFilterListItem<V> extends Component {
     
     private setupFixedAriaLabels(value: any): void {
         if (!this.isTree) { return; }
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
         _.setAriaLabel(this.focusWrapper, `${value} ${itemLabel}`);
         _.setAriaDescribedBy(this.focusWrapper, this.eCheckbox.getInputElement().id);
@@ -255,7 +255,14 @@ export class SetFilterListItem<V> extends Component {
         const cellRendererPromise = compDetails ? compDetails.newAgStackInstance() : undefined;
 
         if (cellRendererPromise == null) {
-            const valueToRender = (params.valueFormatted == null ? params.value : params.valueFormatted) ?? this.translate('blanks');
+            let valueToRender = (params.valueFormatted == null ? params.value : params.valueFormatted) ?? this.translate('blanks');
+            if (typeof valueToRender !== 'string') {
+                _.doOnce(() => console.warn(
+                        'AG Grid: Set Filter Value Formatter must return string values. Check that complex objects are being handled correctly, or enable convertValuesToStrings.'
+                    ), 'setFilterComplexObjectsValueFormatter'
+                );
+                valueToRender = '';
+            }
 
             this.eCheckbox.setLabel(valueToRender);
             this.setupFixedAriaLabels(valueToRender)

@@ -1,9 +1,8 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+
 import { Events } from "../eventKeys";
 import { ColumnModel } from "../columns/columnModel";
-import { Constants } from "../constants/constants";
 
 @Bean('pinnedWidthService')
 export class PinnedWidthService extends BeanStub {
@@ -18,12 +17,12 @@ export class PinnedWidthService extends BeanStub {
         const listener = this.checkContainerWidths.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
+        this.addManagedPropertyListener('domLayout', listener);
     }
 
     private checkContainerWidths() {
 
-        const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const printLayout = this.gridOptionsService.isDomLayout('print');
 
         const newLeftWidth = printLayout ? 0 : this.columnModel.getDisplayedColumnsLeftWidth();
         const newRightWidth = printLayout ? 0 : this.columnModel.getDisplayedColumnsRightWidth();

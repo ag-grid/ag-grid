@@ -1,7 +1,6 @@
 import { EventService } from "../eventService";
 import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent } from "../events";
 import { Column } from "./column";
-import { Constants } from "../constants/constants";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { DetailGridInfo } from "../gridApi";
 import { exists, missing, missingOrEmpty } from "../utils/generic";
@@ -12,6 +11,7 @@ import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { debounce } from "../utils/function";
 import { Beans } from "../rendering/beans";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { IsFullWidthRowParams } from "./iCallbackParams";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -319,11 +319,11 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     public getRowIndexString(): string {
-        if (this.rowPinned === Constants.PINNED_TOP) {
+        if (this.rowPinned === 'top') {
             return 't-' + this.rowIndex;
         }
 
-        if (this.rowPinned === Constants.PINNED_BOTTOM) {
+        if (this.rowPinned === 'bottom') {
             return 'b-' + this.rowIndex;
         }
 
@@ -382,7 +382,7 @@ export class RowNode<TData = any> implements IEventEmitter {
 
     public setId(id?: string): void {
         // see if user is providing the id's
-        const getRowIdFunc = this.beans.gridOptionsWrapper.getRowIdFunc();
+        const getRowIdFunc = this.beans.gridOptionsService.getRowIdFunc();
 
         if (getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.
@@ -619,7 +619,7 @@ export class RowNode<TData = any> implements IEventEmitter {
         // means more rows fit in) which looks crap. so best ignore small values and assume
         // we are still waiting for values to render.
         if (nonePresent || newRowHeight < 10) {
-            newRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this).height;
+            newRowHeight = this.beans.gridOptionsService.getRowHeightForNode(this).height;
         }
 
         if (newRowHeight == this.rowHeight) { return; }
@@ -892,7 +892,7 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     public isRowPinned(): boolean {
-        return this.rowPinned === Constants.PINNED_TOP || this.rowPinned === Constants.PINNED_BOTTOM;
+        return this.rowPinned === 'top' || this.rowPinned === 'bottom';
     }
 
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
@@ -923,7 +923,7 @@ export class RowNode<TData = any> implements IEventEmitter {
 
         if (rangeSelect && this.beans.selectionService.getLastSelectedNode()) {
             const newRowClicked = this.beans.selectionService.getLastSelectedNode() !== this;
-            const allowMultiSelect = this.beans.gridOptionsWrapper.isRowSelectionMulti();
+            const allowMultiSelect = this.beans.gridOptionsService.get('rowSelection') === 'multiple';
             if (newRowClicked && allowMultiSelect) {
                 const nodesChanged = this.doRowRangeSelection(params.newValue);
                 this.beans.selectionService.setLastSelectedNode(this);
@@ -952,7 +952,7 @@ export class RowNode<TData = any> implements IEventEmitter {
 
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
-            const clearOtherNodes = newValue && (clearSelection || !this.beans.gridOptionsWrapper.isRowSelectionMulti());
+            const clearOtherNodes = newValue && (clearSelection || this.beans.gridOptionsService.get('rowSelection') !== 'multiple');
             if (clearOtherNodes) {
                 updatedCount += this.beans.selectionService.clearOtherNodes(this);
             }
@@ -1118,8 +1118,20 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     public isFullWidthCell(): boolean {
-        const isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
+        const isFullWidthCellFunc = this.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
+    }
+
+    private getIsFullWidthCellFunc() {
+        const isFullWidthRow = this.beans.gridOptionsService.getCallback('isFullWidthRow');
+        if (isFullWidthRow) {
+            return isFullWidthRow;
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        const isFullWidthCell = this.beans.gridOptionsService.get('isFullWidthCell');
+        if (isFullWidthCell) {
+            return (params: WithoutGridCommon<IsFullWidthRowParams>) => isFullWidthCell(params.rowNode);
+        }
     }
 
     /**
@@ -1139,5 +1151,33 @@ export class RowNode<TData = any> implements IEventEmitter {
         }
 
         return res.reverse();
+    }
+
+    public createFooter(): void {
+        // only create footer node once, otherwise we have daemons and
+        // the animate screws up with the daemons hanging around
+        if (this.sibling) { return; }
+
+        const footerNode = new RowNode(this.beans);
+
+        Object.keys(this).forEach( key => {
+            (footerNode as any)[key] = (this as any)[key];
+        });
+
+        footerNode.footer = true;
+        footerNode.setRowTop(null);
+        footerNode.setRowIndex(null);
+
+        // manually set oldRowTop to null so we discard any
+        // previous information about its position.
+        footerNode.oldRowTop = null;
+
+        footerNode.id = 'rowGroupFooter_' + this.id;
+
+        // get both header and footer to reference each other as siblings. this is never undone,
+        // only overwritten. so if a group is expanded, then contracted, it will have a ghost
+        // sibling - but that's fine, as we can ignore this if the header is contracted.
+        footerNode.sibling = this;
+        this.sibling = footerNode;
     }
 }

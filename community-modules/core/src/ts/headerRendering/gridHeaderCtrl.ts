@@ -5,7 +5,6 @@ import { Autowired } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { FocusService } from "../focusService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { exists } from "../utils/generic";
 import { ManagedFocusFeature } from "../widgets/managedFocusFeature";
 import { HeaderNavigationDirection, HeaderNavigationService } from "./common/headerNavigationService";
@@ -52,11 +51,11 @@ export class GridHeaderCtrl extends BeanStub {
         const listener = this.setHeaderHeight.bind(this);
         listener();
 
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, listener);
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, listener);
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, listener);
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, listener);
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, listener);
+        this.addManagedPropertyListener('headerHeight', listener);
+        this.addManagedPropertyListener('pivotHeaderHeight', listener);
+        this.addManagedPropertyListener('groupHeaderHeight', listener);
+        this.addManagedPropertyListener('pivotGroupHeaderHeight', listener);
+        this.addManagedPropertyListener('floatingFiltersHeight', listener);
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);
@@ -67,7 +66,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private setHeaderHeight(): void {
-        const { columnModel, gridOptionsWrapper } = this;
+        const { columnModel } = this;
 
         let numberOfFloating = 0;
         let headerRowCount = columnModel.getHeaderRowCount();
@@ -86,7 +85,7 @@ export class GridHeaderCtrl extends BeanStub {
         const numberOfNonGroups = 1 + numberOfFloating;
         const numberOfGroups = headerRowCount - numberOfNonGroups;
 
-        totalHeaderHeight = numberOfFloating * gridOptionsWrapper.getFloatingFiltersHeight()!;
+        totalHeaderHeight = numberOfFloating * columnModel.getFloatingFiltersHeight()!;
         totalHeaderHeight += numberOfGroups * groupHeight!;
         totalHeaderHeight += headerHeight!;
 
@@ -152,7 +151,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     protected onFocusOut(e: FocusEvent): void {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const { relatedTarget } = e;
 
         if (!relatedTarget && this.eGui.contains(eDocument.activeElement)) { return; }

@@ -18,7 +18,6 @@ enum LoadingType { Loading, NoRows }
 export class OverlayWrapperComponent extends Component implements LayoutView {
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
-    // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
     private static TEMPLATE = /* html */`
         <div class="ag-overlay" aria-hidden="true">
             <div class="ag-overlay-panel">
@@ -57,7 +56,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataUpdated.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
-        if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsService.get('rowData')) {
+        if (this.gridOptionsService.isRowModelType('clientSide') && !this.gridOptionsService.get('rowData')) {
             this.showLoadingOverlay();
         }
 

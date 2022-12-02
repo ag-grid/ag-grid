@@ -217,10 +217,16 @@ function prepareMainOptions<T>(
 function prepareTheme<T extends AgChartOptions>(options: T) {
     const theme = getChartTheme(options.theme);
     const themeConfig = theme.getConfig(optionsType(options) || 'cartesian');
+
+    const seriesThemes = Object.entries<any>(theme.config).reduce((result, [seriesType, { series }]) => {
+        result[seriesType] = series?.[seriesType];
+        return result;
+    }, {} as any);
+
     return {
         theme,
         axesThemes: themeConfig['axes'] || {},
-        seriesThemes: themeConfig['series'] || {},
+        seriesThemes: seriesThemes,
         cleanedTheme: jsonMerge([themeConfig, { axes: DELETE, series: DELETE }]),
     };
 }
@@ -316,14 +322,22 @@ function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptio
     jsonWalk(
         options,
         (_, userOpts, mergedOpts) => {
-            if (!mergedOpts) {
-                return;
+            if (!mergedOpts) return;
+
+            const { _enabledFromTheme } = mergedOpts;
+            if (_enabledFromTheme != null) {
+                // Do not apply special handling, base enablement on theme.
+                delete mergedOpts._enabledFromTheme;
             }
-            if ('enabled' in mergedOpts && userOpts.enabled == null) {
+
+            if (!('enabled' in mergedOpts)) return;
+            if (_enabledFromTheme) return;
+
+            if (userOpts.enabled == null) {
                 mergedOpts.enabled = true;
             }
         },
-        { skip: ['data'] },
+        { skip: ['data', 'theme'] },
         mergedOptions
     );
 }

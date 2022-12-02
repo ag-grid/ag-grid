@@ -1,6 +1,7 @@
 import { Bean, Autowired } from './context/context';
 import { BeanStub } from "./context/beanStub";
 import { doOnce } from './utils/function';
+import { exists } from './utils/generic';
 
 export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
 
@@ -9,6 +10,9 @@ interface HardCodedSize {
         [key in SASS_PROPERTIES]?: number;
     };
 }
+
+const DEFAULT_ROW_HEIGHT = 25;
+const MIN_COL_WIDTH = 10;
 
 const MAT_GRID_SIZE = 8;
 const BASE_GRID_SIZE = 4;
@@ -147,13 +151,41 @@ export class Environment extends BeanStub {
         if (!themeMatch) { return { allThemes }; }
 
         const theme = themeMatch[0];
-        const usingOldTheme = themeMatch[2] === undefined;
-
-        if (usingOldTheme) {
-            const newTheme = theme.replace('ag-', 'ag-theme-');
-            doOnce(() => console.warn(`AG Grid: As of v19 old theme are no longer provided. Please replace ${theme} with ${newTheme}.`), 'using-old-theme');
-        }
 
         return { theme, el, themeFamily: theme.replace(/-dark$/, ''), allThemes };
+    }
+
+    // Material data table has strict guidelines about whitespace, and these values are different than the ones
+    // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
+    public getFromTheme(defaultValue: number, sassVariableName: SASS_PROPERTIES): number;
+    public getFromTheme(defaultValue: null, sassVariableName: SASS_PROPERTIES): number | null | undefined;
+    public getFromTheme(defaultValue: any, sassVariableName: SASS_PROPERTIES): any {
+        const { theme } = this.getTheme();
+        if (theme && theme.indexOf('ag-theme') === 0) {
+            return this.getSassVariable(theme, sassVariableName);
+        }
+        return defaultValue;
+    }
+
+    public getDefaultRowHeight(): number {
+        return this.getFromTheme(DEFAULT_ROW_HEIGHT, 'rowHeight');
+    }
+
+    public getListItemHeight() {
+        return this.getFromTheme(20, 'listItemHeight');
+    }
+
+    public setRowHeightVariable(height: number): void {
+        const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
+        const newRowHeight = `${height}px`;
+
+        if (oldRowHeight != newRowHeight) {
+            this.eGridDiv.style.setProperty('--ag-line-height', newRowHeight);
+        }
+    }
+
+    public getMinColWidth(): number {
+        const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
+        return exists(measuredMin) ? Math.max(measuredMin, MIN_COL_WIDTH) : MIN_COL_WIDTH;
     }
 }

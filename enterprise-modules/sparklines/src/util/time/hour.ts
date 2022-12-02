@@ -14,5 +14,5 @@ function field(date: Date): number {
     return date.getHours();
 }
 
-export const hour = new CountableTimeInterval(floor, offset, count, field);
+const hour = new CountableTimeInterval(floor, offset, count, field);
 export default hour;

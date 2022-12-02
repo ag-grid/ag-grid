@@ -82,7 +82,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         }
 
         const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         this.eFloatingFilterInput.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
 

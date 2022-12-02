@@ -17,9 +17,9 @@ The `AgChartOptions` interface is displayed below in an expandable JSON graph, w
 Click through the tabs to see the three main variations of `AgChartOptions` depending on the chart/series type to be rendered.
 
 <tabs>
-    <expandable-snippet label="Cartesian" interfaceName='AgCartesianChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]'></expandable-snippet>
-    <expandable-snippet label="Polar" interfaceName='AgPolarChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]'></expandable-snippet>
-    <expandable-snippet label="Hierarchy" interfaceName='AgHierarchyChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]'></expandable-snippet>
+    <expandable-snippet label="Cartesian" interfaceName='AgCartesianChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]' config='{ "lookupRoot": "charts-api" }'></expandable-snippet>
+    <expandable-snippet label="Polar" interfaceName='AgPolarChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]' config='{ "lookupRoot": "charts-api" }'></expandable-snippet>
+    <expandable-snippet label="Hierarchy" interfaceName='AgHierarchyChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]' config='{ "lookupRoot": "charts-api" }'></expandable-snippet>
 </tabs>
 
 ## Creating and Updating Charts Using Complete Options
@@ -55,5 +55,5 @@ The following example demonstrates both create and update cases:
 [[only-javascript]]
 | ## API
 | Static methods available on the `AgChart` factory class:
-| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" config='{ "showSnippets": false }'></api-documentation>
-| <interface-documentation interfaceName='AgChartInstance' config='{ "showSnippets": false }'></interface-documentation>
+| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></api-documentation>
+| <interface-documentation interfaceName='AgChartInstance' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>

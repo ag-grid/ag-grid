@@ -3,7 +3,6 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    Constants,
     Events,
     IRowModel,
     IViewportDatasource,
@@ -15,9 +14,9 @@ import {
     RowRenderer,
     Beans,
     WithoutGridCommon,
-    FocusService
+    FocusService,
+    RowModelType
 } from "@ag-grid-community/core";
-import { RowModelType } from "@ag-grid-community/core/src/ts/main";
 
 
 const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -44,7 +43,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     @PostConstruct
     private init(): void {
-        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+        this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
         this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
     }
 
@@ -155,7 +154,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     public getType(): RowModelType {
-        return Constants.ROW_MODEL_TYPE_VIEWPORT;
+        return 'viewport';
     }
 
     public getRow(rowIndex: number): RowNode {

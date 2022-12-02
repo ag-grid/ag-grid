@@ -119,7 +119,7 @@ export class GridBodyComp extends Component {
             this.eStickyTop
         );
 
-        if (this.rangeService || this.gridOptionsWrapper.isRowSelectionMulti()) {
+        if (this.rangeService || this.gridOptionsService.get('rowSelection') === 'multiple') {
             setAriaMultiSelectable(this.getGui(), true);
         }
     }

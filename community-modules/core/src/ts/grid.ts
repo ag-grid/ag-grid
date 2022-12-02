@@ -1,5 +1,4 @@
 import { GridOptions } from "./entities/gridOptions";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { SelectionService } from "./selectionService";
 import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel } from "./columns/columnModel";
@@ -41,7 +40,6 @@ import { AutoGroupColService } from "./columns/autoGroupColService";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { PaginationAutoPageSizeService } from "./pagination/paginationAutoPageSizeService";
 import { IRowModel, RowModelType } from "./interfaces/iRowModel";
-import { Constants } from "./constants/constants";
 import { ValueCache } from "./valueService/valueCache";
 import { ChangeDetectionService } from "./valueService/changeDetectionService";
 import { AlignedGridsService } from "./alignedGridsService";
@@ -96,6 +94,8 @@ import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu
 import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { GridOptionsService } from "./gridOptionsService";
+import { LocaleService } from "./localeService";
+import { GridOptionsValidator } from "./gridOptionsValidator";
 
 export interface GridParams {
     // used by Web Components
@@ -303,8 +303,8 @@ export class GridCoreCreator {
             rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            RowContainerHeightService, HorizontalResizeService,
-            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, GridOptionsService,
+            RowContainerHeightService, HorizontalResizeService, LocaleService, GridOptionsValidator,
+            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
@@ -353,7 +353,7 @@ export class GridCoreCreator {
 
         // default to client side
         if (!rowModelType) {
-            rowModelType = Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+            rowModelType = 'clientSide';
         }
 
         const rowModelClasses: { [name: string]: { new(): IRowModel; }; } = {};
@@ -367,26 +367,18 @@ export class GridCoreCreator {
 
         if (exists(rowModelClass)) { return rowModelClass; }
 
-        if (ModuleRegistry.isPackageBased()) {
-            if ([Constants.ROW_MODEL_TYPE_VIEWPORT, Constants.ROW_MODEL_TYPE_SERVER_SIDE].includes(rowModelType)) {
-                // If package based only the enterprise row models could be missing.
-                console.error(`AG Grid: Row Model "${rowModelType}" not found. Please ensure the package 'ag-grid-enterprise' is imported. Please see: https://www.ag-grid.com/javascript-grid/packages/`);
-            } else {
-                console.error('AG Grid: could not find row model for rowModelType ' + rowModelType);
-            }
+
+        let missingModules: Record<RowModelType, ModuleNames> = {
+            clientSide: ModuleNames.ClientSideRowModelModule,
+            infinite: ModuleNames.InfiniteRowModelModule,
+            serverSide: ModuleNames.ServerSideRowModelModule,
+            viewport: ModuleNames.ViewportRowModelModule
+        };
+
+        if (missingModules[rowModelType]) {
+            ModuleRegistry.assertRegistered(missingModules[rowModelType], `rowModelType = '${rowModelType}'`)
         } else {
-            const logMissingModule = (rowModel: RowModelType, module: string) => console.error(`AG Grid: Row Model "${rowModel}" not found. Please ensure the ${module} module is registered. Please see: https://www.ag-grid.com/javascript-grid/modules/`);
-            if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
-                logMissingModule('infinite', ModuleNames.InfiniteRowModelModule);
-            } else if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
-                logMissingModule('viewport', ModuleNames.ViewportRowModelModule);
-            } else if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-                logMissingModule('serverSide', ModuleNames.ServerSideRowModelModule);
-            } else if (rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-                logMissingModule('clientSide', ModuleNames.ClientSideRowModelModule);
-            } else {
-                console.error('AG Grid: could not find row model for rowModelType ' + rowModelType);
-            }
+            console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
         }
 
     }

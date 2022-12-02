@@ -9,7 +9,7 @@ export class HierarchyChart extends Chart {
         super(document, overrideDevicePixelRatio, resources);
 
         const root = this.scene.root!;
-        root.append(this.legend.group);
+        this.legend.attachLegend(root);
     }
 
     protected _data: any = {};

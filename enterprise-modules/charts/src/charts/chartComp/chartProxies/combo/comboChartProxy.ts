@@ -8,13 +8,6 @@ export class ComboChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-
-        this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
-        this.yAxisType = 'number';
-    }
-
-    public getData(params: UpdateChartParams): any[] {
-        return this.getDataTransformedData(params);
     }
 
     public getAxes(params: UpdateChartParams): AgCartesianAxisOptions[] {
@@ -25,7 +18,7 @@ export class ComboChartProxy extends CartesianChartProxy {
 
         const axes: AgCartesianAxisOptions[] = [
             {
-                type: this.xAxisType,
+                type: this.getXAxisType(params),
                 position: 'bottom',
                 gridStyle: [{ stroke: undefined }],
             },
@@ -33,7 +26,7 @@ export class ComboChartProxy extends CartesianChartProxy {
 
         if (primaryYKeys.length > 0) {
             axes.push({
-                type: this.yAxisType,
+                type: 'number',
                 keys: primaryYKeys,
                 position: 'left',
                 title: {
@@ -54,7 +47,7 @@ export class ComboChartProxy extends CartesianChartProxy {
                 }
 
                 const secondaryAxisOptions: AgCartesianAxisOptions = {
-                    type: this.yAxisType,
+                    type: 'number',
                     keys: [secondaryYKey],
                     position: 'right',
                     title: {
@@ -75,7 +68,8 @@ export class ComboChartProxy extends CartesianChartProxy {
             });
         }
 
-        return axes;
+        // Allow toggling of axis titles by theme overrides.
+        return axes.map((axis) => ({ ...axis, title: { ...axis.title, _enabledFromTheme: true }}));
     }
 
     public getSeries(params: UpdateChartParams): any {

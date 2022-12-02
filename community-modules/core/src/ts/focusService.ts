@@ -14,7 +14,6 @@ import { ColumnGroup } from "./entities/columnGroup";
 import { ManagedFocusFeature } from "./widgets/managedFocusFeature";
 import { getTabIndex } from './utils/browser';
 import { makeNull } from './utils/generic';
-import { Constants } from "./constants/constants";
 import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowCtrl } from "./rendering/row/rowCtrl";
@@ -24,6 +23,8 @@ import { AbstractHeaderCellCtrl } from "./headerRendering/cells/abstractCell/abs
 import { last } from "./utils/array";
 import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./entities/iCallbackParams";
 import { WithoutGridCommon } from "./interfaces/iCommon";
+import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR } from "./utils/dom";
+
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -135,14 +136,14 @@ export class FocusService extends BeanStub {
 
         this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
-            const doc = this.gridOptionsWrapper.getDocument();
+            const doc = this.gridOptionsService.getDocument();
             FocusService.addKeyboardModeEvents(doc, this.gridCtrl);
             this.addDestroyFunc(() => this.unregisterGridCompController(this.gridCtrl));
         });
     }
 
     public unregisterGridCompController(gridCompController: GridCtrl): void {
-        const doc = this.gridOptionsWrapper.getDocument();
+        const doc = this.gridOptionsService.getDocument();
 
         FocusService.removeKeyboardModeEvents(doc, gridCompController);
     }
@@ -172,7 +173,7 @@ export class FocusService extends BeanStub {
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): CellPosition | null {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         if (this.gridOptionsService.is('suppressFocusAfterRefresh') || !this.focusedCellPosition) {
             return null;
         }
@@ -188,7 +189,7 @@ export class FocusService extends BeanStub {
     }
 
     public getFocusHeaderToUseAfterRefresh(): HeaderPosition | null {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         if (this.gridOptionsService.is('suppressFocusAfterRefresh') || !this.focusedHeaderPosition) {
             return null;
         }
@@ -206,7 +207,7 @@ export class FocusService extends BeanStub {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
-            const data = this.gridOptionsWrapper.getDomData(ePointer, key);
+            const data = this.gridOptionsService.getDomData(ePointer, key);
 
             if (data) {
                 return false;
@@ -382,8 +383,8 @@ export class FocusService extends BeanStub {
     }
 
     public findFocusableElements(rootNode: HTMLElement, exclude?: string | null, onlyUnmanaged = false): HTMLElement[] {
-        const focusableString = Constants.FOCUSABLE_SELECTOR;
-        let excludeString = Constants.FOCUSABLE_EXCLUDE;
+        const focusableString = FOCUSABLE_SELECTOR;
+        let excludeString = FOCUSABLE_EXCLUDE;
 
         if (exclude) {
             excludeString += ', ' + exclude;
@@ -418,7 +419,7 @@ export class FocusService extends BeanStub {
 
     public findNextFocusableElement(rootNode: HTMLElement = this.eGridDiv, onlyManaged?: boolean | null, backwards?: boolean): HTMLElement | null {
         const focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const activeEl = eDocument.activeElement as HTMLElement;
         let currentIndex: number;
 
@@ -438,7 +439,7 @@ export class FocusService extends BeanStub {
     }
 
     public isFocusUnderManagedComponent(rootNode: HTMLElement): boolean {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         const managedContainers = rootNode.querySelectorAll(`.${ManagedFocusFeature.FOCUS_MANAGED_CLASS}`);
 
         if (!managedContainers.length) { return false; }

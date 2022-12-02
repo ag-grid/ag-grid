@@ -12,7 +12,8 @@ import {
     RowNode,
     ColumnVO,
     RowNodeBlock,
-    ColumnModel
+    ColumnModel,
+    GridOptions
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 
@@ -113,6 +114,42 @@ export class StoreUtils extends BeanStub {
             .some(group => group === true || group === colIdThisGroup);
 
         return affectedGroupCols;
+    }
+
+    public getServerSideInitialRowCount(): number {
+        const rowCount = this.gridOptionsService.getNum('serverSideInitialRowCount');
+        if (typeof rowCount === 'number' && rowCount > 0) {
+            return rowCount;
+        }
+        return 1;
+    }
+
+    private assertRowModelIsServerSide(key: keyof GridOptions) {
+        if (!this.gridOptionsService.isRowModelType('serverSide')) {
+            _.doOnce(() => console.warn(`AG Grid: The '${key}' property can only be used with the Server Side Row Model.`), key);
+            return false;
+        }
+        return true;
+    }
+    private assertNotTreeData(key: keyof GridOptions) {
+        if (this.gridOptionsService.is('treeData')) {
+            _.doOnce(() => console.warn(`AG Grid: The '${key}' property cannot be used while using tree data.`), key + '_TreeData');
+            return false;
+        }
+        return true;
+    }
+
+    public isServerSideSortAllLevels() {
+        return this.gridOptionsService.is('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
+    }
+    public isServerSideFilterAllLevels() {
+        return this.gridOptionsService.is('serverSideFilterAllLevels') && this.assertRowModelIsServerSide('serverSideFilterAllLevels');
+    }
+    public isServerSideSortOnServer() {
+        return this.gridOptionsService.is('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
+    }
+    public isServerSideFilterOnServer() {
+        return this.gridOptionsService.is('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
     }
 
 }

@@ -83,10 +83,7 @@ export const AgGridVue = defineComponent({
                     currentValue: propertyName === 'rowData' ? (Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))) : currentValue,
                     previousValue,
                 };
-                ComponentUtil.processOnChange(changes,
-                    this.gridOptions,
-                    this.gridOptions.api!,
-                    this.gridOptions.columnApi!);
+                ComponentUtil.processOnChange(changes, this.gridOptions.api!);
             }
         },
         checkForBindingConflicts() {
@@ -185,7 +182,7 @@ export const AgGridVue = defineComponent({
 
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example
-        const gridOptions = markRaw(ComponentUtil.copyAttributesToGridOptions(toRaw(this.gridOptions), this));
+        const gridOptions = markRaw(ComponentUtil.copyAttributesToGridOptions(toRaw(this.gridOptions), this, true));
 
         this.checkForBindingConflicts();
 

@@ -1,7 +1,6 @@
 import {
     Column,
     ColumnModel,
-    GridOptionsWrapper,
     GridOptionsService,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -17,7 +16,6 @@ import { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpann
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public columnModel: ColumnModel;
     public valueService: ValueService;
-    public gridOptionsWrapper: GridOptionsWrapper;
     public gridOptionsService: GridOptionsService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
     public processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
@@ -28,14 +26,13 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     constructor(config: GridSerializingParams) {
         const {
-            columnModel, valueService, gridOptionsWrapper, gridOptionsService, processCellCallback,
+            columnModel, valueService, gridOptionsService, processCellCallback,
             processHeaderCallback, processGroupHeaderCallback,
             processRowGroupCallback
         } = config;
 
         this.columnModel = columnModel;
         this.valueService = valueService;
-        this.gridOptionsWrapper = gridOptionsWrapper;
         this.gridOptionsService = gridOptionsService;
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
@@ -50,7 +47,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     abstract parse(): string;
 
     public prepare(columnsToExport: Column[]): void {
-        this.groupColumns = columnsToExport.filter(col => !!col.getColDef().showRowGroup)!;
+        this.groupColumns = columnsToExport.filter(col => !!col.getColDef().showRowGroup);
     }
 
     public extractHeaderValue(column: Column): string {
@@ -84,11 +81,19 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
         const currentColumnGroupIndex = this.groupColumns.indexOf(column);
 
-        if (currentColumnGroupIndex !== -1 && node.groupData?.[column.getId()]) {
-            return true;
+        if (currentColumnGroupIndex !== -1) {
+            if (node.groupData?.[column.getId()]) { return true; }
+
+            // if this is a top level footer, always render`Total` in the left-most cell
+            if (node.footer && node.level === -1) {
+                const colDef = column.getColDef();
+                const isFullWidth = colDef == null || colDef.showRowGroup === true;
+
+                return isFullWidth || colDef.showRowGroup === this.columnModel.getRowGroupColumns()[0].getId();
+            }
         }
 
-        const isGroupUseEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow(this.columnModel.isPivotMode());
+        const isGroupUseEntireRow = this.gridOptionsService.isGroupUseEntireRow(this.columnModel.isPivotMode());
 
         return currentColumnIndex === 0 && isGroupUseEntireRow;
     }
@@ -115,15 +120,19 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 context: this.gridOptionsService.get('context'),
             });
         }
+        const isFooter = node.footer;
         const keys = [node.key];
 
-        if (!this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
+        if (!this.gridOptionsService.isGroupMultiAutoColumn()) {
             while (node.parent) {
                 node = node.parent;
                 keys.push(node.key);
             }
         }
-        return keys.reverse().join(' -> ');
+
+        const groupValue = keys.reverse().join(' -> ');
+
+        return isFooter ? `Total ${groupValue}` : groupValue;
     }
 
     private processCell(params: { accumulatedRowIndex: number, rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string }): any {

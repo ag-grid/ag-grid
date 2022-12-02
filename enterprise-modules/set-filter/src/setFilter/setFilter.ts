@@ -26,7 +26,7 @@ import {
     ColumnModel,
     ValueService,
     GetDataPath,
-    Constants,
+    GROUP_AUTO_COLUMN_ID,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
@@ -139,7 +139,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private getComponentForKeyEvent(e: KeyboardEvent): SetFilterListItem<V> | undefined {
-        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsService.getDocument();
         if (!this.eSetFilterList.contains(eDocument.activeElement) || !this.virtualList) { return; }
 
         const currentItem = this.virtualList.getLastFocusedRow();
@@ -221,7 +221,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.caseSensitive = !!params.caseSensitive;
         let keyCreator = params.keyCreator ?? params.colDef.keyCreator;
         this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings);
-        const isGroupCol = params.column.getId().startsWith(Constants.GROUP_AUTO_COLUMN_ID);
+        const isGroupCol = params.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList && isGroupCol;
         this.getDataPath = this.gridOptionsService.get('getDataPath');
         this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!params.treeList && isGroupCol;
@@ -352,7 +352,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
         const filterListName = translate('ariaFilterList', 'Filter List');
         const isTree = !!this.setFilterParams.treeList;
 
@@ -489,8 +489,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        const { eMiniFilter, gridOptionsWrapper } = this;
-        const translate = gridOptionsWrapper.getLocaleTextFunc();
+        const { eMiniFilter, localeService } = this;
+        const translate = localeService.getLocaleTextFunc();
 
         eMiniFilter.setDisplayed(!this.setFilterParams.suppressMiniFilter);
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
@@ -900,7 +900,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private translateForSetFilter(key: keyof ISetFilterLocaleText): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
     }

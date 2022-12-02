@@ -246,7 +246,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected resetPlaceholder(): void {
-        const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const globalTranslate = this.localeService.getLocaleTextFunc();
         const placeholder = this.translate('dateFormatOoo');
         const ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
 

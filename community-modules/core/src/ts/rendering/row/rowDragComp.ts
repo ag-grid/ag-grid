@@ -71,7 +71,7 @@ export class RowDragComp extends Component {
     // returns true if all compatibility items work out
     private checkCompatibility(): void {
         const managed = this.beans.gridOptionsService.is('rowDragManaged');
-        const treeData = this.beans.gridOptionsWrapper.isTreeData();
+        const treeData = this.beans.gridOptionsService.isTreeData();
 
         if (treeData && managed) {
             doOnce(() =>
@@ -105,7 +105,7 @@ export class RowDragComp extends Component {
         if (this.dragSource) { this.removeDragSource(); }
 
         const rowDragText = this.getRowDragText(this.column);
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.localeService.getLocaleTextFunc();
 
         this.dragSource = {
             type: DragSourceType.RowDrag,
@@ -122,7 +122,7 @@ export class RowDragComp extends Component {
             },
             getDragItem: () => this.getDragItem(),
             dragStartPixels,
-            dragSourceDomDataKey: this.beans.gridOptionsWrapper.getDomDataKey()
+            dragSourceDomDataKey: this.beans.gridOptionsService.getDomDataKey()
         };
 
         this.beans.dragAndDropService.addDragSource(this.dragSource, true);
@@ -187,7 +187,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
+        this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
@@ -232,7 +232,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
 
-        this.addManagedListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
+        this.addManagedPropertyListener('suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
         this.workOutVisibility();
     }
