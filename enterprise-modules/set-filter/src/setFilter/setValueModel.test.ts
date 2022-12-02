@@ -1,5 +1,5 @@
 import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
-import { Constants, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams, ValueFormatterFunc, _ } from '@ag-grid-community/core';
+import { Constants, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams, ValueFormatterFunc, _, GridOptionsService, ColumnModel, ValueService } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 type ValueType = string | number | boolean | Date;
@@ -68,26 +68,35 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         ...filterParams,
     };
 
-    const caseFormatFn = simulateCaseSensitivity ?
+    const caseFormat = simulateCaseSensitivity ?
         v => v : (v) => typeof v === 'string' ? v.toUpperCase() : v;
 
-    return new SetValueModel<string>(
-        svmParams,
-        _ => { },
+    const gridOptionsService = mock<GridOptionsService>('get');
+
+    const columnModel = mock<ColumnModel>('getRowGroupColumns');
+    columnModel.getRowGroupColumns.mockImplementation(() => []);
+
+    const valueService = mock< ValueService>();
+
+    return new SetValueModel<string>({
+        filterParams: svmParams,
+        setIsLoading: _ => { },
         valueFormatterService,
-        key => key === 'blanks' ? '(Blanks)' : '',
-        caseFormatFn,
-        value => _.makeNull(Array.isArray(value) ? value as any : _.toStringOrNull(value)!),
-        params => _.toStringOrNull(params.value)!,
-        false
-    );
+        translate: key => key === 'blanks' ? '(Blanks)' : '',
+        caseFormat,
+        createKey: value => _.makeNull(Array.isArray(value) ? value as any : _.toStringOrNull(value)!),
+        valueFormatter: params => _.toStringOrNull(params.value)!,
+        gridOptionsService,
+        columnModel,
+        valueService
+    });
 }
 
 function getDisplayedValues<V>(model: SetValueModel<V>) {
     const values: (string | null)[] = [];
 
     for (let i = 0; i < model.getDisplayedValueCount(); i++) {
-        values.push(model.getDisplayedKey(i));
+        values.push(model.getDisplayedItem(i) as any);
     }
 
     return values;

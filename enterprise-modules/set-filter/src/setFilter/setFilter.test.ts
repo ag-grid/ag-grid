@@ -12,6 +12,8 @@ import {
     VirtualList,
     IRowModel,
     SetFilterModel,
+    GridOptionsService,
+    ColumnModel,
 } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 import { SetFilter } from './setFilter';
@@ -25,6 +27,8 @@ let context: jest.Mocked<Context>;
 let eMiniFilter: jest.Mocked<AgInputTextField>;
 let eGui: jest.Mocked<HTMLElement>;
 let eSelectAll: jest.Mocked<AgCheckbox>;
+let gridOptionsService: jest.Mocked<GridOptionsService>;
+let columnModel: jest.Mocked<ColumnModel>;
 let virtualList: jest.Mocked<VirtualList>;
 let setValueModel: jest.Mocked<SetValueModel<string>>;
 
@@ -52,6 +56,12 @@ beforeEach(() => {
 
     eSelectAll = mock<AgCheckbox>('setValue', 'getInputElement', 'onValueChange', 'setLabel');
     eSelectAll.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
+
+    gridOptionsService = mock<GridOptionsService>('is', 'get');
+
+    columnModel = mock<ColumnModel>('getRowGroupColumns');
+    columnModel.getRowGroupColumns.mockImplementation(() => []);
+
     virtualList = mock<VirtualList>('refresh');
 
     setValueModel = mock<SetValueModel<string>>('getModel', 'isEverythingVisibleSelected');
@@ -64,7 +74,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
         api: null,
         colDef,
         rowModel,
-        column: null,
+        column: { getId: () => '' },
         context: null,
         doesRowPassOtherFilter: () => true,
         filterChangedCallback: () => { },
@@ -84,6 +94,8 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
     (setFilter as any).eGui = eGui;
     (setFilter as any).eMiniFilter = eMiniFilter;
     (setFilter as any).eSelectAll = eSelectAll;
+    (setFilter as any).gridOptionsService = gridOptionsService;
+    (setFilter as any).columnModel = columnModel;
 
     setFilter.setParams(params);
 

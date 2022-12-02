@@ -30,6 +30,22 @@ export enum SetFilterModelValuesType {
     PROVIDED_LIST, PROVIDED_CALLBACK, TAKEN_FROM_GRID_VALUES
 }
 
+export interface SetValueModelParams<V> {
+    valueFormatterService: ValueFormatterService,
+    gridOptionsService: GridOptionsService,
+    columnModel: ColumnModel,
+    valueService: ValueService,
+    filterParams: ISetFilterParams<any, V>,
+    setIsLoading: (loading: boolean) => void,
+    translate: (key: keyof ISetFilterLocaleText) => string,
+    caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
+    createKey: (value: V | null, node?: RowNode) => string | null,
+    valueFormatter: (params: ValueFormatterParams) => string,
+    usingComplexObjects?: boolean,
+    treeDataTreeList?: boolean,
+    groupingTreeList?: boolean
+}
+
 /** @param V type of value in the Set Filter */
 export class SetValueModel<V> implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
@@ -37,7 +53,6 @@ export class SetValueModel<V> implements IEventEmitter {
     private readonly localEventService = new EventService();
     private readonly formatter: TextFormatter;
     private readonly clientSideValuesExtractor: ClientSideValuesExtractor<V>;
-    private readonly column: Column;
     private readonly doesRowPassOtherFilters: (node: RowNode) => boolean;
     private readonly suppressSorting: boolean;
     private readonly keyComparator: (a: string | null, b: string | null) => number;
@@ -46,7 +61,11 @@ export class SetValueModel<V> implements IEventEmitter {
     private readonly convertValuesToStrings: boolean;
     private readonly caseSensitive: boolean;
     private readonly displayValueModel: ISetDisplayValueModel<V>;
-    private readonly treeDataOrGrouping: boolean;
+    private readonly filterParams: ISetFilterParams<any, V>;
+    private readonly setIsLoading: (loading: boolean) => void;
+    private readonly translate: (key: keyof ISetFilterLocaleText) => string;
+    private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
+    private readonly createKey: (value: V | null, node?: RowNode) => string | null;
 
     private valuesType: SetFilterModelValuesType;
     private miniFilterText: string | null = null;
@@ -68,21 +87,18 @@ export class SetValueModel<V> implements IEventEmitter {
 
     private initialised: boolean = false;
 
-    constructor(
-        private readonly filterParams: ISetFilterParams<any, V>,
-        private readonly setIsLoading: (loading: boolean) => void,
-        private readonly valueFormatterService: ValueFormatterService,
-        private readonly translate: (key: keyof ISetFilterLocaleText) => string,
-        private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
-        private readonly createKey: (value: V | null, node?: RowNode) => string | null,
-        private readonly valueFormatter: (params: ValueFormatterParams) => string,
-        usingComplexObjects: boolean,
-        private readonly gridOptionsService: GridOptionsService,
-        columnModel: ColumnModel,
-        valueService: ValueService,
-        treeDataTreeList: boolean,
-        groupingTreeList: boolean
-    ) {
+    constructor(params: SetValueModelParams<V>) {
+        const {
+            usingComplexObjects,
+            columnModel,
+            valueService,
+            treeDataTreeList,
+            groupingTreeList,
+            filterParams,
+            gridOptionsService,
+            valueFormatterService,
+            valueFormatter
+        } = params;
         const {
             column,
             colDef,
@@ -98,22 +114,23 @@ export class SetValueModel<V> implements IEventEmitter {
             treeListPathGetter,
         } = filterParams;
 
-        this.column = column;
+        this.filterParams = filterParams;
+        this.setIsLoading = params.setIsLoading;
+        this.translate = params.translate;
+        this.caseFormat = params.caseFormat;
+        this.createKey = params.createKey;
         this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
         this.convertValuesToStrings = !!convertValuesToStrings;
         const keyComparator = comparator ?? colDef.comparator as (a: any, b: any) => number;
         // if using complex objects and a comparator is provided, sort by values, otherwise need to sort by the string keys
-        this.compareByValue = usingComplexObjects && !!keyComparator;
-        if (this.compareByValue) {
-            this.entryComparator = ([_aKey, aValue]: [string | null, V | null], [_bKey, bValue]: [string | null, V | null]) => keyComparator(aValue, bValue);    
-        } else {
-            this.keyComparator = keyComparator as any ?? _.defaultComparator;
-        }
+        this.compareByValue = !!usingComplexObjects && !!keyComparator;
+        this.entryComparator = ([_aKey, aValue]: [string | null, V | null], [_bKey, bValue]: [string | null, V | null]) => keyComparator(aValue, bValue);    
+        this.keyComparator = keyComparator as any ?? _.defaultComparator;
         this.caseSensitive = !!caseSensitive
-        const getDataPath = this.gridOptionsService.get('getDataPath');
-        this.treeDataOrGrouping = treeDataTreeList || groupingTreeList;
+        const getDataPath = gridOptionsService.get('getDataPath');
+        const treeDataOrGrouping = !!treeDataTreeList || !!groupingTreeList;
 
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
@@ -123,8 +140,8 @@ export class SetValueModel<V> implements IEventEmitter {
                 this.caseFormat,
                 columnModel,
                 valueService,
-                this.treeDataOrGrouping,
-                treeDataTreeList,
+                treeDataOrGrouping,
+                !!treeDataTreeList,
                 getDataPath
             );
         }
@@ -144,10 +161,10 @@ export class SetValueModel<V> implements IEventEmitter {
             treeListPathGetter,
             treeDataTreeList || groupingTreeList
         ) : new FlatSetDisplayValueModel<V>(
-            this.valueFormatterService,
-            this.valueFormatter,
+            valueFormatterService,
+            valueFormatter,
             this.formatter,
-            this.column
+            column
         ) as any;
 
         this.updateAllValues().then(updatedKeys => this.resetSelectionState(updatedKeys || []));
@@ -245,7 +262,7 @@ export class SetValueModel<V> implements IEventEmitter {
             }
         });
 
-        this.allValuesPromise.then(values => this.updateAvailableKeys(values || [], true)).then(() => this.initialised = true);
+        this.allValuesPromise.then(values => this.updateAvailableKeys(values || [])).then(() => this.initialised = true);
 
         return this.allValuesPromise;
     }
@@ -276,9 +293,8 @@ export class SetValueModel<V> implements IEventEmitter {
         return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
-    private updateAvailableKeys(allKeys: (string | null)[], isInitialLoad?: boolean): void {
-        // on initial load no need to re-read from rows
-        const availableKeys = this.showAvailableOnly() && !isInitialLoad ? this.sortKeys(this.getValuesFromRows(true)) : allKeys;
+    private updateAvailableKeys(allKeys: (string | null)[]): void {
+        const availableKeys = this.showAvailableOnly() ? this.sortKeys(this.getValuesFromRows(true)) : allKeys;
 
         this.availableKeys = new Set(availableKeys);
         this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
@@ -286,7 +302,7 @@ export class SetValueModel<V> implements IEventEmitter {
         this.updateDisplayedValues();
     }
 
-    public sortKeys<A>(nullableValues: Map<string | null, V | null> | null): (string | null)[] {
+    public sortKeys(nullableValues: Map<string | null, V | null> | null): (string | null)[] {
         const values = nullableValues ?? new Map();
 
         if (this.suppressSorting) { return Array.from(values.keys()); }
@@ -316,7 +332,6 @@ export class SetValueModel<V> implements IEventEmitter {
         const predicate = (node: RowNode) => (!removeUnavailableValues || this.doesRowPassOtherFilters(node));
 
         return this.clientSideValuesExtractor.extractUniqueValues(predicate, removeUnavailableValues && !this.caseSensitive ? this.allValues : undefined);
-    
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */

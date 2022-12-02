@@ -26,6 +26,20 @@ export interface SetFilterListItemExpandedChangedEvent extends AgEvent {
     isExpanded: boolean;
 }
 
+export interface SetFilterListItemParams<V> {
+    focusWrapper: HTMLElement,
+    value: V | null | (() => string),
+    params: ISetFilterParams<any, V>,
+    translate: (key: keyof ISetFilterLocaleText) => string,
+    valueFormatter: (params: ValueFormatterParams) => string,
+    isSelected: boolean | undefined,
+    isTree?: boolean,
+    depth?: number,
+    groupsExist?: boolean,
+    isGroup?: boolean,
+    isExpanded?: boolean
+}
+
 /** @param V type of value in the Set Filter */
 export class SetFilterListItem<V> extends Component {
     public static EVENT_SELECTION_CHANGED = 'selectionChanged';
@@ -53,20 +67,32 @@ export class SetFilterListItem<V> extends Component {
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
 
-    constructor(
-        private readonly focusWrapper: HTMLElement,
-        private readonly value: V | null | (() => string),
-        private readonly params: ISetFilterParams<any, V>,
-        private readonly translate: (key: keyof ISetFilterLocaleText) => string,
-        private readonly valueFormatter: (params: ValueFormatterParams) => string,
-        private isSelected: boolean | undefined,
-        private readonly isTree: boolean,
-        private readonly depth: number,
-        private readonly groupsExist: boolean,
-        private readonly isGroup: boolean,
-        private isExpanded?: boolean
-    ) {
-        super(isGroup ? SetFilterListItem.GROUP_TEMPLATE : SetFilterListItem.TEMPLATE);
+    private readonly focusWrapper: HTMLElement;
+    private readonly value: V | null | (() => string);
+    private readonly params: ISetFilterParams<any, V>;
+    private readonly translate: (key: keyof ISetFilterLocaleText) => string;
+    private readonly valueFormatter: (params: ValueFormatterParams) => string;
+    private readonly isTree?: boolean;
+    private readonly depth: number;
+    private readonly isGroup?: boolean;
+    private readonly groupsExist?: boolean
+
+    private isSelected: boolean | undefined;
+    private isExpanded?: boolean;
+
+    constructor(params: SetFilterListItemParams<V>) {
+        super(params.isGroup ? SetFilterListItem.GROUP_TEMPLATE : SetFilterListItem.TEMPLATE);
+        this.focusWrapper = params.focusWrapper;
+        this.value = params.value;
+        this.params = params.params;
+        this.translate = params.translate;
+        this.valueFormatter = params.valueFormatter;
+        this.isSelected = params.isSelected;
+        this.isTree = params.isTree;
+        this.depth = params.depth ?? 0;
+        this.isGroup = params.isGroup;
+        this.groupsExist = params.groupsExist;
+        this.isExpanded = params.isExpanded;
     }
 
     @PostConstruct

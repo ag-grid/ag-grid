@@ -68,7 +68,7 @@ function selectNothing() {
 }
 
 function setCountriesToFranceAustralia() {
-    const instance = gridOptions.api!.getFilterInstance<ISetFilter<string, { name: string, code: string }>>('country')!;
+    const instance = gridOptions.api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
     instance.setFilterValues([
         {
             name: 'France',
@@ -84,7 +84,7 @@ function setCountriesToFranceAustralia() {
 }
 
 function setCountriesToAll() {
-    const instance = gridOptions.api!.getFilterInstance<ISetFilter<string, { name: string, code: string }>>('country')!;
+    const instance = gridOptions.api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
     instance.resetFilterValues()
     instance.applyModel()
     gridOptions.api!.onFilterChanged()

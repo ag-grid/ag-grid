@@ -26,9 +26,10 @@ import {
     ColumnModel,
     ValueService,
     GetDataPath,
+    Constants,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
-import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
+import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 import { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 
@@ -220,26 +221,27 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.caseSensitive = !!params.caseSensitive;
         let keyCreator = params.keyCreator ?? params.colDef.keyCreator;
         this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings);
-        this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList;
+        const isGroupCol = params.column.getId().startsWith(Constants.GROUP_AUTO_COLUMN_ID);
+        this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList && isGroupCol;
         this.getDataPath = this.gridOptionsService.get('getDataPath');
-        this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length;
+        this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!params.treeList && isGroupCol;
         this.createKey = this.generateCreateKey(keyCreator, this.convertValuesToStrings, this.treeDataTreeList || this.groupingTreeList);
 
-        this.valueModel = new SetValueModel(
-            params,
-            loading => this.showOrHideLoadingScreen(loading),
-            this.valueFormatterService,
-            key => this.translateForSetFilter(key),
-            v => this.caseFormat(v),
-            this.createKey,
-            this.valueFormatter,
-            !!keyCreator,
-            this.gridOptionsService,
-            this.columnModel,
-            this.valueService,
-            this.treeDataTreeList,
-            this.groupingTreeList
-        );
+        this.valueModel = new SetValueModel({
+            filterParams: params,
+            setIsLoading: loading => this.showOrHideLoadingScreen(loading),
+            valueFormatterService: this.valueFormatterService,
+            translate: key => this.translateForSetFilter(key),
+            caseFormat: v => this.caseFormat(v),
+            createKey: this.createKey,
+            valueFormatter: this.valueFormatter,
+            usingComplexObjects: !!keyCreator,
+            gridOptionsService: this.gridOptionsService,
+            columnModel: this.columnModel,
+            valueService: this.valueService,
+            treeDataTreeList: this.treeDataTreeList,
+            groupingTreeList: this.groupingTreeList
+        });
 
         this.initialiseFilterBodyUi();
 
@@ -266,8 +268,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         convertValuesToStrings: boolean,
         treeDataOrGrouping: boolean
     ): (value: V | null, node?: RowNode | null) => string | null {
-        if (treeDataOrGrouping) {
-            return value => value ? (value as any as string[]).map(k => k.replace(new RegExp('#', 'g'), '')).join('#') : null;
+        if (treeDataOrGrouping && !keyCreator) {
+            throw new Error('AG Grid: Must supply a Key Creator in Set Filter params when `treeList = true` on a group column, and Tree Data or Row Grouping is enabled.');
         }
         if (keyCreator) {
             return (value, node = null) => {
@@ -394,89 +396,87 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.translateForSetFilter(key);
     }
 
-    private createSetListItem(item: SetFilterModelTreeItem | typeof SetFilter.SELECT_ALL_VALUE | string | null, isTree: boolean, listItemElement: HTMLElement): Component {
+    private createSetListItem(item: SetFilterModelTreeItem | typeof SetFilter.SELECT_ALL_VALUE | string | null, isTree: boolean, focusWrapper: HTMLElement): Component {
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
+        const params = this.setFilterParams;
+        const translate = (translateKey: any) => this.translateForSetFilter(translateKey);
+        const valueFormatter = this.valueFormatter;
+        const groupsExist = this.valueModel.hasGroups();
+
         let listItem: SetFilterListItem<V | string | null>;
+        let itemParams: SetFilterListItemParams<V | string | null>;
+        let selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
+        let expandedListener: ((e: SetFilterListItemExpandedChangedEvent) => void) | undefined;
 
         if (item === SetFilter.SELECT_ALL_VALUE) {
-            listItem = this.createBean(new SetFilterListItem<V>(
-                listItemElement,
-                () => this.getSelectAllLabel(),
-                this.setFilterParams as any,
-                translateKey => this.translateForSetFilter(translateKey),
-                this.valueFormatter,
-                this.isSelectAllSelected(),
+            // select all
+            itemParams = {
+                focusWrapper,
+                value: () => this.getSelectAllLabel(),
+                params,
+                translate,
+                valueFormatter,
+                isSelected: this.isSelectAllSelected(),
                 isTree,
-                0,
-                this.valueModel.hasGroups(),
-                false));
-
-            listItem.addEventListener(
-                SetFilterListItem.EVENT_SELECTION_CHANGED,
-                (e: SetFilterListItemSelectionChangedEvent) => this.onSelectAll(e.isSelected)
-            );
-
-            return listItem;
-        }
-
-        if (this.isSetFilterModelTreeItem(item) && item.children) {
-            listItem = this.createBean(new SetFilterListItem(
-                listItemElement,
-                this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey,
-                this.setFilterParams as any,
-                translateKey => this.translateForSetFilter(translateKey),
-                this.valueFormatter,
-                this.areAllChildrenSelected(item),
+                depth: 0,
+                groupsExist,
+            }
+            selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onSelectAll(e.isSelected);
+        } else if (this.isSetFilterModelTreeItem(item) && item.children) {
+            // group
+            itemParams = {
+                focusWrapper,
+                value: this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey,
+                params,
+                translate,
+                valueFormatter,
+                isSelected: this.areAllChildrenSelected(item),
                 isTree,
-                item.depth,
-                this.valueModel.hasGroups(),
-                true,
-                item.expanded));
-    
-            listItem.addEventListener(
-                SetFilterListItem.EVENT_SELECTION_CHANGED,
-                (e: SetFilterListItemSelectionChangedEvent) => this.onGroupItemSelected(item, e.isSelected)
-            );
-            listItem.addEventListener(
-                SetFilterListItem.EVENT_EXPANDED_CHANGED,
-                (e: SetFilterListItemExpandedChangedEvent) => this.onExpandedChanged(item, e.isExpanded)
-            );
-    
-            return listItem;
-        }
-
-        let depth: number, expanded: boolean, value: V | string | null, key: string | null;
-        if (this.isSetFilterModelTreeItem(item)) {
-            depth = item.depth;
-            expanded = !!item.expanded;
-            value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey,
-            key = item.key!;
+                depth: item.depth,
+                groupsExist,
+                isGroup: true,
+                isExpanded: item.expanded
+            }
+            selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onGroupItemSelected(item, e.isSelected);
+            expandedListener = (e: SetFilterListItemExpandedChangedEvent) => this.onExpandedChanged(item, e.isExpanded);
         } else {
-            depth = 0;
-            expanded = false;
-            value = this.valueModel.getValue(item);
-            key = item;
+            // leaf
+            let depth: number, isExpanded: boolean, value: V | string | null, key: string | null;
+            if (this.isSetFilterModelTreeItem(item)) {
+                depth = item.depth;
+                isExpanded = !!item.expanded;
+                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey,
+                key = item.key!;
+            } else {
+                depth = 0;
+                isExpanded = false;
+                value = this.valueModel.getValue(item);
+                key = item;
+            }
+
+            itemParams = {
+                focusWrapper,
+                value,
+                params,
+                translate,
+                valueFormatter,
+                isSelected: this.valueModel.isKeySelected(key),
+                isTree,
+                depth,
+                groupsExist,
+                isGroup: false,
+                isExpanded
+            }
+            selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onItemSelected(key, e.isSelected);
         }
+        listItem = this.createBean(new SetFilterListItem<V | string | null>(itemParams));
 
-        listItem = this.createBean(new SetFilterListItem(
-            listItemElement,
-            value,
-            this.setFilterParams as any,
-            translateKey => this.translateForSetFilter(translateKey),
-            this.valueFormatter,
-            this.valueModel.isKeySelected(key),
-            isTree,
-            depth,
-            this.valueModel.hasGroups(),
-            false,
-            expanded));
-
-        listItem.addEventListener(
-            SetFilterListItem.EVENT_SELECTION_CHANGED,
-            (e: SetFilterListItemSelectionChangedEvent) => this.onItemSelected(key, e.isSelected)
-        );
+        listItem.addEventListener(SetFilterListItem.EVENT_SELECTION_CHANGED, selectedListener);
+        if (expandedListener) {
+            listItem.addEventListener(SetFilterListItem.EVENT_EXPANDED_CHANGED, expandedListener);
+        }
 
         return listItem;
     }
@@ -552,7 +552,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         const result = super.applyModel();
 
-        // keep appliedModelWrapper in sync with the applied model
+        // keep appliedModelKeys in sync with the applied model
         const appliedModel = this.getModel();
 
         if (appliedModel) {
