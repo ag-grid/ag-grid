@@ -1,15 +1,13 @@
-import { _Scene } from 'ag-charts-community';
-import { createId } from '../util/id';
-import { Padding } from '../util/padding';
+import { _Scene, _Util } from 'ag-charts-community';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
 import { HighlightStyleOptions } from '@ag-grid-community/core';
-import { isContinuous, isDate, isNumber, isString, isStringObject } from '../util/value';
 import { LinearScale } from '../scale/linearScale';
 import { TimeScale } from '../scale/timeScale';
 import { BandScale } from '../scale/bandScale';
-import { extent } from '../util/array';
 import { locale } from '../util/time/format/defaultLocale';
+
+const { extent, isNumber, isContinuous, isString, isStringObject, isDate, createId, Padding } = _Util;
 
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;
@@ -98,7 +96,7 @@ export abstract class Sparkline {
         return this._data;
     }
 
-    padding: Padding = new Padding(3);
+    padding: _Util.Padding = new Padding(3);
 
     xKey: string = 'x';
     yKey: string = 'y';

@@ -1,3 +1,4 @@
+import { _Util } from "ag-charts-community";
 import ContinuousScale from "./continuousScale";
 import timeMillisecond from "../util/time/millisecond";
 import timeSecond from "../util/time/second";
@@ -17,9 +18,9 @@ import {
     durationYear
 } from "../util/time/duration";
 import { CountableTimeInterval, TimeInterval } from "../util/time/interval";
-import { complexBisectRight } from "../util/bisect";
-import { tickStep } from "../util/ticks";
 import { locale } from "../util/time/format/defaultLocale";
+
+const { tickStep, complexBisectRight } = _Util;
 
 export class TimeScale extends ContinuousScale {
     readonly type = 'time';

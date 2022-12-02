@@ -1,6 +1,7 @@
+import { _Util } from "ag-charts-community";
 import ContinuousScale from "./continuousScale";
-import ticks, { tickIncrement } from "../util/ticks";
-import { tickFormat } from "../util/numberFormat";
+
+const { ticks, tickIncrement, tickFormat } = _Util;
 
 /**
  * Maps continuous domain to a continuous range.

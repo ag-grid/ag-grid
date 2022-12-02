@@ -9,3 +9,4 @@ export { Marker } from './chart/marker/marker';
 // Undocumented APIs used by Integrated Charts.
 export * as _Scene from './integrated-charts-scene';
 export * as _Theme from './integrated-charts-theme';
+export * as _Util from './sparklines-util';

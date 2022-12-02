@@ -1,10 +1,10 @@
-import { FontStyle, FontWeight, _Scene } from 'ag-charts-community';
+import { FontStyle, FontWeight, _Scene, _Util } from 'ag-charts-community';
 import { SeriesNodeDatum, Sparkline } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
-import { extent } from '../../util/array';
-import { isNumber } from '../../util/value';
 import { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
 import { Label } from '../label/label';
+
+const { extent, isNumber } = _Util;
 
 export interface RectNodeDatum extends SeriesNodeDatum {
     readonly x: number;

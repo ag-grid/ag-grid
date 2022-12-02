@@ -1,7 +1,8 @@
-import { _Scene } from 'ag-charts-community';
+import { _Scene, _Util } from 'ag-charts-community';
 import { BandScale } from '../../scale/bandScale';
-import { isNumber } from '../../util/value';
 import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
+
+const { isNumber } = _Util;
 
 interface ColumnNodeDatum extends RectNodeDatum { }
 export class ColumnSparkline extends BarColumnSparkline {
