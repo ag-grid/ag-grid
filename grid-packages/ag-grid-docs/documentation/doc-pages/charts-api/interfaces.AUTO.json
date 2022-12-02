@@ -2512,13 +2512,25 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "DatumType",
+      "parent?": "DataValue",
+      "depth": "number",
       "sizeKey?": "string",
       "labelKey?": "string",
-      "valueKey?": "string",
       "colorKey?": "string",
       "color?": "string",
       "title?": "string",
       "seriesId": "string"
+    },
+    "docs": {
+      "datum": "/** Datum from the series data that the treemap tile is being rendered for. */",
+      "parent?": "/** The parent of the datum from the treemap data. */",
+      "depth": "/** The depth of the datum in the hierarchy. */",
+      "sizeKey?": "/** sizeKey as specified on series options. */",
+      "labelKey?": "/** labelKey as specified on series options. */",
+      "colorKey?": "/** colorKey as specified on series options. */",
+      "color?": "/** The computed fill colour of the treemap tile. */",
+      "title?": "/** The title of the treemap tile */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgTreemapSeriesTooltip": {
@@ -2613,6 +2625,7 @@
     },
     "type": {
       "datum": "DataValue",
+      "parent?": "DataValue",
       "depth": "number",
       "labelKey": "string",
       "sizeKey?": "string",
@@ -2627,7 +2640,8 @@
       "seriesId": "string"
     },
     "docs": {
-      "datum": "/** Datum from the series data array that the treemap tile is being rendered for. */",
+      "datum": "/** Datum from the series data that the treemap tile is being rendered for. */",
+      "parent?": "/** The parent of the datum from the treemap data. */",
       "depth": "/** The depth of the datum in the hierarchy. */",
       "labelKey": "/** labelKey as specified on series options. */",
       "sizeKey?": "/** sizeKey as specified on series options. */",

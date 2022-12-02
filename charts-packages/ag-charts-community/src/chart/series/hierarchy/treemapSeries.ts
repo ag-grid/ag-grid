@@ -756,6 +756,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             return toTooltipHtml(
                 tooltipRenderer({
                     datum: nodeDatum.datum,
+                    parent: nodeDatum.parent?.datum,
+                    depth: nodeDatum.depth,
                     sizeKey,
                     labelKey,
                     colorKey,

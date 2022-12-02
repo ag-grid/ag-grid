@@ -1442,13 +1442,23 @@ export interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {
 }
 
 export interface AgTreemapSeriesTooltipRendererParams<DatumType> {
+    /** Datum from the series data that the treemap tile is being rendered for. */
     datum: DatumType;
+    /** The parent of the datum from the treemap data. */
+    parent?: DataValue;
+    /** The depth of the datum in the hierarchy. */
+    depth: number;
+    /** sizeKey as specified on series options. */
     sizeKey?: string;
+    /** labelKey as specified on series options. */
     labelKey?: string;
-    valueKey?: string;
+    /** colorKey as specified on series options. */
     colorKey?: string;
+    /** The computed fill colour of the treemap tile. */
     color?: string;
+    /** The title of the treemap tile */
     title?: string;
+    /** The ID of the series. */
     seriesId: string;
 }
 
@@ -1518,8 +1528,10 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
 
 /** The parameters of the treemap series formatter function */
 export interface AgTreemapSeriesFormatterParams<DataValue = any> {
-    /** Datum from the series data array that the treemap tile is being rendered for. */
+    /** Datum from the series data that the treemap tile is being rendered for. */
     readonly datum: DataValue;
+    /** The parent of the datum from the treemap data. */
+    readonly parent?: DataValue;
     /** The depth of the datum in the hierarchy. */
     readonly depth: number;
     /** labelKey as specified on series options. */
