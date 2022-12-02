@@ -17232,14 +17232,6 @@
         "optional": false
       }
     },
-    "autoHeight": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "suppressRefresh": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
     "meta": { "typeParams": ["TData = any", "TDetail = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
