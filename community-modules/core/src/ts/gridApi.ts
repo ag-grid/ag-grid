@@ -365,7 +365,7 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Updates the `cacheBlockSize` used by `serverSideInfiniteScroll` when requesting data from the server.
+     * Updates the `cacheBlockSize` when requesting data from the server if `suppressServerSideInfiniteScroll` is not enabled.
      * 
      * Note this purges all the cached data and reloads all the rows of the grid.
      * */

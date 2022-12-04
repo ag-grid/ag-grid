@@ -16,7 +16,6 @@ const gridOptions: GridOptions = {
 
   // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
 
   // enable master detail
   masterDetail: true,

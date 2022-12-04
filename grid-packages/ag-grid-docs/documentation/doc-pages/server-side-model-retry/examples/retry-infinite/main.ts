@@ -29,7 +29,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
   maxConcurrentDatasourceRequests: 1,
 
   suppressAggFuncInHeader: true,

@@ -26,6 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     return res
   },
   rowModelType: 'serverSide',
+  suppressServerSideInfiniteScroll: true,
   rowSelection: 'multiple',
 
   isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,

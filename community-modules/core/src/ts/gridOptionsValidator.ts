@@ -164,6 +164,7 @@ export class GridOptionsValidator {
     }
 
     private deprecatedProperties: DeprecatedReference<GridOptions> = {
+        serverSideInfiniteScroll: { version: '29', message: 'Infinite Scrolling is now the default behaviour. This can be suppressed with `suppressServerSideInfiniteScroll`.' },
         rememberGroupStateWhenNewData: { version: '24', message: 'Now that transaction updates are possible and they keep group state, this feature is no longer needed.' },
 
         suppressEnterpriseResetOnNewColumns: { version: '25', message: 'Now that it is possible to dynamically change columns in the grid, this is no longer needed.' },
@@ -231,8 +232,8 @@ export class GridOptionsValidator {
             }
         }
         if (options.serverSideStoreType) {
-            console.warn('AG Grid: since v28.0, `serverSideStoreType` has been replaced by `serverSideInfiniteScroll`. Set to true to use Partial Store, and false to use Full Store.');
-            options.serverSideInfiniteScroll = options.serverSideStoreType === 'partial';
+            console.warn('AG Grid: since v29.0, `serverSideStoreType` has been replaced by `suppressServerSideInfiniteScroll`. Set to false to use Partial Store, and true to use Full Store.');
+            options.suppressServerSideInfiniteScroll = options.serverSideStoreType !== 'partial';
         }
     }
 

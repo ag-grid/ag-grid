@@ -32,6 +32,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   // use the server-side row model
   rowModelType: 'serverSide',
+  suppressServerSideInfiniteScroll: true,
   serverSideFilterOnServer: true,
   animateRows: true,
   // debug: true

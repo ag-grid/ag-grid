@@ -27,7 +27,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
 
   // allow multiple leaf row selections
   rowSelection: 'multiple',
