@@ -699,7 +699,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
     public addStoreStates(result: ServerSideGroupLevelState[]): void {
         result.push({
-            infiniteScroll: true,
+            suppressInfiniteScroll: false,
             route: this.parentRowNode.getGroupKeys(),
             rowCount: this.rowCount,
             lastRowIndexKnown: this.lastRowIndexKnown,

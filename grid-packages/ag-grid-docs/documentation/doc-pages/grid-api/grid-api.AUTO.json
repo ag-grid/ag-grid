@@ -107,7 +107,7 @@
     "type": { "arguments": { "datasource": "IServerSideDatasource" } }
   },
   "setCacheBlockSize": {
-    "description": "/** Updates the `cacheBlockSize` used by `serverSideInfiniteScroll` when requesting data from the server.\n     * \n     * Note this purges all the cached data and reloads all the rows of the grid.\n     * */",
+    "description": "/** Updates the `cacheBlockSize` when requesting data from the server if `suppressServerSideInfiniteScroll` is not enabled.\n     * \n     * Note this purges all the cached data and reloads all the rows of the grid.\n     * */",
     "type": { "arguments": { "blockSize": "number" } }
   },
   "setDatasource": {

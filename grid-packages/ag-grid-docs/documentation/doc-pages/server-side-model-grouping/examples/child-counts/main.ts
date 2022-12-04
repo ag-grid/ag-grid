@@ -21,7 +21,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
 
   // fetch group child count from 'childCount' returned by the server
   getChildCount: (data: any) => {

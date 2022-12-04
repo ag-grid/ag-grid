@@ -148,7 +148,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   columnDefs: columnDefs,
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
   animateRows: true,

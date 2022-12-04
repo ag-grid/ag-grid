@@ -15,6 +15,8 @@ const gridOptions: GridOptions = {
     return params.data.id
   },
   rowModelType: 'serverSide',
+  suppressServerSideInfiniteScroll: true,
+
   columnDefs: columnDefs,
   animateRows: true,
   purgeClosedRowNodes: true,
@@ -54,7 +56,7 @@ const gridOptions: GridOptions = {
   },
   getServerSideGroupLevelParams: (params: GetServerSideGroupLevelParamsParams): ServerSideGroupLevelParams => {
     return {
-      infiniteScroll: params.level == 0,
+      suppressInfiniteScroll: params.level != 0,
     }
   },
 }

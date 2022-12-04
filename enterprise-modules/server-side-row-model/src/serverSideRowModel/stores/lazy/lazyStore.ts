@@ -555,7 +555,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      */
     addStoreStates(result: ServerSideGroupLevelState[]) {
         result.push({
-            infiniteScroll: false,
+            suppressInfiniteScroll: false,
             route: this.parentRowNode.getGroupKeys(),
             rowCount: this.getRowCount(),
             info: this.info,

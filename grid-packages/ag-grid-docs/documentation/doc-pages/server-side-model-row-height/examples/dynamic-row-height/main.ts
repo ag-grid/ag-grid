@@ -20,7 +20,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
 
   // dynamically set row heights
   getRowHeight: (params: RowHeightParams) => {

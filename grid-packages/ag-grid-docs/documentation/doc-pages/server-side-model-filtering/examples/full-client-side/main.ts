@@ -33,7 +33,8 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   animateRows: true,
 
-  rowModelType: 'serverSide'
+  rowModelType: 'serverSide',
+  suppressServerSideInfiniteScroll: true,
 }
 
 // setup the grid after the page has finished loading

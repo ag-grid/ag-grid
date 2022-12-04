@@ -19,7 +19,6 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   rowSelection: 'multiple',
   // use the enterprise row model
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
   cacheBlockSize: 75,
   animateRows: true,
   isRowSelectable: isRowSelectable,

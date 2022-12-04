@@ -24,9 +24,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  // set to partial, so infinite scrolling is enabled
-  serverSideInfiniteScroll: true,
-
   // fetch 10 rows at a time (default is 100)
   cacheBlockSize: 50,
 

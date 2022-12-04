@@ -18,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
 
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
   serverSideInitialRowCount: 5500,
 }
 
