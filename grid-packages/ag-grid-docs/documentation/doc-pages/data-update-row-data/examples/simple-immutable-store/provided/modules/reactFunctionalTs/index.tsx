@@ -100,11 +100,6 @@ const GridExample = () => {
             field: 'symbol',
         }
     }, []);
-    const statusBar = useMemo(() => {
-        return {
-            statusPanels: [{ statusPanel: 'agAggregationComponent', align: 'right' }],
-        }
-    }, []);
     const getRowId = useCallback(function (params: GetRowIdParams) {
         return params.data.symbol;
     }, []);
@@ -220,7 +215,6 @@ const GridExample = () => {
                             animateRows={true}
                             rowSelection={'multiple'}
                             autoGroupColumnDef={autoGroupColumnDef}
-                            statusBar={statusBar}
                             groupDefaultExpanded={1}
                             getRowId={getRowId}
                             onGridReady={onGridReady}

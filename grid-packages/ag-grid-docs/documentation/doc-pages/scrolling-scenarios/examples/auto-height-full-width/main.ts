@@ -51,9 +51,6 @@ const gridOptions: GridOptions = {
     pagination: true,
     paginationPageSize: 10,
     columnDefs: columnDefs,
-    statusBar: {
-        statusPanels: [{ statusPanel: 'agAggregationComponent' }],
-    },
     domLayout: 'autoHeight',
 }
 

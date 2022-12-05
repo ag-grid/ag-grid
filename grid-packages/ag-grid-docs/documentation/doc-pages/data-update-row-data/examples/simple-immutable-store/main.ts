@@ -170,9 +170,6 @@ const gridOptions: GridOptions = {
         cellRenderer: 'agGroupCellRenderer',
         field: 'symbol',
     },
-    statusBar: {
-        statusPanels: [{ statusPanel: 'agAggregationComponent', align: 'right' }],
-    },
     groupDefaultExpanded: 1,
     rowData: immutableStore,
     getRowId: (params: GetRowIdParams) => {
