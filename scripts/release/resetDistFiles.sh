@@ -78,3 +78,4 @@ git reset grid-packages/ag-grid-angular-legacy/dist
 git reset grid-packages/ag-grid-community/styles
 git reset grid-packages/ag-grid-enterprise/styles
 git reset charts-packages/ag-charts-angular-legacy/dist
+git reset grid-packages/ag-grid-docs/documentation/cypress.config.AUTO.json
