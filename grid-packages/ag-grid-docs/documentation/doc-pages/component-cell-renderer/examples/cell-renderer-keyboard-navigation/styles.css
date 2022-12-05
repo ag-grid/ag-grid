@@ -1,0 +1,39 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+html {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+body {
+  padding: 1rem;
+  overflow: auto;
+}
+
+.custom-element {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.custom-element button {
+  width: 80px;
+}
+
+.custom-element input {
+  width: 100px;
+}
+
+.ag-row:focus {
+  background: lightskyblue;
+}
