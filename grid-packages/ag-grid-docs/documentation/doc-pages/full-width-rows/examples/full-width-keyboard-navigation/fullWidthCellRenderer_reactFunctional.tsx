@@ -8,7 +8,6 @@ export default (props: ICellRendererParams) => {
         <div className="full-width-panel">
             <button>
                 <img
-                border="0"
                 width="15"
                 height="10"
                 src={`https://www.ag-grid.com/example-assets/flags/${code}.png`}
