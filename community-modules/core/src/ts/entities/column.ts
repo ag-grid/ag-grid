@@ -303,11 +303,10 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         const usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
         if (usingCSRM && !ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
             const rowGroupingItems: (keyof ColDef)[] = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
-            rowGroupingItems.forEach(item => {
-                if (exists(colDefAny[item])) {
-                    ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'colDef.' + item);                    
-                }
-            });
+            const itemsUsed = rowGroupingItems.filter(x => exists(colDefAny[x]));
+            if (itemsUsed.length > 0) {
+                ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, itemsUsed.map(i => 'colDef.' + i).join(', '));
+            }
         }
 
         if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {

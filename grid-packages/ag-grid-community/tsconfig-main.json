@@ -6,9 +6,13 @@
     "declaration": true,
     "target": "es5",
     "noImplicitAny": true,
+    "types": [],
     "lib": [
       "es2015",
       "dom"
     ]
-  }
+  },
+  "exclude": [
+    "**/*.test.ts"
+  ]
 }

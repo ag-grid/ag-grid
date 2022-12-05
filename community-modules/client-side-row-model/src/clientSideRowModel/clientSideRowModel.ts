@@ -604,20 +604,44 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
     }
 
-    public forEachNode(callback: (node: RowNode, index: number) => void): void {
-        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterGroup, callback, RecursionType.Normal, 0);
+    public forEachNode(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
+        this.recursivelyWalkNodesAndCallback({
+            nodes: [...(this.rootNode.childrenAfterGroup || [])], 
+            callback,
+            recursionType: RecursionType.Normal, 
+            index: 0,
+            includeFooterNodes
+        });
     }
 
-    public forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void): void {
-        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterAggFilter, callback, RecursionType.AfterFilter, 0);
+    public forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
+        this.recursivelyWalkNodesAndCallback({
+            nodes: [...(this.rootNode.childrenAfterAggFilter || [])],
+            callback,
+            recursionType: RecursionType.AfterFilter, 
+            index: 0,
+            includeFooterNodes
+        });
     }
 
-    public forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void {
-        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterSort, callback, RecursionType.AfterFilterAndSort, 0);
+    public forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
+        this.recursivelyWalkNodesAndCallback({
+            nodes: [this.rootNode],
+            callback,
+            recursionType: RecursionType.AfterFilterAndSort,
+            index: 0,
+            includeFooterNodes
+        });
     }
 
-    public forEachPivotNode(callback: (node: RowNode, index: number) => void): void {
-        this.recursivelyWalkNodesAndCallback([this.rootNode], callback, RecursionType.PivotNodes, 0);
+    public forEachPivotNode(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
+        this.recursivelyWalkNodesAndCallback({
+            nodes: [this.rootNode],
+            callback,
+            recursionType: RecursionType.PivotNodes,
+            index: 0,
+            includeFooterNodes
+        });
     }
 
     // iterates through each item in memory, and calls the callback function
@@ -625,14 +649,27 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     // callback - the user provided callback
     // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
     // index - works similar to the index in forEach in javascript's array function
-    private recursivelyWalkNodesAndCallback(nodes: RowNode[] | null, callback: (node: RowNode, index: number) => void, recursionType: RecursionType, index: number) {
-        if (!nodes) { return index; }
+    private recursivelyWalkNodesAndCallback(params: {
+        nodes: RowNode[];
+        callback: (node: RowNode, index: number) => void;
+        recursionType: RecursionType;
+        index: number;
+        includeFooterNodes: boolean
+    }) {
+        const { nodes, callback, recursionType, includeFooterNodes } = params;
+        let { index } = params;
+
+        const firstNode = nodes[0];
+
+        if (includeFooterNodes && firstNode?.parent?.sibling) {
+            nodes.push(firstNode.parent.sibling);
+        } 
 
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
             callback(node, index++);
             // go to the next level if it is a group
-            if (node.hasChildren()) {
+            if (node.hasChildren() && !node.footer) {
                 // depending on the recursion type, we pick a difference set of children
                 let nodeChildren: RowNode[] | null = null;
                 switch (recursionType) {
@@ -651,7 +688,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                         break;
                 }
                 if (nodeChildren) {
-                    index = this.recursivelyWalkNodesAndCallback(nodeChildren, callback, recursionType, index);
+                    index = this.recursivelyWalkNodesAndCallback({
+                        nodes: [...nodeChildren],
+                        callback,
+                        recursionType,
+                        index,
+                        includeFooterNodes
+                    });
                 }
             }
         }

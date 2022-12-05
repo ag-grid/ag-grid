@@ -6,51 +6,22 @@ import { GridOptionsService } from './gridOptionsService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
+import { doOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { iterateObject } from './utils/object';
 
-type DeprecatedReference = Record<string, { newProp?: keyof GridOptions, version: string, message?: string, copyToNewProp?: true, newPropValue?: any }>
+type DeprecatedReference<T> = { [key: string]: { newProp?: keyof T, version: string, message?: string, copyToNewProp?: true, newPropValue?: any } }
+
+export function logDeprecation<T extends {}>(version: string, oldProp: keyof T, newProp?: keyof T, message?: string) {
+    const newPropMsg = newProp ? `Please use '${newProp}' instead. ` : '';
+    doOnce(() => console.warn(`AG Grid: since v${version}, '${oldProp}' is deprecated. ${newPropMsg}${message ?? ''}`), `Deprecated_${oldProp}`);
+}
 
 @Bean('gridOptionsValidator')
 export class GridOptionsValidator {
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
-
-    private deprecatedProperties: DeprecatedReference = {
-        rememberGroupStateWhenNewData: { version: '24', message: 'Now that transaction updates are possible and they keep group state, this feature is no longer needed.' },
-
-        suppressEnterpriseResetOnNewColumns: { version: '25', message: 'Now that it is possible to dynamically change columns in the grid, this is no longer needed.' },
-        suppressColumnStateEvents: { version: '25', message: 'Events should be ignored based on the `event.source`, which will be "api" if the event was due to setting column state via the API.' },
-        defaultExportParams: { version: '25.2', message: 'The property `defaultExportParams` has been replaced by `defaultCsvExportParams` and `defaultExcelExportParams`' },
-        stopEditingWhenGridLosesFocus: { version: '25.2.2', newProp: 'stopEditingWhenCellsLoseFocus', copyToNewProp: true },
-
-        applyColumnDefOrder: { version: '26', message: 'The property `applyColumnDefOrder` is no longer needed, as this is the default behaviour. To turn this behaviour off, set maintainColumnOrder=true' },
-        groupMultiAutoColumn: { version: '26', newProp: 'groupDisplayType', copyToNewProp: true, newPropValue: 'multipleColumns' },
-        groupUseEntireRow: { version: '26', newProp: 'groupDisplayType', copyToNewProp: true, newPropValue: 'groupRows' },
-        defaultGroupSortComparator: { version: '26', newProp: 'initialGroupOrderComparator' },
-        enableMultiRowDragging: { version: '26.1', newProp: 'rowDragMultiRow', copyToNewProp: true },
-        colWidth: { version: '26.1', newProp: 'defaultColDef.width' as any },
-        minColWidth: { version: '26.1', newProp: 'defaultColDef.minWidth' as any },
-        maxColWidth: { version: '26.1', newProp: 'defaultColDef.maxWidth' as any },
-        reactUi: { version: '26.1', message: 'React UI is on by default, so no need for reactUi=true. To turn it off, set suppressReactUi=true.' },
-
-        suppressCellSelection: { version: '27', newProp: 'suppressCellFocus', copyToNewProp: true },
-        clipboardDeliminator: { version: '27.1', newProp: 'clipboardDelimiter', copyToNewProp: true },
-        getRowNodeId: { version: '27.1', newProp: 'getRowId', message: 'The difference: if getRowId() is implemented then immutable data is enabled by default.' },
-        defaultGroupOrderComparator: { version: '27.2', newProp: 'initialGroupOrderComparator' },
-        groupRowAggNodes: { version: '27.2', newProp: 'getGroupRowAgg' },
-        postSort: { version: '27.2', newProp: 'postSortRows' },
-        isFullWidthCell: { version: '27.2', newProp: 'isFullWidthRow' },
-        localeTextFunc: { version: '27.2', newProp: 'getLocaleText' },
-
-        serverSideFilteringAlwaysResets: { version: '28.0', newProp: 'serverSideFilterAllLevels', copyToNewProp: true, },
-        serverSideSortingAlwaysResets: { version: '28.0', newProp: 'serverSideSortAllLevels', copyToNewProp: true, },
-        suppressReactUi: { version: '28', message: 'The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.' },
-        processSecondaryColDef: { version: '28', newProp: 'processPivotResultColDef', copyToNewProp: true },
-        processSecondaryColGroupDef: { version: '28', newProp: 'processPivotResultColGroupDef', copyToNewProp: true },
-        getServerSideStoreParams: { version: '28', newProp: 'getServerSideGroupLevelParams', copyToNewProp: true }
-    }
 
     private pickOneWarning(prop1: keyof GridOptions, prop2: keyof GridOptions) {
         console.warn(`AG Grid: ${prop1} and ${prop2} do not work with each other, you need to pick one.`);
@@ -105,6 +76,18 @@ export class GridOptionsValidator {
             ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection');
         } else if (this.gridOptionsService.is('enableRangeHandle') || this.gridOptionsService.is('enableFillHandle')) {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
+        }
+
+        if (this.gridOptionsService.exists('sideBar')) {
+            // Ensure the SideBar is registered which will then lead them to register Column / Filter Tool panels as required by their config.
+            // It is possible to use the SideBar only with your own custom tool panels.
+            ModuleRegistry.assertRegistered(ModuleNames.SideBarModule, 'sideBar');
+        }
+        if (this.gridOptionsService.exists('statusBar')) {
+            ModuleRegistry.assertRegistered(ModuleNames.StatusBarModule, 'statusBar');
+        }
+        if (this.gridOptionsService.exists('enableCharts')) {
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'enableCharts');
         }
 
         if (this.gridOptionsService.is('groupRowsSticky')) {
@@ -180,20 +163,60 @@ export class GridOptionsValidator {
         }
     }
 
+    private deprecatedProperties: DeprecatedReference<GridOptions> = {
+        serverSideInfiniteScroll: { version: '29', message: 'Infinite Scrolling is now the default behaviour. This can be suppressed with `suppressServerSideInfiniteScroll`.' },
+        rememberGroupStateWhenNewData: { version: '24', message: 'Now that transaction updates are possible and they keep group state, this feature is no longer needed.' },
+
+        suppressEnterpriseResetOnNewColumns: { version: '25', message: 'Now that it is possible to dynamically change columns in the grid, this is no longer needed.' },
+        suppressColumnStateEvents: { version: '25', message: 'Events should be ignored based on the `event.source`, which will be "api" if the event was due to setting column state via the API.' },
+        defaultExportParams: { version: '25.2', message: 'The property `defaultExportParams` has been replaced by `defaultCsvExportParams` and `defaultExcelExportParams`' },
+        stopEditingWhenGridLosesFocus: { version: '25.2.2', newProp: 'stopEditingWhenCellsLoseFocus', copyToNewProp: true },
+
+        applyColumnDefOrder: { version: '26', message: 'The property `applyColumnDefOrder` is no longer needed, as this is the default behaviour. To turn this behaviour off, set maintainColumnOrder=true' },
+        groupMultiAutoColumn: { version: '26', newProp: 'groupDisplayType', copyToNewProp: true, newPropValue: 'multipleColumns' },
+        groupUseEntireRow: { version: '26', newProp: 'groupDisplayType', copyToNewProp: true, newPropValue: 'groupRows' },
+        defaultGroupSortComparator: { version: '26', newProp: 'initialGroupOrderComparator' },
+        enableMultiRowDragging: { version: '26.1', newProp: 'rowDragMultiRow', copyToNewProp: true },
+        colWidth: { version: '26.1', newProp: 'defaultColDef.width' as any },
+        minColWidth: { version: '26.1', newProp: 'defaultColDef.minWidth' as any },
+        maxColWidth: { version: '26.1', newProp: 'defaultColDef.maxWidth' as any },
+        reactUi: { version: '26.1', message: 'React UI is on by default, so no need for reactUi=true. To turn it off, set suppressReactUi=true.' },
+
+        suppressCellSelection: { version: '27', newProp: 'suppressCellFocus', copyToNewProp: true },
+        clipboardDeliminator: { version: '27.1', newProp: 'clipboardDelimiter', copyToNewProp: true },
+        getRowNodeId: { version: '27.1', newProp: 'getRowId', message: 'The difference: if getRowId() is implemented then immutable data is enabled by default.' },
+        defaultGroupOrderComparator: { version: '27.2', newProp: 'initialGroupOrderComparator' },
+        groupRowAggNodes: { version: '27.2', newProp: 'getGroupRowAgg' },
+        postSort: { version: '27.2', newProp: 'postSortRows' },
+        isFullWidthCell: { version: '27.2', newProp: 'isFullWidthRow' },
+        localeTextFunc: { version: '27.2', newProp: 'getLocaleText' },
+
+        serverSideFilteringAlwaysResets: { version: '28.0', newProp: 'serverSideFilterAllLevels', copyToNewProp: true, },
+        serverSideSortingAlwaysResets: { version: '28.0', newProp: 'serverSideSortAllLevels', copyToNewProp: true, },
+        suppressReactUi: { version: '28', message: 'The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.' },
+        processSecondaryColDef: { version: '28', newProp: 'processPivotResultColDef', copyToNewProp: true },
+        processSecondaryColGroupDef: { version: '28', newProp: 'processPivotResultColGroupDef', copyToNewProp: true },
+        getServerSideStoreParams: { version: '28', newProp: 'getServerSideGroupLevelParams', copyToNewProp: true },
+
+        enableChartToolPanelsButton: { version: '29', message: 'The Chart Tool Panels button is now enabled by default. To hide the Chart Tool Panels button and display the hamburger button instead, set suppressChartToolPanelsButton=true.' }
+    }
+
     private checkForDeprecated() {
         // casting to generic object, so typescript compiles even though
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
 
         Object.entries(this.deprecatedProperties).map(([oldProp, details]) => {
-            if (options[oldProp] != null) {
-                const newPropMsg = details.newProp ? `Please use '${details.newProp}' instead. ` : '';
-                console.warn(`AG Grid: since v${details.version}, '${oldProp}' is deprecated. ${newPropMsg}${details.message ?? ''}`);
+            const oldPropValue = (options as any)[oldProp];
+            if (oldPropValue) {
+                logDeprecation(details.version, oldProp, details.newProp, details.message);
                 if (details.copyToNewProp && details.newProp && options[details.newProp] == null) {
-                    options[details.newProp] = details.newPropValue ?? options[oldProp];
+                    options[details.newProp] = details.newPropValue ?? oldPropValue;
                 }
             }
-        })
+        });
+
+        // Manual messages and deprecation behaviour that don't fit our standard approach above.
 
         if (options.groupSuppressAutoColumn) {
             const propName = options.treeData ? 'treeDataDisplayType' : 'groupDisplayType';
@@ -209,8 +232,8 @@ export class GridOptionsValidator {
             }
         }
         if (options.serverSideStoreType) {
-            console.warn('AG Grid: since v28.0, `serverSideStoreType` has been replaced by `serverSideInfiniteScroll`. Set to true to use Partial Store, and false to use Full Store.');
-            options.serverSideInfiniteScroll = options.serverSideStoreType === 'partial';
+            console.warn('AG Grid: since v29.0, `serverSideStoreType` has been replaced by `suppressServerSideInfiniteScroll`. Set to false to use Partial Store, and true to use Full Store.');
+            options.suppressServerSideInfiniteScroll = options.serverSideStoreType !== 'partial';
         }
     }
 

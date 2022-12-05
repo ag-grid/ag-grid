@@ -1,5 +1,5 @@
 import { _, ChartType, AgChartTheme as GridAgChartTheme, SeriesChartType } from "@ag-grid-community/core";
-import { AgChart, AgChartTheme, AgChartThemeOverrides, AgChartThemePalette, AgChartInstance, _Theme, AgChartOptions } from "ag-charts-community";
+import { AgChart, AgChartTheme, AgChartThemeOverrides, AgChartThemePalette, AgChartInstance, _Theme, AgChartOptions, AgChartPaddingOptions } from "ag-charts-community";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";
@@ -14,6 +14,7 @@ export interface ChartProxyParams {
     getChartThemeName: () => string;
     getChartThemes: () => string[];
     getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
+    getExtraPaddingRequired: () => AgChartPaddingOptions;
     apiChartThemeOverrides?: AgChartThemeOverrides;
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
@@ -48,7 +49,6 @@ export abstract class ChartProxy {
     protected readonly standaloneChartType: ChartSeriesType;
 
     protected readonly chart: AgChartInstance;
-    protected readonly agChartTheme: AgChartTheme;
     protected readonly crossFiltering: boolean;
     protected readonly crossFilterCallback: (event: any, reset?: boolean) => void;
 
@@ -60,8 +60,6 @@ export abstract class ChartProxy {
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
         this.standaloneChartType = getSeriesType(this.chartType);
-
-        this.agChartTheme = createAgChartTheme(chartProxyParams, this);
 
         if (this.chart == null) {
             this.chart = AgChart.create(this.getCommonChartOptions());
@@ -150,7 +148,7 @@ export abstract class ChartProxy {
             { overrides: this.getActiveFormattingPanelOverrides() } : {};
         return {
             theme: {
-                ...this.agChartTheme,
+                ...createAgChartTheme(this.chartProxyParams, this),
                 ...formattingPanelOverrides,
             },
             container: this.chartProxyParams.parentElement

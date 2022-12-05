@@ -58,6 +58,7 @@ export class Scene {
         this.overrideDevicePixelRatio = overrideDevicePixelRatio;
 
         this.opts = { document, mode };
+        this.debug.consoleLog = windowValue('agChartsDebug') === true;
         this.debug.stats = windowValue('agChartsSceneStats') ?? false;
         this.debug.dirtyTree = windowValue('agChartsSceneDirtyTree') ?? false;
         this.canvas = new HdpiCanvas({ document, width, height, overrideDevicePixelRatio });

@@ -22,8 +22,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     sortable: true,
     filter: true,
     resizable: true,
-  },
-  sideBar: 'columns'
+  }
 }
 
 // setup the grid after the page has finished loading

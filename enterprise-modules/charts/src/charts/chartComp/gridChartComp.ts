@@ -17,7 +17,7 @@ import {
     RefSelector,
     SeriesChartType,
     WithoutGridCommon,
-    CHART_TOOL_PANEL_MENU_OPTIONS
+    CHART_TOOL_PANEL_MENU_OPTIONS,
 } from "@ag-grid-community/core";
 import { AgChartThemeOverrides, AgChartThemePalette, AgChartInstance } from "ag-charts-community";
 import { ChartMenu } from "./menu/chartMenu";
@@ -193,6 +193,7 @@ export class GridChartComp extends Component {
             getChartThemes: this.getChartThemes.bind(this),
             customChartThemes: this.gridOptionsService.get('customChartThemes'),
             getGridOptionsChartThemeOverrides: () => this.getGridOptionsChartThemeOverrides(),
+            getExtraPaddingRequired: () => this.chartMenu?.getExtraPaddingRequired() ?? {},
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             crossFiltering: this.params.crossFiltering,
             crossFilterCallback,
@@ -227,7 +228,7 @@ export class GridChartComp extends Component {
         this.chartOptionsService = this.createBean(new ChartOptionsService(this.chartController));
         this.titleEdit && this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
     }
-
+    
     private getChartThemeName(): string {
         return this.chartController.getChartThemeName();
     }

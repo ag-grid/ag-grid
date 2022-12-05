@@ -27,6 +27,7 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',
+  suppressServerSideInfiniteScroll: true,
   animateRows: true,
   asyncTransactionWaitMillis: 4000,
 }

@@ -1009,7 +1009,7 @@
                 "url": "/server-side-model-datasource/#registering-the-datasource"
             }
         },
-        "serverSideInfiniteScroll": {
+        "suppressServerSideInfiniteScroll": {
         },
         "cacheBlockSize": {
             "description": "(Infinite Scroll only) How many rows for each block in the cache, i.e. how many rows returned from the server at a time. Default: `100`"

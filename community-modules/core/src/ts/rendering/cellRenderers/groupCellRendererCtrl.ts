@@ -9,7 +9,6 @@ import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { removeAriaExpanded, setAriaExpanded } from "../../utils/aria";
 import { isElementInEventPath, isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../utils/event";
-import { doOnce } from "../../utils/function";
 import { missing } from "../../utils/generic";
 import { createIconNoSpan } from "../../utils/icon";
 import { cloneObject } from "../../utils/object";
@@ -66,9 +65,6 @@ export interface GroupCellRendererParams<TData = any, TValue = any> extends ICel
     innerRendererParams?: any;
     /** Callback to enable different innerRenderers to be used based of value of params. */
     innerRendererSelector?: CellRendererSelectorFunc;
-
-    /** @deprecated */
-    padding: number;
 }
 
 export class GroupCellRendererCtrl extends BeanStub {
@@ -605,11 +601,6 @@ export class GroupCellRendererCtrl extends BeanStub {
         const treeData = this.gridOptionsService.isTreeData();
         const manyDimensionThisColumn = !fullWithRow || treeData || params.colDef!.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
-        const userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
-
-        if (userProvidedPaddingPixelsTheDeprecatedWay) {
-            doOnce(() => console.warn('AG Grid: cellRendererParams.padding no longer works, it was deprecated in since v14.2 and removed in v26, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the AG Grid documentation page for Themes, in particular the property $row-group-indent-size.'), 'groupCellRenderer->doDeprecatedWay');
-        }
 
         if (this.indentClass) {
             this.comp.addOrRemoveCssClass(this.indentClass, false);

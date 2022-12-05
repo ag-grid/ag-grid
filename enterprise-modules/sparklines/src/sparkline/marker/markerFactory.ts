@@ -1,16 +1,14 @@
-import { Circle } from './circle';
-import { Diamond } from './diamond';
-import { Square } from './square';
+import { _Scene } from 'ag-charts-community';
 
 export function getMarker(shape: string) {
     switch (shape) {
         case 'circle':
-            return Circle;
+            return _Scene.Circle;
         case 'square':
-            return Square;
+            return _Scene.Square;
         case 'diamond':
-            return Diamond;
+            return _Scene.Diamond;
         default:
-            return Circle;
+            return _Scene.Circle;
     }
 }

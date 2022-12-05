@@ -36,6 +36,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   },
   // use the server-side row model
   rowModelType: 'serverSide',
+  suppressServerSideInfiniteScroll: true,
 
   enableCellChangeFlash: true,
   suppressAggFuncInHeader: true,

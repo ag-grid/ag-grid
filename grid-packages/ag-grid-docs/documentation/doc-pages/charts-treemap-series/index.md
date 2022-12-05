@@ -84,7 +84,7 @@ series: [{
     labelKey: 'orgHierarchy',
     sizeKey: undefined,  // make all siblings within a parent the same size
     colorKey: undefined, // use node depth value to determine the tile color
-    colorParents: true,  // assign color to parent tiles based on their depth too (not just leaf tiles)
+    groupFill: 'black',  // the color of group tiles, retrieved from data if `undefined`
     colorDomain: [0, 2, 4], // depth of 0 will correspond to 'red', 2 to 'green' and so on
     colorRange: ['red', 'green', 'blue'], // tiles with a depth of 1 will be a blend of 'red' and 'green'
     // change the color of a particular tile

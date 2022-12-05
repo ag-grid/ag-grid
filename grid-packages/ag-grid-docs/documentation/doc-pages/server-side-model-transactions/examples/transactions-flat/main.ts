@@ -65,6 +65,8 @@ const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     // use the enterprise row model
     rowModelType: 'serverSide',
+    suppressServerSideInfiniteScroll: true,
+
     // cacheBlockSize: 100,
     animateRows: true,
     serverSideDatasource: dataSource,

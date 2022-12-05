@@ -1,17 +1,13 @@
-import { BandScale } from '../../scale/bandScale';
-import { Group } from '../../scene/group';
-import { Path } from '../../scene/shape/path';
-import { Selection } from '../../scene/selection';
-import { Marker } from '../marker/marker';
+import { MarkerFormat, MarkerFormatterParams, CrosshairLineOptions } from '@ag-grid-community/core';
+import { _Scale, _Scene, _Util } from 'ag-charts-community';
+
 import { Point, SeriesNodeDatum, Sparkline } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
-import { MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
-import { extent } from '../../util/array';
-import { isNumber } from '../../util/value';
-import { Line } from '../../scene/shape/line';
-import { CrosshairLineOptions } from '@ag-grid-community/core';
 import { getLineDash } from '../../util/lineDash';
+
+const { extent, isNumber } = _Util;
+const { BandScale } = _Scale;
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: Point;
@@ -52,15 +48,15 @@ class SparklineCrosshairs {
 export class LineSparkline extends Sparkline {
     static className = 'LineSparkline';
 
-    protected linePath: Path = new Path();
-    protected xCrosshairLine: Line = new Line();
-    protected yCrosshairLine: Line = new Line();
+    protected linePath: _Scene.Path = new _Scene.Path();
+    protected xCrosshairLine: _Scene.Line = new _Scene.Line();
+    protected yCrosshairLine: _Scene.Line = new _Scene.Line();
 
-    private lineSparklineGroup: Group = new Group();
-    private markers: Group = new Group();
-    private markerSelection: Selection<Marker, Group, LineNodeDatum, any> = Selection.select(
+    private lineSparklineGroup: _Scene.Group = new _Scene.Group();
+    private markers: _Scene.Group = new _Scene.Group();
+    private markerSelection: _Scene.Selection<_Scene.Marker, _Scene.Group, LineNodeDatum, any> = _Scene.Selection.select(
         this.markers
-    ).selectAll<Marker>();
+    ).selectAll<_Scene.Marker>();
     private markerSelectionData: LineNodeDatum[] = [];
 
     readonly marker = new SparklineMarker();

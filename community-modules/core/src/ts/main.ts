@@ -159,8 +159,6 @@ export { AnimationFrameService } from "./misc/animationFrameService";
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
 export { LargeTextCellEditor } from "./rendering/cellEditors/largeTextCellEditor";
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
-export { PopupSelectCellEditor } from "./rendering/cellEditors/popupSelectCellEditor";
-export { PopupTextCellEditor } from "./rendering/cellEditors/popupTextCellEditor";
 export { SelectCellEditor } from "./rendering/cellEditors/selectCellEditor";
 export { TextCellEditor } from "./rendering/cellEditors/textCellEditor";
 

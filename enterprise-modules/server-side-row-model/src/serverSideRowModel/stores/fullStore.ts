@@ -657,7 +657,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     public addStoreStates(result: ServerSideGroupLevelState[]): void {
         result.push({
-            infiniteScroll: false,
+            suppressInfiniteScroll: true,
             route: this.parentRowNode.getGroupKeys(),
             rowCount: this.allRowNodes.length,
             info: this.info

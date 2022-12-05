@@ -7,6 +7,7 @@ import { Column, ColumnPinnedType } from "../entities/column";
 import { Autowired, Bean, PreDestroy } from "../context/context";
 import { _ } from "../utils";
 import { ColumnEventType } from "../events";
+import { logDeprecation } from "../gridOptionsValidator";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -194,32 +195,32 @@ export class ColumnApi {
 
     /** @deprecated v28 Use `getColumns` instead */
     public getAllColumns(): Column[] | null {
-        console.warn('AG Grid: since version 28.0.x getAllColumns has been renamed, please use getColumns instead');
+        logDeprecation<ColumnApi>('28.0', 'getAllColumns', 'getColumns');
         return this.getColumns();
     }
     /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
     public getOriginalColumnGroup(name: string): ProvidedColumnGroup | null {
-        console.error('AG Grid: getOriginalColumnGroup is deprecated, use getProvidedColumnGroup');
+        logDeprecation<ColumnApi>('27.0', 'getOriginalColumnGroup', 'getProvidedColumnGroup');
         return this.columnModel.getProvidedColumnGroup(name);
     }
     /** @deprecated v28 Use `getColumns` instead. */
     public getPrimaryColumns(): Column[] | null {
-        console.warn('AG Grid: since version 28.0.x getPrimaryColumns has been renamed, please use getColumns instead');
+        logDeprecation<ColumnApi>('28.0', 'getPrimaryColumns', 'getColumns');
         return this.getColumns();
     }
     /** @deprecated v28 Use `getPivotResultColumns` instead. */
     public getSecondaryColumns(): Column[] | null {
-        console.warn('AG Grid: since version 28.0.x getSecondaryColumns has been renamed, please use getPivotResultColumns instead');
+        logDeprecation<ColumnApi>('28.0', 'getSecondaryColumns', 'getPivotResultColumns');
         return this.getPivotResultColumns();
     }
     /** @deprecated v28 Use `setPivotResultColumns` instead. */
     public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void {
-        console.warn('AG Grid: since version 28.0.x setSecondaryColumns has been renamed, please use setPivotResultColumns instead');
+        logDeprecation<ColumnApi>('28.0', 'setSecondaryColumns', 'setPivotResultColumns');
         this.setPivotResultColumns(colDefs);
     }
     /** @deprecated v28 Use `getPivotResultColumn` instead */
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null {
-        console.warn('AG Grid: since version 28.0.x getSecondaryPivotColumn has been renamed, please use getPivotResultColumn instead');
+        logDeprecation<ColumnApi>('28.0', 'getSecondaryPivotColumn', 'getPivotResultColumn');
         return this.getPivotResultColumn(pivotKeys, valueColKey);
     }
 }

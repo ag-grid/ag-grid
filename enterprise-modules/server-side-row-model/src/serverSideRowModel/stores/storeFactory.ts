@@ -10,7 +10,6 @@ import {
     WithoutGridCommon,
     GridOptionsService
 } from "@ag-grid-community/core";
-import { InfiniteStore } from "./infiniteStore";
 import { SSRMParams } from "../serverSideRowModel";
 import { FullStore } from "./fullStore";
 import { LazyStore } from "./lazy/lazyStore";
@@ -24,8 +23,7 @@ export class StoreFactory {
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
 
-        const InfiniteScrollStore = !!this.isServerSideNewInfiniteScroll() ? LazyStore : InfiniteStore;
-        const CacheClass = storeParams.infiniteScroll ? InfiniteScrollStore : FullStore;
+        const CacheClass = storeParams.suppressInfiniteScroll ? FullStore : LazyStore;
 
         return new CacheClass(ssrmParams, storeParams, parentNode);
     }
@@ -40,7 +38,7 @@ export class StoreFactory {
         const maxBlocksInCache = this.getMaxBlocksInCache(infiniteScroll, ssrmParams, userStoreParams);
 
         const storeParams: ServerSideGroupLevelParams = {
-            infiniteScroll,
+            suppressInfiniteScroll: !infiniteScroll,
             cacheBlockSize,
             maxBlocksInCache
         };
@@ -109,24 +107,20 @@ export class StoreFactory {
 
         const res = callback(params);
         if (res.storeType!=null) {
-            res.infiniteScroll = res.storeType==="partial";
+            res.suppressInfiniteScroll = res.storeType!=="partial";
         }
 
         return res;
     }
 
     private isInfiniteScroll(storeParams?: ServerSideGroupLevelParams): boolean {
-        const res = (storeParams && storeParams.infiniteScroll != null)
-            ? storeParams.infiniteScroll
-            : this.isServerSideInfiniteScroll();
-        return res;
+        const res = (storeParams && storeParams.suppressInfiniteScroll != null)
+            ? storeParams.suppressInfiniteScroll
+            : this.isSuppressServerSideInfiniteScroll();
+        return !res;
     }
 
-    private isServerSideInfiniteScroll(): boolean {
-        return this.gridOptionsService.is('serverSideInfiniteScroll' as any) || this.gridOptionsService.get('serverSideInfiniteScroll') === 'legacy';
-    }
-
-    private isServerSideNewInfiniteScroll(): boolean {
-        return this.gridOptionsService.is('serverSideInfiniteScroll' as any);
+    private isSuppressServerSideInfiniteScroll(): boolean {
+        return this.gridOptionsService.is('suppressServerSideInfiniteScroll');
     }
 }

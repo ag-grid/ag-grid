@@ -20,7 +20,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowSelection: 'single',
   columnDefs: columnDefs,
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
   getRowId: getRowId
 }
 

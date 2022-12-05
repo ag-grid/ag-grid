@@ -1,17 +1,13 @@
-import { Group } from '../../scene/group';
-import { Path } from '../../scene/shape/path';
-import { Line } from '../../scene/shape/line';
-import { BandScale } from '../../scale/bandScale';
-import { Selection } from '../../scene/selection';
+import { MarkerFormat, MarkerFormatterParams, CrosshairLineOptions } from '@ag-grid-community/core';
+import { _Scale, _Scene, _Util } from 'ag-charts-community';
+
 import { Point, SeriesNodeDatum, Sparkline } from '../sparkline';
-import { Marker } from '../marker/marker';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
-import { MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
-import { extent } from '../../util/array';
-import { isNumber } from '../../util/value';
-import { CrosshairLineOptions } from '@ag-grid-community/core';
 import { getLineDash } from '../../util/lineDash';
+
+const { extent, isNumber } = _Util;
+const { BandScale } = _Scale;
 
 interface AreaNodeDatum extends SeriesNodeDatum { }
 
@@ -55,19 +51,17 @@ export class AreaSparkline extends Sparkline {
 
     fill: string = 'rgba(124, 181, 236, 0.25)';
 
-    protected strokePath: Path = new Path();
-    protected fillPath: Path = new Path();
-    protected xCrosshairLine: Line = new Line();
-    protected yCrosshairLine: Line = new Line();
+    protected strokePath: _Scene.Path = new _Scene.Path();
+    protected fillPath: _Scene.Path = new _Scene.Path();
+    protected xCrosshairLine: _Scene.Line = new _Scene.Line();
+    protected yCrosshairLine: _Scene.Line = new _Scene.Line();
 
-    private areaSparklineGroup: Group = new Group();
-    private fillPathData: PathDatum[] = [];
-    private strokePathData: PathDatum[] = [];
-    private xAxisLine: Line = new Line();
-    private markers: Group = new Group();
-    private markerSelection: Selection<Marker, Group, AreaNodeDatum, any> = Selection.select(
+    private areaSparklineGroup: _Scene.Group = new _Scene.Group();
+    private xAxisLine: _Scene.Line = new _Scene.Line();
+    private markers: _Scene.Group = new _Scene.Group();
+    private markerSelection: _Scene.Selection<_Scene.Marker, _Scene.Group, AreaNodeDatum, any> = _Scene.Selection.select(
         this.markers
-    ).selectAll<Marker>();
+    ).selectAll<_Scene.Marker>();
     private markerSelectionData: AreaNodeDatum[] = [];
 
     readonly marker = new SparklineMarker();
@@ -91,15 +85,6 @@ export class AreaSparkline extends Sparkline {
         return this.markerSelectionData;
     }
 
-    /**
-     * If marker shape is changed, this method should be called to remove the previous marker nodes selection.
-     */
-    private onMarkerShapeChange() {
-        this.markerSelection = this.markerSelection.setData([]);
-        this.markerSelection.exit.remove();
-        this.scheduleLayout();
-    }
-
     protected update(): void {
         const data = this.generateNodeData();
 
@@ -110,8 +95,6 @@ export class AreaSparkline extends Sparkline {
         const { nodeData, fillData, strokeData } = data;
 
         this.markerSelectionData = nodeData;
-        this.fillPathData = fillData;
-        this.strokePathData = strokeData;
 
         this.updateSelection(nodeData);
         this.updateNodes();

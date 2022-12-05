@@ -110,6 +110,7 @@ const gridOptions: GridOptions = {
   rowSelection: 'multiple',
   columnDefs: columnDefs,
   rowModelType: 'serverSide',
+  suppressServerSideInfiniteScroll: true,
   animateRows: true,
   defaultColDef: {
     width: 250,

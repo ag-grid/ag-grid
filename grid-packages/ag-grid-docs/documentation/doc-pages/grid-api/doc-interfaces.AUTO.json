@@ -227,12 +227,6 @@
       "type": { "returnType": "boolean", "optional": false }
     }
   },
-  "DeprecatedComponentName": {
-    "propertyHolder": { "type": { "returnType": "string", "optional": false } },
-    "newComponentName": {
-      "type": { "returnType": "string", "optional": false }
-    }
-  },
   "ContextParams": {
     "providedBeanInstances": {
       "type": { "returnType": "any", "optional": false }
@@ -3099,12 +3093,12 @@
       "type": { "returnType": "number", "optional": true }
     },
     "serverSideStoreType": {
-      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
+      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "serverSideInfiniteScroll": {
+    "suppressServerSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean | 'legacy'", "optional": true }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -3139,11 +3133,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -5198,10 +5192,10 @@
   "ServerSideStoreType": {},
   "ServerSideGroupLevelParams": {
     "storeType": {
-      "description": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If infiniteScroll==true, then Partial Store is used.\n     * If infiniteScroll==false, then Full Store is used.\n     *  */",
+      "description": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If suppressInfiniteScroll==false, then Partial Store is used.\n     * If suppressInfiniteScroll==false, then Full Store is used.\n     *  */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "infiniteScroll": {
+    "suppressInfiniteScroll": {
       "description": "/** Whether to have infinite scroll active or not for the level.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
@@ -5216,10 +5210,10 @@
   },
   "ServerSideStoreParams": {
     "storeType": {
-      "description": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If infiniteScroll==true, then Partial Store is used.\n     * If infiniteScroll==false, then Full Store is used.\n     *  */",
+      "description": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If suppressInfiniteScroll==false, then Partial Store is used.\n     * If suppressInfiniteScroll==false, then Full Store is used.\n     *  */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "infiniteScroll": {
+    "suppressInfiniteScroll": {
       "description": "/** Whether to have infinite scroll active or not for the level.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
@@ -10841,7 +10835,7 @@
     "previousValue": { "type": { "returnType": "any", "optional": false } }
   },
   "PropertyChangedListener": {},
-  "DeprecatedReference": {},
+  "DeprecatedReference": { "meta": { "typeParams": ["T"] } },
   "IAbstractHeaderCellComp": {},
   "IHeaderCellComp": {
     "setWidth": {
@@ -12500,23 +12494,32 @@
         "optional": false
       }
     },
-    "forEachNode": {
-      "type": {
-        "arguments": { "callback": "(node: RowNode, index: number) => void" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "forEachNodeAfterFilter": {
       "type": {
-        "arguments": { "callback": "(node: RowNode, index: number) => void" },
+        "arguments": {
+          "callback": "(node: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
+        },
         "returnType": "void",
         "optional": false
       }
     },
     "forEachNodeAfterFilterAndSort": {
       "type": {
-        "arguments": { "callback": "(node: RowNode, index: number) => void" },
+        "arguments": {
+          "callback": "(node: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "forEachPivotNode": {
+      "type": {
+        "arguments": {
+          "callback": "(node: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
+        },
         "returnType": "void",
         "optional": false
       }
@@ -12557,13 +12560,6 @@
       "type": {
         "arguments": {},
         "returnType": "RowNode[] | null",
-        "optional": false
-      }
-    },
-    "forEachPivotNode": {
-      "type": {
-        "arguments": { "callback": "(node: RowNode, index: number) => void" },
-        "returnType": "void",
         "optional": false
       }
     },
@@ -12667,6 +12663,17 @@
       "type": {
         "arguments": { "first": "RowNode", "last": "RowNode | null" },
         "returnType": "RowNode[]",
+        "optional": false
+      }
+    },
+    "forEachNode": {
+      "description": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
+      "type": {
+        "arguments": {
+          "callback": "(rowNode: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
+        },
+        "returnType": "void",
         "optional": false
       }
     },
@@ -14199,7 +14206,8 @@
       "description": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
       "type": {
         "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void"
+          "callback": "(rowNode: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -14979,7 +14987,8 @@
       "description": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
       "type": {
         "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void"
+          "callback": "(rowNode: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -15346,7 +15355,8 @@
       "description": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
       "type": {
         "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void"
+          "callback": "(rowNode: RowNode, index: number) => void",
+          "includeFooterNodes?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -15581,7 +15591,7 @@
     }
   },
   "ServerSideGroupLevelState": {
-    "infiniteScroll": {
+    "suppressInfiniteScroll": {
       "description": "/** True if infininte scrolling */",
       "type": { "returnType": "boolean", "optional": false }
     },
@@ -15611,7 +15621,7 @@
     }
   },
   "ServerSideGroupState": {
-    "infiniteScroll": {
+    "suppressInfiniteScroll": {
       "description": "/** True if infininte scrolling */",
       "type": { "returnType": "boolean", "optional": false }
     },
@@ -17222,14 +17232,6 @@
         "optional": false
       }
     },
-    "autoHeight": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "suppressRefresh": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
     "meta": { "typeParams": ["TData = any", "TDetail = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
@@ -17983,10 +17985,6 @@
     "innerRendererSelector": {
       "description": "/** Callback to enable different innerRenderers to be used based of value of params. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
-    },
-    "padding": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "number", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "value": {
@@ -20804,12 +20802,12 @@
       "type": { "returnType": "number", "optional": true }
     },
     "serverSideStoreType": {
-      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
+      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "serverSideInfiniteScroll": {
+    "suppressServerSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean | 'legacy'", "optional": true }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -20844,11 +20842,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -23521,12 +23519,12 @@
       "type": { "returnType": "number", "optional": true }
     },
     "serverSideStoreType": {
-      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
+      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "serverSideInfiniteScroll": {
+    "suppressServerSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean | 'legacy'", "optional": true }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -23561,11 +23559,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -26244,12 +26242,12 @@
       "type": { "returnType": "number", "optional": true }
     },
     "serverSideStoreType": {
-      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
+      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "serverSideInfiniteScroll": {
+    "suppressServerSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean | 'legacy'", "optional": true }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -26284,11 +26282,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {

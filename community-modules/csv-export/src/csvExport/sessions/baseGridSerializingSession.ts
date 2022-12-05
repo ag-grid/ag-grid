@@ -47,7 +47,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     abstract parse(): string;
 
     public prepare(columnsToExport: Column[]): void {
-        this.groupColumns = columnsToExport.filter(col => !!col.getColDef().showRowGroup)!;
+        this.groupColumns = columnsToExport.filter(col => !!col.getColDef().showRowGroup);
     }
 
     public extractHeaderValue(column: Column): string {
@@ -81,8 +81,16 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
         const currentColumnGroupIndex = this.groupColumns.indexOf(column);
 
-        if (currentColumnGroupIndex !== -1 && node.groupData?.[column.getId()]) {
-            return true;
+        if (currentColumnGroupIndex !== -1) {
+            if (node.groupData?.[column.getId()]) { return true; }
+
+            // if this is a top level footer, always render`Total` in the left-most cell
+            if (node.footer && node.level === -1) {
+                const colDef = column.getColDef();
+                const isFullWidth = colDef == null || colDef.showRowGroup === true;
+
+                return isFullWidth || colDef.showRowGroup === this.columnModel.getRowGroupColumns()[0].getId();
+            }
         }
 
         const isGroupUseEntireRow = this.gridOptionsService.isGroupUseEntireRow(this.columnModel.isPivotMode());
@@ -112,6 +120,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 context: this.gridOptionsService.get('context'),
             });
         }
+        const isFooter = node.footer;
         const keys = [node.key];
 
         if (!this.gridOptionsService.isGroupMultiAutoColumn()) {
@@ -120,7 +129,10 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 keys.push(node.key);
             }
         }
-        return keys.reverse().join(' -> ');
+
+        const groupValue = keys.reverse().join(' -> ');
+
+        return isFooter ? `Total ${groupValue}` : groupValue;
     }
 
     private processCell(params: { accumulatedRowIndex: number, rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string }): any {
