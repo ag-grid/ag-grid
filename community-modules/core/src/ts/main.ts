@@ -88,7 +88,7 @@ export {
     DraggingEvent
 } from "./dragAndDrop/dragAndDropService";
 export { RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
-export { DragService } from "./dragAndDrop/dragService";
+export { DragService, DragListenerParams } from "./dragAndDrop/dragService";
 export { IRowDragItem } from "./rendering/row/rowDragComp";
 
 // entities
@@ -234,8 +234,6 @@ export { AgInputNumberField } from "./widgets/agInputNumberField";
 export { AgInputRange } from "./widgets/agInputRange";
 export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
-export { AgAngleSelect } from "./widgets/agAngleSelect";
-export { AgColorPicker } from "./widgets/agColorPicker";
 export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
 export { AgMenuItemComponent, MenuItemActivatedEvent, MenuItemSelectedEvent } from "./widgets/agMenuItemComponent";
 export { AgMenuList } from "./widgets/agMenuList";
@@ -251,6 +249,8 @@ export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService, AgPopup, PopupPositionParams } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
+export { AgAbstractLabel, IAgLabel } from "./widgets/agAbstractLabel";
+export { AgPickerField } from "./widgets/agPickerField";
 
 // range
 export {

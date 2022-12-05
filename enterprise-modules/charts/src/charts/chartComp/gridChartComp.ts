@@ -19,7 +19,7 @@ import {
     WithoutGridCommon,
     CHART_TOOL_PANEL_MENU_OPTIONS,
 } from "@ag-grid-community/core";
-import { AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
+import { AgChartThemeOverrides, AgChartThemePalette, AgChartInstance } from "ag-charts-community";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
 import { ChartController, DEFAULT_THEMES } from "./chartController";
@@ -36,7 +36,6 @@ import { ChartCrossFilterService } from "./services/chartCrossFilterService";
 import { CrossFilteringContext } from "../chartService";
 import { ChartOptionsService } from "./services/chartOptionsService";
 import { ComboChartProxy } from "./chartProxies/combo/comboChartProxy";
-import { AgChartInstance } from "ag-charts-community";
 
 export interface GridChartParams {
     chartId: string;

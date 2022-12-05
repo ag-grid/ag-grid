@@ -1,5 +1,4 @@
 import {
-    AgColorPicker,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSlider,
@@ -12,6 +11,7 @@ import { ChartTranslationService } from "../../../services/chartTranslationServi
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
+import { AgColorPicker } from "../../../../../widgets/agColorPicker";
 
 export class ShadowPanel extends Component {
 

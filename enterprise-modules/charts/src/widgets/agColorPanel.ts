@@ -1,9 +1,6 @@
-import { Component } from "./component";
-import { Color } from "../utils";
-import { RefSelector } from "./componentAnnotations";
-import { PostConstruct } from "../context/context";
+import { Component, PostConstruct, RefSelector, _ } from "@ag-grid-community/core";
 import { AgColorPicker } from "./agColorPicker";
-import { exists } from "../utils/generic";
+import { _Util } from 'ag-charts-community';
 
 export class AgColorPanel extends Component {
     private H = 1; // in the [0, 1] range
@@ -199,14 +196,14 @@ export class AgColorPanel extends Component {
     }
 
     private update() {
-        const color = Color.fromHSB(this.H * 360, this.S, this.B, this.A);
-        const spectrumColor = Color.fromHSB(this.H * 360, 1, 1);
+        const color = _Util.Color.fromHSB(this.H * 360, this.S, this.B, this.A);
+        const spectrumColor = _Util.Color.fromHSB(this.H * 360, 1, 1);
         const rgbaColor = color.toRgbaString();
 
         // the recent color list needs to know color has actually changed
         const colorPicker = this.picker as AgColorPicker;
 
-        const existingColor = Color.fromString(colorPicker.getValue());
+        const existingColor = _Util.Color.fromString(colorPicker.getValue());
         if (existingColor.toRgbaString() !== rgbaColor) {
             this.colorChanged = true;
         }
@@ -253,7 +250,7 @@ export class AgColorPanel extends Component {
     }
 
     public setValue(val: string) {
-        const color: Color = Color.fromString(val);
+        const color: _Util.Color = _Util.Color.fromString(val);
         const [h, s, b] = color.toHSB();
 
         this.H = (isNaN(h) ? 0 : h) / 360;
@@ -271,7 +268,7 @@ export class AgColorPanel extends Component {
     private onRecentColorClick(e: MouseEvent) {
         const target = e.target as HTMLElement;
 
-        if (!exists(target.id)) {
+        if (!_.exists(target.id)) {
             return;
         }
 
@@ -282,7 +279,7 @@ export class AgColorPanel extends Component {
     }
 
     private addRecentColor() {
-        const color = Color.fromHSB(this.H * 360, this.S, this.B, this.A);
+        const color = _Util.Color.fromHSB(this.H * 360, this.S, this.B, this.A);
         const rgbaColor = color.toRgbaString();
 
         let recentColors = AgColorPanel.recentColors;

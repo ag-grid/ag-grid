@@ -1,5 +1,4 @@
 import {
-    AgColorPicker,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSlider,
@@ -11,6 +10,7 @@ import {
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
+import { AgColorPicker } from "../../../../../widgets/agColorPicker";
 
 export class AxisTicksPanel extends Component {
 

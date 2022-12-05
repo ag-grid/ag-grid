@@ -1,6 +1,5 @@
 import {
     _,
-    AgColorPicker,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSelect,
@@ -9,6 +8,7 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
+import { AgColorPicker } from "../../../../widgets/agColorPicker";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 
 export interface Font {
