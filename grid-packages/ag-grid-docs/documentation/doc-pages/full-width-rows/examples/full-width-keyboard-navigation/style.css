@@ -1,0 +1,25 @@
+.full-width-panel {
+  white-space: normal;
+  height: 100%;
+  width: 100%;
+  border: 2px solid grey;
+  border-style: ridge;
+  box-sizing: border-box;
+  background-color: #fff8d5;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-left: var(--ag-cell-horizontal-padding); 
+}
+
+.full-width-panel input {
+  width: 80px;
+}
+
+.ag-row:focus .full-width-panel {
+  background-color: #e9d985;
+}
+
+.ag-row:focus {
+  background: lightskyblue;
+}
