@@ -36,7 +36,7 @@ export class CartesianChart extends Chart {
         const { captionAutoPadding = 0 } = this.positionCaptions();
         this.positionLegend(captionAutoPadding);
 
-        if (legend.enabled && legend.data.length) {
+        if (legend.visible && legend.enabled && legend.data.length) {
             const { legendAutoPadding } = this;
             const legendPadding = this.legend.spacing;
 
@@ -84,7 +84,9 @@ export class CartesianChart extends Chart {
         }
 
         this.seriesRoot.visible = seriesVisible;
-        legend.visible = seriesVisible;
+        if (!seriesVisible) {
+            legend.visible = false;
+        }
         navigator.visible = seriesVisible;
 
         this.seriesRect = seriesRect;

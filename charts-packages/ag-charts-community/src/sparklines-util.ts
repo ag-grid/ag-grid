@@ -9,4 +9,4 @@ export { tickFormat } from './util/numberFormat';
 
 import ticks from './util/ticks';
 export { ticks };
-export { Color } from './util/color'
+export { Color } from './util/color';
