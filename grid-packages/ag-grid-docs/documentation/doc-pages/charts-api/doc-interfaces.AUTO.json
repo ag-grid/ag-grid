@@ -4346,6 +4346,8 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "Column": {},
+  "Grid": {},
   "InteractionTypes": {},
   "Listener": { "meta": { "typeParams": ["T extends InteractionTypes"] } },
   "SUPPORTED_EVENTS": {},

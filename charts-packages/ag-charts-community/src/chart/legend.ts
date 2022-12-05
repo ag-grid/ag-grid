@@ -32,6 +32,7 @@ import {
     Validate,
 } from '../util/validation';
 import { Layers } from './layers';
+import { gridLayout } from './gridLayout';
 
 export interface LegendDatum {
     id: string; // component ID
@@ -306,7 +307,6 @@ export class Legend {
             node.marker = new Marker();
         });
         const itemSelection = (this.itemSelection = updateSelection.merge(enterSelection));
-        const itemCount = itemSelection.size;
 
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
@@ -370,125 +370,70 @@ export class Legend {
             bboxes.push(markerLabel.computeBBox());
         });
 
-        const itemHeight = bboxes.length && bboxes[0].height;
-        let rowCount = 0;
-
-        let columnWidth = 0;
-        let paddedItemsWidth = 0;
-        let paddedItemsHeight = 0;
-
         width = Math.max(1, width);
         height = Math.max(1, height);
 
-        switch (this.orientation) {
-            case LegendOrientation.Horizontal:
-                if (!(isFinite(width) && width > 0)) {
-                    return false;
-                }
-
-                rowCount = 0;
-                let columnCount = 0;
-
-                // Split legend items into columns until the width is suitable.
-                do {
-                    let itemsWidth = 0;
-
-                    columnCount = 0;
-                    columnWidth = 0;
-                    rowCount++;
-
-                    let i = 0;
-                    while (i < itemCount) {
-                        const bbox = bboxes[i];
-                        if (bbox.width > columnWidth) {
-                            columnWidth = bbox.width;
-                        }
-                        i++;
-                        if (i % rowCount === 0) {
-                            itemsWidth += columnWidth;
-                            columnWidth = 0;
-                            columnCount++;
-                        }
-                    }
-                    if (i % rowCount !== 0) {
-                        itemsWidth += columnWidth;
-                        columnCount++;
-                    }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * paddingX;
-                } while (paddedItemsWidth > width && columnCount > 1);
-
-                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * paddingY;
-
-                break;
-
-            case LegendOrientation.Vertical:
-                if (!(isFinite(height) && height > 0)) {
-                    return false;
-                }
-
-                rowCount = itemCount * 2;
-
-                // Split legend items into columns until the height is suitable.
-                do {
-                    rowCount = (rowCount >> 1) + (rowCount % 2);
-                    columnWidth = 0;
-
-                    let itemsWidth = 0;
-                    let itemsHeight = 0;
-                    let columnCount = 0;
-
-                    let i = 0;
-                    while (i < itemCount) {
-                        const bbox = bboxes[i];
-                        if (!columnCount) {
-                            itemsHeight += bbox.height;
-                        }
-                        if (bbox.width > columnWidth) {
-                            columnWidth = bbox.width;
-                        }
-                        i++;
-                        if (i % rowCount === 0) {
-                            itemsWidth += columnWidth;
-                            columnWidth = 0;
-                            columnCount++;
-                        }
-                    }
-                    if (i % rowCount !== 0) {
-                        itemsWidth += columnWidth;
-                        columnCount++;
-                    }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * paddingX;
-                    paddedItemsHeight = itemsHeight + (rowCount - 1) * paddingY;
-                } while (paddedItemsHeight > height && rowCount > 1);
-
-                break;
+        if (!isFinite(width)) {
+            return false;
         }
 
+        const { pages } = gridLayout({
+            bboxes,
+            maxHeight: height,
+            maxWidth: width,
+            itemPaddingY: paddingY,
+            itemPaddingX: paddingX,
+        });
+
+        const columns = pages[0];
+
+        const itemHeight = bboxes[0].height + paddingY;
+        const totalHeight = columns[0].rowCount * itemHeight;
+        const totalWidth = columns.reduce((w, col) => (w += col.columnWidth), 0);
+
+        // Position legend items using the layout computed.
+
         // Top-left corner of the first legend item.
-        const startX = (width - paddedItemsWidth) / 2;
-        const startY = (height - paddedItemsHeight) / 2;
+        const startX = (width - totalWidth) / 2;
+        const startY = (height - totalHeight) / 2;
 
         let x = 0;
         let y = 0;
-        columnWidth = 0;
-
-        // Position legend items using the layout computed above.
+        let firstItem: MarkerLabel;
+        let prevColumnWidth = 0;
+        let newColumn = false;
+        let columnIdx = 0;
+        const visibleStart = columns[0].startIdx;
+        const visibleEnd = columns[columns.length - 1].endIdx;
         itemSelection.each((markerLabel, _, i) => {
+            if (i < visibleStart || i > visibleEnd) {
+                markerLabel.visible = false;
+                return;
+            }
+
+            firstItem ??= markerLabel;
+            markerLabel.visible = true;
+
+            let column = columns[columnIdx];
+            newColumn = false;
+            if (i > column.endIdx) {
+                columnIdx++;
+                newColumn = true;
+                column = columns[columnIdx];
+            }
+
+            if (newColumn || markerLabel === firstItem) {
+                x += prevColumnWidth;
+                y = 0;
+
+                prevColumnWidth = column.columnWidth;
+            } else {
+                y += itemHeight;
+            }
+
             // Round off for pixel grid alignment to work properly.
             markerLabel.translationX = Math.floor(startX + x);
             markerLabel.translationY = Math.floor(startY + y);
-
-            const bbox = bboxes[i];
-            if (bbox.width > columnWidth) {
-                columnWidth = bbox.width;
-            }
-            if ((i + 1) % rowCount === 0) {
-                x += columnWidth + paddingX;
-                y = 0;
-                columnWidth = 0;
-            } else {
-                y += bbox.height + paddingY;
-            }
         });
 
         // Update legend item properties that don't affect the layout.
@@ -496,8 +441,8 @@ export class Legend {
 
         const size = this.size;
         const oldSize = this.oldSize;
-        size[0] = paddedItemsWidth;
-        size[1] = paddedItemsHeight;
+        size[0] = totalWidth;
+        size[1] = totalHeight;
 
         if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
             oldSize[0] = size[0];
