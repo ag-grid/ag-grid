@@ -68,8 +68,7 @@ export class ComboChartProxy extends CartesianChartProxy {
             });
         }
 
-        // Allow toggling of axis titles by theme overrides.
-        return axes.map((axis) => ({ ...axis, title: { ...axis.title, _enabledFromTheme: true }}));
+        return axes;
     }
 
     public getSeries(params: UpdateChartParams): any {

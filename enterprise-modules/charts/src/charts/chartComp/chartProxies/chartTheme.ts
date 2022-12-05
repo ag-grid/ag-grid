@@ -9,7 +9,8 @@ import {
     AgPolarSeriesTheme,
     _Theme,
 } from 'ag-charts-community';
-import { getSeriesType } from '../utils/seriesTypeMapper';
+import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
+import { getSeriesType, VALID_SERIES_TYPES } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';
 
 export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: ChartProxy): AgChartTheme {
@@ -135,13 +136,23 @@ function createCrossFilterThemeOverrides(
     };
 }
 
+const STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES = ALL_AXIS_TYPES.reduce(
+    (r, n) => ({ ...r, [n]: { title: { _enabledFromTheme: true } } }),
+    {}
+);
 const STATIC_INBUILT_STOCK_THEME_OVERRIDES: AgChartThemeOverrides = {
+    common: {
+        axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
+    },
     pie: {
         series: {
+            title: { _enabledFromTheme: true },
+            calloutLabel: { _enabledFromTheme: true },
             sectorLabel: {
                 enabled: false,
+                _enabledFromTheme: true,
             },
-        },
+        } as any,
     },
 };
 

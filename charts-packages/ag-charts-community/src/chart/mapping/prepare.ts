@@ -321,24 +321,36 @@ function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptio
     // Set `enabled: true` for all option objects where the user has provided values.
     jsonWalk(
         options,
-        (_, userOpts, mergedOpts) => {
-            if (!mergedOpts) return;
+        (_, visitingUserOpts, visitingMergedOpts) => {
+            if (!visitingMergedOpts) return;
 
-            const { _enabledFromTheme } = mergedOpts;
+            const { _enabledFromTheme } = visitingMergedOpts;
             if (_enabledFromTheme != null) {
                 // Do not apply special handling, base enablement on theme.
-                delete mergedOpts._enabledFromTheme;
+                delete visitingMergedOpts._enabledFromTheme;
             }
 
-            if (!('enabled' in mergedOpts)) return;
+            if (!('enabled' in visitingMergedOpts)) return;
             if (_enabledFromTheme) return;
 
-            if (userOpts.enabled == null) {
-                mergedOpts.enabled = true;
+            if (visitingUserOpts.enabled == null) {
+                visitingMergedOpts.enabled = true;
             }
         },
         { skip: ['data', 'theme'] },
         mergedOptions
+    );
+
+    // Cleanup any special properties.
+    jsonWalk(
+        mergedOptions,
+        (_, visitingMergedOpts) => {
+            if (visitingMergedOpts._enabledFromTheme != null) {
+                // Do not apply special handling, base enablement on theme.
+                delete visitingMergedOpts._enabledFromTheme;
+            }
+        },
+        { skip: ['data', 'theme'] }
     );
 }
 

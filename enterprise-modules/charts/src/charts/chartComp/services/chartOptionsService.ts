@@ -10,7 +10,7 @@ import { AgCartesianAxisType, AgChart, AgChartOptions } from "ag-charts-communit
 import { ChartController } from "../chartController";
 import { AgChartActual } from "../utils/integration";
 import { deepMerge } from "../utils/object";
-import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
+import { ChartSeriesType, getSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
 type SupportedSeries = AgChartActual['series'][number];
@@ -168,19 +168,10 @@ export class ChartOptionsService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private static VALID_SERIES_TYPES: ChartSeriesType[] = [
-        'area',
-        'bar',
-        'column',
-        'histogram',
-        'line',
-        'pie',
-        'scatter',
-    ];
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
         const mapTypeToImplType = (type: ChartSeriesType) => type === 'column' ? 'bar' : type;
 
-        return ChartOptionsService.VALID_SERIES_TYPES.includes(seriesType) &&
+        return VALID_SERIES_TYPES.includes(seriesType) &&
             series.type === mapTypeToImplType(seriesType);
     }
 
