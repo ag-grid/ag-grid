@@ -80,7 +80,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
         if (this.value === color) { return this; }
 
         this.eDisplayField.style.backgroundColor = color;
-        console.log('setting vlaues')
+
         return super.setValue(color);
     }
 
