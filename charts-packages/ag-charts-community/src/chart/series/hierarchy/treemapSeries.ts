@@ -1,7 +1,7 @@
 import { Selection } from '../../../scene/selection';
 import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Label } from '../../label';
-import { SeriesNodeDatum, SeriesTooltip, SeriesNodeClickEvent } from '../series';
+import { SeriesNodeDatum, SeriesTooltip, SeriesNodeClickEvent, HighlightStyle } from '../series';
 import { HierarchySeries } from './hierarchySeries';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { Group } from '../../../scene/group';
@@ -104,6 +104,15 @@ enum TextNodeTag {
 
 function getTextSize(text: string, style: Label) {
     return HdpiCanvas.getTextSize(text, [style.fontWeight, `${style.fontSize}px`, style.fontFamily].join(' '));
+}
+
+class TreemapTextHighlightStyle {
+    @Validate(OPT_COLOR_STRING)
+    color?: string = 'black';
+}
+
+export class TreemapHighlightStyle extends HighlightStyle {
+    readonly text = new TreemapTextHighlightStyle();
 }
 
 export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
@@ -216,6 +225,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     labelShadow = new DropShadow();
 
     readonly tooltip = new TreemapSeriesTooltip();
+
+    readonly highlightStyle = new TreemapHighlightStyle();
 
     private getNodePaddingTop(nodeDatum: TreemapNodeDatum, bbox: BBox) {
         const { title, subtitle, nodePadding } = this;

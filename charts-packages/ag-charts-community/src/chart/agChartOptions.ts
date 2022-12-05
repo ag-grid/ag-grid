@@ -711,11 +711,6 @@ export interface AgSeriesHighlightMarkerStyle {
     strokeWidth?: PixelSize;
 }
 
-export interface AgSeriesHighlightTextStyle {
-    /** The colour of an item's text when tapped or hovered over. Use `undefined` for no highlight. */
-    color?: CssColor;
-}
-
 export interface AgSeriesHighlightSeriesStyle {
     enabled?: boolean;
     /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */
@@ -729,8 +724,6 @@ export interface AgSeriesHighlightStyle {
     item?: AgSeriesHighlightMarkerStyle;
     /** Highlight style used for whole series when one of its markers is tapped or hovered over. */
     series?: AgSeriesHighlightSeriesStyle;
-    /** Highlight style used for a text when item is tapped or hovered over. */
-    text?: AgSeriesHighlightTextStyle;
 }
 
 export interface AgSeriesNodeClickParams<DatumType> {
@@ -1494,6 +1487,16 @@ export interface AgTreemapSeriesLabelsOptions {
     };
 }
 
+export interface AgTreemapSeriesHighlightTextStyle {
+    /** The colour of an item's text when tapped or hovered over. Use `undefined` for no highlight. */
+    color?: CssColor;
+}
+
+export interface AgTreemapSeriesHighlightStyle extends AgSeriesHighlightStyle {
+    /** Highlight style used for a text when item is tapped or hovered over. */
+    text?: AgTreemapSeriesHighlightTextStyle;
+}
+
 /** Configuration for the treemap series. */
 export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
     type?: 'treemap';
@@ -1535,6 +1538,8 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     labelShadow?: AgDropShadowOptions;
     /** Determines whether the groups will be highlighted by cursor. */
     highlightGroups?: boolean;
+    /** Configuration for treemap tiles when they are hovered over. */
+    highlightStyle?: AgTreemapSeriesHighlightStyle;
     /** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */
     formatter?: (params: AgTreemapSeriesFormatterParams<DataValue>) => AgTreemapSeriesFormat;
     /** A map of event names to event listeners. */

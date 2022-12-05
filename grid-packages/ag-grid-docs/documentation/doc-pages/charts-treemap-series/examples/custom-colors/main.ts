@@ -37,17 +37,13 @@ const options: agCharts.AgChartOptions = {
                     color: undefined,
                 },
             },
-            formatter: ({ datum, depth, parent, highlighted }) => {
+            formatter: ({ depth, parent, highlighted }) => {
                 if (depth < 2) {
                     return {};
                 }
 
+                const fill = parent.name === 'Foodstuffs' ? 'rgb(64, 172, 64)' : 'rgb(32, 96, 224)';
                 const stroke = highlighted ? 'black' : 'white';
-                const mainColor = parent.name === 'Foodstuffs' ? [224, 64, 32] : [32, 92, 224];
-                const siblings = parent.children.sort((a, b) => b.exports - a.exports);
-                const lightness = siblings.indexOf(datum) / siblings.length;
-                const color = mainColor.map((v) => v * (1 - 0.5 * lightness));
-                const fill = `rgb(${color.join(',')})`;
                 return { fill, stroke };
             },
         } as agCharts.AgTreemapSeriesOptions,

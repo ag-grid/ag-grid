@@ -1985,12 +1985,6 @@
       "type": { "returnType": "PixelSize", "optional": true }
     }
   },
-  "AgSeriesHighlightTextStyle": {
-    "color": {
-      "description": "/** The colour of an item's text when tapped or hovered over. Use `undefined` for no highlight. */",
-      "type": { "returnType": "CssColor", "optional": true }
-    }
-  },
   "AgSeriesHighlightSeriesStyle": {
     "enabled": { "type": { "returnType": "boolean", "optional": true } },
     "dimOpacity": {
@@ -2010,10 +2004,6 @@
     "series": {
       "description": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */",
       "type": { "returnType": "AgSeriesHighlightSeriesStyle", "optional": true }
-    },
-    "text": {
-      "description": "/** Highlight style used for a text when item is tapped or hovered over. */",
-      "type": { "returnType": "AgSeriesHighlightTextStyle", "optional": true }
     }
   },
   "AgSeriesNodeClickParams": {
@@ -3943,6 +3933,29 @@
       }
     }
   },
+  "AgTreemapSeriesHighlightTextStyle": {
+    "color": {
+      "description": "/** The colour of an item's text when tapped or hovered over. Use `undefined` for no highlight. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    }
+  },
+  "AgTreemapSeriesHighlightStyle": {
+    "text": {
+      "description": "/** Highlight style used for a text when item is tapped or hovered over. */",
+      "type": {
+        "returnType": "AgTreemapSeriesHighlightTextStyle",
+        "optional": true
+      }
+    },
+    "item": {
+      "description": "/** Highlight style used for an individual marker when tapped or hovered over. */",
+      "type": { "returnType": "AgSeriesHighlightMarkerStyle", "optional": true }
+    },
+    "series": {
+      "description": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */",
+      "type": { "returnType": "AgSeriesHighlightSeriesStyle", "optional": true }
+    }
+  },
   "AgTreemapSeriesOptions": {
     "type": { "type": { "returnType": "'treemap'", "optional": true } },
     "title": {
@@ -4024,6 +4037,13 @@
       "description": "/** Determines whether the groups will be highlighted by cursor. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "highlightStyle": {
+      "description": "/** Configuration for treemap tiles when they are hovered over. */",
+      "type": {
+        "returnType": "AgTreemapSeriesHighlightStyle",
+        "optional": true
+      }
+    },
     "formatter": {
       "description": "/** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */",
       "type": {
@@ -4056,10 +4076,6 @@
     "cursor": {
       "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "highlightStyle": {
-      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
-      "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
     }
   },
   "AgTreemapSeriesFormatterParams": {

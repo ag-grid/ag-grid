@@ -1295,13 +1295,6 @@
       "strokeWidth?": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */"
     }
   },
-  "AgSeriesHighlightTextStyle": {
-    "meta": {},
-    "type": { "color?": "CssColor" },
-    "docs": {
-      "color?": "/** The colour of an item's text when tapped or hovered over. Use `undefined` for no highlight. */"
-    }
-  },
   "AgSeriesHighlightSeriesStyle": {
     "meta": {},
     "type": {
@@ -1318,13 +1311,11 @@
     "meta": {},
     "type": {
       "item?": "AgSeriesHighlightMarkerStyle",
-      "series?": "AgSeriesHighlightSeriesStyle",
-      "text?": "AgSeriesHighlightTextStyle"
+      "series?": "AgSeriesHighlightSeriesStyle"
     },
     "docs": {
       "item?": "/** Highlight style used for an individual marker when tapped or hovered over. */",
-      "series?": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */",
-      "text?": "/** Highlight style used for a text when item is tapped or hovered over. */"
+      "series?": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */"
     }
   },
   "AgSeriesNodeClickParams": {
@@ -2568,6 +2559,26 @@
       "value?": "/** The configuration for the cell value label. */"
     }
   },
+  "AgTreemapSeriesHighlightTextStyle": {
+    "meta": {},
+    "type": { "color?": "CssColor" },
+    "docs": {
+      "color?": "/** The colour of an item's text when tapped or hovered over. Use `undefined` for no highlight. */"
+    }
+  },
+  "AgTreemapSeriesHighlightStyle": {
+    "meta": {},
+    "type": {
+      "text?": "AgTreemapSeriesHighlightTextStyle",
+      "item?": "AgSeriesHighlightMarkerStyle",
+      "series?": "AgSeriesHighlightSeriesStyle"
+    },
+    "docs": {
+      "text?": "/** Highlight style used for a text when item is tapped or hovered over. */",
+      "item?": "/** Highlight style used for an individual marker when tapped or hovered over. */",
+      "series?": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */"
+    }
+  },
   "AgTreemapSeriesOptions": {
     "meta": {
       "typeParams": ["DatumType = any"],
@@ -2594,14 +2605,14 @@
       "tileShadow?": "AgDropShadowOptions",
       "labelShadow?": "AgDropShadowOptions",
       "highlightGroups?": "boolean",
+      "highlightStyle?": "AgTreemapSeriesHighlightStyle",
       "formatter?": "(params: AgTreemapSeriesFormatterParams<DataValue>) => AgTreemapSeriesFormat",
       "listeners?": "AgSeriesListeners<DatumType>",
       "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
-      "cursor?": "string",
-      "highlightStyle?": "AgSeriesHighlightStyle"
+      "cursor?": "string"
     },
     "docs": {
       "title?": "/** The label configuration for the top-level tiles. */",
@@ -2623,14 +2634,14 @@
       "tileShadow?": "/** Configuration for the shadow used behind the treemap tiles. */",
       "labelShadow?": "/** Configuration for the shadow used behind the treemap labels. */",
       "highlightGroups?": "/** Determines whether the groups will be highlighted by cursor. */",
+      "highlightStyle?": "/** Configuration for treemap tiles when they are hovered over. */",
       "formatter?": "/** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */",
       "listeners?": "/** A map of event names to event listeners. */",
       "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
-      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */"
     }
   },
   "AgTreemapSeriesFormatterParams": {
