@@ -25,7 +25,12 @@ npx gulp release-archive
 cd ../../
 
 ARCHIVE_FILENAME="archive_`date +%Y%m%d`_$RAW_VERSION.tar"
-node scripts/release/createDocsArchiveBundle.js $RAW_VERSION $ARCHIVE_FILENAME
+rm $ARCHIVE_FILENAME
+
+echo "Adding robots.txt and github version info"
+node scripts/release/patchDocs.js
+
+tar -cvf $ARCHIVE_FILENAME "grid-packages/ag-grid-docs/dist"
 
 echo "Gzipping $ARCHIVE_FILENAME"
 gzip --force $ARCHIVE_FILENAME
