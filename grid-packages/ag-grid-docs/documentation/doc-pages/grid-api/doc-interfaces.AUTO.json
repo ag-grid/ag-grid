@@ -1781,6 +1781,10 @@
     "contractColumnSelection": {
       "description": "/** By default, column groups start expanded.\n     * Pass true to default to contracted groups*/",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "columnLayout": {
+      "description": "/** Custom Columns Panel layout */",
+      "type": { "returnType": "(ColDef | ColGroupDef)[]", "optional": true }
     }
   },
   "BaseColDefParams": {

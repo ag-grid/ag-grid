@@ -1062,14 +1062,16 @@
       "suppressColumnFilter?": "boolean",
       "suppressColumnSelectAll?": "boolean",
       "suppressColumnExpandAll?": "boolean",
-      "contractColumnSelection?": "boolean"
+      "contractColumnSelection?": "boolean",
+      "columnLayout?": "(ColDef | ColGroupDef)[]"
     },
     "docs": {
       "suppressSyncLayoutWithGrid?": "/** To suppress updating the layout of columns as they are rearranged in the grid */",
       "suppressColumnFilter?": "/** To suppress Column Filter section*/",
       "suppressColumnSelectAll?": "/** To suppress Select / Un-select all widget*/",
       "suppressColumnExpandAll?": "/** To suppress Expand / Collapse all widget*/",
-      "contractColumnSelection?": "/** By default, column groups start expanded.\n     * Pass true to default to contracted groups*/"
+      "contractColumnSelection?": "/** By default, column groups start expanded.\n     * Pass true to default to contracted groups*/",
+      "columnLayout?": "/** Custom Columns Panel layout */"
     }
   },
   "BaseColDefParams": {
