@@ -59,7 +59,8 @@ export default class TitlePanel extends Component {
             setEnabled: (enabled) => {
                 this.setOption('title.enabled', enabled);
                 const currentTitleText = this.getOption('title.text');
-                if (enabled && currentTitleText === 'Title') {
+                const replaceableTitleText = currentTitleText === 'Title' || currentTitleText?.trim().length === 0;
+                if (enabled && replaceableTitleText) {
                     this.setOption('title.text', this.titlePlaceholder);
                 }
             }
