@@ -187,24 +187,10 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
     }
 
     private getStrategyTypeForProp(propKey: string) {
-        if (propKey === 'rowData') {
-            if (this.props.rowDataChangeDetectionStrategy) {
-                return this.props.rowDataChangeDetectionStrategy;
-            }
-            if (this.isImmutableDataActive()) {
-                return ChangeDetectionStrategyType.IdentityCheck;
-            }
+        if (propKey === 'rowData' && this.props.rowDataChangeDetectionStrategy) {
+            return this.props.rowDataChangeDetectionStrategy;
         }
-
-        // all other cases will default to DeepValueCheck
-        return ChangeDetectionStrategyType.DeepValueCheck;
-    }
-
-    private isImmutableDataActive() {
-        return (this.props.immutableData || this.props.getRowId != null) ||
-            (this.props.gridOptions && (
-                this.props.gridOptions.immutableData
-                || this.props.gridOptions.getRowId != null));
+        return ChangeDetectionStrategyType.IdentityCheck
     }
 }
 

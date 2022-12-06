@@ -11280,7 +11280,11 @@
       "DeepValueCheck = 'DeepValueCheck'",
       "NoCheck = 'NoCheck'"
     ],
-    "docs": [null, null, null]
+    "docs": [
+      null,
+      "/** @deprecated IdentityCheck will be used instead */",
+      null
+    ]
   },
   "ChangeDetectionStrategy": {
     "meta": {},
