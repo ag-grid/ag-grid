@@ -33,24 +33,22 @@ const options: AgChartOptions = {
 }
 
 function tooltipRenderer(params: AgTreemapSeriesTooltipRendererParams<any>) {
-  const { datum } = params
-  const customRootText = 'Custom Root Text'
-  const title = datum.parent
-    ? datum.parent.depth
-      ? datum.parent.datum[params.labelKey!]
-      : customRootText
+  const { color, parent, depth, labelKey, colorKey } = params
+  const customRootText = 'All industries'
+  const title = depth > 1
+    ? parent[labelKey!]
     : customRootText
   let content = '<div>'
   let ellipsis = false
 
-  if (datum.parent) {
+  if (parent) {
     const maxCount = 5
-    ellipsis = datum.parent.children!.length > maxCount
-    datum.parent.children!.slice(0, maxCount).forEach((child: any) => {
-      content += `<div style="font-weight: bold; color: white; background-color: ${child.fill
-        }; padding: 5px;"><strong>${child.datum.name || child.label
+    ellipsis = parent.children!.length > maxCount
+    parent.children!.slice(0, maxCount).forEach((child: any) => {
+      content += `<div style="font-weight: bold; color: white; background-color: ${color
+        }; padding: 5px;"><strong>${child[labelKey!]
         }</strong>: ${String(
-          isFinite(child.colorValue) ? child.colorValue.toFixed(2) : ''
+          isFinite(child[colorKey!]) ? child[colorKey!].toFixed(2) : ''
         )}%</div>`
     })
   }
