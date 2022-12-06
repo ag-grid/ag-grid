@@ -18,6 +18,7 @@ export class TitleEdit extends Component {
     private destroyableChartListeners: (() => void)[];
     private chartController: ChartController;
     private chartOptionsService: ChartOptionsService;
+    private editing: boolean = false;
 
     constructor(private readonly chartMenu: ChartMenu) {
         super(TitleEdit.TEMPLATE);
@@ -30,7 +31,7 @@ export class TitleEdit extends Component {
                 this.endEditing();
             }
         });
-        this.addManagedListener(this.getGui(), 'blur', this.endEditing.bind(this));
+        this.addManagedListener(this.getGui(), 'blur', () => this.endEditing());
     }
 
     /* should be called when the containing component changes to a new chart proxy */
@@ -88,6 +89,11 @@ export class TitleEdit extends Component {
             return;
         }
 
+        if (this.editing) {
+            return;
+        }
+        this.editing = true;
+
         const minimumTargetInputWidth: number = 300;
         const maximumInputWidth: number = this.chartController.getChartProxy().getChart().width;
         const inputWidth = Math.max(Math.min(titleBBox.width + 20, maximumInputWidth), minimumTargetInputWidth);
@@ -119,6 +125,11 @@ export class TitleEdit extends Component {
     }
 
     private endEditing(): void {
+        if (!this.editing) {
+            return;
+        }
+        this.editing = false;
+
         const value = (this.getGui() as HTMLInputElement).value;
         this.chartOptionsService.setChartOption('title.text', value);
         this.eventService.dispatchEvent({type: 'chartTitleEdit'});
