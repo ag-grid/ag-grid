@@ -311,24 +311,38 @@ export class ChartMenu extends Component {
         this.menuVisible ? this.hideMenu() : this.showMenu();
     }
 
-    public showMenu(panel?: ChartToolPanelMenuOptions, animate: boolean = true): void {
+    public showMenu(
+        /**
+         * Menu panel to show. If empty, shows the existing menu, or creates the default menu if menu panel has not been created
+         */
+        panel?: ChartToolPanelMenuOptions,
+        /**
+         * Whether to animate the menu opening
+         */
+        animate: boolean = true
+    ): void {
         if (!animate) {
             this.eMenuPanelContainer.classList.add('ag-no-transition');
         }
 
-        const menuPanel = panel || this.defaultPanel;
-        let tab = this.panels.indexOf(menuPanel);
-        if (tab < 0) {
-            console.warn(`AG Grid: '${panel}' is not a valid Chart Tool Panel name`);
-            tab = this.panels.indexOf(this.defaultPanel)
-        }
-
-        if (this.menuPanel) {
-            this.tabbedMenu.showTab(tab);
+        if (this.menuPanel && !panel) {
             this.showContainer();
         } else {
-            this.createMenuPanel(tab).then(this.showContainer.bind(this));
+            const menuPanel = panel || this.defaultPanel;
+            let tab = this.panels.indexOf(menuPanel);
+            if (tab < 0) {
+                console.warn(`AG Grid: '${panel}' is not a valid Chart Tool Panel name`);
+                tab = this.panels.indexOf(this.defaultPanel)
+            }
+    
+            if (this.menuPanel) {
+                this.tabbedMenu.showTab(tab);
+                this.showContainer();
+            } else {
+                this.createMenuPanel(tab).then(this.showContainer.bind(this));
+            }
         }
+
 
         if (!animate) {
             // Wait for menu to render
