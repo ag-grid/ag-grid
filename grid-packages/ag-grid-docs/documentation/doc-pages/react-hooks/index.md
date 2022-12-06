@@ -24,6 +24,9 @@ const App = () => {
 };
 ```
 
+If you do NOT use `useState` or `useMemo`, then the grid will be provided with a new set of row data each time
+the parent component is rendered. This will result in unexpected behaviour in the grid, such as row selection resetting.
+
 For applications that set data into the grid (as opposed to showing data statically), it makes sense to favour `useState`
 over `useMemo` as loading data usually aligns with changing state in your application.
 
