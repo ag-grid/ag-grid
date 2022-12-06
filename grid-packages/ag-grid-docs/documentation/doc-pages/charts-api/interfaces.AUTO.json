@@ -2894,9 +2894,13 @@
     "meta": { "isTypeAlias": true },
     "type": "Record<string, { vertical: [ Date, Date ]; horizontal: [ number, number ]; }>"
   },
+  "Page": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
+  },
   "Column": {
     "meta": { "isTypeAlias": true },
-    "type": "{ rowCount: number; columnWidth: number; columnHeight: number; startIdx: number; endIdx: number; }"
+    "type": "{ rowCount: number; columnWidth: number; columnHeight: number; startIndex: number; endIndex: number; bboxes: BBox[]; }"
   },
   "Grid": {
     "meta": { "isTypeAlias": true },
@@ -2949,7 +2953,7 @@
       "label": "{ text: string; }"
     }
   },
-  "LegendOrientation": {
+  "Orientation": {
     "meta": { "isEnum": true },
     "type": ["Vertical", "Horizontal"],
     "docs": [null, null]

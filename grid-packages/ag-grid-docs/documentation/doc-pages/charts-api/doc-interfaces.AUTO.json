@@ -4346,6 +4346,7 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "Page": {},
   "Column": {},
   "Grid": {},
   "InteractionTypes": {},
@@ -4373,7 +4374,7 @@
       }
     }
   },
-  "LegendOrientation": {},
+  "Orientation": {},
   "SeriesOptionsTypes": {},
   "AxesOptionsTypes": {},
   "PreparationContext": {

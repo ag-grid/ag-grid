@@ -54,7 +54,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly scene: Scene;
     readonly seriesRoot = new ClipRect();
     readonly background: Background = new Background();
-    readonly legend = new Legend();
+    readonly legend: Legend;
 
     protected legendAutoPadding = new Padding();
 
@@ -228,6 +228,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('click', (event) => this.onClick(event));
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
         this.interactionManager.addListener('leave', () => this.togglePointer(false));
+
+        this.legend = new Legend(this.interactionManager);
 
         background.width = this.scene.width;
         background.height = this.scene.height;

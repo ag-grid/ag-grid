@@ -1,6 +1,15 @@
 import { BBox } from '../scene/bbox';
 
-type Column = { rowCount: number; columnWidth: number; columnHeight: number; startIdx: number; endIdx: number };
+export type Page = { columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number };
+
+type Column = {
+    rowCount: number;
+    columnWidth: number;
+    columnHeight: number;
+    startIndex: number;
+    endIndex: number;
+    bboxes: BBox[];
+};
 type Grid = { [column: number]: Column };
 
 export function gridLayout({
@@ -21,33 +30,40 @@ export function gridLayout({
     let rowCount = 0;
     let columnCount = 1;
     let columnWidth = 0;
-    let height = 0;
-    let startIdx = 0;
-    let endIdx = 0;
+    let gridHeight = 0;
+    let startIndex = 0;
+    let endIndex = 0;
 
     for (let i = 0; i < itemCount; i++) {
         const { height: itemHeight, width: itemWidth } = bboxes[i];
         const paddedItemHeight = itemHeight + itemPaddingY;
         const paddedItemWidth = itemWidth + itemPaddingX;
-        if (height + paddedItemHeight < maxHeight) {
-            height += paddedItemHeight;
+        if (gridHeight + paddedItemHeight < maxHeight) {
+            gridHeight += paddedItemHeight;
             rowCount++;
 
-            endIdx = i;
+            endIndex = i;
 
             if (paddedItemWidth > columnWidth) {
                 columnWidth = paddedItemWidth;
             }
         } else {
             columnCount++;
-            height = paddedItemHeight;
+            gridHeight = paddedItemHeight;
             columnWidth = paddedItemWidth;
             rowCount = 1;
-            startIdx = i;
-            endIdx = i;
+            startIndex = i;
+            endIndex = i;
         }
 
-        grid[columnCount] = { rowCount, columnWidth, columnHeight: height, startIdx, endIdx };
+        grid[columnCount] = {
+            rowCount,
+            columnWidth,
+            columnHeight: gridHeight,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            bboxes: bboxes.slice(startIndex, endIndex + 1),
+        };
     }
 
     const pages = paginate(grid, maxWidth);
@@ -56,18 +72,39 @@ export function gridLayout({
 }
 
 export function paginate(grid: Grid, maxWidth: number) {
-    const pages: { [page: number]: Column[] } = {};
-    let width = 0;
+    const pages: Page[] = [];
+    let pageWidth = 0;
+    let pageHeight = 0;
     let page = 0;
+    let startIndex = 0;
+    let endIndex = 0;
+    let columns = [];
     for (let column in grid) {
-        const { columnWidth } = grid[column];
-        if (width + columnWidth > maxWidth && pages[page]) {
-            width = 0;
-            page++;
+        const { columnWidth, columnHeight, startIndex: columnStartIdx, endIndex: columnEndIdx } = grid[column];
+        if (pageHeight < columnHeight) {
+            pageHeight = columnHeight;
         }
-        width += columnWidth;
-        pages[page] ??= [];
-        pages[page].push(grid[column]);
+
+        if (pageWidth + columnWidth > maxWidth && pages[page]) {
+            // start new page
+            page++;
+            columns = [];
+            startIndex = columnStartIdx;
+            endIndex = columnEndIdx;
+            pageWidth = columnWidth;
+        } else {
+            endIndex = columnEndIdx;
+            pageWidth += columnWidth;
+        }
+
+        columns.push(grid[column]);
+        pages[page] = {
+            columns,
+            pageWidth,
+            pageHeight,
+            startIndex,
+            endIndex,
+        };
     }
 
     return pages;

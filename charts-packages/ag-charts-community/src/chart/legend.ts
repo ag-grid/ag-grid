@@ -32,7 +32,9 @@ import {
     Validate,
 } from '../util/validation';
 import { Layers } from './layers';
-import { gridLayout } from './gridLayout';
+import { gridLayout, Page } from './gridLayout';
+import { Pagination } from './pagination/pagination';
+import { InteractionManager } from './interaction/interactionManager';
 
 export interface LegendDatum {
     id: string; // component ID
@@ -51,7 +53,7 @@ export interface LegendDatum {
     };
 }
 
-enum LegendOrientation {
+enum Orientation {
     Vertical,
     Horizontal,
 }
@@ -156,6 +158,8 @@ export class Legend {
     ).selectAll<MarkerLabel>();
 
     private oldSize: [number, number] = [0, 0];
+    private pages: Page[] = [];
+    private pagination: Pagination;
 
     readonly item = new LegendItem();
     readonly listeners = new LegendListeners();
@@ -195,7 +199,14 @@ export class Legend {
         return this._enabled;
     }
 
-    orientation: LegendOrientation = LegendOrientation.Vertical;
+    private _orientation: Orientation = Orientation.Vertical;
+    set orientation(value: Orientation) {
+        this._orientation = value;
+        this.pagination.orientation = value;
+    }
+    get orientation() {
+        return this._orientation;
+    }
     @Validate(POSITION)
     private _position: AgChartLegendPosition = 'right';
     set position(value: AgChartLegendPosition) {
@@ -204,11 +215,11 @@ export class Legend {
         switch (value) {
             case 'right':
             case 'left':
-                this.orientation = LegendOrientation.Vertical;
+                this.orientation = Orientation.Vertical;
                 break;
             case 'bottom':
             case 'top':
-                this.orientation = LegendOrientation.Horizontal;
+                this.orientation = Orientation.Horizontal;
                 break;
         }
     }
@@ -220,8 +231,10 @@ export class Legend {
     @Validate(OPT_BOOLEAN)
     reverseOrder?: boolean = undefined;
 
-    constructor() {
+    constructor(interactionManager: InteractionManager) {
         this.item.marker.parent = this;
+        this.pagination = new Pagination((page) => this.updatePageNumber(page), interactionManager);
+        this.pagination.attachPagination(this.group);
     }
 
     public onMarkerShapeChange() {
@@ -377,25 +390,65 @@ export class Legend {
             return false;
         }
 
-        const { pages } = gridLayout({
+        const paginationBBox = this.pagination.computeBBox();
+        const verticalOrientation = this.orientation === Orientation.Vertical;
+
+        width = width - (verticalOrientation ? 0 : paginationBBox.width);
+        height = height - (verticalOrientation ? paginationBBox.height : 0);
+
+        this.pages = gridLayout({
             bboxes,
             maxHeight: height,
             maxWidth: width,
             itemPaddingY: paddingY,
             itemPaddingX: paddingX,
-        });
+        }).pages;
 
-        const columns = pages[0];
+        const totalPages = this.pages.length;
+        this.pagination.visible = totalPages > 1;
+        this.pagination.totalPages = totalPages;
 
-        const itemHeight = bboxes[0].height + paddingY;
-        const totalHeight = columns[0].rowCount * itemHeight;
-        const totalWidth = columns.reduce((w, col) => (w += col.columnWidth), 0);
+        const startX = width / 2;
+        const startY = height / 2;
+        this.pagination.translationX = verticalOrientation ? startX : startX + width;
+        this.pagination.translationY = verticalOrientation ? startY + height : (startY + height) / 2;
 
-        // Position legend items using the layout computed.
+        // Position legend items
+        const pageNumber = this.pagination.getCurrentPage();
+        this.updatePositions(width, height, pageNumber);
+
+        // Update legend item properties that don't affect the layout.
+        this.update();
+
+        const size = this.size;
+        const oldSize = this.oldSize;
+        size[0] = width;
+        size[1] = height;
+
+        if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
+            oldSize[0] = size[0];
+            oldSize[1] = size[1];
+        }
+    }
+
+    updatePositions(width: number, height: number, pageNumber: number = 0) {
+        const {
+            item: { paddingY },
+            itemSelection,
+            pages,
+        } = this;
+
+        const { columns, startIndex: visibleStart, endIndex: visibleEnd } = pages[pageNumber];
+
+        if (!(pages && columns)) {
+            return;
+        }
+
+        // Position legend items using the layout computed above.
 
         // Top-left corner of the first legend item.
-        const startX = (width - totalWidth) / 2;
-        const startY = (height - totalHeight) / 2;
+        const startX = width / 2;
+        const startY = height / 2;
 
         let x = 0;
         let y = 0;
@@ -403,8 +456,9 @@ export class Legend {
         let prevColumnWidth = 0;
         let newColumn = false;
         let columnIdx = 0;
-        const visibleStart = columns[0].startIdx;
-        const visibleEnd = columns[columns.length - 1].endIdx;
+
+        const itemHeight = columns[0].bboxes[0].height + paddingY;
+
         itemSelection.each((markerLabel, _, i) => {
             if (i < visibleStart || i > visibleEnd) {
                 markerLabel.visible = false;
@@ -416,7 +470,8 @@ export class Legend {
 
             let column = columns[columnIdx];
             newColumn = false;
-            if (i > column.endIdx) {
+
+            if (i > column.endIndex) {
                 columnIdx++;
                 newColumn = true;
                 column = columns[columnIdx];
@@ -435,19 +490,10 @@ export class Legend {
             markerLabel.translationX = Math.floor(startX + x);
             markerLabel.translationY = Math.floor(startY + y);
         });
+    }
 
-        // Update legend item properties that don't affect the layout.
-        this.update();
-
-        const size = this.size;
-        const oldSize = this.oldSize;
-        size[0] = totalWidth;
-        size[1] = totalHeight;
-
-        if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
-            oldSize[0] = size[0];
-            oldSize[1] = size[1];
-        }
+    updatePageNumber(pageNumber: number) {
+        this.updatePositions(this.size[0], this.size[1], pageNumber);
     }
 
     update() {
