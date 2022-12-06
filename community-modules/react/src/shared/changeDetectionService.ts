@@ -1,3 +1,5 @@
+import { _ } from "@ag-grid-community/core";
+
 export enum ChangeDetectionStrategyType {
     IdentityCheck = 'IdentityCheck',
 /** @deprecated IdentityCheck will be used instead */
@@ -29,6 +31,9 @@ export class ChangeDetectionService {
     };
 
     public getStrategy(changeDetectionStrategy: ChangeDetectionStrategyType): ChangeDetectionStrategy {
+        if (changeDetectionStrategy === ChangeDetectionStrategyType.DeepValueCheck) {
+            _.doOnce(() => console.warn('AG Grid: Since v29 ChangeDetectionStrategyType.DeepValueCheck has been deprecated. IdentityCheck will be used instead. See https://ag-grid.com/react-data-grid/react-hooks/'), 'DeepValueCheck_Deprecation')
+        }
         return this.strategyMap[changeDetectionStrategy];
     }
 }
