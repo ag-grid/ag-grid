@@ -37,7 +37,10 @@ export class Pagination {
 
     private _totalPages: number = 0;
     set totalPages(value: number) {
-        this._totalPages = value;
+        if (this._totalPages !== value) {
+            this._totalPages = value;
+            this.setCurrentPage(0);
+        }
         this.onPaginationChanged();
     }
     get totalPages() {
