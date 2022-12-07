@@ -62,6 +62,7 @@ export class LazyBlockLoader extends BeanStub {
                 return;
             }
         });
+
         return [...indexesToLoad];
     }
 

@@ -20,7 +20,7 @@ import {
     Column,
     ColumnModel,
     IsApplyServerSideTransactionParams,
-    SelectionChangedEvent
+    SelectionChangedEvent,
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
@@ -88,6 +88,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.destroyBean(this.cache);
+    }
+
+    applyNewTransaction(transaction: { oldData: any, newData: any }) {
+        return this.cache.applyNewTransaction(transaction);
     }
 
     /**

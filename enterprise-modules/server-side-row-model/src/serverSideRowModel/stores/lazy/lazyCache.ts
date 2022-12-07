@@ -1,4 +1,4 @@
-import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, ServerSideGroupLevelParams, StoreUpdatedEvent, WithoutGridCommon } from "@ag-grid-community/core";
+import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, RowNodeSorter, ServerSideGroupLevelParams, SortController, SortOption, StoreUpdatedEvent, WithoutGridCommon, _ } from "@ag-grid-community/core";
 import { BlockUtils } from "src/serverSideRowModel/blocks/blockUtils";
 import { NodeManager } from "src/serverSideRowModel/nodeManager";
 import { LazyStore } from "./lazyStore";
@@ -9,6 +9,8 @@ export class LazyCache extends BeanStub {
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
+    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
+    @Autowired('sortController') private sortController: SortController;
 
     // Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
     private live = true;
@@ -285,6 +287,7 @@ export class LazyCache extends BeanStub {
             this.blockUtils.checkOpenByDefault(newNode);
             this.nodeManager.addRowNode(newNode);
             this.nodeIds.add(newNode.id!);
+            newNode.needsRefresh = false;
         }
 
         // add the new node to the store, has to be done after the display index is calculated so it doesn't take itself into account
@@ -482,6 +485,7 @@ export class LazyCache extends BeanStub {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
                 const duplicateIdText = duplicates.join(', ');
+                console.log('response', response.rowData);
                 console.warn(`AG Grid: Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.`);
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
@@ -723,5 +727,255 @@ export class LazyCache extends BeanStub {
 
     public reduceRowCount(count: number) {
         this.numberOfRows -= count;
+    }
+
+    private createTemporaryNode(data: any) {
+        // node doesn't exist, create a new one
+        const newNode = this.blockUtils.createRowNode(this.store.getRowDetails());
+        if (data != null) {
+            const defaultId = this.getPrefixedId(this.store.getIdSequence().next());
+            this.blockUtils.setDataIntoRowNode(newNode, data, defaultId, undefined);
+            this.blockUtils.checkOpenByDefault(newNode);
+        }
+        return newNode;
+    }
+
+    applyNewTransaction({ oldData, newData }: any) {
+        const sortOptions: SortOption[] = this.sortController.getSortOptions();
+        const allNodes = Object.entries(this.nodeIndexMap);
+        this.nodeIndexMap = {};
+
+
+        const oldNode = oldData && this.nodeIds.has(this.getRowId(oldData)!) ? allNodes.find(([_, node]) => node.id === this.getRowId(oldData)!)?.[1] : undefined;
+        const oldDataTempNode = oldData ? (oldNode ?? this.createTemporaryNode(oldData)) : null;
+        const newDataTempNode = newData ? this.createTemporaryNode(newData) : null;
+
+        let hasPassedOldNode = false;
+        let hasPassedNewNode = false;
+
+
+        allNodes.forEach(([stringIndex, node], idx, self) => {
+            if (hasPassedNewNode && hasPassedOldNode) {
+                this.nodeIndexMap[Number(stringIndex)] = node;
+                return;
+            }; // break as no point searching anymore
+
+            if (node === oldNode) {
+                hasPassedOldNode = true;
+                return;
+            }
+
+            if (oldDataTempNode && !hasPassedOldNode && !node.stub) {
+                // hasPassedOldNode = this.rowNodeSorter.compareRowNodes(sortOptions, { currentPos: -1, rowNode: oldDataTempNode }, { currentPos: -1, rowNode: node }) > 0;
+            }
+
+            const numericIndex = Number(stringIndex);
+            if (newDataTempNode && !hasPassedNewNode) {
+                if (!node.stub) {
+                    hasPassedNewNode = this.rowNodeSorter.compareRowNodes(sortOptions, { currentPos: -1, rowNode: newDataTempNode }, { currentPos: -1, rowNode: node }) < 0;
+                }
+                if (hasPassedNewNode) {
+                    let indexAdjustment = 0;
+                    if (hasPassedOldNode) indexAdjustment -= 1;
+
+                    if (oldNode) {
+                        this.nodeIndexMap[numericIndex + indexAdjustment] = oldNode;
+                        this.blockUtils.updateDataIntoRowNode(oldNode, newData);
+                    } else {
+                        this.createRowAtIndex(numericIndex + indexAdjustment, newData);
+                    }
+                }
+            }
+            
+            let indexAdjustment = 0;
+            if (hasPassedNewNode) indexAdjustment += 1;
+            if (hasPassedOldNode) indexAdjustment -= 1;
+
+            this.nodeIndexMap[numericIndex + indexAdjustment] = node;
+        });
+
+        let indexAdjustment = 0;
+        if (hasPassedOldNode) indexAdjustment -= 1;
+    
+        const lastRow = this.nodeIndexMap[this.numberOfRows + indexAdjustment];
+        if (this.isLastRowKnown && !hasPassedNewNode && !lastRow && newData) {
+            hasPassedNewNode = true;
+            if (oldNode) {
+                this.nodeIndexMap[this.numberOfRows + indexAdjustment] = oldNode;
+                this.blockUtils.updateDataIntoRowNode(oldNode, newData);
+            } else {
+                this.createRowAtIndex(this.numberOfRows + indexAdjustment, newData);
+            }
+        }
+
+        if (hasPassedNewNode) indexAdjustment += 1;
+        this.numberOfRows += indexAdjustment;
+
+        if (!hasPassedNewNode && oldNode) {
+            this.nodeIds.delete(oldNode.id!);
+            this.blockUtils.destroyRowNode(oldNode);
+        }
+        return;
+        // const newId = newData ? this.getRowId(newData) : undefined;
+
+        // if (!oldData && newId && this.nodeIds.has(newId)) {
+        //     // if we can find the row, we should try to sort what we can
+        //     oldData = allNodes.find(([_, oldNode]) => oldNode.id === newId)![1].data;
+        // }
+
+        // const sortOptions: SortOption[] = this.sortController.getSortOptions();
+
+        // const oldId = oldData ? this.getRowId(oldData) : undefined;
+        // if (oldData) {
+        //     let indexToRemove: number;
+        //     if (this.nodeIds.has(oldId!)) {
+        //         const nodeToRemove = allNodes.find(([_, node]) => node.id === oldId);
+        //         if (!nodeToRemove) {
+        //             if (this.isLastRowKnown) {
+        //                 this.numberOfRows -= 1;
+        //             }
+        //             return;
+        //         }
+        //         indexToRemove = Number(nodeToRemove[0]);
+        //     } else {
+        //         const tempRow = this.createTemporaryNode(oldData);
+        //         const nodeToRemove = allNodes.find(([_, node]) => !node.stub && this.rowNodeSorter.compareRowNodes(sortOptions, { currentPos: -1, rowNode: tempRow }, { currentPos: -1, rowNode: node }) < 0);
+        //         if (!nodeToRemove) {
+        //             if (this.isLastRowKnown) {
+        //                 this.numberOfRows -= 1;
+        //             }
+        //             return;
+        //         }
+        //         indexToRemove = Number(nodeToRemove[0]) - 1;
+        //         if (indexToRemove < 0) {
+        //             // node to remove invalid, skip
+        //             return;
+        //         }
+        //     }
+
+        //     this.destroyRowAtIndex(indexToRemove);
+
+        //     for(let i = 0; i < allNodes.length; i++) {
+        //         const [stringIndex, node] = allNodes[i];
+        //         const numericIndex = Number(stringIndex);
+
+        //         if (numericIndex <= indexToRemove) {
+        //             continue;
+        //         }
+
+        //         delete this.nodeIndexMap[numericIndex];
+        //         this.nodeIndexMap[numericIndex - 1] = node;
+        //     }
+        //     if (this.isLastRowKnown) {
+        //         this.numberOfRows -= 1;
+        //     }
+        // }
+
+        // // this is a create/insert
+        // if (newData) {
+        //     const tempRow = this.createTemporaryNode(newData);
+        //     let [stringIndexAfterInsert] = allNodes.find(([_, node]) => !node.stub && this.rowNodeSorter.compareRowNodes(sortOptions, { currentPos: -1, rowNode: tempRow }, { currentPos: -1, rowNode: node }) < 0) || [null, null];
+
+        //     if (stringIndexAfterInsert == null && !this.isLastRowKnown) {
+        //         // inserting later than where we are, and don't know end of store
+        //         return;
+        //     }
+
+        //     const numericIndexAfterInsert = Number(stringIndexAfterInsert);
+        //     for(let i = allNodes.length - 1; i > 0; i--) {
+        //         const [stringIndex, node] = allNodes[i];
+        //         const numericIndex = Number(stringIndex);
+
+        //         if (numericIndex < numericIndexAfterInsert) {
+        //             break;
+        //         }
+
+        //         delete this.nodeIndexMap[numericIndex];
+        //         this.nodeIndexMap[numericIndex + 1] = node;
+        //     }
+            
+        //     this.numberOfRows += 1;
+
+        //     this.createRowAtIndex(numericIndexAfterInsert, newData);
+        //     return;
+        // }
+        // return;
+
+
+        // const [oldNodeStringIndex, oldNode] = allNodes.find(([_, node]) => node.id === oldId) ?? [null, this.createTemporaryNode(oldData)];
+
+        // // creating nodes because sorter doesn't currently support sorting based on just a data object
+        // const newNode = this.createTemporaryNode(newData);
+        // const sortResult = Math.sign(this.rowNodeSorter.compareRowNodes(sortOptions, { currentPos: -1, rowNode: oldNode! }, { currentPos: -1, rowNode: newNode! }));
+
+        // if (sortResult === 0) {
+        //     // if the row won't need moved, and oldNode was a "real node", simply update the data
+        //     if (oldNodeStringIndex !== null) {
+        //         this.blockUtils.updateDataIntoRowNode(oldNode, newData);
+        //         return;
+        //     }
+        //     return;
+        // }
+
+        // const firstData = sortResult > 0 ? newNode : oldNode;
+        // const lastData = sortResult > 0 ? oldNode : newNode;
+
+        // // this is the first node AFTER the first position of old/new node
+        // let firstIndex = allNodes.findIndex(([_, node]) => !node.stub && this.rowNodeSorter.compareRowNodes(sortOptions, { currentPos: -1, rowNode: firstData! }, { currentPos: -1, rowNode: node }) < 0);
+        // let lastIndex = allNodes.findIndex(([_, node]) => !node.stub && this.rowNodeSorter.compareRowNodes(sortOptions, { currentPos: -1, rowNode: lastData! }, { currentPos: -1, rowNode: node }) < 0);
+        // // console.log(firstIndex, 'to', lastIndex);
+        // // console.log(allNodes[firstIndex], 'to', allNodes[lastIndex]);
+
+
+        // // debugger;
+        // if (firstIndex === -1 && lastIndex === -1) {
+        //     if (oldNodeStringIndex !== null) {
+        //         this.blockUtils.updateDataIntoRowNode(oldNode, newData);
+        //         return;
+        //     }
+        //     return;
+        // };
+        // if (firstIndex === -1) firstIndex = 0;
+        // if (lastIndex === -1) lastIndex = allNodes.length;
+
+        // const indexedNodesToMove = allNodes.filter(([_, node]) => {
+        //     // also need to move all stubs between these rows...
+        //     const isAfterFirstData = this.rowNodeSorter.compareRowNodes(sortOptions, { currentPos: -1, rowNode: firstData! }, { currentPos: -1, rowNode: node }) < 0;
+        //     const isBeforeLastData = this.rowNodeSorter.compareRowNodes(sortOptions, { currentPos: -1, rowNode: lastData! }, { currentPos: -1, rowNode: node }) > 0;
+        //     return isAfterFirstData && isBeforeLastData;
+        // });
+
+        // const nodesToMove = allNodes.slice(firstIndex, lastIndex);
+        // // if (!_.areEqual(indexedNodesToMove, nodesToMove)) debugger;
+   
+        // if (nodesToMove.length === 0) {
+        //     // if the row won't need moved, and oldNode was a "real node", simply update the data
+        //     if (oldNodeStringIndex !== null) {
+        //         this.blockUtils.updateDataIntoRowNode(oldNode, newData);
+        //         return;
+        //     }
+        //     return;
+        // }
+
+        // // move nodes between old and new location
+        // nodesToMove.forEach(([stringIndex, node]) => {
+        //     if (node === oldNode) {
+        //         return;
+        //     }
+
+        //     const currentIndex = Number(stringIndex);
+        //     delete this.nodeIndexMap[currentIndex];
+        //     this.nodeIndexMap[currentIndex + sortResult] = node;
+        // });
+
+        // const [stringIndexForInsert] = sortResult === -1 ? nodesToMove[nodesToMove.length - 1] : nodesToMove[0];
+        // const indexForInsert = Number(stringIndexForInsert);
+
+        // if (oldNodeStringIndex === null) {
+        //     return;
+        // }
+
+        // this.blockUtils.updateDataIntoRowNode(oldNode, newData);
+        // this.nodeIndexMap[indexForInsert] = oldNode;
     }
 }

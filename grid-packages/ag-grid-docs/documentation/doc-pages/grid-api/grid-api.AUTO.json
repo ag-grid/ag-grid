@@ -1203,6 +1203,14 @@
     "description": "/** Clears all aggregation functions (including those provided by the grid). */",
     "type": { "arguments": {}, "returnType": "void" }
   },
+  "applyNewTransaction": {
+    "description": "/** Apply transactions to the server side row model. */",
+    "type": {
+      "arguments": {
+        "changes": "{ level?: number; remove?: any; create?: any; }[]"
+      }
+    }
+  },
   "applyServerSideTransaction": {
     "description": "/** Apply transactions to the server side row model. */",
     "type": {

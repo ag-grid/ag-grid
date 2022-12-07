@@ -5,7 +5,7 @@ import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from ".
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { CellPosition } from "./entities/cellPosition";
-import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
+import { ColDef, ColGroupDef, IAggFunc, ValueGetterParams } from "./entities/colDef";
 import { Column } from "./entities/column";
 import {
     ChartRef,
@@ -42,7 +42,7 @@ import {
     TabToNextHeaderParams
 } from "./entities/iCallbackParams";
 import { RowNode, RowPinnedType } from "./entities/rowNode";
-import { AgEvent, ColumnEventType } from "./events";
+import { AgEvent, ColumnEventType, Events } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
 import { FocusService } from "./focusService";
@@ -94,6 +94,7 @@ import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { RowDataTransaction } from "./interfaces/rowDataTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
+import { StoreUpdatedEvent, WithoutGridCommon } from "./main";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
@@ -106,6 +107,7 @@ import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { SelectionService } from "./selectionService";
 import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
+import { _ } from "./utils";
 import { doOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { iterateObject, removeAllReferences } from "./utils/object";
@@ -1682,6 +1684,85 @@ export class GridApi<TData = any> {
         if (this.aggFuncService) {
             this.aggFuncService.clear();
         }
+    }
+
+    /** Apply transactions to the server side row model. */
+    public applyNewTransaction(changes: {
+        level?: number; // when undefined, looks at leaf nodes, otherwise targets that group level, issue with unbalanced nodes
+        remove?: any, //data before update (if new is omitted, this is delete)
+        create?: any, //data after update (if old is omitted, this is create, which can still do the role of update if we can find id)
+        // benefits of this approach in conjunction with server side sorting
+
+        // insertIndex now redundant, can easily find if insert is between rows, or before loaded rows, or after
+
+        // no longer need to refresh for removes, if we assume the remove occurred we can find where the node lived
+        // .     relative to our loaded block, and remove a stub node in the relevant location instead.
+
+        // if the node didn't exist and was updated, remove stub node from relevant location and add at new location
+    }[]) {
+        // problems:
+        // we provided level to getRowId, how do we getRowId without level? maybe we can still require level? and if omitted level = leaf level
+
+        const rowGroupColumns = this.columnModel.getRowGroupColumns();
+        const getRoute = (data: any, level?: number) => {
+            const rowGroupFields = rowGroupColumns.map(col => col.getColDef().field!);
+            if (level !== undefined) {
+                return rowGroupFields.slice(0, level);
+            }
+            return rowGroupFields.map(field => data[field]);
+        }
+
+        // Rob can't argue with this convention, I can't see anything wrong with it
+        const getRouteId = (route: []) => route.join('-spliterator-');
+
+        changes.forEach(change => {
+            const { remove, create, level } = change;
+
+            // update, if old and new are different group routes, this creates an add and remove
+            if (change.remove && change.create) {
+                const oldRoute = getRoute(remove, level);
+                const newRoute = getRoute(create, level);
+                if (_.areEqual(oldRoute, newRoute)) {
+                    (this.serverSideRowModel as any).executeOnStore(oldRoute, (store: { applyNewTransaction?: any }) => {
+                        if ('applyNewTransaction' in store) {
+
+                            store.applyNewTransaction({ oldData: remove, newData: create })
+                        }
+                    })
+
+                    // if the routes are different, split this into an add and remove, could be better performance if we could have stores drop nodes without destroying
+                    
+                    return;
+                }
+                // if routes are different, execute as different remove and creates
+            }
+
+            // delete
+            if (change.remove) {
+                const oldRoute = getRoute(remove, level);
+                (this.serverSideRowModel as any).executeOnStore(oldRoute, (store: { applyNewTransaction?: any }) => {
+                    if ('applyNewTransaction' in store) {
+
+                        store.applyNewTransaction({ oldData: remove })
+                    }
+                });
+            }
+
+            // add
+            if (change.create) {
+                const newRoute = getRoute(create, level);
+                (this.serverSideRowModel as any).executeOnStore(newRoute, (store: { applyNewTransaction?: any }) => {
+                    if ('applyNewTransaction' in store) {
+
+                        store.applyNewTransaction({ newData: create })
+                    }
+                });
+            }
+        });
+        const event: WithoutGridCommon<StoreUpdatedEvent> = {
+            type: Events.EVENT_STORE_UPDATED
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     /** Apply transactions to the server side row model. */
