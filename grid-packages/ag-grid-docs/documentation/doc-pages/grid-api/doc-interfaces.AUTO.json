@@ -20011,15 +20011,6 @@
     }
   },
   "ChangeDetectionStrategyType": {},
-  "ChangeDetectionStrategy": {
-    "areEqual": {
-      "type": {
-        "arguments": { "a": "any", "b": "any" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    }
-  },
   "SharedProps": {
     "gridOptions": {
       "type": { "returnType": "GridOptions<TData>", "optional": true }
@@ -20041,6 +20032,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },
@@ -22759,6 +22751,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },
@@ -25482,6 +25475,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },

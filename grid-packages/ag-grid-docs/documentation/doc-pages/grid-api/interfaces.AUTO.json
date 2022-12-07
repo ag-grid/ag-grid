@@ -11280,15 +11280,7 @@
       "DeepValueCheck = 'DeepValueCheck'",
       "NoCheck = 'NoCheck'"
     ],
-    "docs": [
-      null,
-      "/** @deprecated IdentityCheck will be used instead */",
-      null
-    ]
-  },
-  "ChangeDetectionStrategy": {
-    "meta": {},
-    "type": { "areEqual(a: any, b: any)": "boolean" }
+    "docs": [null, null, null]
   },
   "SharedProps": {
     "meta": { "typeParams": ["TData = any"] },
@@ -11671,6 +11663,7 @@
       "columnApi?": "ColumnApi | null"
     },
     "docs": {
+      "rowDataChangeDetectionStrategy?": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "statusBar?": "/** Specifies the status bar components to use in the status bar. */",
       "sideBar?": "/** Specifies the side bar components. */",
       "suppressContextMenu?": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`  */",
@@ -12413,6 +12406,7 @@
       "columnApi?": "ColumnApi | null"
     },
     "docs": {
+      "rowDataChangeDetectionStrategy?": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "statusBar?": "/** Specifies the status bar components to use in the status bar. */",
       "sideBar?": "/** Specifies the side bar components. */",
       "suppressContextMenu?": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`  */",
@@ -13157,6 +13151,7 @@
       "columnApi?": "ColumnApi | null"
     },
     "docs": {
+      "rowDataChangeDetectionStrategy?": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "statusBar?": "/** Specifies the status bar components to use in the status bar. */",
       "sideBar?": "/** Specifies the side bar components. */",
       "suppressContextMenu?": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`  */",

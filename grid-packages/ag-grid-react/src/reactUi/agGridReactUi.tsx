@@ -1,6 +1,5 @@
 import { BaseComponentWrapper, CtrlsService, ColumnApi, ComponentType, ComponentUtil, Context, FrameworkComponentWrapper, GridApi, GridCoreCreator, GridOptions, GridParams, WrappableInterface, _ } from 'ag-grid-community';
 import React, { Component } from 'react';
-import { ChangeDetectionService, ChangeDetectionStrategyType } from '../shared/changeDetectionService';
 import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
@@ -19,7 +18,6 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
     private gridOptions!: GridOptions<TData>;
 
     private destroyFuncs: (() => void)[] = [];
-    private changeDetectionService = new ChangeDetectionService();
     private eGui = React.createRef<HTMLDivElement>();
 
     private portalManager: PortalManager;
@@ -81,6 +79,8 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
         this.gridOptions = this.props.gridOptions || {};
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this.props);
 
+        this.checkForDeprecations(this.props);
+
         const createUiCallback = (context: Context) => {
             this.setState({context: context});
 
@@ -114,6 +114,12 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
         gridCoreCreator.create(this.eGui.current!, this.gridOptions, createUiCallback, acceptChangesCallback, gridParams);
     }
 
+    private checkForDeprecations(props: any) {
+        if (props.rowDataChangeDetectionStrategy) {
+            _.doOnce(() => console.warn('AG Grid: Since v29 rowDataChangeDetectionStrategy has been deprecated. Row data property changes will be compared by reference via triple equals ===. See https://ag-grid.com/react-data-grid/react-hooks/'), 'rowDataChangeDetectionStrategy_Deprecation')
+        }
+    }
+
     public componentWillUnmount() {
         if (this.renderedAfterMount) {
             debug('AgGridReactUi.componentWillUnmount - executing');
@@ -141,9 +147,7 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
 
         Object.keys(nextProps).forEach(propKey => {
             if (_.includes(ComponentUtil.ALL_PROPERTIES, propKey)) {
-                const changeDetectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
-
-                if (!changeDetectionStrategy.areEqual(prevProps[propKey], nextProps[propKey])) {
+                if (prevProps[propKey] !== nextProps[propKey]) {
                     if (debugLogging) {
                         console.log(`agGridReact: [${propKey}] property changed`);
                     }
@@ -184,13 +188,6 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
             debug('AgGridReactUi.processWhenReady async');
             this.whenReadyFuncs.push(func);
         }
-    }
-
-    private getStrategyTypeForProp(propKey: string) {
-        if (propKey === 'rowData' && this.props.rowDataChangeDetectionStrategy) {
-            return this.props.rowDataChangeDetectionStrategy;
-        }
-        return ChangeDetectionStrategyType.IdentityCheck
     }
 }
 
