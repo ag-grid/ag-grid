@@ -33,6 +33,16 @@ over `useMemo` as loading data usually aligns with changing state in your applic
 All examples in the documentation use `useState` for Row Data. However, all code snippets in the documentation leave 
 these hooks out for easier reading.
 
+### Immutable Data
+
+When using the grid against an Immutable Store, it's best to provide the callback `getRowId()` to allow the grid to 
+identify rows. The grid is then able to identify Rows between new lists of Row Data. For example if Rows are selected, 
+and new Row Data is provided such that some Rows are removed, the grid is able to maintain the selection across rows 
+that exist in both the old and new lists of Row Data.
+
+See [Updating Row Data](/data-update-row-data/) for more information.
+
+
 ## Column Definitions
 
 When setting Column Definitions, we recommend using `useState` or `useMemo`.
@@ -199,12 +209,3 @@ const App = () => {
     return <AgGridReact columnDefs={columnDefs} />;
 };
 ```
-
-## Immutable Data
-
-When using the grid against an Immutable Store, it's best to provide the callback `getRowId()` to allow the grid to 
-identify rows. The grid is then able to identify Rows between new lists of Row Data. For example if Rows are selected, 
-and new Row Data is provided such that some Rows are removed, the grid is able to maintain the selection across rows 
-that exist in both the old and new lists of Row Data.
-
-See [Updating Row Data](/data-update-row-data/) for more information.
