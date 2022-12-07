@@ -471,6 +471,7 @@ export class GridChartComp extends Component {
         }
 
         this.destroyBean(this.chartMenu);
+        this.destroyBean(this.titleEdit);
 
         // don't want to invoke destroy() on the Dialog (prevents destroy loop)
         if (this.chartDialog && this.chartDialog.isAlive()) {

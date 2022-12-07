@@ -3857,14 +3857,42 @@
     }
   },
   "AgTreemapSeriesTooltipRendererParams": {
-    "datum": { "type": { "returnType": "DatumType", "optional": false } },
-    "sizeKey": { "type": { "returnType": "string", "optional": true } },
-    "labelKey": { "type": { "returnType": "string", "optional": true } },
-    "valueKey": { "type": { "returnType": "string", "optional": true } },
-    "colorKey": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } },
+    "datum": {
+      "description": "/** Datum from the series data that the treemap tile is being rendered for. */",
+      "type": { "returnType": "DatumType", "optional": false }
+    },
+    "parent": {
+      "description": "/** The parent of the datum from the treemap data. */",
+      "type": { "returnType": "DataValue", "optional": true }
+    },
+    "depth": {
+      "description": "/** The depth of the datum in the hierarchy. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "sizeKey": {
+      "description": "/** sizeKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelKey": {
+      "description": "/** labelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorKey": {
+      "description": "/** colorKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The computed fill colour of the treemap tile. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "title": {
+      "description": "/** The title of the treemap tile */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgTreemapSeriesTooltip": {
@@ -3900,9 +3928,32 @@
     "value": {
       "description": "/** The configuration for the cell value label. */",
       "type": {
-        "returnType": "{\n        /** A property to be used as a key to retrieve a value from datum. */\n        key?: string;\n        /** A function to generate a value label from datum. */\n        formatter?: (params: { datum: any }) => string | undefined;\n        /** The label's font and color style. */\n        style?: AgChartLabelOptions;\n    }",
+        "returnType": "{\n        /** A property to be used as a key to retrieve a value from datum. */\n        key?: string;\n        /** A name of a datum value. */\n        name?: string;\n        /** A function to generate a value label from datum. */\n        formatter?: (params: { datum: any }) => string | undefined;\n        /** The label's font and color style. */\n        style?: AgChartLabelOptions;\n    }",
         "optional": true
       }
+    }
+  },
+  "AgTreemapSeriesHighlightTextStyle": {
+    "color": {
+      "description": "/** The colour of an item's text when tapped or hovered over. Use `undefined` for no highlight. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    }
+  },
+  "AgTreemapSeriesHighlightStyle": {
+    "text": {
+      "description": "/** Highlight style used for a text when item is tapped or hovered over. */",
+      "type": {
+        "returnType": "AgTreemapSeriesHighlightTextStyle",
+        "optional": true
+      }
+    },
+    "item": {
+      "description": "/** Highlight style used for an individual marker when tapped or hovered over. */",
+      "type": { "returnType": "AgSeriesHighlightMarkerStyle", "optional": true }
+    },
+    "series": {
+      "description": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */",
+      "type": { "returnType": "AgSeriesHighlightSeriesStyle", "optional": true }
     }
   },
   "AgTreemapSeriesOptions": {
@@ -3974,6 +4025,25 @@
       "description": "/** Whether or not to use gradients for treemap tiles. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "tileShadow": {
+      "description": "/** Configuration for the shadow used behind the treemap tiles. */",
+      "type": { "returnType": "AgDropShadowOptions", "optional": true }
+    },
+    "labelShadow": {
+      "description": "/** Configuration for the shadow used behind the treemap labels. */",
+      "type": { "returnType": "AgDropShadowOptions", "optional": true }
+    },
+    "highlightGroups": {
+      "description": "/** Determines whether the groups will be highlighted by cursor. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "highlightStyle": {
+      "description": "/** Configuration for treemap tiles when they are hovered over. */",
+      "type": {
+        "returnType": "AgTreemapSeriesHighlightStyle",
+        "optional": true
+      }
+    },
     "formatter": {
       "description": "/** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */",
       "type": {
@@ -4006,16 +4076,16 @@
     "cursor": {
       "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "highlightStyle": {
-      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
-      "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
     }
   },
   "AgTreemapSeriesFormatterParams": {
     "datum": {
-      "description": "/** Datum from the series data array that the treemap tile is being rendered for. */",
+      "description": "/** Datum from the series data that the treemap tile is being rendered for. */",
       "type": { "returnType": "DataValue", "optional": false }
+    },
+    "parent": {
+      "description": "/** The parent of the datum from the treemap data. */",
+      "type": { "returnType": "DataValue", "optional": true }
     },
     "depth": {
       "description": "/** The depth of the datum in the hierarchy. */",

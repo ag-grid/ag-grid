@@ -24,11 +24,12 @@ export default class TitlePanel extends Component {
 
     private hasTitle(): boolean {
         const title: any = this.getOption('title');
-        return title && title.enabled && title.text && title.text.length > 0;
+        const hasTitle = title && title.enabled && title.text && title.text.length > 0;
+        return hasTitle ? true : false;
     }
 
     private initFontPanel(): void {
-        const hasTitle = this.hasTitle;
+        const hasTitle = this.hasTitle();
 
         const setFont = (font: Font) => {
             if (font.family) { this.setOption('title.fontFamily', font.family); }
@@ -52,7 +53,7 @@ export default class TitlePanel extends Component {
 
         const fontPanelParams: FontPanelParams = {
             name: this.chartTranslationService.translate('title'),
-            enabled: this.hasTitle(),
+            enabled: hasTitle,
             suppressEnabledCheckbox: false,
             initialFont,
             setFont,

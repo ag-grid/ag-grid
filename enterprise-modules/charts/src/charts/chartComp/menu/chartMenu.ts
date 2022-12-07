@@ -386,5 +386,9 @@ export class ChartMenu extends Component {
         if (this.menuPanel && this.menuPanel.isAlive()) {
             this.destroyBean(this.menuPanel);
         }
+
+        if (this.tabbedMenu && this.tabbedMenu.isAlive()) {
+            this.destroyBean(this.tabbedMenu);
+        }
     }
 }
