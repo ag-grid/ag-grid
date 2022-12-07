@@ -412,14 +412,18 @@ export class Legend {
         this.pagination.visible = totalPages > 1;
         this.pagination.totalPages = totalPages;
 
+        // Top-left corner of the first legend item.
         const startX = width / 2;
         const startY = height / 2;
-        this.pagination.translationX = verticalOrientation ? startX : startX + width;
-        this.pagination.translationY = verticalOrientation ? startY + height : (startY + height) / 2;
-
-        // Position legend items
         const pageNumber = this.pagination.getCurrentPage();
-        this.updatePositions(width, height, pageNumber);
+        // Position legend items
+        this.updatePositions(startX, startY, pageNumber);
+
+        const { pageHeight, pageWidth } = this.pages[pageNumber];
+        this.pagination.translationX = verticalOrientation ? startX : startX + pageWidth;
+        this.pagination.translationY = verticalOrientation
+            ? startY + pageHeight
+            : startY + pageHeight / 2 - paginationBBox.height;
 
         // Update legend item properties that don't affect the layout.
         this.update();
@@ -435,7 +439,7 @@ export class Legend {
         }
     }
 
-    updatePositions(width: number, height: number, pageNumber: number = 0) {
+    updatePositions(startX: number, startY: number, pageNumber: number = 0) {
         const {
             item: { paddingY },
             itemSelection,
@@ -449,11 +453,6 @@ export class Legend {
         }
 
         // Position legend items using the layout computed above.
-
-        // Top-left corner of the first legend item.
-        const startX = width / 2;
-        const startY = height / 2;
-
         let x = 0;
         let y = 0;
         let firstItem: MarkerLabel;
@@ -497,7 +496,9 @@ export class Legend {
     }
 
     updatePageNumber(pageNumber: number) {
-        this.updatePositions(this.size[0], this.size[1], pageNumber);
+        const startX = this.size[0] / 2;
+        const startY = this.size[1] / 2;
+        this.updatePositions(startX, startY, pageNumber);
         this.updateCallback(ChartUpdateType.SCENE_RENDER);
     }
 
