@@ -200,14 +200,6 @@ export class Legend {
         return this._enabled;
     }
 
-    private _orientation: Orientation = Orientation.Vertical;
-    set orientation(value: Orientation) {
-        this._orientation = value;
-        this.pagination.orientation = value;
-    }
-    get orientation() {
-        return this._orientation;
-    }
     @Validate(POSITION)
     private _position: AgChartLegendPosition = 'right';
     set position(value: AgChartLegendPosition) {
@@ -228,9 +220,26 @@ export class Legend {
         return this._position;
     }
 
+    /** Used to constrain the width of the legend. */
+    @Validate(OPT_NUMBER(0))
+    maxWidth?: number = undefined;
+
+    /** Used to constrain the height of the legend. */
+    @Validate(OPT_NUMBER(0))
+    maxHeight?: number = undefined;
+
     /** Reverse the display order of legend items if `true`. */
     @Validate(OPT_BOOLEAN)
     reverseOrder?: boolean = undefined;
+
+    private _orientation: Orientation = Orientation.Vertical;
+    set orientation(value: Orientation) {
+        this._orientation = value;
+        this.pagination.orientation = value;
+    }
+    get orientation() {
+        return this._orientation;
+    }
 
     constructor(
         private readonly updateCallback: (type: ChartUpdateType) => void,

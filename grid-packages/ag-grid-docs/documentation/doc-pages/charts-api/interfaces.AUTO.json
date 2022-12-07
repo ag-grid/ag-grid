@@ -808,6 +808,8 @@
     "type": {
       "enabled?": "boolean",
       "position?": "AgChartLegendPosition",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
       "spacing?": "PixelSize",
       "item?": "AgChartLegendItemOptions",
       "reverseOrder?": "boolean",
@@ -816,6 +818,8 @@
     "docs": {
       "enabled?": "/** Whether or not to show the legend. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
+      "maxWidth?": "/** Used to constrain the width of the legend. */",
+      "maxHeight?": "/** Used to constrain the height of the legend. */",
       "spacing?": "/** The spacing in pixels to use outside the legend. */",
       "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
       "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",

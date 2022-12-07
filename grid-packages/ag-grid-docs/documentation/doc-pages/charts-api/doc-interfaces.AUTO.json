@@ -1290,6 +1290,14 @@
       "description": "/** Where the legend should show in relation to the chart. */",
       "type": { "returnType": "AgChartLegendPosition", "optional": true }
     },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
     "spacing": {
       "description": "/** The spacing in pixels to use outside the legend. */",
       "type": { "returnType": "PixelSize", "optional": true }

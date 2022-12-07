@@ -756,13 +756,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
             return;
         }
 
+        const legendSpacing = legend.spacing;
         const width = this.width;
         const height = this.height - captionAutoPadding;
 
-        const legendWidth = width * 0.1;
-        const legendHeight = height * 0.1;
+        const horizontalLegendWidth = legend.maxWidth ?? width - legendSpacing * 2;
+        const horizontalLegendHeight = legend.maxHeight ?? height * 0.1;
 
-        const legendSpacing = legend.spacing;
+        const verticalLegendWidth = legend.maxWidth ?? width * 0.1;
+        const verticalLegendHeight = legend.maxHeight ?? height - legendSpacing * 2;
 
         let translationX = 0;
         let translationY = 0;
@@ -770,7 +772,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         let legendBBox: BBox;
         switch (legend.position) {
             case 'bottom':
-                legend.performLayout(width - legendSpacing * 2, legendHeight);
+                legend.performLayout(horizontalLegendWidth, horizontalLegendHeight);
                 legendBBox = legend.computeBBox();
 
                 if (legend.visible) {
@@ -785,7 +787,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 break;
 
             case 'top':
-                legend.performLayout(width - legendSpacing * 2, legendHeight);
+                legend.performLayout(horizontalLegendWidth, horizontalLegendHeight);
                 legendBBox = legend.computeBBox();
 
                 if (legend.visible) {
@@ -800,7 +802,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 break;
 
             case 'left':
-                legend.performLayout(legendWidth, height - legendSpacing * 2);
+                legend.performLayout(verticalLegendWidth, verticalLegendHeight);
                 legendBBox = legend.computeBBox();
 
                 if (legend.visible) {
@@ -815,7 +817,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 break;
 
             default: // case 'right':
-                legend.performLayout(legendWidth, height - legendSpacing * 2);
+                legend.performLayout(verticalLegendWidth, verticalLegendHeight);
                 legendBBox = legend.computeBBox();
 
                 if (legend.visible) {
