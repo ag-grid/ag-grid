@@ -3517,7 +3517,7 @@
       "type": "/** Event identifier */"
     }
   },
-  "DragEvent": {
+  "AgDragEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "target": "HTMLElement",

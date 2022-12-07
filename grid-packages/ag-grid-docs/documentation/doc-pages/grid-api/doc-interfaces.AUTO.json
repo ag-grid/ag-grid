@@ -6710,7 +6710,7 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "DragEvent": {
+  "AgDragEvent": {
     "target": {
       "description": "/** The DOM element that started the event. */",
       "type": { "returnType": "HTMLElement", "optional": false }
