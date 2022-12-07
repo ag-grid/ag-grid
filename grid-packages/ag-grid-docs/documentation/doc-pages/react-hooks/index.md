@@ -35,12 +35,10 @@ these hooks out for easier reading.
 
 ### Immutable Data
 
-When using the grid against an Immutable Store, it's best to provide the callback `getRowId()` to allow the grid to 
-identify rows. The grid is then able to identify Rows between new lists of Row Data. For example if Rows are selected, 
-and new Row Data is provided such that some Rows are removed, the grid is able to maintain the selection across rows 
+If you are going to be updating Row Data then it is strongly recommended to provide the `getRowId` callback that returns a unique id for each row. The grid is then able to identify Rows between new lists of Row Data. For example, if Rows are selected, and new Row Data is provided such that some Rows are removed, the grid is able to maintain the selection across rows 
 that exist in both the old and new lists of Row Data.
 
-See [Updating Row Data](/data-update-row-data/) for more information.
+See [Updating Row Data](/data-update-row-data/) for more information and other benefits of providing the `getRowId` callback.
 
 
 ## Column Definitions
