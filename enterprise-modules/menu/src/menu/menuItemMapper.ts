@@ -66,7 +66,7 @@ export class MenuItemMapper extends BeanStub {
                 return {
                     name: localeTextFunc('pinColumn', 'Pin Column'),
                     icon: _.createIconNoSpan('menuPin', this.gridOptionsService, null),
-                    subMenu: ['pinLeft', 'pinRight', 'clearPinned']
+                    subMenu: ['clearPinned', 'pinLeft', 'pinRight']
                 };
             case 'pinLeft':
                 return {

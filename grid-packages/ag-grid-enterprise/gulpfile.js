@@ -93,16 +93,11 @@ const cleanDist = () => {
 // End of Typescript related tasks
 
 const copyGridCoreStyles = (done) => {
-    if (!fs.existsSync('./node_modules/ag-grid-community/dist/styles')) {
-        done("node_modules/ag-grid-community/dist/styles doesn't exist - exiting")
-    }
-
     if (!fs.existsSync('./node_modules/ag-grid-community/styles/ag-grid.css')) {
         done("./node_modules/ag-grid-community/styles doesn't exist - exiting")
     }
 
     return merge([
-            gulp.src('./node_modules/ag-grid-community/dist/styles/**/*').pipe(gulp.dest('./dist/styles')),
             gulp.src('./node_modules/ag-grid-community/styles/*.css').pipe(gulp.dest('./styles')),
             gulp.src('./node_modules/ag-grid-community/styles/*.scss').pipe(gulp.dest('./styles'))
         ]

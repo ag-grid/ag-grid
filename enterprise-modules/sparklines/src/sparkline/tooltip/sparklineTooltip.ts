@@ -1,8 +1,6 @@
-import { Color } from '../../util/color';
-import { Observable } from '../../util/observable';
 import { TooltipRendererResult, TooltipRendererParams } from '@ag-grid-community/core';
 
-export interface TooltipMeta {
+interface TooltipMeta {
     pageX: number;
     pageY: number;
 }
@@ -35,29 +33,18 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
         contentHtml = `<span class="${SparklineTooltip.class}-content">${content}</span>`;
     }
 
+    let style = `opacity: ${opacity}`;
     if (backgroundColor) {
-        const bgColor = Color.fromString(backgroundColor.toLowerCase());
-        const { r, g, b, a } = bgColor;
-
-        // TODO: combine a and opacity for alpha?
-        const alpha = opacity;
-
-        const bgColorWithAlpha = Color.fromArray([r, g, b, alpha]);
-        const bgColorRgbaString = bgColorWithAlpha.toRgbaString();
-
-        return `<div class="${SparklineTooltip.class}" style="background-color: ${bgColorRgbaString}">
-                    ${titleHtml}
-                    ${contentHtml}
-                </div>`;
-    } else {
-        return `<div class="${SparklineTooltip.class}">
-                    ${titleHtml}
-                    ${contentHtml}
-                </div>`;
+        style += `; background-color: ${backgroundColor.toLowerCase()}`;
     }
+
+    return `<div class="${SparklineTooltip.class}" style="${style}">
+                ${titleHtml}
+                ${contentHtml}
+            </div>`;
 }
 
-export class SparklineTooltip extends Observable {
+export class SparklineTooltip {
     element: HTMLElement = document.createElement('div');
 
     static class: string = 'ag-sparkline-tooltip';
@@ -68,7 +55,6 @@ export class SparklineTooltip extends Observable {
     renderer?: (params: TooltipRendererParams) => string | TooltipRendererResult = undefined;
 
     constructor() {
-        super();
         const tooltipRoot = document.body;
         tooltipRoot.appendChild(this.element);
     }

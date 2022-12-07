@@ -64,7 +64,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private addScrollListener() {
-        const fakeHScroll = this.ctrlsService.getFakeHScrollCtrl();
+        const fakeHScroll = this.ctrlsService.getFakeHScrollComp();
 
         this.addManagedListener(this.centerRowContainerCtrl.getViewportElement(), 'scroll', this.onCenterViewportScroll.bind(this));
         this.addManagedListener(fakeHScroll.getViewport(), 'scroll', this.onFakeHorizontalScroll.bind(this));
@@ -100,7 +100,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const topCenterContainer = this.ctrlsService.getTopCenterRowContainerCtrl();
         const stickyTopCenterContainer = this.ctrlsService.getStickyTopCenterRowContainerCtrl();
         const bottomCenterContainer = this.ctrlsService.getBottomCenterRowContainerCtrl();
-        const fakeHScroll = this.ctrlsService.getFakeHScrollCtrl();
+        const fakeHScroll = this.ctrlsService.getFakeHScrollComp();
         const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
 
         centerHeaderContainer.setHorizontalScroll(offset);
@@ -128,7 +128,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private onFakeHorizontalScroll(): void {
-        const fakeHScrollViewport = this.ctrlsService.getFakeHScrollCtrl().getViewport();
+        const fakeHScrollViewport = this.ctrlsService.getFakeHScrollComp().getViewport();
         if (!this.isControllingScroll(fakeHScrollViewport)) { return; }
         this.onBodyHorizontalScroll(fakeHScrollViewport);
     }
@@ -177,7 +177,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private doHorizontalScroll(scrollLeft: number): void {
-        const fakeHScrollViewport = this.ctrlsService.getFakeHScrollCtrl().getViewport();
+        const fakeHScrollViewport = this.ctrlsService.getFakeHScrollComp().getViewport();
         const fakeScrollLeft = getScrollLeft(fakeHScrollViewport, this.enableRtl);
 
         if (this.scrollLeft === scrollLeft && scrollLeft === fakeScrollLeft) { return; }

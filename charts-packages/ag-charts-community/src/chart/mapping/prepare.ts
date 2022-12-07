@@ -217,10 +217,16 @@ function prepareMainOptions<T>(
 function prepareTheme<T extends AgChartOptions>(options: T) {
     const theme = getChartTheme(options.theme);
     const themeConfig = theme.getConfig(optionsType(options) || 'cartesian');
+
+    const seriesThemes = Object.entries<any>(theme.config).reduce((result, [seriesType, { series }]) => {
+        result[seriesType] = series?.[seriesType];
+        return result;
+    }, {} as any);
+
     return {
         theme,
         axesThemes: themeConfig['axes'] || {},
-        seriesThemes: themeConfig['series'] || {},
+        seriesThemes: seriesThemes,
         cleanedTheme: jsonMerge([themeConfig, { axes: DELETE, series: DELETE }]),
     };
 }
@@ -315,24 +321,36 @@ function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptio
     // Set `enabled: true` for all option objects where the user has provided values.
     jsonWalk(
         options,
-        (_, userOpts, mergedOpts) => {
-            if (!mergedOpts) return;
+        (_, visitingUserOpts, visitingMergedOpts) => {
+            if (!visitingMergedOpts) return;
 
-            const { enabledFromTheme = false } = mergedOptions;
-            if ('enabledFromTheme' in mergedOptions) {
+            const { _enabledFromTheme } = visitingMergedOpts;
+            if (_enabledFromTheme != null) {
                 // Do not apply special handling, base enablement on theme.
-                delete mergedOptions['enabledFromTheme'];
+                delete visitingMergedOpts._enabledFromTheme;
             }
 
-            if (!('enabled' in mergedOpts)) return;
-            if (enabledFromTheme) return;
+            if (!('enabled' in visitingMergedOpts)) return;
+            if (_enabledFromTheme) return;
 
-            if (userOpts.enabled == null) {
-                mergedOpts.enabled = true;
+            if (visitingUserOpts.enabled == null) {
+                visitingMergedOpts.enabled = true;
             }
         },
-        { skip: ['data'] },
+        { skip: ['data', 'theme'] },
         mergedOptions
+    );
+
+    // Cleanup any special properties.
+    jsonWalk(
+        mergedOptions,
+        (_, visitingMergedOpts) => {
+            if (visitingMergedOpts._enabledFromTheme != null) {
+                // Do not apply special handling, base enablement on theme.
+                delete visitingMergedOpts._enabledFromTheme;
+            }
+        },
+        { skip: ['data', 'theme'] }
     );
 }
 

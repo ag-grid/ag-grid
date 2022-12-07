@@ -629,15 +629,16 @@ export interface GridOptions<TData = any> {
      */
     serverSideInitialRowCount?: number;
     /**
-     * @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.
-     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,
+     * @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.
+     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,
      * Full Store is used.
      */
     serverSideStoreType?: ServerSideStoreType;
-    /** Set whether Server-side Row Model will use Infinite Scrolling
+    /**
+     * Set whether Server-side Row Model will use Infinite Scrolling
      * Default: `false`
      */
-    serverSideInfiniteScroll?: boolean | 'legacy';
+    suppressServerSideInfiniteScroll?: boolean;
     /**
      * How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * Default: `100`
@@ -663,17 +664,17 @@ export interface GridOptions<TData = any> {
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
     serverSideFilterAllLevels?: boolean;
     /**
-     * When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+     * When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,
      * as Sorting is always server side when Infinite Scroll is active.
      * Default: `false`
      */
      serverSideSortOnServer?: boolean;
      /**
-      * When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+      * When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,
       * as Filtering is always server side when Infinite Scroll is active.
       * Default: `false`
       */
-     serverSideFilterOnServer?: boolean;
+    serverSideFilterOnServer?: boolean;
     /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */
     serverSideSortingAlwaysResets?: boolean;
     /** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */
@@ -1234,14 +1235,14 @@ export interface ServerSideGroupLevelParams {
      * What store type to use.
      * If missing, then defaults to grid option `serverSideStoreType`.
      * Deprecated in favor of infiniteScroll.
-     * If infiniteScroll==true, then Partial Store is used.
-     * If infiniteScroll==false, then Full Store is used.
+     * If suppressInfiniteScroll==false, then Partial Store is used.
+     * If suppressInfiniteScroll==false, then Full Store is used.
      *  */
     storeType?: ServerSideStoreType;
     /**
      * Whether to have infinite scroll active or not for the level.
      */
-    infiniteScroll?: boolean;
+    suppressInfiniteScroll?: boolean;
     /**
      * For Infinite Scroll only.
      * How many blocks to keep in cache.

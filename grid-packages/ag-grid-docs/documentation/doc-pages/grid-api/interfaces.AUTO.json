@@ -156,10 +156,6 @@
     },
     "type": { "component": "any", "componentFromFramework": "boolean" }
   },
-  "DeprecatedComponentName": {
-    "meta": {},
-    "type": { "propertyHolder": "string", "newComponentName": "string" }
-  },
   "ContextParams": {
     "meta": {},
     "type": {
@@ -1066,14 +1062,16 @@
       "suppressColumnFilter?": "boolean",
       "suppressColumnSelectAll?": "boolean",
       "suppressColumnExpandAll?": "boolean",
-      "contractColumnSelection?": "boolean"
+      "contractColumnSelection?": "boolean",
+      "columnLayout?": "(ColDef | ColGroupDef)[]"
     },
     "docs": {
       "suppressSyncLayoutWithGrid?": "/** To suppress updating the layout of columns as they are rearranged in the grid */",
       "suppressColumnFilter?": "/** To suppress Column Filter section*/",
       "suppressColumnSelectAll?": "/** To suppress Select / Un-select all widget*/",
       "suppressColumnExpandAll?": "/** To suppress Expand / Collapse all widget*/",
-      "contractColumnSelection?": "/** By default, column groups start expanded.\n     * Pass true to default to contracted groups*/"
+      "contractColumnSelection?": "/** By default, column groups start expanded.\n     * Pass true to default to contracted groups*/",
+      "columnLayout?": "/** Custom Columns Panel layout */"
     }
   },
   "BaseColDefParams": {
@@ -1693,7 +1691,7 @@
       "infiniteInitialRowCount?": "number",
       "serverSideInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
-      "serverSideInfiniteScroll?": "boolean | 'legacy'",
+      "suppressServerSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
@@ -2061,8 +2059,8 @@
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n     * Default: `1`\n     */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n     * Default: `1`\n     */",
       "serverSideInitialRowCount?": "/** Set how many loading rows to display to the user for the root level group.\n     * Default: `1`\n     */",
-      "serverSideStoreType?": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
-      "serverSideInfiniteScroll?": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
+      "serverSideStoreType?": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
+      "suppressServerSideInfiniteScroll?": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n     * Set to `-1` for no maximum restriction on requests.\n     * Default: `2`\n     */",
@@ -2071,8 +2069,8 @@
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
-      "serverSideSortOnServer?": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
-      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "serverSideSortOnServer?": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "serverSideSortingAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
@@ -2440,13 +2438,13 @@
     "meta": {},
     "type": {
       "storeType?": "ServerSideStoreType",
-      "infiniteScroll?": "boolean",
+      "suppressInfiniteScroll?": "boolean",
       "maxBlocksInCache?": "number",
       "cacheBlockSize?": "number"
     },
     "docs": {
-      "storeType?": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If infiniteScroll==true, then Partial Store is used.\n     * If infiniteScroll==false, then Full Store is used.\n     *  */",
-      "infiniteScroll?": "/** Whether to have infinite scroll active or not for the level.\n     */",
+      "storeType?": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If suppressInfiniteScroll==false, then Partial Store is used.\n     * If suppressInfiniteScroll==false, then Full Store is used.\n     *  */",
+      "suppressInfiniteScroll?": "/** Whether to have infinite scroll active or not for the level.\n     */",
       "maxBlocksInCache?": "/** For Infinite Scroll only.\n     * How many blocks to keep in cache.\n     * If missing, defaults to grid options `maxBlocksInCache`.\n     */",
       "cacheBlockSize?": "/** For Infinite Scroll only.\n     * Cache block size.\n     * If missing, defaults to grid options `cacheBlockSize`.\n     */"
     }
@@ -2457,13 +2455,13 @@
     },
     "type": {
       "storeType?": "ServerSideStoreType",
-      "infiniteScroll?": "boolean",
+      "suppressInfiniteScroll?": "boolean",
       "maxBlocksInCache?": "number",
       "cacheBlockSize?": "number"
     },
     "docs": {
-      "storeType?": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If infiniteScroll==true, then Partial Store is used.\n     * If infiniteScroll==false, then Full Store is used.\n     *  */",
-      "infiniteScroll?": "/** Whether to have infinite scroll active or not for the level.\n     */",
+      "storeType?": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If suppressInfiniteScroll==false, then Partial Store is used.\n     * If suppressInfiniteScroll==false, then Full Store is used.\n     *  */",
+      "suppressInfiniteScroll?": "/** Whether to have infinite scroll active or not for the level.\n     */",
       "maxBlocksInCache?": "/** For Infinite Scroll only.\n     * How many blocks to keep in cache.\n     * If missing, defaults to grid options `maxBlocksInCache`.\n     */",
       "cacheBlockSize?": "/** For Infinite Scroll only.\n     * Cache block size.\n     * If missing, defaults to grid options `cacheBlockSize`.\n     */"
     }
@@ -6207,6 +6205,10 @@
     "meta": { "isTypeAlias": true },
     "type": "(event: PropertyChangedEvent) => void"
   },
+  "DeprecatedReference": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "{ [key: string]: { newProp?: keyof T; version: string; message?: string; copyToNewProp?: true; newPropValue?: any; }; }"
+  },
   "IAbstractHeaderCellComp": { "meta": {}, "type": {} },
   "IHeaderCellComp": {
     "meta": {},
@@ -7082,9 +7084,9 @@
       "refreshModel(params: RefreshModelParams<TData>)": "void",
       "expandOrCollapseAll(expand: boolean)": "void",
       "forEachLeafNode(callback: (node: RowNode, index: number) => void)": "void",
-      "forEachNode(callback: (node: RowNode, index: number) => void)": "void",
-      "forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void)": "void",
-      "forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void)": "void",
+      "forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean)": "void",
+      "forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean)": "void",
+      "forEachPivotNode(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean)": "void",
       "resetRowHeights()": "void",
       "onRowHeightChanged()": "void",
       "onRowHeightChangedDebounced()": "void",
@@ -7093,7 +7095,6 @@
       "getRootNode()": "RowNode",
       "doAggregate(changedPath?: ChangedPath)": "void",
       "getTopLevelNodes()": "RowNode[] | null",
-      "forEachPivotNode(callback: (node: RowNode, index: number) => void)": "void",
       "ensureRowsAtPixel(rowNode: RowNode[], pixel: number, increment: number)": "boolean",
       "highlightRowAtPixel(rowNode: RowNode | null, pixel?: number)": "void",
       "getHighlightPosition(pixel: number, rowNode?: RowNode)": "RowHighlightPosition",
@@ -7109,7 +7110,7 @@
       "isEmpty()": "boolean",
       "isRowsToRender()": "boolean",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
-      "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
+      "forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean)": "void",
       "getType()": "RowModelType",
       "isLastRowIndexKnown()": "boolean",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
@@ -7125,7 +7126,7 @@
       "isEmpty()": "/** Returns true if this model has no rows, regardless of model filter. EG if rows present, but filtered\n     * out, this still returns false. If it returns true, then the grid shows the 'no rows' overlay - but we\n     * don't show that overlay if the rows are just filtered out. */",
       "isRowsToRender()": "/** Returns true if no rows (either no rows at all, or the rows are filtered out). This is what the grid\n     * uses to know if there are rows to render or not. */",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "/** Returns all rows in range that should be selected. If there is a gap in range (non ClientSideRowModel) then\n     *  then no rows should be returned  */",
-      "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
+      "forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean)": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
       "getType()": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
       "isLastRowIndexKnown()": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "/** Used by CSRM only - is makes sure there are now estimated row heights within the range. */",
@@ -7944,7 +7945,7 @@
       "isEmpty()": "boolean",
       "isRowsToRender()": "boolean",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
-      "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
+      "forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean)": "void",
       "getType()": "RowModelType",
       "isLastRowIndexKnown()": "boolean",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
@@ -7960,7 +7961,7 @@
       "isEmpty()": "/** Returns true if this model has no rows, regardless of model filter. EG if rows present, but filtered\n     * out, this still returns false. If it returns true, then the grid shows the 'no rows' overlay - but we\n     * don't show that overlay if the rows are just filtered out. */",
       "isRowsToRender()": "/** Returns true if no rows (either no rows at all, or the rows are filtered out). This is what the grid\n     * uses to know if there are rows to render or not. */",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "/** Returns all rows in range that should be selected. If there is a gap in range (non ClientSideRowModel) then\n     *  then no rows should be returned  */",
-      "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
+      "forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean)": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
       "getType()": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
       "isLastRowIndexKnown()": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "/** Used by CSRM only - is makes sure there are now estimated row heights within the range. */",
@@ -8298,7 +8299,7 @@
       "isEmpty()": "boolean",
       "isRowsToRender()": "boolean",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
-      "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
+      "forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean)": "void",
       "getType()": "RowModelType",
       "isLastRowIndexKnown()": "boolean",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
@@ -8314,7 +8315,7 @@
       "isEmpty()": "/** Returns true if this model has no rows, regardless of model filter. EG if rows present, but filtered\n     * out, this still returns false. If it returns true, then the grid shows the 'no rows' overlay - but we\n     * don't show that overlay if the rows are just filtered out. */",
       "isRowsToRender()": "/** Returns true if no rows (either no rows at all, or the rows are filtered out). This is what the grid\n     * uses to know if there are rows to render or not. */",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "/** Returns all rows in range that should be selected. If there is a gap in range (non ClientSideRowModel) then\n     *  then no rows should be returned  */",
-      "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
+      "forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean)": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
       "getType()": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
       "isLastRowIndexKnown()": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "/** Used by CSRM only - is makes sure there are now estimated row heights within the range. */",
@@ -8436,7 +8437,7 @@
       "isEmpty()": "boolean",
       "isRowsToRender()": "boolean",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
-      "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
+      "forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean)": "void",
       "getType()": "RowModelType",
       "isLastRowIndexKnown()": "boolean",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
@@ -8452,7 +8453,7 @@
       "isEmpty()": "/** Returns true if this model has no rows, regardless of model filter. EG if rows present, but filtered\n     * out, this still returns false. If it returns true, then the grid shows the 'no rows' overlay - but we\n     * don't show that overlay if the rows are just filtered out. */",
       "isRowsToRender()": "/** Returns true if no rows (either no rows at all, or the rows are filtered out). This is what the grid\n     * uses to know if there are rows to render or not. */",
       "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "/** Returns all rows in range that should be selected. If there is a gap in range (non ClientSideRowModel) then\n     *  then no rows should be returned  */",
-      "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
+      "forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean)": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n     * all nodes. For serverSide, goes through what's loaded in memory. */",
       "getType()": "/** The base class returns the type. We use this instead of 'instanceof' as the client might provide\n     * their own implementation of the models in the future. */",
       "isLastRowIndexKnown()": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "/** Used by CSRM only - is makes sure there are now estimated row heights within the range. */",
@@ -8522,7 +8523,7 @@
   "ServerSideGroupLevelState": {
     "meta": {},
     "type": {
-      "infiniteScroll": "boolean",
+      "suppressInfiniteScroll": "boolean",
       "route": "string[]",
       "rowCount": "number",
       "lastRowIndexKnown?": "boolean",
@@ -8531,7 +8532,7 @@
       "cacheBlockSize?": "number"
     },
     "docs": {
-      "infiniteScroll": "/** True if infininte scrolling */",
+      "suppressInfiniteScroll": "/** True if infininte scrolling */",
       "route": "/** The route that identifies this level. */",
       "rowCount": "/** How many rows the level has. This includes 'loading rows'. */",
       "lastRowIndexKnown?": "/** Infinite Scroll only.\n     * Whether the last row index is know.\n     * */",
@@ -8545,7 +8546,7 @@
       "doc": "/** @deprecated use ServerSideGroupLevelState instead  */"
     },
     "type": {
-      "infiniteScroll": "boolean",
+      "suppressInfiniteScroll": "boolean",
       "route": "string[]",
       "rowCount": "number",
       "lastRowIndexKnown?": "boolean",
@@ -8554,7 +8555,7 @@
       "cacheBlockSize?": "number"
     },
     "docs": {
-      "infiniteScroll": "/** True if infininte scrolling */",
+      "suppressInfiniteScroll": "/** True if infininte scrolling */",
       "route": "/** The route that identifies this level. */",
       "rowCount": "/** How many rows the level has. This includes 'loading rows'. */",
       "lastRowIndexKnown?": "/** Infinite Scroll only.\n     * Whether the last row index is know.\n     * */",
@@ -9524,8 +9525,6 @@
       "agGridReact": "any",
       "frameworkComponentWrapper": "any",
       "pinned": "\"left\" | \"right\" | null | undefined",
-      "autoHeight": "boolean",
-      "suppressRefresh": "boolean",
       "value": "TValue",
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
@@ -9551,8 +9550,6 @@
       "getDetailRowData": "/** A function that provides what rows to display in the Detail Grid. */",
       "refreshStrategy": "/** Defines how to refresh the Detail Grids as data is changing in the Master Grid. */",
       "template": "/** Allows changing the template used around the Detail Grid. */",
-      "autoHeight": "/** @deprecated */",
-      "suppressRefresh": "/** @deprecated */",
       "value": "/** Value to be rendered. */",
       "valueFormatted": "/** Formatted value to be rendered. */",
       "fullWidth?": "/** True if this is a full width row. */",
@@ -9991,7 +9988,6 @@
       "innerRendererFramework?": "any",
       "innerRendererParams?": "any",
       "innerRendererSelector?": "CellRendererSelectorFunc",
-      "padding": "number",
       "value": "TValue",
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
@@ -10024,7 +10020,6 @@
       "innerRendererFramework?": "/** @deprecated as of v27, use innerRenderer for Framework components\n     * Same as `innerRenderer` but for a framework component. */",
       "innerRendererParams?": "/** Additional params to customise to the `innerRenderer`. */",
       "innerRendererSelector?": "/** Callback to enable different innerRenderers to be used based of value of params. */",
-      "padding": "/** @deprecated */",
       "value": "/** Value to be rendered. */",
       "valueFormatted": "/** Formatted value to be rendered. */",
       "fullWidth?": "/** True if this is a full width row. */",
@@ -10695,16 +10690,6 @@
     "meta": {},
     "type": { "selected": "boolean", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
-  },
-  "ColorPickerConfig": {
-    "meta": {},
-    "type": {
-      "color": "string",
-      "label?": "HTMLElement | string",
-      "labelWidth?": "number | 'flex'",
-      "labelSeparator?": "string",
-      "labelAlignment?": "LabelAlignment"
-    }
   },
   "DialogOptions": {
     "meta": {},
@@ -11494,7 +11479,7 @@
       "infiniteInitialRowCount?": "number",
       "serverSideInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
-      "serverSideInfiniteScroll?": "boolean | 'legacy'",
+      "suppressServerSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
@@ -11862,8 +11847,8 @@
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n     * Default: `1`\n     */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n     * Default: `1`\n     */",
       "serverSideInitialRowCount?": "/** Set how many loading rows to display to the user for the root level group.\n     * Default: `1`\n     */",
-      "serverSideStoreType?": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
-      "serverSideInfiniteScroll?": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
+      "serverSideStoreType?": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
+      "suppressServerSideInfiniteScroll?": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n     * Set to `-1` for no maximum restriction on requests.\n     * Default: `2`\n     */",
@@ -11872,8 +11857,8 @@
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
-      "serverSideSortOnServer?": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
-      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "serverSideSortOnServer?": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "serverSideSortingAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
@@ -12236,7 +12221,7 @@
       "infiniteInitialRowCount?": "number",
       "serverSideInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
-      "serverSideInfiniteScroll?": "boolean | 'legacy'",
+      "suppressServerSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
@@ -12604,8 +12589,8 @@
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n     * Default: `1`\n     */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n     * Default: `1`\n     */",
       "serverSideInitialRowCount?": "/** Set how many loading rows to display to the user for the root level group.\n     * Default: `1`\n     */",
-      "serverSideStoreType?": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
-      "serverSideInfiniteScroll?": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
+      "serverSideStoreType?": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
+      "suppressServerSideInfiniteScroll?": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n     * Set to `-1` for no maximum restriction on requests.\n     * Default: `2`\n     */",
@@ -12614,8 +12599,8 @@
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
-      "serverSideSortOnServer?": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
-      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "serverSideSortOnServer?": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "serverSideSortingAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
@@ -12980,7 +12965,7 @@
       "infiniteInitialRowCount?": "number",
       "serverSideInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
-      "serverSideInfiniteScroll?": "boolean | 'legacy'",
+      "suppressServerSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
@@ -13348,8 +13333,8 @@
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n     * Default: `1`\n     */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n     * Default: `1`\n     */",
       "serverSideInitialRowCount?": "/** Set how many loading rows to display to the user for the root level group.\n     * Default: `1`\n     */",
-      "serverSideStoreType?": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
-      "serverSideInfiniteScroll?": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
+      "serverSideStoreType?": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
+      "suppressServerSideInfiniteScroll?": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n     * Set to `-1` for no maximum restriction on requests.\n     * Default: `2`\n     */",
@@ -13358,8 +13343,8 @@
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
-      "serverSideSortOnServer?": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
-      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "serverSideSortOnServer?": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "serverSideSortingAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",

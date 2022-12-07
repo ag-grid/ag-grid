@@ -631,6 +631,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.background.width = this.width;
             this.background.height = this.height;
 
+            this.disablePointer();
             this.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
         }
     }

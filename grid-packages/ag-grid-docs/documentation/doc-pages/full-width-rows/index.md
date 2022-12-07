@@ -76,6 +76,18 @@ The following points should be noted:
 
 - The example is showing a flat list of data. There is no grouping or parent / child relationships between the full width and normal rows.
 
-
-
 <grid-example title='Basic Full Width' name='basic-full-width' type='generated' options=' { "exampleHeight" : 595 }'></grid-example>
+
+
+## Full Width Keyboard Navigation
+
+Within full width rows, keyboard navigation and focus can be handled by writing a custom `suppressKeyboardEvent` function in grid options.
+
+An example of this is shown below, where the custom cell elements are able to be traversed using <kbd>tab</kbd> and <kbd>shift</kbd>+<kbd>tab</kbd>:
+
+- Click on the `United Kingdom` row, press the <kbd>tab</kbd> a few times and notice that the full width `France` row can be tabbed into, along with the button, link and textbox. At the end of the cell elements, the tab focus moves to the next cell in the next row
+- Use <kbd>shift</kbd>+<kbd>tab</kbd> to navigate in the reverse direction
+
+The `suppressKeyboardEvent` function is used to capture tab events and determine if the user is tabbing forward or backwards. It also suppresses the default behaviour of moving to the next cell if tabbing within the child elements. If the focus is at the beginning or the end of the cell children and moving out of the cell, the keyboard event is not suppressed, so focus can move to adjacent rows. Also, when moving backwards, the focus needs to be manually set while preventing the default behaviour of the keyboard press event.
+
+<grid-example title='Full Width Keyboard Navigation' name='full-width-keyboard-navigation' type='mixed'></grid-example>

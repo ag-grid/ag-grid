@@ -2516,13 +2516,25 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "DatumType",
+      "parent?": "DataValue",
+      "depth": "number",
       "sizeKey?": "string",
       "labelKey?": "string",
-      "valueKey?": "string",
       "colorKey?": "string",
       "color?": "string",
       "title?": "string",
       "seriesId": "string"
+    },
+    "docs": {
+      "datum": "/** Datum from the series data that the treemap tile is being rendered for. */",
+      "parent?": "/** The parent of the datum from the treemap data. */",
+      "depth": "/** The depth of the datum in the hierarchy. */",
+      "sizeKey?": "/** sizeKey as specified on series options. */",
+      "labelKey?": "/** labelKey as specified on series options. */",
+      "colorKey?": "/** colorKey as specified on series options. */",
+      "color?": "/** The computed fill colour of the treemap tile. */",
+      "title?": "/** The title of the treemap tile */",
+      "seriesId": "/** The ID of the series. */"
     }
   },
   "AgTreemapSeriesTooltip": {
@@ -2542,13 +2554,33 @@
       "large?": "AgChartLabelOptions",
       "medium?": "AgChartLabelOptions",
       "small?": "AgChartLabelOptions",
-      "value?": "{ key?: string; formatter?: (params: { datum: any; }) => string | undefined; style?: AgChartLabelOptions; }"
+      "value?": "{ key?: string; name?: string; formatter?: (params: { datum: any; }) => string | undefined; style?: AgChartLabelOptions; }"
     },
     "docs": {
       "large?": "/** The label configuration for the large leaf tiles. */",
       "medium?": "/** The label configuration for the medium-sized leaf tiles. */",
       "small?": "/** The label configuration for the small leaf tiles. */",
       "value?": "/** The configuration for the cell value label. */"
+    }
+  },
+  "AgTreemapSeriesHighlightTextStyle": {
+    "meta": {},
+    "type": { "color?": "CssColor" },
+    "docs": {
+      "color?": "/** The colour of an item's text when tapped or hovered over. Use `undefined` for no highlight. */"
+    }
+  },
+  "AgTreemapSeriesHighlightStyle": {
+    "meta": {},
+    "type": {
+      "text?": "AgTreemapSeriesHighlightTextStyle",
+      "item?": "AgSeriesHighlightMarkerStyle",
+      "series?": "AgSeriesHighlightSeriesStyle"
+    },
+    "docs": {
+      "text?": "/** Highlight style used for a text when item is tapped or hovered over. */",
+      "item?": "/** Highlight style used for an individual marker when tapped or hovered over. */",
+      "series?": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */"
     }
   },
   "AgTreemapSeriesOptions": {
@@ -2566,18 +2598,25 @@
       "colorKey?": "string",
       "colorDomain?": "number[]",
       "colorRange?": "string[]",
-      "colorParents?": "boolean",
+      "groupFill?": "string",
+      "groupStroke?": "string",
+      "groupStrokeWidth?": "number",
+      "tileStroke?": "string",
+      "tileStrokeWidth?": "number",
       "tooltip?": "AgTreemapSeriesTooltip<DatumType>",
       "nodePadding?": "PixelSize",
       "gradient?": "boolean",
+      "tileShadow?": "AgDropShadowOptions",
+      "labelShadow?": "AgDropShadowOptions",
+      "highlightGroups?": "boolean",
+      "highlightStyle?": "AgTreemapSeriesHighlightStyle",
       "formatter?": "(params: AgTreemapSeriesFormatterParams<DataValue>) => AgTreemapSeriesFormat",
       "listeners?": "AgSeriesListeners<DatumType>",
       "id?": "string",
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
-      "cursor?": "string",
-      "highlightStyle?": "AgSeriesHighlightStyle"
+      "cursor?": "string"
     },
     "docs": {
       "title?": "/** The label configuration for the top-level tiles. */",
@@ -2588,18 +2627,25 @@
       "colorKey?": "/** The name of the node key containing the color value. This value (along with `colorDomain` and `colorRange` configs) will be used to determine the tile color. */",
       "colorDomain?": "/** The domain the 'colorKey' values belong to. The domain can contain more than two stops, for example `[-5, 0, -5]`. In that case the 'colorRange' should also use a matching number of colors. */",
       "colorRange?": "/** The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'. */",
-      "colorParents?": "/** Whether or not to assign colors to non-leaf nodes based on 'colorKey'. */",
+      "groupFill?": "/** The group fill color. If undefined the value based on `colorKey` will be used. */",
+      "groupStroke?": "/** The group's stroke color. */",
+      "groupStrokeWidth?": "/** The group's stroke width. */",
+      "tileStroke?": "/** The tile's stroke color. */",
+      "tileStrokeWidth?": "/** The tile's stroke width. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
       "nodePadding?": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
       "gradient?": "/** Whether or not to use gradients for treemap tiles. */",
+      "tileShadow?": "/** Configuration for the shadow used behind the treemap tiles. */",
+      "labelShadow?": "/** Configuration for the shadow used behind the treemap labels. */",
+      "highlightGroups?": "/** Determines whether the groups will be highlighted by cursor. */",
+      "highlightStyle?": "/** Configuration for treemap tiles when they are hovered over. */",
       "formatter?": "/** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */",
       "listeners?": "/** A map of event names to event listeners. */",
       "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
-      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */"
     }
   },
   "AgTreemapSeriesFormatterParams": {
@@ -2609,6 +2655,8 @@
     },
     "type": {
       "datum": "DataValue",
+      "parent?": "DataValue",
+      "depth": "number",
       "labelKey": "string",
       "sizeKey?": "string",
       "colorKey?": "string",
@@ -2622,7 +2670,9 @@
       "seriesId": "string"
     },
     "docs": {
-      "datum": "/** Datum from the series data array that the treemap tile is being rendered for. */",
+      "datum": "/** Datum from the series data that the treemap tile is being rendered for. */",
+      "parent?": "/** The parent of the datum from the treemap data. */",
+      "depth": "/** The depth of the datum in the hierarchy. */",
       "labelKey": "/** labelKey as specified on series options. */",
       "sizeKey?": "/** sizeKey as specified on series options. */",
       "colorKey?": "/** colorKey as specified on series options. */",

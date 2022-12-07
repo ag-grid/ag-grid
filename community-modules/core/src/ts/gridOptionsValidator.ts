@@ -6,15 +6,26 @@ import { GridOptionsService } from './gridOptionsService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
+import { doOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
-import { exists, missing } from './utils/generic';
 import { iterateObject } from './utils/object';
+
+type DeprecatedReference<T> = { [key: string]: { newProp?: keyof T, version: string, message?: string, copyToNewProp?: true, newPropValue?: any } }
+
+export function logDeprecation<T extends {}>(version: string, oldProp: keyof T, newProp?: keyof T, message?: string) {
+    const newPropMsg = newProp ? `Please use '${newProp}' instead. ` : '';
+    doOnce(() => console.warn(`AG Grid: since v${version}, '${oldProp}' is deprecated. ${newPropMsg}${message ?? ''}`), `Deprecated_${oldProp}`);
+}
 
 @Bean('gridOptionsValidator')
 export class GridOptionsValidator {
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
+
+    private pickOneWarning(prop1: keyof GridOptions, prop2: keyof GridOptions) {
+        console.warn(`AG Grid: ${prop1} and ${prop2} do not work with each other, you need to pick one.`);
+    }
 
     @PostConstruct
     public init(): void {
@@ -35,7 +46,7 @@ export class GridOptionsValidator {
             }
             if (this.gridOptionsService.isRowModelType('serverSide')) {
                 console.warn(
-                    'AG Grid: group selects children is NOT support for Server Side Row Model. ' +
+                    'AG Grid: group selects children is NOT supported for Server Side Row Model. ' +
                     'This is because the rows are lazy loaded, so selecting a group is not possible as' +
                     'the grid has no way of knowing what the children are.'
                 );
@@ -43,22 +54,20 @@ export class GridOptionsValidator {
         }
 
         if (this.gridOptionsService.is('groupRemoveSingleChildren') && this.gridOptionsService.is('groupHideOpenParents')) {
-            console.warn(
-                "AG Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don't ask us how to use these together on our support forum either, you will get the same answer!"
-            );
+            this.pickOneWarning('groupRemoveSingleChildren', 'groupHideOpenParents');
         }
 
         if (this.gridOptionsService.isRowModelType('serverSide')) {
             const msg = (prop: string, alt?: string) => (
                 `AG Grid: '${prop}' is not supported on the Server-Side Row Model.` + (alt ? ` Please use ${alt} instead.` : '')
             );
-            if (exists(this.gridOptions.groupDefaultExpanded)) {
+            if (this.gridOptionsService.exists('groupDefaultExpanded')) {
                 console.warn(msg('groupDefaultExpanded', 'isServerSideGroupOpenByDefault callback'));
             }
-            if (exists(this.gridOptions.groupIncludeFooter)) {
+            if (this.gridOptionsService.exists('groupIncludeFooter')) {
                 console.warn(msg('groupIncludeFooter'));
             }
-            if (exists(this.gridOptions.groupIncludeTotalFooter)) {
+            if (this.gridOptionsService.exists('groupIncludeTotalFooter')) {
                 console.warn(msg('groupIncludeTotalFooter'));
             }
         }
@@ -69,36 +78,31 @@ export class GridOptionsValidator {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
 
+        if (this.gridOptionsService.exists('sideBar')) {
+            // Ensure the SideBar is registered which will then lead them to register Column / Filter Tool panels as required by their config.
+            // It is possible to use the SideBar only with your own custom tool panels.
+            ModuleRegistry.assertRegistered(ModuleNames.SideBarModule, 'sideBar');
+        }
+        if (this.gridOptionsService.exists('statusBar')) {
+            ModuleRegistry.assertRegistered(ModuleNames.StatusBarModule, 'statusBar');
+        }
+        if (this.gridOptionsService.exists('enableCharts')) {
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'enableCharts');
+        }
+
         if (this.gridOptionsService.is('groupRowsSticky')) {
             if (this.gridOptionsService.is('groupHideOpenParents')) {
-                console.warn(
-                    "AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one."
-                );
+                this.pickOneWarning('groupRowsSticky', 'groupHideOpenParents');                
             }
 
             if (this.gridOptionsService.is('masterDetail')) {
-                console.warn(
-                    "AG Grid: groupRowsSticky and masterDetail do not work with each other, you need to pick one."
-                );
+                this.pickOneWarning('groupRowsSticky', 'masterDetail');                
             }
 
             if (this.gridOptionsService.is('pagination')) {
-                console.warn(
-                    "AG Grid: groupRowsSticky and pagination do not work with each other, you need to pick one."
-                );
+                this.pickOneWarning('groupRowsSticky', 'pagination');
             }
         }
-
-        const warnOfDeprecaredIcon = (name: string) => {
-            if (this.gridOptions.icons && this.gridOptions.icons[name]) {
-                console.warn(`gridOptions.icons.${name} is no longer supported. For information on how to style checkboxes and radio buttons, see https://www.ag-grid.com/javascript-grid-icons/`);
-            }
-        };
-        warnOfDeprecaredIcon('radioButtonOff');
-        warnOfDeprecaredIcon('radioButtonOn');
-        warnOfDeprecaredIcon('checkboxChecked');
-        warnOfDeprecaredIcon('checkboxUnchecked');
-        warnOfDeprecaredIcon('checkboxIndeterminate');
     }
 
     private checkColumnDefProperties() {
@@ -113,7 +117,7 @@ export class GridOptionsValidator {
                 validProperties,
                 validProperties,
                 'colDef',
-                'https://www.ag-grid.com/javascript-grid-column-properties/'
+                'https://www.ag-grid.com/javascript-data-grid/column-properties/'
             );
         });
     }
@@ -159,115 +163,66 @@ export class GridOptionsValidator {
         }
     }
 
+    private deprecatedProperties: DeprecatedReference<GridOptions> = {
+        serverSideInfiniteScroll: { version: '29', message: 'Infinite Scrolling is now the default behaviour. This can be suppressed with `suppressServerSideInfiniteScroll`.' },
+        rememberGroupStateWhenNewData: { version: '24', message: 'Now that transaction updates are possible and they keep group state, this feature is no longer needed.' },
+
+        suppressEnterpriseResetOnNewColumns: { version: '25', message: 'Now that it is possible to dynamically change columns in the grid, this is no longer needed.' },
+        suppressColumnStateEvents: { version: '25', message: 'Events should be ignored based on the `event.source`, which will be "api" if the event was due to setting column state via the API.' },
+        defaultExportParams: { version: '25.2', message: 'The property `defaultExportParams` has been replaced by `defaultCsvExportParams` and `defaultExcelExportParams`' },
+        stopEditingWhenGridLosesFocus: { version: '25.2.2', newProp: 'stopEditingWhenCellsLoseFocus', copyToNewProp: true },
+
+        applyColumnDefOrder: { version: '26', message: 'The property `applyColumnDefOrder` is no longer needed, as this is the default behaviour. To turn this behaviour off, set maintainColumnOrder=true' },
+        groupMultiAutoColumn: { version: '26', newProp: 'groupDisplayType', copyToNewProp: true, newPropValue: 'multipleColumns' },
+        groupUseEntireRow: { version: '26', newProp: 'groupDisplayType', copyToNewProp: true, newPropValue: 'groupRows' },
+        defaultGroupSortComparator: { version: '26', newProp: 'initialGroupOrderComparator' },
+        enableMultiRowDragging: { version: '26.1', newProp: 'rowDragMultiRow', copyToNewProp: true },
+        colWidth: { version: '26.1', newProp: 'defaultColDef.width' as any },
+        minColWidth: { version: '26.1', newProp: 'defaultColDef.minWidth' as any },
+        maxColWidth: { version: '26.1', newProp: 'defaultColDef.maxWidth' as any },
+        reactUi: { version: '26.1', message: 'React UI is on by default, so no need for reactUi=true. To turn it off, set suppressReactUi=true.' },
+
+        suppressCellSelection: { version: '27', newProp: 'suppressCellFocus', copyToNewProp: true },
+        clipboardDeliminator: { version: '27.1', newProp: 'clipboardDelimiter', copyToNewProp: true },
+        getRowNodeId: { version: '27.1', newProp: 'getRowId', message: 'The difference: if getRowId() is implemented then immutable data is enabled by default.' },
+        defaultGroupOrderComparator: { version: '27.2', newProp: 'initialGroupOrderComparator' },
+        groupRowAggNodes: { version: '27.2', newProp: 'getGroupRowAgg' },
+        postSort: { version: '27.2', newProp: 'postSortRows' },
+        isFullWidthCell: { version: '27.2', newProp: 'isFullWidthRow' },
+        localeTextFunc: { version: '27.2', newProp: 'getLocaleText' },
+
+        serverSideFilteringAlwaysResets: { version: '28.0', newProp: 'serverSideFilterAllLevels', copyToNewProp: true, },
+        serverSideSortingAlwaysResets: { version: '28.0', newProp: 'serverSideSortAllLevels', copyToNewProp: true, },
+        suppressReactUi: { version: '28', message: 'The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.' },
+        processSecondaryColDef: { version: '28', newProp: 'processPivotResultColDef', copyToNewProp: true },
+        processSecondaryColGroupDef: { version: '28', newProp: 'processPivotResultColGroupDef', copyToNewProp: true },
+        getServerSideStoreParams: { version: '28', newProp: 'getServerSideGroupLevelParams', copyToNewProp: true },
+
+        enableChartToolPanelsButton: { version: '29', message: 'The Chart Tool Panels button is now enabled by default. To hide the Chart Tool Panels button and display the hamburger button instead, set suppressChartToolPanelsButton=true.' }
+    }
+
     private checkForDeprecated() {
         // casting to generic object, so typescript compiles even though
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
 
-        if (options.enableMultiRowDragging) {
-            options.rowDragMultiRow = true;
-            delete options.enableMultiRowDragging;
-            console.warn(
-                'AG Grid: since v26.1, `enableMultiRowDragging` is deprecated. Please use `rowDragMultiRow`.'
-            );
-        }
-
-        const checkRenamedProperty = (oldProp: string, newProp: keyof GridOptions, version: string) => {
-            if (options[oldProp] != null) {
-                console.warn(`AG Grid: since version ${version}, '${oldProp}' is deprecated / renamed, please use the new property name '${newProp}' instead.`);
-                if (options[newProp] == null) {
-                    options[newProp] = options[oldProp];
+        Object.entries(this.deprecatedProperties).map(([oldProp, details]) => {
+            const oldPropValue = (options as any)[oldProp];
+            if (oldPropValue) {
+                logDeprecation(details.version, oldProp, details.newProp, details.message);
+                if (details.copyToNewProp && details.newProp && options[details.newProp] == null) {
+                    options[details.newProp] = details.newPropValue ?? oldPropValue;
                 }
             }
-        };
+        });
 
-        checkRenamedProperty('serverSideFilteringAlwaysResets', 'serverSideFilterAllLevels', '28.0.0');
-        checkRenamedProperty('serverSideSortingAlwaysResets', 'serverSideSortAllLevels', '28.0.0');
-
-        if (options.rememberGroupStateWhenNewData) {
-            console.warn('AG Grid: since v24.0, grid property rememberGroupStateWhenNewData is deprecated. This feature was provided before Transaction Updates worked (which keep group state). Now that transaction updates are possible and they keep group state, this feature is no longer needed.');
-        }
-
-        if (options.suppressEnterpriseResetOnNewColumns) {
-            console.warn('AG Grid: since v25, grid property suppressEnterpriseResetOnNewColumns is deprecated. This was a temporary property to allow changing columns in Server Side Row Model without triggering a reload. Now that it is possible to dynamically change columns in the grid, this is no longer needed.');
-        }
-
-        if (options.suppressColumnStateEvents) {
-            console.warn('AG Grid: since v25, grid property suppressColumnStateEvents no longer works due to a refactor that we did. It should be possible to achieve similar using event.source, which would be "api" if the event was due to setting column state via the API');
-        }
-
-        if (options.defaultExportParams) {
-            console.warn('AG Grid: since v25.2, the grid property `defaultExportParams` has been replaced by `defaultCsvExportParams` and `defaultExcelExportParams`.');
-        }
-
-        if (options.stopEditingWhenGridLosesFocus) {
-            console.warn('AG Grid: since v25.2.2, the grid property `stopEditingWhenGridLosesFocus` has been replaced by `stopEditingWhenCellsLoseFocus`.');
-            options.stopEditingWhenCellsLoseFocus = true;
-        }
-
-        if (options.applyColumnDefOrder) {
-            console.warn('AG Grid: since v26.0, the grid property `applyColumnDefOrder` is no longer needed, as this is the default behaviour. To turn this behaviour off, set maintainColumnOrder=true');
-        }
-
-        if (options.groupMultiAutoColumn) {
-            console.warn("AG Grid: since v26.0, the grid property `groupMultiAutoColumn` has been replaced by `groupDisplayType = 'multipleColumns'`");
-            options.groupDisplayType = 'multipleColumns';
-        }
-
-        if (options.groupUseEntireRow) {
-            console.warn("AG Grid: since v26.0, the grid property `groupUseEntireRow` has been replaced by `groupDisplayType = 'groupRows'`");
-            options.groupDisplayType = 'groupRows';
-        }
+        // Manual messages and deprecation behaviour that don't fit our standard approach above.
 
         if (options.groupSuppressAutoColumn) {
             const propName = options.treeData ? 'treeDataDisplayType' : 'groupDisplayType';
+
             console.warn(`AG Grid: since v26.0, the grid property \`groupSuppressAutoColumn\` has been replaced by \`${propName} = 'custom'\``);
-            options.groupDisplayType = 'custom';
-        }
-
-        if (options.defaultGroupOrderComparator) {
-            console.warn("AG Grid: since v27.2, the grid property `defaultGroupOrderComparator` is deprecated and has been replaced by `initialGroupOrderComparator` and now receives a single params object.");
-        }
-        if (options.defaultGroupSortComparator) {
-            console.warn("AG Grid: since v26.0, the grid property `defaultGroupSortComparator` has been replaced by `initialGroupOrderComparator`");
-            options.defaultGroupOrderComparator = options.defaultGroupSortComparator;
-        }
-
-        if (options.groupRowAggNodes) {
-            console.warn("AG Grid: since v27.2, the grid property `groupRowAggNodes` is deprecated and has been replaced by `getGroupRowAgg` and now receives a single params object.");
-        }
-        if (options.postSort) {
-            console.warn("AG Grid: since v27.2, the grid property `postSort` is deprecated and has been replaced by `postSortRows` and now receives a single params object.");
-        }
-        if (options.isFullWidthCell) {
-            console.warn("AG Grid: since v27.2, the grid property `isFullWidthCell` is deprecated and has been replaced by `isFullWidthRow` and now receives a single params object.");
-        }
-        if (options.localeTextFunc) {
-            console.warn("AG Grid: since v27.2, the grid property `localeTextFunc` is deprecated and has been replaced by `getLocaleText` and now receives a single params object.");
-        }
-
-        if (options.colWidth) {
-            console.warn('AG Grid: since v26.1, the grid property `colWidth` is deprecated and should be set via `defaultColDef.width`.');
-        }
-        if (options.minColWidth) {
-            console.warn('AG Grid: since v26.1, the grid property `minColWidth` is deprecated and should be set via `defaultColDef.minWidth`.');
-        }
-        if (options.maxColWidth) {
-            console.warn('AG Grid: since v26.1, the grid property `maxColWidth` is deprecated and should be set via `defaultColDef.maxWidth`.');
-        }
-        if (options.reactUi) {
-            console.warn('AG Grid: since v27.0, React UI is on by default, so no need for reactUi=true. To turn it off, set suppressReactUi=true.');
-        }
-        if (options.suppressReactUi) {
-            console.warn('AG Grid: The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.');
-        }
-        if (options.suppressCellSelection) {
-            console.warn('AG Grid: since v27.0, `suppressCellSelection` has been replaced by `suppressCellFocus`.');
-            options.suppressCellFocus = options.suppressCellSelection;
-        }
-
-        if (options.getRowNodeId) {
-            console.warn('AG Grid: since v27.1, `getRowNodeId` is deprecated and has been replaced by `getRowId`. The difference: if getRowId() is implemented then immutable data is enabled by default.');
+            options[propName] = 'custom';
         }
         if (options.immutableData) {
             if (options.getRowId) {
@@ -276,20 +231,10 @@ export class GridOptionsValidator {
                 console.warn('AG Grid: since v27.1, `immutableData` is deprecated. To enable immutable data you must implement the `getRowId()` callback.');
             }
         }
-        if (options.clipboardDeliminator) {
-            console.warn('AG Grid: since v27.1, `clipboardDeliminator` has been replaced by `clipboardDelimiter`.');
-            options.clipboardDelimiter = options.clipboardDeliminator;
-        }
-
-        checkRenamedProperty('processSecondaryColDef', 'processPivotResultColDef', '28.0.x');
-        checkRenamedProperty('processSecondaryColGroupDef', 'processPivotResultColGroupDef', '28.0.x');
-
         if (options.serverSideStoreType) {
-            console.warn('AG Grid: since v28.0, `serverSideStoreType` has been replaced by `serverSideInfiniteScroll`. Set to true to use Partial Store, and false to use Full Store.');
-            options.serverSideInfiniteScroll = options.serverSideStoreType === 'partial';
+            console.warn('AG Grid: since v29.0, `serverSideStoreType` has been replaced by `suppressServerSideInfiniteScroll`. Set to false to use Partial Store, and true to use Full Store.');
+            options.suppressServerSideInfiniteScroll = options.serverSideStoreType !== 'partial';
         }
-
-        checkRenamedProperty('getServerSideStoreParams', 'getServerSideGroupLevelParams', '28.0.x');
     }
 
     private checkForViolations() {
@@ -298,7 +243,7 @@ export class GridOptionsValidator {
 
     private treeDataViolations() {
         if (this.gridOptionsService.isRowModelType('clientSide')) {
-            if (missing(this.gridOptionsService.get('getDataPath'))) {
+            if (!this.gridOptionsService.exists('getDataPath')) {
                 console.warn(
                     'AG Grid: property usingTreeData=true with rowModel=clientSide, but you did not ' +
                     'provide getDataPath function, please provide getDataPath function if using tree data.'
@@ -306,13 +251,13 @@ export class GridOptionsValidator {
             }
         }
         if (this.gridOptionsService.isRowModelType('serverSide')) {
-            if (missing(this.gridOptionsService.get('isServerSideGroup'))) {
+            if (!this.gridOptionsService.exists('isServerSideGroup')) {
                 console.warn(
                     'AG Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
                     'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.'
                 );
             }
-            if (missing(this.gridOptionsService.get('getServerSideGroupKey'))) {
+            if (!this.gridOptionsService.exists('getServerSideGroupKey')) {
                 console.warn(
                     'AG Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
                     'provide getServerSideGroupKey function, please provide getServerSideGroupKey function if using tree data.'

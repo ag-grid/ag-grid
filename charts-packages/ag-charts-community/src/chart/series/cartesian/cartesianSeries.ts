@@ -218,10 +218,13 @@ export abstract class CartesianSeries<
         }
 
         if (contextNodeData.length < subGroups.length) {
-            subGroups.splice(contextNodeData.length).forEach(({ dataNodeGroup, markerGroup, paths }) => {
+            subGroups.splice(contextNodeData.length).forEach(({ dataNodeGroup, markerGroup, labelGroup, paths }) => {
                 contentGroup.removeChild(dataNodeGroup);
                 if (markerGroup) {
                     contentGroup.removeChild(markerGroup);
+                }
+                if (labelGroup) {
+                    contentGroup.removeChild(labelGroup);
                 }
                 for (const path of paths) {
                     contentGroup.removeChild(path);

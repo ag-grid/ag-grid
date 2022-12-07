@@ -15,6 +15,16 @@ export type ChartSeriesType =
     'treemap' |
     'common';
 
+export const VALID_SERIES_TYPES: ChartSeriesType[] = [
+    'area',
+    'bar',
+    'column',
+    'histogram',
+    'line',
+    'pie',
+    'scatter',
+];
+
 export function getSeriesType(chartType: ChartType): ChartSeriesType {
     switch (chartType) {
         case 'bar':

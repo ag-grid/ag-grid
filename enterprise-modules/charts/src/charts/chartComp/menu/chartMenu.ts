@@ -22,6 +22,7 @@ import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
 import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartOptionsService } from "../services/chartOptionsService";
+import { AgChartPaddingOptions } from "ag-charts-community";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]
@@ -57,6 +58,7 @@ export class ChartMenu extends Component {
     private tabbedMenu: TabbedChartMenu;
     private menuPanel?: AgPanel;
     private menuVisible = false;
+    private chartToolbarOptions: ChartMenuOptions[];
 
     constructor(
         private readonly eChartContainer: HTMLElement,
@@ -89,6 +91,21 @@ export class ChartMenu extends Component {
 
     public isVisible(): boolean {
         return this.menuVisible;
+    }
+
+    public getExtraPaddingRequired(): AgChartPaddingOptions {
+        const topItems: ChartMenuOptions[] = ['chartLink', 'chartUnlink', 'chartDownload'];
+        const rightItems: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat'];
+
+        const result: AgChartPaddingOptions = {};
+        if (topItems.some(v => this.chartToolbarOptions.includes(v))) {
+            result.top = 10;
+        }
+        if (rightItems.some(v => this.chartToolbarOptions.includes(v))) {
+            result.right = 15;
+        }
+
+        return result;
     }
 
     private getToolbarOptions(): ChartMenuOptions[] {
@@ -202,10 +219,10 @@ export class ChartMenu extends Component {
     }
 
     private createButtons(): void {
-        const chartToolbarOptions = this.getToolbarOptions();
+        this.chartToolbarOptions = this.getToolbarOptions();
         const menuEl = this.eMenu;
 
-        chartToolbarOptions.forEach(button => {
+        this.chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
             const [iconName, callback] = buttonConfig;
             const buttonEl = _.createIconNoSpan(
@@ -294,24 +311,38 @@ export class ChartMenu extends Component {
         this.menuVisible ? this.hideMenu() : this.showMenu();
     }
 
-    public showMenu(panel?: ChartToolPanelMenuOptions, animate: boolean = true): void {
+    public showMenu(
+        /**
+         * Menu panel to show. If empty, shows the existing menu, or creates the default menu if menu panel has not been created
+         */
+        panel?: ChartToolPanelMenuOptions,
+        /**
+         * Whether to animate the menu opening
+         */
+        animate: boolean = true
+    ): void {
         if (!animate) {
             this.eMenuPanelContainer.classList.add('ag-no-transition');
         }
 
-        const menuPanel = panel || this.defaultPanel;
-        let tab = this.panels.indexOf(menuPanel);
-        if (tab < 0) {
-            console.warn(`AG Grid: '${panel}' is not a valid Chart Tool Panel name`);
-            tab = this.panels.indexOf(this.defaultPanel)
-        }
-
-        if (this.menuPanel) {
-            this.tabbedMenu.showTab(tab);
+        if (this.menuPanel && !panel) {
             this.showContainer();
         } else {
-            this.createMenuPanel(tab).then(this.showContainer.bind(this));
+            const menuPanel = panel || this.defaultPanel;
+            let tab = this.panels.indexOf(menuPanel);
+            if (tab < 0) {
+                console.warn(`AG Grid: '${panel}' is not a valid Chart Tool Panel name`);
+                tab = this.panels.indexOf(this.defaultPanel)
+            }
+    
+            if (this.menuPanel) {
+                this.tabbedMenu.showTab(tab);
+                this.showContainer();
+            } else {
+                this.createMenuPanel(tab).then(this.showContainer.bind(this));
+            }
         }
+
 
         if (!animate) {
             // Wait for menu to render
@@ -354,6 +385,10 @@ export class ChartMenu extends Component {
 
         if (this.menuPanel && this.menuPanel.isAlive()) {
             this.destroyBean(this.menuPanel);
+        }
+
+        if (this.tabbedMenu && this.tabbedMenu.isAlive()) {
+            this.destroyBean(this.tabbedMenu);
         }
     }
 }

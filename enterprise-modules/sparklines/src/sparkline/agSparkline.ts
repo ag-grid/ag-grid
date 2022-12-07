@@ -15,7 +15,9 @@ import {
 } from '@ag-grid-community/core';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
 import { BarColumnLabel } from './bar-column/barColumnSparkline';
-import { isNumber } from '../util/value';
+import { _Util } from 'ag-charts-community';
+
+const { extent, isNumber } = _Util;
 
 export type SparklineFactoryOptions = SparklineOptions & {
     data: any[];
@@ -25,7 +27,7 @@ export type SparklineFactoryOptions = SparklineOptions & {
     container?: HTMLElement;
 };
 
-export type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline | BarSparkline;
+type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline | BarSparkline;
 
 type Validators = {
     [property: string] : ValidatorFunc;
@@ -236,7 +238,7 @@ const doOnceFlags: { [key: string]: boolean; } = {};
  * @param {Function} func
  * @param {string} key
  */
- export function doOnce(func: () => void, key: string) {
+function doOnce(func: () => void, key: string) {
     if (doOnceFlags[key]) { return; }
 
     func();

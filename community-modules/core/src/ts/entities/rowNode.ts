@@ -1152,4 +1152,32 @@ export class RowNode<TData = any> implements IEventEmitter {
 
         return res.reverse();
     }
+
+    public createFooter(): void {
+        // only create footer node once, otherwise we have daemons and
+        // the animate screws up with the daemons hanging around
+        if (this.sibling) { return; }
+
+        const footerNode = new RowNode(this.beans);
+
+        Object.keys(this).forEach( key => {
+            (footerNode as any)[key] = (this as any)[key];
+        });
+
+        footerNode.footer = true;
+        footerNode.setRowTop(null);
+        footerNode.setRowIndex(null);
+
+        // manually set oldRowTop to null so we discard any
+        // previous information about its position.
+        footerNode.oldRowTop = null;
+
+        footerNode.id = 'rowGroupFooter_' + this.id;
+
+        // get both header and footer to reference each other as siblings. this is never undone,
+        // only overwritten. so if a group is expanded, then contracted, it will have a ghost
+        // sibling - but that's fine, as we can ignore this if the header is contracted.
+        footerNode.sibling = this;
+        this.sibling = footerNode;
+    }
 }

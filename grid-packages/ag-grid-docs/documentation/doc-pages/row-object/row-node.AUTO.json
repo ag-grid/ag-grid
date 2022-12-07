@@ -426,5 +426,6 @@
   "getRoute": {
     "description": "/** Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.\n     * If the Row Node is not a group, it returns `undefined`.\n     */",
     "type": { "arguments": {}, "returnType": "string[] | undefined" }
-  }
+  },
+  "createFooter": { "type": { "arguments": {}, "returnType": "void" } }
 }

@@ -303,7 +303,7 @@ export class VirtualList extends TabGuardComp {
     }
 
     private addScrollListener() {
-        this.addGuiEventListener('scroll', () => this.drawVirtualRows());
+        this.addGuiEventListener('scroll', () => this.drawVirtualRows(), { passive: true });
     }
 
     public setModel(model: VirtualListModel): void {

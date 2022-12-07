@@ -22,6 +22,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
 
   rowModelType: 'serverSide',
+  suppressServerSideInfiniteScroll: true,
 
   getServerSideGroupLevelParams: (params: GetServerSideGroupLevelParamsParams): ServerSideGroupLevelParams => {
     var noGroupingActive = params.rowGroupColumns.length == 0
@@ -29,7 +30,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     if (noGroupingActive) {
       res = {
         // infinite scrolling
-        infiniteScroll: true,
+        suppressInfiniteScroll: false,
         // 100 rows per block
         cacheBlockSize: 100,
         // purge blocks that are not needed
@@ -38,7 +39,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     } else {
       var topLevelRows = params.level == 0
       res = {
-        infiniteScroll: topLevelRows ? false : true,
+        suppressInfiniteScroll: !topLevelRows,
         cacheBlockSize: params.level == 1 ? 5 : 2,
         maxBlocksInCache: -1, // never purge blocks
       }

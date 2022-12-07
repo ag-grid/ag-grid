@@ -95,9 +95,15 @@ class SeriesHighlightStyle {
     enabled?: boolean = undefined;
 }
 
+class TextHighlightStyle {
+    @Validate(OPT_COLOR_STRING)
+    color?: string = 'black';
+}
+
 export class HighlightStyle {
     readonly item = new SeriesItemHighlightStyle();
     readonly series = new SeriesHighlightStyle();
+    readonly text = new TextHighlightStyle();
 }
 
 export class SeriesTooltip {

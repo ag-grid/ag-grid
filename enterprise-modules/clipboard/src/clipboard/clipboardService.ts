@@ -38,6 +38,7 @@ import {
     Optional,
     CtrlsService,
     WithoutGridCommon,
+    ProcessRowGroupForExportParams,
 } from "@ag-grid-community/core";
 import { stringToArray } from "./csv";
 
@@ -733,13 +734,44 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             columnSeparator: this.getClipboardDelimiter(),
             onlySelected: !rowPositions,
             processCellCallback: this.gridOptionsService.getCallback('processCellForClipboard'),
-            processRowGroupCallback: (params) => params.node.key!,
+            processRowGroupCallback: (params) => this.processRowGroupCallback(params),
             processHeaderCallback: this.gridOptionsService.getCallback('processHeaderForClipboard'),
             processGroupHeaderCallback: this.gridOptionsService.getCallback('processGroupHeaderForClipboard')
             
         };
 
         return this.csvCreator.getDataAsCsv(exportParams, true);
+    }
+
+    private processRowGroupCallback(params: ProcessRowGroupForExportParams) {
+        const { node } = params;
+        const { key } = node;
+
+        let value = key != null ? key : '';
+
+        if (params.node.footer) {
+            let suffix = '';
+            if (key && key.length) {
+                suffix = ` ${key}`;
+            }
+            value = `Total${suffix}`;
+        }
+        const processCellForClipboard = this.gridOptionsService.getCallback('processCellForClipboard');
+
+        if (processCellForClipboard) {
+            let column = node.rowGroupColumn as Column;
+
+            if (!column && node.footer && node.level === -1) {
+                column = this.columnModel.getRowGroupColumns()[0];
+            }
+            return processCellForClipboard({
+                value,
+                node,
+                column,
+                type: 'clipboard'
+            });
+        }
+        return value;
     }
 
     private dispatchFlashCells(cellsToFlash: {}): void {

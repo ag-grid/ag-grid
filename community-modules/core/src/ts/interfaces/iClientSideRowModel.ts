@@ -22,9 +22,9 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     refreshModel(params: RefreshModelParams<TData>): void;
     expandOrCollapseAll(expand: boolean): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
-    forEachNode(callback: (node: RowNode, index: number) => void): void;
-    forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void): void;
-    forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void;
+    forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
+    forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
+    forEachPivotNode(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
     resetRowHeights(): void;
     onRowHeightChanged(): void;
     onRowHeightChangedDebounced(): void;
@@ -33,7 +33,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     getRootNode(): RowNode;
     doAggregate(changedPath?: ChangedPath): void;
     getTopLevelNodes(): RowNode[] | null;
-    forEachPivotNode(callback: (node: RowNode, index: number) => void): void;
     ensureRowsAtPixel(rowNode: RowNode[], pixel: number, increment: number): boolean;
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
     getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition;

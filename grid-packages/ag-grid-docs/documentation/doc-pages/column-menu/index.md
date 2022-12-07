@@ -88,13 +88,48 @@ The behaviour and appearance of the Columns Menu tab can be customised by supply
 
 <interface-documentation interfaceName='ColumnsMenuParams' ></interface-documentation>
 
-The following example demonstrates all of the above columns menu tab properties. Note the following:
+The following example demonstrates all of the above columns menu tab properties except **columnLayout** which will be covered later on. Note the following:
 
 - All columns menu tabs have been configured to ignore column moves in the grid by setting `suppressSyncLayoutWithGrid=true` on the default column definition.
 - The **Name** column doesn't show the top filter section as `suppressColumnFilter`, `suppressColumnSelectAll` and `suppressColumnExpandAll` are all set to `true`.
 - The **Age** column shows the group columns in a collapsed state as `contractColumnSelection` is set to `true`.
 
 <grid-example title='Customising Columns Menu Tab' name='customising-columns-menu-tab' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
+
+## Custom Column Layout
+
+The order of columns in the Columns Tool Panel is derived from the `columnDefs` supplied in the grid options, and is kept in sync with the grid when columns are moved by default. However custom column layouts can also be defined by using the **columnLayout** in the `colDef.columnsMenuParams`.
+
+<snippet>
+const gridOptions = {
+    // original column definitions supplied to the grid
+    columnDefs: [
+        {
+            columnsMenuParams: {
+                columnLayout: [{
+                    headerName: 'Group 1', // group doesn't appear in grid
+                    children: [
+                        { field: 'c' }, // custom column order with column "b" omitted
+                        { field: 'a' }
+                    ]
+                }]
+            }
+        },
+        { field: 'b' },
+        { field: 'c' }
+    ]
+}
+</snippet>
+
+[[note]]
+| When providing **columnLayout** the `suppressSyncLayoutWithGrid` will automatically set to true.
+
+The following example demonstrates the **columnLayout** property of the column menu tab. Note the following:
+
+- The `name` column has a custom layout for its **Columns Menu** tab.
+- All other columns will display the same layout as the grid.
+
+<grid-example title='Customising Columns Layout' name='customising-columns-layout' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
 
 ## Popup Parent
 

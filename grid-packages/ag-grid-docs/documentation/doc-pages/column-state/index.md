@@ -45,7 +45,7 @@ The example below demonstrates saving and restoring column state. Try the follow
 1. Click 'Restore State' and the columns state is set back to where it was when you clicked 'Save State'.
 1. Click 'Reset State' and the state will go back to what was defined in the Column Definitions.
 
-<grid-example title='Save and Apply State' name='save-apply-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Save and Apply State' name='save-apply-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "columnpanel"] }'></grid-example>
 
 ## Column State Interface
 
@@ -128,7 +128,7 @@ gridOptions.columnApi.applyColumnState({
 
 The example below shows some fine grained access to Column State.
 
-<grid-example title='Fine Grained State' name='fine-grained-state' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Fine Grained State' name='fine-grained-state' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "columnpanel"] }'></grid-example>
 
 ### Saving Partial State
 
@@ -142,7 +142,7 @@ are not impacted.
 Likewise when saving and restoring visibility and order, only visibility and order will be impacted when
 re-applying the state.
 
-<grid-example title='Selective State' name='selective-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Selective State' name='selective-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "columnpanel"] }'></grid-example>
 
 ## Considerations
 

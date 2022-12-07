@@ -36,7 +36,7 @@ export class CartesianChart extends Chart {
         const { captionAutoPadding = 0 } = this.positionCaptions();
         this.positionLegend(captionAutoPadding);
 
-        if (legend.enabled && legend.data.length) {
+        if (legend.visible && legend.enabled && legend.data.length) {
             const { legendAutoPadding } = this;
             const legendPadding = this.legend.spacing;
 
@@ -84,7 +84,9 @@ export class CartesianChart extends Chart {
         }
 
         this.seriesRoot.visible = seriesVisible;
-        legend.visible = seriesVisible;
+        if (!seriesVisible) {
+            legend.visible = false;
+        }
         navigator.visible = seriesVisible;
 
         this.seriesRect = seriesRect;
@@ -313,8 +315,8 @@ export class CartesianChart extends Chart {
         result.height -= (top ?? 0) + (bottom ?? 0);
 
         // Width and height should not be negative.
-        result.width = Math.max(0, Math.round(result.width));
-        result.height = Math.max(0, Math.round(result.height));
+        result.width = Math.max(0, result.width);
+        result.height = Math.max(0, result.height);
 
         return result;
     }

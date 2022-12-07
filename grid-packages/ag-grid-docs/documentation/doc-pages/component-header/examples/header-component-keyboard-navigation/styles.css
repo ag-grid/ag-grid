@@ -1,0 +1,13 @@
+.custom-header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.custom-header input {
+    width: 80px;
+}
+
+:focus {
+    background: lightskyblue !important;
+}

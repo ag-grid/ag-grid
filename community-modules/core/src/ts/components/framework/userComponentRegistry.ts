@@ -10,12 +10,12 @@ import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatin
 import { TextFilter } from "../../filter/provided/text/textFilter";
 import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
 import { HeaderComp } from "../../headerRendering/cells/column/headerComp";
-import { HeaderGroupComp } from "../../headerRendering/cells/columnGroup/headerGroupComp";
 import { SortIndicatorComp } from "../../headerRendering/cells/column/sortIndicatorComp";
+import { HeaderGroupComp } from "../../headerRendering/cells/columnGroup/headerGroupComp";
 import { IComponent } from "../../interfaces/iComponent";
+import { ModuleNames } from "../../modules/moduleNames";
+import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { LargeTextCellEditor } from "../../rendering/cellEditors/largeTextCellEditor";
-import { PopupSelectCellEditor } from "../../rendering/cellEditors/popupSelectCellEditor";
-import { PopupTextCellEditor } from "../../rendering/cellEditors/popupTextCellEditor";
 import { SelectCellEditor } from "../../rendering/cellEditors/selectCellEditor";
 import { TextCellEditor } from "../../rendering/cellEditors/textCellEditor";
 import { AnimateShowChangeCellRenderer } from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
@@ -27,7 +27,6 @@ import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayCo
 import { TooltipComponent } from "../../rendering/tooltipComponent";
 import { doOnce } from "../../utils/function";
 import { iterateObject } from '../../utils/object';
-import { AgComponentUtils } from "./agComponentUtils";
 
 /**
  * B the business interface (ie IHeader)
@@ -37,17 +36,10 @@ export interface RegisteredComponent {
     component: any;
     componentFromFramework: boolean;
 }
-
-export interface DeprecatedComponentName {
-    propertyHolder: string;
-    newComponentName: string;
-}
-
 @Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
-    @Autowired('agComponentUtils') private readonly agComponentUtils: AgComponentUtils;
 
     private agGridDefaults: { [key: string]: any } = {
         //date
@@ -75,8 +67,6 @@ export class UserComponentRegistry extends BeanStub {
         agCellEditor: TextCellEditor,
         agTextCellEditor: TextCellEditor,
         agSelectCellEditor: SelectCellEditor,
-        agPopupTextCellEditor: PopupTextCellEditor,
-        agPopupSelectCellEditor: PopupSelectCellEditor,
         agLargeTextCellEditor: LargeTextCellEditor,
 
         //filter
@@ -92,62 +82,22 @@ export class UserComponentRegistry extends BeanStub {
         agTooltipComponent: TooltipComponent
     };
 
-    private agDeprecatedNames: { [key: string]: DeprecatedComponentName; } = {
-        set: {
-            newComponentName: 'agSetColumnFilter',
-            propertyHolder: 'filter'
-        },
-        text: {
-            newComponentName: 'agTextColumnFilter',
-            propertyHolder: 'filter'
-        },
-        number: {
-            newComponentName: 'agNumberColumnFilter',
-            propertyHolder: 'filter'
-        },
-        date: {
-            newComponentName: 'agDateColumnFilter',
-            propertyHolder: 'filter'
-        },
+    /** Used to provide useful error messages if a user is trying to use an enterprise component without loading the module. */
+    private enterpriseAgDefaultCompsModule: Record<string, ModuleNames> = {
+        agSetColumnFilter: ModuleNames.SetFilterModule,
+        agSetColumnFloatingFilter: ModuleNames.SetFilterModule,
+        agMultiColumnFilter: ModuleNames.MultiFilterModule,
+        agMultiColumnFloatingFilter: ModuleNames.MultiFilterModule,
+        agRichSelect: ModuleNames.RichSelectModule,
+        agRichSelectCellEditor: ModuleNames.RichSelectModule,
+        agDetailCellRenderer: ModuleNames.MasterDetailModule,
+        agSparklineCellRenderer: ModuleNames.SparklinesModule
+    }
 
-        group: {
-            newComponentName: 'agGroupCellRenderer',
-            propertyHolder: 'cellRenderer'
-        },
-        animateShowChange: {
-            newComponentName: 'agAnimateShowChangeCellRenderer',
-            propertyHolder: 'cellRenderer'
-        },
-        animateSlide: {
-            newComponentName: 'agAnimateSlideCellRenderer',
-            propertyHolder: 'cellRenderer'
-        },
-
-        select: {
-            newComponentName: 'agSelectCellEditor',
-            propertyHolder: 'cellEditor'
-        },
-        largeText: {
-            newComponentName: 'agLargeTextCellEditor',
-            propertyHolder: 'cellEditor'
-        },
-        popupSelect: {
-            newComponentName: 'agPopupSelectCellEditor',
-            propertyHolder: 'cellEditor'
-        },
-        popupText: {
-            newComponentName: 'agPopupTextCellEditor',
-            propertyHolder: 'cellEditor'
-        },
-        richSelect: {
-            newComponentName: 'agRichSelectCellEditor',
-            propertyHolder: 'cellEditor'
-        },
-        headerComponent: {
-            newComponentName: 'agColumnHeader',
-            propertyHolder: 'headerComponent'
-        }
-    };
+    private deprecatedAgGridDefaults: Record<string, string> = {
+        agPopupTextCellEditor: 'AG Grid: Since v27.1 The agPopupTextCellEditor is deprecated. Instead use { cellEditor: "agTextCellEditor", cellEditorPopup: true }',
+        agPopupSelectCellEditor: 'AG Grid: Since v27.1 the agPopupSelectCellEditor is deprecated. Instead use { cellEditor: "agSelectCellEditor", cellEditorPopup: true }',
+    }
 
     private jsComps: { [key: string]: any } = {};
     private fwComps: { [key: string]: any } = {};
@@ -164,8 +114,7 @@ export class UserComponentRegistry extends BeanStub {
         }
     }
 
-    public registerDefaultComponent(rawName: string, component: any) {
-        const name = this.translateIfDeprecated(rawName);
+    public registerDefaultComponent(name: string, component: any) {
 
         if (this.agGridDefaults[name]) {
             console.error(`Trying to overwrite a default component. You should call registerComponent`);
@@ -175,9 +124,7 @@ export class UserComponentRegistry extends BeanStub {
         this.agGridDefaults[name] = component;
     }
 
-    private registerJsComponent(rawName: string, component: any) {
-        const name = this.translateIfDeprecated(rawName);
-
+    private registerJsComponent(name: string, component: any) {
         if (this.fwComps[name]) {
             console.error(`Trying to register a component that you have already registered for frameworks: ${name}`);
             return;
@@ -190,16 +137,14 @@ export class UserComponentRegistry extends BeanStub {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    private registerFwComponent<A extends IComponent<any> & B, B>(rawName: string, component: { new(): IComponent<B>; }) {
+    private registerFwComponent<A extends IComponent<any> & B, B>(name: string, component: { new(): IComponent<B>; }) {
         const warningMessage = `AG Grid: As of v27, registering components via grid property frameworkComponents is deprecated. Instead register both JavaScript AND Framework Components via the components property.`;
         doOnce( ()=> console.warn(warningMessage), `UserComponentRegistry.frameworkComponentsDeprecated`);
 
-        const name = this.translateIfDeprecated(rawName);
         this.fwComps[name] = component;
     }
 
-    public retrieve(rawName: string): {componentFromFramework: boolean, component: any} | null {
-        const name = this.translateIfDeprecated(rawName);
+    public retrieve(name: string): { componentFromFramework: boolean, component: any } | null {
 
         const createResult = (component: any, componentFromFramework: boolean) => ({componentFromFramework, component});
 
@@ -227,24 +172,16 @@ export class UserComponentRegistry extends BeanStub {
             return createResult(defaultComponent, false);
         }
 
-        if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
-            console.warn(`AG Grid: Looking for component [${name}] but it wasn't found.`);
+        const moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
+        if (moduleForComponent) {
+            ModuleRegistry.assertRegistered(moduleForComponent, `AG Grid component [${name}]`);
+        } else if (this.deprecatedAgGridDefaults[name]) {
+            doOnce(() => console.warn(this.deprecatedAgGridDefaults[name]), name)
+        }
+        else {
+            doOnce(() => console.warn(`AG Grid: Looking for component [${name}] but it wasn't found. Have you registered the component? See https://ag-grid.com/javascript-data-grid/components/`), "MissingComp" + name);
         }
 
         return null;
-    }
-
-    private translateIfDeprecated(raw: string): string {
-        const deprecatedInfo = this.agDeprecatedNames[raw];
-
-        if (deprecatedInfo != null) {
-            doOnce(() => {
-                console.warn(`AG Grid: Since v15.0 component names have been renamed to be namespaced. You should rename ${deprecatedInfo.propertyHolder}:${raw} to ${deprecatedInfo.propertyHolder}:${deprecatedInfo.newComponentName}`);
-            }, 'DEPRECATE_COMPONENT_' + raw);
-
-            return deprecatedInfo.newComponentName;
-        }
-
-        return raw;
     }
 }

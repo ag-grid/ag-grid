@@ -1,17 +1,11 @@
-import { Group } from '../scene/group';
-import { Scene } from '../scene/scene';
-import { Observable } from '../util/observable';
-import { createId } from '../util/id';
-import { Padding } from '../util/padding';
+import { HighlightStyleOptions } from '@ag-grid-community/core';
+import { _Scale, _Scene, _Util } from 'ag-charts-community';
+
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
-import { HighlightStyleOptions } from '@ag-grid-community/core';
-import { isContinuous, isDate, isNumber, isString, isStringObject } from '../util/value';
-import { LinearScale } from '../scale/linearScale';
-import { TimeScale } from '../scale/timeScale';
-import { BandScale } from '../scale/bandScale';
-import { extent } from '../util/array';
-import { locale } from '../util/time/format/defaultLocale';
+
+const { extent, isNumber, isContinuous, isString, isStringObject, isDate, createId, Padding } = _Util;
+const { LinearScale, BandScale, TimeScale } = _Scale;
 
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;
@@ -34,19 +28,19 @@ type Container = HTMLElement | undefined | null;
 type Data = any[] | undefined | null;
 type DataType = 'number' | 'array' | 'object' | undefined;
 type AxisType = 'number' | 'category' | 'time';
-type ScaleType = LinearScale | TimeScale | BandScale<string>;
+type ScaleType = _Scale.LinearScale | _Scale.TimeScale | _Scale.BandScale<string>;
 
-export class SparklineAxis extends Observable {
+export class SparklineAxis {
     type?: AxisType = 'category';
     stroke: string = 'rgb(204, 214, 235)';
     strokeWidth: number = 1;
 }
-export abstract class Sparkline extends Observable {
+export abstract class Sparkline {
     readonly id: string = createId(this);
 
-    readonly scene: Scene;
+    readonly scene: _Scene.Scene;
     readonly canvasElement: HTMLCanvasElement;
-    readonly rootGroup: Group;
+    readonly rootGroup: _Scene.Group;
 
     // Only one tooltip instance for all sparkline instances.
     tooltip!: SparklineTooltip;
@@ -100,7 +94,7 @@ export abstract class Sparkline extends Observable {
         return this._data;
     }
 
-    padding: Padding = new Padding(3);
+    padding: _Util.Padding = new Padding(3);
 
     xKey: string = 'x';
     yKey: string = 'y';
@@ -115,7 +109,7 @@ export abstract class Sparkline extends Observable {
     protected max: number | undefined = undefined;
 
     protected xScale!: ScaleType;
-    protected yScale: LinearScale = new LinearScale();
+    protected yScale: _Scale.LinearScale = new LinearScale();
 
     readonly axis = new SparklineAxis();
     readonly highlightStyle: HighlightStyleOptions = {
@@ -126,15 +120,13 @@ export abstract class Sparkline extends Observable {
     };
 
     protected constructor() {
-        super();
-
-        const root = new Group();
+        const root = new _Scene.Group();
         this.rootGroup = root;
 
         const element = document.createElement('div');
         element.setAttribute('class', 'ag-sparkline-wrapper');
 
-        const scene = new Scene(document);
+        const scene = new _Scene.Scene({ document });
         this.scene = scene;
         this.canvasElement = scene.canvas.element;
         scene.root = root;
@@ -321,6 +313,7 @@ export abstract class Sparkline extends Observable {
         ) {
             this.highlightDatum(closestDatum);
             this.updateCrosshairs();
+            this.scene.render();
         }
 
         if (this.tooltip.enabled) {
@@ -335,6 +328,7 @@ export abstract class Sparkline extends Observable {
     private onMouseOut(event: MouseEvent) {
         this.dehighlightDatum();
         this.tooltip.toggle(false);
+        this.scene.render();
     }
 
     protected smallestInterval?: { x: number, y: number } = undefined;
@@ -448,6 +442,8 @@ export abstract class Sparkline extends Observable {
 
         // produce data joins and update selection's nodes
         this.update();
+
+        this.scene.render();
     }
 
     /**
@@ -521,6 +517,8 @@ export abstract class Sparkline extends Observable {
 
             // produce data joins and update selection's nodes
             this.update();
+
+            this.scene.render();
 
             this.layoutId = 0;
         });
@@ -626,7 +624,9 @@ export abstract class Sparkline extends Observable {
         return String(Math.round(datum * 10) / 10);
     }
 
-    private defaultDateFormatter = locale.format('%m/%d/%y, %H:%M:%S');
+    private defaultDateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'short', timeStyle: 'medium', hour12: false } as any);
+    
+    // locale.format('%m/%d/%y, %H:%M:%S');
 
     protected formatDatum(datum: any): string {
         const type = this.axis.type || 'category';
@@ -634,7 +634,7 @@ export abstract class Sparkline extends Observable {
         if (type === 'number' && typeof datum === 'number') {
             return this.formatNumericDatum(datum);
         } else if (type === 'time' && (datum instanceof Date || isNumber(datum))) {
-            return this.defaultDateFormatter(datum);
+            return this.defaultDateFormatter.format(datum);
         } else {
             return String(datum);
         }

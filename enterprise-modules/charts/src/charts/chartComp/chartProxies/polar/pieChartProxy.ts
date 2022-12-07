@@ -53,8 +53,7 @@ export class PieChartProxy extends ChartProxy {
             if (this.chartType === 'doughnut') {
                 const { outerRadiusOffset, innerRadiusOffset } = PieChartProxy.calculateOffsets(offset);
                 const title = f.displayName ? {
-                    title: { text: f.displayName },
-                    showInLegend: numFields > 1
+                    title: { text: f.displayName, showInLegend: numFields > 1 },
                 } : undefined;
 
                 // augment shared options with 'doughnut' specific options

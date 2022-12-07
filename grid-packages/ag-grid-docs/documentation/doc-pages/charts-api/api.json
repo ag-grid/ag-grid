@@ -1027,8 +1027,8 @@
     "colorRange": {
       "default": ["#cb4b3f", "#6acb64"]
     },
-    "colorParents": {
-      "default": false
+    "groupFill": {
+      "default": "#272931"
     },
     "gradient": {
       "default": true

@@ -30,7 +30,6 @@ const gridOptions: GridOptions = {
     },
   },
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
   treeData: true,
   columnDefs: columnDefs,
   animateRows: true,

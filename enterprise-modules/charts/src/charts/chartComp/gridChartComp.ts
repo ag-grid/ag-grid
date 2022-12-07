@@ -17,9 +17,9 @@ import {
     RefSelector,
     SeriesChartType,
     WithoutGridCommon,
-    CHART_TOOL_PANEL_MENU_OPTIONS
+    CHART_TOOL_PANEL_MENU_OPTIONS,
 } from "@ag-grid-community/core";
-import { AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
+import { AgChartThemeOverrides, AgChartThemePalette, AgChartInstance } from "ag-charts-community";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
 import { ChartController, DEFAULT_THEMES } from "./chartController";
@@ -36,7 +36,6 @@ import { ChartCrossFilterService } from "./services/chartCrossFilterService";
 import { CrossFilteringContext } from "../chartService";
 import { ChartOptionsService } from "./services/chartOptionsService";
 import { ComboChartProxy } from "./chartProxies/combo/comboChartProxy";
-import { AgChartInstance } from "ag-charts-community";
 
 export interface GridChartParams {
     chartId: string;
@@ -194,6 +193,7 @@ export class GridChartComp extends Component {
             getChartThemes: this.getChartThemes.bind(this),
             customChartThemes: this.gridOptionsService.get('customChartThemes'),
             getGridOptionsChartThemeOverrides: () => this.getGridOptionsChartThemeOverrides(),
+            getExtraPaddingRequired: () => this.chartMenu?.getExtraPaddingRequired() ?? {},
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             crossFiltering: this.params.crossFiltering,
             crossFilterCallback,
@@ -228,7 +228,7 @@ export class GridChartComp extends Component {
         this.chartOptionsService = this.createBean(new ChartOptionsService(this.chartController));
         this.titleEdit && this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
     }
-
+    
     private getChartThemeName(): string {
         return this.chartController.getChartThemeName();
     }
@@ -471,6 +471,7 @@ export class GridChartComp extends Component {
         }
 
         this.destroyBean(this.chartMenu);
+        this.destroyBean(this.titleEdit);
 
         // don't want to invoke destroy() on the Dialog (prevents destroy loop)
         if (this.chartDialog && this.chartDialog.isAlive()) {

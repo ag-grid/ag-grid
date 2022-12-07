@@ -339,8 +339,8 @@ export class Component extends BeanStub {
         super.destroy();
     }
 
-    public addGuiEventListener(event: string, listener: (event: any) => void): void {
-        this.eGui.addEventListener(event, listener);
+    public addGuiEventListener(event: string, listener: (event: any) => void, options?: AddEventListenerOptions): void {
+        this.eGui.addEventListener(event, listener, options);
         this.addDestroyFunc(() => this.eGui.removeEventListener(event, listener));
     }
 

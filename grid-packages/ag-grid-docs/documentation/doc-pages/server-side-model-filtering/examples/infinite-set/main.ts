@@ -42,7 +42,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
 
   // fetch 100 rows at a time
   cacheBlockSize: 100,

@@ -548,6 +548,8 @@ export interface ColumnsMenuParams {
     /** By default, column groups start expanded.
      * Pass true to default to contracted groups*/
     contractColumnSelection?: boolean;
+    /** Custom Columns Panel layout */
+    columnLayout?: (ColDef | ColGroupDef)[];
 }
 
 export interface BaseColDefParams<TData = any> extends AgGridCommon<TData> {

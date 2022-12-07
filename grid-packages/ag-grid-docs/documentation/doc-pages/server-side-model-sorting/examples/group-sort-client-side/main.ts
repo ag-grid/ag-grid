@@ -22,6 +22,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
 
   rowModelType: 'serverSide',
+  suppressServerSideInfiniteScroll: true,
+
   suppressAggFuncInHeader: true,
   animateRows: true,
 }

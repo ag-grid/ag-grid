@@ -1,5 +1,4 @@
 import {
-    AgColorPicker,
     AgGroupComponent,
     AgGroupComponentParams,
     Autowired,
@@ -9,6 +8,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { AgColorPicker } from "../../../../../widgets/agColorPicker";
 
 export class BackgroundPanel extends Component {
     public static TEMPLATE = /* html */

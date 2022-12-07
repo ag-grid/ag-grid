@@ -1446,13 +1446,23 @@ export interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {
 }
 
 export interface AgTreemapSeriesTooltipRendererParams<DatumType> {
+    /** Datum from the series data that the treemap tile is being rendered for. */
     datum: DatumType;
+    /** The parent of the datum from the treemap data. */
+    parent?: DataValue;
+    /** The depth of the datum in the hierarchy. */
+    depth: number;
+    /** sizeKey as specified on series options. */
     sizeKey?: string;
+    /** labelKey as specified on series options. */
     labelKey?: string;
-    valueKey?: string;
+    /** colorKey as specified on series options. */
     colorKey?: string;
+    /** The computed fill colour of the treemap tile. */
     color?: string;
+    /** The title of the treemap tile */
     title?: string;
+    /** The ID of the series. */
     seriesId: string;
 }
 
@@ -1472,11 +1482,23 @@ export interface AgTreemapSeriesLabelsOptions {
     value?: {
         /** A property to be used as a key to retrieve a value from datum. */
         key?: string;
+        /** A name of a datum value. */
+        name?: string;
         /** A function to generate a value label from datum. */
         formatter?: (params: { datum: any }) => string | undefined;
         /** The label's font and color style. */
         style?: AgChartLabelOptions;
     };
+}
+
+export interface AgTreemapSeriesHighlightTextStyle {
+    /** The colour of an item's text when tapped or hovered over. Use `undefined` for no highlight. */
+    color?: CssColor;
+}
+
+export interface AgTreemapSeriesHighlightStyle extends AgSeriesHighlightStyle {
+    /** Highlight style used for a text when item is tapped or hovered over. */
+    text?: AgTreemapSeriesHighlightTextStyle;
 }
 
 /** Configuration for the treemap series. */
@@ -1498,14 +1520,30 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     colorDomain?: number[];
     /** The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'. */
     colorRange?: string[];
-    /** Whether or not to assign colors to non-leaf nodes based on 'colorKey'. */
-    colorParents?: boolean;
+    /** The group fill color. If undefined the value based on `colorKey` will be used. */
+    groupFill?: string;
+    /** The group's stroke color. */
+    groupStroke?: string;
+    /** The group's stroke width. */
+    groupStrokeWidth?: number;
+    /** The tile's stroke color. */
+    tileStroke?: string;
+    /** The tile's stroke width. */
+    tileStrokeWidth?: number;
     /** Series-specific tooltip configuration. */
     tooltip?: AgTreemapSeriesTooltip<DatumType>;
     /** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */
     nodePadding?: PixelSize;
     /** Whether or not to use gradients for treemap tiles. */
     gradient?: boolean;
+    /** Configuration for the shadow used behind the treemap tiles. */
+    tileShadow?: AgDropShadowOptions;
+    /** Configuration for the shadow used behind the treemap labels. */
+    labelShadow?: AgDropShadowOptions;
+    /** Determines whether the groups will be highlighted by cursor. */
+    highlightGroups?: boolean;
+    /** Configuration for treemap tiles when they are hovered over. */
+    highlightStyle?: AgTreemapSeriesHighlightStyle;
     /** A callback function for adjusting the styles of a particular treemap tile based on the input parameters */
     formatter?: (params: AgTreemapSeriesFormatterParams<DataValue>) => AgTreemapSeriesFormat;
     /** A map of event names to event listeners. */
@@ -1514,8 +1552,12 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
 
 /** The parameters of the treemap series formatter function */
 export interface AgTreemapSeriesFormatterParams<DataValue = any> {
-    /** Datum from the series data array that the treemap tile is being rendered for. */
+    /** Datum from the series data that the treemap tile is being rendered for. */
     readonly datum: DataValue;
+    /** The parent of the datum from the treemap data. */
+    readonly parent?: DataValue;
+    /** The depth of the datum in the hierarchy. */
+    readonly depth: number;
     /** labelKey as specified on series options. */
     readonly labelKey: string;
     /** sizeKey as specified on series options. */

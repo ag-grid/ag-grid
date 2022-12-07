@@ -84,7 +84,7 @@ series: [{
     labelKey: 'orgHierarchy',
     sizeKey: undefined,  // make all siblings within a parent the same size
     colorKey: undefined, // use node depth value to determine the tile color
-    colorParents: true,  // assign color to parent tiles based on their depth too (not just leaf tiles)
+    groupFill: 'black',  // the color of group tiles, retrieved from data if `undefined`
     colorDomain: [0, 2, 4], // depth of 0 will correspond to 'red', 2 to 'green' and so on
     colorRange: ['red', 'green', 'blue'], // tiles with a depth of 1 will be a blend of 'red' and 'green'
     // change the color of a particular tile
@@ -99,6 +99,155 @@ series: [{
 ## Organizational Chart Example
 
 <chart-example title='Organizational Chart' name='org-chart' type='generated'></chart-example>
+
+## Understanding the Treemap colours
+
+There are several ways to customise the colours of treemap tiles.
+
+### Storing the colour values in the data
+
+If treemap data nodes have fill colours assigned to them,
+the property containing the colour should be specified in `colorKey`.
+
+```js
+series: [{
+    type: 'treemap',
+    colorKey: 'color',
+    data: [{
+        children: [
+            { color: 'red' },
+            { color: '#fa5310' },
+        ],
+    }],
+}]
+```
+
+### Using the color scale
+
+`colorKey` can also specify a property containing a numeric value.
+In this case the `colorDomain` and `colorRange` should be provided.
+
+```js
+series: [{
+    type: 'treemap',
+    colorKey: 'color',
+    colorDomain: [0, 10, 20],
+    colorRange: ['red', 'yellow', 'green'],
+    data: [{
+        children: [
+            { color: 5 },
+            { color: 8 },
+            { color: 12 },
+        ],
+    }],
+}]
+```
+
+### Groups colours
+
+The groups can be coloured in 2 ways:
+- A static colour value can be specified in `groupFill` property.
+- If `groupFill` can be set to `undefined`, the group colour behaviour will match the one for tiles.
+
+```js
+series: [{
+    type: 'treemap',
+    colorKey: 'color',
+    groupFill: 'black',
+    ...
+    groupFill: undefined,
+    data: [{
+        color: 'black',
+        children: [
+            { color: 'white' },
+            { color: 'red' },
+            { color: 'white' },
+        ],
+    }],
+}]
+```
+
+### Strokes
+
+There are several properties to control the tiles' and groups' stroke colors and widths.
+
+```js
+series: [{
+    type: 'treemap',
+    tileStroke: 'black',
+    tileStrokeWidth: 2,
+    groupStroke: 'transparent',
+    groupStrokeWidth: 0,
+}]
+```
+
+### Labels colours and font styles
+
+Since tiles can have different sizes depending on layout,
+there is `large`, `medium` and `small` label configuration to match a specific size.
+Tiles can also have separate `value` labels.
+The styles for all of them can be specified like:
+
+```js
+series: [{
+    type: 'treemap',
+    labels: {
+        large: {
+            color: 'black',
+            fontWeight: 'bold',
+        },
+        medium: {
+            color: 'black',
+        },
+        small: {
+            color: 'gray',
+            fontSize: 8,
+        },
+        value: {
+            formatter: ({ datum }) => `${datum.size * 100}%`,
+            style: {
+                color: 'orange',
+            },
+        },
+    },
+}]
+```
+
+In addition the groups' titles can have their own styles:
+
+```js
+series: [{
+    type: 'treemap',
+    title: {
+        color: 'black',
+        fontWeight: 'bold',
+    },
+    subtitle: {
+        color: 'black',
+        fontSize: 8,
+    },
+}]
+```
+
+### Overriding the styles for particular tiles
+
+Use `formatter` function to change a colour for specific tiles.
+
+```js
+series: [{
+    formatter: ({ datum, depth, labelKey, highlighted }) => {
+        if (datum[labelKey] === 'Joel Cooper') {
+            return { fill: highlighted ? 'white' : 'orchid' };
+        }
+    },
+}]
+```
+
+Please see the API reference for more information.
+
+## Complex Colouring Chart Example
+
+<chart-example title='Complex Colouring Chart' name='custom-colors' type='generated'></chart-example>
 
 ## API Reference
 

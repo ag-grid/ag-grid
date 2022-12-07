@@ -36,7 +36,6 @@ const gridOptions: GridOptions = {
   },
   // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true,
 
   animateRows: true,
   suppressAggFuncInHeader: true,

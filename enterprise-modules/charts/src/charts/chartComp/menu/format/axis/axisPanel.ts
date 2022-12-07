@@ -1,8 +1,6 @@
 import {
     _,
-    AgAngleSelect,
     AgCheckbox,
-    AgColorPicker,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSlider,
@@ -17,6 +15,8 @@ import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { FormatPanelOptions, getMaxValue } from "../formatPanel";
+import { AgColorPicker } from "../../../../../widgets/agColorPicker";
+import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
 
 export class AxisPanel extends Component {
 

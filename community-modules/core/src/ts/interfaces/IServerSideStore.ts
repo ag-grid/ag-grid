@@ -35,7 +35,7 @@ export interface StoreRefreshAfterParams {
 
 export interface ServerSideGroupLevelState {
     /** True if infininte scrolling */
-    infiniteScroll: boolean;
+    suppressInfiniteScroll: boolean;
     /** The route that identifies this level. */
     route: string[];
     /** How many rows the level has. This includes 'loading rows'. */

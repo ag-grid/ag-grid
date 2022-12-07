@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
-import { AgChartOptions } from '../agChartOptions';
+import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
 import * as examples from '../test/examples';
 import { prepareOptions } from './prepare';
 
@@ -106,6 +106,55 @@ const EXAMPLES: Record<string, TestCase> = {
     },
 };
 
+const COMBO_CHART_EXAMPLE: AgCartesianChartOptions = {
+    series: [
+        { type: 'line', yKey: 'test2' },
+        { type: 'column', yKey: 'test' },
+        { type: 'area', yKey: 'test3' },
+    ],
+    theme: {
+        baseTheme: {
+            baseTheme: 'ag-default',
+            overrides: {
+                column: { series: { label: { enabled: true } } },
+                line: { series: { label: { enabled: true } } },
+                area: { series: { label: { enabled: true } } },
+            },
+        } as any,
+        overrides: {},
+    },
+};
+
+const COMPLEX_THEME_SCENARIO: AgCartesianChartOptions = {
+    series: [
+        { type: 'line', yKey: 'test2' },
+        { type: 'column', yKey: 'test' },
+        { type: 'area', yKey: 'test3' },
+        { type: 'area', yKey: 'test4', label: {} },
+    ],
+    axes: [
+        { type: 'time', position: 'bottom' },
+        { type: 'time', position: 'bottom', title: { text: 'Time' } },
+        { type: 'number', position: 'left', title: { text: 'Velocity' } },
+        { type: 'number', position: 'right', title: { text: 'G', enabled: true } },
+    ],
+    theme: {
+        baseTheme: {
+            baseTheme: 'ag-default',
+            overrides: {
+                common: {
+                    axes: {
+                        number: { title: { _enabledFromTheme: true, enabled: false } },
+                    },
+                },
+                column: { series: { label: { enabled: false, _enabledFromTheme: true } } },
+                line: { series: { label: { enabled: true, _enabledFromTheme: true } } },
+            },
+        } as any,
+        overrides: {},
+    },
+};
+
 describe('prepare', () => {
     describe('#prepareOptions', () => {
         beforeEach(() => {
@@ -142,5 +191,31 @@ describe('prepare', () => {
                 }
             });
         }
+
+        it('should merge combo-chart series overrides as expected', () => {
+            const options = COMBO_CHART_EXAMPLE;
+            options.container = document.createElement('div');
+
+            const preparedOptions = prepareOptions(options);
+
+            expect(preparedOptions.series?.length).toEqual(3);
+            expect(preparedOptions.series?.map((s) => s.type)).toEqual(['line', 'column', 'area']);
+            expect(preparedOptions.series?.map((s) => s.label?.enabled)).toEqual([true, true, true]);
+        });
+
+        it('should merge complex theme setups as expected', () => {
+            const options = COMPLEX_THEME_SCENARIO;
+
+            options.container = document.createElement('div');
+
+            const preparedOptions = prepareOptions(options);
+
+            expect(preparedOptions.axes?.length).toEqual(4);
+            expect(preparedOptions.axes?.map((a) => a.type)).toEqual(['time', 'time', 'number', 'number']);
+            expect(preparedOptions.axes?.map((a) => a.title?.enabled)).toEqual([false, true, false, true]);
+            expect(preparedOptions.series?.length).toEqual(4);
+            expect(preparedOptions.series?.map((s) => s.type)).toEqual(['line', 'column', 'area', 'area']);
+            expect(preparedOptions.series?.map((s) => s.label?.enabled)).toEqual([true, false, false, true]);
+        });
     });
 });
