@@ -35,6 +35,7 @@ import { Layers } from './layers';
 import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
 import { InteractionManager } from './interaction/interactionManager';
+import { ChartUpdateType } from './chart';
 
 export interface LegendDatum {
     id: string; // component ID
@@ -231,7 +232,10 @@ export class Legend {
     @Validate(OPT_BOOLEAN)
     reverseOrder?: boolean = undefined;
 
-    constructor(interactionManager: InteractionManager) {
+    constructor(
+        private readonly updateCallback: (type: ChartUpdateType) => void,
+        interactionManager: InteractionManager
+    ) {
         this.item.marker.parent = this;
         this.pagination = new Pagination((page) => this.updatePageNumber(page), interactionManager);
         this.pagination.attachPagination(this.group);
@@ -494,6 +498,7 @@ export class Legend {
 
     updatePageNumber(pageNumber: number) {
         this.updatePositions(this.size[0], this.size[1], pageNumber);
+        this.updateCallback(ChartUpdateType.SCENE_RENDER);
     }
 
     update() {
