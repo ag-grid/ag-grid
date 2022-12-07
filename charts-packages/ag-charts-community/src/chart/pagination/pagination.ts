@@ -1,33 +1,114 @@
 import { Group } from '../../scene/group';
-import { Node } from '../../scene/node';
+import { Node, RedrawType } from '../../scene/node';
 import { Marker } from '../marker/marker';
 import { Triangle } from '../marker/triangle';
 import { Text } from '../../scene/shape/text';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { InteractionEvent, InteractionManager } from '../interaction/interactionManager';
+import {
+    COLOR_STRING,
+    NUMBER,
+    OPT_COLOR_STRING,
+    OPT_FONT_STYLE,
+    OPT_FONT_WEIGHT,
+    OPT_NUMBER,
+    STRING,
+    Validate,
+} from '../../util/validation';
+import { FontStyle, FontWeight } from '../agChartOptions';
+import { getMarker } from '../marker/util';
 
 enum Orientation {
     Vertical,
     Horizontal,
 }
 
-export class Pagination {
-    private group = new Group();
+class PaginationLabel {
+    @Validate(COLOR_STRING)
+    color: string = 'black';
 
-    label: Text = new Text();
-    currentPage: number = 0;
+    @Validate(OPT_FONT_STYLE)
+    fontStyle?: FontStyle = undefined;
+
+    @Validate(OPT_FONT_WEIGHT)
+    fontWeight?: FontWeight = undefined;
+
+    @Validate(NUMBER(0))
+    fontSize: number = 12;
+
+    @Validate(STRING)
+    fontFamily: string = 'Verdana, sans-serif';
+}
+
+class PaginationMarkerStyle {
+    @Validate(NUMBER(0))
+    size = 15;
+
+    @Validate(OPT_COLOR_STRING)
+    fill?: string;
+
+    @Validate(OPT_NUMBER(0, 1))
+    fillOpacity?: number = undefined;
+
+    @Validate(OPT_COLOR_STRING)
+    stroke?: string;
+
+    @Validate(NUMBER(0))
+    strokeWidth: number = 1;
+
+    @Validate(NUMBER(0, 1))
+    strokeOpacity: number = 1;
+}
+
+class PaginationMarker {
+    @Validate(NUMBER(0))
+    size = 15;
+
+    _shape: string | (new () => Marker) = Triangle;
+    set shape(value: string | (new () => Marker)) {
+        this._shape = value;
+        this.parent?.onMarkerShapeChange();
+    }
+    get shape() {
+        return this._shape;
+    }
+
+    /**
+     * Inner padding between a pagination button and the label.
+     */
+    @Validate(NUMBER(0))
+    padding: number = 8;
+
+    parent?: { onMarkerShapeChange(): void };
+}
+
+export class Pagination {
+    static className = 'Pagination';
+
+    private readonly group = new Group({ name: 'pagination' });
+    private readonly labelNode: Text = new Text();
+
+    readonly marker = new PaginationMarker();
+    readonly activeStyle = new PaginationMarkerStyle();
+    readonly inactiveStyle = new PaginationMarkerStyle();
+    readonly highlightStyle = new PaginationMarkerStyle();
+    readonly label = new PaginationLabel();
+
+    private currentPage: number = 0;
 
     constructor(private readonly updateCallback: (newPage: number) => void, interactionManager: InteractionManager) {
-        const label = this.label;
-        label.textBaseline = 'middle';
-        label.fontSize = 12;
-        label.fontFamily = 'Verdana, sans-serif';
-        label.fill = 'black';
-        label.y = HdpiCanvas.has.textMetrics ? 1 : 0;
+        const { labelNode } = this;
+        labelNode.textBaseline = 'middle';
+        labelNode.fontSize = 12;
+        labelNode.fontFamily = 'Verdana, sans-serif';
+        labelNode.fill = 'black';
+        labelNode.y = HdpiCanvas.has.textMetrics ? 1 : 0;
 
-        this.group.append([this.nextButton, this.previousButton, label]);
+        this.group.append([this.nextButton, this.previousButton, labelNode]);
 
         interactionManager.addListener('click', (event) => this.onClick(event));
+
+        this.marker.parent = this;
 
         this.updatePositions();
     }
@@ -109,7 +190,6 @@ export class Pagination {
             this.group.removeChild(this._nextButton);
             this._nextButton = value;
             this.group.appendChild(value);
-            this.updatePositions();
         }
     }
     get nextButton(): Marker {
@@ -122,33 +202,10 @@ export class Pagination {
             this.group.removeChild(this._previousButton);
             this._previousButton = value;
             this.group.appendChild(value);
-            this.updatePositions();
         }
     }
     get previousButton(): Marker {
         return this._previousButton;
-    }
-
-    private _markerSize: number = 15;
-    set markerSize(value: number) {
-        if (this._markerSize !== value) {
-            this._markerSize = value;
-            this.updatePositions();
-        }
-    }
-    get markerSize(): number {
-        return this._markerSize;
-    }
-
-    private _spacing: number = 8;
-    set spacing(value: number) {
-        if (this._spacing !== value) {
-            this._spacing = value;
-            this.updatePositions();
-        }
-    }
-    get spacing(): number {
-        return this._spacing;
     }
 
     private updatePositions() {
@@ -157,32 +214,42 @@ export class Pagination {
     }
 
     private updateLabelPosition() {
-        const { markerSize } = this;
+        const { size: markerSize, padding: markerPadding } = this.marker;
 
         this.nextButton.size = markerSize;
         this.previousButton.size = markerSize;
 
-        this.label.x = markerSize / 2 + this.spacing;
+        this.labelNode.x = markerSize / 2 + markerPadding;
     }
 
     private updateNextButtonPosition() {
-        const labelBBox = this.label.computeBBox();
-        this.nextButton.translationX = labelBBox.x + labelBBox.width + this.markerSize / 2 + this.spacing;
+        const labelBBox = this.labelNode.computeBBox();
+        this.nextButton.translationX = labelBBox.x + labelBBox.width + this.marker.size / 2 + this.marker.padding;
     }
 
     private updateLabel() {
         const { currentPage, totalPages: pages } = this;
 
-        this.label.text = `${currentPage + 1} / ${pages}`;
+        this.labelNode.text = `${currentPage + 1} / ${pages}`;
     }
 
-    private updateButtons() {
-        const { nextButton, previousButton, nextButtonDisabled, previousButtonDisabled } = this;
-        nextButton.fill = nextButtonDisabled ? 'grey' : 'blue';
-        nextButton.stroke = nextButtonDisabled ? 'grey' : 'blue';
+    private updateMarkers() {
+        const { nextButton, previousButton, nextButtonDisabled, previousButtonDisabled, activeStyle, inactiveStyle } =
+            this;
 
-        previousButton.fill = previousButtonDisabled ? 'grey' : 'blue';
-        previousButton.stroke = previousButtonDisabled ? 'grey' : 'blue';
+        const nextButtonStyle = nextButtonDisabled ? inactiveStyle : activeStyle;
+        this.updateMarker(nextButton, nextButtonStyle);
+
+        const previousButtonStyle = previousButtonDisabled ? inactiveStyle : activeStyle;
+        this.updateMarker(previousButton, previousButtonStyle);
+    }
+
+    private updateMarker(marker: Marker, style: PaginationMarkerStyle) {
+        marker.fill = style.fill;
+        marker.fillOpacity = style.fillOpacity ?? 1;
+        marker.stroke = style.stroke;
+        marker.strokeWidth = style.strokeWidth;
+        marker.strokeOpacity = style.strokeOpacity;
     }
 
     private enableOrDisableButtons() {
@@ -194,7 +261,7 @@ export class Pagination {
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
         this.previousButtonDisabled = onFirstPage || zeroPagesToDisplay;
 
-        this.updateButtons();
+        this.updateMarkers();
     }
 
     private onClick(event: InteractionEvent<'click'>) {
@@ -237,6 +304,14 @@ export class Pagination {
 
         this.currentPage = page;
         this.onPaginationChanged();
+    }
+
+    onMarkerShapeChange() {
+        const Marker = getMarker(this.marker.shape || Triangle);
+        this.previousButton = new Marker();
+        this.nextButton = new Marker();
+        this.updatePositions();
+        this.group.markDirty(this.group, RedrawType.MINOR);
     }
 
     attachPagination(node: Node) {
