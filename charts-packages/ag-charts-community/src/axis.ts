@@ -291,10 +291,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         });
     }
 
-    setVisible({ axis, crossLines }: { axis: boolean; crossLines: boolean }) {
-        this.axisGroup.visible = axis;
-        this.gridlineGroup.visible = axis;
-        this.crossLineGroup.visible = crossLines;
+    setCrossLinesVisible(visible: boolean) {
+        this.crossLineGroup.visible = visible;
     }
 
     attachAxis(node: Node, nextNode?: Node | null) {

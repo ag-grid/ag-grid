@@ -2884,7 +2884,7 @@
   },
   "VisibilityMap": {
     "meta": { "isTypeAlias": true },
-    "type": "{ axes: boolean; crossLines: boolean; series: boolean; }"
+    "type": "{ crossLines: boolean; series: boolean; legend: boolean; }"
   },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
