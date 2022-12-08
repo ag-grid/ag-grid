@@ -23,11 +23,6 @@ type GetKeys<T, U> = {
 }[keyof T];
 
 /**
- * Get all the GridOptions properties of the provided type.
- * Will also include `any` properties. 
- */
-export type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
-/**
  * Get all the GridOption properties that strictly contain the provided type.
  * Does not include `any` properties.
  */
@@ -52,7 +47,7 @@ export interface PropertyChangedEvent extends AgEvent {
 
 export type PropertyChangedListener = (event: PropertyChangedEvent) => void
 
-export function toNumber(value: any): number | undefined {
+function toNumber(value: any): number | undefined {
     if (typeof value == 'number') {
         return value;
     }
@@ -62,7 +57,7 @@ export function toNumber(value: any): number | undefined {
     }
 }
 
-export function isTrue(value: any): boolean {
+function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
 

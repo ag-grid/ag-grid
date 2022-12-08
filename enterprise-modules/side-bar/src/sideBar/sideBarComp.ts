@@ -23,10 +23,6 @@ import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsC
 import { SideBarDefParser } from "./sideBarDefParser";
 import { ToolPanelWrapper } from "./toolPanelWrapper";
 
-export interface IToolPanelChildComp extends IComponent<any> {
-    refresh(): void;
-}
-
 export class SideBarComp extends Component implements ISideBar {
 
     @Autowired('gridApi') private gridApi: GridApi;

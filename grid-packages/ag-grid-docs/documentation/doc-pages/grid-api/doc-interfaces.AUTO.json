@@ -221,12 +221,6 @@
       }
     }
   },
-  "RegisteredComponent": {
-    "component": { "type": { "returnType": "any", "optional": false } },
-    "componentFromFramework": {
-      "type": { "returnType": "boolean", "optional": false }
-    }
-  },
   "ContextParams": {
     "providedBeanInstances": {
       "type": { "returnType": "any", "optional": false }
@@ -10555,18 +10549,6 @@
     "focusColumn": { "type": { "returnType": "Column", "optional": false } },
     "isAsync": { "type": { "returnType": "boolean", "optional": true } }
   },
-  "RenderParams": {
-    "rows": { "type": { "returnType": "RowNode", "optional": false } }
-  },
-  "RenderRowsFeature": {
-    "render": {
-      "type": {
-        "arguments": { "rows": "RowNode[]" },
-        "returnType": "void",
-        "optional": false
-      }
-    }
-  },
   "RowContainerName": {},
   "RowContainerType": {},
   "IRowContainerComp": {
@@ -10741,7 +10723,6 @@
     }
   },
   "GetKeys": { "meta": { "typeParams": ["T", "U"] } },
-  "KeysLike": { "meta": { "typeParams": ["U"] } },
   "KeysOfType": { "meta": { "typeParams": ["U"] } },
   "BooleanProps": {},
   "NumberProps": {},
@@ -14175,7 +14156,6 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
-  "IMenu": {},
   "IMenuFactory": {
     "showMenuAfterButtonClick": {
       "type": {
@@ -14954,79 +14934,6 @@
     "start": {
       "description": "/** Gets called after grid is initialised. What happens depends on row model. Client Side will take rowData\n     * from gridOptions, the other row models will start calling their datasources. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
-  },
-  "IRowNodeBlock": {
-    "getDisplayIndexStart": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "getDisplayIndexEnd": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "getLastAccessed": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "getState": {
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
-    },
-    "isAnyNodeOpen": {
-      "type": {
-        "arguments": { "rowCount": "number" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "getBlockNumber": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "forEachNodeDeep": {
-      "type": {
-        "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void",
-          "sequence": "NumberSequence",
-          "rowCount": "number"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "forEachNodeShallow": {
-      "type": {
-        "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void",
-          "sequence": "NumberSequence",
-          "rowCount": "number"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "load": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "addEventListener": {
-      "type": {
-        "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async?": "boolean",
-          "options?": "AddEventListenerOptions"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "removeEventListener": {
-      "type": {
-        "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async?": "boolean",
-          "options?": "AddEventListenerOptions"
-        },
-        "returnType": "void",
-        "optional": false
-      }
     }
   },
   "StageExecuteParams": {
@@ -17430,6 +17337,7 @@
   "ModuleNames": {},
   "GridOptionKey": {},
   "AnyGridOptions": {},
+  "KeysLike": { "meta": { "typeParams": ["U"] } },
   "CallbackKeys": {},
   "FunctionKeys": {},
   "ICellComp": {
@@ -18967,13 +18875,6 @@
     "labelSeparator": { "type": { "returnType": "string", "optional": true } },
     "labelAlignment": {
       "type": { "returnType": "LabelAlignment", "optional": true }
-    }
-  },
-  "ChangeEvent": {
-    "selected": { "type": { "returnType": "boolean", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
     }
   },
   "DialogOptions": {

@@ -150,12 +150,6 @@
       "newAgStackInstance": "() => AgPromise<any>"
     }
   },
-  "RegisteredComponent": {
-    "meta": {
-      "doc": "/** B the business interface (ie IHeader)\n * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid\n */"
-    },
-    "type": { "component": "any", "componentFromFramework": "boolean" }
-  },
   "ContextParams": {
     "meta": {},
     "type": {
@@ -6008,11 +6002,6 @@
       "focusIndex": "/** For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub). */"
     }
   },
-  "RenderParams": { "meta": {}, "type": { "rows": "RowNode" } },
-  "RenderRowsFeature": {
-    "meta": {},
-    "type": { "render(rows: RowNode[])": "void" }
-  },
   "RowContainerName": {
     "meta": { "isEnum": true },
     "type": [
@@ -6126,10 +6115,6 @@
   "GetKeys": {
     "meta": { "isTypeAlias": true, "typeParams": ["T", "U"] },
     "type": "{ [K in keyof T]: U extends T[K] ? K : (T[K] extends U | undefined ? K : never); }[keyof T]"
-  },
-  "KeysLike": {
-    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
-    "type": "Exclude<GetKeys<GridOptions, U>, undefined>"
   },
   "KeysOfType": {
     "meta": { "isTypeAlias": true, "typeParams": ["U"] },
@@ -7953,7 +7938,6 @@
       "start()": "/** Gets called after grid is initialised. What happens depends on row model. Client Side will take rowData\n     * from gridOptions, the other row models will start calling their datasources. */"
     }
   },
-  "IMenu": { "meta": {}, "type": {} },
   "IMenuFactory": {
     "meta": {},
     "type": {
@@ -8305,22 +8289,6 @@
       "isLastRowIndexKnown()": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "/** Used by CSRM only - is makes sure there are now estimated row heights within the range. */",
       "start()": "/** Gets called after grid is initialised. What happens depends on row model. Client Side will take rowData\n     * from gridOptions, the other row models will start calling their datasources. */"
-    }
-  },
-  "IRowNodeBlock": {
-    "meta": {},
-    "type": {
-      "getDisplayIndexStart()": "number",
-      "getDisplayIndexEnd()": "number",
-      "getLastAccessed()": "number",
-      "getState()": "string",
-      "isAnyNodeOpen(rowCount: number)": "boolean",
-      "getBlockNumber()": "number",
-      "forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number)": "void",
-      "forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number)": "void",
-      "load()": "void",
-      "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
-      "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void"
     }
   },
   "StageExecuteParams": {
@@ -9780,6 +9748,10 @@
     "meta": { "isTypeAlias": true },
     "type": "{ [K in keyof GridOptions]: GridOptions[K] extends 'NO_MATCH' ? K : never; }[keyof GridOptions]"
   },
+  "KeysLike": {
+    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
+    "type": "Exclude<GetKeys<GridOptions, U>, undefined>"
+  },
   "CallbackKeys": {
     "meta": { "isTypeAlias": true },
     "type": "KeysOfType<(any: AgGridCommon<any>) => any>"
@@ -10670,11 +10642,6 @@
       "labelSeparator?": "string",
       "labelAlignment?": "LabelAlignment"
     }
-  },
-  "ChangeEvent": {
-    "meta": {},
-    "type": { "selected": "boolean", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
   },
   "DialogOptions": {
     "meta": {},

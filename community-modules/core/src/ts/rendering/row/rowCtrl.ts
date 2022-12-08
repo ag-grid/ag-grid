@@ -24,7 +24,7 @@ import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRender
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
 
-export enum RowType {
+enum RowType {
     Normal = 'Normal',
     FullWidth = 'FullWidth',
     FullWidthLoading = 'FullWidthLoading',
