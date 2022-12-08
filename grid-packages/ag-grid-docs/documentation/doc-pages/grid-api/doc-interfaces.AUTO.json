@@ -14213,7 +14213,17 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
+  "ModuleValidationResult": {},
   "Module": {
+    "version": { "type": { "returnType": "string", "optional": false } },
+    "validate": {
+      "description": "/** Validation run when registering the module\n     * \n     * @return Whether the module is valid or not. If not, a message explaining why it is not valid\n     */",
+      "type": {
+        "arguments": {},
+        "returnType": "ModuleValidationResult",
+        "optional": true
+      }
+    },
     "moduleName": { "type": { "returnType": "string", "optional": false } },
     "beans": { "type": { "returnType": "any[]", "optional": true } },
     "agStackComponents": {

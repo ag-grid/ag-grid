@@ -21,7 +21,7 @@ import {
     PreDestroy,
     SeriesChartType
 } from "@ag-grid-community/core";
-import { AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
+import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION } from "ag-charts-community";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 import { upgradeChartModel } from "./chartModelMigration";
 import { VERSION as GRID_VERSION } from "../version";
@@ -35,6 +35,8 @@ export class ChartService extends BeanStub implements IChartService {
 
     @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+
+    public static CHARTS_VERSION = CHARTS_VERSION;
 
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
     // those in developer provided containers.

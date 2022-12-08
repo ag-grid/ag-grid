@@ -6,8 +6,10 @@ import { WatermarkComp } from "./license/watermark";
 export { LicenseManager } from "./licenseManager";
 export { MD5 } from "./license/md5";
 export { WatermarkComp } from "./license/watermark";
+import { VERSION } from "./version";
 
 export const EnterpriseCoreModule: Module = {
+    version: VERSION,
     moduleName: ModuleNames.EnterpriseCoreModule,
     beans: [LicenseManager, MD5],
     agStackComponents: [

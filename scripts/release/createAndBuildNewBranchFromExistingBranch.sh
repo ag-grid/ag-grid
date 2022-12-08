@@ -41,7 +41,7 @@ else
 fi
 
 echo "########################################################################"
-echo "####### Updating lerna.json, package.json and bower.json files #########"
+echo "####### Updating lerna.json, package.json, bower.json and version.ts files #########"
 if [ $PROJECTS_TO_VERSION == "all" ] || [ $PROJECTS_TO_VERSION == "charts" ]; then
   echo "Versioning Charts Packages"
   node scripts/release/versionModules.js "6.2.1" "~6.2.1" '["charts-packages", "examples-charts"]' "all"

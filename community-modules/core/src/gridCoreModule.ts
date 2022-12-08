@@ -1,1 +1,5 @@
-export const GridCoreModule = { };
+import { VERSION } from "./version";
+
+export const GridCoreModule = {
+  version: VERSION
+};

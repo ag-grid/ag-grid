@@ -469,7 +469,7 @@ export * from "./interfaces/iAgChartOptions";
 export * from "./interfaces/iSparklineCellRendererParams";
 
 // modules
-export { Module } from "./interfaces/iModule";
+export { Module, ModuleValidationResult } from "./interfaces/iModule";
 export { ModuleNames } from "./modules/moduleNames";
 export { ModuleRegistry } from "./modules/moduleRegistry";
 

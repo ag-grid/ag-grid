@@ -8,8 +8,10 @@ import { PrimaryColsPanel } from "./columnToolPanel/primaryColsPanel";
 import { RowGroupingModule } from "@ag-grid-enterprise/row-grouping";
 import { SideBarModule } from "@ag-grid-enterprise/side-bar";
 import { ModelItemUtils } from "./columnToolPanel/modelItemUtils";
+import { VERSION } from "./version";
 
 export const ColumnsToolPanelModule: Module = {
+    version: VERSION,
     moduleName: ModuleNames.ColumnToolPanelModule,
     beans: [ModelItemUtils],
     agStackComponents: [

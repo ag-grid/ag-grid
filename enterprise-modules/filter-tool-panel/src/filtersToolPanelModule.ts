@@ -4,8 +4,10 @@ import { FiltersToolPanelHeaderPanel } from "./filterToolPanel/filtersToolPanelH
 import { FiltersToolPanelListPanel } from "./filterToolPanel/filtersToolPanelListPanel";
 import { FiltersToolPanel } from "./filterToolPanel/filtersToolPanel";
 import { SideBarModule } from "@ag-grid-enterprise/side-bar";
+import { VERSION } from "./version";
 
 export const FiltersToolPanelModule: Module = {
+    version: VERSION,
     moduleName: ModuleNames.FiltersToolPanelModule,
     beans: [],
     agStackComponents: [
