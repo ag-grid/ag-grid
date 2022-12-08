@@ -12,7 +12,6 @@ import {
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { LegacyReactComponent } from './legacyReactComponent';
-import { ChangeDetectionService, ChangeDetectionStrategyType } from '../shared/changeDetectionService';
 import { AgGridReactProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
@@ -31,8 +30,6 @@ export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<T
     };
 
     gridOptions!: GridOptions<TData>;
-
-    changeDetectionService = new ChangeDetectionService();
 
     api: GridApi<TData> | null = null;
     columnApi!: ColumnApi;
@@ -82,6 +79,8 @@ export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<T
         const gridOptions = this.props.gridOptions || {};
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
 
+        this.checkForDeprecations(this.props);
+
         // don't need the return value
         new Grid(this.eGridDiv, this.gridOptions, gridParams);
 
@@ -91,24 +90,10 @@ export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<T
         this.props.setGridApi!(this.api, this.columnApi);
     }
 
-    private getStrategyTypeForProp(propKey: string) {
-        if (propKey === 'rowData') {
-            if (this.props.rowDataChangeDetectionStrategy) {
-                return this.props.rowDataChangeDetectionStrategy;
-            } else if (this.isImmutableDataActive()) {
-                return ChangeDetectionStrategyType.IdentityCheck;
-            }
+    private checkForDeprecations(props: any) {
+        if (props.rowDataChangeDetectionStrategy) {
+            _.doOnce(() => console.warn('AG Grid: Since v29 rowDataChangeDetectionStrategy has been deprecated. Row data property changes will be compared by reference via triple equals ===. See https://ag-grid.com/react-data-grid/react-hooks/'), 'rowDataChangeDetectionStrategy_Deprecation')
         }
-
-        // all other cases will default to DeepValueCheck
-        return ChangeDetectionStrategyType.DeepValueCheck;
-    }
-
-    private isImmutableDataActive() {
-        return (this.props.immutableData) || this.props.getRowId != null ||
-            (this.props.gridOptions && (
-            this.props.gridOptions.immutableData
-                  || this.props.gridOptions.getRowId != null));
     }
 
     shouldComponentUpdate(nextProps: any) {
@@ -137,10 +122,9 @@ export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<T
         const debugLogging = !!nextProps.debug;
 
         Object.keys(nextProps).forEach(propKey => {
-            if (_.includes(ComponentUtil.ALL_PROPERTIES, propKey)) {
-                const changeDetectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
+            if (_.includes(ComponentUtil.ALL_PROPERTIES, propKey)) {                
 
-                if (!changeDetectionStrategy.areEqual(prevProps[propKey], nextProps[propKey])) {
+                if (prevProps[propKey] !== nextProps[propKey]) {
                     if (debugLogging) {
                         console.log(`agGridReact: [${propKey}] property changed`);
                     }
