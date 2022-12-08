@@ -10,7 +10,7 @@ import {
     _Theme,
 } from 'ag-charts-community';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
-import { getSeriesType, VALID_SERIES_TYPES } from '../utils/seriesTypeMapper';
+import { getSeriesType } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';
 
 export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: ChartProxy): AgChartTheme {

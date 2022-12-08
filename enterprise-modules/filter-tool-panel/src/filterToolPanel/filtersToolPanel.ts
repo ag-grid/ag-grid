@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     ColDef,
     ColGroupDef,

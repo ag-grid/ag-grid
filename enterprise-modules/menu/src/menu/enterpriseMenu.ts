@@ -12,7 +12,6 @@ import {
     FilterWrapper,
     GridApi,
     IMenuFactory,
-    IPrimaryColsPanel,
     IRowModel,
     MenuItemDef,
     ModuleNames,

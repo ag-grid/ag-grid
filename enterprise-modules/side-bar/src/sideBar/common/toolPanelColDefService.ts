@@ -128,11 +128,6 @@ export class ToolPanelColDefService extends BeanStub {
     }
 
     private mergeLeafPathTrees(leafPathTrees: AbstractColDef[]) {
-        const getLeafPathString = (leafPath: ColDef | ColGroupDef): string => {
-            const group = leafPath as ColGroupDef;
-            return group.children ? group.groupId + getLeafPathString(group.children[0]) : '';
-        };
-
         const matchingRootGroupIds = (pathA: AbstractColDef, pathB: AbstractColDef) => {
             const bothPathsAreGroups = this.isColGroupDef(pathA) && this.isColGroupDef(pathB);
             return bothPathsAreGroups && this.getId(pathA) === this.getId(pathB);
