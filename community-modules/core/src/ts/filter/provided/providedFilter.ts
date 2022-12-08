@@ -11,7 +11,6 @@ import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
 import { RowNode } from '../../entities/rowNode';
-import { _ } from '../../utils';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 

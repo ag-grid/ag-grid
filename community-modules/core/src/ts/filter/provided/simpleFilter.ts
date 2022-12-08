@@ -2,7 +2,7 @@ import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '..
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { OptionsFactory } from './optionsFactory';
 import { IProvidedFilter, IProvidedFilterParams, ProvidedFilter } from './providedFilter';
-import { AgPromise, _ } from '../../utils';
+import { AgPromise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { includes } from '../../utils/array';

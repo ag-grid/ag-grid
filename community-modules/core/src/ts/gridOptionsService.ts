@@ -1,7 +1,7 @@
 import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
-import { DomLayoutType, GetRowIdFunc, GridOptions } from "./entities/gridOptions";
+import { DomLayoutType, GridOptions } from "./entities/gridOptions";
 import { GetGroupAggFilteringParams, GetRowIdParams, RowHeightParams } from "./entities/iCallbackParams";
 import { RowNode } from "./entities/rowNode";
 import { Environment } from "./environment";

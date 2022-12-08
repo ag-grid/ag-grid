@@ -7,8 +7,7 @@ import {
     ProcessHeaderForExportParams,
     ProcessRowGroupForExportParams,
     RowNode,
-    ValueService,
-    _
+    ValueService
 } from "@ag-grid-community/core";
 
 import { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "../interfaces";

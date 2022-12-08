@@ -3,7 +3,6 @@ import {
     Bean,
     ChangedPath,
     FilterManager,
-    PostConstruct,
     RowNode,
     BeanStub
 } from "@ag-grid-community/core";

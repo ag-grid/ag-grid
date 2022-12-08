@@ -1,6 +1,5 @@
 import { Bean, Autowired } from './context/context';
 import { BeanStub } from "./context/beanStub";
-import { doOnce } from './utils/function';
 import { exists } from './utils/generic';
 
 export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
