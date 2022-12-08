@@ -23,6 +23,7 @@ import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
 import { ClipRect } from '../scene/clipRect';
+import { Layers } from './layers';
 
 /** Types of chart-update, in pipeline execution order. */
 export enum ChartUpdateType {
@@ -192,6 +193,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     protected readonly interactionManager: InteractionManager;
+    protected readonly axisGroup: Group;
 
     protected constructor(
         document = window.document,
@@ -214,6 +216,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         background.fill = 'white';
         root.appendChild(background.node);
 
+        this.axisGroup = new Group({ name: 'Axes', layer: true, zIndex: Layers.AXIS_ZINDEX });
+        root.appendChild(this.axisGroup);
+
         this.element = element;
         element.classList.add('ag-chart-wrapper');
         element.style.position = 'relative';
@@ -228,6 +233,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('click', (event) => this.onClick(event));
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
         this.interactionManager.addListener('leave', () => this.togglePointer(false));
+        this.interactionManager.addListener('page-left', () => this.destroy());
 
         background.width = this.scene.width;
         background.height = this.scene.height;
@@ -446,11 +452,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     protected _axes: ChartAxis[] = [];
     set axes(values: ChartAxis[]) {
-        const root = this.scene.root!;
-        this._axes.forEach((axis) => axis.detachAxis(root));
+        this._axes.forEach((axis) => axis.detachAxis(this.axisGroup));
         // make linked axes go after the regular ones (simulates stable sort by `linkedTo` property)
         this._axes = values.filter((a) => !a.linkedTo).concat(values.filter((a) => a.linkedTo));
-        this._axes.forEach((axis) => axis.attachAxis(root));
+        this._axes.forEach((axis) => axis.attachAxis(this.axisGroup));
     }
     get axes(): ChartAxis[] {
         return this._axes;

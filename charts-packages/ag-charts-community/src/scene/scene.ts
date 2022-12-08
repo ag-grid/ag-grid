@@ -274,6 +274,9 @@ export class Scene {
         this.container = undefined;
 
         this.strip();
+
+        this.canvas.destroy();
+        Object.assign(this, { canvas: undefined, ctx: undefined });
     }
 
     async render(opts?: { debugSplitTimes: number[]; extraDebugStats: Record<string, number> }) {

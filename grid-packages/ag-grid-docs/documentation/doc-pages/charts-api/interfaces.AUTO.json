@@ -2946,7 +2946,7 @@
   },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave'"
+    "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
   },
   "Listener": {
     "meta": {
@@ -2957,7 +2957,7 @@
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel'"
+    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
   },
   "InteractionEvent": {
     "meta": {
@@ -2971,8 +2971,8 @@
     "type": [
       "SERIES_BACKGROUND_ZINDEX = -10",
       "AXIS_GRIDLINES_ZINDEX = 0",
-      "SERIES_CROSSLINE_RANGE_ZINDEX = 10",
       "AXIS_ZINDEX = 20",
+      "SERIES_CROSSLINE_RANGE_ZINDEX = 30",
       "SERIES_LAYER_ZINDEX = 500",
       "SERIES_LABEL_ZINDEX = 1000",
       "SERIES_CROSSLINE_LINE_ZINDEX = 2500",

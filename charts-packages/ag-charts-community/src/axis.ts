@@ -221,7 +221,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._scale;
     }
 
-    protected readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: Layers.AXIS_ZINDEX });
+    protected readonly axisGroup = new Group({ name: `${this.id}-axis`, zIndex: Layers.AXIS_ZINDEX });
     private readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
 
     private readonly lineGroup = this.axisGroup.appendChild(new Group({ name: `${this.id}-Line` }));
@@ -232,7 +232,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     protected readonly gridlineGroup = new Group({
         name: `${this.id}-gridline`,
-        layer: true,
         zIndex: Layers.AXIS_GRIDLINES_ZINDEX,
     });
     private gridlineGroupSelection = Selection.select(this.gridlineGroup).selectAll<Group>();
