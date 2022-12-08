@@ -1,4 +1,4 @@
-type InteractionTypes = 'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave';
+type InteractionTypes = 'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left';
 type Listener<T extends InteractionTypes> = {
     symbol?: Symbol;
     handler: (event: InteractionEvent<T>) => void;
@@ -13,7 +13,9 @@ type SUPPORTED_EVENTS =
     | 'touchstart'
     | 'touchmove'
     | 'touchend'
-    | 'touchcancel';
+    | 'touchcancel'
+    | 'pagehide';
+const WINDOW_EVENT_HANDLERS: SUPPORTED_EVENTS[] = ['pagehide'];
 const EVENT_HANDLERS: SUPPORTED_EVENTS[] = [
     'click',
     'mousedown',
@@ -65,6 +67,10 @@ export class InteractionManager {
             element.addEventListener(type, this.eventHandler);
         }
 
+        for (const type of WINDOW_EVENT_HANDLERS) {
+            window.addEventListener(type, this.eventHandler);
+        }
+
         if (InteractionManager.interactionDocuments.indexOf(doc) < 0) {
             const styleElement = document.createElement('style');
             styleElement.innerHTML = CSS;
@@ -99,6 +105,10 @@ export class InteractionManager {
     }
 
     public destroy() {
+        for (const type of WINDOW_EVENT_HANDLERS) {
+            window.removeEventListener(type, this.eventHandler);
+        }
+
         for (const type of EVENT_HANDLERS) {
             this.element.removeEventListener(type, this.eventHandler);
         }
@@ -138,8 +148,20 @@ export class InteractionManager {
             case 'touchcancel':
                 types = ['leave'];
                 break;
+
+            case 'pagehide':
+                types = ['page-left'];
+                break;
         }
 
+        const NULL_COORDS = {
+            clientX: -Infinity,
+            clientY: -Infinity,
+            pageX: -Infinity,
+            pageY: -Infinity,
+            offsetX: -Infinity,
+            offsetY: -Infinity,
+        };
         let coordSource;
         if (event instanceof MouseEvent) {
             const mouseEvent = event as MouseEvent;
@@ -150,6 +172,12 @@ export class InteractionManager {
             const lastTouch = touchEvent.touches[0] ?? touchEvent.changedTouches[0];
             const { clientX, clientY, pageX, pageY } = lastTouch;
             coordSource = { clientX, clientY, pageX, pageY };
+        } else if (event instanceof PageTransitionEvent) {
+            if (event.persisted) {
+                // Don't fire the page-left event since the page maybe revisited.
+                return;
+            }
+            coordSource = NULL_COORDS;
         } else {
             // Unsupported event - abort.
             return;

@@ -228,6 +228,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('click', (event) => this.onClick(event));
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
         this.interactionManager.addListener('leave', () => this.togglePointer(false));
+        this.interactionManager.addListener('page-left', () => this.destroy());
 
         background.width = this.scene.width;
         background.height = this.scene.height;

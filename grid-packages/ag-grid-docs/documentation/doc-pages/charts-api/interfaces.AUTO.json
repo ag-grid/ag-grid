@@ -2946,7 +2946,7 @@
   },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave'"
+    "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
   },
   "Listener": {
     "meta": {
@@ -2957,7 +2957,7 @@
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel'"
+    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
   },
   "InteractionEvent": {
     "meta": {
