@@ -2,7 +2,6 @@ import {
     _,
     Component,
     Events,
-    IComponent,
     ISideBar,
     IToolPanel,
     ModuleNames,
