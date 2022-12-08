@@ -64,7 +64,7 @@ If however you want to use ES Modules directly in the browser then you can do so
 </html>
 ```
 
-Note that if you want to reference individual modules you'd be better of using a bundler such as Webpack, or if you want to load modules as above but
+Note that if you want to reference individual modules you'd be better off using a bundler such as Webpack, or if you want to load modules as above but
 via a CDN you'll need to use a shim such as [es-module-shims](https://www.npmjs.com/package/es-module-shims?activeTab=readme).
 
 Alternatively you can use ES Modules with AG Grid packages, as documented [here](/esm-packages/).

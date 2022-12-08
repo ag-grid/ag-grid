@@ -6,7 +6,7 @@ AG Grid `packages` are the easiest way to get started with AG Grid, but the trad
 
 ## Introduction
 
-The following artifacts are "`packages`" and are designed to work to together:
+The following artifacts are "`packages`" and are designed to work together:
 
 [[only-javascript]]
 || Package Name | Contents |
@@ -33,9 +33,9 @@ The following artifacts are "`packages`" and are designed to work to together:
 || `ag-grid-vue` | Vue Support |
 
 
-When using `packages` you get all of the code within that package and cannot pick and choose which features you require. Unlike ['modules](/modules/) there is no need to register feature modules with the grid as the packages take care of this for you.
+When using `packages` you get all of the code within that package and cannot pick and choose which features you require. Unlike [modules](/modules/) there is no need to register feature modules with the grid as the packages take care of this for you.
 
-As a result it is easier to use `packages` but the trade-off will be you'll end up with a larger bundle size if you don't require all the features within a given package.
+As a result it is easier to use `packages` but the trade-off will be that you end up with a larger bundle size if you don't require all the features within a given package.
 
 If you do decide to use `packages` you'll need to specify `ag-grid-community` as a minimum dependency:
 
