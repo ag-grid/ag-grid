@@ -245,6 +245,8 @@ export class Pagination {
     }
 
     private updateMarker(marker: Marker, style: PaginationMarkerStyle) {
+        const { size } = this.marker;
+        marker.size = size;
         marker.fill = style.fill;
         marker.fillOpacity = style.fillOpacity ?? 1;
         marker.stroke = style.stroke;
@@ -311,6 +313,7 @@ export class Pagination {
         this.previousButton = new Marker();
         this.nextButton = new Marker();
         this.updatePositions();
+        this.updateMarkers();
         this.group.markDirty(this.group, RedrawType.MINOR);
     }
 

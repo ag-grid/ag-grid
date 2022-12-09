@@ -246,6 +246,17 @@ export class ChartTheme {
                     },
                 },
                 reverseOrder: false,
+                pagination: {
+                    marker: {
+                        size: 12,
+                    },
+                    activeStyle: {
+                        fill: 'rgb(70, 70, 70)',
+                    },
+                    inactiveStyle: {
+                        fill: 'rgb(219, 219, 219)',
+                    },
+                },
             },
             tooltip: {
                 enabled: true,
