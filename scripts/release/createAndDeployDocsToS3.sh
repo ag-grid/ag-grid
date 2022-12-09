@@ -8,6 +8,6 @@ TARGET_DIRECTORY=$1
 #cd ../../
 #node scripts/release/patchDocs.js
 
-#cd grid-packages/ag-grid-docs
+cd grid-packages/ag-grid-docs
 
 aws s3 cp dist s3://testing.ag-grid.com/$TARGET_DIRECTORY --recursive
