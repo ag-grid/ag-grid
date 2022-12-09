@@ -1688,21 +1688,10 @@ export class GridApi<TData = any> {
 
     /** Apply transactions to the server side row model. */
     public applyNewTransaction(changes: {
-        level?: number; // when undefined, looks at leaf nodes, otherwise targets that group level, issue with unbalanced nodes
-        remove?: any, //data before update (if new is omitted, this is delete)
-        create?: any, //data after update (if old is omitted, this is create, which can still do the role of update if we can find id)
-        // benefits of this approach in conjunction with server side sorting
-
-        // insertIndex now redundant, can easily find if insert is between rows, or before loaded rows, or after
-
-        // no longer need to refresh for removes, if we assume the remove occurred we can find where the node lived
-        // .     relative to our loaded block, and remove a stub node in the relevant location instead.
-
-        // if the node didn't exist and was updated, remove stub node from relevant location and add at new location
+        level?: number,
+        remove?: any,
+        create?: any,
     }[]) {
-        // problems:
-        // we provided level to getRowId, how do we getRowId without level? maybe we can still require level? and if omitted level = leaf level
-
         const rowGroupColumns = this.columnModel.getRowGroupColumns();
         const getRoute = (data: any, level?: number) => {
             const rowGroupFields = rowGroupColumns.map(col => col.getColDef().field!);
@@ -1711,9 +1700,6 @@ export class GridApi<TData = any> {
             }
             return rowGroupFields.map(field => data[field]);
         }
-
-        // Rob can't argue with this convention, I can't see anything wrong with it
-        const getRouteId = (route: []) => route.join('-spliterator-');
 
         changes.forEach(change => {
             const { remove, create, level } = change;
