@@ -2,11 +2,11 @@
 
 TARGET_DIRECTORY=$1
 
-#cd grid-packages/ag-grid-docs
-#npx gulp release-archive
+cd grid-packages/ag-grid-docs
+npx gulp release-archive
 
-#cd ../../
-#node scripts/release/patchDocs.js
+cd ../../
+node scripts/release/patchDocs.js
 
 cd grid-packages/ag-grid-docs
 
