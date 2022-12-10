@@ -187,4 +187,9 @@ export class Environment extends BeanStub {
         const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
         return exists(measuredMin) ? Math.max(measuredMin, MIN_COL_WIDTH) : MIN_COL_WIDTH;
     }
+
+    protected destroy(): void {
+        for (const prop in CALCULATED_SIZES) delete CALCULATED_SIZES[prop];
+        super.destroy();
+    }
 }
