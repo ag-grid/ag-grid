@@ -3377,26 +3377,29 @@
     }
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
+  "ScaleClampParams": {
+    "meta": {},
+    "type": { "strict": "boolean" },
+    "docs": {
+      "strict": "/** If `true` the values outside of the domain will become `NaN`.\n     * If `false` such values will be clamped to the domain edges.\n     */"
+    }
+  },
+  "ScaleTickFormatParams": {
+    "meta": {},
+    "type": { "count?": "any", "ticks?": "any[]", "specifier?": "any" }
+  },
   "Scale": {
     "meta": { "typeParams": ["D", "R"] },
     "type": {
       "domain": "D[]",
       "range": "R[]",
-      "convert(value: D, clamper?: (values: D[]) => (x: D) => D)": "R",
+      "convert(value: D, params?: ScaleClampParams)": "R",
       "invert?(value: R)": "D",
       "ticks?(count: any, offset?: number)": "D[]",
-      "tickFormat?({ count, ticks, specifier }: { count?: any; ticks?: any[]; specifier?: any; })": "(x: any) => string",
+      "tickFormat?(params: ScaleTickFormatParams)": "(x: any) => string",
       "nice?(count?: number)": "void",
       "bandwidth?": "number"
     }
-  },
-  "Reinterpolator": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
-    "type": "(t: number) => T"
-  },
-  "Deinterpolator": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
-    "type": "(v: T) => number"
   },
   "DefaultTimeFormats": {
     "meta": { "isEnum": true },

@@ -16,7 +16,7 @@ import { equal } from '../../../util/equal';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { checkDatum, isContinuous, isNumber } from '../../../util/value';
-import { clamper, ContinuousScale } from '../../../scale/continuousScale';
+import { ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
 import {
     BOOLEAN,
@@ -594,9 +594,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     }
 
                     const prevY = currY < 0 ? prevMinY : prevMaxY;
-                    const continuousY = yScale instanceof ContinuousScale;
-                    const y = yScale.convert(prevY + currY, continuousY ? clamper : undefined);
-                    const bottomY = yScale.convert(prevY, continuousY ? clamper : undefined);
+                    const y = yScale.convert(prevY + currY, { strict: false });
+                    const bottomY = yScale.convert(prevY, { strict: false });
                     const yValue = seriesDatum[yKey]; // unprocessed y-value
 
                     let labelText: string;

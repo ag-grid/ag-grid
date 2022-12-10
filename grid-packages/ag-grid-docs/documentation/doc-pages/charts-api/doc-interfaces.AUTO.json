@@ -4824,15 +4824,23 @@
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
+  "ScaleClampParams": {
+    "strict": {
+      "description": "/** If `true` the values outside of the domain will become `NaN`.\n     * If `false` such values will be clamped to the domain edges.\n     */",
+      "type": { "returnType": "boolean", "optional": false }
+    }
+  },
+  "ScaleTickFormatParams": {
+    "count": { "type": { "returnType": "any", "optional": true } },
+    "ticks": { "type": { "returnType": "any[]", "optional": true } },
+    "specifier": { "type": { "returnType": "any", "optional": true } }
+  },
   "Scale": {
     "domain": { "type": { "returnType": "D[]", "optional": false } },
     "range": { "type": { "returnType": "R[]", "optional": false } },
     "convert": {
       "type": {
-        "arguments": {
-          "value": "D",
-          "clamper?": "(values: D[]) => (x: D) => D"
-        },
+        "arguments": { "value": "D", "params?": "ScaleClampParams" },
         "returnType": "R",
         "optional": false
       }
@@ -4853,9 +4861,7 @@
     },
     "tickFormat": {
       "type": {
-        "arguments": {
-          "undefined": "{ count?: any; ticks?: any[]; specifier?: any; }"
-        },
+        "arguments": { "params": "ScaleTickFormatParams" },
         "returnType": "(x: any) => string",
         "optional": true
       }
@@ -4870,8 +4876,6 @@
     "bandwidth": { "type": { "returnType": "number", "optional": true } },
     "meta": { "typeParams": ["D", "R"] }
   },
-  "Reinterpolator": { "meta": { "typeParams": ["T"] } },
-  "Deinterpolator": { "meta": { "typeParams": ["T"] } },
   "DefaultTimeFormats": {},
   "RedrawType": {},
   "SceneChangeDetectionOptions": {},

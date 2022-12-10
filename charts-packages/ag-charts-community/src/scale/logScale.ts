@@ -4,93 +4,83 @@ import { format } from '../util/numberFormat';
 import { NUMBER, Validate } from '../util/validation';
 
 const identity = (x: any) => x;
+
 export class LogScale extends ContinuousScale {
     readonly type = 'log';
 
-    _domain = [1, 10];
-
-    baseLog = identity; // takes a log with base `base` of `x`
-    basePow = identity; // raises `base` to the power of `x`
-
-    protected setDomain(values: any[]) {
-        let df = values[0];
-        let dl = values[values.length - 1];
-
-        if (df === 0 || dl === 0 || (df < 0 && dl > 0) || (df > 0 && dl < 0)) {
-            console.warn('Log scale domain should not start at, end at or cross zero.');
-            if (df === 0 && dl > 0) {
-                df = Number.EPSILON;
-            } else if (dl === 0 && df < 0) {
-                dl = -Number.EPSILON;
-            } else if (df < 0 && dl > 0) {
-                if (Math.abs(dl) >= Math.abs(df)) {
-                    df = Number.EPSILON;
-                } else {
-                    dl = -Number.EPSILON;
-                }
-            } else if (df > 0 && dl < 0) {
-                if (Math.abs(dl) >= Math.abs(df)) {
-                    df = -Number.EPSILON;
-                } else {
-                    dl = Number.EPSILON;
-                }
-            }
-            values = values.slice();
-            values[0] = df;
-            values[values.length - 1] = dl;
-        }
-
-        super.setDomain(values);
+    constructor() {
+        super();
+        this.updateLogFn();
+        this.updatePowFn();
     }
-    protected getDomain(): any[] {
-        return super.getDomain();
+
+    protected _domain = [1, 10];
+    set domain(values: any[]) {
+        this._domain = values;
+    }
+    get domain() {
+        return this._domain;
+    }
+
+    protected transform(x: any) {
+        return this._domain[0] >= 0 ? Math.log(x) : -Math.log(-x);
+    }
+    protected transformInvert(x: any) {
+        return this._domain[0] >= 0 ? Math.exp(x) : -Math.exp(-x);
     }
 
     @Validate(NUMBER(0))
-    _base = 10;
+    private _base = 10;
     set base(value: number) {
-        if (this._base !== value) {
-            this._base = value;
-            this.rescale();
+        if (this._base === value) {
+            return;
         }
+        this._base = value;
+        this.updateLogFn();
+        this.updatePowFn();
     }
     get base(): number {
         return this._base;
     }
 
-    rescale() {
-        const { base } = this;
-        let baseLog = LogScale.makeLogFn(base);
-        let basePow = LogScale.makePowFn(base);
+    private baseLog: (x: number) => number = identity;
+    private basePow: (x: number) => number = identity;
 
-        if (this.domain[0] < 0) {
-            baseLog = this.reflect(baseLog);
-            basePow = this.reflect(basePow);
-            this.transform = (x) => -Math.log(-x);
-            this.untransform = (x) => -Math.exp(-x);
+    private log = (x: number) => {
+        return this._domain[0] >= 0 ? this.baseLog(x) : -this.baseLog(-x);
+    };
+
+    private pow = (x: number) => {
+        return this._domain[0] >= 0 ? this.basePow(x) : -this.basePow(-x);
+    };
+
+    private updateLogFn() {
+        const base = this._base;
+        let log: (x: number) => number;
+        if (base === 10) {
+            log = Math.log10;
+        } else if (base === Math.E) {
+            log = Math.log;
+        } else if (base === 2) {
+            log = Math.log2;
         } else {
-            this.transform = (x) => Math.log(x);
-            this.untransform = (x) => Math.exp(x);
+            const logBase = Math.log(base);
+            log = (x) => Math.log(x) / logBase;
         }
-
-        this.baseLog = baseLog;
-        this.basePow = basePow;
-
-        super.rescale();
+        this.baseLog = log;
     }
 
-    /**
-     * For example, if `f` is `Math.log10`, we have
-     *
-     *     f(100) == 2
-     *     f(-100) == NaN
-     *     rf = reflect(f)
-     *     rf(-100) == -2
-     *
-     * @param f
-     */
-    reflect(f: (x: number) => number): (x: number) => number {
-        return (x: number) => -f(-x);
+    private updatePowFn() {
+        const base = this._base;
+        let pow: (x: number) => number;
+        if (base === 10) {
+            pow = LogScale.pow10;
+        } else if (base === Math.E) {
+            pow = Math.exp;
+        } else {
+            pow = (x) => Math.pow(base, x);
+        }
+        this.basePow = pow;
     }
 
     nice() {
@@ -107,8 +97,8 @@ export class LogScale extends ContinuousScale {
 
         // For example, for base == 10:
         // [ 50, 900] becomes [ 10, 1000 ]
-        domain[i0] = this.basePow(Math.floor(this.baseLog(x0)));
-        domain[i1] = this.basePow(Math.ceil(this.baseLog(x1)));
+        domain[i0] = this.pow(Math.floor(this.log(x0)));
+        domain[i1] = this.pow(Math.ceil(this.log(x1)));
 
         this.domain = domain;
     }
@@ -119,31 +109,6 @@ export class LogScale extends ContinuousScale {
             : x < 0
             ? 0
             : x;
-    }
-
-    static makePowFn(base: number): (x: number) => number {
-        if (base === 10) {
-            return LogScale.pow10;
-        }
-        if (base === Math.E) {
-            return Math.exp;
-        }
-        return (x: number) => Math.pow(base, x);
-    }
-
-    // Make a log function witn an arbitrary base or return a native function if exists.
-    static makeLogFn(base: number) {
-        if (base === Math.E) {
-            return Math.log;
-        }
-        if (base === 10) {
-            return Math.log10;
-        }
-        if (base === 2) {
-            return Math.log2;
-        }
-        const logBase = Math.log(base);
-        return (x: number) => Math.log(x) / logBase;
     }
 
     ticks(count = 10) {
@@ -158,8 +123,8 @@ export class LogScale extends ContinuousScale {
             [d0, d1] = [d1, d0];
         }
 
-        let p0 = this.baseLog(d0);
-        let p1 = this.baseLog(d1);
+        let p0 = this.log(d0);
+        let p1 = this.log(d1);
         let z = [];
 
         // if `base` is an integer and delta in order of magnitudes is less than n
@@ -170,7 +135,7 @@ export class LogScale extends ContinuousScale {
             p1 = Math.round(p1) + 1;
             if (d0 > 0) {
                 for (; p0 < p1; ++p0) {
-                    for (let k = 1, p = this.basePow(p0); k < base; ++k) {
+                    for (let k = 1, p = this.pow(p0); k < base; ++k) {
                         let t = p * k;
                         // The `t` checks are needed because we expanded the [p0, p1] by 1 in each direction.
                         if (t < d0) continue;
@@ -180,7 +145,7 @@ export class LogScale extends ContinuousScale {
                 }
             } else {
                 for (; p0 < p1; ++p0) {
-                    for (let k = base - 1, p = this.basePow(p0); k >= 1; --k) {
+                    for (let k = base - 1, p = this.pow(p0); k >= 1; --k) {
                         let t = p * k;
                         if (t < d0) continue;
                         if (t > d1) break;
@@ -195,7 +160,7 @@ export class LogScale extends ContinuousScale {
             // For example, if n == 4, base == 10 and domain == [10^2, 10^6]
             // then p1 - p0 < n == false.
             // `ticks` return [2, 3, 4, 5, 6], then mapped to [10^2, 10^3, 10^4, 10^5, 10^6].
-            z = ticks(p0, p1, Math.min(p1 - p0, n)).map(this.basePow);
+            z = ticks(p0, p1, Math.min(p1 - p0, n)).map(this.pow);
         }
 
         return isReversed ? z.reverse() : z;
@@ -230,7 +195,7 @@ export class LogScale extends ContinuousScale {
         const k = Math.max(1, (base * count) / this.ticks().length);
 
         return (d) => {
-            let i = d / this.basePow(Math.round(this.baseLog(d)));
+            let i = d / this.pow(Math.round(this.log(d)));
             if (i * base < base - 0.5) {
                 i *= base;
             }
