@@ -117,12 +117,8 @@
         background: var(--ag-background-color);
     }
 
-    .ag-chart-menu-close:hover .ag-icon {
-        background: var(--ag-subheader-background-color);
-    }
-
     .ag-chart-menu-close .ag-icon {
-        background: none;
+        background: var(--ag-subheader-background-color);
     }
 
     @include ag.text-input {

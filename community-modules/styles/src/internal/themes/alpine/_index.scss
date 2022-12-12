@@ -202,11 +202,10 @@
 
     .ag-chart-menu-close:hover .ag-icon {
         border-color: var(--ag-border-color);
-        background: var(--ag-header-background-color);
     }
 
     .ag-chart-menu-close .ag-icon {
-        background: none;
+        background: var(--ag-header-background-color);
         border: 1px solid var(--ag-secondary-border-color);
         border-right: none;
     }
