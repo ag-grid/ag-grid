@@ -1,0 +1,44 @@
+@mixin baseContainer {
+  padding: 2rem 0;
+  margin: 0 auto;
+  list-style: none;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  display: none;
+}
+
+.mobileContainer {
+  @include baseContainer;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.logoImage {
+  width: 100px;
+  height: 50px;
+  
+  // Temporary styles for logos
+  filter: grayscale(1);
+  opacity: 0.25;
+}
+
+@media screen and (min-width: 900px) {
+  .container {
+    @include baseContainer;
+    max-width: 1400px;
+  }
+
+  .mobileContainer {
+    display: none;
+  }
+
+  .logoImage {
+    width: 200px;
+    height: 100px;
+  }
+}

@@ -4,6 +4,7 @@ import styles from './components/assets/homepage/homepage.module.scss';
 import Footer from '../components/footer/Footer';
 import Seo from "./components/SEO";
 import {agGridVersion} from "../utils/consts";
+import { HomepageCustomerLogos } from './components/customer-logos/HomepageCustomerLogos';
 
 const IS_SSR = typeof window === "undefined"
 
@@ -26,6 +27,7 @@ const Default = () => {
                             </React.Suspense>}
                         </div>
                     </section>
+                    <HomepageCustomerLogos />
                 </div>
                 <div className={styles['stage-frameworks']}>
                     <section className={styles['stage-frameworks__section-frameworks']}>
