@@ -269,7 +269,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.cache.getAllNodes().forEach(node => {
             if (node.failedLoad) {
                 node.failedLoad = false;
-                node.needsRefresh = true;
+                node.__needsRefreshWhenVisible = true;
                 node.stub = true;
             }
         });

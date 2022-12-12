@@ -1840,6 +1840,7 @@ export class GridApi<TData = any> {
 
     /**
      * Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.
+     * @deprecated v29
      */
     public getCacheBlockState(): any {
         return this.rowNodeBlockLoader.getBlockState();
