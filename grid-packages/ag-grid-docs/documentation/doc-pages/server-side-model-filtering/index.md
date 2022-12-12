@@ -140,4 +140,4 @@ When the filter for the **Country** column is changed, the values for the **Spor
 
 ## Next Up
 
-Continue to the next section to learn about [Data Refresh](/server-side-model-refresh/).
+Continue to the next section to learn about [SSRM Row Grouping](/server-side-model-grouping/).

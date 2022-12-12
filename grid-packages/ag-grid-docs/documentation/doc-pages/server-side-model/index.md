@@ -65,16 +65,6 @@ server-side coding from you, however when done your users will have an experienc
 real time, something previously only available in expensive reporting tools, which you can now embed into your
 JavaScript application.
 
-## AlaSQL
-
-All the examples in this documentation are standalone examples that can be run inside the documentation and
-exported to Plunker. This is excellent as you can easily inspect fully working examples. To allow this, all the
-examples have mocked servers, as the examples in the docs and Plunker are client-side only.
-
-The mocked servers generate SQL to imitate how a real server might use the requests sent from the grid. These examples use [AlaSQL](http://alasql.org/) which is a JavaScript SQL database that works in browsers.
-
-This doesn't mean SQL must be used, you can use whatever back-end technology you want, it's just used in our examples.
-
 ## Full Stack Examples
 
 To accompany the examples in the documentation, we also provide the following full stack examples for reference.
