@@ -24,11 +24,11 @@ For more details on sorting configurations see the section on [Row Sorting](/row
 
 ## Client-side Sorting
 
-When [Infinite Scroll](/server-side-model-infinite-scroll/) is not active, the grid has all the rows needed to sort on the client. As such, the SSRM will sort on the client-side.
+When Infinite Scroll is not active, the grid has all the rows needed to sort on the client. As such, the SSRM will sort on the client-side.
 
 The example below demonstrates Client-side Sorting with no Infinite Scroll. Note the following:
 
-- The grid is not using [Infinite Scroll](/server-side-model-infinite-scroll/), the property  `serverSideInfiniteScroll` is not set.
+- The grid is not using Infinite Scroll, the property  `serverSideInfiniteScroll` is not set.
 - All columns have sorting enabled using the `defaultColDef.sortable = true`.
 - Rows are loaded once. All sorting is then subsequently done by the grid.
 
@@ -36,7 +36,7 @@ The example below demonstrates Client-side Sorting with no Infinite Scroll. Note
 
 ## Server-side Sorting
 
-When [Infinite Scroll](/server-side-model-infinite-scroll/) is active, the grid does not have all the rows needed to sort on the client. As such, the server-side row model will request rows again each time the sort changes and expect the server to sort the rows.
+When Infinite Scroll is active, the grid does not have all the rows needed to sort on the client. As such, the server-side row model will request rows again each time the sort changes and expect the server to sort the rows.
 
 The request object sent to the server contains sort metadata in the `sortModel` property. An example of the `sortModel` is as follows:
 
@@ -66,7 +66,7 @@ The example below demonstrates sorting using the SSRM and Infinite Scrolling. No
 
 As previously mentioned, when not using Infinite Scroll, the grid will sort on the client. To force Server-side Sorting, regardless of Infinite Scroll, set `serverSideSortOnServer=true`. This is demonstrated below, note the following:
 
-- The grid is not using [Infinite Scroll](/server-side-model-infinite-scroll/), the property  `serverSideInfiniteScroll` is not set.
+- The grid is not using Infinite Scroll, the property  `serverSideInfiniteScroll` is not set.
 - Grid property `serverSideSortOnServer=true` to force Server-side Sorting.
 - Rows are loaded every time the sort order changes.
 
@@ -78,7 +78,7 @@ Sorting row groups Client-side (Infinite Scroll is off) happens inside the grid 
 
 The example below shows Client-side sorting of groups. Note the following:
  
- - The grid is not using [Infinite Scroll](/server-side-model-infinite-scroll/), the property  `serverSideInfiniteScroll` is not set.
+ - The grid is not using Infinite Scroll, the property  `serverSideInfiniteScroll` is not set.
  - All columns have sorting enabled via defaultColDef.sortable = true.
  - Click the Gold column header to sort, open the browser console and note there are no requests to the server - the grid sorts client-side without reloading the rows.
 

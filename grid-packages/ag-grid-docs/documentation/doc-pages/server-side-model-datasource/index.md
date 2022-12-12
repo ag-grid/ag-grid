@@ -92,4 +92,4 @@ Note the following:
 
 ## Next Up
 
-Continue to the next section to learn about [Infinite Scroll](/server-side-model-infinite-scroll/).
+Continue to the next section to learn about [Configuration](/server-side-model-configuration/).
