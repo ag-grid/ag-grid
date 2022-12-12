@@ -5,7 +5,6 @@ import { Padding } from '../util/padding';
 import { Background } from './background';
 import { Legend, LegendDatum } from './legend';
 import { BBox } from '../scene/bbox';
-import { find } from '../util/array';
 import { SizeMonitor } from '../util/sizeMonitor';
 import { Caption } from '../caption';
 import { Observable, SourceEvent } from '../util/observable';
@@ -304,7 +303,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
     }
 
-    private togglePointer(visible?: boolean) {
+    togglePointer(visible?: boolean) {
         if (this.tooltip.enabled) {
             this.tooltip.toggle(visible);
         }
@@ -508,50 +507,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected freeSeries(series: Series<any>) {
         series.chart = undefined;
         series.removeEventListener('nodeClick', this.onSeriesNodeClick, this);
-    }
-
-    addSeriesAfter(series: Series<any>, after?: Series<any>): boolean {
-        const { series: allSeries, seriesRoot } = this;
-        const canAdd = allSeries.indexOf(series) < 0;
-
-        if (canAdd) {
-            const afterIndex = after ? this.series.indexOf(after) : -1;
-
-            if (afterIndex >= 0) {
-                if (afterIndex + 1 < allSeries.length) {
-                    seriesRoot.insertBefore(series.rootGroup, allSeries[afterIndex + 1].rootGroup);
-                } else {
-                    seriesRoot.append(series.rootGroup);
-                }
-                this.initSeries(series);
-
-                allSeries.splice(afterIndex + 1, 0, series);
-            } else {
-                if (allSeries.length > 0) {
-                    seriesRoot.insertBefore(series.rootGroup, allSeries[0].rootGroup);
-                } else {
-                    seriesRoot.append(series.rootGroup);
-                }
-                this.initSeries(series);
-
-                allSeries.unshift(series);
-            }
-        }
-
-        return false;
-    }
-
-    removeSeries(series: Series<any>): boolean {
-        const index = this.series.indexOf(series);
-
-        if (index >= 0) {
-            this.series.splice(index, 1);
-            this.freeSeries(series);
-            this.seriesRoot.removeChild(series.rootGroup);
-            return true;
-        }
-
-        return false;
     }
 
     removeAllSeries(): void {
@@ -904,8 +859,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
     };
 
     protected onMouseMove(event: InteractionEvent<'hover'>): void {
-        this.handleLegendMouseMove(event);
-
         if (this.tooltip.enabled) {
             if (this.tooltip.delay > 0) {
                 this.togglePointer(false);
@@ -977,10 +930,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.update(ChartUpdateType.SERIES_UPDATE);
             return;
         }
-        if (this.checkLegendClick(event)) {
-            this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
-            return;
-        }
         this.fireEvent<AgChartClickEvent>({
             type: 'click',
             event: event.sourceEvent,
@@ -1017,115 +966,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
             get: () => (event as any).series,
         });
         this.fireEvent(seriesNodeClickEvent);
-    }
-
-    private checkLegendClick(event: InteractionEvent<'click'>): boolean {
-        const {
-            legend,
-            legend: {
-                listeners: { legendItemClick },
-            },
-        } = this;
-        const datum = legend.getDatumForPoint(event.offsetX, event.offsetY);
-        if (!datum) {
-            return false;
-        }
-
-        const { id, itemId, enabled } = datum;
-        const series = find(this.series, (s) => s.id === id);
-        if (!series) {
-            return false;
-        }
-
-        series.toggleSeriesItem(itemId, !enabled);
-        if (enabled) {
-            this.togglePointer(false);
-        }
-
-        if (enabled && this.highlightedDatum?.series === series) {
-            this.highlightedDatum = undefined;
-        }
-
-        if (!enabled) {
-            this.highlightedDatum = {
-                series,
-                itemId,
-                datum: undefined,
-            };
-        }
-
-        legendItemClick({ enabled: !enabled, itemId, seriesId: series.id });
-
-        return true;
-    }
-
-    private pointerInsideLegend = false;
-    private pointerOverLegendDatum = false;
-    private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
-        if (!this.legend.enabled) {
-            return;
-        }
-
-        const { offsetX, offsetY } = event;
-        const datum = this.legend.getDatumForPoint(offsetX, offsetY);
-
-        const pointerInsideLegend = this.legendBBox.containsPoint(offsetX, offsetY);
-        const pointerOverLegendDatum = pointerInsideLegend && datum !== undefined;
-
-        if (!pointerInsideLegend && this.pointerInsideLegend) {
-            this.pointerInsideLegend = false;
-            this.element.style.cursor = 'default';
-            // Dehighlight if the pointer was inside the legend and is now leaving it.
-            this.changeHighlightDatum();
-            return;
-        }
-
-        if (pointerOverLegendDatum && !this.pointerOverLegendDatum) {
-            this.element.style.cursor = 'pointer';
-            if (datum && this.legend.truncatedItems.has(datum.itemId || datum.id)) {
-                this.element.title = datum.label.text;
-            } else {
-                this.element.title = '';
-            }
-        }
-        if (!pointerOverLegendDatum && this.pointerOverLegendDatum) {
-            this.element.style.cursor = 'default';
-        }
-
-        this.pointerInsideLegend = pointerInsideLegend;
-        this.pointerOverLegendDatum = pointerOverLegendDatum;
-
-        const oldHighlightedDatum = this.highlightedDatum;
-
-        if (datum) {
-            const { id, itemId, enabled } = datum;
-
-            if (enabled) {
-                const series = find(this.series, (series) => series.id === id);
-
-                if (series) {
-                    this.highlightedDatum = {
-                        series,
-                        itemId,
-                        datum: undefined,
-                    };
-                }
-            } else {
-                this.highlightedDatum = undefined;
-            }
-        }
-
-        // Careful to only schedule updates when necessary.
-        if (
-            (this.highlightedDatum && !oldHighlightedDatum) ||
-            (!this.highlightedDatum && oldHighlightedDatum) ||
-            (this.highlightedDatum &&
-                oldHighlightedDatum &&
-                (this.highlightedDatum.series !== oldHighlightedDatum.series ||
-                    this.highlightedDatum.itemId !== oldHighlightedDatum.itemId))
-        ) {
-            this.update(ChartUpdateType.SERIES_UPDATE);
-        }
     }
 
     private onSeriesDatumPick(meta: PointerMeta, datum: SeriesNodeDatum) {
