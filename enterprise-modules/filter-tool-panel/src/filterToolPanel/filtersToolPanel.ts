@@ -63,7 +63,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         };
         this.params = {
             ...defaultParams,
-            ...this.params,
+            ...params,
             context: this.gridOptionsService.get('context')
         };
 
