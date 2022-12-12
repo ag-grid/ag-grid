@@ -7960,9 +7960,15 @@
       "hideActiveMenu()": "void"
     }
   },
+  "ModuleValidationResult": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ isValid: true; } | { isValid: false; message: string; }"
+  },
   "Module": {
     "meta": {},
     "type": {
+      "version": "string",
+      "validate?": "() => ModuleValidationResult",
       "moduleName": "string",
       "beans?": "any[]",
       "agStackComponents?": "ComponentMeta[]",
@@ -7970,6 +7976,9 @@
       "userComponents?": "{ componentName: string; componentClass: any; }[]",
       "rowModels?": "{ [name: string]: { new (): IRowModel; }; }",
       "dependantModules?": "Module[]"
+    },
+    "docs": {
+      "validate?": "/** Validation run when registering the module\n     * \n     * @return Whether the module is valid or not. If not, a message explaining why it is not valid\n     */"
     }
   },
   "IMultiFilter": {

@@ -195,7 +195,7 @@ Object {
   },
   "chartThemeName": "ag-default",
   "chartType": "groupedColumn",
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -396,7 +396,7 @@ Object {
   },
   "chartThemeName": "ag-default",
   "chartType": "groupedColumn",
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -509,7 +509,7 @@ Object {
   },
   "chartThemeName": "ag-vivid",
   "chartType": "doughnut",
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -622,7 +622,7 @@ Object {
   },
   "chartThemeName": "ag-default",
   "chartType": "pie",
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -821,7 +821,7 @@ Object {
   },
   "chartThemeName": "ag-default",
   "chartType": "groupedColumn",
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -1047,7 +1047,7 @@ Object {
   },
   "chartThemeName": "ag-default",
   "chartType": "groupedColumn",
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -1286,7 +1286,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -1533,7 +1533,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -1775,7 +1775,7 @@ Object {
   "modelType": "line",
   "suppressChartRanges": true,
   "unlinkChart": false,
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -2023,7 +2023,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -2230,7 +2230,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -2477,7 +2477,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -2840,7 +2840,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -3197,7 +3197,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;
 
@@ -3569,6 +3569,6 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.0",
+  "version": "28.2.1",
 }
 `;

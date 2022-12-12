@@ -8,11 +8,33 @@ export class ModuleRegistry {
     // having in a map a) removes duplicates and b) allows fast lookup
     private static modulesMap: { [name: string]: Module; } = {};
     private static moduleBased: boolean | undefined;
+    private static currentModuleVersion: string;
 
     public static register(module: Module, moduleBased = true): void {
+        ModuleRegistry.runVersionChecks(module);
+
         ModuleRegistry.modulesMap[module.moduleName] = module;
 
         ModuleRegistry.setModuleBased(moduleBased);
+    }
+
+    private static runVersionChecks(module: Module) {
+        if (!ModuleRegistry.currentModuleVersion) {
+            ModuleRegistry.currentModuleVersion = module.version;
+        }
+
+        if (!module.version) {
+            console.error(`AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is incompatible. Please update all modules to the same version.`);
+        } else if (module.version !== ModuleRegistry.currentModuleVersion) {
+            console.error(`AG Grid: You are using incompatible versions of AG Grid modules. Major and minor versions should always match across modules. '${module.moduleName}' is version ${module.version} but the other modules are version ${this.currentModuleVersion}. Please update all modules to the same version.`);
+        }
+
+        if (module.validate) {
+            const result = module.validate();
+            if (!result.isValid) {
+                console.error(`AG Grid: ${result.message}`);
+            }
+        }
     }
 
     private static setModuleBased(moduleBased: boolean) {
