@@ -618,11 +618,6 @@
                 "enterprise": true
               },
               {
-                "title": "Row Grouping",
-                "url": "/server-side-model-grouping/",
-                "enterprise": true
-              },
-              {
                 "title": "Sorting",
                 "url": "/server-side-model-sorting/",
                 "enterprise": true
@@ -630,6 +625,11 @@
               {
                 "title": "Filtering",
                 "url": "/server-side-model-filtering/",
+                "enterprise": true
+              },
+              {
+                "title": "Row Grouping",
+                "url": "/server-side-model-grouping/",
                 "enterprise": true
               },
               {
@@ -693,6 +693,20 @@
                 "title": "Tree Data",
                 "url": "/server-side-model-tree-data/",
                 "enterprise": true
+              },
+              {
+                "title": "Client-Side Operations",
+                "url": "/server-side-client-side-operations/",
+                "showInCollapsed": true,
+                "enterprise": true,
+                "matrixExcludeChildren": true,
+                "items": [
+                  {
+                    "title": "Sorting",
+                    "url": "/server-side-client-side-sorting/",
+                    "enterprise": true
+                  }
+                ]
               },
               {
                 "title": "See Also",

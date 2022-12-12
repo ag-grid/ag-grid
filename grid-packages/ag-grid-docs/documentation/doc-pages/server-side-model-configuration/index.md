@@ -62,4 +62,4 @@ This is demonstrated in the example below, note the following:
 
 ## Next Up
 
-Continue to the next section to learn about [SSRM Row Grouping](/server-side-model-grouping/).
+Continue to the next section to learn about [SSRM Sorting](/server-side-model-sorting/).
