@@ -696,14 +696,19 @@
               },
               {
                 "title": "Client-Side Operations",
-                "url": "/server-side-client-side-operations/",
+                "url": "/server-side-model-client-side-operations/",
                 "showInCollapsed": true,
                 "enterprise": true,
                 "matrixExcludeChildren": true,
                 "items": [
                   {
                     "title": "Sorting",
-                    "url": "/server-side-client-side-sorting/",
+                    "url": "/server-side-model-client-side-sorting/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Filtering",
+                    "url": "/server-side-model-client-side-filtering/",
                     "enterprise": true
                   }
                 ]
