@@ -1,12 +1,16 @@
 import { ComponentMeta, ControllerMeta } from "../context/context";
 import { IRowModel } from "./iRowModel";
 
-export type ModuleValidationResult = {
-    isValid: true
-  } | {
-    isValid: false,
-    message: string
-  }
+export type ModuleValidationValidResult = {
+  isValid: true
+};
+
+export type ModuleValidationInvalidResult = {
+  isValid: false,
+  message: string
+};
+
+export type ModuleValidationResult = ModuleValidationValidResult | ModuleValidationInvalidResult;
 
 export interface Module {
     version: string;

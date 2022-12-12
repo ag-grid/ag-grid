@@ -7960,9 +7960,17 @@
       "hideActiveMenu()": "void"
     }
   },
+  "ModuleValidationValidResult": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ isValid: true; }"
+  },
+  "ModuleValidationInvalidResult": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ isValid: false; message: string; }"
+  },
   "ModuleValidationResult": {
     "meta": { "isTypeAlias": true },
-    "type": "{ isValid: true; } | { isValid: false; message: string; }"
+    "type": "ModuleValidationValidResult | ModuleValidationInvalidResult"
   },
   "Module": {
     "meta": {},

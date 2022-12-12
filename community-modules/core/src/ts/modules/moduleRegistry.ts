@@ -1,4 +1,4 @@
-import { Module } from "../interfaces/iModule";
+import { Module, ModuleValidationInvalidResult } from "../interfaces/iModule";
 import { ModuleNames } from "./moduleNames";
 import { doOnce } from "../utils/function";
 import { values } from "../utils/generic";
@@ -32,7 +32,8 @@ export class ModuleRegistry {
         if (module.validate) {
             const result = module.validate();
             if (!result.isValid) {
-                console.error(`AG Grid: ${result.message}`);
+                const errorResult = result as ModuleValidationInvalidResult;
+                console.error(`AG Grid: ${errorResult.message}`);
             }
         }
     }

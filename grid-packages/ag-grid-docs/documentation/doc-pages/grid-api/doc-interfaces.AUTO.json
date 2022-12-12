@@ -14203,6 +14203,8 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
+  "ModuleValidationValidResult": {},
+  "ModuleValidationInvalidResult": {},
   "ModuleValidationResult": {},
   "Module": {
     "version": { "type": { "returnType": "string", "optional": false } },
