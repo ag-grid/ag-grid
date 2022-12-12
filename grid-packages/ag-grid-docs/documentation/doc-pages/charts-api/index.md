@@ -52,8 +52,21 @@ The following example demonstrates both create and update cases:
 | <chart-example title='Update with Partial AgChartOptions' name='update-partial' type='typescript'></chart-example>
 |
 
+[[only-frameworks]]
+| ## Updating Charts Using Partial Options
+|
+| `AgChart` exposes an `updateDelta()` static method to allow partial updates to an existing charts configuration.
+| To assist with state management, the complete applied options state can be retrieve by calling `getOptions()` on the
+| chart instance.
+|
+| [[note]]
+| | These APIs should not be normally used with framework wrappers for Angular, React or Vue, as the framework-specific integrated will perform change detection. However when using Integrated Charts it
+| | maybe necessary to use Javascript APIs to perform chart updates in Grid callbacks.
+
+## API
+Static methods available on the `AgChart` factory class:
 [[only-javascript]]
-| ## API
-| Static methods available on the `AgChart` factory class:
 | <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></api-documentation>
-| <interface-documentation interfaceName='AgChartInstance' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+[[only-frameworks]]
+| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["updateDelta"]' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></api-documentation>
+<interface-documentation interfaceName='AgChartInstance' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>

@@ -1,4 +1,5 @@
 import { HdpiCanvas } from './hdpiCanvas';
+import { isDesktop } from '../util/userAgent';
 
 // Work-around for typing issues with Angular 13+ (see AG-6969),
 type OffscreenCanvasRenderingContext2D = any;
@@ -37,6 +38,12 @@ export class HdpiOffscreenCanvas {
 
     destroy() {
         this.imageSource.close();
+
+        // Workaround memory allocation quirks in iOS Safari by resizing to 0x0 and clearing.
+        // See https://bugs.webkit.org/show_bug.cgi?id=195325.
+        this.canvas.width = 0;
+        this.canvas.height = 0;
+        this.context.clearRect(0, 0, 0, 0);
     }
 
     clear() {
@@ -59,7 +66,13 @@ export class HdpiOffscreenCanvas {
      * element accordingly (default).
      */
     setPixelRatio(ratio?: number) {
-        const pixelRatio = ratio || window.devicePixelRatio;
+        let pixelRatio = ratio ?? window.devicePixelRatio;
+        if (!isDesktop()) {
+            // Mobile browsers have stricter memory limits, we reduce rendering resolution to
+            // improve stability on mobile browsers. iOS Safari 12->16 are pain-points since they
+            // have memory allocation quirks - see https://bugs.webkit.org/show_bug.cgi?id=195325.
+            pixelRatio = 1;
+        }
 
         if (pixelRatio === this.pixelRatio) {
             return;

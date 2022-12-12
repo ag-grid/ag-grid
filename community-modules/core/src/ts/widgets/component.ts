@@ -336,6 +336,16 @@ export class Component extends BeanStub {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
+        if (this.parentComponent) {
+            this.parentComponent = undefined;
+        }
+
+        const eGui = this.eGui as any;
+
+        if (eGui && eGui.__agComponent) {
+            eGui.__agComponent = undefined;
+        }
+
         super.destroy();
     }
 

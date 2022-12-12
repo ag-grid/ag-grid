@@ -1,7 +1,6 @@
 import { browserSupportsPreventScroll, isBrowserChrome, isBrowserSafari } from './browser';
 import { exists } from './generic';
 import { isNonNullObject } from './object';
-import { hyphenToCamelCase } from './string';
 import { setAriaHidden } from './aria';
 
 let rtlNegativeScroll: boolean;
@@ -365,9 +364,9 @@ export function addStylesToElement(eElement: any, styles: any) {
     if (!styles) { return; }
 
     Object.keys(styles).forEach((key) => {
-        const keyCamelCase = hyphenToCamelCase(key);
-        if (keyCamelCase) {
-            eElement.style[keyCamelCase] = styles[key];
+        
+        if (key && key.length) {
+            eElement.style.setProperty(key, styles[key]);
         }
     });
 }

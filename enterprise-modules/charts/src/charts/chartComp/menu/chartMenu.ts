@@ -98,11 +98,22 @@ export class ChartMenu extends Component {
         const rightItems: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat'];
 
         const result: AgChartPaddingOptions = {};
+        const extraPadding = 10;
         if (topItems.some(v => this.chartToolbarOptions.includes(v))) {
-            result.top = 10;
+            const isRtl = this.gridOptionsService.is('enableRtl');
+            if (isRtl) {
+                result.top = extraPadding + 10; // More padding to account for the flip of the y axis
+            } else {
+                result.top = extraPadding;
+            }
         }
         if (rightItems.some(v => this.chartToolbarOptions.includes(v))) {
-            result.right = 15;
+            const isRtl = this.gridOptionsService.is('enableRtl');
+            if (isRtl) {
+                result.left = extraPadding;
+            } else {
+                result.right = extraPadding;
+            }
         }
 
         return result;
