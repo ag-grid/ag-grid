@@ -358,6 +358,10 @@ export class GridOptionsService {
         return document;
     }
 
+    public getRootNode(): Document | ShadowRoot {
+        return this.eGridDiv.getRootNode() as Document | ShadowRoot;
+    }
+
     public getRowIdFunc(): ((params: WithoutGridCommon<GetRowIdParams>) => string) | undefined {
         const getRowId = this.getCallback('getRowId');
         if (getRowId) {
