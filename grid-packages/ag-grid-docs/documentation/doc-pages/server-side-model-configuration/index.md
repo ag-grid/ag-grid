@@ -60,25 +60,6 @@ This is demonstrated in the example below, note the following:
 
 <grid-example title='Initial Scroll Position' name='initial-scroll-position' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
 
-## Debugging Infinite Scroll
-
-When experimenting with different Infinite Scroll [Configurations](/server-side-model/) it can useful to 
-enable debug mode as follows:
-
-<snippet>
-const gridOptions = {
-    debug: true
-}
-</snippet>
-
-The screenshot below is taken from the browser's dev console when `debug` is enabled:
-
-<image-caption src="debug.png" constrained="true" alt="Console Output"></image-caption>
-
-Notice that the current cache status is logged showing block details such as the `startRow` and `endRow`.
-
-This can be very useful when debugging issues on the server.
-
 ## Next Up
 
 Continue to the next section to learn about [SSRM Row Grouping](/server-side-model-grouping/).
