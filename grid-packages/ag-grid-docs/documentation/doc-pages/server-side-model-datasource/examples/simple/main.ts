@@ -18,22 +18,21 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   // use the server-side row model instead of the default 'client-side'
   rowModelType: 'serverSide',
-  suppressServerSideInfiniteScroll: true,
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  let gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
       // setup the fake server with entire dataset
-      var fakeServer = createFakeServer(data)
+      const fakeServer = createFakeServer(data)
 
       // create datasource with a reference to the fake server
-      var datasource = createServerSideDatasource(fakeServer)
+      const datasource = createServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
       gridOptions.api!.setServerSideDatasource(datasource)
@@ -46,7 +45,7 @@ function createServerSideDatasource(server: any): IServerSideDatasource {
       console.log('[Datasource] - rows requested by grid: ', params.request)
 
       // get data for request from our fake server
-      var response = server.getData(params.request)
+      const response = server.getData(params.request)
 
       // simulating real server call with a 500ms delay
       setTimeout(function () {
@@ -64,13 +63,13 @@ function createServerSideDatasource(server: any): IServerSideDatasource {
 function createFakeServer(allData: any[]) {
   return {
     getData: (request: IServerSideGetRowsRequest) => {
-      // take a copy of the data to return to the client
-      var requestedRows = allData.slice()
+      // in this simplified fake server all rows are contained in an array
+      const requestedRows = allData.slice(request.startRow, request.endRow);
 
       return {
         success: true,
         rows: requestedRows,
-      }
+      };
     },
   }
 }
