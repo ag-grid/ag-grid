@@ -8208,6 +8208,7 @@
       "cellHeight": "number",
       "cellRenderer": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "searchDebounceDelay?": "number",
+      "formatValue": "(value: any) => any",
       "value": "TValue",
       "eventKey": "string | null",
       "charPress": "string | null",
@@ -8221,12 +8222,16 @@
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
+      "values": "/** The list of values to be selected from. */",
+      "cellHeight": "/** The row height, in pixels, of each value. */",
+      "cellRenderer": "/** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */",
+      "searchDebounceDelay?": "/** The value in `ms` for the fuzzy search debounce delay. Default: `300` */",
+      "formatValue": "/** A callback function that allows you to change the displayed value for simple data. */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
@@ -8240,7 +8245,6 @@
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n     * true to prevent focus from moving to the next cell after editing stops in case the\n     * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n     *  will live inside. Useful if you want to add event listeners or classes at this level.\n     *  This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
@@ -9805,6 +9809,9 @@
       "context": "any"
     },
     "docs": {
+      "maxLength": "/** Max number of characters to allow. Default: `200` */",
+      "rows": "/** Number of character rows to display. Default: `10` */",
+      "cols": "/** Number of character columns to display. Default: `60` */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
@@ -9847,6 +9854,7 @@
       "context": "any"
     },
     "docs": {
+      "values": "/** List of values to display */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
@@ -9892,6 +9900,8 @@
       "context": "any"
     },
     "docs": {
+      "useFormatter": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor. */",
+      "maxLength?": "/** Max number of characters to allow. Default: `524288` */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",

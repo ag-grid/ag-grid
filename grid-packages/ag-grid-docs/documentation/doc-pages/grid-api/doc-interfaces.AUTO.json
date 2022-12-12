@@ -14721,16 +14721,32 @@
   },
   "CellValue": {},
   "IRichCellEditorParams": {
-    "values": { "type": { "returnType": "CellValue[]", "optional": false } },
-    "cellHeight": { "type": { "returnType": "number", "optional": false } },
+    "values": {
+      "description": "/** The list of values to be selected from. */",
+      "type": { "returnType": "CellValue[]", "optional": false }
+    },
+    "cellHeight": {
+      "description": "/** The row height, in pixels, of each value. */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "cellRenderer": {
+      "description": "/** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */",
       "type": {
         "returnType": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
         "optional": false
       }
     },
     "searchDebounceDelay": {
+      "description": "/** The value in `ms` for the fuzzy search debounce delay. Default: `300` */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "formatValue": {
+      "description": "/** A callback function that allows you to change the displayed value for simple data. */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "any",
+        "optional": false
+      }
     },
     "value": {
       "description": "/** Current value of the cell */",
@@ -14790,14 +14806,6 @@
     },
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
-        "optional": false
-      }
-    },
-    "formatValue": {
-      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": {
         "arguments": { "value": "any" },
         "returnType": "any",
@@ -17456,9 +17464,18 @@
     }
   },
   "ILargeTextEditorParams": {
-    "maxLength": { "type": { "returnType": "number", "optional": false } },
-    "rows": { "type": { "returnType": "number", "optional": false } },
-    "cols": { "type": { "returnType": "number", "optional": false } },
+    "maxLength": {
+      "description": "/** Max number of characters to allow. Default: `200` */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "rows": {
+      "description": "/** Number of character rows to display. Default: `10` */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "cols": {
+      "description": "/** Number of character columns to display. Default: `60` */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
@@ -17546,7 +17563,10 @@
     }
   },
   "ISelectCellEditorParams": {
-    "values": { "type": { "returnType": "any[]", "optional": false } },
+    "values": {
+      "description": "/** List of values to display */",
+      "type": { "returnType": "any[]", "optional": false }
+    },
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
@@ -17634,8 +17654,14 @@
     }
   },
   "ITextCellEditorParams": {
-    "useFormatter": { "type": { "returnType": "boolean", "optional": false } },
-    "maxLength": { "type": { "returnType": "number", "optional": true } },
+    "useFormatter": {
+      "description": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "maxLength": {
+      "description": "/** Max number of characters to allow. Default: `524288` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }

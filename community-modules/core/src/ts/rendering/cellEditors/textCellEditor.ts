@@ -11,7 +11,9 @@ import { KeyCode } from '../../constants/keyCode';
  *               want to display text rather than code.
 */
 export interface ITextCellEditorParams extends ICellEditorParams {
+/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor. */
     useFormatter: boolean;
+/** Max number of characters to allow. Default: `524288` */
     maxLength?: number
 }
 

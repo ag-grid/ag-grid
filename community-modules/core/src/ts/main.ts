@@ -157,10 +157,12 @@ export { AnimationFrameService } from "./misc/animationFrameService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
-export { LargeTextCellEditor } from "./rendering/cellEditors/largeTextCellEditor";
+export { LargeTextCellEditor, ILargeTextEditorParams } from "./rendering/cellEditors/largeTextCellEditor";
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
-export { SelectCellEditor } from "./rendering/cellEditors/selectCellEditor";
-export { TextCellEditor } from "./rendering/cellEditors/textCellEditor";
+export { SelectCellEditor, ISelectCellEditorParams } from "./rendering/cellEditors/selectCellEditor";
+export { TextCellEditor, ITextCellEditorParams } from "./rendering/cellEditors/textCellEditor";
+export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
+
 
 // rendering / cellRenderers
 export { Beans } from "./rendering/beans";
@@ -453,7 +455,6 @@ export { IEventEmitter } from "./interfaces/iEventEmitter";
 export { IHeaderParams, IHeaderComp, IHeader } from "./headerRendering/cells/column/headerComp";
 export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/cells/columnGroup/headerGroupComp";
 export { ColumnApi } from "./columns/columnApi";
-export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
