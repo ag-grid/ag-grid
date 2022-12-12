@@ -633,11 +633,6 @@
                 "enterprise": true
               },
               {
-                "title": "Refresh",
-                "url": "/server-side-model-refresh/",
-                "enterprise": true
-              },
-              {
                 "title": "Pivoting",
                 "url": "/server-side-model-pivoting/",
                 "enterprise": true
@@ -655,6 +650,11 @@
               {
                 "title": "Changing Columns",
                 "url": "/server-side-model-changing-columns/",
+                "enterprise": true
+              },
+              {
+                "title": "Refresh",
+                "url": "/server-side-model-refresh/",
                 "enterprise": true
               },
               {

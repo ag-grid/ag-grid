@@ -46,7 +46,7 @@ export class LazyBlockLoader extends BeanStub {
         }
 
         // user has manually refreshed this node
-        if (node.needsRefresh) {
+        if (node.__needsRefresh) {
             return true;
         }
 
@@ -60,7 +60,7 @@ export class LazyBlockLoader extends BeanStub {
         }
 
         // if node is a loading stub, or if it needs reverified, we refresh
-        return (node.stub && !node.failedLoad) || node.needsVerify;
+        return (node.stub && !node.failedLoad) || node.__needsRefreshWhenVisible;
     }
 
     private getBlocksToLoad() {

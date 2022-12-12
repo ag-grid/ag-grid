@@ -151,11 +151,6 @@ class GridExample extends Component {
         });
     }
 
-    printCacheState = () => {
-        console.log('*** Cache State ***');
-        console.log(this.gridApi.getCacheBlockState());
-    }
-
     jumpTo500 = () => {
         // first up, need to make sure the grid is actually showing 500 or more rows
         if ((this.gridApi.getInfiniteRowCount() || 0) < 501) {
@@ -175,7 +170,6 @@ class GridExample extends Component {
                         <button onClick={() => this.setRowCountTo200()}>Set Row Count</button>
                         <button onClick={() => this.rowsAndMaxFound()}>Print Info</button>
                         <button onClick={() => this.jumpTo500()}>Jump to 500</button>
-                        <button onClick={() => this.printCacheState()}>Print Cache State</button>
                     </div>
                     <div style={{ "marginBottom": "10px" }}>
                         <button onClick={() => this.setPricesHigh()}>Set Prices High</button>

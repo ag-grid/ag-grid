@@ -5,9 +5,8 @@ enterprise: true
 
 This section describes the Server-Side Datasource and demonstrates how it is used to load data from a server.
 
-
-The Server-Side Row Model (SSRM) requires a datasource to fetch rows for the grid. As the grid requires more data
-(e.g. the user scrolls down and Infinite Scrolling is active) more data will be requested via the datasource.
+The Server-Side Row Model requires a datasource to fetch rows for the grid. When users scroll or perform grid operations
+such as sorting or grouping, more data will be requested via the datasource.
 
 [[note]]
 | The SSRM does not impose any restrictions on the server-side technologies used. It is left up to applications to decide how and where data is sourced for the grid.

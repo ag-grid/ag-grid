@@ -19,16 +19,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 280,
   },
-  getServerSideGroupLevelParams: (params: GetServerSideGroupLevelParamsParams): ServerSideGroupLevelParams => {
-    var res: ServerSideGroupLevelParams = {
-      storeType: params.level == 0 ? 'partial' : 'full',
-    }
-    return res
-  },
   rowModelType: 'serverSide',
-  suppressServerSideInfiniteScroll: true,
   rowSelection: 'multiple',
-
   isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
   suppressAggFuncInHeader: true,
   animateRows: true,

@@ -139,12 +139,12 @@
     "description": "/** Used by server side row model, true if this row node failed a load */",
     "type": { "returnType": "boolean" }
   },
-  "needsRefresh": {
+  "___needsRefresh": {
     "description": "/** Used by server side row model, true if this row node requires reload */",
     "type": { "returnType": "boolean" }
   },
-  "needsVerify": {
-    "description": "/** Used by server side row model, true if this node needs verified by the server  */",
+  "___needsRefreshWhenVisible": {
+    "description": "/** Used by server side row model, true if this node needs refreshed by the server when in viewport */",
     "type": { "returnType": "boolean" }
   },
   "allLeafChildren": {

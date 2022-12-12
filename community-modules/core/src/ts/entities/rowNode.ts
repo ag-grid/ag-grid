@@ -170,10 +170,10 @@ export class RowNode<TData = any> implements IEventEmitter {
     public failedLoad: boolean;
 
     /** Used by server side row model, true if this row node requires reload */
-    public needsRefresh: boolean;
+    public __needsRefresh: boolean;
 
-    /** Used by server side row model, true if this node needs verified by the server  */
-    public needsVerify: boolean;
+    /** Used by server side row model, true if this node needs refreshed by the server when in viewport */
+    public __needsRefreshWhenVisible: boolean;
 
     /** All lowest level nodes beneath this node, no groups. */
     public allLeafChildren: RowNode<TData>[];

@@ -68,7 +68,7 @@ export class LazyCache extends BeanStub {
             const [stringIndex, node] = nodeMapEntries[i];
             // if we find the index, simply return this node
             if (node.rowIndex === displayIndex) {
-                if (node.stub || node.needsVerify) {
+                if (node.stub || node.__needsRefreshWhenVisible) {
                     this.rowLoader.queueLoadAction();
                 }
                 return node;
@@ -245,8 +245,8 @@ export class LazyCache extends BeanStub {
         // make sure an existing node isn't being overwritten
         const existingNodeAtIndex = this.nodeIndexMap[atStoreIndex];
         if (existingNodeAtIndex) {
-            existingNodeAtIndex.needsRefresh = false;
-            existingNodeAtIndex.needsVerify = false;
+            existingNodeAtIndex.__needsRefresh = false;
+            existingNodeAtIndex.__needsRefreshWhenVisible = false;
 
             // if the node is the same, just update the content
             if (this.doesNodeMatch(data, existingNodeAtIndex)) {
@@ -335,7 +335,7 @@ export class LazyCache extends BeanStub {
         for(let i = start; i < end; i++) {
             const node = this.nodeIndexMap[i];
             if (node) {
-                node.needsVerify = true;
+                node.__needsRefreshWhenVisible = true;
             }
         }
     }
@@ -509,8 +509,8 @@ export class LazyCache extends BeanStub {
             
             if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache)) {
                 this.blockUtils.updateDataIntoRowNode(nodeFromCache, data);
-                nodeFromCache.needsRefresh = false;
-                nodeFromCache.needsVerify = false;
+                nodeFromCache.__needsRefresh = false;
+                nodeFromCache.__needsRefreshWhenVisible = false;
                 return;
             }
             // create row will handle deleting the overwritten row
@@ -565,7 +565,7 @@ export class LazyCache extends BeanStub {
     }
 
     public markNodesForRefresh() {
-        this.getAllNodes().forEach(node => node.needsRefresh = true);
+        this.getAllNodes().forEach(node => node.__needsRefresh = true);
         this.rowLoader.queueLoadAction();
     }
 
@@ -735,7 +735,7 @@ export class LazyCache extends BeanStub {
         this.numberOfRows -= this.isLastRowIndexKnown() ? idsToRemove.length : deletedNodeCount;
 
         if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
-            nodesToVerify.forEach(node => node.needsVerify = true);
+            nodesToVerify.forEach(node => node.__needsRefreshWhenVisible = true);
             this.rowLoader.queueLoadAction();
         }
 

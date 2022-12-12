@@ -40,11 +40,6 @@ function refreshCache(route?: string[]) {
   gridOptions.api!.refreshServerSide({ route: route, purge: purge })
 }
 
-function getBlockState() {
-  var blockState = gridOptions.api!.getCacheBlockState()
-  console.log(blockState)
-}
-
 function getServerSideDatasource(server: any): IServerSideDatasource {
   return {
     getRows: (params) => {
