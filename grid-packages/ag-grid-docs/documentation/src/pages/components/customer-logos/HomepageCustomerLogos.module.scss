@@ -1,14 +1,11 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 .tagLine {
+  margin: 28px 0;
+  font-size: 16px;
   text-align: center;
-  color: #FAFBFB;
+  color: white;
   opacity: 0.25;
-  font-weight: 510;
-  font-size: 14px;
-  line-height: 17px;
+
+  @media screen and (min-width: 768px) {
+    margin: 0;
+  }
 }
