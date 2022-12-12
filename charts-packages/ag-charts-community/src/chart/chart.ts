@@ -307,7 +307,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (this.tooltip.enabled) {
             this.tooltip.toggle(visible);
         }
-        if (!visible && this.lastPick) {
+        if (!visible && this.lastPick?.datum?.datum != null) {
             this.changeHighlightDatum();
         }
         if (!visible && this.lastInteractionEvent) {
@@ -874,7 +874,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private disablePointer({ updateProcessing = true } = {}) {
-        this.changeHighlightDatum(undefined, { updateProcessing });
+        if (this.highlightedDatum?.datum?.datum != null) {
+            this.changeHighlightDatum(undefined, { updateProcessing });
+        }
         this.togglePointer(false);
     }
 
