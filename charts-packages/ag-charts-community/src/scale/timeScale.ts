@@ -17,7 +17,6 @@ import {
     durationYear,
 } from '../util/time/duration';
 import { CountableTimeInterval, TimeInterval } from '../util/time/interval';
-import { complexBisectRight } from '../util/bisect';
 import { tickStep } from '../util/ticks';
 import { buildFormatter } from '../util/timeFormat';
 
@@ -41,8 +40,16 @@ const formatStrings: Record<DefaultTimeFormats, string> = {
     [DefaultTimeFormats.YEAR]: '%Y',
 };
 
+function toNumber(x: any) {
+    return x instanceof Date ? x.getTime() : x;
+}
+
 export class TimeScale extends ContinuousScale {
     readonly type = 'time';
+
+    domain: Date[] = [new Date(2022, 11, 7), new Date(2022, 11, 8)];
+    tickInterval: CountableTimeInterval | undefined;
+    protected cacheProps: Array<keyof this> = ['domain', 'range', 'nice', 'tickCount', 'tickInterval'];
 
     private year: CountableTimeInterval = timeYear;
     private month: CountableTimeInterval = timeMonth;
@@ -108,9 +115,9 @@ export class TimeScale extends ContinuousScale {
                 : updateFormat(DefaultTimeFormats.YEAR);
         }
 
-        const domain = this._domain;
-        const start = Math.min(...domain.map((d) => d.getTime()));
-        const stop = Math.max(...domain.map((d) => d.getTime()));
+        const domain = this.getDomain();
+        const start = Math.min(...domain.map(toNumber));
+        const stop = Math.max(...domain.map(toNumber));
         const extent = stop - start;
 
         let formatStringArray: string[] = [formatStrings[defaultTimeFormat]];
@@ -173,53 +180,45 @@ export class TimeScale extends ContinuousScale {
     }
 
     /**
-     *
-     * @param interval If the `interval` is a number, it's interpreted as the desired tick count
-     * and the method tries to pick an appropriate interval automatically, based on the extent of the domain.
-     * If the `interval` is `undefined`, it defaults to `10`.
-     * If the `interval` is a time interval, simply use it.
      * @param start The start time (timestamp).
      * @param stop The end time (timestamp).
      * @param step Number of intervals between ticks.
      */
-    tickInterval({
-        interval,
+    private getTickInterval({
         start,
         stop,
         step,
-        offset,
     }: {
-        interval: number | CountableTimeInterval;
         start: number;
         stop: number;
         step?: number;
-        offset?: number;
     }): CountableTimeInterval | TimeInterval | undefined {
-        if (typeof interval === 'number') {
-            const tickCount = Math.max(0, interval - (offset ?? 0));
+        let interval = this.tickInterval;
+        if (!interval) {
+            const tickCount = this.tickCount ?? 10;
             const tickIntervals = this.tickIntervals;
             const target = Math.abs(stop - start) / tickCount;
-            const i = complexBisectRight(tickIntervals, target, (interval) => interval[2]);
+            let i = 0;
+            for (; i < tickIntervals.length; i++) {
+                if (target <= tickIntervals[i][2]) {
+                    break;
+                }
+            }
+
             if (i === tickIntervals.length) {
                 step = tickStep(start / durationYear, stop / durationYear, tickCount);
                 interval = this.year;
             } else if (i) {
-                [interval, step] =
-                    tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i];
+                const ratio0 = target / tickIntervals[i - 1][2];
+                const ratio1 = tickIntervals[i][2] / target;
+                const index = ratio0 < ratio1 ? i - 1 : i;
+                [interval, step] = tickIntervals[index];
             } else {
-                step = Math.max(tickStep(start, stop, interval), 1);
+                step = Math.max(tickStep(start, stop, tickCount), 1);
                 interval = this.millisecond;
             }
         }
         return step == undefined ? interval : interval.every(step);
-    }
-
-    protected _domain: Date[] = [new Date(2022, 11, 7), new Date(2022, 11, 8)];
-    set domain(values: Date[]) {
-        this._domain = values.map((d: any) => (d instanceof Date ? d : new Date(d)));
-    }
-    get domain(): Date[] {
-        return this._domain;
     }
 
     invert(y: number): Date {
@@ -228,65 +227,52 @@ export class TimeScale extends ContinuousScale {
 
     /**
      * Returns uniformly-spaced dates that represent the scale's domain.
-     * @param interval The desired tick count or a time interval object.
      */
-    ticks(interval: number | CountableTimeInterval = 10, offset?: number): Date[] {
-        const d = this._domain.map((d) => d.getTime());
+    ticks(): Date[] {
+        if (!this.domain || this.domain.length < 2) {
+            return [];
+        }
+        this.refresh();
+        const d = this.getDomain().map(toNumber);
         let t0 = d[0];
         let t1 = d[d.length - 1];
-        const reverse = t1 < t0;
-
-        if (reverse) {
-            const _ = t0;
-            t0 = t1;
-            t1 = _;
-        }
-        const t = this.tickInterval({ interval, start: t0, stop: t1, offset });
-        const i = t ? t.range(new Date(t0), new Date(t1 + 1)) : []; // inclusive stop
-
-        return reverse ? i.reverse() : i;
+        const t = this.getTickInterval({ start: t0, stop: t1 });
+        return t ? t.range(new Date(t0), new Date(t1 + 1)) : []; // inclusive stop
     }
 
     /**
      * Returns a time format function suitable for displaying tick values.
-     * @param count Ignored. Used only to satisfy the {@link Scale} interface.
      * @param specifier If the specifier string is provided, this method is equivalent to
      * the {@link TimeLocaleObject.format} method.
      * If no specifier is provided, this method returns the default time format function.
      */
-    tickFormat({ ticks, specifier }: { count?: any; ticks?: any[]; specifier?: string }): (date: Date) => string {
+    tickFormat({ ticks, specifier }: { ticks?: any[]; specifier?: string }): (date: Date) => string {
         return specifier == undefined ? this.defaultTickFormat(ticks) : buildFormatter(specifier);
+    }
+
+    update() {
+        if (!this.domain || this.domain.length < 2) {
+            return;
+        }
+        if (this.nice) {
+            this.updateNiceDomain();
+        }
     }
 
     /**
      * Extends the domain so that it starts and ends on nice round values.
      * This method typically modifies the scale’s domain, and may only extend the bounds to the nearest round value.
-     * @param interval
      */
-    nice(interval: number | CountableTimeInterval = 10): void {
-        const d = this._domain;
-        const i = this.tickInterval({ interval, start: d[0]?.getTime(), stop: d[d.length - 1]?.getTime() });
+    protected updateNiceDomain(): void {
+        const d = this.domain;
+        const start = toNumber(d[0]);
+        const stop = toNumber(d[d.length - 1]);
+        const i = this.getTickInterval({ start, stop });
 
         if (i) {
-            this.domain = this._nice(d, i);
+            const n0 = i.floor(d[0]);
+            const n1 = i.ceil(d[d.length - 1]);
+            this.niceDomain = [n0, n1];
         }
-    }
-
-    private _nice(domain: Date[], interval: TimeInterval): Date[] {
-        domain = domain.slice();
-        let i0 = 0;
-        let i1 = domain.length - 1;
-        let x0 = domain[i0];
-        let x1 = domain[i1];
-
-        if (x1 < x0) {
-            [i0, i1] = [i1, i0];
-            [x0, x1] = [x1, x0];
-        }
-
-        domain[i0] = interval.floor(x0);
-        domain[i1] = interval.ceil(x1);
-
-        return domain;
     }
 }

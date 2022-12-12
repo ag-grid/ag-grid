@@ -11,7 +11,8 @@ test('ticks', () => {
             20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 200000, 300000, 400000, 500000, 600000,
             700000, 800000, 900000, 1000000,
         ]);
-        expect(scale.ticks(4)).toEqual(new NumericTicks(5, [100, 1000, 10000, 100000, 1000000]));
+        scale.tickCount = 4;
+        expect(scale.ticks()).toEqual(new NumericTicks(5, [100, 1000, 10000, 100000, 1000000]));
     }
 
     {
@@ -59,16 +60,19 @@ test('nice', () => {
     {
         const scale = new LogScale();
         scale.domain = [57, 775];
-        scale.nice();
-        expect(scale.domain).toEqual([10, 1000]);
+        scale.nice = true;
+        scale.update();
+        expect(scale.nice).toBe(true);
+        expect(scale.niceDomain).toEqual([10, 1000]);
     }
 
     {
         const scale = new LogScale();
         scale.domain = [Math.E * 1.234, Math.E * 5.783];
         scale.base = Math.E;
-        scale.nice();
-        const domain = scale.domain;
+        scale.nice = true;
+        scale.update();
+        const domain = scale.niceDomain;
         expect(Math.log(domain[0])).toEqual(1);
         expect(Math.log(domain[1])).toEqual(3);
     }

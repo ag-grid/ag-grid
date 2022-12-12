@@ -8,54 +8,44 @@ const identity = (x: any) => x;
 export class LogScale extends ContinuousScale {
     readonly type = 'log';
 
-    constructor() {
-        super();
-        this.updateLogFn();
-        this.updatePowFn();
-    }
-
-    protected _domain = [1, 10];
-    set domain(values: any[]) {
-        this._domain = values;
-    }
-    get domain() {
-        return this._domain;
-    }
-
-    protected transform(x: any) {
-        return this._domain[0] >= 0 ? Math.log(x) : -Math.log(-x);
-    }
-    protected transformInvert(x: any) {
-        return this._domain[0] >= 0 ? Math.exp(x) : -Math.exp(-x);
-    }
+    domain = [1, 10];
 
     @Validate(NUMBER(0))
-    private _base = 10;
-    set base(value: number) {
-        if (this._base === value) {
+    base = 10;
+
+    protected transform(x: any) {
+        return this.domain[0] >= 0 ? Math.log(x) : -Math.log(-x);
+    }
+    protected transformInvert(x: any) {
+        return this.domain[0] >= 0 ? Math.exp(x) : -Math.exp(-x);
+    }
+
+    protected cacheProps: Array<keyof this> = ['domain', 'range', 'nice', 'tickCount', 'base'];
+
+    update() {
+        if (!this.domain || this.domain.length < 2) {
             return;
         }
-        this._base = value;
         this.updateLogFn();
         this.updatePowFn();
-    }
-    get base(): number {
-        return this._base;
+        if (this.nice) {
+            this.updateNiceDomain();
+        }
     }
 
     private baseLog: (x: number) => number = identity;
     private basePow: (x: number) => number = identity;
 
     private log = (x: number) => {
-        return this._domain[0] >= 0 ? this.baseLog(x) : -this.baseLog(-x);
+        return this.domain[0] >= 0 ? this.baseLog(x) : -this.baseLog(-x);
     };
 
     private pow = (x: number) => {
-        return this._domain[0] >= 0 ? this.basePow(x) : -this.basePow(-x);
+        return this.domain[0] >= 0 ? this.basePow(x) : -this.basePow(-x);
     };
 
     private updateLogFn() {
-        const base = this._base;
+        const { base } = this;
         let log: (x: number) => number;
         if (base === 10) {
             log = Math.log10;
@@ -71,7 +61,7 @@ export class LogScale extends ContinuousScale {
     }
 
     private updatePowFn() {
-        const base = this._base;
+        const { base } = this;
         let pow: (x: number) => number;
         if (base === 10) {
             pow = LogScale.pow10;
@@ -83,24 +73,14 @@ export class LogScale extends ContinuousScale {
         this.basePow = pow;
     }
 
-    nice() {
+    protected updateNiceDomain() {
         const domain = this.domain;
-        let i0 = 0;
-        let i1 = domain.length - 1;
-        let x0 = domain[i0];
-        let x1 = domain[i1];
+        const d0 = domain[0];
+        const d1 = domain[domain.length - 1];
 
-        if (x1 < x0) {
-            [i0, i1] = [i1, i0];
-            [x0, x1] = [x1, x0];
-        }
-
-        // For example, for base == 10:
-        // [ 50, 900] becomes [ 10, 1000 ]
-        domain[i0] = this.pow(Math.floor(this.log(x0)));
-        domain[i1] = this.pow(Math.ceil(this.log(x1)));
-
-        this.domain = domain;
+        const n0 = this.pow(Math.floor(this.log(d0)));
+        const n1 = this.pow(Math.ceil(this.log(d1)));
+        this.niceDomain = [n0, n1];
     }
 
     static pow10(x: number): number {
@@ -111,10 +91,14 @@ export class LogScale extends ContinuousScale {
             : x;
     }
 
-    ticks(count = 10) {
-        const n = count == null ? 10 : +count;
+    ticks() {
+        if (!this.domain || this.domain.length < 2) {
+            return [];
+        }
+        this.refresh();
+        const n = this.tickCount ?? 10;
         const base = this.base;
-        const domain = this.domain;
+        const domain = this.getDomain();
         let d0 = domain[0];
         let d1 = domain[domain.length - 1];
         const isReversed = d1 < d0;

@@ -8,17 +8,31 @@ import { tickFormat } from '../util/numberFormat';
 export class LinearScale extends ContinuousScale {
     readonly type = 'linear';
 
-    ticks(count = 10, offset?: number) {
-        const d = this._domain;
-        count = Math.max(0, count - (offset ?? 0));
+    ticks() {
+        if (!this.domain || this.domain.length < 2) {
+            return [];
+        }
+        this.refresh();
+        const d = this.getDomain();
+        const count = this.tickCount ?? 10;
         return ticks(d[0], d[d.length - 1], count);
+    }
+
+    update() {
+        if (!this.domain || this.domain.length < 2) {
+            return;
+        }
+        if (this.nice) {
+            this.updateNiceDomain();
+        }
     }
 
     /**
      * Extends the domain so that it starts and ends on nice round values.
      * @param count Tick count.
      */
-    nice(count = 10) {
+    protected updateNiceDomain() {
+        const count = this.tickCount ?? 10;
         const d = this.domain;
         let i0 = 0;
         let i1 = d.length - 1;
@@ -51,16 +65,16 @@ export class LinearScale extends ContinuousScale {
         if (step > 0) {
             d[i0] = Math.floor(start / step) * step;
             d[i1] = Math.ceil(stop / step) * step;
-            this.domain = d;
+            this.niceDomain = d;
         } else if (step < 0) {
             d[i0] = Math.ceil(start * step) / step;
             d[i1] = Math.floor(stop * step) / step;
-            this.domain = d;
+            this.niceDomain = d;
         }
     }
 
     tickFormat({ count, specifier }: { count?: number; ticks?: any[]; specifier?: string }) {
-        const d = this.domain;
-        return tickFormat(d[0], d[d.length - 1], count == undefined ? 10 : count, specifier);
+        const d = this.getDomain();
+        return tickFormat(d[0], d[d.length - 1], count ?? 10, specifier);
     }
 }

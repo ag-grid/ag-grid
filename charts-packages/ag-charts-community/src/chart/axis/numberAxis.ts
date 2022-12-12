@@ -80,7 +80,9 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
 
         const [d, ticks] = calculateNiceSecondaryAxis(this.dataDomain, primaryTickCount ?? 0);
 
+        this.scale.nice = false;
         this.scale.domain = d;
+        this.scale.update();
 
         return ticks;
     }

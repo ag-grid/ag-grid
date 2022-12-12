@@ -4838,6 +4838,8 @@
   "Scale": {
     "domain": { "type": { "returnType": "D[]", "optional": false } },
     "range": { "type": { "returnType": "R[]", "optional": false } },
+    "nice": { "type": { "returnType": "boolean", "optional": true } },
+    "tickCount": { "type": { "returnType": "number", "optional": true } },
     "convert": {
       "type": {
         "arguments": { "value": "D", "params?": "ScaleClampParams" },
@@ -4853,23 +4855,12 @@
       }
     },
     "ticks": {
-      "type": {
-        "arguments": { "count": "any", "offset?": "number" },
-        "returnType": "D[]",
-        "optional": true
-      }
+      "type": { "arguments": {}, "returnType": "D[]", "optional": true }
     },
     "tickFormat": {
       "type": {
         "arguments": { "params": "ScaleTickFormatParams" },
         "returnType": "(x: any) => string",
-        "optional": true
-      }
-    },
-    "nice": {
-      "type": {
-        "arguments": { "count?": "number" },
-        "returnType": "void",
         "optional": true
       }
     },

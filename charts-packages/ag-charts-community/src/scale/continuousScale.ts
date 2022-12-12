@@ -1,21 +1,11 @@
 import { Scale } from './scale';
 
 export abstract class ContinuousScale implements Scale<any, any> {
-    protected _domain: any[] = [0, 1];
-    set domain(values: any[]) {
-        this._domain = values;
-    }
-    get domain() {
-        return this._domain;
-    }
-
-    protected _range: any[] = [0, 1];
-    set range(values: any[]) {
-        this._range = values;
-    }
-    get range() {
-        return this._range;
-    }
+    domain: any[] = [0, 1];
+    range: any[] = [0, 1];
+    nice = false;
+    tickCount = 10;
+    niceDomain: any[] = null as any;
 
     protected transform(x: any) {
         return x;
@@ -24,12 +14,26 @@ export abstract class ContinuousScale implements Scale<any, any> {
         return x;
     }
 
+    protected getDomain() {
+        if (this.nice) {
+            this.refresh();
+            if (this.niceDomain) {
+                return this.niceDomain;
+            }
+        }
+        return this.domain;
+    }
+
     strictClampByDefault = false;
 
     convert(x: number, params?: { strict: boolean }) {
+        if (!this.domain || this.domain.length < 2) {
+            return NaN;
+        }
+        this.refresh();
         const strict = params?.strict ?? this.strictClampByDefault;
 
-        const domain = this.domain.map((d) => this.transform(d));
+        const domain = this.getDomain().map((d) => this.transform(d));
         const d0 = domain[0];
         const d1 = domain[domain.length - 1];
 
@@ -57,7 +61,8 @@ export abstract class ContinuousScale implements Scale<any, any> {
     }
 
     invert(x: number): any {
-        const domain = this.domain.map((d) => this.transform(d));
+        this.refresh();
+        const domain = this.getDomain().map((d) => this.transform(d));
         const d0 = domain[0];
         const d1 = domain[domain.length - 1];
 
@@ -81,5 +86,27 @@ export abstract class ContinuousScale implements Scale<any, any> {
         }
 
         return this.transformInvert(d);
+    }
+
+    protected cache: any = null;
+    protected cacheProps: Array<keyof this> = ['domain', 'range', 'nice', 'tickCount'];
+    protected didChange() {
+        const { cache } = this;
+        const didChange = !cache || this.cacheProps.some((p) => this[p] !== cache[p]);
+        if (didChange) {
+            this.cache = {};
+            this.cacheProps.forEach((p) => (this.cache[p] = this[p]));
+            return true;
+        }
+        return false;
+    }
+
+    abstract update(): void;
+    protected abstract updateNiceDomain(): void;
+
+    protected refresh() {
+        if (this.didChange()) {
+            this.update();
+        }
     }
 }

@@ -15,10 +15,11 @@ export interface ScaleTickFormatParams {
 export interface Scale<D, R> {
     domain: D[];
     range: R[];
+    nice?: boolean;
+    tickCount?: number;
     convert(value: D, params?: ScaleClampParams): R;
     invert?(value: R): D;
-    ticks?(count: any, offset?: number): D[];
+    ticks?(): D[];
     tickFormat?(params: ScaleTickFormatParams): (x: any) => string;
-    nice?(count?: number): void;
     bandwidth?: number;
 }

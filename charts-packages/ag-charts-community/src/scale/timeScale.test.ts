@@ -2,6 +2,34 @@ import { expect, describe, it } from '@jest/globals';
 import { TimeScale } from './timeScale';
 
 describe('TimeScale', () => {
+    it('should create nice domain', () => {
+        const scale = new TimeScale();
+        scale.domain = [new Date('2022-02-13'), new Date('2022-11-30')];
+        scale.nice = true;
+        scale.update();
+        expect(scale.niceDomain).toEqual([new Date('2022-02-01'), new Date('2022-12-01')]);
+    });
+
+    it('should create nice ticks', () => {
+        const scale = new TimeScale();
+        scale.domain = [new Date('2022-02-13'), new Date('2022-11-30')];
+        scale.nice = true;
+        scale.tickCount = 10;
+        expect(scale.ticks()).toEqual([
+            new Date('2022-02-01'),
+            new Date('2022-03-01'),
+            new Date('2022-04-01'),
+            new Date('2022-05-01'),
+            new Date('2022-06-01'),
+            new Date('2022-07-01'),
+            new Date('2022-08-01'),
+            new Date('2022-09-01'),
+            new Date('2022-10-01'),
+            new Date('2022-11-01'),
+            new Date('2022-12-01'),
+        ]);
+    });
+
     describe('#calculateDefaultTickFormat', () => {
         const TEST_CASES: { name: string; ticks: Date[]; expectedFormat: string }[] = [
             {

@@ -396,11 +396,20 @@ export class Axis<S extends Scale<D, number>, D = any> {
             this._title = value;
 
             // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
-            this.updateTitle({ ticks: this.scale.ticks!(this.tick.count) });
+            this.setTickCount(this.scale, this.tick.count);
+            this.updateTitle({ ticks: this.scale.ticks!() });
         }
     }
     get title(): Caption | undefined {
         return this._title;
+    }
+
+    private setTickCount(scale: Scale<any, any>, count: any) {
+        if (scale instanceof TimeScale && count && count instanceof TimeInterval) {
+            scale.tickInterval = count as any;
+        } else {
+            scale.tickCount = count;
+        }
     }
 
     /**
@@ -500,14 +509,16 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let ticks: any[] = [];
         const defaultTickCount = 10;
         const tickCount = this.tick.count !== undefined;
-        const nice = this.nice && scale.nice;
+        const nice = this.nice;
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
         const calculatePrimaryDomain = !secondaryAxis && !tickCount && nice;
 
         scale.domain = this.dataDomain;
-        if (nice) {
-            scale.nice!(this.tick.count);
+        if (scale instanceof ContinuousScale) {
+            scale.nice = nice;
+            this.setTickCount(scale, this.tick.count);
+            scale.update();
         }
 
         while (labelOverlap) {
@@ -521,9 +532,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 }
 
                 if (calculatePrimaryDomain) {
-                    // `scale.nice` mutates `scale.domain` based on new tick count
-                    scale.domain = this.dataDomain;
-                    scale.nice!(defaultTickCount - i);
+                    scale.tickCount = defaultTickCount - i;
                 }
 
                 const prevTicks = ticks;
@@ -538,7 +547,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     secondaryAxisTicks = this.updateSecondaryAxisTicks(primaryTickCount);
                 }
 
-                ticks = filteredTicks ?? secondaryAxisTicks ?? this.scale.ticks!(this.tick.count, i);
+                ticks = filteredTicks ?? secondaryAxisTicks ?? scale.ticks!();
 
                 this.updateSelections({
                     halfBandwidth,
@@ -550,7 +559,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     primaryTickCount = ticks.length;
                 }
 
-                unchanged = ticks.every((t, i) => t === prevTicks[i]);
+                unchanged = ticks.every((t, i) => Number(t) === Number(prevTicks[i]));
                 i++;
             }
 
