@@ -250,7 +250,8 @@
         .ag-chart-menu-close {
             position: absolute;
             top: 50%;
-            transform: translateY(-50%);
+            transform: translate(3px, -50%) ;
+            transition: transform 0.33s ease-in-out;
             padding: 0;
             display: block;
             cursor: pointer;
@@ -259,7 +260,11 @@
             @include ag.unthemed-rtl((right: 0px));
 
             .ag-icon {
-                padding: 10px 2px;
+                padding: 10px 5px 10px 2px;
+            }
+
+            &:hover {
+                transform: translate(0, -50%);
             }
 
             &:before {
@@ -278,6 +283,10 @@
         }
     }
 
+    .ag-chart-menu-visible .ag-chart-tool-panel-button-enable .ag-chart-menu-close:hover {
+        transform: translate(5px, -50%);
+    }
+
     .ag-charts-font-size-color {
         display: flex;
         align-self: stretch;
@@ -287,31 +296,6 @@
     .ag-charts-data-group-item {
         position: relative;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     .ag-chart-menu {
         border-radius: var(--ag-card-radius);
