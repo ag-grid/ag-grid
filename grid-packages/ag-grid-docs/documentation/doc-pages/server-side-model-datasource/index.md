@@ -14,7 +14,7 @@ The Server-Side Row Model (SSRM) requires a datasource to fetch rows for the gri
 
 ## Enabling Server-Side Row Model
 
-When no row model is specified the grid will use the [Client-Side Row Model](/client-side-model/) by default. To use the SSRM instead, set the `rowModelType` as follows:
+The [Client-Side Row Model](/client-side-model/) is the default Row Model. To use the SSRM instead, set the `rowModelType` as follows:
 
 <snippet>
 const gridOptions = {
