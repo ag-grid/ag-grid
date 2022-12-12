@@ -200,11 +200,6 @@ function setPricesLow() {
     })
 }
 
-function printCacheState() {
-    console.log('*** Cache State ***')
-    console.log(gridOptions.api!.getCacheBlockState())
-}
-
 function jumpTo500() {
     // first up, need to make sure the grid is actually showing 500 or more rows
     if ((gridOptions.api!.getInfiniteRowCount() || 0) < 501) {
