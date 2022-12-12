@@ -141,7 +141,7 @@ export class ComponentUtil {
 
 
 
-    public static processOnChange(changes: any, api: GridApi, isVue: boolean = false): void {
+    public static processOnChange(changes: any, api: GridApi): void {
         if (!changes) {
             return;
         }

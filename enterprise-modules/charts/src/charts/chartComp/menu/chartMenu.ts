@@ -98,11 +98,22 @@ export class ChartMenu extends Component {
         const rightItems: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat'];
 
         const result: AgChartPaddingOptions = {};
+        const extraPadding = 10;
         if (topItems.some(v => this.chartToolbarOptions.includes(v))) {
-            result.top = 10;
+            const isRtl = this.gridOptionsService.is('enableRtl');
+            if (isRtl) {
+                result.top = extraPadding + 10; // More padding to account for the flip of the y axis
+            } else {
+                result.top = extraPadding;
+            }
         }
         if (rightItems.some(v => this.chartToolbarOptions.includes(v))) {
-            result.right = 15;
+            const isRtl = this.gridOptionsService.is('enableRtl');
+            if (isRtl) {
+                result.left = extraPadding;
+            } else {
+                result.right = extraPadding;
+            }
         }
 
         return result;
@@ -311,24 +322,38 @@ export class ChartMenu extends Component {
         this.menuVisible ? this.hideMenu() : this.showMenu();
     }
 
-    public showMenu(panel?: ChartToolPanelMenuOptions, animate: boolean = true): void {
+    public showMenu(
+        /**
+         * Menu panel to show. If empty, shows the existing menu, or creates the default menu if menu panel has not been created
+         */
+        panel?: ChartToolPanelMenuOptions,
+        /**
+         * Whether to animate the menu opening
+         */
+        animate: boolean = true
+    ): void {
         if (!animate) {
             this.eMenuPanelContainer.classList.add('ag-no-transition');
         }
 
-        const menuPanel = panel || this.defaultPanel;
-        let tab = this.panels.indexOf(menuPanel);
-        if (tab < 0) {
-            console.warn(`AG Grid: '${panel}' is not a valid Chart Tool Panel name`);
-            tab = this.panels.indexOf(this.defaultPanel)
-        }
-
-        if (this.menuPanel) {
-            this.tabbedMenu.showTab(tab);
+        if (this.menuPanel && !panel) {
             this.showContainer();
         } else {
-            this.createMenuPanel(tab).then(this.showContainer.bind(this));
+            const menuPanel = panel || this.defaultPanel;
+            let tab = this.panels.indexOf(menuPanel);
+            if (tab < 0) {
+                console.warn(`AG Grid: '${panel}' is not a valid Chart Tool Panel name`);
+                tab = this.panels.indexOf(this.defaultPanel)
+            }
+    
+            if (this.menuPanel) {
+                this.tabbedMenu.showTab(tab);
+                this.showContainer();
+            } else {
+                this.createMenuPanel(tab).then(this.showContainer.bind(this));
+            }
         }
+
 
         if (!animate) {
             // Wait for menu to render
@@ -371,6 +396,10 @@ export class ChartMenu extends Component {
 
         if (this.menuPanel && this.menuPanel.isAlive()) {
             this.destroyBean(this.menuPanel);
+        }
+
+        if (this.tabbedMenu && this.tabbedMenu.isAlive()) {
+            this.destroyBean(this.tabbedMenu);
         }
     }
 }

@@ -719,15 +719,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Default: `1`
          */
     @Input() public serverSideInitialRowCount: number | undefined = undefined;
-    /** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.
-         * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,
+    /** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.
+         * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,
          * Full Store is used.
          */
     @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
     /** Set whether Server-side Row Model will use Infinite Scrolling
          * Default: `false`
          */
-    @Input() public serverSideInfiniteScroll: boolean | 'legacy' | undefined = undefined;
+    @Input() public suppressServerSideInfiniteScroll: boolean | undefined = undefined;
     /** How many rows for each block in the store, i.e. how many rows returned from the server at a time.
          * Default: `100`
          */
@@ -749,12 +749,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
-    /** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+    /** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,
          * as Sorting is always server side when Infinite Scroll is active.
          * Default: `false`
          */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
-    /** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,
+    /** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,
           * as Filtering is always server side when Infinite Scroll is active.
           * Default: `false`
           */
@@ -1255,7 +1255,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
     static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';
     static ngAcceptInputType_groupRowsSticky: boolean | null | '';
-    static ngAcceptInputType_serverSideInfiniteScroll: boolean | null | '';
+    static ngAcceptInputType_suppressServerSideInfiniteScroll: boolean | null | '';
     static ngAcceptInputType_rowGroupPanelSuppressSort: boolean | null | '';
     static ngAcceptInputType_allowShowChangeAfterFilter: boolean | null | '';
     // @END@

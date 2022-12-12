@@ -221,12 +221,6 @@
       }
     }
   },
-  "RegisteredComponent": {
-    "component": { "type": { "returnType": "any", "optional": false } },
-    "componentFromFramework": {
-      "type": { "returnType": "boolean", "optional": false }
-    }
-  },
   "ContextParams": {
     "providedBeanInstances": {
       "type": { "returnType": "any", "optional": false }
@@ -292,8 +286,8 @@
     "stickyTopRightRowContainerCtrl": {
       "type": { "returnType": "RowContainerCtrl", "optional": false }
     },
-    "fakeHScrollCtrl": {
-      "type": { "returnType": "FakeHScrollCtrl", "optional": false }
+    "fakeHScrollComp": {
+      "type": { "returnType": "FakeHScrollComp", "optional": false }
     },
     "gridHeaderCtrl": {
       "type": { "returnType": "GridHeaderCtrl", "optional": false }
@@ -1781,6 +1775,10 @@
     "contractColumnSelection": {
       "description": "/** By default, column groups start expanded.\n     * Pass true to default to contracted groups*/",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "columnLayout": {
+      "description": "/** Custom Columns Panel layout */",
+      "type": { "returnType": "(ColDef | ColGroupDef)[]", "optional": true }
     }
   },
   "BaseColDefParams": {
@@ -3093,12 +3091,12 @@
       "type": { "returnType": "number", "optional": true }
     },
     "serverSideStoreType": {
-      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
+      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "serverSideInfiniteScroll": {
+    "suppressServerSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean | 'legacy'", "optional": true }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -3133,11 +3131,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -5192,10 +5190,10 @@
   "ServerSideStoreType": {},
   "ServerSideGroupLevelParams": {
     "storeType": {
-      "description": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If infiniteScroll==true, then Partial Store is used.\n     * If infiniteScroll==false, then Full Store is used.\n     *  */",
+      "description": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If suppressInfiniteScroll==false, then Partial Store is used.\n     * If suppressInfiniteScroll==false, then Full Store is used.\n     *  */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "infiniteScroll": {
+    "suppressInfiniteScroll": {
       "description": "/** Whether to have infinite scroll active or not for the level.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
@@ -5210,10 +5208,10 @@
   },
   "ServerSideStoreParams": {
     "storeType": {
-      "description": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If infiniteScroll==true, then Partial Store is used.\n     * If infiniteScroll==false, then Full Store is used.\n     *  */",
+      "description": "/** @deprecated\n     * What store type to use.\n     * If missing, then defaults to grid option `serverSideStoreType`.\n     * Deprecated in favor of infiniteScroll.\n     * If suppressInfiniteScroll==false, then Partial Store is used.\n     * If suppressInfiniteScroll==false, then Full Store is used.\n     *  */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "infiniteScroll": {
+    "suppressInfiniteScroll": {
       "description": "/** Whether to have infinite scroll active or not for the level.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
@@ -6706,7 +6704,7 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "DragEvent": {
+  "AgDragEvent": {
     "target": {
       "description": "/** The DOM element that started the event. */",
       "type": { "returnType": "HTMLElement", "optional": false }
@@ -10413,78 +10411,6 @@
       "type": { "returnType": "string", "optional": true }
     }
   },
-  "IFakeHScrollComp": {
-    "setHeight": {
-      "type": {
-        "arguments": { "height": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setBottom": {
-      "type": {
-        "arguments": { "bottom": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setViewportHeight": {
-      "type": {
-        "arguments": { "height": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setContainerHeight": {
-      "type": {
-        "arguments": { "height": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setRightSpacerFixedWidth": {
-      "type": {
-        "arguments": { "width": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setLeftSpacerFixedWidth": {
-      "type": {
-        "arguments": { "width": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setDisplayed": {
-      "type": {
-        "arguments": { "displayed": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "addOrRemoveCssClass": {
-      "type": {
-        "arguments": { "cssClassName": "string", "on": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "includeLeftSpacerScrollerCss": {
-      "type": {
-        "arguments": { "cssClass": "string", "include": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "includeRightSpacerScrollerCss": {
-      "type": {
-        "arguments": { "cssClass": "string", "include": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    }
-  },
   "RowAnimationCssClasses": {},
   "IGridBodyComp": {
     "setColumnMovingCss": {
@@ -10622,18 +10548,6 @@
     },
     "focusColumn": { "type": { "returnType": "Column", "optional": false } },
     "isAsync": { "type": { "returnType": "boolean", "optional": true } }
-  },
-  "RenderParams": {
-    "rows": { "type": { "returnType": "RowNode", "optional": false } }
-  },
-  "RenderRowsFeature": {
-    "render": {
-      "type": {
-        "arguments": { "rows": "RowNode[]" },
-        "returnType": "void",
-        "optional": false
-      }
-    }
   },
   "RowContainerName": {},
   "RowContainerType": {},
@@ -10809,7 +10723,6 @@
     }
   },
   "GetKeys": { "meta": { "typeParams": ["T", "U"] } },
-  "KeysLike": { "meta": { "typeParams": ["U"] } },
   "KeysOfType": { "meta": { "typeParams": ["U"] } },
   "BooleanProps": {},
   "NumberProps": {},
@@ -14243,7 +14156,6 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
-  "IMenu": {},
   "IMenuFactory": {
     "showMenuAfterButtonClick": {
       "type": {
@@ -15024,79 +14936,6 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
-  "IRowNodeBlock": {
-    "getDisplayIndexStart": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "getDisplayIndexEnd": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "getLastAccessed": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "getState": {
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
-    },
-    "isAnyNodeOpen": {
-      "type": {
-        "arguments": { "rowCount": "number" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "getBlockNumber": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "forEachNodeDeep": {
-      "type": {
-        "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void",
-          "sequence": "NumberSequence",
-          "rowCount": "number"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "forEachNodeShallow": {
-      "type": {
-        "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void",
-          "sequence": "NumberSequence",
-          "rowCount": "number"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "load": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "addEventListener": {
-      "type": {
-        "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async?": "boolean",
-          "options?": "AddEventListenerOptions"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "removeEventListener": {
-      "type": {
-        "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async?": "boolean",
-          "options?": "AddEventListenerOptions"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    }
-  },
   "StageExecuteParams": {
     "rowNode": {
       "type": { "returnType": "RowNode<TData>", "optional": false }
@@ -15591,7 +15430,7 @@
     }
   },
   "ServerSideGroupLevelState": {
-    "infiniteScroll": {
+    "suppressInfiniteScroll": {
       "description": "/** True if infininte scrolling */",
       "type": { "returnType": "boolean", "optional": false }
     },
@@ -15621,7 +15460,7 @@
     }
   },
   "ServerSideGroupState": {
-    "infiniteScroll": {
+    "suppressInfiniteScroll": {
       "description": "/** True if infininte scrolling */",
       "type": { "returnType": "boolean", "optional": false }
     },
@@ -17252,14 +17091,6 @@
         "optional": false
       }
     },
-    "autoHeight": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "suppressRefresh": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
     "meta": { "typeParams": ["TData = any", "TDetail = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
@@ -17526,6 +17357,7 @@
   "ModuleNames": {},
   "GridOptionKey": {},
   "AnyGridOptions": {},
+  "KeysLike": { "meta": { "typeParams": ["U"] } },
   "CallbackKeys": {},
   "FunctionKeys": {},
   "ICellComp": {
@@ -18013,10 +17845,6 @@
     "innerRendererSelector": {
       "description": "/** Callback to enable different innerRenderers to be used based of value of params. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
-    },
-    "padding": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "number", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "value": {
@@ -19058,26 +18886,6 @@
   },
   "LabelAlignment": {},
   "IAgLabel": {
-    "label": {
-      "type": { "returnType": "HTMLElement | string", "optional": true }
-    },
-    "labelWidth": {
-      "type": { "returnType": "number | 'flex'", "optional": true }
-    },
-    "labelSeparator": { "type": { "returnType": "string", "optional": true } },
-    "labelAlignment": {
-      "type": { "returnType": "LabelAlignment", "optional": true }
-    }
-  },
-  "ChangeEvent": {
-    "selected": { "type": { "returnType": "boolean", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
-  },
-  "ColorPickerConfig": {
-    "color": { "type": { "returnType": "string", "optional": false } },
     "label": {
       "type": { "returnType": "HTMLElement | string", "optional": true }
     },
@@ -20228,15 +20036,6 @@
     }
   },
   "ChangeDetectionStrategyType": {},
-  "ChangeDetectionStrategy": {
-    "areEqual": {
-      "type": {
-        "arguments": { "a": "any", "b": "any" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    }
-  },
   "SharedProps": {
     "gridOptions": {
       "type": { "returnType": "GridOptions<TData>", "optional": true }
@@ -20258,6 +20057,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },
@@ -21023,12 +20823,12 @@
       "type": { "returnType": "number", "optional": true }
     },
     "serverSideStoreType": {
-      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
+      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "serverSideInfiniteScroll": {
+    "suppressServerSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean | 'legacy'", "optional": true }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -21063,11 +20863,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -22976,6 +22776,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },
@@ -23740,12 +23541,12 @@
       "type": { "returnType": "number", "optional": true }
     },
     "serverSideStoreType": {
-      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
+      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "serverSideInfiniteScroll": {
+    "suppressServerSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean | 'legacy'", "optional": true }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -23780,11 +23581,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -25699,6 +25500,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },
@@ -26463,12 +26265,12 @@
       "type": { "returnType": "number", "optional": true }
     },
     "serverSideStoreType": {
-      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
+      "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "serverSideInfiniteScroll": {
+    "suppressServerSideInfiniteScroll": {
       "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-      "type": { "returnType": "boolean | 'legacy'", "optional": true }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -26503,11 +26305,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {

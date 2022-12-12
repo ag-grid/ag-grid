@@ -102,12 +102,6 @@ const GridExample = () => {
             minWidth: 100,
         }
     }, []);
-    const statusBar = useMemo(() => {
-        return {
-            statusPanels: [{ statusPanel: 'agAggregationComponent' }],
-        }
-    }, []);
-
 
     const isFullWidthRow = useCallback((params) => {
         return params.rowNode.data.fullWidth;
@@ -124,7 +118,6 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     pagination={true}
                     paginationPageSize={10}
-                    statusBar={statusBar}
                     domLayout={'autoHeight'}
                     isFullWidthRow={isFullWidthRow}
                     fullWidthCellRenderer={fullWidthCellRenderer}

@@ -449,7 +449,7 @@ export class GridBodyCtrl extends BeanStub {
 
     // + rangeService
     public addScrollEventListener(listener: () => void): void {
-        this.eBodyViewport.addEventListener('scroll', listener);
+        this.eBodyViewport.addEventListener('scroll', listener, { passive: true });
     }
 
     // + focusService

@@ -15,7 +15,6 @@ import {
     RowNodeTransaction
 } from "@ag-grid-community/core";
 
-import { RowNodeMap } from "./clientSideRowModel";
 
 @Bean('sortService')
 export class SortService extends BeanStub {

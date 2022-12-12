@@ -105,9 +105,6 @@ class GridExample extends Component {
             },
             rowData: createRowData(),
             paginationPageSize: 10,
-            statusBar: {
-                statusPanels: [{ statusPanel: 'agAggregationComponent' }],
-            },
             domLayout: 'autoHeight'
         };
     }

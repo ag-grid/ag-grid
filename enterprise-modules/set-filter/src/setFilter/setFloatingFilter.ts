@@ -6,7 +6,6 @@ import {
     ValueFormatterService,
     IFloatingFilterParams,
     AgInputTextField,
-    _,
     ColumnModel,
     SetFilterModel,
 } from '@ag-grid-community/core';

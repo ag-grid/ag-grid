@@ -87,17 +87,16 @@ export class CellCtrl extends BeanStub {
     private value: any;
     private valueFormatted: any;
 
-    private cellRangeFeature: CellRangeFeature;
-    private cellPositionFeature: CellPositionFeature;
-    private cellCustomStyleFeature: CellCustomStyleFeature;
-    private tooltipFeature: TooltipFeature;
-    private cellMouseListenerFeature: CellMouseListenerFeature;
-    private cellKeyboardListenerFeature: CellKeyboardListenerFeature;
+    private cellRangeFeature: CellRangeFeature | null = null;
+    private cellPositionFeature: CellPositionFeature | null = null;
+    private cellCustomStyleFeature: CellCustomStyleFeature | null = null;
+    private tooltipFeature: TooltipFeature | null = null;
+    private cellMouseListenerFeature: CellMouseListenerFeature | null = null;
+    private cellKeyboardListenerFeature: CellKeyboardListenerFeature | null = null;
 
     private cellPosition: CellPosition;
 
     private editing: boolean;
-    private editingInPopup: boolean;
 
     private includeSelection: boolean;
     private includeDndSource: boolean;
@@ -126,21 +125,21 @@ export class CellCtrl extends BeanStub {
 
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
-        this.addDestroyFunc(() => this.cellPositionFeature.destroy());
+        this.addDestroyFunc(() => { this.cellPositionFeature?.destroy(); this.cellPositionFeature = null; });
 
         this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);
-        this.addDestroyFunc(() => this.cellCustomStyleFeature.destroy());
+        this.addDestroyFunc(() => { this.cellCustomStyleFeature?.destroy(); this.cellCustomStyleFeature = null; });
 
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column);
-        this.addDestroyFunc(() => this.cellMouseListenerFeature.destroy());
+        this.addDestroyFunc(() => { this.cellMouseListenerFeature?.destroy(); this.cellMouseListenerFeature = null; });
 
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.rowCtrl);
-        this.addDestroyFunc(() => this.cellKeyboardListenerFeature.destroy());
+        this.addDestroyFunc(() => { this.cellKeyboardListenerFeature?.destroy(); this.cellKeyboardListenerFeature = null; });
 
         const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsService.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
-            this.addDestroyFunc(() => this.cellRangeFeature.destroy());
+            this.addDestroyFunc(() => { this.cellRangeFeature?.destroy(); this.cellRangeFeature = null; });
         }
 
         this.addTooltipFeature();
@@ -190,7 +189,7 @@ export class CellCtrl extends BeanStub {
         };
 
         this.tooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
-        this.addDestroyFunc(() => this.tooltipFeature.destroy());
+        this.addDestroyFunc(() => { this.tooltipFeature?.destroy(); this.tooltipFeature = null; });
     }
 
     public setComp(
@@ -233,10 +232,10 @@ export class CellCtrl extends BeanStub {
         this.cellComp.setColId(colIdSanitised!);
         this.cellComp.setRole('gridcell');
 
-        this.cellPositionFeature.setComp(eGui);
-        this.cellCustomStyleFeature.setComp(comp);
-        this.tooltipFeature.setComp(comp);
-        this.cellKeyboardListenerFeature.setComp(this.eGui);
+        this.cellPositionFeature?.setComp(eGui);
+        this.cellCustomStyleFeature?.setComp(comp);
+        this.tooltipFeature?.setComp(comp);
+        this.cellKeyboardListenerFeature?.setComp(this.eGui);
 
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp, eGui); }
 
@@ -250,7 +249,7 @@ export class CellCtrl extends BeanStub {
             this.onCellCompAttachedFuncs.forEach(func => func());
             this.onCellCompAttachedFuncs = [];
         }
-    }
+}
 
     private setupAutoHeight(eCellWrapper: HTMLElement): void {
         if (!this.column.isAutoHeight()) { return; }
@@ -524,12 +523,8 @@ export class CellCtrl extends BeanStub {
     }
 
     private createCellRendererParams(): ICellRendererParams {
-        const addRowCompListener = (eventType: string, listener: Function) => {
-            console.warn('AG Grid: since AG Grid v26, params.addRowCompListener() is deprecated. If you need this functionality, please contact AG Grid support and advise why so that we can revert with an appropriate workaround, as we dont have any valid use cases for it. This method was originally provided as a work around to know when cells were destroyed in AG Grid before custom Cell Renderers could be provided.');
-            this.rowCtrl.addEventListener(eventType, listener);
-        };
 
-        const res: any = {
+        const res: ICellRendererParams = {
             value: this.value,
             valueFormatted: this.valueFormatted,
             getValue: this.getValueFromValueService.bind(this),
@@ -541,8 +536,8 @@ export class CellCtrl extends BeanStub {
             colDef: this.column.getColDef(),
             column: this.column,
             rowIndex: this.getCellPosition().rowIndex,
-            api: this.beans.gridOptionsService.get('api'),
-            columnApi: this.beans.gridOptionsService.get('columnApi'),
+            api: this.beans.gridOptionsService.get('api')!,
+            columnApi: this.beans.gridOptionsService.get('columnApi')!,
             context: this.beans.gridOptionsService.get('context'),
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.getGui(),
@@ -550,15 +545,9 @@ export class CellCtrl extends BeanStub {
 
             registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels: number, value?: string, suppressVisibilityChange?: boolean) => this.registerRowDragger(rowDraggerElement, dragStartPixels, suppressVisibilityChange),
 
-            // this function is not documented anywhere, so we could drop it
-            // it was in the olden days to allow user to register for when rendered
-            // row was removed (the row comp was removed), however now that the user
-            // can provide components for cells, the destroy method gets call when this
-            // happens so no longer need to fire event.
-            addRowCompListener: addRowCompListener
-        };
+        } as ICellRendererParams;
 
-        return res as ICellRendererParams;
+        return res;
     }
 
     private parseValue(newValue: any): any {
@@ -666,15 +655,15 @@ export class CellCtrl extends BeanStub {
                 this.flashCell();
             }
 
-            this.cellCustomStyleFeature.applyUserStyles();
-            this.cellCustomStyleFeature.applyClassesFromColDef();
+            this.cellCustomStyleFeature?.applyUserStyles();
+            this.cellCustomStyleFeature?.applyClassesFromColDef();
         }
 
         this.refreshToolTip();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
-        this.cellCustomStyleFeature.applyCellClassRules();
+        this.cellCustomStyleFeature?.applyCellClassRules();
     }
 
     // cell editors call this, when they want to stop for reasons other
@@ -849,15 +838,15 @@ export class CellCtrl extends BeanStub {
     }
 
     public onKeyPress(event: KeyboardEvent): void {
-        this.cellKeyboardListenerFeature.onKeyPress(event);
+        this.cellKeyboardListenerFeature?.onKeyPress(event);
     }
 
     public onKeyDown(event: KeyboardEvent): void {
-        this.cellKeyboardListenerFeature.onKeyDown(event);
+        this.cellKeyboardListenerFeature?.onKeyDown(event);
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        this.cellMouseListenerFeature.onMouseEvent(eventName, mouseEvent);
+        this.cellMouseListenerFeature?.onMouseEvent(eventName, mouseEvent);
     }
 
     public getGui(): HTMLElement {
@@ -865,16 +854,16 @@ export class CellCtrl extends BeanStub {
     }
 
     public refreshToolTip(): void {
-        this.tooltipFeature.refreshToolTip();
+        this.tooltipFeature?.refreshToolTip();
     }
 
     public getColSpanningList(): Column[] {
-        return this.cellPositionFeature.getColSpanningList();
+        return this.cellPositionFeature!.getColSpanningList();
     }
 
     public onLeftChanged(): void {
         if (!this.cellComp) { return; }
-        this.cellPositionFeature.onLeftChanged();
+        this.cellPositionFeature?.onLeftChanged();
     }
 
     public onDisplayedColumnsChanged(): void {
@@ -892,7 +881,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onWidthChanged(): void {
-        return this.cellPositionFeature.onWidthChanged();
+        return this.cellPositionFeature?.onWidthChanged();
     }
 
     public getColumn(): Column {
@@ -1124,7 +1113,7 @@ export class CellCtrl extends BeanStub {
 
         if (newComp) {
             this.customRowDragComp = newComp;
-            this.addDestroyFunc(() => this.beans.context.destroyBean(newComp));
+            this.addDestroyFunc(() => { this.beans.context.destroyBean(newComp); (this.customRowDragComp as any) = null; });
         }
     }
 

@@ -1,5 +1,4 @@
 import { Column } from "../entities/column";
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { ContainerType } from "./iAfterGuiAttachedParams";
 
 export interface IMenuFactory {

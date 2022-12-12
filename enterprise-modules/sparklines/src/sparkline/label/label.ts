@@ -4,7 +4,7 @@ export class Label {
     enabled = true;
     fontSize = 8;
     fontFamily = 'Verdana, sans-serif';
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
+    fontStyle?: FontStyle = undefined;
+    fontWeight?: FontWeight = undefined;
     color = 'rgba(70, 70, 70, 1)';
 }

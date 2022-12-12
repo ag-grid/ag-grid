@@ -27,10 +27,6 @@ export interface IDetailCellRendererParams<TData = any, TDetail = any> extends I
     agGridReact: any;
     frameworkComponentWrapper: any;
     pinned: "left" | "right" | null | undefined;
-    /** @deprecated */
-    autoHeight: boolean;
-    /** @deprecated */
-    suppressRefresh: boolean;
 }
 
 export interface GetDetailRowData<TData = any, TDetail = any> {

@@ -725,12 +725,12 @@
     "type": { "returnType": "number" }
   },
   "serverSideStoreType": {
-    "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `full`.\n     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\n     * Full Store is used.\n     */",
+    "description": "/** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.\n     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,\n     * Full Store is used.\n     */",
     "type": { "returnType": "ServerSideStoreType" }
   },
-  "serverSideInfiniteScroll": {
+  "suppressServerSideInfiniteScroll": {
     "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
-    "type": { "returnType": "boolean | 'legacy'" }
+    "type": { "returnType": "boolean" }
   },
   "cacheBlockSize": {
     "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
@@ -765,11 +765,11 @@
     "type": { "returnType": "boolean" }
   },
   "serverSideSortOnServer": {
-    "description": "/** When enabled, Sorting will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+    "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "serverSideFilterOnServer": {
-    "description": "/** When enabled, Filtering will be done on the server side. When serverSideInfiniteScroll=true, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+    "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
     "type": { "returnType": "boolean" }
   },
   "serverSideSortingAlwaysResets": {

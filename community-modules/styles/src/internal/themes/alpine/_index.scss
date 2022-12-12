@@ -201,14 +201,15 @@
         background: var(--ag-background-color);
     }
 
+    .ag-chart-menu-close:hover .ag-icon {
+        border-color: var(--ag-border-color);
+        background: var(--ag-header-background-color);
+    }
+
     .ag-chart-menu-close .ag-icon {
         background: none;
         border: 1px solid var(--ag-secondary-border-color);
         border-right: none;
-    }
-
-    .ag-chart-menu-close .ag-icon:hover {
-        background: var(--ag-header-background-color);
     }
 
     .ag-chart-settings-card-item.ag-not-selected:hover {

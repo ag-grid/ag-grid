@@ -1,4 +1,3 @@
-export * from "./color";
 export * from "./utils";
 export * from "./numberSequence";
 export * from "./promise";

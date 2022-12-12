@@ -61,6 +61,7 @@ const gridOptions: GridOptions = {
     return params.data.product
   },
   rowModelType: 'serverSide',
+  suppressServerSideInfiniteScroll: true,
   columnDefs: columnDefs,
 }
 

@@ -18,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
 
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true
 }
 
 // setup the grid after the page has finished loading

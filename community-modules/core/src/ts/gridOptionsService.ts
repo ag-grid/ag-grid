@@ -1,7 +1,7 @@
 import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
-import { DomLayoutType, GetRowIdFunc, GridOptions } from "./entities/gridOptions";
+import { DomLayoutType, GridOptions } from "./entities/gridOptions";
 import { GetGroupAggFilteringParams, GetRowIdParams, RowHeightParams } from "./entities/iCallbackParams";
 import { RowNode } from "./entities/rowNode";
 import { Environment } from "./environment";
@@ -22,11 +22,6 @@ type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
 }[keyof T];
 
-/**
- * Get all the GridOptions properties of the provided type.
- * Will also include `any` properties. 
- */
-export type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
 /**
  * Get all the GridOption properties that strictly contain the provided type.
  * Does not include `any` properties.
@@ -52,7 +47,7 @@ export interface PropertyChangedEvent extends AgEvent {
 
 export type PropertyChangedListener = (event: PropertyChangedEvent) => void
 
-export function toNumber(value: any): number | undefined {
+function toNumber(value: any): number | undefined {
     if (typeof value == 'number') {
         return value;
     }
@@ -62,7 +57,7 @@ export function toNumber(value: any): number | undefined {
     }
 }
 
-export function isTrue(value: any): boolean {
+function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
 

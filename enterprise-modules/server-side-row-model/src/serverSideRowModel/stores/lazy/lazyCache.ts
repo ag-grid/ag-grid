@@ -1,4 +1,4 @@
-import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, ServerSideGroupLevelParams, StoreUpdatedEvent, WithoutGridCommon } from "@ag-grid-community/core";
+import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, ServerSideGroupLevelParams } from "@ag-grid-community/core";
 import { BlockUtils } from "src/serverSideRowModel/blocks/blockUtils";
 import { NodeManager } from "src/serverSideRowModel/nodeManager";
 import { LazyStore } from "./lazyStore";
@@ -68,6 +68,9 @@ export class LazyCache extends BeanStub {
             const [stringIndex, node] = nodeMapEntries[i];
             // if we find the index, simply return this node
             if (node.rowIndex === displayIndex) {
+                if (node.stub || node.needsVerify) {
+                    this.rowLoader.queueLoadAction();
+                }
                 return node;
             }
 
@@ -121,9 +124,10 @@ export class LazyCache extends BeanStub {
     private createStubNode(storeIndex: number, displayIndex: number): RowNode {
         // bounds are acquired before creating the node, as otherwise it'll use it's own empty self to calculate
         const rowBounds = this.store.getRowBounds(displayIndex!);
-        const newNode = this.createRowAtIndex(storeIndex);
-        newNode.setRowIndex(displayIndex);
-        newNode.setRowTop(rowBounds!.rowTop);
+        const newNode = this.createRowAtIndex(storeIndex, null, node => {
+            node.setRowIndex(displayIndex);
+            node.setRowTop(rowBounds!.rowTop);
+        });
         return newNode;
     }
 
@@ -235,13 +239,14 @@ export class LazyCache extends BeanStub {
      * @param data the data object to populate the node with 
      * @returns the new row node
      */
-    private createRowAtIndex(atStoreIndex: number, data?: any): RowNode {
+    private createRowAtIndex(atStoreIndex: number, data?: any, createNodeCallback?: (node: RowNode) => void): RowNode {
         const usingRowIds = this.isUsingRowIds();
 
         // make sure an existing node isn't being overwritten
         const existingNodeAtIndex = this.nodeIndexMap[atStoreIndex];
         if (existingNodeAtIndex) {
             existingNodeAtIndex.needsRefresh = false;
+            existingNodeAtIndex.needsVerify = false;
 
             // if the node is the same, just update the content
             if (this.doesNodeMatch(data, existingNodeAtIndex)) {
@@ -254,7 +259,7 @@ export class LazyCache extends BeanStub {
                 return existingNodeAtIndex;
             }
 
-            // destroy the old node
+            // destroy the old node, might be worth caching state here
             this.destroyRowAtIndex(atStoreIndex);
         }
 
@@ -270,8 +275,8 @@ export class LazyCache extends BeanStub {
                 delete this.nodeIndexMap[existingIndex];
                 this.nodeIndexMap[atStoreIndex] = existingNode;
 
-                // mark all of the old block as needsRefresh to trigger it for a refresh
-                this.markBlockForRefresh(existingIndex);
+                // mark all of the old block as needsVerify to trigger it for a refresh
+                this.markBlockForVerify(existingIndex);
 
                 return existingNode;
             }
@@ -289,6 +294,10 @@ export class LazyCache extends BeanStub {
 
         // add the new node to the store, has to be done after the display index is calculated so it doesn't take itself into account
         this.nodeIndexMap[atStoreIndex] = newNode;
+
+        if (createNodeCallback) {
+            createNodeCallback(newNode);
+        }
 
         // if this is a stub, we need to tell the loader to load rows
         if (newNode.stub) {
@@ -321,12 +330,12 @@ export class LazyCache extends BeanStub {
         }
     }
 
-    private markBlockForRefresh(rowIndex: number) {
+    private markBlockForVerify(rowIndex: number) {
         const [start, end] = this.rowLoader.getBlockBoundsForIndex(rowIndex);
         for(let i = start; i < end; i++) {
             const node = this.nodeIndexMap[i];
             if (node) {
-                node.needsRefresh = true;
+                node.needsVerify = true;
             }
         }
     }
@@ -501,6 +510,7 @@ export class LazyCache extends BeanStub {
             if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache)) {
                 this.blockUtils.updateDataIntoRowNode(nodeFromCache, data);
                 nodeFromCache.needsRefresh = false;
+                nodeFromCache.needsVerify = false;
                 return;
             }
             // create row will handle deleting the overwritten row
@@ -691,6 +701,7 @@ export class LazyCache extends BeanStub {
         let deletedNodeCount = 0;
 
         const remainingIdsToRemove = [...idsToRemove];
+        const nodesToVerify = [];
         for (let i = 0; i < allNodes.length; i++) {
             const [stringStoreIndex, node] = allNodes[i];
 
@@ -711,17 +722,23 @@ export class LazyCache extends BeanStub {
                 continue;
             }
 
-            // shift normal node up by number of deleted prior to this point
             const numericStoreIndex = Number(stringStoreIndex);
+            if (i !== numericStoreIndex) {
+                nodesToVerify.push(node);
+            }
+
+            // shift normal node up by number of deleted prior to this point
             this.nodeIndexMap[numericStoreIndex - deletedNodeCount] = this.nodeIndexMap[numericStoreIndex];
             delete this.nodeIndexMap[numericStoreIndex];
         }
 
-        this.numberOfRows -= deletedNodeCount;
-        return removedNodes;
-    }
+        this.numberOfRows -= this.isLastRowIndexKnown() ? idsToRemove.length : deletedNodeCount;
 
-    public reduceRowCount(count: number) {
-        this.numberOfRows -= count;
+        if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
+            nodesToVerify.forEach(node => node.needsVerify = true);
+            this.rowLoader.queueLoadAction();
+        }
+
+        return removedNodes;
     }
 }

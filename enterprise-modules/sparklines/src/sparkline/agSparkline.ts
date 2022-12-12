@@ -15,7 +15,9 @@ import {
 } from '@ag-grid-community/core';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
 import { BarColumnLabel } from './bar-column/barColumnSparkline';
-import { isNumber } from '../util/value';
+import { _Util } from 'ag-charts-community';
+
+const { extent, isNumber } = _Util;
 
 export type SparklineFactoryOptions = SparklineOptions & {
     data: any[];

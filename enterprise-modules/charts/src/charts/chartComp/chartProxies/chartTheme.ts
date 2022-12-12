@@ -9,6 +9,7 @@ import {
     AgPolarSeriesTheme,
     _Theme,
 } from 'ag-charts-community';
+import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { getSeriesType } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';
 
@@ -135,20 +136,16 @@ function createCrossFilterThemeOverrides(
     };
 }
 
-const STATIC_INBUILT_STOCK_THEME_OVERRIDES: AgChartThemeOverrides = {
-    pie: {
-        series: {
-            sectorLabel: {
-                enabled: false,
-            },
-        },
-    },
-};
+const STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES = ALL_AXIS_TYPES.reduce(
+    (r, n) => ({ ...r, [n]: { title: { _enabledFromTheme: true } } }),
+    {}
+);
 
 function inbuiltStockThemeOverrides(params: ChartProxyParams) {
     const extraPadding = params.getExtraPaddingRequired();
     return {
         common: {
+            axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
             padding: {
                 top: 20 + (extraPadding.top ?? 0),
                 right: 20 + (extraPadding.right ?? 0),
@@ -156,7 +153,16 @@ function inbuiltStockThemeOverrides(params: ChartProxyParams) {
                 left: 20 + (extraPadding.left ?? 0),
             },
         },
-        ...STATIC_INBUILT_STOCK_THEME_OVERRIDES,
+        pie: {
+            series: {
+                title: { _enabledFromTheme: true },
+                calloutLabel: { _enabledFromTheme: true },
+                sectorLabel: {
+                    enabled: false,
+                    _enabledFromTheme: true,
+                },
+            } as any,
+        },
     };
 }
 

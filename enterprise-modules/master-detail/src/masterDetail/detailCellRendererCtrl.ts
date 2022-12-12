@@ -72,13 +72,6 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     }
 
     private setupRefreshStrategy(): void {
-        if (this.params.suppressRefresh) {
-            console.warn("AG Grid: as of v23.2.0, cellRendererParams.suppressRefresh for Detail Cell Renderer is no " +
-                "longer used. Please set cellRendererParams.refreshStrategy = 'nothing' instead.");
-            this.refreshStrategy = 'nothing';
-            return;
-        }
-
         const providedStrategy = this.params.refreshStrategy;
 
         const validSelection = providedStrategy == 'everything' || providedStrategy == 'nothing' || providedStrategy == 'rows';

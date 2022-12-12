@@ -125,6 +125,36 @@ const COMBO_CHART_EXAMPLE: AgCartesianChartOptions = {
     },
 };
 
+const COMPLEX_THEME_SCENARIO: AgCartesianChartOptions = {
+    series: [
+        { type: 'line', yKey: 'test2' },
+        { type: 'column', yKey: 'test' },
+        { type: 'area', yKey: 'test3' },
+        { type: 'area', yKey: 'test4', label: {} },
+    ],
+    axes: [
+        { type: 'time', position: 'bottom' },
+        { type: 'time', position: 'bottom', title: { text: 'Time' } },
+        { type: 'number', position: 'left', title: { text: 'Velocity' } },
+        { type: 'number', position: 'right', title: { text: 'G', enabled: true } },
+    ],
+    theme: {
+        baseTheme: {
+            baseTheme: 'ag-default',
+            overrides: {
+                common: {
+                    axes: {
+                        number: { title: { _enabledFromTheme: true, enabled: false } },
+                    },
+                },
+                column: { series: { label: { enabled: false, _enabledFromTheme: true } } },
+                line: { series: { label: { enabled: true, _enabledFromTheme: true } } },
+            },
+        } as any,
+        overrides: {},
+    },
+};
+
 describe('prepare', () => {
     describe('#prepareOptions', () => {
         beforeEach(() => {
@@ -171,6 +201,21 @@ describe('prepare', () => {
             expect(preparedOptions.series?.length).toEqual(3);
             expect(preparedOptions.series?.map((s) => s.type)).toEqual(['line', 'column', 'area']);
             expect(preparedOptions.series?.map((s) => s.label?.enabled)).toEqual([true, true, true]);
+        });
+
+        it('should merge complex theme setups as expected', () => {
+            const options = COMPLEX_THEME_SCENARIO;
+
+            options.container = document.createElement('div');
+
+            const preparedOptions = prepareOptions(options);
+
+            expect(preparedOptions.axes?.length).toEqual(4);
+            expect(preparedOptions.axes?.map((a) => a.type)).toEqual(['time', 'time', 'number', 'number']);
+            expect(preparedOptions.axes?.map((a) => a.title?.enabled)).toEqual([false, true, false, true]);
+            expect(preparedOptions.series?.length).toEqual(4);
+            expect(preparedOptions.series?.map((s) => s.type)).toEqual(['line', 'column', 'area', 'area']);
+            expect(preparedOptions.series?.map((s) => s.label?.enabled)).toEqual([true, false, false, true]);
         });
     });
 });

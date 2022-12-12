@@ -402,6 +402,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     chart.userOptions = jsonMerge([chart.userOptions || {}, userOptions], noDataCloneMergeOptions);
 
     const updateType = forceNodeDataRefresh ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
+    debug('chart update type', { updateType: ChartUpdateType[updateType] });
     chart.update(updateType, { forceNodeDataRefresh });
 }
 

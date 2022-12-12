@@ -12,7 +12,6 @@ import {
     FilterWrapper,
     GridApi,
     IMenuFactory,
-    IPrimaryColsPanel,
     IRowModel,
     MenuItemDef,
     ModuleNames,
@@ -239,8 +238,6 @@ export class EnterpriseMenu extends BeanStub {
     private hidePopupFunc: Function;
     private column: Column;
     private mainMenuList: AgMenuList;
-
-    private columnSelectPanel: IPrimaryColsPanel;
 
     private tabItemFilter: TabbedItem;
     private tabItemGeneral: TabbedItem;
@@ -521,28 +518,37 @@ export class EnterpriseMenu extends BeanStub {
         const eWrapperDiv = document.createElement('div');
         eWrapperDiv.classList.add('ag-menu-column-select-wrapper');
 
-        this.columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
+        const columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
 
         let columnsMenuParams = this.column.getColDef().columnsMenuParams;
         if (!columnsMenuParams) { columnsMenuParams = {}; }
 
-        this.columnSelectPanel.init(false, {
+        const {
+            contractColumnSelection, suppressColumnExpandAll, suppressColumnFilter,
+            suppressColumnSelectAll, suppressSyncLayoutWithGrid, columnLayout
+        } = columnsMenuParams;
+
+        columnSelectPanel.init(false, {
             suppressColumnMove: false,
             suppressValues: false,
             suppressPivots: false,
             suppressRowGroups: false,
             suppressPivotMode: false,
-            contractColumnSelection: !!columnsMenuParams.contractColumnSelection,
-            suppressColumnExpandAll: !!columnsMenuParams.suppressColumnExpandAll,
-            suppressColumnFilter: !!columnsMenuParams.suppressColumnFilter,
-            suppressColumnSelectAll: !!columnsMenuParams.suppressColumnSelectAll,
-            suppressSyncLayoutWithGrid: !!columnsMenuParams.suppressSyncLayoutWithGrid,
+            contractColumnSelection: !!contractColumnSelection,
+            suppressColumnExpandAll: !!suppressColumnExpandAll,
+            suppressColumnFilter: !!suppressColumnFilter,
+            suppressColumnSelectAll: !!suppressColumnSelectAll,
+            suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
             api: this.gridApi,
             columnApi: this.columnApi,
             context: this.gridOptionsService.get('context')
         }, 'columnMenu');
 
-        const columnSelectPanelGui = this.columnSelectPanel.getGui();
+        if (columnLayout) {
+            columnSelectPanel.setColumnLayout(columnLayout);
+        }
+
+        const columnSelectPanelGui = columnSelectPanel.getGui();
         columnSelectPanelGui.classList.add('ag-menu-column-select');
         eWrapperDiv.appendChild(columnSelectPanelGui);
 

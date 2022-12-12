@@ -5,11 +5,17 @@ import { ChartTranslationService } from "./charts/chartComp/services/chartTransl
 import { ChartCrossFilterService } from "./charts/chartComp/services/chartCrossFilterService";
 
 import { RangeSelectionModule } from "@ag-grid-enterprise/range-selection";
+import { AgColorPicker } from "./widgets/agColorPicker";
+import { AgAngleSelect } from "./widgets/agAngleSelect";
 
 export const GridChartsModule: Module = {
     moduleName: ModuleNames.GridChartsModule,
     beans: [
         ChartService, ChartTranslationService, ChartCrossFilterService
+    ],
+    agStackComponents: [
+        { componentName: 'AgColorPicker', componentClass: AgColorPicker },
+        { componentName: 'AgAngleSelect', componentClass: AgAngleSelect },
     ],
     dependantModules: [
         RangeSelectionModule,

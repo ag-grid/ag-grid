@@ -135,23 +135,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 idFunc({ level: this.level, parentKeys: this.parentRowNode.getGroupKeys(), data })
             ));
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
-            
-            const allRowsAreDiscoverable = allUniqueIdsToRemove.every(id => this.cache.isNodeInCache(id));
-            // if all nodes to remove can't be found, we mark the store for refresh
-            // there's things that could be done to enhance this, like checking if we have all rows up to the top
-            // in which case rows can't be out of place if not found
-            if (!allRowsAreDiscoverable) {
-                this.refreshStore(false);
-                this.updateSelectionAfterTransaction(updatedNodes);
-                // while no actual remove has been done, assume it has so we can prevent jittery scrollbar
-                this.cache.reduceRowCount(transaction.remove?.length ?? 0);
-                return {
-                    status: ServerSideTransactionResultStatus.Applied,
-                    update: updatedNodes,
-                    add: insertedNodes,
-                };
-            }
-
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
         }
 
@@ -555,7 +538,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      */
     addStoreStates(result: ServerSideGroupLevelState[]) {
         result.push({
-            infiniteScroll: false,
+            suppressInfiniteScroll: false,
             route: this.parentRowNode.getGroupKeys(),
             rowCount: this.getRowCount(),
             info: this.info,
