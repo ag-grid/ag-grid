@@ -30,6 +30,7 @@ export class PaginationComp extends Component {
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;
     private lastButtonDisabled = false;
+    private areListenersSetup = false;
 
     constructor() {
         super();
@@ -44,40 +45,50 @@ export class PaginationComp extends Component {
         this.btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsService)!);
         this.btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsService)!);
 
-        const isPaging = this.gridOptionsService.is('pagination');
-        const paginationPanelEnabled = isPaging && !this.gridOptionsService.is('suppressPaginationPanel');
-
-        if (!paginationPanelEnabled) {
-            this.setDisplayed(false);
-            return;
-        }
-
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
-
-        [
-            { el: this.btFirst, fn: this.onBtFirst.bind(this) },
-            { el: this.btPrevious, fn: this.onBtPrevious.bind(this) },
-            { el: this.btNext, fn: this.onBtNext.bind(this) },
-            { el: this.btLast, fn: this.onBtLast.bind(this) }
-        ].forEach(item => {
-            const { el, fn } = item;
-            this.addManagedListener(el, 'click', fn);
-            this.addManagedListener(el, 'keydown', (e: KeyboardEvent) => {
-                if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
-                    e.preventDefault();
-                    fn();
-                }
-            });
-        });
+        this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
+        this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
 
         this.onPaginationChanged();
     }
 
     private onPaginationChanged(): void {
+        const isPaging = this.gridOptionsService.is('pagination');
+        const paginationPanelEnabled = isPaging && !this.gridOptionsService.is('suppressPaginationPanel');
+
+        this.setDisplayed(paginationPanelEnabled);
+        if (!paginationPanelEnabled) {
+            return;
+        }
+
+        this.setupListeners();
+
         this.enableOrDisableButtons();
         this.updateRowLabels();
         this.setCurrentPageLabel();
         this.setTotalLabels();
+    }
+
+    private setupListeners() {
+        if (!this.areListenersSetup) {
+            this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+
+            [
+                { el: this.btFirst, fn: this.onBtFirst.bind(this) },
+                { el: this.btPrevious, fn: this.onBtPrevious.bind(this) },
+                { el: this.btNext, fn: this.onBtNext.bind(this) },
+                { el: this.btLast, fn: this.onBtLast.bind(this) }
+            ].forEach(item => {
+                const { el, fn } = item;
+                this.addManagedListener(el, 'click', fn);
+                this.addManagedListener(el, 'keydown', (e: KeyboardEvent) => {
+                    if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                        e.preventDefault();
+                        fn();
+                    }
+                });
+            });
+            this.areListenersSetup = true;
+        }
     }
 
     private onBtFirst() {
