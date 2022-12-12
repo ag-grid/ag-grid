@@ -24,7 +24,7 @@ export class CartesianChart extends Chart {
         this.navigator.enabled = false;
     }
 
-    readonly navigator = new Navigator(this, this.interactionManager);
+    readonly navigator = new Navigator(this, this.interactionManager, this.cursorManager);
 
     async performLayout() {
         this.scene.root!.visible = true;

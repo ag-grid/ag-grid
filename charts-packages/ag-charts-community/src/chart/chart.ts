@@ -24,6 +24,7 @@ import { InteractionEvent, InteractionManager } from './interaction/interactionM
 import { jsonMerge } from '../util/json';
 import { ClipRect } from '../scene/clipRect';
 import { Layers } from './layers';
+import { CursorManager } from './interaction/cursorManager';
 
 /** Types of chart-update, in pipeline execution order. */
 export enum ChartUpdateType {
@@ -55,7 +56,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly scene: Scene;
     readonly seriesRoot = new ClipRect();
     readonly background: Background = new Background();
-    readonly legend = new Legend();
+    readonly legend: Legend;
+    readonly tooltip: Tooltip;
 
     protected legendAutoPadding = new Padding();
 
@@ -149,8 +151,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._autoSize;
     }
 
-    readonly tooltip: Tooltip;
-
     download(fileName?: string, fileFormat?: string) {
         this.scene.download(fileName, fileFormat);
     }
@@ -193,6 +193,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     protected readonly interactionManager: InteractionManager;
+    protected readonly cursorManager: CursorManager;
     protected readonly axisGroup: Group;
 
     protected constructor(
@@ -230,10 +231,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.autoSize = true;
 
         this.interactionManager = new InteractionManager(element);
-        this.interactionManager.addListener('click', (event) => this.onClick(event));
-        this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
-        this.interactionManager.addListener('leave', () => this.togglePointer(false));
-        this.interactionManager.addListener('page-left', () => this.destroy());
+        this.cursorManager = new CursorManager(element);
 
         background.width = this.scene.width;
         background.height = this.scene.height;
@@ -258,7 +256,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
         });
 
         this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
+        this.legend = new Legend(this, this.interactionManager, this.cursorManager);
         this.container = container;
+
+        // Add interaction listeners last so child components are registered first.
+        this.interactionManager.addListener('click', (event) => this.onClick(event));
+        this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
+        this.interactionManager.addListener('leave', () => this.togglePointer(false));
+        this.interactionManager.addListener('page-left', () => this.destroy());
     }
 
     destroy(opts?: { keepTransferableResources: boolean }): TransferableResources | undefined {
@@ -1171,7 +1176,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const { updateProcessing = true } = opts ?? {};
         const seriesToUpdate: Set<Series> = new Set<Series>();
         const { datum: { series: newSeries = undefined } = {}, datum = undefined } = newPick || {};
-        const { lastPick: { datum: { series: lastSeries = undefined } = {} } = {} } = this;
+        const { lastPick: { datum: { series: lastSeries = undefined } = {} } = {}, lastPick } = this;
 
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);
@@ -1179,7 +1184,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         if (newSeries) {
             seriesToUpdate.add(newSeries);
-            this.element.style.cursor = newSeries.cursor;
+        }
+
+        // Adjust cursor if a specific datum is highlighted, rather than just a series.
+        if (lastSeries?.cursor && lastPick?.datum?.datum) {
+            this.cursorManager.updateCursor(lastSeries.id);
+        }
+        if (newSeries?.cursor && datum?.datum) {
+            this.cursorManager.updateCursor(newSeries.id, newSeries.cursor);
         }
 
         this.lastPick = newPick;
