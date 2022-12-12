@@ -14731,10 +14731,7 @@
     },
     "cellRenderer": {
       "description": "/** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
-        "optional": false
-      }
+      "type": { "returnType": "any", "optional": false }
     },
     "searchDebounceDelay": {
       "description": "/** The value in `ms` for the fuzzy search debounce delay. Default: `300` */",
