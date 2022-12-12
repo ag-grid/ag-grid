@@ -51,6 +51,7 @@ import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { matchesGroupDisplayType, matchesTreeDataDisplayType } from '../gridOptionsValidator';
+import { PropertyChangedEvent } from '../gridOptionsService';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -113,6 +114,10 @@ export interface IColumnLimit {
     minWidth?: number,
     /** Defines a maximum width for this column (does not override the column maximum width) */
     maxWidth?: number
+}
+
+interface ColDefPropertyChangedEvent extends PropertyChangedEvent {
+    source?: ColumnEventType;
 }
 
 @Bean('columnModel')
@@ -270,7 +275,7 @@ export class ColumnModel extends BeanStub {
 
         this.addManagedPropertyListener('groupDisplayType', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
-        this.addManagedPropertyListener('defaultColDef', () => this.onDefaultColDefChanged());
+        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('defaultColDef', (params) => this.onDefaultColDefChanged(params.source));
     }
 
     public onAutoGroupColumnDefChanged() {
@@ -280,10 +285,10 @@ export class ColumnModel extends BeanStub {
         this.updateDisplayedColumns('gridOptionsChanged');
     }
 
-    public onDefaultColDefChanged(): void {
+    public onDefaultColDefChanged(source: ColumnEventType = 'api'): void {
         // likewise for autoGroupCol, the default col def impacts this
         this.forceRecreateAutoGroups = true;
-        this.createColumnsFromColumnDefs(true);
+        this.createColumnsFromColumnDefs(true, source);
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {

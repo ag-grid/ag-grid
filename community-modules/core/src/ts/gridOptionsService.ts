@@ -45,7 +45,7 @@ export interface PropertyChangedEvent extends AgEvent {
     previousValue: any;
 }
 
-export type PropertyChangedListener = (event: PropertyChangedEvent) => void
+export type PropertyChangedListener<T extends PropertyChangedEvent> = (event: T) => void
 
 function toNumber(value: any): number | undefined {
     if (typeof value == 'number') {
@@ -183,10 +183,10 @@ export class GridOptionsService {
         }
     }
 
-    addEventListener(key: keyof GridOptions, listener: PropertyChangedListener): void {
+    addEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void {
         this.propertyEventService.addEventListener(key, listener);
     }
-    removeEventListener(key: keyof GridOptions, listener: PropertyChangedListener): void {
+    removeEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void {
         this.propertyEventService.removeEventListener(key, listener);
     }
 

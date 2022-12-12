@@ -5,7 +5,7 @@ import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { Component } from "../widgets/component";
 import { addSafePassiveEventListener } from "../utils/event";
-import { GridOptionsService, PropertyChangedListener } from "../gridOptionsService";
+import { GridOptionsService, PropertyChangedEvent, PropertyChangedListener } from "../gridOptionsService";
 import { GridOptions } from "../entities/gridOptions";
 import { LocaleService } from "../localeService";
 import { Environment } from "../environment";
@@ -118,9 +118,9 @@ export class BeanStub implements IEventEmitter {
         return destroyFunc;
     }
 
-    public addManagedPropertyListener(
+    public addManagedPropertyListener<T extends PropertyChangedEvent>(
         event: keyof GridOptions,
-        listener: PropertyChangedListener
+        listener: PropertyChangedListener<T>
     ): (() => null) | undefined {
         if (this.destroyed) {
             return;

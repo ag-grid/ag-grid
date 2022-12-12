@@ -102,6 +102,16 @@
       "maxWidth?": "/** Defines a maximum width for this column (does not override the column maximum width) */"
     }
   },
+  "ColDefPropertyChangedEvent": {
+    "meta": {},
+    "type": {
+      "source?": "ColumnEventType",
+      "type": "keyof GridOptions",
+      "currentValue": "any",
+      "previousValue": "any"
+    },
+    "docs": { "type": "/** Event identifier */" }
+  },
   "ColKey": {
     "meta": { "isTypeAlias": true },
     "type": "keyof (ColDef) | (keyof ColGroupDef)"
@@ -6172,8 +6182,11 @@
     "docs": { "type": "/** Event identifier */" }
   },
   "PropertyChangedListener": {
-    "meta": { "isTypeAlias": true },
-    "type": "(event: PropertyChangedEvent) => void"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["T extends PropertyChangedEvent"]
+    },
+    "type": "(event: T) => void"
   },
   "DeprecatedReference": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
