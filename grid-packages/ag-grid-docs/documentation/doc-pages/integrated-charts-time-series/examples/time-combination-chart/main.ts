@@ -79,7 +79,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     ],
     aggFunc: 'sum',
     suppressChartRanges: true,
-    chartContainer: document.querySelector('#myChart') as any,
+    chartContainer: document.querySelector('#myChart') as HTMLElement,
   });
 }
 

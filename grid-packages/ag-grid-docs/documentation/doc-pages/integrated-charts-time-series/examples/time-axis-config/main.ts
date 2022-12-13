@@ -65,7 +65,7 @@ const gridOptions: GridOptions = {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   var createRangeChartParams: CreateRangeChartParams = {
-    chartContainer: document.querySelector('#myChart') as any,
+    chartContainer: document.querySelector('#myChart') as HTMLElement,
     suppressChartRanges: true,
     cellRange: {
       columns: ['timestamp', 'cpuUsage'],

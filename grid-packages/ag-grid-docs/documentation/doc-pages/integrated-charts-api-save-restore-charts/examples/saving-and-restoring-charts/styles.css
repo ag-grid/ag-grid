@@ -11,7 +11,8 @@
 
 .my-chart {
     flex: 1;
-    border: 1px solid lightgrey;
+    margin-top: 0.5rem;
+    border: 1px solid var(--ag-border-color);
 }
 
 #buttons {
