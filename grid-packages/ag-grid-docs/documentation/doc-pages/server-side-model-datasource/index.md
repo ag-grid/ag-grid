@@ -76,10 +76,7 @@ Alternatively, the datasource can be registered via the grid API:
 gridOptions.api.setServerSideDatasource(myDatasource);
 </snippet>
 
-The example below demonstrates loading rows using an SSRM Datasource. The example does not use
-Row Grouping or Infinite Scrolling, so it doesn't demonstrate the benefits of using the SSRM.
-However, it does demonstrate how to configure the grid with the SSRM which will be built on later.
-Note the following:
+The example below demonstrates loading rows using a simple SSRM Datasource. Note the following:
 
 - The Server-Side Row Model is selected using the grid options property: `rowModelType = 'serverSide'`.
 - The datasource is registered with the grid using: `api.setServerSideDatasource(datasource)`.
