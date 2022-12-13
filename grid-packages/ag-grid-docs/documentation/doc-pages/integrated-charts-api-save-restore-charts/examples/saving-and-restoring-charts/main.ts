@@ -32,7 +32,6 @@ function saveChart() {
   if (chartModels.length > 0) {
     chartModel = chartModels[0]
   }
-  alert('Chart saved!')
 }
 
 function clearChart() {
