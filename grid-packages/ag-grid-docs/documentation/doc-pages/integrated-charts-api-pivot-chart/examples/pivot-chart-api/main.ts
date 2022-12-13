@@ -33,12 +33,6 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
     chartThemeName: 'ag-vivid',
     chartThemeOverrides: {
       common: {
-        padding: {
-          top: 20,
-          left: 10,
-          bottom: 30,
-          right: 10,
-        },
         legend: {
           enabled: true,
           position: 'bottom',
