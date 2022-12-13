@@ -601,7 +601,9 @@ export class Legend {
         }
 
         const maybeDeHighlight = () => {
-            // De-highlight if the pointer was inside the legend and is now leaving it.
+            // Remove highlight IF the current highlight was from legend interactions. The only way
+            // a highlight is from the legend is if it isn't for a specific datum right now, so if
+            // the highlight points to a specific datum, don't remove it.
             if (this.chart.highlightedDatum?.datum != null) {
                 return;
             }
