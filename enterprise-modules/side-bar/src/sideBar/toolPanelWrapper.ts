@@ -4,7 +4,6 @@ import {
     UserComponentFactory,
     IToolPanelComp,
     IToolPanelParams,
-    AgPromise,
     ToolPanelDef,
     PostConstruct,
     WithoutGridCommon

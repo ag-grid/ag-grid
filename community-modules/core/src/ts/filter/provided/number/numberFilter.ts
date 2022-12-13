@@ -1,8 +1,6 @@
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { _ } from '../../../utils';
 import { ConditionPosition, ISimpleFilterModel, Tuple } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
-import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isBrowserChrome, isBrowserEdge } from '../../../utils/browser';

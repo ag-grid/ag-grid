@@ -9,26 +9,13 @@ import {
     GridApi,
     IColumnToolPanel,
     IToolPanelComp,
-    IToolPanelParams,
+    ToolPanelColumnCompParams,
     ModuleNames,
     ModuleRegistry
 } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
 import { PrimaryColsPanel } from "./primaryColsPanel";
-
-export interface ToolPanelColumnCompParams extends IToolPanelParams {
-    suppressColumnMove: boolean;
-    suppressRowGroups: boolean;
-    suppressValues: boolean;
-    suppressPivots: boolean;
-    suppressPivotMode: boolean;
-    suppressColumnFilter: boolean;
-    suppressColumnSelectAll: boolean;
-    suppressColumnExpandAll: boolean;
-    contractColumnSelection: boolean;
-    suppressSyncLayoutWithGrid: boolean;
-}
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
 

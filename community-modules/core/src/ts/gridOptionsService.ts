@@ -1,7 +1,7 @@
 import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
-import { DomLayoutType, GetRowIdFunc, GridOptions } from "./entities/gridOptions";
+import { DomLayoutType, GridOptions } from "./entities/gridOptions";
 import { GetGroupAggFilteringParams, GetRowIdParams, RowHeightParams } from "./entities/iCallbackParams";
 import { RowNode } from "./entities/rowNode";
 import { Environment } from "./environment";
@@ -22,11 +22,6 @@ type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
 }[keyof T];
 
-/**
- * Get all the GridOptions properties of the provided type.
- * Will also include `any` properties. 
- */
-export type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
 /**
  * Get all the GridOption properties that strictly contain the provided type.
  * Does not include `any` properties.
@@ -50,9 +45,9 @@ export interface PropertyChangedEvent extends AgEvent {
     previousValue: any;
 }
 
-export type PropertyChangedListener = (event: PropertyChangedEvent) => void
+export type PropertyChangedListener<T extends PropertyChangedEvent> = (event: T) => void
 
-export function toNumber(value: any): number | undefined {
+function toNumber(value: any): number | undefined {
     if (typeof value == 'number') {
         return value;
     }
@@ -62,7 +57,7 @@ export function toNumber(value: any): number | undefined {
     }
 }
 
-export function isTrue(value: any): boolean {
+function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
 
@@ -188,10 +183,10 @@ export class GridOptionsService {
         }
     }
 
-    addEventListener(key: keyof GridOptions, listener: PropertyChangedListener): void {
+    addEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void {
         this.propertyEventService.addEventListener(key, listener);
     }
-    removeEventListener(key: keyof GridOptions, listener: PropertyChangedListener): void {
+    removeEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void {
         this.propertyEventService.removeEventListener(key, listener);
     }
 
@@ -361,6 +356,10 @@ export class GridOptionsService {
         }
 
         return document;
+    }
+
+    public getRootNode(): Document | ShadowRoot {
+        return this.eGridDiv.getRootNode() as Document | ShadowRoot;
     }
 
     public getRowIdFunc(): ((params: WithoutGridCommon<GetRowIdParams>) => string) | undefined {

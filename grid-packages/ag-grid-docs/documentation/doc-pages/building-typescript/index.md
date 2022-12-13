@@ -133,19 +133,18 @@ This serves as our entry point for our application.
 
 ### resolve
 
-As our imports done specify what file extension to use, we need to specify what file types we want to match on - in this case we're looking at TypeScript and JavaScript files, but you could also add CSS & HTML files too.
+As our imports specify what file extension to use, we need to specify what file types we want to match on - in this case we're looking at TypeScript and JavaScript files, but you could also add CSS & HTML files too.
 
 ### module.rules
 
 Loaders tell Webpack how & what to do with certain types of file - we have specified a few here to deal with Typescript, HTML, CSS and Images:
 
 - ts-loader: transpile Typescript to ES5
-- html
 - scss: process and bundle imported SCSS
 
 ### plugins
 
-- HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS file for us
+- `HtmlWebpackPlugin`: takes our supplied template `index.html` and inserts the generated JS file for us
 
 ## Typescript Configuration
 

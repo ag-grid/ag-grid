@@ -1,5 +1,4 @@
 import {
-    IAfterGuiAttachedParams,
     ICellEditor,
     ICellEditorParams,
     ICellRenderer,

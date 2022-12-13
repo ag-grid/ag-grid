@@ -102,6 +102,16 @@
       "maxWidth?": "/** Defines a maximum width for this column (does not override the column maximum width) */"
     }
   },
+  "ColDefPropertyChangedEvent": {
+    "meta": {},
+    "type": {
+      "source?": "ColumnEventType",
+      "type": "keyof GridOptions",
+      "currentValue": "any",
+      "previousValue": "any"
+    },
+    "docs": { "type": "/** Event identifier */" }
+  },
   "ColKey": {
     "meta": { "isTypeAlias": true },
     "type": "keyof (ColDef) | (keyof ColGroupDef)"
@@ -149,12 +159,6 @@
       "popupPositionFromSelector?": "'over' | 'under'",
       "newAgStackInstance": "() => AgPromise<any>"
     }
-  },
-  "RegisteredComponent": {
-    "meta": {
-      "doc": "/** B the business interface (ie IHeader)\n * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid\n */"
-    },
-    "type": { "component": "any", "componentFromFramework": "boolean" }
   },
   "ContextParams": {
     "meta": {},
@@ -3517,7 +3521,7 @@
       "type": "/** Event identifier */"
     }
   },
-  "DragEvent": {
+  "AgDragEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "target": "HTMLElement",
@@ -6008,11 +6012,6 @@
       "focusIndex": "/** For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub). */"
     }
   },
-  "RenderParams": { "meta": {}, "type": { "rows": "RowNode" } },
-  "RenderRowsFeature": {
-    "meta": {},
-    "type": { "render(rows: RowNode[])": "void" }
-  },
   "RowContainerName": {
     "meta": { "isEnum": true },
     "type": [
@@ -6127,10 +6126,6 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T", "U"] },
     "type": "{ [K in keyof T]: U extends T[K] ? K : (T[K] extends U | undefined ? K : never); }[keyof T]"
   },
-  "KeysLike": {
-    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
-    "type": "Exclude<GetKeys<GridOptions, U>, undefined>"
-  },
   "KeysOfType": {
     "meta": { "isTypeAlias": true, "typeParams": ["U"] },
     "type": "Exclude<GetKeys<GridOptions, U>, AnyGridOptions>"
@@ -6187,8 +6182,11 @@
     "docs": { "type": "/** Event identifier */" }
   },
   "PropertyChangedListener": {
-    "meta": { "isTypeAlias": true },
-    "type": "(event: PropertyChangedEvent) => void"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["T extends PropertyChangedEvent"]
+    },
+    "type": "(event: T) => void"
   },
   "DeprecatedReference": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
@@ -7953,7 +7951,6 @@
       "start()": "/** Gets called after grid is initialised. What happens depends on row model. Client Side will take rowData\n     * from gridOptions, the other row models will start calling their datasources. */"
     }
   },
-  "IMenu": { "meta": {}, "type": {} },
   "IMenuFactory": {
     "meta": {},
     "type": {
@@ -7963,9 +7960,23 @@
       "hideActiveMenu()": "void"
     }
   },
+  "ModuleValidationValidResult": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ isValid: true; }"
+  },
+  "ModuleValidationInvalidResult": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ isValid: false; message: string; }"
+  },
+  "ModuleValidationResult": {
+    "meta": { "isTypeAlias": true },
+    "type": "ModuleValidationValidResult | ModuleValidationInvalidResult"
+  },
   "Module": {
     "meta": {},
     "type": {
+      "version": "string",
+      "validate?": "() => ModuleValidationResult",
       "moduleName": "string",
       "beans?": "any[]",
       "agStackComponents?": "ComponentMeta[]",
@@ -7973,6 +7984,9 @@
       "userComponents?": "{ componentName: string; componentClass: any; }[]",
       "rowModels?": "{ [name: string]: { new (): IRowModel; }; }",
       "dependantModules?": "Module[]"
+    },
+    "docs": {
+      "validate?": "/** Validation run when registering the module\n     * \n     * @return Whether the module is valid or not. If not, a message explaining why it is not valid\n     */"
     }
   },
   "IMultiFilter": {
@@ -8222,8 +8236,9 @@
     "type": {
       "values": "CellValue[]",
       "cellHeight": "number",
-      "cellRenderer": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
+      "cellRenderer": "any",
       "searchDebounceDelay?": "number",
+      "formatValue": "(value: any) => any",
       "value": "TValue",
       "eventKey": "string | null",
       "charPress": "string | null",
@@ -8237,12 +8252,16 @@
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
+      "values": "/** The list of values to be selected from. */",
+      "cellHeight": "/** The row height, in pixels, of each value. */",
+      "cellRenderer": "/** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */",
+      "searchDebounceDelay?": "/** The value in `ms` for the fuzzy search debounce delay. Default: `300` */",
+      "formatValue": "/** A callback function that allows you to change the displayed value for simple data. */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
@@ -8256,7 +8275,6 @@
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n     * true to prevent focus from moving to the next cell after editing stops in case the\n     * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n     *  will live inside. Useful if you want to add event listeners or classes at this level.\n     *  This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
@@ -8305,22 +8323,6 @@
       "isLastRowIndexKnown()": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "/** Used by CSRM only - is makes sure there are now estimated row heights within the range. */",
       "start()": "/** Gets called after grid is initialised. What happens depends on row model. Client Side will take rowData\n     * from gridOptions, the other row models will start calling their datasources. */"
-    }
-  },
-  "IRowNodeBlock": {
-    "meta": {},
-    "type": {
-      "getDisplayIndexStart()": "number",
-      "getDisplayIndexEnd()": "number",
-      "getLastAccessed()": "number",
-      "getState()": "string",
-      "isAnyNodeOpen(rowCount: number)": "boolean",
-      "getBlockNumber()": "number",
-      "forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number)": "void",
-      "forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number)": "void",
-      "load()": "void",
-      "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
-      "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void"
     }
   },
   "StageExecuteParams": {
@@ -9780,6 +9782,10 @@
     "meta": { "isTypeAlias": true },
     "type": "{ [K in keyof GridOptions]: GridOptions[K] extends 'NO_MATCH' ? K : never; }[keyof GridOptions]"
   },
+  "KeysLike": {
+    "meta": { "isTypeAlias": true, "typeParams": ["U"] },
+    "type": "Exclude<GetKeys<GridOptions, U>, undefined>"
+  },
   "CallbackKeys": {
     "meta": { "isTypeAlias": true },
     "type": "KeysOfType<(any: AgGridCommon<any>) => any>"
@@ -9833,6 +9839,9 @@
       "context": "any"
     },
     "docs": {
+      "maxLength": "/** Max number of characters to allow. Default: `200` */",
+      "rows": "/** Number of character rows to display. Default: `10` */",
+      "cols": "/** Number of character columns to display. Default: `60` */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
@@ -9875,6 +9884,7 @@
       "context": "any"
     },
     "docs": {
+      "values": "/** List of values to display */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
@@ -9920,6 +9930,8 @@
       "context": "any"
     },
     "docs": {
+      "useFormatter": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor. */",
+      "maxLength?": "/** Max number of characters to allow. Default: `524288` */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
@@ -10671,11 +10683,6 @@
       "labelAlignment?": "LabelAlignment"
     }
   },
-  "ChangeEvent": {
-    "meta": {},
-    "type": { "selected": "boolean", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
-  },
   "DialogOptions": {
     "meta": {},
     "type": {
@@ -11267,10 +11274,6 @@
     ],
     "docs": [null, null, null]
   },
-  "ChangeDetectionStrategy": {
-    "meta": {},
-    "type": { "areEqual(a: any, b: any)": "boolean" }
-  },
   "SharedProps": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
@@ -11652,6 +11655,7 @@
       "columnApi?": "ColumnApi | null"
     },
     "docs": {
+      "rowDataChangeDetectionStrategy?": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "statusBar?": "/** Specifies the status bar components to use in the status bar. */",
       "sideBar?": "/** Specifies the side bar components. */",
       "suppressContextMenu?": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`  */",
@@ -12394,6 +12398,7 @@
       "columnApi?": "ColumnApi | null"
     },
     "docs": {
+      "rowDataChangeDetectionStrategy?": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "statusBar?": "/** Specifies the status bar components to use in the status bar. */",
       "sideBar?": "/** Specifies the side bar components. */",
       "suppressContextMenu?": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`  */",
@@ -13138,6 +13143,7 @@
       "columnApi?": "ColumnApi | null"
     },
     "docs": {
+      "rowDataChangeDetectionStrategy?": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "statusBar?": "/** Specifies the status bar components to use in the status bar. */",
       "sideBar?": "/** Specifies the side bar components. */",
       "suppressContextMenu?": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`  */",

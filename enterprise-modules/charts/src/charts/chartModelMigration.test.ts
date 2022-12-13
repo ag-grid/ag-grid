@@ -1,6 +1,7 @@
 import { describe, it, expect } from '@jest/globals';
 import * as fs from 'fs';
-import { upgradeChartModel, CURRENT_VERSION, heuristicVersionDetection } from './chartModelMigration';
+import { upgradeChartModel, heuristicVersionDetection } from './chartModelMigration';
+import { VERSION } from '../version';
 
 import { ChartModel } from '@ag-grid-community/core';
 
@@ -53,11 +54,11 @@ describe('chartModelMigration', () => {
             expect(upgradedChartModel).toMatchSnapshot();
         });
 
-        it.each(SNAPSHOT_NAMES)(`should upgrade %s to ${CURRENT_VERSION}`, (name) => {
+        it.each(SNAPSHOT_NAMES)(`should upgrade %s to ${VERSION}`, (name) => {
             const chartModel = loadChartModel(name);
 
             const upgradedChartModel = upgradeChartModel(chartModel);
-            expect(upgradedChartModel.version).toEqual(CURRENT_VERSION);
+            expect(upgradedChartModel.version).toEqual(VERSION);
         });
     });
 

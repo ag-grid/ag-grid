@@ -46,25 +46,29 @@ function updatePackageBowserJsonFiles() {
         fs.readdirSync(packageDirectory)
             .filter(packageMatchesResolvedModuleToVersion)
             .forEach(directory => {
-                    // update all package.json files
-                    let currentPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/package.json`;
-                    updateFileWithNewVersions(currentPackageJsonFile);
+                // update all package.json files
+                const currentPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/package.json`;
+                updateFileWithNewVersions(currentPackageJsonFile);
 
-                    // angular projects have "sub" projects which we need to update
-                    if (directory.includes("angular") && !directory.includes("example")) {
-                        updateAngularProject(CWD, packageDirectory, directory);
-                    }
-
-                    // docs has a documentation sub dir that we need to handle too
-                    if(directory === 'ag-grid-docs') {
-                        updateFileWithNewVersions(`${CWD}/${packageDirectory}/${directory}/documentation/package.json`);
-                    }
-
-                    // update all bower.json files, if they exist
-                    let currentBowerFile = `${CWD}/${packageDirectory}/${directory}/bower.json`;
-                    updateFileWithNewVersions(currentBowerFile, true);
+                // angular projects have "sub" projects which we need to update
+                if (directory.includes("angular") && !directory.includes("example")) {
+                    updateAngularProject(CWD, packageDirectory, directory);
                 }
-            );
+
+                // docs has a documentation sub dir that we need to handle too
+                if (directory === 'ag-grid-docs') {
+                    updateFileWithNewVersions(`${CWD}/${packageDirectory}/${directory}/documentation/package.json`);
+                }
+
+                // update version.ts file
+                const currentVersionFile = `${CWD}/${packageDirectory}/${directory}/src/version.ts`;
+                updateVersionFile(currentVersionFile);
+
+                // update all bower.json files, if they exist
+                const currentBowerFile = `${CWD}/${packageDirectory}/${directory}/bower.json`;
+                updateFileWithNewVersions(currentBowerFile, true);
+            }
+        );
     })
 }
 
@@ -102,6 +106,26 @@ function updateFileWithNewVersions(currentFile, optional = false) {
             JSON.stringify(updatedPackageJson, null, 2),
             "utf8");
     });
+}
+
+/**
+ * Update `version.ts` file with version number if it exists
+ */
+function updateVersionFile(currentFile) {
+    if (!fs.existsSync(currentFile)) {
+        return;
+    }
+
+    fs.readFile(currentFile, 'utf8', (err, contents) => {
+        const regex = /(export const VERSION =)(.*)$/m;
+        const substitute = `$1 '${gridNewVersion}';`;
+        const replacement = contents.replace(regex, substitute)
+            
+        fs.writeFileSync(currentFile,
+            replacement,
+            "utf8");
+    });
+
 }
 
 function updateVersion(packageJson) {

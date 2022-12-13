@@ -142,6 +142,14 @@
       "type": { "returnType": "number", "optional": true }
     }
   },
+  "ColDefPropertyChangedEvent": {
+    "source": { "type": { "returnType": "ColumnEventType", "optional": true } },
+    "type": {
+      "type": { "returnType": "keyof GridOptions", "optional": false }
+    },
+    "currentValue": { "type": { "returnType": "any", "optional": false } },
+    "previousValue": { "type": { "returnType": "any", "optional": false } }
+  },
   "ColKey": {},
   "ComponentMetadata": {
     "mandatoryMethodList": {
@@ -219,12 +227,6 @@
         "returnType": "AgPromise<any>",
         "optional": false
       }
-    }
-  },
-  "RegisteredComponent": {
-    "component": { "type": { "returnType": "any", "optional": false } },
-    "componentFromFramework": {
-      "type": { "returnType": "boolean", "optional": false }
     }
   },
   "ContextParams": {
@@ -6710,7 +6712,7 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "DragEvent": {
+  "AgDragEvent": {
     "target": {
       "description": "/** The DOM element that started the event. */",
       "type": { "returnType": "HTMLElement", "optional": false }
@@ -10555,18 +10557,6 @@
     "focusColumn": { "type": { "returnType": "Column", "optional": false } },
     "isAsync": { "type": { "returnType": "boolean", "optional": true } }
   },
-  "RenderParams": {
-    "rows": { "type": { "returnType": "RowNode", "optional": false } }
-  },
-  "RenderRowsFeature": {
-    "render": {
-      "type": {
-        "arguments": { "rows": "RowNode[]" },
-        "returnType": "void",
-        "optional": false
-      }
-    }
-  },
   "RowContainerName": {},
   "RowContainerType": {},
   "IRowContainerComp": {
@@ -10741,7 +10731,6 @@
     }
   },
   "GetKeys": { "meta": { "typeParams": ["T", "U"] } },
-  "KeysLike": { "meta": { "typeParams": ["U"] } },
   "KeysOfType": { "meta": { "typeParams": ["U"] } },
   "BooleanProps": {},
   "NumberProps": {},
@@ -10766,7 +10755,9 @@
     "currentValue": { "type": { "returnType": "any", "optional": false } },
     "previousValue": { "type": { "returnType": "any", "optional": false } }
   },
-  "PropertyChangedListener": {},
+  "PropertyChangedListener": {
+    "meta": { "typeParams": ["T extends PropertyChangedEvent"] }
+  },
   "DeprecatedReference": { "meta": { "typeParams": ["T"] } },
   "IAbstractHeaderCellComp": {},
   "IHeaderCellComp": {
@@ -14175,7 +14166,6 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
-  "IMenu": {},
   "IMenuFactory": {
     "showMenuAfterButtonClick": {
       "type": {
@@ -14213,7 +14203,19 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
+  "ModuleValidationValidResult": {},
+  "ModuleValidationInvalidResult": {},
+  "ModuleValidationResult": {},
   "Module": {
+    "version": { "type": { "returnType": "string", "optional": false } },
+    "validate": {
+      "description": "/** Validation run when registering the module\n     * \n     * @return Whether the module is valid or not. If not, a message explaining why it is not valid\n     */",
+      "type": {
+        "arguments": {},
+        "returnType": "ModuleValidationResult",
+        "optional": true
+      }
+    },
     "moduleName": { "type": { "returnType": "string", "optional": false } },
     "beans": { "type": { "returnType": "any[]", "optional": true } },
     "agStackComponents": {
@@ -14741,16 +14743,29 @@
   },
   "CellValue": {},
   "IRichCellEditorParams": {
-    "values": { "type": { "returnType": "CellValue[]", "optional": false } },
-    "cellHeight": { "type": { "returnType": "number", "optional": false } },
+    "values": {
+      "description": "/** The list of values to be selected from. */",
+      "type": { "returnType": "CellValue[]", "optional": false }
+    },
+    "cellHeight": {
+      "description": "/** The row height, in pixels, of each value. */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "cellRenderer": {
-      "type": {
-        "returnType": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
-        "optional": false
-      }
+      "description": "/** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "searchDebounceDelay": {
+      "description": "/** The value in `ms` for the fuzzy search debounce delay. Default: `300` */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "formatValue": {
+      "description": "/** A callback function that allows you to change the displayed value for simple data. */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "any",
+        "optional": false
+      }
     },
     "value": {
       "description": "/** Current value of the cell */",
@@ -14810,14 +14825,6 @@
     },
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
-        "optional": false
-      }
-    },
-    "formatValue": {
-      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": {
         "arguments": { "value": "any" },
         "returnType": "any",
@@ -14954,79 +14961,6 @@
     "start": {
       "description": "/** Gets called after grid is initialised. What happens depends on row model. Client Side will take rowData\n     * from gridOptions, the other row models will start calling their datasources. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
-  },
-  "IRowNodeBlock": {
-    "getDisplayIndexStart": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "getDisplayIndexEnd": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "getLastAccessed": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "getState": {
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
-    },
-    "isAnyNodeOpen": {
-      "type": {
-        "arguments": { "rowCount": "number" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "getBlockNumber": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "forEachNodeDeep": {
-      "type": {
-        "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void",
-          "sequence": "NumberSequence",
-          "rowCount": "number"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "forEachNodeShallow": {
-      "type": {
-        "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void",
-          "sequence": "NumberSequence",
-          "rowCount": "number"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "load": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "addEventListener": {
-      "type": {
-        "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async?": "boolean",
-          "options?": "AddEventListenerOptions"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "removeEventListener": {
-      "type": {
-        "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async?": "boolean",
-          "options?": "AddEventListenerOptions"
-        },
-        "returnType": "void",
-        "optional": false
-      }
     }
   },
   "StageExecuteParams": {
@@ -17430,6 +17364,7 @@
   "ModuleNames": {},
   "GridOptionKey": {},
   "AnyGridOptions": {},
+  "KeysLike": { "meta": { "typeParams": ["U"] } },
   "CallbackKeys": {},
   "FunctionKeys": {},
   "ICellComp": {
@@ -17548,9 +17483,18 @@
     }
   },
   "ILargeTextEditorParams": {
-    "maxLength": { "type": { "returnType": "number", "optional": false } },
-    "rows": { "type": { "returnType": "number", "optional": false } },
-    "cols": { "type": { "returnType": "number", "optional": false } },
+    "maxLength": {
+      "description": "/** Max number of characters to allow. Default: `200` */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "rows": {
+      "description": "/** Number of character rows to display. Default: `10` */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "cols": {
+      "description": "/** Number of character columns to display. Default: `60` */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
@@ -17638,7 +17582,10 @@
     }
   },
   "ISelectCellEditorParams": {
-    "values": { "type": { "returnType": "any[]", "optional": false } },
+    "values": {
+      "description": "/** List of values to display */",
+      "type": { "returnType": "any[]", "optional": false }
+    },
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
@@ -17726,8 +17673,14 @@
     }
   },
   "ITextCellEditorParams": {
-    "useFormatter": { "type": { "returnType": "boolean", "optional": false } },
-    "maxLength": { "type": { "returnType": "number", "optional": true } },
+    "useFormatter": {
+      "description": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "maxLength": {
+      "description": "/** Max number of characters to allow. Default: `524288` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
@@ -18969,13 +18922,6 @@
       "type": { "returnType": "LabelAlignment", "optional": true }
     }
   },
-  "ChangeEvent": {
-    "selected": { "type": { "returnType": "boolean", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
-  },
   "DialogOptions": {
     "eWrapper": { "type": { "returnType": "HTMLElement", "optional": true } },
     "modal": { "type": { "returnType": "boolean", "optional": true } },
@@ -19939,15 +19885,6 @@
     }
   },
   "ChangeDetectionStrategyType": {},
-  "ChangeDetectionStrategy": {
-    "areEqual": {
-      "type": {
-        "arguments": { "a": "any", "b": "any" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    }
-  },
   "SharedProps": {
     "gridOptions": {
       "type": { "returnType": "GridOptions<TData>", "optional": true }
@@ -19969,6 +19906,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },
@@ -22687,6 +22625,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },
@@ -25410,6 +25349,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },

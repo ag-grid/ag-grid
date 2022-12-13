@@ -1,9 +1,9 @@
-import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import { ColumnSortState, CssClassManager, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails } from '@ag-grid-community/core';
 import { isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
-import { useEffectOnce } from '../useEffectOnce';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 
 const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
@@ -24,7 +24,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!), []);
 
-    useEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         const compProxy: IHeaderCellComp = {
             setWidth: width => setWidth(width),
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),

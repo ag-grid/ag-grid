@@ -88,7 +88,7 @@ The behaviour and appearance of the Columns Menu tab can be customised by supply
 
 <interface-documentation interfaceName='ColumnsMenuParams' ></interface-documentation>
 
-The following example demonstrates all of the above columns menu tab properties except **columnLayout** which will be covered later on. Note the following:
+The following example demonstrates all of the above columns menu tab properties **except columnLayout** which will be covered later on. Note the following:
 
 - All columns menu tabs have been configured to ignore column moves in the grid by setting `suppressSyncLayoutWithGrid=true` on the default column definition.
 - The **Name** column doesn't show the top filter section as `suppressColumnFilter`, `suppressColumnSelectAll` and `suppressColumnExpandAll` are all set to `true`.
@@ -98,7 +98,9 @@ The following example demonstrates all of the above columns menu tab properties 
 
 ## Custom Column Layout
 
-The order of columns in the Columns Tool Panel is derived from the `columnDefs` supplied in the grid options, and is kept in sync with the grid when columns are moved by default. However custom column layouts can also be defined by using the **columnLayout** in the `colDef.columnsMenuParams`.
+By default the order of columns in the Columns Menu Tab is derived from the `columnDefs` supplied in the grid options, and is kept in sync with the grid when columns are moved.
+
+However, a custom column layout can be provided using the **columnLayout** property in the `colDef.columnsMenuParams`.
 
 <snippet>
 const gridOptions = {
@@ -122,12 +124,15 @@ const gridOptions = {
 </snippet>
 
 [[note]]
-| When providing **columnLayout** the `suppressSyncLayoutWithGrid` will automatically set to true.
+| When providing a custom columns layout by setting the **columnLayout** property, the `suppressSyncLayoutWithGrid` will automatically set to true. This means that reordering the columns in the grid will not reorder the columns in the list shown in columns menu tab.
 
-The following example demonstrates the **columnLayout** property of the column menu tab. Note the following:
+The following example demonstrates providing custom column layouts in the column menu tab via the **columnLayout** property. Note the following:
 
-- The `name` column has a custom layout for its **Columns Menu** tab.
-- All other columns will display the same layout as the grid.
+- Open the column menu for the `name` column and note it has a custom layout for its Columns Menu tab.
+- Open the column menu for any other column and note it shows the same column layout as the grid.
+- Reorder columns in the grid - drag the `age` column and drop it on the left of the `name` column.
+- Open the column menu for the name column and note that the column layout in unchanged (as a custom column layout is not synchronized with the grid column order).
+- Open the column menu for any other column and note that the column layout shows the `age` column before the `name` column.
 
 <grid-example title='Customising Columns Layout' name='customising-columns-layout' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
 

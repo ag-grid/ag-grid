@@ -8,8 +8,10 @@ import { FilteredRowsComp } from "./statusBar/providedPanels/filteredRowsComp";
 import { TotalRowsComp } from "./statusBar/providedPanels/totalRowsComp";
 import { SelectedRowsComp } from "./statusBar/providedPanels/selectedRowsComp";
 import { AggregationComp } from "./statusBar/providedPanels/aggregationComp";
+import { VERSION } from "./version";
 
 export const StatusBarModule: Module = {
+    version: VERSION,
     moduleName: ModuleNames.StatusBarModule,
     beans: [StatusBarService],
     agStackComponents: [

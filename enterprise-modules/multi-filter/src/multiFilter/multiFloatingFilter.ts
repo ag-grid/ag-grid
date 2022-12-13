@@ -6,7 +6,6 @@ import {
     IFloatingFilterParams,
     UserComponentFactory,
     Autowired,
-    HeaderFilterCellCtrl,
     IFilterDef,
     AgPromise,
     IMultiFilterParams,

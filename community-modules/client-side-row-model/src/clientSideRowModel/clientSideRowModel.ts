@@ -626,7 +626,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     public forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
         this.recursivelyWalkNodesAndCallback({
-            nodes: [this.rootNode],
+            nodes: [...(this.rootNode.childrenAfterSort || [])],
             callback,
             recursionType: RecursionType.AfterFilterAndSort,
             index: 0,

@@ -32,10 +32,12 @@ import {
     Validate,
 } from '../util/validation';
 import { Layers } from './layers';
+import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
+import { CursorManager } from './interaction/cursorManager';
+import { Series, SeriesNodeDatum } from './series/series';
+import { ChartUpdateType } from './chart';
 import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
-import { InteractionManager } from './interaction/interactionManager';
-import { ChartUpdateType } from './chart';
 
 export interface LegendDatum {
     id: string; // component ID
@@ -165,8 +167,6 @@ export class Legend {
     readonly item = new LegendItem();
     readonly listeners = new LegendListeners();
 
-    truncatedItems: Set<string> = new Set();
-
     set translationX(value: number) {
         this.group.translationX = value;
     }
@@ -242,12 +242,27 @@ export class Legend {
     }
 
     constructor(
-        private readonly updateCallback: (type: ChartUpdateType) => void,
-        interactionManager: InteractionManager
+        private readonly chart: {
+            readonly series: Series<any>[];
+            readonly highlightedDatum?: SeriesNodeDatum;
+            togglePointer(visible: boolean): void;
+            changeHighlightDatum(opts?: { datum: SeriesNodeDatum }): void;
+            update(
+                type: ChartUpdateType,
+                opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
+            ): void;
+        },
+        private readonly interactionManager: InteractionManager,
+        private readonly cursorManager: CursorManager
     ) {
         this.item.marker.parent = this;
         this.pagination = new Pagination((page) => this.updatePageNumber(page), interactionManager);
         this.pagination.attachPagination(this.group);
+
+        this.item.marker.parent = this;
+
+        this.interactionManager.addListener('click', (e) => this.checkLegendClick(e));
+        this.interactionManager.addListener('hover', (e) => this.handleLegendMouseMove(e));
     }
 
     public onMarkerShapeChange() {
@@ -384,12 +399,8 @@ export class Legend {
                 addEllipsis = true;
             }
 
-            const id = datum.itemId || datum.id;
             if (addEllipsis) {
                 text += ellipsis;
-                this.truncatedItems.add(id);
-            } else {
-                this.truncatedItems.delete(id);
             }
 
             markerLabel.text = text;
@@ -508,7 +519,7 @@ export class Legend {
         const startX = this.size[0] / 2;
         const startY = this.size[1] / 2;
         this.updatePositions(startX, startY, pageNumber);
-        this.updateCallback(ChartUpdateType.SCENE_RENDER);
+        this.chart.update(ChartUpdateType.SCENE_RENDER);
     }
 
     update() {
@@ -529,14 +540,114 @@ export class Legend {
     }
 
     getDatumForPoint(x: number, y: number): LegendDatum | undefined {
-        const node = this.group.pickNode(x, y);
+        for (const child of this.group.children) {
+            if (!(child instanceof MarkerLabel)) continue;
 
-        if (node && node.parent) {
-            return node.parent.datum;
+            if (child.computeBBox().containsPoint(x, y)) {
+                return child.datum;
+            }
         }
+
+        return undefined;
     }
 
     computeBBox(): BBox {
         return this.group.computeBBox();
+    }
+
+    private checkLegendClick(event: InteractionEvent<'click'>) {
+        const {
+            listeners: { legendItemClick },
+            chart,
+        } = this;
+        const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
+        if (!datum) {
+            return;
+        }
+
+        const { id, itemId, enabled } = datum;
+        const series = chart.series.find((s) => s.id === id);
+        if (!series) {
+            return;
+        }
+        event.consume();
+
+        const newEnabled = !enabled;
+        series.toggleSeriesItem(itemId, newEnabled);
+        if (!newEnabled) {
+            chart.togglePointer(false);
+        }
+
+        if (!newEnabled && chart.highlightedDatum?.series === series) {
+            chart.changeHighlightDatum();
+        }
+
+        if (newEnabled) {
+            chart.changeHighlightDatum({
+                datum: {
+                    series,
+                    itemId,
+                    datum: undefined,
+                },
+            });
+        }
+
+        this.chart.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
+
+        legendItemClick({ enabled: newEnabled, itemId, seriesId: series.id });
+    }
+
+    private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
+        const { enabled } = this;
+        if (!enabled) {
+            return;
+        }
+
+        const maybeDeHighlight = () => {
+            // Remove highlight IF the current highlight was from legend interactions. The only way
+            // a highlight is from the legend is if it isn't for a specific datum right now, so if
+            // the highlight points to a specific datum, don't remove it.
+            if (this.chart.highlightedDatum?.datum != null) {
+                return;
+            }
+            this.chart.changeHighlightDatum();
+        };
+
+        const legendBBox = this.computeBBox();
+        const { offsetX, offsetY } = event;
+        const pointerInsideLegend = legendBBox.containsPoint(offsetX, offsetY);
+
+        if (!pointerInsideLegend) {
+            this.cursorManager.updateCursor(this.id);
+            maybeDeHighlight();
+            return;
+        }
+
+        // Prevent other handlers from consuming this event if it's generated inside the legend
+        // boundaries.
+        event.consume();
+
+        const datum = this.getDatumForPoint(offsetX, offsetY);
+        const pointerOverLegendDatum = pointerInsideLegend && datum !== undefined;
+        if (!pointerOverLegendDatum) {
+            this.cursorManager.updateCursor(this.id);
+            maybeDeHighlight();
+            return;
+        }
+
+        this.cursorManager.updateCursor(this.id, 'pointer');
+
+        const series = datum ? this.chart.series.find((series) => series.id === datum?.id) : undefined;
+        if (datum?.enabled && series) {
+            this.chart.changeHighlightDatum({
+                datum: {
+                    series,
+                    itemId: datum?.itemId,
+                    datum: undefined,
+                },
+            });
+        } else {
+            maybeDeHighlight();
+        }
     }
 }

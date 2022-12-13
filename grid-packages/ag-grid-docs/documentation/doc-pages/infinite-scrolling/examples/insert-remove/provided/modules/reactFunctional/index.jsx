@@ -188,11 +188,6 @@ const GridExample = () => {
         });
     }, [allOfTheData])
 
-    const printCacheState = useCallback(() => {
-        console.log('*** Cache State ***');
-        console.log(gridRef.current.api.getCacheBlockState());
-    }, [])
-
     const jumpTo500 = useCallback(() => {
         // first up, need to make sure the grid is actually showing 500 or more rows
         if ((gridRef.current.api.getInfiniteRowCount() || 0) < 501) {
@@ -212,7 +207,6 @@ const GridExample = () => {
                     <button onClick={setRowCountTo200}>Set Row Count</button>
                     <button onClick={rowsAndMaxFound}>Print Info</button>
                     <button onClick={jumpTo500}>Jump to 500</button>
-                    <button onClick={printCacheState}>Print Cache State</button>
                 </div>
                 <div style={{ "marginBottom": "10px" }}>
                     <button onClick={setPricesHigh}>Set Prices High</button>

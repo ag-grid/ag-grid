@@ -28,14 +28,6 @@ import { TooltipComponent } from "../../rendering/tooltipComponent";
 import { doOnce } from "../../utils/function";
 import { iterateObject } from '../../utils/object';
 
-/**
- * B the business interface (ie IHeader)
- * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
- */
-export interface RegisteredComponent {
-    component: any;
-    componentFromFramework: boolean;
-}
 @Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
 

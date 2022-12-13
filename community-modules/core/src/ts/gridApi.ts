@@ -106,7 +106,6 @@ import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { SelectionService } from "./selectionService";
 import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
-import { doOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { iterateObject, removeAllReferences } from "./utils/object";
 import { camelCaseToHumanText } from "./utils/string";
@@ -555,9 +554,11 @@ export class GridApi<TData = any> {
         }
     }
 
+
     /**
-     *  If after getting the model, you expand or collapse a group, call this method to inform the grid.
-     *  It will work out the final set of 'to be displayed' rows again (i.e. expand or collapse the group visually).
+     * Informs the grid that row group expanded state has changed and it needs to rerender the group nodes.
+     * Typically called after changing the row group expanded state manually across multiple groups and
+     * you want to update the grid view in a single rerender instead of on every group change.
      */
     public onGroupExpandedOrCollapsed() {
         if (missing(this.clientSideRowModel)) {
@@ -1839,6 +1840,7 @@ export class GridApi<TData = any> {
 
     /**
      * Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.
+     * @deprecated v29
      */
     public getCacheBlockState(): any {
         return this.rowNodeBlockLoader.getBlockState();

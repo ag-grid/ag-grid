@@ -7,8 +7,17 @@ import { ChartCrossFilterService } from "./charts/chartComp/services/chartCrossF
 import { RangeSelectionModule } from "@ag-grid-enterprise/range-selection";
 import { AgColorPicker } from "./widgets/agColorPicker";
 import { AgAngleSelect } from "./widgets/agAngleSelect";
+import { VERSION as GRID_VERSION } from "./version";
+import { validGridChartsVersion } from "./utils/validGridChartsVersion";
 
 export const GridChartsModule: Module = {
+    version: GRID_VERSION,
+    validate: () => {
+        return validGridChartsVersion({
+            gridVersion: GRID_VERSION,
+            chartsVersion: ChartService.CHARTS_VERSION
+        });
+    },
     moduleName: ModuleNames.GridChartsModule,
     beans: [
         ChartService, ChartTranslationService, ChartCrossFilterService
