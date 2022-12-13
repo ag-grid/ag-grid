@@ -295,7 +295,7 @@ If there are missing / empty values in the row data of the grid, or missing valu
 
 ## Filter Value Types
 
-The Set Filter internally maintains the original type of the cell values, but always uses strings for the keys. E.g. if the cell contains a number, the Filter Model will contain those numbers converted to strings, but if you specified a comparator, that would use the values with type number. Note that in AG Grid versions prior to 29.0, the Filter Model values were converted to strings for everything. This behaviour can be replicated by setting `filterParams.convertValuesToStrings = true`, but the setting is deprecated.
+The Set Filter internally maintains the original type of the cell values, but always uses strings for the keys. E.g. if the cell contains a number, the Filter Model will contain those numbers converted to strings, but if you specified a value formatter, that would use the values with type number. Note that in AG Grid versions prior to 29.0, the Filter Model values were converted to strings for everything. This behaviour can be replicated by setting `filterParams.convertValuesToStrings = true`, but the setting is deprecated.
 
 ### Complex Objects
 
@@ -410,6 +410,48 @@ The following example demonstrates tooltips in the Set Filter. Note the followin
 - **Col C** has Set Filter Tooltips enabled and is supplied a Custom Tooltip Component.
 
 <grid-example title='Filter Value Tooltips' name='filter-value-tooltips' type='generated' options='{ "enterprise": true, "exampleHeight": 500, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+
+## Tree Structure
+
+The Filter List supports displaying the values grouped in a tree structure. This is enabled by setting `filterParams.treeList = true`. There are four different ways the tree structure can be created:
+- The column values are of type `Date`, in which case the tree will be year -> month -> day.
+- Tree Data mode is enabled and the column is a group column. The Filter List will match the tree structure. A Key Creator must be supplied to convert the array of keys.
+- Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied to convert the array of keys.
+- A `filterParams.treeListPathGetter` is provided to get a custom tree path for the column values.
+- When searching in the Mini Filter, all children will be included when a parent matches the search value. A parent will be included if it has any children that match the search value, or it matches itself.
+
+The values can be formatted in the Filter List via `filterParams.treeListFormatter`. This allows a different format to be used for each level of the tree (compared to the Value Formatter which is applied equally to every value).
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'date',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                treeList: true,
+            }
+        }
+    ],
+    autoGroupColumnDef: {
+        field: 'athlete',
+        filter: 'agSetColumnFilter',
+        filterParams: {
+            treeList: true,
+            keyCreator: params => params.value.join('#')
+        },
+    },
+}
+</snippet>
+
+The following example demonstrates tree structures in the Set Filter. Note the following:
+
+1. The **Group**, **Date** and **Gold** columns all have `filterParams.treeList = true`
+2. The **Group** column Filter List matches the format of the Row Grouping. A Key Creator is specified to convert the path into a string.
+3. The **Date** column is grouped by year -> month -> date. `filterParams.treeListFormatter` is provided which formats the numerical month value to display as the name of the month.
+4. The **Gold** column has `filterParams.treeListPathGetter` provided which groups the values into a tree of >2 and <=2.
+
+<grid-example title='Tree Structure Filter List' name='tree-structure-filter-list' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Next Up
 

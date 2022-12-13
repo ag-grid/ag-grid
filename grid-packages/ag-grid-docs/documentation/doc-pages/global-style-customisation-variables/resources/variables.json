@@ -377,6 +377,10 @@
       "description": "How much to indent child columns in the column tool panel relative to their parent",
       "type": "CSS size (e.g. `0`, `4px` or `50%`)"
     },
+    "--ag-set-filter-indent-size": {
+      "description": "How much to indent child filter items in the Set Filter List relative to their parent",
+      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+    },
     "--ag-row-group-indent-size": {
       "description": "How much to indent child rows in the grid relative to their parent row",
       "type": "CSS size (e.g. `0`, `4px` or `50%`)"

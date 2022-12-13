@@ -143,6 +143,20 @@
         @include ag.unthemed-rtl((margin-left: var(--ag-widget-container-horizontal-padding)));
     }
 
+    .ag-set-filter-add-group-indent {
+        @include ag.unthemed-rtl((margin-left: calc(var(--ag-widget-container-horizontal-padding) + var(--ag-icon-size) + var(--ag-grid-size) * 2)));
+    }
+
+    @for $i from 1 to 10 {
+        .ag-set-filter-indent-#{$i} {
+            @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-set-filter-indent-size)) ));
+        }
+    }
+
+    .ag-set-filter-group-icons {
+        @include ag.unthemed-rtl((margin-right: var(--ag-widget-container-horizontal-padding)))
+    }
+
     .ag-filter-apply-panel {
         padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
         border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);

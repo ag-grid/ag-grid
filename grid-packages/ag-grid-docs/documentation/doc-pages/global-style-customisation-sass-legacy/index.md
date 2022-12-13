@@ -384,6 +384,9 @@ list-item-height: ag-derived(grid-size, $times: 5),
 // How much to indent child columns in the column tool panel relative to their parent
 column-select-indent-size: ag-derived(grid-size, $plus: icon-size),
 
+// How much to indent child filter items in the Set Filter List relative to their parent
+set-filter-indent-size: ag-derived(grid-size, $plus: icon-size),
+
 // How much to indent child rows in the grid relative to their parent row
 row-group-indent-size: ag-derived(cell-widget-spacing, $plus: icon-size),
 

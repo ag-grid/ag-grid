@@ -15766,6 +15766,26 @@
       "description": "/** @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,\n     * as well as maintaining the type of primitives (e.g. number, boolean) when not used as keys.\n     * \n     * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.\n     * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "treeList": {
+      "description": "/** If `true`, the Set Filter List will be displayed in a tree format. If enabled, one of the following must be true:\n     * \n     * - A `treeListPathGetter` is provided to get the tree path for the column values.\n     * - The column values are of type `Date`, in which case the tree will be year -> month -> day.\n     * - Tree Data mode is enabled and the column is the group column. The Filter List will match the tree structure. A Key Creator must be supplied.\n     * - Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied.\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "treeListPathGetter": {
+      "description": "/** Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.\n     */",
+      "type": {
+        "arguments": { "value": "V" },
+        "returnType": "(string | null)[]",
+        "optional": true
+      }
+    },
+    "treeListFormatter": {
+      "description": "/** Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.\n     * `level` refers to the level of the tree (starting at 0).\n     */",
+      "type": {
+        "arguments": { "pathKey": "string | null", "level": "number" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
     "meta": { "typeParams": ["TData = any", "V = string"] },
     "buttons": {
       "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n     * The options are:\n     * \n     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.\n     */",
@@ -19382,6 +19402,79 @@
       }
     }
   },
+  "ISetDisplayValueModel": {
+    "updateDisplayedValuesToAllAvailable": {
+      "type": {
+        "arguments": {
+          "getValue": "(key: string | null) => V",
+          "availableKeys": "Iterable<string | null>"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "updateDisplayedValuesToMatchMiniFilter": {
+      "type": {
+        "arguments": {
+          "getValue": "(key: string | null) => V",
+          "availableKeys": "Iterable<string | null>",
+          "matchesFilter": "(valueToCheck: string | null) => boolean",
+          "nullMatchesFilter": "boolean",
+          "fromMiniFilter?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getDisplayedValueCount": {
+      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    },
+    "getDisplayedItem": {
+      "type": {
+        "arguments": { "index": "number" },
+        "returnType": "string | SetFilterModelTreeItem | null",
+        "optional": false
+      }
+    },
+    "getDisplayedKeys": {
+      "type": {
+        "arguments": {},
+        "returnType": "(string | null)[]",
+        "optional": false
+      }
+    },
+    "forEachDisplayedKey": {
+      "type": {
+        "arguments": { "func": "(key: string | null) => void" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "someDisplayedKey": {
+      "type": {
+        "arguments": { "func": "(key: string | null) => boolean" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "hasGroups": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "refresh": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "meta": { "typeParams": ["V"] }
+  },
+  "SetFilterModelTreeItem": {
+    "treeKey": { "type": { "returnType": "string | null", "optional": false } },
+    "depth": { "type": { "returnType": "number", "optional": false } },
+    "filterPasses": { "type": { "returnType": "boolean", "optional": false } },
+    "expanded": { "type": { "returnType": "boolean", "optional": true } },
+    "children": {
+      "type": { "returnType": "SetFilterModelTreeItem[]", "optional": true }
+    },
+    "key": { "type": { "returnType": "string | null", "optional": true } }
+  },
   "ISetFilterLocaleText": {
     "loadingOoo": { "type": { "returnType": "string", "optional": false } },
     "blanks": { "type": { "returnType": "string", "optional": false } },
@@ -19399,7 +19492,110 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "SetFilterListItemExpandedChangedEvent": {
+    "isExpanded": { "type": { "returnType": "boolean", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "SetFilterListItemParams": {
+    "focusWrapper": {
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "value": {
+      "type": { "returnType": "V | null | (() => string)", "optional": false }
+    },
+    "params": {
+      "type": { "returnType": "ISetFilterParams<any, V>", "optional": false }
+    },
+    "translate": {
+      "type": {
+        "arguments": { "key": "keyof ISetFilterLocaleText" },
+        "returnType": "string",
+        "optional": false
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "arguments": { "params": "ValueFormatterParams" },
+        "returnType": "string",
+        "optional": false
+      }
+    },
+    "isSelected": {
+      "type": { "returnType": "boolean | undefined", "optional": false }
+    },
+    "isTree": { "type": { "returnType": "boolean", "optional": true } },
+    "depth": { "type": { "returnType": "number", "optional": true } },
+    "groupsExist": { "type": { "returnType": "boolean", "optional": true } },
+    "isGroup": { "type": { "returnType": "boolean", "optional": true } },
+    "isExpanded": { "type": { "returnType": "boolean", "optional": true } },
+    "meta": { "typeParams": ["V"] }
+  },
   "SetFilterModelValuesType": {},
+  "SetValueModelParams": {
+    "valueFormatterService": {
+      "type": { "returnType": "ValueFormatterService", "optional": false }
+    },
+    "gridOptionsService": {
+      "type": { "returnType": "GridOptionsService", "optional": false }
+    },
+    "columnModel": {
+      "type": { "returnType": "ColumnModel", "optional": false }
+    },
+    "valueService": {
+      "type": { "returnType": "ValueService", "optional": false }
+    },
+    "filterParams": {
+      "type": { "returnType": "ISetFilterParams<any, V>", "optional": false }
+    },
+    "setIsLoading": {
+      "type": {
+        "arguments": { "loading": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "translate": {
+      "type": {
+        "arguments": { "key": "keyof ISetFilterLocaleText" },
+        "returnType": "string",
+        "optional": false
+      }
+    },
+    "caseFormat": {
+      "type": {
+        "arguments": { "valueToFormat": "T" },
+        "returnType": "typeof valueToFormat",
+        "optional": false
+      }
+    },
+    "createKey": {
+      "type": {
+        "arguments": { "value": "V | null", "node?": "RowNode" },
+        "returnType": "string | null",
+        "optional": false
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "arguments": { "params": "ValueFormatterParams" },
+        "returnType": "string",
+        "optional": false
+      }
+    },
+    "usingComplexObjects": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "treeDataTreeList": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "groupingTreeList": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "meta": { "typeParams": ["V"] }
+  },
   "ToolPanelFiltersCompParams": {
     "suppressExpandAll": {
       "description": "/** To suppress Expand / Collapse All */",

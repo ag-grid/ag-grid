@@ -60,6 +60,7 @@
     --ag-header-height: calc(var(--ag-grid-size) * 8);       // if changed, update environment.ts
     --ag-list-item-height: calc(var(--ag-grid-size) * 4); // if changed, update environment.ts
     --ag-column-select-indent-size: var(--ag-icon-size);
+    --ag-set-filter-indent-size: var(--ag-icon-size);
     --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
     --ag-cell-widget-spacing: calc(var(--ag-grid-size) * 2);
 

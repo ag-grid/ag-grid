@@ -746,6 +746,13 @@
         display: flex;
     }
 
+    .ag-set-filter-group-icons {
+        display: block;
+        > * {
+            cursor: pointer;
+        }
+    }
+
     .ag-filter-body-wrapper {
         display: flex;
         flex-direction: column;
@@ -1606,6 +1613,10 @@
     // Default values for themes that do not use the mixins
     @for $i from 1 to 10 {
         .ag-column-select-indent-#{$i} {
+            @include ag.unthemed-rtl(( padding-left: $i * 20px ));
+        }
+
+        .ag-set-filter-indent-#{$i} {
             @include ag.unthemed-rtl(( padding-left: $i * 20px ));
         }
 

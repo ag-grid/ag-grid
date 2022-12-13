@@ -8665,6 +8665,9 @@
       "caseSensitive?": "boolean",
       "excelMode?": "'mac' | 'windows'",
       "convertValuesToStrings?": "boolean",
+      "treeList?": "boolean",
+      "treeListPathGetter?": "(value: V) => (string | null)[]",
+      "treeListFormatter?": "(pathKey: string | null, level: number) => string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -8699,6 +8702,9 @@
       "caseSensitive?": "/** If `true`, enables case-sensitivity in the SetFilter Mini-Filter and Filter List.\n     * Default: `false`.\n     */",
       "excelMode?": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.\n     */",
       "convertValuesToStrings?": "/** @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,\n     * as well as maintaining the type of primitives (e.g. number, boolean) when not used as keys.\n     * \n     * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.\n     * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.\n     */",
+      "treeList?": "/** If `true`, the Set Filter List will be displayed in a tree format. If enabled, one of the following must be true:\n     * \n     * - A `treeListPathGetter` is provided to get the tree path for the column values.\n     * - The column values are of type `Date`, in which case the tree will be year -> month -> day.\n     * - Tree Data mode is enabled and the column is the group column. The Filter List will match the tree structure. A Key Creator must be supplied.\n     * - Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied.\n     */",
+      "treeListPathGetter?": "/** Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.\n     */",
+      "treeListFormatter?": "/** Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.\n     * `level` refers to the level of the tree (starting at 0).\n     */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n     * The options are:\n     * \n     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.\n     */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n     * or Reset button is clicked if this is set to `true`.\n     * \n     * Default: `false`\n     */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n     * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n     * - `DateFilter` and `SetFilter`: 0ms\n     */",
@@ -10980,6 +10986,31 @@
       "isRowSelected?(index: number)": "boolean | undefined"
     }
   },
+  "ISetDisplayValueModel": {
+    "meta": { "typeParams": ["V"] },
+    "type": {
+      "updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>)": "void",
+      "updateDisplayedValuesToMatchMiniFilter(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>, matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean, fromMiniFilter?: boolean)": "void",
+      "getDisplayedValueCount()": "number",
+      "getDisplayedItem(index: number)": "string | SetFilterModelTreeItem | null",
+      "getDisplayedKeys()": "(string | null)[]",
+      "forEachDisplayedKey(func: (key: string | null) => void)": "void",
+      "someDisplayedKey(func: (key: string | null) => boolean)": "boolean",
+      "hasGroups()": "boolean",
+      "refresh()": "void"
+    }
+  },
+  "SetFilterModelTreeItem": {
+    "meta": {},
+    "type": {
+      "treeKey": "string | null",
+      "depth": "number",
+      "filterPasses": "boolean",
+      "expanded?": "boolean",
+      "children?": "SetFilterModelTreeItem[]",
+      "key?": "string | null"
+    }
+  },
   "ISetFilterLocaleText": {
     "meta": {},
     "type": {
@@ -10996,10 +11027,49 @@
     "type": { "isSelected": "boolean", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
+  "SetFilterListItemExpandedChangedEvent": {
+    "meta": {},
+    "type": { "isExpanded": "boolean", "type": "string" },
+    "docs": { "type": "/** Event identifier */" }
+  },
+  "SetFilterListItemParams": {
+    "meta": { "typeParams": ["V"] },
+    "type": {
+      "focusWrapper": "HTMLElement",
+      "value": "V | null | (() => string)",
+      "params": "ISetFilterParams<any, V>",
+      "translate": "(key: keyof ISetFilterLocaleText) => string",
+      "valueFormatter": "(params: ValueFormatterParams) => string",
+      "isSelected": "boolean | undefined",
+      "isTree?": "boolean",
+      "depth?": "number",
+      "groupsExist?": "boolean",
+      "isGroup?": "boolean",
+      "isExpanded?": "boolean"
+    }
+  },
   "SetFilterModelValuesType": {
     "meta": { "isEnum": true },
     "type": ["PROVIDED_LIST", "PROVIDED_CALLBACK", "TAKEN_FROM_GRID_VALUES"],
     "docs": [null, null, null]
+  },
+  "SetValueModelParams": {
+    "meta": { "typeParams": ["V"] },
+    "type": {
+      "valueFormatterService": "ValueFormatterService",
+      "gridOptionsService": "GridOptionsService",
+      "columnModel": "ColumnModel",
+      "valueService": "ValueService",
+      "filterParams": "ISetFilterParams<any, V>",
+      "setIsLoading": "(loading: boolean) => void",
+      "translate": "(key: keyof ISetFilterLocaleText) => string",
+      "caseFormat": "<T extends string | null>(valueToFormat: T) => typeof valueToFormat",
+      "createKey": "(value: V | null, node?: RowNode) => string | null",
+      "valueFormatter": "(params: ValueFormatterParams) => string",
+      "usingComplexObjects?": "boolean",
+      "treeDataTreeList?": "boolean",
+      "groupingTreeList?": "boolean"
+    }
   },
   "ToolPanelFiltersCompParams": {
     "meta": {},
