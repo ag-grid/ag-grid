@@ -19,7 +19,7 @@ import {
 import { CountableTimeInterval, TimeInterval } from '../util/time/interval';
 import { complexBisectRight } from '../util/bisect';
 import { tickStep } from '../util/ticks';
-import { locale } from '../util/time/format/defaultLocale';
+import { buildFormatter } from '../util/timeFormat';
 
 enum DefaultTimeFormats {
     MILLISECOND,
@@ -52,7 +52,6 @@ export class TimeScale extends ContinuousScale {
     private minute: CountableTimeInterval = timeMinute;
     private second: CountableTimeInterval = timeSecond;
     private millisecond: CountableTimeInterval = timeMillisecond;
-    private format: (specifier: string) => (date: Date) => string = locale.format;
 
     /**
      * Array of default tick intervals in the following format:
@@ -170,7 +169,7 @@ export class TimeScale extends ContinuousScale {
 
     defaultTickFormat(ticks?: any[]) {
         const formatString = this.calculateDefaultTickFormat(ticks);
-        return (date: Date) => this.format(formatString)(date);
+        return (date: Date) => buildFormatter(formatString)(date);
     }
 
     /**
@@ -256,7 +255,7 @@ export class TimeScale extends ContinuousScale {
      * If no specifier is provided, this method returns the default time format function.
      */
     tickFormat({ ticks, specifier }: { count?: any; ticks?: any[]; specifier?: string }): (date: Date) => string {
-        return specifier == undefined ? this.defaultTickFormat(ticks) : this.format(specifier);
+        return specifier == undefined ? this.defaultTickFormat(ticks) : buildFormatter(specifier);
     }
 
     /**

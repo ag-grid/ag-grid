@@ -1,4 +1,4 @@
-import { locale } from './time/format/defaultLocale';
+import { buildFormatter } from './timeFormat';
 
 const interpolatePattern = /(#\{(.*?)\})/g;
 
@@ -35,7 +35,7 @@ export function interpolate(
         if (value instanceof Date) {
             const format = formatName && formats && formats[formatName];
             if (typeof format === 'string') {
-                const formatter = locale.format(format);
+                const formatter = buildFormatter(format);
                 return formatter(value);
             }
             return value.toDateString();
