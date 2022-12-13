@@ -4436,6 +4436,9 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "CursorState": {
+    "style": { "type": { "returnType": "string", "optional": false } }
+  },
   "InteractionTypes": {},
   "Listener": { "meta": { "typeParams": ["T extends InteractionTypes"] } },
   "SUPPORTED_EVENTS": {},

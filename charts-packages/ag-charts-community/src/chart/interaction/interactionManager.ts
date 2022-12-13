@@ -35,6 +35,8 @@ export type InteractionEvent<T extends InteractionTypes> = {
     pageX: number;
     pageY: number;
     sourceEvent: Event;
+    /** Consume the event, don't notify other listeners! */
+    consume(): void;
 } & (T extends 'drag' ? { startX: number; startY: number } : {});
 
 const CSS = `
@@ -190,7 +192,9 @@ export class InteractionManager {
 
             listeners.forEach((listener: Listener<any>) => {
                 try {
-                    listener.handler(interactionEvent);
+                    if (!interactionEvent.consumed) {
+                        listener.handler(interactionEvent);
+                    }
                 } catch (e) {
                     console.error(e);
                 }
@@ -221,13 +225,17 @@ export class InteractionManager {
             pageY = clientY - pageRect.top;
         }
 
-        return {
+        const builtEvent = {
             type,
             offsetX,
             offsetY,
             pageX,
             pageY,
             sourceEvent: event,
+            consumed: false,
+            consume: () => (builtEvent.consumed = true),
         };
+
+        return builtEvent;
     }
 }
