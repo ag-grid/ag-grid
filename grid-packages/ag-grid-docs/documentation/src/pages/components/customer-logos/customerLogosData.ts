@@ -80,9 +80,9 @@ export const customerLogosData: CustomerLogosData = {
         order: 30,
         mobileOrder: 30,
     },
-    americanExpress: {
-        name: "American Express",
-        logoUrl: 'images/customer-logos-white/american-express.svg',
+    facebook: {
+        name: "Facebook",
+        logoUrl: 'images/customer-logos-white/facebook.svg',
         order: 30,
         mobileOrder: 30,
     },

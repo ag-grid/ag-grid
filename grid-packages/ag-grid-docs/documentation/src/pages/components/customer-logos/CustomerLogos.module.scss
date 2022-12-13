@@ -7,17 +7,17 @@
 .container {
   display: none;
   justify-content: center;
-  margin-top: 18px;
-  margin-bottom: 18px;
+  margin: 18px auto;
   padding-left: 15px;
   padding-right: 15px;
 
   @media screen and (min-width: 920px) {
     display: flex;
+    max-width: 1200px;
   }
 
   li {
-    margin: 8px min(2vw, 26px);
+    margin: 8px 26px;
   }
 }
 
@@ -39,6 +39,14 @@
 
     &:nth-child(n + 10) {
       display: none;
+    }
+
+    @media screen and (min-width: 600px) {
+      width: calc(100% / 4);
+
+      &:nth-child(n + 10) {
+        display: block;
+      }
     }
   }
 }
