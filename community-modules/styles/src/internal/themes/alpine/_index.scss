@@ -202,12 +202,12 @@
     }
 
     .ag-chart-menu-close:hover .ag-icon {
-        border-color: var(--ag-border-color);
+        border-color: var(--ag-alpine-active-color);
     }
 
     .ag-chart-menu-close .ag-icon {
         background: var(--ag-header-background-color);
-        border: 1px solid var(--ag-secondary-border-color);
+        border: 1px solid var(--ag-border-color);
         border-right: none;
     }
 
