@@ -99,6 +99,7 @@ export class SetFilterListItem<V> extends Component {
     private init(): void {
         this.render();
 
+        this.eCheckbox.getLabelElement().classList.add('ag-set-filter-item-label')
         this.eCheckbox.setValue(this.isSelected, true);
         this.eCheckbox.setDisabled(!!this.params.readOnly);
 

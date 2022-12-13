@@ -139,10 +139,6 @@
         margin: 0px var(--ag-widget-container-horizontal-padding);
     }
 
-    .ag-set-filter-item-value {
-        @include ag.unthemed-rtl((margin-left: var(--ag-widget-container-horizontal-padding)));
-    }
-
     .ag-set-filter-add-group-indent {
         @include ag.unthemed-rtl((margin-left: calc(var(--ag-widget-container-horizontal-padding) + var(--ag-icon-size) + var(--ag-grid-size) * 2)));
     }

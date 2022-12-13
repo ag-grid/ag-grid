@@ -736,14 +736,17 @@
         height: 100%;
     }
 
-    .ag-set-filter-item-value {
+    .ag-set-filter-item-label {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        flex: 1 !important;
+        margin-right: 0 !important;
     }
 
     .ag-set-filter-item-checkbox {
         display: flex;
+        overflow: hidden;
     }
 
     .ag-set-filter-group-icons {

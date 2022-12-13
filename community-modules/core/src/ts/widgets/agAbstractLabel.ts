@@ -141,4 +141,8 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
     public isDisabled(): boolean {
         return !!this.disabled;
     }
+
+    public getLabelElement(): HTMLElement {
+        return this.eLabel;
+    }
 }
