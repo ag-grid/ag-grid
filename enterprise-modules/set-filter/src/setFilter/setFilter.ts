@@ -598,6 +598,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         if (value != null && Array.isArray(value)) {
+            if (value.length === 0) {
+                return this.appliedModelKeys!.has(null);
+            }
             return value.some(v => this.isInAppliedModel(this.createKey(v, node)));
         }
 
@@ -607,6 +610,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private doesFilterPassForConvertValuesToString(node: RowNode, value: V | null) {
         const key = this.createKey(value, node);
         if (key != null && Array.isArray(key)) {
+            if (key.length === 0) {
+                return this.appliedModelKeys!.has(null);
+            }
             return key.some(v => this.isInAppliedModel(v));
         }
 

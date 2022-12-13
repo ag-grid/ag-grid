@@ -291,7 +291,7 @@ If case differences need to be normalised to remove redundant values from the da
 
 If there are missing / empty values in the row data of the grid, or missing values in the list of [Supplied Values](#supplying-filter-values), the Filter List will contain an entry called `(Blanks)` which can be used to select / deselect all of these values. If this not the desired behaviour, provide a [Formatter](#value-formatter) to present blank values in a different way.
 
-`undefined`, `null` and `''` are all treated as missing values. These will appear within the [Set Filter model](/filter-set-api/#set-filter-model) as a single entry of `null`. This also applies to supplied Filter List values (e.g. if you supply `''` it will appear in the filter model as `null`).
+`undefined`, `null` and `''`, as well as an empty array if using [multiple values](#multiple-values-per-cell), are all treated as missing values. These will appear within the [Set Filter model](/filter-set-api/#set-filter-model) as a single entry of `null`. This also applies to supplied Filter List values (e.g. if you supply `''` it will appear in the filter model as `null`).
 
 ## Filter Value Types
 
@@ -351,6 +351,7 @@ The example below demonstrates this in action. Note the following:
 - The **Animals (objects)** column retrieves values from an array of objects, using a [Key Creator](#complex-objects). The Key Creator is applied to the elements within the array (as is the Value Formatter). Note that if `convertValuesToStrings` is set in the filter params, the Key Creator will be applied to the raw value in the cell, and is expected to return an array of strings.
 - For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
 - Selecting values in the Set Filter will show rows where the data for that row contains **any** of the selected values.
+- The first row contains empty arrays for the **Animals (array)** and **Animals (objects)** columns, and an empty string for the **Animals (string)** column which is converted to an empty array. These all appear in the Filter List as `(Blanks)`.
 
 <grid-example title='Multiple Values' name='multiple-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
