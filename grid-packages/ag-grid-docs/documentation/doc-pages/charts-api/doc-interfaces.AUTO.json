@@ -4531,8 +4531,20 @@
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
   "Page": {},
+  "Orientation": {},
   "Column": {},
   "Grid": {},
+  "DimensionProps": {
+    "max": { "type": { "returnType": "number", "optional": false } },
+    "fn": {
+      "type": {
+        "arguments": { "bbox": "BBox" },
+        "returnType": "number",
+        "optional": false
+      }
+    },
+    "padding": { "type": { "returnType": "number", "optional": false } }
+  },
   "CursorState": {
     "style": { "type": { "returnType": "string", "optional": false } }
   },
@@ -4561,7 +4573,6 @@
       }
     }
   },
-  "Orientation": {},
   "SeriesOptionsTypes": {},
   "AxesOptionsTypes": {},
   "PreparationContext": {

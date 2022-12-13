@@ -17,11 +17,7 @@ import {
 } from '../../util/validation';
 import { FontStyle, FontWeight } from '../agChartOptions';
 import { getMarker } from '../marker/util';
-
-enum Orientation {
-    Vertical,
-    Horizontal,
-}
+import { Orientation } from '../gridLayout';
 
 class PaginationLabel {
     @Validate(COLOR_STRING)

@@ -1,0 +1,1139 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`horizontal layout one row, multiple columns, one page 1`] = `
+Array [
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 23,
+        "columnWidth": 100,
+        "indices": Array [
+          0,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 23,
+        "columnWidth": 120,
+        "indices": Array [
+          1,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 23,
+        "columnWidth": 140,
+        "indices": Array [
+          2,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 23,
+        "columnWidth": 140,
+        "indices": Array [
+          3,
+        ],
+      },
+    ],
+    "endIndex": 3,
+    "pageHeight": 23,
+    "pageWidth": 500,
+    "startIndex": 0,
+  },
+]
+`;
+
+exports[`horizontal layout two rows, multiple columns, one page 1`] = `
+Array [
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 100,
+        "indices": Array [
+          0,
+          4,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 120,
+        "indices": Array [
+          1,
+          5,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 140,
+        "indices": Array [
+          2,
+          6,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 140,
+        "indices": Array [
+          3,
+          7,
+        ],
+      },
+    ],
+    "endIndex": 7,
+    "pageHeight": 46,
+    "pageWidth": 500,
+    "startIndex": 0,
+  },
+]
+`;
+
+exports[`horizontal layout two rows, multiple columns, one page, mixed item widths in single column  1`] = `
+Array [
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 130,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 130,
+        "indices": Array [
+          0,
+          4,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 125,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 125,
+        "indices": Array [
+          1,
+          5,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 125,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 125,
+        "indices": Array [
+          2,
+          6,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 130,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 130,
+        "indices": Array [
+          3,
+          7,
+        ],
+      },
+    ],
+    "endIndex": 7,
+    "pageHeight": 46,
+    "pageWidth": 510,
+    "startIndex": 0,
+  },
+]
+`;
+
+exports[`horizontal layout two rows, multiple columns, two page, mixed item widths in single column  1`] = `
+Array [
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 140,
+        "indices": Array [
+          0,
+          3,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 140,
+        "indices": Array [
+          1,
+          4,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 140,
+        "indices": Array [
+          2,
+          5,
+        ],
+      },
+    ],
+    "endIndex": 5,
+    "pageHeight": 46,
+    "pageWidth": 420,
+    "startIndex": 0,
+  },
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 23,
+        "columnWidth": 120,
+        "indices": Array [
+          6,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 23,
+        "columnWidth": 100,
+        "indices": Array [
+          7,
+        ],
+      },
+    ],
+    "endIndex": 7,
+    "pageHeight": 23,
+    "pageWidth": 220,
+    "startIndex": 6,
+  },
+]
+`;
+
+exports[`horizontal layout two rows, multiple columns, two pages 1`] = `
+Array [
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 100,
+        "indices": Array [
+          0,
+          4,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 120,
+        "indices": Array [
+          1,
+          5,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 140,
+        "indices": Array [
+          2,
+          6,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 140,
+        "indices": Array [
+          3,
+          7,
+        ],
+      },
+    ],
+    "endIndex": 7,
+    "pageHeight": 46,
+    "pageWidth": 500,
+    "startIndex": 0,
+  },
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 100,
+        "indices": Array [
+          8,
+          12,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 120,
+        "indices": Array [
+          9,
+          13,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 140,
+        "indices": Array [
+          10,
+          14,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 46,
+        "columnWidth": 140,
+        "indices": Array [
+          11,
+          15,
+        ],
+      },
+    ],
+    "endIndex": 15,
+    "pageHeight": 46,
+    "pageWidth": 500,
+    "startIndex": 8,
+  },
+]
+`;
+
+exports[`vertical layout one column, multiple rows, one page 1`] = `
+Array [
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 140,
+        "indices": Array [
+          0,
+          1,
+          2,
+          3,
+        ],
+      },
+    ],
+    "endIndex": 3,
+    "pageHeight": 92,
+    "pageWidth": 140,
+    "startIndex": 0,
+  },
+]
+`;
+
+exports[`vertical layout two columns, multiple rows, one page 1`] = `
+Array [
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 140,
+        "indices": Array [
+          0,
+          1,
+          2,
+          3,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 140,
+        "indices": Array [
+          4,
+          5,
+          6,
+          7,
+        ],
+      },
+    ],
+    "endIndex": 7,
+    "pageHeight": 92,
+    "pageWidth": 280,
+    "startIndex": 0,
+  },
+]
+`;
+
+exports[`vertical layout two columns, multiple rows, one page, mixed item widths in single column  1`] = `
+Array [
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 125,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 130,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 130,
+        "indices": Array [
+          0,
+          1,
+          2,
+          3,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 130,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 125,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 130,
+        "indices": Array [
+          4,
+          5,
+          6,
+          7,
+        ],
+      },
+    ],
+    "endIndex": 7,
+    "pageHeight": 92,
+    "pageWidth": 260,
+    "startIndex": 0,
+  },
+]
+`;
+
+exports[`vertical layout two columns, multiple rows, two page, mixed item widths in single column  1`] = `
+Array [
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 125,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 130,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 130,
+        "indices": Array [
+          0,
+          1,
+          2,
+          3,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 130,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 125,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 130,
+        "indices": Array [
+          4,
+          5,
+          6,
+          7,
+        ],
+      },
+    ],
+    "endIndex": 7,
+    "pageHeight": 92,
+    "pageWidth": 260,
+    "startIndex": 0,
+  },
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 125,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 130,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 130,
+        "indices": Array [
+          8,
+          9,
+          10,
+          11,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 130,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 125,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 130,
+        "indices": Array [
+          12,
+          13,
+          14,
+          15,
+        ],
+      },
+    ],
+    "endIndex": 15,
+    "pageHeight": 92,
+    "pageWidth": 260,
+    "startIndex": 8,
+  },
+]
+`;
+
+exports[`vertical layout two columns, multiple rows, two pages 1`] = `
+Array [
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 140,
+        "indices": Array [
+          0,
+          1,
+          2,
+          3,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 140,
+        "indices": Array [
+          4,
+          5,
+          6,
+          7,
+        ],
+      },
+    ],
+    "endIndex": 7,
+    "pageHeight": 92,
+    "pageWidth": 280,
+    "startIndex": 0,
+  },
+  Object {
+    "columns": Array [
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 140,
+        "indices": Array [
+          8,
+          9,
+          10,
+          11,
+        ],
+      },
+      Object {
+        "bboxes": Array [
+          BBox {
+            "height": 23,
+            "width": 100,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 120,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+          BBox {
+            "height": 23,
+            "width": 140,
+            "x": 0,
+            "y": 0,
+          },
+        ],
+        "columnHeight": 92,
+        "columnWidth": 140,
+        "indices": Array [
+          12,
+          13,
+          14,
+          15,
+        ],
+      },
+    ],
+    "endIndex": 15,
+    "pageHeight": 92,
+    "pageWidth": 280,
+    "startIndex": 8,
+  },
+]
+`;

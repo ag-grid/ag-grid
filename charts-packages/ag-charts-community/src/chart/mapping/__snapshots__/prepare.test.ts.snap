@@ -131,6 +131,17 @@ Object {
       "paddingX": 40,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "bottom",
     "reverseOrder": false,
     "spacing": 10,
@@ -559,6 +570,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
@@ -903,6 +925,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "right",
     "reverseOrder": false,
@@ -1525,6 +1558,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
@@ -1823,6 +1867,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -2058,6 +2113,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "bottom",
     "reverseOrder": false,
@@ -2498,6 +2564,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "bottom",
     "reverseOrder": false,
@@ -3081,6 +3158,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -3340,6 +3428,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -3588,6 +3687,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -3830,6 +3940,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -4066,6 +4187,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "right",
     "reverseOrder": false,
@@ -4349,6 +4481,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "bottom",
     "reverseOrder": false,
@@ -4635,6 +4778,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "right",
     "reverseOrder": false,
@@ -4936,6 +5090,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -5191,6 +5356,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 15,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "bottom",
     "reverseOrder": false,
@@ -6347,6 +6523,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -6498,6 +6685,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "right",
     "reverseOrder": false,
@@ -6768,6 +6966,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "top",
     "reverseOrder": false,
@@ -7073,6 +7282,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -7363,6 +7583,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "right",
     "reverseOrder": false,
@@ -7671,6 +7902,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "bottom",
     "reverseOrder": false,
@@ -8143,6 +8385,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -8303,6 +8556,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "right",
     "reverseOrder": false,
@@ -8585,6 +8849,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -8828,6 +9103,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -9051,6 +9337,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "right",
     "reverseOrder": false,
@@ -9312,6 +9609,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "right",
     "reverseOrder": false,
     "spacing": 20,
@@ -9548,6 +9856,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "bottom",
     "reverseOrder": false,
@@ -9858,6 +10177,17 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
+    },
     "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
@@ -10140,6 +10470,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "bottom",
     "reverseOrder": false,
@@ -10443,6 +10784,17 @@ Object {
       },
       "paddingX": 16,
       "paddingY": 8,
+    },
+    "pagination": Object {
+      "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "inactiveStyle": Object {
+        "fill": "rgb(219, 219, 219)",
+      },
+      "marker": Object {
+        "size": 12,
+      },
     },
     "position": "right",
     "reverseOrder": false,

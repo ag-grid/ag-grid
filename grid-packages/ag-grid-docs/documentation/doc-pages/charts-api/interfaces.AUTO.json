@@ -3017,13 +3017,26 @@
     "meta": { "isTypeAlias": true },
     "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
   },
+  "Orientation": {
+    "meta": { "isEnum": true },
+    "type": ["Vertical", "Horizontal"],
+    "docs": [null, null]
+  },
   "Column": {
     "meta": { "isTypeAlias": true },
-    "type": "{ rowCount: number; columnWidth: number; columnHeight: number; startIndex: number; endIndex: number; bboxes: BBox[]; }"
+    "type": "{ columnWidth: number; columnHeight: number; indices: number[]; bboxes: BBox[]; }"
   },
   "Grid": {
     "meta": { "isTypeAlias": true },
     "type": "{ [column: number]: Column; }"
+  },
+  "DimensionProps": {
+    "meta": {},
+    "type": {
+      "max": "number",
+      "fn": "(bbox: BBox) => number",
+      "padding": "number"
+    }
   },
   "CursorState": { "meta": {}, "type": { "style": "string" } },
   "InteractionTypes": {
@@ -3072,11 +3085,6 @@
       "marker": "{ shape?: string | (new () => Marker); fill: string; stroke: string; fillOpacity: number; strokeOpacity: number; }",
       "label": "{ text: string; }"
     }
-  },
-  "Orientation": {
-    "meta": { "isEnum": true },
-    "type": ["Vertical", "Horizontal"],
-    "docs": [null, null]
   },
   "SeriesOptionsTypes": {
     "meta": { "isTypeAlias": true },

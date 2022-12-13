@@ -38,6 +38,7 @@ import { Series, SeriesNodeDatum } from './series/series';
 import { ChartUpdateType } from './chart';
 import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
+import { Orientation } from './gridLayout';
 
 export interface LegendDatum {
     id: string; // component ID
@@ -54,11 +55,6 @@ export interface LegendDatum {
     label: {
         text: string; // display name for the sub-component
     };
-}
-
-enum Orientation {
-    Vertical,
-    Horizontal,
 }
 
 class LegendLabel {
@@ -420,13 +416,15 @@ export class Legend {
         width = width - (verticalOrientation ? 0 : paginationBBox.width);
         height = height - (verticalOrientation ? paginationBBox.height : 0);
 
-        this.pages = gridLayout({
-            bboxes,
-            maxHeight: height,
-            maxWidth: width,
-            itemPaddingY: paddingY,
-            itemPaddingX: paddingX,
-        }).pages;
+        this.pages =
+            gridLayout({
+                orientation: this.orientation,
+                bboxes,
+                maxHeight: height,
+                maxWidth: width,
+                itemPaddingY: paddingY,
+                itemPaddingX: paddingX,
+            })?.pages || [];
 
         const totalPages = this.pages.length;
         this.pagination.visible = totalPages > 1;
@@ -475,12 +473,14 @@ export class Legend {
         // Position legend items using the layout computed above.
         let x = 0;
         let y = 0;
-        let firstItem: MarkerLabel;
-        let prevColumnWidth = 0;
-        let newColumn = false;
-        let columnIdx = 0;
+
+        const columnCount = columns.length;
+        const rowCount = columns[0].indices.length;
+        const horizontal = this.orientation === Orientation.Horizontal;
 
         const itemHeight = columns[0].bboxes[0].height + paddingY;
+
+        const rowSumColumnWidths: number[] = [];
 
         itemSelection.each((markerLabel, _, i) => {
             if (i < visibleStart || i > visibleEnd) {
@@ -488,26 +488,28 @@ export class Legend {
                 return;
             }
 
-            firstItem ??= markerLabel;
-            markerLabel.visible = true;
-
-            let column = columns[columnIdx];
-            newColumn = false;
-
-            if (i > column.endIndex) {
-                columnIdx++;
-                newColumn = true;
-                column = columns[columnIdx];
-            }
-
-            if (newColumn || markerLabel === firstItem) {
-                x += prevColumnWidth;
-                y = 0;
-
-                prevColumnWidth = column.columnWidth;
+            const pageIndex = i - visibleStart;
+            let columnIndex = 0;
+            let rowIndex = 0;
+            if (horizontal) {
+                columnIndex = pageIndex % columnCount;
+                rowIndex = Math.floor(pageIndex / columnCount);
             } else {
-                y += itemHeight;
+                columnIndex = Math.floor(pageIndex / rowCount);
+                rowIndex = pageIndex % rowCount;
             }
+
+            markerLabel.visible = true;
+            let column = columns[columnIndex];
+
+            if (!column) {
+                return;
+            }
+
+            y = itemHeight * rowIndex;
+            x = rowSumColumnWidths[rowIndex] ?? 0;
+
+            rowSumColumnWidths[rowIndex] = (rowSumColumnWidths[rowIndex] ?? 0) + column.columnWidth;
 
             // Round off for pixel grid alignment to work properly.
             markerLabel.translationX = Math.floor(startX + x);
