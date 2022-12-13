@@ -273,6 +273,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 node.stub = true;
             }
         });
+        this.forEachChildStoreShallow(store => store.retryLoads());
         this.fireStoreUpdatedEvent();
     }
 
