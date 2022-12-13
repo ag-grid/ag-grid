@@ -3,7 +3,6 @@ export * from './util/id';
 export * from './util/padding';
 
 export { extent } from './util/array';
-export { tickIncrement, tickStep } from './util/ticks';
 export { tickFormat } from './util/numberFormat';
 
 import ticks from './util/ticks';

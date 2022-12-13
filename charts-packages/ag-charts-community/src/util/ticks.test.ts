@@ -16,7 +16,7 @@ test('getTicks', () => {
 
     expect(getTicks(2, 97, 1)).toHaveLength(0);
     compareTicks(getTicks(2, 97, 2), ticks_2_to_3);
-    compareTicks(getTicks(2, 97, 3), ticks_2_to_3);
+    compareTicks(getTicks(2, 97, 3), ticks_4_to_6);
     compareTicks(getTicks(2, 97, 4), ticks_4_to_6);
     compareTicks(getTicks(2, 97, 5), ticks_4_to_6);
     compareTicks(getTicks(2, 97, 6), ticks_4_to_6);
@@ -25,5 +25,4 @@ test('getTicks', () => {
     compareTicks(getTicks(2, 97, 9), ticks_7_to_13);
     compareTicks(getTicks(2, 97, 10), ticks_7_to_13);
     compareTicks(getTicks(2, 97, 20), ticks_14_30);
-    compareTicks(getTicks(2, 97, 30), ticks_14_30);
 });
