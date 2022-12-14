@@ -28,7 +28,7 @@ const LogoItems = ({ logos }: { logos: CustomerLogosDataItem[] }) => {
 
 export const CustomerLogos = ({ data }: { data: CustomerLogosData }) => {
   const logos = filterAndSortByKey(data, 'order');
-  const mobileLogos = filterAndSortByKey(data, 'mobileOrder');;
+  const mobileLogos = filterAndSortByKey(data, 'mobileOrder');
 
   return (
     <>
