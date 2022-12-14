@@ -25,7 +25,8 @@ import {
     StoreRefreshAfterParams,
     StoreUpdatedEvent,
     WithoutGridCommon,
-    IsApplyServerSideTransactionParams
+    IsApplyServerSideTransactionParams,
+    IRowNode
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -377,7 +378,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         });
     }
 
-    public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | undefined {
+    public getRowUsingDisplayIndex(displayRowIndex: number): IRowNode | undefined {
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer exists
         if (!this.isDisplayIndexInStore(displayRowIndex)) { return undefined; }

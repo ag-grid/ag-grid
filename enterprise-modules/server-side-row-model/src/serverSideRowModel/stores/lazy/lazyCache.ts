@@ -1,4 +1,4 @@
-import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, ServerSideGroupLevelParams } from "@ag-grid-community/core";
+import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, IRowNode, ServerSideGroupLevelParams } from "@ag-grid-community/core";
 import { BlockUtils } from "src/serverSideRowModel/blocks/blockUtils";
 import { NodeManager } from "src/serverSideRowModel/nodeManager";
 import { LazyStore } from "./lazyStore";
@@ -56,7 +56,7 @@ export class LazyCache extends BeanStub {
      * @param displayIndex the display index of the node to find
      * @returns undefined if the node is not in the store bounds, otherwise will always return a node
      */
-    public getRowByDisplayIndex(displayIndex: number): RowNode | undefined {
+    public getRowByDisplayIndex(displayIndex: number): IRowNode | undefined {
         // if index isn't in store, nothing to return
         if (!this.store.isDisplayIndexInStore(displayIndex)) {
             return undefined;

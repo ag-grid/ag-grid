@@ -727,7 +727,7 @@
     },
     "rowNode": {
       "description": "/** The parent RowNode, where the aggregation result will be shown */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** data (if any) of the parent RowNode */",
@@ -1272,8 +1272,8 @@
         "arguments": {
           "valueA": "any",
           "valueB": "any",
-          "nodeA": "RowNode<TData>",
-          "nodeB": "RowNode<TData>",
+          "nodeA": "IRowNode<TData>",
+          "nodeB": "IRowNode<TData>",
           "isDescending": "boolean"
         },
         "returnType": "number",
@@ -1432,7 +1432,7 @@
   "ColumnFunctionCallbackParams": {
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
@@ -1464,7 +1464,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
@@ -1496,7 +1496,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
@@ -1528,7 +1528,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
@@ -1558,7 +1558,7 @@
   "DndSourceOnRowDragParams": {
     "rowNode": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "dragEvent": {
       "description": "/** The DOM event that represents a drag and drop interaction */",
@@ -1583,7 +1583,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
@@ -1615,7 +1615,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
@@ -1647,7 +1647,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
@@ -1700,7 +1700,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
@@ -1734,7 +1734,7 @@
     },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Row data associated with the node. */",
@@ -1792,7 +1792,7 @@
   "BaseColDefParams": {
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
@@ -1823,7 +1823,7 @@
   "BaseColDefOptionalDataParams": {
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
@@ -1863,7 +1863,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
@@ -1941,7 +1941,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
@@ -1980,7 +1980,7 @@
     },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
@@ -2020,7 +2020,7 @@
     },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
@@ -2058,7 +2058,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
@@ -2094,7 +2094,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
@@ -2125,7 +2125,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
@@ -2156,7 +2156,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
@@ -2195,7 +2195,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node. Will be `undefined` for group rows. */",
@@ -2274,7 +2274,7 @@
     },
     "node": {
       "description": "/** The RowNode associated with this row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The index of the row */",
@@ -3406,7 +3406,7 @@
     "doesExternalFilterPass": {
       "description": "/** Should return `true` if external filter passes, otherwise `false`. */",
       "type": {
-        "arguments": { "node": "RowNode<TData>" },
+        "arguments": { "node": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -3490,7 +3490,7 @@
     "groupRowAggNodes": {
       "description": "/** @deprecated v27.2 - Use `getGroupRowAgg` instead. */",
       "type": {
-        "arguments": { "nodes": "RowNode[]" },
+        "arguments": { "nodes": "IRowNode[]" },
         "returnType": "any",
         "optional": true
       }
@@ -3522,7 +3522,7 @@
     "defaultGroupOrderComparator": {
       "description": "/** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */",
       "type": {
-        "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
+        "arguments": { "nodeA": "IRowNode<TData>", "nodeB": "IRowNode<TData>" },
         "returnType": "number",
         "optional": true
       }
@@ -3610,7 +3610,7 @@
     "getBusinessKeyForNode": {
       "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n     * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.\n     */",
       "type": {
-        "arguments": { "node": "RowNode<TData>" },
+        "arguments": { "node": "IRowNode<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -3654,7 +3654,7 @@
     "postSort": {
       "description": "/** @deprecated v27.2 Use `postSortRows` instead */",
       "type": {
-        "arguments": { "nodes": "RowNode<TData>[]" },
+        "arguments": { "nodes": "IRowNode<TData>[]" },
         "returnType": "void",
         "optional": true
       }
@@ -3694,7 +3694,7 @@
     "isFullWidthCell": {
       "description": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -5049,7 +5049,7 @@
     },
     "node": {
       "description": "/** The RowNode associated with this row */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The index of the row */",
@@ -5963,11 +5963,11 @@
     },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "nodes": {
       "description": "/** The list of nodes being dragged. */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
@@ -5983,7 +5983,7 @@
     },
     "overNode": {
       "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
-      "type": { "returnType": "RowNode<TData>", "optional": true }
+      "type": { "returnType": "IRowNode<TData>", "optional": true }
     },
     "y": {
       "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n     * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n     * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n     * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?'\n     */",
@@ -6011,11 +6011,11 @@
     },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "nodes": {
       "description": "/** The list of nodes being dragged. */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
@@ -6031,7 +6031,7 @@
     },
     "overNode": {
       "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
-      "type": { "returnType": "RowNode<TData>", "optional": true }
+      "type": { "returnType": "IRowNode<TData>", "optional": true }
     },
     "y": {
       "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n     * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n     * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n     * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?'\n     */",
@@ -6058,11 +6058,11 @@
     },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "nodes": {
       "description": "/** The list of nodes being dragged. */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
@@ -6078,7 +6078,7 @@
     },
     "overNode": {
       "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
-      "type": { "returnType": "RowNode<TData>", "optional": true }
+      "type": { "returnType": "IRowNode<TData>", "optional": true }
     },
     "y": {
       "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n     * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n     * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n     * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?'\n     */",
@@ -6105,11 +6105,11 @@
     },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "nodes": {
       "description": "/** The list of nodes being dragged. */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
@@ -6125,7 +6125,7 @@
     },
     "overNode": {
       "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
-      "type": { "returnType": "RowNode<TData>", "optional": true }
+      "type": { "returnType": "IRowNode<TData>", "optional": true }
     },
     "y": {
       "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n     * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n     * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n     * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?'\n     */",
@@ -6152,11 +6152,11 @@
     },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "nodes": {
       "description": "/** The list of nodes being dragged. */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
@@ -6172,7 +6172,7 @@
     },
     "overNode": {
       "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
-      "type": { "returnType": "RowNode<TData>", "optional": true }
+      "type": { "returnType": "IRowNode<TData>", "optional": true }
     },
     "y": {
       "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n     * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n     * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n     * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?'\n     */",
@@ -6491,7 +6491,7 @@
   },
   "ItemsAddedEvent": {
     "items": {
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
@@ -7011,7 +7011,7 @@
   "BaseRowEvent": {
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7051,7 +7051,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7090,7 +7090,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7133,7 +7133,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7172,7 +7172,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7211,7 +7211,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7250,7 +7250,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7289,7 +7289,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7328,7 +7328,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7367,7 +7367,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7406,7 +7406,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7445,7 +7445,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7484,7 +7484,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7529,7 +7529,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7574,7 +7574,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7619,7 +7619,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7664,7 +7664,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7709,7 +7709,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7754,7 +7754,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7799,7 +7799,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7844,7 +7844,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7889,7 +7889,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7934,7 +7934,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -7979,7 +7979,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -8036,7 +8036,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -8086,7 +8086,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -8136,7 +8136,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The visible row index for the row */",
@@ -8719,7 +8719,7 @@
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": false
       }
@@ -8870,7 +8870,7 @@
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": false
       }
@@ -8938,7 +8938,7 @@
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": false
       }
@@ -9113,7 +9113,7 @@
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": false
       }
@@ -9293,7 +9293,7 @@
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": false
       }
@@ -9366,7 +9366,7 @@
     },
     "node": {
       "description": "/** Row node for the given row */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "data": {
       "description": "/** Data associated with the node */",
@@ -9494,7 +9494,7 @@
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": false
       }
@@ -10789,7 +10789,7 @@
   "ShouldRowBeSkippedParams": {
     "node": {
       "description": "/** Row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
@@ -10811,7 +10811,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "node": {
-      "type": { "returnType": "RowNode<TData> | null", "optional": true }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": true }
     },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "type": { "type": { "returnType": "string", "optional": false } },
@@ -10866,7 +10866,7 @@
   "ProcessRowGroupForExportParams": {
     "node": {
       "description": "/** Row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
@@ -10957,7 +10957,7 @@
     },
     "node": {
       "description": "/** The row node, if a cell was clicked, otherwise null. */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "value": {
       "description": "/** The value, if a cell was clicked, otherwise null.  */",
@@ -11007,7 +11007,7 @@
     },
     "rowNode": {
       "description": "/** If popup is for a row, this gives the RowNode */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": true }
+      "type": { "returnType": "IRowNode<TData> | null", "optional": true }
     },
     "ePopup": {
       "description": "/** The popup we are showing */",
@@ -11235,7 +11235,7 @@
   "IsGroupOpenByDefaultParams": {
     "rowNode": {
       "description": "/** The row node being considered. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowGroupColumn": {
       "description": "/** The Column for which this row is grouping. */",
@@ -11274,7 +11274,7 @@
     },
     "parentRowNode": {
       "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
-      "type": { "returnType": "RowNode", "optional": true }
+      "type": { "returnType": "IRowNode", "optional": true }
     },
     "rowGroupColumns": {
       "description": "/** Active Row Group Columns, if any. */",
@@ -11308,7 +11308,7 @@
     },
     "parentRowNode": {
       "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
-      "type": { "returnType": "RowNode", "optional": true }
+      "type": { "returnType": "IRowNode", "optional": true }
     },
     "rowGroupColumns": {
       "description": "/** Active Row Group Columns, if any. */",
@@ -11337,7 +11337,7 @@
   },
   "IsServerSideGroupOpenByDefaultParams": {
     "data": { "type": { "returnType": "any", "optional": false } },
-    "rowNode": { "type": { "returnType": "RowNode", "optional": false } },
+    "rowNode": { "type": { "returnType": "IRowNode", "optional": false } },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<any>", "optional": false }
@@ -11358,7 +11358,7 @@
     },
     "parentNode": {
       "description": "/** The parent RowNode, if transaction is applied to a group. */",
-      "type": { "returnType": "RowNode", "optional": false }
+      "type": { "returnType": "IRowNode", "optional": false }
     },
     "storeInfo": {
       "description": "/** @deprecated use groupLevelInfo instead */",
@@ -11417,7 +11417,7 @@
       "type": { "returnType": "HTMLElement", "optional": true }
     },
     "rowIndex": { "type": { "returnType": "number", "optional": false } },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "node": { "type": { "returnType": "IRowNode<TData>", "optional": false } },
     "addRenderedRowListener": {
       "type": {
         "arguments": { "eventType": "string", "listener": "Function" },
@@ -11450,7 +11450,7 @@
     },
     "rowNode": {
       "description": "/** The RowNode of the current cell being changed. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "column": {
       "description": "/** The Column of the current cell being changed. */",
@@ -11496,7 +11496,7 @@
     },
     "node": {
       "description": "/** The RowNode of the row in question. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
@@ -11528,8 +11528,8 @@
     }
   },
   "InitialGroupOrderComparatorParams": {
-    "nodeA": { "type": { "returnType": "RowNode<TData>", "optional": false } },
-    "nodeB": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "nodeA": { "type": { "returnType": "IRowNode<TData>", "optional": false } },
+    "nodeB": { "type": { "returnType": "IRowNode<TData>", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -11546,7 +11546,7 @@
   },
   "GetGroupRowAggParams": {
     "nodes": {
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
@@ -11564,7 +11564,7 @@
   },
   "PostSortRowsParams": {
     "nodes": {
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
@@ -11582,7 +11582,7 @@
   },
   "IsFullWidthRowParams": {
     "rowNode": {
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
@@ -11619,7 +11619,7 @@
     }
   },
   "GetGroupAggFilteringParams": {
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "node": { "type": { "returnType": "IRowNode<TData>", "optional": false } },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -11695,7 +11695,7 @@
     },
     "node": {
       "description": "/** Row node for the cell */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Row data */",
@@ -13661,7 +13661,7 @@
   "IDoesFilterPassParams": {
     "node": {
       "description": "/** The row node in question. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** The data part of the row node in question. */",
@@ -13735,7 +13735,7 @@
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": false
       }
@@ -14311,7 +14311,7 @@
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": false
       }
@@ -14738,7 +14738,7 @@
     },
     "node": {
       "description": "/** Row node for the cell */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Row data */",
@@ -15025,6 +15025,10 @@
       "description": "/** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */",
       "type": { "returnType": "boolean", "optional": false }
     },
+    "failedLoad": {
+      "description": "/** Used by server side row model, true if this row node failed a load */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
     "rowIndex": {
       "description": "/** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */",
       "type": { "returnType": "number | null", "optional": false }
@@ -15287,6 +15291,10 @@
       "description": "/** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */",
       "type": { "returnType": "boolean", "optional": false }
     },
+    "failedLoad": {
+      "description": "/** Used by server side row model, true if this row node failed a load */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
     "rowIndex": {
       "description": "/** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */",
       "type": { "returnType": "number | null", "optional": false }
@@ -15461,7 +15469,7 @@
     },
     "parentNode": {
       "description": "/** The parent row node. The RootNode (level -1) if request is top level.\n     * This is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods).\n     */",
-      "type": { "returnType": "RowNode", "optional": false }
+      "type": { "returnType": "IRowNode", "optional": false }
     },
     "successCallback": {
       "description": "/** @deprecated Use `success` method instead and return result as a `LoadSuccessParams` object.\n     */",
@@ -15555,7 +15563,7 @@
     },
     "forEachNodeAfterFilterAndSort": {
       "type": {
-        "arguments": { "callback": "(node: RowNode, index: number) => void" },
+        "arguments": { "callback": "(node: IRowNode, index: number) => void" },
         "returnType": "void",
         "optional": false
       }
@@ -15747,7 +15755,7 @@
     "forEachNodeDeep": {
       "type": {
         "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void",
+          "callback": "(rowNode: IRowNode, index: number) => void",
           "sequence?": "NumberSequence"
         },
         "returnType": "void",
@@ -15757,7 +15765,7 @@
     "forEachNodeDeepAfterFilterAndSort": {
       "type": {
         "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void",
+          "callback": "(rowNode: IRowNode, index: number) => void",
           "sequence?": "NumberSequence"
         },
         "returnType": "void",
@@ -15773,7 +15781,7 @@
           "displayRowIndex": "number",
           "dontCreateBlock?": "boolean"
         },
-        "returnType": "RowNode | undefined",
+        "returnType": "IRowNode | undefined",
         "optional": false
       }
     },
@@ -15848,8 +15856,8 @@
     },
     "getRowNodesInRange": {
       "type": {
-        "arguments": { "firstInRange": "RowNode", "lastInRange": "RowNode" },
-        "returnType": "RowNode[]",
+        "arguments": { "firstInRange": "IRowNode", "lastInRange": "IRowNode" },
+        "returnType": "IRowNode[]",
         "optional": false
       }
     },
@@ -16250,7 +16258,7 @@
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": false
       }
@@ -16411,7 +16419,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The current index of the row (this changes after filter and sort). */",
@@ -17432,7 +17440,7 @@
       "description": "/** Datasource calls this when it wants a row node - typically used when it wants to update the row node. */",
       "type": {
         "arguments": { "rowIndex": "number" },
-        "returnType": "RowNode",
+        "returnType": "IRowNode",
         "optional": false
       }
     }
@@ -17553,7 +17561,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The current index of the row (this changes after filter and sort). */",
@@ -17631,7 +17639,7 @@
   "GetDetailRowDataParams": {
     "node": {
       "description": "/** Row node for the details request. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Data for the current row. */",
@@ -17692,15 +17700,15 @@
   "RowNodeTransaction": {
     "add": {
       "description": "/** Row nodes added */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
     "remove": {
       "description": "/** Row nodes removed */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
     "update": {
       "description": "/** Row nodes updated */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] }
   },
@@ -17736,15 +17744,15 @@
     },
     "add": {
       "description": "/** If rows were added, the newly created Row Nodes for those rows. */",
-      "type": { "returnType": "RowNode[]", "optional": true }
+      "type": { "returnType": "IRowNode[]", "optional": true }
     },
     "remove": {
       "description": "/** If rows were removed, the deleted Row Nodes. */",
-      "type": { "returnType": "RowNode[]", "optional": true }
+      "type": { "returnType": "IRowNode[]", "optional": true }
     },
     "update": {
       "description": "/** If rows were updated, the updated Row Nodes. */",
-      "type": { "returnType": "RowNode[]", "optional": true }
+      "type": { "returnType": "IRowNode[]", "optional": true }
     }
   },
   "ServerSideTransactionResultStatus": {},
@@ -17953,7 +17961,7 @@
     },
     "node": {
       "description": "/** Row node for the cell */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Row data */",
@@ -18044,7 +18052,7 @@
     },
     "node": {
       "description": "/** Row node for the cell */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Row data */",
@@ -18139,7 +18147,7 @@
     },
     "node": {
       "description": "/** Row node for the cell */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "data": {
       "description": "/** Row data */",
@@ -18322,7 +18330,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The current index of the row (this changes after filter and sort). */",
@@ -18417,7 +18425,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The current index of the row (this changes after filter and sort). */",
@@ -18584,7 +18592,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
     "rowIndex": {
       "description": "/** The current index of the row (this changes after filter and sort). */",
@@ -21591,7 +21599,7 @@
     "doesExternalFilterPass": {
       "description": "/** Should return `true` if external filter passes, otherwise `false`. */",
       "type": {
-        "arguments": { "node": "RowNode<TData>" },
+        "arguments": { "node": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -21675,7 +21683,7 @@
     "groupRowAggNodes": {
       "description": "/** @deprecated v27.2 - Use `getGroupRowAgg` instead. */",
       "type": {
-        "arguments": { "nodes": "RowNode[]" },
+        "arguments": { "nodes": "IRowNode[]" },
         "returnType": "any",
         "optional": true
       }
@@ -21707,7 +21715,7 @@
     "defaultGroupOrderComparator": {
       "description": "/** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */",
       "type": {
-        "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
+        "arguments": { "nodeA": "IRowNode<TData>", "nodeB": "IRowNode<TData>" },
         "returnType": "number",
         "optional": true
       }
@@ -21795,7 +21803,7 @@
     "getBusinessKeyForNode": {
       "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n     * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.\n     */",
       "type": {
-        "arguments": { "node": "RowNode<TData>" },
+        "arguments": { "node": "IRowNode<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -21839,7 +21847,7 @@
     "postSort": {
       "description": "/** @deprecated v27.2 Use `postSortRows` instead */",
       "type": {
-        "arguments": { "nodes": "RowNode<TData>[]" },
+        "arguments": { "nodes": "IRowNode<TData>[]" },
         "returnType": "void",
         "optional": true
       }
@@ -21879,7 +21887,7 @@
     "isFullWidthCell": {
       "description": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -24309,7 +24317,7 @@
     "doesExternalFilterPass": {
       "description": "/** Should return `true` if external filter passes, otherwise `false`. */",
       "type": {
-        "arguments": { "node": "RowNode<TData>" },
+        "arguments": { "node": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -24393,7 +24401,7 @@
     "groupRowAggNodes": {
       "description": "/** @deprecated v27.2 - Use `getGroupRowAgg` instead. */",
       "type": {
-        "arguments": { "nodes": "RowNode[]" },
+        "arguments": { "nodes": "IRowNode[]" },
         "returnType": "any",
         "optional": true
       }
@@ -24425,7 +24433,7 @@
     "defaultGroupOrderComparator": {
       "description": "/** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */",
       "type": {
-        "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
+        "arguments": { "nodeA": "IRowNode<TData>", "nodeB": "IRowNode<TData>" },
         "returnType": "number",
         "optional": true
       }
@@ -24513,7 +24521,7 @@
     "getBusinessKeyForNode": {
       "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n     * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.\n     */",
       "type": {
-        "arguments": { "node": "RowNode<TData>" },
+        "arguments": { "node": "IRowNode<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -24557,7 +24565,7 @@
     "postSort": {
       "description": "/** @deprecated v27.2 Use `postSortRows` instead */",
       "type": {
-        "arguments": { "nodes": "RowNode<TData>[]" },
+        "arguments": { "nodes": "IRowNode<TData>[]" },
         "returnType": "void",
         "optional": true
       }
@@ -24597,7 +24605,7 @@
     "isFullWidthCell": {
       "description": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -27033,7 +27041,7 @@
     "doesExternalFilterPass": {
       "description": "/** Should return `true` if external filter passes, otherwise `false`. */",
       "type": {
-        "arguments": { "node": "RowNode<TData>" },
+        "arguments": { "node": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -27117,7 +27125,7 @@
     "groupRowAggNodes": {
       "description": "/** @deprecated v27.2 - Use `getGroupRowAgg` instead. */",
       "type": {
-        "arguments": { "nodes": "RowNode[]" },
+        "arguments": { "nodes": "IRowNode[]" },
         "returnType": "any",
         "optional": true
       }
@@ -27149,7 +27157,7 @@
     "defaultGroupOrderComparator": {
       "description": "/** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */",
       "type": {
-        "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
+        "arguments": { "nodeA": "IRowNode<TData>", "nodeB": "IRowNode<TData>" },
         "returnType": "number",
         "optional": true
       }
@@ -27237,7 +27245,7 @@
     "getBusinessKeyForNode": {
       "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n     * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.\n     */",
       "type": {
-        "arguments": { "node": "RowNode<TData>" },
+        "arguments": { "node": "IRowNode<TData>" },
         "returnType": "string",
         "optional": true
       }
@@ -27281,7 +27289,7 @@
     "postSort": {
       "description": "/** @deprecated v27.2 Use `postSortRows` instead */",
       "type": {
-        "arguments": { "nodes": "RowNode<TData>[]" },
+        "arguments": { "nodes": "IRowNode<TData>[]" },
         "returnType": "void",
         "optional": true
       }
@@ -27321,7 +27329,7 @@
     "isFullWidthCell": {
       "description": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "type": {
-        "arguments": { "rowNode": "RowNode<TData>" },
+        "arguments": { "rowNode": "IRowNode<TData>" },
         "returnType": "boolean",
         "optional": true
       }

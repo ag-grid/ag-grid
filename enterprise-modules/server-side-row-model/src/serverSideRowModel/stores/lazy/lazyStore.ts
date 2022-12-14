@@ -20,7 +20,8 @@ import {
     Column,
     ColumnModel,
     IsApplyServerSideTransactionParams,
-    SelectionChangedEvent
+    SelectionChangedEvent,
+    IRowNode
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
@@ -283,7 +284,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param displayRowIndex the displayed index within the grid to search for
      * @returns the row node if the display index falls within the store, if it didn't exist this will create a new stub to return
      */
-    getRowUsingDisplayIndex(displayRowIndex: number): RowNode<any> | undefined {
+    getRowUsingDisplayIndex(displayRowIndex: number): IRowNode<any> | undefined {
         return this.cache.getRowByDisplayIndex(displayRowIndex);
     }
 

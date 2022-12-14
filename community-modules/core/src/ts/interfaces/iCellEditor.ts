@@ -1,8 +1,8 @@
 import { ColDef } from "../entities/colDef";
 import { Column } from "../entities/column";
-import { RowNode } from "../entities/rowNode";
 import { AgGridCommon } from "./iCommon";
 import { IPopupComponent } from "./iPopupComponent";
+import { IRowNode } from "./iRowNode";
 
 export interface ICellEditor {
     /**
@@ -68,7 +68,7 @@ export interface ICellEditorParams<TData = any, TValue = any> extends AgGridComm
     /** Column definition */
     colDef: ColDef<TData>;
     /** Row node for the cell */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
     /** Row data */
     data: TData;
     /** Editing row index */

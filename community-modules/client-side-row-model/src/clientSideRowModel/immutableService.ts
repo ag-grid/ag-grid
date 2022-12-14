@@ -46,7 +46,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
         // to the data change event on the row node and refreshed itself.
         if (nodeTransaction) {
-            this.rowRenderer.refreshFullWidthRows(nodeTransaction.update);
+            this.rowRenderer.refreshFullWidthRows(nodeTransaction.update as RowNode[]);
         }
     }
 

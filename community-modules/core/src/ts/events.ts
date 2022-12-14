@@ -1,4 +1,3 @@
-import { RowNode } from './entities/rowNode';
 import { Column, ColumnPinnedType } from './entities/column';
 import { ColDef } from './entities/colDef';
 import { ProvidedColumnGroup } from './entities/providedColumnGroup';
@@ -10,7 +9,7 @@ import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction"
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
 import { AgGridCommon } from './interfaces/iCommon';
-import { RowPinnedType } from './interfaces/iRowNode';
+import { RowPinnedType, IRowNode } from './interfaces/iRowNode';
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent<TData = any> extends AgGridEvent<TData> {
@@ -171,9 +170,9 @@ export interface RowDragEvent<TData = any> extends AgGridEvent<TData> {
     /** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */
     type: string;
     /** The row node getting dragged. Also the node that started the drag when multi-row dragging. */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
     /** The list of nodes being dragged. */
-    nodes: RowNode<TData>[];
+    nodes: IRowNode<TData>[];
     /** The underlying mouse move event associated with the drag. */
     event: MouseEvent;
     /** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */
@@ -181,7 +180,7 @@ export interface RowDragEvent<TData = any> extends AgGridEvent<TData> {
     /** The row index the mouse is dragging over or -1 if over no row. */
     overIndex: number;
     /** The row node the mouse is dragging over or undefined if over no row. */
-    overNode?: RowNode<TData>;
+    overNode?: IRowNode<TData>;
     /** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.
      * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.
      * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.
@@ -279,7 +278,7 @@ export interface ColumnGroupOpenedEvent<TData = any> extends AgGridEvent<TData> 
 }
 
 export interface ItemsAddedEvent<TData = any> extends AgGridEvent<TData> {
-    items: RowNode<TData>[];
+    items: IRowNode<TData>[];
 }
 
 export type ScrollDirection = 'horizontal' | 'vertical';
@@ -405,7 +404,7 @@ export interface ColumnPinnedEvent<TData = any> extends ColumnEvent<TData> {
 /**------------*/
 interface BaseRowEvent<TData> extends AgGridEvent<TData> {
     /** The row node. */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
     /** The visible row index for the row */
     rowIndex: number | null;
     /** Either 'top', 'bottom' or null / undefined (if not set) */

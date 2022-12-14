@@ -103,6 +103,9 @@ interface BaseRowNode<TData = any> {
 
     /** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */
     stub: boolean;
+    /** Used by server side row model, true if this row node failed a load */
+    failedLoad: boolean;
+
     /** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */
     rowIndex: number | null;
 

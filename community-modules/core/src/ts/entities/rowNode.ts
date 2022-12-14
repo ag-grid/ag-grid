@@ -14,7 +14,7 @@ import { Column } from "./column";
 import { IsFullWidthRowParams } from "../interfaces/iCallbackParams";
 import { CellChangedEvent, DataChangedEvent, IRowNode, RowHighlightPosition, RowNodeEvent, RowNodeEventType, RowPinnedType, SetSelectedParams } from "../interfaces/iRowNode";
 
-export class RowNode<TData = any> implements IEventEmitter, IRowNode {
+export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
     public static ID_PREFIX_TOP_PINNED = 't-';

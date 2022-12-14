@@ -9,7 +9,7 @@ import { Column } from "./column";
 import { ColumnGroup } from "./columnGroup";
 import { RowClassParams } from "./gridOptions";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
-import { RowNode } from "./rowNode";
+import { IRowNode } from "../interfaces/iRowNode";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any> {
@@ -82,7 +82,7 @@ export interface IAggFuncParams<TData = any, TValue = any> extends AgGridCommon<
     /** ColDef of the aggregation column */
     colDef: ColDef<TData>;
     /** The parent RowNode, where the aggregation result will be shown */
-    rowNode: RowNode<TData>;
+    rowNode: IRowNode<TData>;
     /** data (if any) of the parent RowNode */
     data: TData;
 }
@@ -420,7 +420,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
      *  - `> 0` Sort valueA after valueB 
      *  - `< 0` Sort valueA before valueB
      */
-    comparator?: (valueA: any, valueB: any, nodeA: RowNode<TData>, nodeB: RowNode<TData>, isDescending: boolean) => number;
+    comparator?: (valueA: any, valueB: any, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number;
     /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false` */
     unSortIcon?: boolean;
 
@@ -459,7 +459,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
 }
 export interface ColumnFunctionCallbackParams<TData = any> extends AgGridCommon<TData> {
     /** Row node for the given row */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
     /** Data associated with the node. Will be `undefined` for group rows. */
     data: TData | undefined;
     /** Column for this callback */
@@ -480,7 +480,7 @@ export interface DndSourceCallbackParams<TData = any> extends ColumnFunctionCall
 
 export interface DndSourceOnRowDragParams<TData = any> extends AgGridCommon<TData> {
     /** Row node for the given row */
-    rowNode: RowNode<TData>;
+    rowNode: IRowNode<TData>;
     /** The DOM event that represents a drag and drop interaction */
     dragEvent: DragEvent;
 }
@@ -525,7 +525,7 @@ export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgG
     /** Value for the cell. */
     value: TValue;
     /** Row node for the given row */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
     /** Row data associated with the node. */
     data: TData;
     /** Column for this callback */
@@ -554,7 +554,7 @@ export interface ColumnsMenuParams {
 
 export interface BaseColDefParams<TData = any> extends AgGridCommon<TData> {
     /** Row node for the given row */
-    node: RowNode<TData> | null;
+    node: IRowNode<TData> | null;
     /** Data associated with the node */
     data: TData;
     /** Column for this callback */
@@ -565,7 +565,7 @@ export interface BaseColDefParams<TData = any> extends AgGridCommon<TData> {
 
 export interface BaseColDefOptionalDataParams<TData = any> extends AgGridCommon<TData> {
     /** Row node for the given row */
-    node: RowNode<TData> | null;
+    node: IRowNode<TData> | null;
     /** Data associated with the node */
     data: TData | undefined;
     /** Column for this callback */

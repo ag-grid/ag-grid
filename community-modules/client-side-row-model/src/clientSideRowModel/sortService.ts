@@ -12,7 +12,8 @@ import {
     BeanStub,
     WithoutGridCommon,
     PostSortRowsParams,
-    RowNodeTransaction
+    RowNodeTransaction,
+    IRowNode
 } from "@ag-grid-community/core";
 
 
@@ -111,7 +112,7 @@ export class SortService extends BeanStub {
     private calculateDirtyNodes(rowNodeTransactions?: RowNodeTransaction[] | null): { [nodeId: string]: true } {
         const dirtyNodes: { [nodeId: string]: true } = {};
 
-        const addNodesFunc = (rowNodes: RowNode[]) => {
+        const addNodesFunc = (rowNodes: IRowNode[]) => {
             if (rowNodes) {
                 rowNodes.forEach(rowNode => dirtyNodes[rowNode.id!] = true);
             }

@@ -2,7 +2,6 @@ import { ExpressionService } from "./expressionService";
 import { ColumnModel } from "../columns/columnModel";
 import { ValueGetterParams, KeyCreatorParams, ValueSetterParams } from "../entities/colDef";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { CellValueChangedEvent, Events } from "../events";
 import { ValueCache } from "./valueCache";
@@ -10,6 +9,8 @@ import { BeanStub } from "../context/beanStub";
 import { getValueUsingField } from "../utils/object";
 import { missing, exists } from "../utils/generic";
 import { doOnce } from "../utils/function";
+import { IRowNode } from "../interfaces/iRowNode";
+import { RowNode } from "../entities/rowNode";
 
 @Bean('valueService')
 export class ValueService extends BeanStub {
@@ -37,7 +38,7 @@ export class ValueService extends BeanStub {
     }
 
     public getValue(column: Column,
-        rowNode?: RowNode | null,
+        rowNode?: IRowNode | null,
         forFilter = false,
         ignoreAggData = false): any {
 
@@ -97,7 +98,7 @@ export class ValueService extends BeanStub {
         return result;
     }
 
-    private getOpenedGroup(rowNode: RowNode, column: Column): any {
+    private getOpenedGroup(rowNode: IRowNode, column: Column): any {
 
         if (!this.gridOptionsService.is('showOpenedGroup')) { return; }
 
@@ -126,7 +127,7 @@ export class ValueService extends BeanStub {
      * @param eventSource The event source
      * @returns `True` if the value has been updated, otherwise`False`.
      */
-    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, eventSource?: string): boolean {
+    public setValue(rowNode: IRowNode, colKey: string | Column, newValue: any, eventSource?: string): boolean {
         const column = this.columnModel.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
@@ -260,7 +261,7 @@ export class ValueService extends BeanStub {
         return !valuesAreSame;
     }
 
-    private executeFilterValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
+    private executeFilterValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
         const params: ValueGetterParams = {
             data: data,
             node: rowNode,
@@ -275,12 +276,12 @@ export class ValueService extends BeanStub {
         return this.expressionService.evaluate(valueGetter, params);
     }
 
-    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
+    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
 
         const colId = column.getId();
 
         // if inside the same turn, just return back the value we got last time
-        const valueFromCache = this.valueCache.getValue(rowNode, colId);
+        const valueFromCache = this.valueCache.getValue(rowNode as RowNode, colId);
 
         if (valueFromCache !== undefined) {
             return valueFromCache;
@@ -300,12 +301,12 @@ export class ValueService extends BeanStub {
         const result = this.expressionService.evaluate(valueGetter, params);
 
         // if a turn is active, store the value in case the grid asks for it again
-        this.valueCache.setValue(rowNode, colId, result);
+        this.valueCache.setValue(rowNode as RowNode, colId, result);
 
         return result;
     }
 
-    private getValueCallback(node: RowNode, field: string | Column): any {
+    private getValueCallback(node: IRowNode, field: string | Column): any {
         const otherColumn = this.columnModel.getPrimaryColumn(field);
 
         if (otherColumn) {
@@ -316,7 +317,7 @@ export class ValueService extends BeanStub {
     }
 
     // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
-    public getKeyForNode(col: Column, rowNode: RowNode): any {
+    public getKeyForNode(col: Column, rowNode: IRowNode): any {
         const value = this.getValue(col, rowNode);
         const keyCreator = col.getColDef().keyCreator;
 

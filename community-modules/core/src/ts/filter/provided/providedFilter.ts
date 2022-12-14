@@ -10,7 +10,7 @@ import { IFilterLocaleText, IFilterTitleLocaleText, DEFAULT_FILTER_LOCALE_TEXT }
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
-import { RowNode } from '../../entities/rowNode';
+import { IRowNode } from '../../interfaces/iRowNode';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -405,7 +405,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
     }
 
-    protected getCellValue(rowNode: RowNode): V {
+    protected getCellValue(rowNode: IRowNode): V {
         const { api, colDef, column, columnApi, context } = this.providedFilterParams;
         return this.providedFilterParams.valueGetter({
             api,
