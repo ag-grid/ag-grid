@@ -4,29 +4,29 @@ import { TimeScale } from './timeScale';
 describe('TimeScale', () => {
     it('should create nice domain', () => {
         const scale = new TimeScale();
-        scale.domain = [new Date('2022-02-13'), new Date('2022-11-30')];
+        scale.domain = [new Date(new Date(2022, 1, 13)), new Date(new Date(2022, 10, 30))];
         scale.nice = true;
         scale.update();
-        expect(scale.niceDomain).toEqual([new Date('2022-02-01'), new Date('2022-12-01')]);
+        expect(scale.niceDomain).toEqual([new Date(2022, 1, 1), new Date(2022, 11, 1)]);
     });
 
     it('should create nice ticks', () => {
         const scale = new TimeScale();
-        scale.domain = [new Date('2022-02-13'), new Date('2022-11-30')];
+        scale.domain = [new Date(2022, 1, 13), new Date(2022, 10, 30)];
         scale.nice = true;
         scale.tickCount = 10;
         expect(scale.ticks()).toEqual([
-            new Date('2022-02-01'),
-            new Date('2022-03-01'),
-            new Date('2022-04-01'),
-            new Date('2022-05-01'),
-            new Date('2022-06-01'),
-            new Date('2022-07-01'),
-            new Date('2022-08-01'),
-            new Date('2022-09-01'),
-            new Date('2022-10-01'),
-            new Date('2022-11-01'),
-            new Date('2022-12-01'),
+            new Date(2022, 1, 1),
+            new Date(2022, 2, 1),
+            new Date(2022, 3, 1),
+            new Date(2022, 4, 1),
+            new Date(2022, 5, 1),
+            new Date(2022, 6, 1),
+            new Date(2022, 7, 1),
+            new Date(2022, 8, 1),
+            new Date(2022, 9, 1),
+            new Date(2022, 10, 1),
+            new Date(2022, 11, 1),
         ]);
     });
 
