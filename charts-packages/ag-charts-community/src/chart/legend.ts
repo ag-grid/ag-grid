@@ -420,6 +420,16 @@ export class Legend {
         width = width - (verticalOrientation ? 0 : paginationBBox.width);
         height = height - (verticalOrientation ? paginationBBox.height : 0);
 
+        const size = this.size;
+        const oldSize = this.oldSize;
+        size[0] = width;
+        size[1] = height;
+
+        if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
+            oldSize[0] = size[0];
+            oldSize[1] = size[1];
+        }
+
         this.pages =
             gridLayout({
                 orientation: this.orientation,
@@ -434,14 +444,23 @@ export class Legend {
         this.pagination.visible = totalPages > 1;
         this.pagination.totalPages = totalPages;
 
+        const pageNumber = this.pagination.getCurrentPage();
+        const page = this.pages[pageNumber];
+
+        if (totalPages < 1 || !page) {
+            this.visible = false;
+            return;
+        }
+
+        this.visible = true;
+
+        // Position legend items
         // Top-left corner of the first legend item.
         const startX = width / 2;
         const startY = height / 2;
-        const pageNumber = this.pagination.getCurrentPage();
-        // Position legend items
         this.updatePositions(startX, startY, pageNumber);
 
-        const { pageHeight, pageWidth } = this.pages[pageNumber];
+        const { pageHeight = 0, pageWidth = 0 } = page;
         this.pagination.translationX = verticalOrientation ? startX : startX + pageWidth;
         this.pagination.translationY = verticalOrientation
             ? startY + pageHeight
@@ -449,16 +468,6 @@ export class Legend {
 
         // Update legend item properties that don't affect the layout.
         this.update();
-
-        const size = this.size;
-        const oldSize = this.oldSize;
-        size[0] = width;
-        size[1] = height;
-
-        if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
-            oldSize[0] = size[0];
-            oldSize[1] = size[1];
-        }
     }
 
     updatePositions(startX: number, startY: number, pageNumber: number = 0) {
@@ -468,11 +477,11 @@ export class Legend {
             pages,
         } = this;
 
-        const { columns, startIndex: visibleStart, endIndex: visibleEnd } = pages[pageNumber];
-
-        if (!(pages && columns)) {
+        if (pages.length < 1 || !pages[pageNumber]) {
             return;
         }
+
+        const { columns, startIndex: visibleStart, endIndex: visibleEnd } = pages[pageNumber];
 
         // Position legend items using the layout computed above.
         let x = 0;

@@ -48,9 +48,9 @@ export function gridLayout({
         // If calculatePage() fails on the first row, we could use the number of items that fit
         // as a good guess for the next iteration.
         // separate function for guess calculation (loop through bboxes, use dimension functions)
-        const startingGuess = 10;
-        const minGuess = 1;
         const unprocessedBBoxes = bboxes.slice(processedBBoxCount);
+        const startingGuess = estimateStartingGuess(unprocessedBBoxes, primary);
+        const minGuess = 1;
 
         for (let guess = startingGuess; guess >= minGuess; guess--) {
             const pageIndices = calculatePage(unprocessedBBoxes, processedBBoxCount, guess, primary, secondary);
@@ -67,7 +67,12 @@ export function gridLayout({
 
             if (typeof pageIndices === 'number') {
                 // calculatePage() suggested a better guess, use that.
-                guess = pageIndices < guess ? pageIndices : guess;
+                if (pageIndices === minGuess) {
+                    processedBBoxCount = bboxes.length;
+                    break;
+                }
+
+                guess = pageIndices < guess && pageIndices > minGuess ? pageIndices : guess;
                 continue;
             }
 
@@ -75,6 +80,10 @@ export function gridLayout({
             rawPages.push(pageIndices);
             break;
         }
+    }
+
+    if (rawPages.length === 0) {
+        return;
     }
 
     const pages = rawPages.map((indices): Page => {
@@ -137,6 +146,19 @@ interface DimensionProps {
     padding: number;
 }
 
+function estimateStartingGuess(bboxes: BBox[], primary: DimensionProps): number {
+    let primarySum = 0;
+    for (let bboxIndex = 0; bboxIndex < bboxes.length; bboxIndex++) {
+        primarySum += primary.fn(bboxes[bboxIndex]);
+
+        if (primarySum > primary.max) {
+            return bboxIndex;
+        }
+    }
+
+    return bboxes.length;
+}
+
 function calculatePage(
     bboxes: BBox[],
     indexOffset: number,
@@ -152,7 +174,8 @@ function calculatePage(
     let currentPrimaryIndices: number[] = [];
     let maxPrimaryValues: number[] = [];
     for (let bboxIndex = 0; bboxIndex < bboxes.length; bboxIndex++) {
-        if (bboxIndex % primaryCount === 0) {
+        const primaryValueIdx = (bboxIndex + 1) % primaryCount;
+        if (primaryValueIdx === 0) {
             sumSecondary += currentMaxSecondary;
             currentMaxSecondary = 0;
 
@@ -162,7 +185,6 @@ function calculatePage(
             currentPrimaryIndices = [];
         }
 
-        const primaryValueIdx = bboxIndex % primaryCount;
         const primaryValue = primary.fn(bboxes[bboxIndex]) + primary.padding;
         maxPrimaryValues[primaryValueIdx] = Math.max(maxPrimaryValues[primaryValueIdx] ?? 0, primaryValue);
         currentMaxSecondary = Math.max(currentMaxSecondary, secondary.fn(bboxes[bboxIndex]) + secondary.padding);

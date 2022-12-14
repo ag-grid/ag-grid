@@ -6,7 +6,7 @@ import { BBox } from '../scene/bbox';
 import { Navigator } from './navigator/navigator';
 import { AgCartesianAxisPosition } from './agChartOptions';
 
-type VisibilityMap = { crossLines: boolean; series: boolean; legend: boolean };
+type VisibilityMap = { crossLines: boolean; series: boolean };
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
@@ -84,9 +84,6 @@ export class CartesianChart extends Chart {
         }
 
         this.seriesRoot.visible = visibility.series;
-        if (!visibility.legend) {
-            legend.visible = false;
-        }
         navigator.visible = visibility.series;
 
         this.seriesRect = seriesRect;
@@ -111,7 +108,6 @@ export class CartesianChart extends Chart {
     private _lastVisibility: VisibilityMap = {
         crossLines: true,
         series: true,
-        legend: true,
     };
     updateAxes(inputShrinkRect: BBox) {
         // Start with a good approximation from the last update - this should mean that in many resize
@@ -139,7 +135,6 @@ export class CartesianChart extends Chart {
             return (
                 visibility.crossLines === otherVisibility.crossLines &&
                 visibility.series === otherVisibility.series &&
-                visibility.legend === otherVisibility.legend &&
                 // Check for existing axis positions and equality.
                 Object.entries(axisWidths).every(([p, w]) => {
                     const otherW = (otherAxisWidths as any)[p];
@@ -208,7 +203,6 @@ export class CartesianChart extends Chart {
         const visibility: Partial<VisibilityMap> = {
             series: true,
             crossLines: true,
-            legend: true,
         };
 
         let clipSeries = false;
@@ -217,7 +211,7 @@ export class CartesianChart extends Chart {
         const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(lastPassSeriesRect, axisWidths) : {};
         const axisBound = this.buildAxisBound(bounds, axisWidths, crossLinePadding, visibility);
 
-        const seriesRect = this.buildSeriesRect(axisBound, axisWidths, visibility);
+        const seriesRect = this.buildSeriesRect(axisBound, axisWidths);
 
         // Set the number of ticks for continuous axes based on the available range
         // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
@@ -303,11 +297,7 @@ export class CartesianChart extends Chart {
         return result;
     }
 
-    private buildSeriesRect(
-        axisBound: BBox,
-        axisWidths: Partial<Record<AgCartesianAxisPosition, number>>,
-        visibility: Partial<VisibilityMap>
-    ) {
+    private buildSeriesRect(axisBound: BBox, axisWidths: Partial<Record<AgCartesianAxisPosition, number>>) {
         let result = axisBound.clone();
         const { top, bottom, left, right } = axisWidths;
         result.x += left ?? 0;
@@ -315,12 +305,9 @@ export class CartesianChart extends Chart {
         result.width -= (left ?? 0) + (right ?? 0);
         result.height -= (top ?? 0) + (bottom ?? 0);
 
-        if (result.width < 0 || result.height < 0) {
-            // Width and height should not be negative.
-            visibility.legend = false;
-            result.width = Math.max(0, result.width);
-            result.height = Math.max(0, result.height);
-        }
+        // Width and height should not be negative.
+        result.width = Math.max(0, result.width);
+        result.height = Math.max(0, result.height);
 
         return result;
     }

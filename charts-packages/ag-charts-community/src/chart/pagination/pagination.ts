@@ -126,8 +126,8 @@ export class Pagination {
         if (this._totalPages !== value) {
             this._totalPages = value;
             this.setCurrentPage(0);
+            this.update();
         }
-        this.onPaginationChanged();
     }
     get totalPages() {
         return this._totalPages;
@@ -211,6 +211,12 @@ export class Pagination {
     }
     get previousButton(): Marker {
         return this._previousButton;
+    }
+
+    private update() {
+        this.updateLabel();
+        this.updateNextButtonPosition();
+        this.enableOrDisableButtons();
     }
 
     private updatePositions() {
@@ -304,9 +310,7 @@ export class Pagination {
     }
 
     private onPaginationChanged() {
-        this.updateLabel();
-        this.updateNextButtonPosition();
-        this.enableOrDisableButtons();
+        this.update();
         this.updateCallback(this.currentPage);
     }
 
@@ -328,7 +332,6 @@ export class Pagination {
         }
 
         this.currentPage = page;
-        this.onPaginationChanged();
     }
 
     onMarkerShapeChange() {

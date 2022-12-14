@@ -2953,7 +2953,7 @@
   },
   "VisibilityMap": {
     "meta": { "isTypeAlias": true },
-    "type": "{ crossLines: boolean; series: boolean; legend: boolean; }"
+    "type": "{ crossLines: boolean; series: boolean; }"
   },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
