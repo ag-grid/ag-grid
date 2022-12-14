@@ -1,8 +1,8 @@
-export default function (a: number, b: number, count: number): NumericTicks {
-    const step = tickStep(a, b, count);
-    a = Math.ceil(a / step) * step;
-    b = Math.floor(b / step) * step;
-    return range(a, b, step);
+export default function (start: number, stop: number, count: number): NumericTicks {
+    const step = tickStep(start, stop, count);
+    start = Math.ceil(start / step) * step;
+    stop = Math.floor(stop / step) * step;
+    return range(start, stop, step);
 }
 
 // Make error thresholds 2/5 between the intervals

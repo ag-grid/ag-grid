@@ -1,5 +1,5 @@
 import { ContinuousScale } from './continuousScale';
-import ticks from '../util/ticks';
+import generateTicks from '../util/ticks';
 import { format } from '../util/numberFormat';
 import { NUMBER, Validate } from '../util/validation';
 
@@ -90,51 +90,34 @@ export class LogScale extends ContinuousScale {
             return [];
         }
         this.refresh();
-        const n = this.tickCount ?? 10;
+        const count = this.tickCount ?? 10;
         const base = this.base;
         const [d0, d1] = this.getDomain();
 
         let p0 = this.log(d0);
         let p1 = this.log(d1);
-        let z = [];
+        const isBaseInteger = base % 1 === 0;
+        const isDiffLarge = p1 - p0 >= count;
 
-        // if `base` is an integer and delta in order of magnitudes is less than n
-        if (!(base % 1) && p1 - p0 < n) {
-            // For example, if n == 10, base == 10 and domain == [10^2, 10^6]
-            // then p1 - p0 < n == true.
-            p0 = Math.round(p0) - 1;
-            p1 = Math.round(p1) + 1;
-            if (d0 > 0) {
-                for (; p0 < p1; ++p0) {
-                    for (let k = 1, p = this.pow(p0); k < base; ++k) {
-                        let t = p * k;
-                        // The `t` checks are needed because we expanded the [p0, p1] by 1 in each direction.
-                        if (t < d0) continue;
-                        if (t > d1) break;
-                        z.push(t);
-                    }
-                }
-            } else {
-                for (; p0 < p1; ++p0) {
-                    for (let k = base - 1, p = this.pow(p0); k >= 1; --k) {
-                        let t = p * k;
-                        if (t < d0) continue;
-                        if (t > d1) break;
-                        z.push(t);
-                    }
-                }
-            }
-            if (z.length * 2 < n) {
-                z = ticks(d0, d1, n);
-            }
-        } else {
-            // For example, if n == 4, base == 10 and domain == [10^2, 10^6]
-            // then p1 - p0 < n == false.
-            // `ticks` return [2, 3, 4, 5, 6], then mapped to [10^2, 10^3, 10^4, 10^5, 10^6].
-            z = ticks(p0, p1, Math.min(p1 - p0, n)).map(this.pow);
+        if (!isBaseInteger || isDiffLarge) {
+            // Returns [10^1, 10^2, 10^3, 10^4, ...]
+            return generateTicks(p0, p1, Math.min(p1 - p0, count)).map((x) => this.pow(x));
         }
 
-        return z;
+        const ticks: number[] = [];
+        const isPositive = d0 > 0;
+        p0 = Math.floor(p0) - 1;
+        p1 = Math.round(p1) + 1;
+        for (let p = p0; p <= p1; p++) {
+            for (let k = 1; k < base; k++) {
+                const q = isPositive ? k : base - k + 1;
+                const t = this.pow(p) * q;
+                if (t >= d0 && t <= d1) {
+                    ticks.push(t);
+                }
+            }
+        }
+        return ticks;
     }
 
     tickFormat({
