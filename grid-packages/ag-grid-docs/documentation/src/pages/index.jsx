@@ -4,6 +4,7 @@ import styles from './components/assets/homepage/homepage.module.scss';
 import Footer from '../components/footer/Footer';
 import Seo from "./components/SEO";
 import {agGridVersion} from "../utils/consts";
+import { HomepageQuotes } from './components/quotes/HomepageQuotes';
 
 const IS_SSR = typeof window === "undefined"
 
@@ -124,6 +125,8 @@ const Default = () => {
                         </div>
                     </section>
                 </div>
+
+                <HomepageQuotes />
 
                 <div className={styles['stage-scenarios']}>
                     <h2 className={styles['heading-scenarios']}>Integrated Charting</h2>

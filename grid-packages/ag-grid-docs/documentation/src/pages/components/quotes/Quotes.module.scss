@@ -1,0 +1,89 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  gap: 45px;
+}
+
+li {
+  flex: 1;
+}
+
+blockquote {
+  position: relative;
+  background: #bad9f0;
+  color: #212529;
+  padding: 20px;
+
+  p {
+    margin: 0;
+
+    &:before {
+      content: open-quote;
+      position: absolute;
+      top: 20px;
+      left: 12px;
+    }
+  
+    &:after {
+      content: close-quote;
+    }
+  }
+}
+
+figcaption {
+  display: grid;
+  grid-template-columns: 80px auto;
+  column-gap: 9px;
+  grid-template-rows: auto;
+  grid-template-areas: 
+    "avatar name"
+    "avatar creatorOf";
+}
+
+.avatar {
+  grid-area: avatar;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  background-color: #cccccc;
+}
+
+.name {
+  grid-area: name;
+  align-self: end;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 26px;
+  color: #212529;
+}
+
+.creatorOfContainer {
+  grid-area: creatorOf;
+  display: flex;
+  align-items: center;
+  align-self: start;
+  gap: 2px;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.creator {
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 12px;
+  color: #706D6E;
+}
+
+.creatorOf {
+  color: #212529;
+}
+
+.creatorOfIcon {
+  width: 22px;
+  height: 22px;
+}
