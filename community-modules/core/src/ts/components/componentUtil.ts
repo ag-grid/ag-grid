@@ -142,7 +142,7 @@ export class ComponentUtil {
 
 
     public static processOnChange(changes: any, api: GridApi): void {
-        if (!changes) {
+        if (!changes || Object.keys(changes).length === 0) {
             return;
         }
 
