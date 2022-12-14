@@ -76,17 +76,6 @@
 );
 
 //
-// Border style and size validation
-//
-
-@include test-suite(
-    --ag-borders-row,
-    $ok: (solid 1px, 1px solid, dashed 3px, dotted 0, var(--anything)),
-    $error: ("solid" 1px, solid, 1px, solid 2),
-    $error-message: "CSS border-style and size"
-);
-
-//
 // Border style and color validation
 //
 

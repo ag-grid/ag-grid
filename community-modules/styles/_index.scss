@@ -407,8 +407,11 @@ $-variable-param-types: (
     --ag-borders-critical: "border-style-and-size",
     --ag-borders-secondary: "border-style-and-size",
     --ag-secondary-border-color: "color",
-    --ag-borders-row: "border-style-and-size",
+
+    --ag-row-border-style: "border-style",
+    --ag-row-border-width: "border-size"
     --ag-row-border-color: "color",
+
     --ag-cell-horizontal-border: "border-style-and-color",
     --ag-borders-input: "border-style-and-size",
     --ag-input-border-color: "color",
