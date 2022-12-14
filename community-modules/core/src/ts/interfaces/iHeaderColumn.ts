@@ -1,6 +1,6 @@
-import { AbstractColDef } from "./colDef";
-import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { ColumnGroup } from "./columnGroup";
+import { AbstractColDef } from "../entities/colDef";
+import { IEventEmitter } from "./iEventEmitter";
+import { ColumnGroup } from "../entities/columnGroup";
 import { ColumnPinnedType } from "../entities/column";
 
 // Implemented by Column and ColumnGroup. Allows the groups to contain a list of this type for it's children.

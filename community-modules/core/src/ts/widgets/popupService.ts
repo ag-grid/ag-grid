@@ -13,7 +13,7 @@ import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 import { AgPromise } from "../utils";
 import { CtrlsService } from "../ctrlsService";
 import { setAriaLabel, setAriaRole } from "../utils/aria";
-import { PostProcessPopupParams } from "../entities/iCallbackParams";
+import { PostProcessPopupParams } from "../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 

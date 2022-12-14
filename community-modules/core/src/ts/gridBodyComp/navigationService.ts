@@ -20,7 +20,7 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/iCallbackParams";
+import { NavigateToNextCellParams, TabToNextCellParams } from "../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { Events } from "../eventKeys";
 import { FullWidthRowFocusedEvent } from "../events";

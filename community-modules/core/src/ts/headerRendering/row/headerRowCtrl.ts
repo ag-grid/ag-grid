@@ -3,7 +3,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired, PreDestroy } from "../../context/context";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { IHeaderColumn } from "../../entities/iHeaderColumn";
+import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { FocusService } from "../../focusService";
 import { isBrowserSafari } from "../../utils/browser";

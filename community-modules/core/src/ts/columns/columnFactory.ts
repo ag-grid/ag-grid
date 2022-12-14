@@ -2,7 +2,7 @@ import { Logger, LoggerFactory } from '../logger';
 import { ColumnUtils } from './columnUtils';
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnKeyCreator } from "./columnKeyCreator";
-import { IProvidedColumn } from "../entities/iProvidedColumn";
+import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { Column } from "../entities/column";
 import { Autowired, Bean, Qualifier } from "../context/context";

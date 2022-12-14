@@ -1,6 +1,6 @@
-import { IHeaderColumn } from "../entities/iHeaderColumn";
+import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColumnGroup } from "../entities/columnGroup";
-import { IProvidedColumn } from "../entities/iProvidedColumn";
+import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { Column } from "../entities/column";
 import { Bean } from "../context/context";

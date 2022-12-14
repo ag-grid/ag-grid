@@ -1,4 +1,4 @@
-import { IProvidedColumn } from "./iProvidedColumn";
+import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { ColGroupDef } from "./colDef";
 import { ColumnGroup } from "./columnGroup";
 import { Column } from "./column";
