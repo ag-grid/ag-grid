@@ -847,6 +847,11 @@
                     "enterprise": true
                   },
                   {
+                    "title": "Tree List",
+                    "url": "/filter-set-tree-list/",
+                    "enterprise": true
+                  },
+                  {
                     "title": "Mini Filter",
                     "url": "/filter-set-mini-filter/",
                     "enterprise": true

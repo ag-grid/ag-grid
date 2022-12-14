@@ -47,7 +47,7 @@ function treeListFormatter(pathKey: string | null, level: number): string {
     date.setMonth(Number(pathKey) -1);
     return date.toLocaleDateString(undefined, {month: 'long'});
   }
-  return pathKey ?? '';
+  return pathKey || '';
 }
 
 // setup the grid after the page has finished loading

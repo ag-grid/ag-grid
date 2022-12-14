@@ -31,12 +31,10 @@ import {
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
-import { SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import { SetFilterDisplayValue, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
-    public static readonly SELECT_ALL_VALUE = '__AG_SELECT_ALL__';
-
     @RefSelector('eMiniFilter') private readonly eMiniFilter: AgInputTextField;
     @RefSelector('eFilterLoading') private readonly eFilterLoading: HTMLElement;
     @RefSelector('eSetFilterList') private readonly eSetFilterList: HTMLElement;
@@ -360,6 +358,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const virtualList = this.virtualList = this.createBean(new VirtualList('filter', isTree ? 'tree' : 'listbox', filterListName));
         const eSetFilterList = this.getRefElement('eSetFilterList');
 
+        if (isTree) {
+            eSetFilterList.classList.add('ag-set-filter-tree-list');
+        }
+
         if (eSetFilterList) {
             eSetFilterList.appendChild(virtualList.getGui());
         }
@@ -397,82 +399,71 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.translateForSetFilter(key);
     }
 
-    private createSetListItem(item: SetFilterModelTreeItem | typeof SetFilter.SELECT_ALL_VALUE | string | null, isTree: boolean, focusWrapper: HTMLElement): Component {
+    private createSetListItem(item: SetFilterModelTreeItem | string | null, isTree: boolean, focusWrapper: HTMLElement): Component {
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        const params = this.setFilterParams;
-        const translate = (translateKey: any) => this.translateForSetFilter(translateKey);
-        const valueFormatter = this.valueFormatter;
         const groupsExist = this.valueModel.hasGroups();
-
-        let listItem: SetFilterListItem<V | string | null>;
-        let itemParams: SetFilterListItemParams<V | string | null>;
+        let value: V | string | (() => string) | null;
+        let isSelected: boolean | undefined;
+        let depth: number | undefined;
+        let isGroup: boolean | undefined;
+        let isExpanded: boolean | undefined;
+        let hasIndeterminateExpandState: boolean | undefined;
         let selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
         let expandedListener: ((e: SetFilterListItemExpandedChangedEvent) => void) | undefined;
 
-        if (item === SetFilter.SELECT_ALL_VALUE) {
-            // select all
-            itemParams = {
-                focusWrapper,
-                value: () => this.getSelectAllLabel(),
-                params,
-                translate,
-                valueFormatter,
-                isSelected: this.isSelectAllSelected(),
-                isTree,
-                depth: 0,
-                groupsExist,
-            }
-            selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onSelectAll(e.isSelected);
-        } else if (this.isSetFilterModelTreeItem(item) && item.children) {
-            // group
-            itemParams = {
-                focusWrapper,
-                value: this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey,
-                params,
-                translate,
-                valueFormatter,
-                isSelected: this.areAllChildrenSelected(item),
-                isTree,
-                depth: item.depth,
-                groupsExist,
-                isGroup: true,
-                isExpanded: item.expanded
-            }
-            selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onGroupItemSelected(item, e.isSelected);
-            expandedListener = (e: SetFilterListItemExpandedChangedEvent) => this.onExpandedChanged(item, e.isExpanded);
-        } else {
-            // leaf
-            let depth: number, isExpanded: boolean, value: V | string | null, key: string | null;
-            if (this.isSetFilterModelTreeItem(item)) {
-                depth = item.depth;
-                isExpanded = !!item.expanded;
-                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey,
-                key = item.key!;
+        if(this.isSetFilterModelTreeItem(item)) {
+            depth = item.depth;
+            isExpanded = item.expanded;
+            if (item.key === SetFilterDisplayValue.SELECT_ALL) {
+                // select all
+                value = () => this.getSelectAllLabel();
+                isSelected = this.isSelectAllSelected();
+                isGroup = groupsExist;
+                hasIndeterminateExpandState = true;
+                selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onSelectAll(e.isSelected);
+                expandedListener = (e: SetFilterListItemExpandedChangedEvent) => this.onExpandAll(item, e.isExpanded);
+            } else if (item.children) {
+                // group
+                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey;
+                isSelected = this.areAllChildrenSelected(item);
+                isGroup = true;
+                selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onGroupItemSelected(item, e.isSelected);
+                expandedListener = (e: SetFilterListItemExpandedChangedEvent) => this.onExpandedChanged(item, e.isExpanded);
             } else {
-                depth = 0;
-                isExpanded = false;
+                // leaf
+                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey;
+                isSelected = this.valueModel.isKeySelected(item.key!);
+                selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onItemSelected(item.key!, e.isSelected);
+            }
+        } else {
+            if (item === SetFilterDisplayValue.SELECT_ALL) {
+                value = () => this.getSelectAllLabel();
+                isSelected = this.isSelectAllSelected();
+                selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onSelectAll(e.isSelected);
+            } else {
                 value = this.valueModel.getValue(item);
-                key = item;
+                isSelected = this.valueModel.isKeySelected(item);
+                selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onItemSelected(item, e.isSelected);
             }
-
-            itemParams = {
-                focusWrapper,
-                value,
-                params,
-                translate,
-                valueFormatter,
-                isSelected: this.valueModel.isKeySelected(key),
-                isTree,
-                depth,
-                groupsExist,
-                isGroup: false,
-                isExpanded
-            }
-            selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onItemSelected(key, e.isSelected);
         }
-        listItem = this.createBean(new SetFilterListItem<V | string | null>(itemParams));
+
+        const itemParams: SetFilterListItemParams<V | string | null> = {
+            focusWrapper,
+            value,
+            params: this.setFilterParams,
+            translate: (translateKey: any) => this.translateForSetFilter(translateKey),
+            valueFormatter: this.valueFormatter,
+            isSelected,
+            isTree,
+            depth,
+            groupsExist,
+            isGroup,
+            isExpanded,
+            hasIndeterminateExpandState,
+        }
+        const listItem = this.createBean(new SetFilterListItem<V | string | null>(itemParams));
 
         listItem.addEventListener(SetFilterListItem.EVENT_SELECTION_CHANGED, selectedListener);
         if (expandedListener) {
@@ -852,9 +843,29 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
     }
 
+    private onExpandAll(item: SetFilterModelTreeItem, isExpanded: boolean): void {
+        const recursiveExpansion = (i: SetFilterModelTreeItem) => {
+            if (!i.filterPasses) {
+                return;
+            }
+            if (i.children) {
+                i.children.forEach(childItem => recursiveExpansion(childItem));
+                i.expanded = isExpanded;
+            }
+        };
+
+        recursiveExpansion(item);
+
+        this.refreshAfterExpansion();
+    }
+    
     private onExpandedChanged(item: SetFilterModelTreeItem, isExpanded: boolean): void {
         item.expanded = isExpanded;
 
+        this.refreshAfterExpansion();
+    }
+    
+    private refreshAfterExpansion(): void {
         const focusedRow = this.virtualList!.getLastFocusedRow();
 
         this.valueModel!.updateDisplayedValues(false, true);
@@ -940,6 +951,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private areAllChildrenSelected(item: SetFilterModelTreeItem): boolean | undefined {
         const recursiveChildSelectionCheck = (i: SetFilterModelTreeItem): boolean | undefined => {
+            if (!i.filterPasses) {
+                return true;
+            }
             if (i.children) {
                 let someTrue = false;
                 let someFalse = false;
@@ -1017,7 +1031,7 @@ class ModelWrapperWithSelectAll<V> implements VirtualListModel {
     }
 
     public getRow(index: number): string | null {
-        return index === 0 ? SetFilter.SELECT_ALL_VALUE as any : this.model.getDisplayedItem(index - 1);
+        return index === 0 ? this.model.getSelectAllItem() as any : this.model.getDisplayedItem(index - 1);
     }
 
     public isRowSelected(index: number): boolean | undefined {

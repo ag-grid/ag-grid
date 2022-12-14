@@ -120,6 +120,9 @@ groupExpanded: 'tree-open'
 setFilterGroupClosed: 'tree-closed',
 // set filter list group expanded (click to contract)
 setFilterGroupOpen: 'tree-open',
+// set filter list expand/collapse all button, shown when some children are expanded and
+//     others are collapsed
+setFilterGroupIndeterminate: 'tree-indeterminate',
 // context menu chart item
 chart: 'chart'
 // chart window title bar

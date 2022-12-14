@@ -8892,7 +8892,7 @@
       "comparator?": "/** Comparator for sorting. If not provided, the Column Definition comparator is used. If Column\n     * Definition comparator is also not provided, the default (grid provided) comparator is used.\n     */",
       "textFormatter?": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for\n     * instance to substitute accented characters.\n     */",
       "valueFormatter?": "/** If specified, this formats the value before it is displayed in the Filter List.\n     * If a Key Creator is provided (see `keyCreator`), this must also be provided,\n     * unless `convertValuesToStrings` is `true`\n     */",
-      "keyCreator?": "/** Function to return a string key for a value. This is required when the filter values are complex objects.\n     * If not provided, the Column Definition Key Creator is used.\n     */",
+      "keyCreator?": "/** Function to return a string key for a value. This is required when the filter values are complex objects,\n     * or when `treeList = true` and the column is a group column with Tree Data or Grouping enabled.\n     * If not provided, the Column Definition Key Creator is used.\n     */",
       "showTooltips?": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,\n     * untruncated value.\n     * \n     * Default: `false`\n     */",
       "caseSensitive?": "/** If `true`, enables case-sensitivity in the SetFilter Mini-Filter and Filter List.\n     * Default: `false`.\n     */",
       "excelMode?": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.\n     */",
@@ -11184,10 +11184,11 @@
   "ISetDisplayValueModel": {
     "meta": { "typeParams": ["V"] },
     "type": {
-      "updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>)": "void",
+      "updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>, fromMiniFilter?: boolean)": "void",
       "updateDisplayedValuesToMatchMiniFilter(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>, matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean, fromMiniFilter?: boolean)": "void",
       "getDisplayedValueCount()": "number",
       "getDisplayedItem(index: number)": "string | SetFilterModelTreeItem | null",
+      "getSelectAllItem()": "string | SetFilterModelTreeItem",
       "getDisplayedKeys()": "(string | null)[]",
       "forEachDisplayedKey(func: (key: string | null) => void)": "void",
       "someDisplayedKey(func: (key: string | null) => boolean)": "boolean",
@@ -11240,7 +11241,8 @@
       "depth?": "number",
       "groupsExist?": "boolean",
       "isGroup?": "boolean",
-      "isExpanded?": "boolean"
+      "isExpanded?": "boolean",
+      "hasIndeterminateExpandState?": "boolean"
     }
   },
   "SetFilterModelValuesType": {
