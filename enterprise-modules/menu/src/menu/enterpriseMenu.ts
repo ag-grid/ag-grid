@@ -28,7 +28,8 @@ import {
     AgMenuList,
     AgMenuItemComponent,
     MenuItemSelectedEvent,
-    HeaderNavigationService
+    HeaderNavigationService,
+    HeaderPosition
 
 } from '@ag-grid-community/core';
 
@@ -110,49 +111,12 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
     ): void {
-        const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
-        const eMenuGui = menu.getGui();
-        const currentHeaderPosition = this.focusService.getFocusedHeader();
-        const currentColumnIndex = this.columnModel.getAllDisplayedColumns().indexOf(column);
-
-        const anchorToElement = eventSource || this.ctrlsService.getGridBodyCtrl().getGui();
-
+        const { menu, eMenuGui, currentHeaderPosition, currentColumnIndex, anchorToElement } = this.getMenuParams(column, restrictToTabs, eventSource);
         const closedFuncs: ((e?: Event) => void)[] = [];
 
-        closedFuncs.push((e?: Event) => {
-            this.destroyBean(menu);
-            column.setMenuVisible(false, 'contextMenu');
-
-            const isKeyboardEvent = e instanceof KeyboardEvent;
-
-            if (isKeyboardEvent && eventSource) {
-
-                if (_.isVisible(eventSource)) {
-                    const focusableEl = this.focusService.findTabbableParent(eventSource);
-                    if (focusableEl) {
-                        if (column) {
-                            this.headerNavigationService.scrollToColumn(column);
-                        }
-                        focusableEl.focus();
-                    }
-                }
-                // if the focusEl is no longer in the DOM, we try to focus
-                // the header that is closest to the previous header position
-                else if (currentHeaderPosition && currentColumnIndex !== -1) {
-                    const allColumns = this.columnModel.getAllDisplayedColumns();
-                    const columnToFocus = allColumns[currentColumnIndex] || _.last(allColumns);
-
-                    if (columnToFocus) {
-                        this.focusService.focusHeaderPosition({
-                            headerPosition:{
-                                headerRowIndex: currentHeaderPosition.headerRowIndex,
-                                column: columnToFocus
-                            }
-                        });
-                    }
-                }
-            }
-        });
+        closedFuncs.push(
+            this.getClosedCallback(column, menu, currentHeaderPosition, currentColumnIndex, eventSource)
+        );
 
         const translate = this.localeService.getLocaleTextFunc();
 
@@ -166,29 +130,17 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 closedFuncs.forEach(f => f(e));
             },
             afterGuiAttached: params => menu.afterGuiAttached(Object.assign({}, { container: containerType }, params)),
-            positionCallback: () => positionCallback(menu),
+            // if defaultTab is not present, positionCallback will be called
+            // after `showTabBasedOnPreviousSelection` is called.
+            positionCallback: !!defaultTab ? () => positionCallback(menu) : undefined,
             anchorToElement,
             ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
         });
 
-        if (addPopupRes) {
-            // if user starts showing / hiding columns, or otherwise move the underlying column
-            // for this menu, we want to stop tracking the menu with the column position. otherwise
-            // the menu would move as the user is using the columns tab inside the menu.
-            const stopAnchoringPromise = addPopupRes.stopAnchoringPromise;
-
-            if (stopAnchoringPromise) {
-                stopAnchoringPromise.then((stopAnchoringFunc: Function) => {
-                    column.addEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
-                    column.addEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
-
-                    closedFuncs.push(() => {
-                        column.removeEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
-                        column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
-                    });
-                });
-            }
-        }
+        // if user starts showing / hiding columns, or otherwise move the underlying column
+        // for this menu, we want to stop tracking the menu with the column position. otherwise
+        // the menu would move as the user is using the columns tab inside the menu.
+        this.addStopAnchoring(addPopupRes?.stopAnchoringPromise, column, closedFuncs);
 
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
@@ -210,6 +162,80 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 this.activeMenu = null;
             }
         });
+    }
+
+    private getClosedCallback(
+        column: Column,
+        menu: EnterpriseMenu,
+        headerPosition: HeaderPosition | null,
+        columnIndex: number,
+        eventSource?: HTMLElement
+    ): (e?: Event) => void {
+        return (e?: Event) => {
+            this.destroyBean(menu);
+            column.setMenuVisible(false, 'contextMenu');
+
+            const isKeyboardEvent = e instanceof KeyboardEvent;
+            if (!isKeyboardEvent || !eventSource) { return; }
+
+            if (_.isVisible(eventSource)) {
+                const focusableEl = this.focusService.findTabbableParent(eventSource);
+                if (focusableEl) {
+                    if (column) {
+                        this.headerNavigationService.scrollToColumn(column);
+                    }
+                    focusableEl.focus();
+                }
+            }
+            // if the focusEl is no longer in the DOM, we try to focus
+            // the header that is closest to the previous header position
+            else if (headerPosition && columnIndex !== -1) {
+                const allColumns = this.columnModel.getAllDisplayedColumns();
+                const columnToFocus = allColumns[columnIndex] || _.last(allColumns);
+
+                if (columnToFocus) {
+                    this.focusService.focusHeaderPosition({
+                        headerPosition:{
+                            headerRowIndex: headerPosition.headerRowIndex,
+                            column: columnToFocus
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    private addStopAnchoring(
+        stopAnchoringPromise: AgPromise<Function>,
+        column: Column, 
+        closedFuncsArr: (() => void)[]
+    ) {
+        if (!stopAnchoringPromise) { return; }
+
+        stopAnchoringPromise.then((stopAnchoringFunc: Function) => {
+            column.addEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
+            column.addEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
+
+            closedFuncsArr.push(() => {
+                column.removeEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
+                column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
+            });
+        });
+    }
+
+    private getMenuParams(
+        column: Column,
+        restrictToTabs?: ColumnMenuTab[],
+        eventSource?: HTMLElement
+    ) {
+        const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
+        return {
+            menu,
+            eMenuGui: menu.getGui(),
+            currentHeaderPosition: this.focusService.getFocusedHeader(),
+            currentColumnIndex: this.columnModel.getAllDisplayedColumns().indexOf(column),
+            anchorToElement: eventSource || this.ctrlsService.getGridBodyCtrl().getGui()
+        }
     }
 
     public isMenuEnabled(column: Column): boolean {
