@@ -6,7 +6,7 @@
     "rowNodeEvents": {
         "meta": {
             "displayName": "Events on Row Nodes",
-            "description": "The following events can be listened to on <code>rowNodes</code>:",
+            "description": "The following events can be listened to on `rowNodes`:",
             "isEvent": true
         },
         "rowSelected": {
@@ -46,7 +46,7 @@
             }
         },
         "allChildrenCountChanged": {
-            "description": "<code>allChildrenCount</code> has changed.",
+            "description": "`allChildrenCount` has changed.",
             "type": {
                 "arguments": {
                     "event": "RowNodeEvent"
@@ -55,7 +55,7 @@
             }
         },
         "dataChanged": {
-            "description": "<code>rowData</code> has changed.",
+            "description": "`rowData` has changed.",
             "type": {
                 "arguments": {
                     "event": "DataChangedEvent"
@@ -64,7 +64,7 @@
             }
         },
         "heightChanged": {
-            "description": "<code>rowHeight</code> has changed.",
+            "description": "`rowHeight` has changed.",
             "type": {
                 "arguments": {
                     "event": "RowNodeEvent"
@@ -73,7 +73,7 @@
             }
         },
         "topChanged": {
-            "description": "<code>rowTop</code> has changed.",
+            "description": "`rowTop` has changed.",
             "type": {
                 "arguments": {
                     "event": "RowNodeEvent"
@@ -82,7 +82,7 @@
             }
         },
         "firstChildChanged": {
-            "description": "<code>firstChild</code> has changed.",
+            "description": "`firstChild` has changed.",
             "type": {
                 "arguments": {
                     "event": "RowNodeEvent"
@@ -91,7 +91,7 @@
             }
         },
         "lastChildChanged": {
-            "description": "<code>lastChild</code> has changed.",
+            "description": "`lastChild` has changed.",
             "type": {
                 "arguments": {
                     "event": "RowNodeEvent"
@@ -100,7 +100,7 @@
             }
         },
         "childIndexChanged": {
-            "description": "<code>childIndex</code> has changed.",
+            "description": "`childIndex` has changed.",
             "type": {
                 "arguments": {
                     "event": "RowNodeEvent"
@@ -109,7 +109,7 @@
             }
         },
         "rowIndexChanged": {
-            "description": "<code>rowIndex</code> has changed.",
+            "description": "`rowIndex` has changed.",
             "type": {
                 "arguments": {
                     "event": "RowNodeEvent"
@@ -118,7 +118,7 @@
             }
         },
         "expandedChanged": {
-            "description": "<code>expanded</code> has changed.",
+            "description": "`expanded` has changed.",
             "type": {
                 "arguments": {
                     "event": "RowNodeEvent"
@@ -127,7 +127,7 @@
             }
         },
         "uiLevelChanged": {
-            "description": "<code>uiLevel</code> has changed.",
+            "description": "`uiLevel` has changed.",
             "type": {
                 "arguments": {
                     "event": "RowNodeEvent"
