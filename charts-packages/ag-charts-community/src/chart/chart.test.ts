@@ -319,9 +319,9 @@ describe('Chart', () => {
             getTooltipRenderedValues: (params) => [params.datum[params.sectorLabelKey], params.angleValue],
             getHighlightNode: (series) => {
                 // Returns a highlighted sector
-                return series.highlightGroup.children.find(
-                    (child: any) => child?.datum === series.chart.highlightedDatum
-                ).children[0];
+                const highlightedDatum = series.chart.highlightManager.getActiveHighlight();
+                return series.highlightGroup.children.find((child: any) => child?.datum === highlightedDatum)
+                    .children[0];
             },
         });
     });
@@ -353,9 +353,9 @@ describe('Chart', () => {
                 return [datum[params.labelKey], datum[params.sizeKey]];
             },
             getHighlightNode: (series) => {
-                return series.highlightGroup.children.find(
-                    (child: any) => child?.datum === series.chart.highlightedDatum
-                ).children[0];
+                const highlightedDatum = series.chart.highlightManager.getActiveHighlight();
+                return series.highlightGroup.children.find((child: any) => child?.datum === highlightedDatum)
+                    .children[0];
             },
         });
     });

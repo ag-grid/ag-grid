@@ -3,7 +3,7 @@ import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgCartesianChartOptions, AgChartOptions } from './agChartOptions';
 import { AgChart } from './agChartV2';
 import { CartesianChart } from './cartesianChart';
-import { Chart, ChartUpdateType } from './chart';
+import { Chart } from './chart';
 import { SeriesNodeDataContext } from './series/series';
 import {
     waitForChartStability,

@@ -945,9 +945,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
     private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
         const { lastPick } = this;
 
-        if (lastPick && lastPick.event) {
-            const { event, datum } = lastPick;
-            datum.series.fireNodeClickEvent(event, datum);
+        if (lastPick?.datum) {
+            const { datum } = lastPick;
+            datum.series.fireNodeClickEvent(event.sourceEvent, datum);
             return true;
         } else if (event.sourceEvent.type.startsWith('touch')) {
             const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY });
@@ -1034,7 +1034,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.cursorManager.updateCursor(newSeries.id, newSeries.cursor);
         }
 
-        this.lastPick = event.currentHighlight;
+        this.lastPick = event.currentHighlight ? { datum: event.currentHighlight } : undefined;
 
         let updateAll = newSeries == null || lastSeries == null;
         if (updateAll) {
