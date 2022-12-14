@@ -34,12 +34,10 @@ export abstract class ContinuousScale implements Scale<any, any> {
         const strict = params?.strict ?? this.strictClampByDefault;
 
         const domain = this.getDomain().map((d) => this.transform(d));
-        const d0 = domain[0];
-        const d1 = domain[domain.length - 1];
+        const [d0, d1] = domain;
 
         const { range } = this;
-        const r0 = range[0];
-        const r1 = range[range.length - 1];
+        const [r0, r1] = range;
 
         x = this.transform(x);
 
@@ -63,12 +61,10 @@ export abstract class ContinuousScale implements Scale<any, any> {
     invert(x: number): any {
         this.refresh();
         const domain = this.getDomain().map((d) => this.transform(d));
-        const d0 = domain[0];
-        const d1 = domain[domain.length - 1];
+        const [d0, d1] = domain;
 
         const { range } = this;
-        const r0 = range[0];
-        const r1 = range[range.length - 1];
+        const [r0, r1] = range;
 
         let d: any;
         if (x < r0) {

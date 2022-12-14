@@ -194,29 +194,34 @@ export class TimeScale extends ContinuousScale {
         step?: number;
     }): CountableTimeInterval | TimeInterval | undefined {
         let interval = this.tickInterval;
-        if (!interval) {
-            const tickCount = this.tickCount ?? 10;
-            const tickIntervals = this.tickIntervals;
-            const target = Math.abs(stop - start) / tickCount;
-            let i = 0;
-            while (i < tickIntervals.length && target > tickIntervals[i][2]) {
-                i++;
-            }
-
-            if (i === tickIntervals.length) {
-                step = tickStep(start / durationYear, stop / durationYear, tickCount);
-                interval = this.year;
-            } else if (i) {
-                const ratio0 = target / tickIntervals[i - 1][2];
-                const ratio1 = tickIntervals[i][2] / target;
-                const index = ratio0 < ratio1 ? i - 1 : i;
-                [interval, step] = tickIntervals[index];
-            } else {
-                step = Math.max(tickStep(start, stop, tickCount), 1);
-                interval = this.millisecond;
-            }
+        if (interval) {
+            return interval;
         }
-        return step == undefined ? interval : interval.every(step);
+
+        const tickCount = this.tickCount ?? 10;
+        const tickIntervals = this.tickIntervals;
+        const target = Math.abs(stop - start) / tickCount;
+        let i = 0;
+        while (i < tickIntervals.length && target > tickIntervals[i][2]) {
+            i++;
+        }
+
+        if (i === 0) {
+            step = Math.max(tickStep(start, stop, tickCount), 1);
+            interval = this.millisecond;
+        } else if (i === tickIntervals.length) {
+            const y0 = start / durationYear;
+            const y1 = stop / durationYear;
+            step = tickStep(y0, y1, tickCount);
+            interval = this.year;
+        } else {
+            const ratio0 = target / tickIntervals[i - 1][2];
+            const ratio1 = tickIntervals[i][2] / target;
+            const index = ratio0 < ratio1 ? i - 1 : i;
+            [interval, step] = tickIntervals[index];
+        }
+
+        return interval.every(step);
     }
 
     invert(y: number): Date {
@@ -231,9 +236,7 @@ export class TimeScale extends ContinuousScale {
             return [];
         }
         this.refresh();
-        const d = this.getDomain().map(toNumber);
-        let t0 = d[0];
-        let t1 = d[d.length - 1];
+        const [t0, t1] = this.getDomain().map(toNumber);
         const t = this.getTickInterval({ start: t0, stop: t1 });
         return t ? t.range(new Date(t0), new Date(t1 + 1)) : []; // inclusive stop
     }
@@ -262,14 +265,14 @@ export class TimeScale extends ContinuousScale {
      * This method typically modifies the scale’s domain, and may only extend the bounds to the nearest round value.
      */
     protected updateNiceDomain(): void {
-        const d = this.domain;
-        const start = toNumber(d[0]);
-        const stop = toNumber(d[d.length - 1]);
+        const [d0, d1] = this.domain;
+        const start = toNumber(d0);
+        const stop = toNumber(d1);
         const i = this.getTickInterval({ start, stop });
 
         if (i) {
-            const n0 = i.floor(d[0]);
-            const n1 = i.ceil(d[d.length - 1]);
+            const n0 = i.floor(d0);
+            const n1 = i.ceil(d1);
             this.niceDomain = [n0, n1];
         }
     }

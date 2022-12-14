@@ -74,9 +74,7 @@ export class LogScale extends ContinuousScale {
     }
 
     protected updateNiceDomain() {
-        const domain = this.domain;
-        const d0 = domain[0];
-        const d1 = domain[domain.length - 1];
+        const [d0, d1] = this.domain;
 
         const n0 = this.pow(Math.floor(this.log(d0)));
         const n1 = this.pow(Math.ceil(this.log(d1)));
@@ -84,11 +82,7 @@ export class LogScale extends ContinuousScale {
     }
 
     static pow10(x: number): number {
-        return isFinite(x)
-            ? +('1e' + x) // to avoid precision issues, e.g. Math.pow(10, -4) is not 0.0001
-            : x < 0
-            ? 0
-            : x;
+        return x >= 0 ? Math.pow(10, x) : 1 / Math.pow(10, -x);
     }
 
     ticks() {
@@ -98,14 +92,7 @@ export class LogScale extends ContinuousScale {
         this.refresh();
         const n = this.tickCount ?? 10;
         const base = this.base;
-        const domain = this.getDomain();
-        let d0 = domain[0];
-        let d1 = domain[domain.length - 1];
-        const isReversed = d1 < d0;
-
-        if (isReversed) {
-            [d0, d1] = [d1, d0];
-        }
+        const [d0, d1] = this.getDomain();
 
         let p0 = this.log(d0);
         let p1 = this.log(d1);
@@ -147,7 +134,7 @@ export class LogScale extends ContinuousScale {
             z = ticks(p0, p1, Math.min(p1 - p0, n)).map(this.pow);
         }
 
-        return isReversed ? z.reverse() : z;
+        return z;
     }
 
     tickFormat({
