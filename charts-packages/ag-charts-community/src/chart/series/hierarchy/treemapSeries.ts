@@ -456,7 +456,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     }
 
     private isDatumHighlighted(datum: TreemapNodeDatum) {
-        const { highlightedDatum } = this.chart!;
+        const highlightedDatum = this.highlightManager?.getActiveHighlight();
         return datum === highlightedDatum && (datum.isLeaf || this.highlightGroups);
     }
 

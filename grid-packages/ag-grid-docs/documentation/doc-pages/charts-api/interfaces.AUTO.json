@@ -2944,17 +2944,26 @@
     "meta": { "isTypeAlias": true },
     "type": "Record<string, { vertical: [ Date, Date ]; horizontal: [ number, number ]; }>"
   },
+  "Listener": {
+    "meta": { "isTypeAlias": true, "typeParams": ["E"] },
+    "type": "{ symbol?: Symbol; handler: (event: E) => void; }"
+  },
   "CursorState": { "meta": {}, "type": { "style": "string" } },
+  "HighlightState": {
+    "meta": {},
+    "type": { "highlightedDatum": "SeriesNodeDatum" }
+  },
+  "HighlightChangeEvent": {
+    "meta": {},
+    "type": {
+      "type": "'highlight-change'",
+      "previousHighlight?": "SeriesNodeDatum",
+      "currentHighlight?": "SeriesNodeDatum"
+    }
+  },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
     "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
-  },
-  "Listener": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": ["T extends InteractionTypes"]
-    },
-    "type": "{ symbol?: Symbol; handler: (event: InteractionEvent<T>) => void; }"
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },

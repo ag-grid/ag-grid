@@ -491,11 +491,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     async createNodeData() {
-        const { chart, data, visible } = this;
+        const { data, visible } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
 
-        if (!(chart && data && visible && xAxis && yAxis)) {
+        if (!(data && visible && xAxis && yAxis)) {
             return [];
         }
 

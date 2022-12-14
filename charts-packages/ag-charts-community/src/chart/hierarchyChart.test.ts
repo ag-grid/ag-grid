@@ -82,8 +82,8 @@ describe('HierarchyChart', () => {
                 depth--;
             }
 
-            chart.changeHighlightDatum({ datum: node as any });
-            chart.update(ChartUpdateType.SERIES_UPDATE);
+            const highlightManager = (chart as any).highlightManager;
+            highlightManager.updateHighlight(chart.id, node as any);
             await compare(chart);
         });
     });

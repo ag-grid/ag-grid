@@ -147,7 +147,8 @@ export abstract class CartesianSeries<
     }
 
     async update({ seriesRect }: { seriesRect?: BBox }) {
-        const { seriesItemEnabled, visible, chart: { highlightedDatum: { series = undefined } = {} } = {} } = this;
+        const { seriesItemEnabled, visible } = this;
+        const { series } = this.highlightManager?.getActiveHighlight() ?? {};
         const seriesHighlighted = series ? series === this : undefined;
 
         const anySeriesItemEnabled =
@@ -373,15 +374,11 @@ export abstract class CartesianSeries<
     }
 
     protected async updateHighlightSelection(seriesHighlighted?: boolean) {
-        const {
-            chart: { highlightedDatum: { datum = undefined } = {}, highlightedDatum = undefined } = {},
-            highlightSelection,
-            highlightLabelSelection,
-            _contextNodeData: contextNodeData,
-        } = this;
+        const { highlightSelection, highlightLabelSelection, _contextNodeData: contextNodeData } = this;
 
+        const highlightedDatum = this.highlightManager?.getActiveHighlight();
         const item =
-            seriesHighlighted && highlightedDatum && datum ? (highlightedDatum as C['nodeData'][number]) : undefined;
+            seriesHighlighted && highlightedDatum?.datum ? (highlightedDatum as C['nodeData'][number]) : undefined;
         this.highlightSelection = await this.updateHighlightSelectionItem({ item, highlightSelection });
 
         let labelItem: C['labelData'][number] | undefined;
