@@ -50,6 +50,17 @@ export const DATA_YOUTUBE_VIDEOS_STATS_BY_DAY_OF_YEAR = range(100, 300, 5).map((
 
 // Ensure we generate consistent 'random' numbers.
 const youtubeRandom2 = seedRandom(49275017231);
+export const DATA_YOUTUBE_VIDEOS_STATS_BY_DAY_OF_YEAR_LARGE_SCALE = range(100, 300, 5).map((day) => {
+    return {
+        day,
+        likes: Math.floor(youtubeRandom2() * 500_000),
+        subscribes: Math.floor(youtubeRandom2() * 50_000),
+        comments: Math.floor(youtubeRandom2() * 25_000),
+    };
+});
+
+// Ensure we generate consistent 'random' numbers.
+const youtubeRandom3 = seedRandom(49275017231);
 
 export const DATA_YOUTUBE_VIDEOS_STATS_BY_DATE = dateRange(
     new Date(2022, 0, 1, 0, 0, 0),
@@ -57,8 +68,8 @@ export const DATA_YOUTUBE_VIDEOS_STATS_BY_DATE = dateRange(
 ).map((date) => {
     return {
         date,
-        likes: Math.floor(youtubeRandom2() * 500),
-        subscribes: Math.floor(youtubeRandom2() * 50),
-        comments: Math.floor(youtubeRandom2() * 25),
+        likes: Math.floor(youtubeRandom3() * 500),
+        subscribes: Math.floor(youtubeRandom3() * 50),
+        comments: Math.floor(youtubeRandom3() * 25),
     };
 });
