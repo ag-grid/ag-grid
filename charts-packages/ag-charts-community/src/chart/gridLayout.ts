@@ -13,7 +13,6 @@ type Column = {
     indices: number[];
     bboxes: BBox[];
 };
-export type Grid = { [column: number]: Column };
 
 export function gridLayout({
     orientation,
@@ -29,7 +28,7 @@ export function gridLayout({
     maxWidth: number;
     itemPaddingY?: number;
     itemPaddingX?: number;
-}): { pages: Page[] } | undefined {
+}): { pages: Page[]; maxPageWidth: number; maxPageHeight: number } | undefined {
     const horizontal = orientation === Orientation.Horizontal;
     const primary: DimensionProps = {
         max: horizontal ? maxWidth : maxHeight,
@@ -45,12 +44,15 @@ export function gridLayout({
     let processedBBoxCount = 0;
     const rawPages: number[][][] = [];
     while (processedBBoxCount < bboxes.length) {
-        // If calculatePage() fails on the first row, we could use the number of items that fit
+        // If calculatePage() fails on the first guess, we could use the number of items that fit
         // as a good guess for the next iteration.
-        // separate function for guess calculation (loop through bboxes, use dimension functions)
         const unprocessedBBoxes = bboxes.slice(processedBBoxCount);
-        const startingGuess = estimateStartingGuess(unprocessedBBoxes, primary);
         const minGuess = 1;
+        const startingGuess = estimateStartingGuess(unprocessedBBoxes, primary);
+
+        if (startingGuess < minGuess) {
+            return;
+        }
 
         for (let guess = startingGuess; guess >= minGuess; guess--) {
             const pageIndices = calculatePage(unprocessedBBoxes, processedBBoxCount, guess, primary, secondary);
@@ -82,62 +84,13 @@ export function gridLayout({
         }
     }
 
+    // rawPages[pageNumber][secondaryDim][primaryDim]
+
     if (rawPages.length === 0) {
         return;
     }
 
-    const pages = rawPages.map((indices): Page => {
-        if (orientation === Orientation.Horizontal) {
-            indices = transpose(indices);
-        }
-
-        const lastIndices = indices[indices.length - 1];
-        const columns = indices.map((colIndices): Column => {
-            const colBBoxes = colIndices.map((bboxIndex) => bboxes[bboxIndex]);
-            let columnHeight = 0;
-            let columnWidth = 0;
-            colBBoxes.forEach((bbox) => {
-                columnHeight += bbox.height + itemPaddingY;
-                columnWidth = Math.max(columnWidth, bbox.width + itemPaddingX);
-            });
-            return {
-                indices: colIndices,
-                bboxes: colBBoxes,
-                columnHeight,
-                columnWidth,
-            };
-        });
-
-        let pageWidth = 0;
-        let pageHeight = 0;
-        columns.forEach((column) => {
-            (pageWidth += column.columnWidth), (pageHeight = Math.max(pageHeight, column.columnHeight));
-        });
-
-        return {
-            columns,
-            startIndex: indices[0][0],
-            endIndex: lastIndices[lastIndices.length - 1],
-            pageWidth,
-            pageHeight,
-        };
-    });
-
-    return { pages };
-
-    // pages[pageNumber][secondaryDim][primaryDim]
-
-    // 0 1  2  3   12 13 14 15 16
-    // 4 5  6  7   12 13 14 15 16
-    // 8 9 10 11
-
-    // 0  4   8
-    // 1  5   9
-    // 2  6  10
-    // 3  7  11
-
-    // 12 16 20
-    // 13 17 21
+    return buildPages(rawPages, orientation, bboxes, itemPaddingY, itemPaddingX);
 }
 
 interface DimensionProps {
@@ -146,26 +99,13 @@ interface DimensionProps {
     padding: number;
 }
 
-function estimateStartingGuess(bboxes: BBox[], primary: DimensionProps): number {
-    let primarySum = 0;
-    for (let bboxIndex = 0; bboxIndex < bboxes.length; bboxIndex++) {
-        primarySum += primary.fn(bboxes[bboxIndex]);
-
-        if (primarySum > primary.max) {
-            return bboxIndex;
-        }
-    }
-
-    return bboxes.length;
-}
-
 function calculatePage(
     bboxes: BBox[],
     indexOffset: number,
     primaryCount: number,
     primary: DimensionProps,
     secondary: DimensionProps
-) {
+): number[][] | undefined | number {
     const result: number[][] = [];
 
     let sumSecondary = 0;
@@ -216,6 +156,58 @@ function calculatePage(
     return result.length > 0 ? result : undefined;
 }
 
+function buildPages(
+    rawPages: number[][][],
+    orientation: Orientation,
+    bboxes: BBox[],
+    itemPaddingY: number,
+    itemPaddingX: number
+): { pages: Page[]; maxPageWidth: number; maxPageHeight: number } {
+    let maxPageWidth = 0;
+    let maxPageHeight = 0;
+    const pages = rawPages.map((indices): Page => {
+        if (orientation === Orientation.Horizontal) {
+            indices = transpose(indices);
+        }
+
+        const lastIndices = indices[indices.length - 1];
+        const columns = indices.map((colIndices): Column => {
+            const colBBoxes = colIndices.map((bboxIndex) => bboxes[bboxIndex]);
+            let columnHeight = 0;
+            let columnWidth = 0;
+            colBBoxes.forEach((bbox) => {
+                columnHeight += bbox.height + itemPaddingY;
+                columnWidth = Math.max(columnWidth, bbox.width + itemPaddingX);
+            });
+            return {
+                indices: colIndices,
+                bboxes: colBBoxes,
+                columnHeight,
+                columnWidth,
+            };
+        });
+
+        let pageWidth = 0;
+        let pageHeight = 0;
+        columns.forEach((column) => {
+            (pageWidth += column.columnWidth), (pageHeight = Math.max(pageHeight, column.columnHeight));
+        });
+
+        maxPageWidth = Math.max(pageWidth, maxPageWidth);
+        maxPageHeight = Math.max(pageHeight, maxPageHeight);
+
+        return {
+            columns,
+            startIndex: indices[0][0],
+            endIndex: lastIndices[lastIndices.length - 1],
+            pageWidth,
+            pageHeight,
+        };
+    });
+
+    return { pages, maxPageWidth, maxPageHeight };
+}
+
 function transpose(data: number[][]) {
     const result: number[][] = [];
     for (let i = 0; i < data[0].length; i++) {
@@ -229,4 +221,17 @@ function transpose(data: number[][]) {
     });
 
     return result;
+}
+
+function estimateStartingGuess(bboxes: BBox[], primary: DimensionProps): number {
+    let primarySum = 0;
+    for (let bboxIndex = 0; bboxIndex < bboxes.length; bboxIndex++) {
+        primarySum += primary.fn(bboxes[bboxIndex]);
+
+        if (primarySum > primary.max) {
+            return bboxIndex;
+        }
+    }
+
+    return bboxes.length;
 }

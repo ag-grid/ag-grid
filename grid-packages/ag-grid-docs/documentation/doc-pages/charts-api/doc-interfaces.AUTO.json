@@ -4533,7 +4533,6 @@
   "Page": {},
   "Orientation": {},
   "Column": {},
-  "Grid": {},
   "DimensionProps": {
     "max": { "type": { "returnType": "number", "optional": false } },
     "fn": {

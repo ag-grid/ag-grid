@@ -3026,10 +3026,6 @@
     "meta": { "isTypeAlias": true },
     "type": "{ columnWidth: number; columnHeight: number; indices: number[]; bboxes: BBox[]; }"
   },
-  "Grid": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ [column: number]: Column; }"
-  },
   "DimensionProps": {
     "meta": {},
     "type": {

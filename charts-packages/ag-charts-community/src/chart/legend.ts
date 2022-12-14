@@ -430,17 +430,21 @@ export class Legend {
             oldSize[1] = size[1];
         }
 
-        this.pages =
-            gridLayout({
-                orientation: this.orientation,
-                bboxes,
-                maxHeight: height,
-                maxWidth: width,
-                itemPaddingY: paddingY,
-                itemPaddingX: paddingX,
-            })?.pages || [];
+        const {
+            pages = [],
+            maxPageWidth = 0,
+            maxPageHeight = 0,
+        } = gridLayout({
+            orientation: this.orientation,
+            bboxes,
+            maxHeight: height,
+            maxWidth: width,
+            itemPaddingY: paddingY,
+            itemPaddingX: paddingX,
+        }) || {};
 
-        const totalPages = this.pages.length;
+        this.pages = pages;
+        const totalPages = pages.length;
         this.pagination.visible = totalPages > 1;
         this.pagination.totalPages = totalPages;
 
@@ -460,11 +464,10 @@ export class Legend {
         const startY = height / 2;
         this.updatePositions(startX, startY, pageNumber);
 
-        const { pageHeight = 0, pageWidth = 0 } = page;
-        this.pagination.translationX = verticalOrientation ? startX : startX + pageWidth;
+        this.pagination.translationX = verticalOrientation ? startX : startX + maxPageWidth;
         this.pagination.translationY = verticalOrientation
-            ? startY + pageHeight
-            : startY + pageHeight / 2 - paginationBBox.height;
+            ? startY + maxPageHeight
+            : startY + maxPageHeight / 2 - paginationBBox.height;
 
         // Update legend item properties that don't affect the layout.
         this.update();
