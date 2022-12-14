@@ -2,7 +2,7 @@ import { Column } from "../entities/column";
 import { CellPosition } from "../entities/cellPosition";
 import { RowPosition } from "../entities/rowPosition";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
-import { RowPinnedType } from "../entities/rowNode";
+import { RowPinnedType } from "../interfaces/iRowNode";
 
 export interface IRangeService {
     isEmpty(): boolean;

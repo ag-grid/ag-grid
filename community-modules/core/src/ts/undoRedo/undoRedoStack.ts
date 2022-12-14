@@ -1,4 +1,4 @@
-import { RowPinnedType } from "../entities/rowNode";
+import { RowPinnedType } from "../interfaces/iRowNode";
 import { CellRange } from "../interfaces/IRangeService";
 
 export interface CellValueChange {

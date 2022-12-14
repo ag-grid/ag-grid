@@ -40,8 +40,9 @@ import {
     RowHeightParams,
     TabToNextCellParams,
     TabToNextHeaderParams
-} from "./entities/iCallbackParams";
-import { RowNode, RowPinnedType } from "./entities/rowNode";
+} from "./interfaces/iCallbackParams";
+import { RowNode } from "./entities/rowNode";
+import { RowPinnedType } from "./interfaces/iRowNode";
 import { AgEvent, ColumnEventType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";

@@ -1,7 +1,8 @@
 import { IRowModel } from './iRowModel';
 import { RowNodeTransaction } from './rowNodeTransaction';
 import { RowDataTransaction } from './rowDataTransaction';
-import { RowHighlightPosition, RowNode } from '../entities/rowNode';
+import { RowNode } from '../entities/rowNode';
+import { RowHighlightPosition } from '../interfaces/iRowNode';
 import { ChangedPath } from '../utils/changedPath';
 
 export enum ClientSideRowModelSteps {
