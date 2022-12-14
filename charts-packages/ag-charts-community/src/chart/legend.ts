@@ -252,7 +252,11 @@ export class Legend {
         private readonly cursorManager: CursorManager
     ) {
         this.item.marker.parent = this;
-        this.pagination = new Pagination((page) => this.updatePageNumber(page), interactionManager);
+        this.pagination = new Pagination(
+            (page) => this.updatePageNumber(page),
+            this.interactionManager,
+            this.cursorManager
+        );
         this.pagination.attachPagination(this.group);
 
         this.item.marker.parent = this;

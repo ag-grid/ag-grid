@@ -4,7 +4,10 @@ import { Marker } from '../marker/marker';
 import { Triangle } from '../marker/triangle';
 import { Text } from '../../scene/shape/text';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
+import { getMarker } from '../marker/util';
+import { createId } from '../../util/id';
 import { InteractionEvent, InteractionManager } from '../interaction/interactionManager';
+import { CursorManager } from '../interaction/cursorManager';
 import {
     COLOR_STRING,
     NUMBER,
@@ -16,7 +19,6 @@ import {
     Validate,
 } from '../../util/validation';
 import { FontStyle, FontWeight } from '../agChartOptions';
-import { getMarker } from '../marker/util';
 import { Orientation } from '../gridLayout';
 
 class PaginationLabel {
@@ -81,6 +83,8 @@ class PaginationMarker {
 export class Pagination {
     static className = 'Pagination';
 
+    readonly id = createId(this);
+
     private readonly group = new Group({ name: 'pagination' });
     private readonly labelNode: Text = new Text();
 
@@ -92,7 +96,11 @@ export class Pagination {
 
     private currentPage: number = 0;
 
-    constructor(private readonly updateCallback: (newPage: number) => void, interactionManager: InteractionManager) {
+    constructor(
+        private readonly updateCallback: (newPage: number) => void,
+        private readonly interactionManager: InteractionManager,
+        private readonly cursorManager: CursorManager
+    ) {
         const { labelNode } = this;
         labelNode.textBaseline = 'middle';
         labelNode.fontSize = 12;
@@ -102,7 +110,8 @@ export class Pagination {
 
         this.group.append([this.nextButton, this.previousButton, labelNode]);
 
-        interactionManager.addListener('click', (event) => this.onClick(event));
+        this.interactionManager.addListener('click', (event) => this.onPaginationClick(event));
+        this.interactionManager.addListener('hover', (event) => this.onPaginationMouseMove(event));
 
         this.marker.parent = this;
 
@@ -262,17 +271,35 @@ export class Pagination {
         this.updateMarkers();
     }
 
-    private onClick(event: InteractionEvent<'click'>) {
+    private nextButtonContainsPoint(offsetX: number, offsetY: number) {
+        return !this.nextButtonDisabled && this.nextButton.containsPoint(offsetX, offsetY);
+    }
+
+    private previousButtonContainsPoint(offsetX: number, offsetY: number) {
+        return !this.previousButtonDisabled && this.previousButton.containsPoint(offsetX, offsetY);
+    }
+
+    private onPaginationClick(event: InteractionEvent<'click'>) {
         const { offsetX, offsetY } = event;
 
-        const { nextButton, previousButton, nextButtonDisabled, previousButtonDisabled } = this;
-
-        if (!nextButtonDisabled && nextButton.containsPoint(offsetX, offsetY)) {
+        if (this.nextButtonContainsPoint(offsetX, offsetY)) {
             this.incrementPage();
             this.onPaginationChanged();
-        } else if (!previousButtonDisabled && previousButton.containsPoint(offsetX, offsetY)) {
+            event.consume();
+        } else if (this.previousButtonContainsPoint(offsetX, offsetY)) {
             this.decrementPage();
             this.onPaginationChanged();
+            event.consume();
+        }
+    }
+
+    private onPaginationMouseMove(event: InteractionEvent<'hover'>) {
+        const { offsetX, offsetY } = event;
+
+        if (this.nextButtonContainsPoint(offsetX, offsetY) || this.previousButtonContainsPoint(offsetX, offsetY)) {
+            this.cursorManager.updateCursor(this.id, 'pointer');
+        } else {
+            this.cursorManager.updateCursor(this.id);
         }
     }
 
