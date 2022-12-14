@@ -11,8 +11,8 @@ These variables use [Variable Cascading](/global-style-customisation-css/#variab
 - `--ag-borders` and `--ag-border-color` - the master control for all borders in the grid
   - `--ag-borders-critical` and `--ag-critical-border-color` - borders that are important for UX even on grids without many borders - for example to differentiate pinned from regular columns. Themes that disable borders generally may want to enable these borders
   - `--ag-borders-secondary` and `--ag-secondary-border-color` - borders separating UI elements within components.
-    - `--ag-borders-input` and `--ag-secondary-border-row` - borders around text inputs
-  - `--ag-row-border-style`, `--ag-row-border-color` and `--ag-row-border-width` - borders separating the grid rows. Row borders are configured independently of other border properties.
+      - `--ag-borders-input` and `--ag-secondary-border-row` - borders around text inputs
+- `--ag-row-border-style`, `--ag-row-border-color` and `--ag-row-border-width` - borders separating the grid rows. Row borders are configured independently of other border properties.
 
 ## Example
 
