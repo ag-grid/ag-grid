@@ -31,12 +31,12 @@ export default class TitlePanel extends Component {
     private initFontPanel(): void {
         const hasTitle = this.hasTitle();
 
-        const setFont = (font: Font) => {
-            if (font.family) { this.setOption('title.fontFamily', font.family); }
-            if (font.weight) { this.setOption('title.fontWeight', font.weight); }
-            if (font.style) { this.setOption('title.fontStyle', font.style); }
-            if (font.size) { this.setOption('title.fontSize', font.size); }
-            if (font.color) { this.setOption('title.color', font.color); }
+        const setFont = (font: Font, isSilent?: boolean) => {
+            if (font.family) { this.setOption('title.fontFamily', font.family, isSilent); }
+            if (font.weight) { this.setOption('title.fontWeight', font.weight, isSilent); }
+            if (font.style) { this.setOption('title.fontStyle', font.style, isSilent); }
+            if (font.size) { this.setOption('title.fontSize', font.size, isSilent); }
+            if (font.color) { this.setOption('title.color', font.color, isSilent); }
         };
 
         const initialFont = {
@@ -48,7 +48,7 @@ export default class TitlePanel extends Component {
         };
 
         if (!hasTitle) {
-            setFont(initialFont);
+            setFont(initialFont, true);
         }
 
         const fontPanelParams: FontPanelParams = {
@@ -81,8 +81,8 @@ export default class TitlePanel extends Component {
         return this.chartOptionsService.getChartOption(expression);
     }
 
-    private setOption(property: string, value: any): void {
-        this.chartOptionsService.setChartOption(property, value);
+    private setOption(property: string, value: any, isSilent?: boolean): void {
+        this.chartOptionsService.setChartOption(property, value, isSilent);
     }
 
     private destroyActivePanels(): void {

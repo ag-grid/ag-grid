@@ -80,9 +80,9 @@
 
         --ag-secondary-border-color: var(--ag-border-color);
 
-        --ag-borders-row: var(--ag-borders-secondary);
-
+        --ag-row-border-style: solid;
         --ag-row-border-color: var(--ag-secondary-border-color);
+        --ag-row-border-width: 1px;
 
         --ag-cell-horizontal-border: solid transparent;
         

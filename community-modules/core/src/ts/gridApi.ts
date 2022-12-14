@@ -810,8 +810,8 @@ export class GridApi<TData = any> {
      * This is called for every node, ignoring any filtering or sorting applied within the grid.
      * If using the Infinite Row Model, then this gets called for each page loaded in the page cache.
      */
-    public forEachNode(callback: (rowNode: RowNode<TData>, index: number) => void) {
-        this.rowModel.forEachNode(callback);
+    public forEachNode(callback: (rowNode: RowNode<TData>, index: number) => void, includeFooterNodes?: boolean) {
+        this.rowModel.forEachNode(callback, includeFooterNodes);
     }
 
     /** Similar to `forEachNode`, except skips any filtered out data. */

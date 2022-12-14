@@ -126,7 +126,7 @@ const gridOptions = {
 
 For more details on setting values, see [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values). Once you have supplied values to the Set Filter, they will not change unless you ask for them to be refreshed. See [Refreshing Values](/filter-set-filter-list/#refreshing-values) for more information.
 
-The example below demonstrates Server-side Filtering using the Set Filter and Infinite Scrolling. Note the following:
+The example below demonstrates Server-side Filtering using the Set Filter. Note the following:
 
 - The **Country** and **Sport** columns have Set Filters defined using `filter: 'agSetColumnFilter'`.
 - Set Filter values are fetched asynchronously and supplied via the `params.success(values)` callback.

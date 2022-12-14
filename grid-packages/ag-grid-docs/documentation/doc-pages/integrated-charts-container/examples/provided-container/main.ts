@@ -33,7 +33,7 @@ var chartPanelTemplate =
   '<div class="chart-wrapper-body"></div>' +
   '</div>'
 
-function appendTitle(el: HTMLElement) {
+function appendTitle(el: Element) {
   const formatter = new Intl.DateTimeFormat('en', {
     weekday: 'long',
     year: 'numeric',
@@ -57,14 +57,14 @@ function createChartContainer(chartRef: ChartRef) {
 
   const eParent = document.querySelector('#container') as HTMLElement;
 
-  eParent.appendChild(eChartWrapper)
+  eParent.appendChild(eChartWrapper);
 
-  eChartWrapper.querySelector('.chart-wrapper-body').appendChild(eChart)
+  eChartWrapper.querySelector('.chart-wrapper-body')!.appendChild(eChart)
 
-  appendTitle(eChartWrapper.querySelector('.chart-wrapper-title'));
+  appendTitle(eChartWrapper.querySelector('.chart-wrapper-title')!);
 
   eChartWrapper
-    .querySelector('.chart-wrapper-close')
+    .querySelector('.chart-wrapper-close')!
     .addEventListener('click', function () {
       chartRef.destroyChart()
       eParent.removeChild(eChartWrapper)

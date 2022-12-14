@@ -44,7 +44,7 @@ The request object sent to the server contains sort metadata in the `sortModel` 
 Notice in the snippet above that the `sortModel` contains an array of models for each column that has active sorts in 
 the grid. The column ID and sort type can then be used by the server to perform the actual sorting.
 
-The example below demonstrates sorting using the SSRM and Infinite Scrolling. Note the following:
+The example below demonstrates sorting using the SSRM. Note the following:
 
 - All columns have sorting enabled via `defaultColDef.sortable = true`.
 - The server uses the metadata contained in the `sortModel` to sort the rows.

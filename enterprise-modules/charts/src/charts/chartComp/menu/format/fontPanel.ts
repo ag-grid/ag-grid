@@ -25,7 +25,7 @@ export interface FontPanelParams {
     suppressEnabledCheckbox?: boolean;
     setEnabled?: (enabled: boolean) => void;
     initialFont: Font;
-    setFont: (font: Font) => void;
+    setFont: (font: Font, isSilent?: boolean) => void;
 }
 
 export class FontPanel extends Component {

@@ -39,7 +39,7 @@ const gridOptions: GridOptions = {
       valueFormatter: valueFormatter,
       keyCreator: (params: KeyCreatorParams) => params.value.name,
       filterParams: {
-        valueFormatter: (params: ValueFormatterParams) => params.value.name
+        valueFormatter: (params: ValueFormatterParams) => params.value ? params.value.name : '(Blanks)'
       },
     },
   ],
