@@ -26,7 +26,7 @@ export abstract class ContinuousScale implements Scale<any, any> {
 
     strictClampByDefault = false;
 
-    convert(x: number, params?: { strict: boolean }) {
+    convert(x: any, params?: { strict: boolean }) {
         if (!this.domain || this.domain.length < 2) {
             return NaN;
         }
