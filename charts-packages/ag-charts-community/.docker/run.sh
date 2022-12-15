@@ -24,6 +24,8 @@ case $1 in
             -v ${LOCAL_REPO_ROOT}/charts-packages/ag-charts-community:${CHARTS_PATH} \
             -v charts-nm:${NODE_MODULES_PATH} \
             -w ${CHARTS_PATH} \
+            -p 3000:3000 \
+            -p 9229:9229 \
             charts:latest \
             $@
     ;;
