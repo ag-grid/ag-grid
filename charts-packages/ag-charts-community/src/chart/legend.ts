@@ -633,7 +633,7 @@ export class Legend {
 
         const legendBBox = this.computeBBox();
         const { offsetX, offsetY } = event;
-        const pointerInsideLegend = legendBBox.containsPoint(offsetX, offsetY);
+        const pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
 
         if (!pointerInsideLegend) {
             this.cursorManager.updateCursor(this.id);
