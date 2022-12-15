@@ -27,10 +27,22 @@ blockquote {
       top: 20px;
       left: 12px;
     }
-  
+
     &:after {
       content: close-quote;
     }
+  }
+
+  &:after {
+    content: "";
+    height: 0;
+    width: 0;
+    display: block;
+    border-top: 15px solid #bad9f0;
+    border-right: 15px solid transparent;
+    position: absolute;
+    bottom: -15px;
+    left: 70px;
   }
 }
 
