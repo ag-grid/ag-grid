@@ -653,23 +653,23 @@
                 "enterprise": true
               },
               {
-                "title": "Refresh",
-                "url": "/server-side-model-refresh/",
-                "enterprise": true
-              },
-              {
                 "title": "Updating Data",
                 "url": "/server-side-model-updating/",
                 "enterprise": true,
                 "items": [
                   {
-                    "title": "Transactions",
-                    "url": "/server-side-model-transactions/",
+                    "title": "Refresh",
+                    "url": "/server-side-model-updating-refresh/",
                     "enterprise": true
                   },
                   {
-                    "title": "High Frequency",
-                    "url": "/server-side-model-high-frequency/",
+                    "title": "Single Row Updates",
+                    "url": "/server-side-model-updating-single-row/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Transactions",
+                    "url": "/server-side-model-updating-transactions/",
                     "enterprise": true
                   }
                 ]
