@@ -21,7 +21,7 @@ export const quotesData: QuotesData = {
     orgName: "Google Developers",
     orgIconUrl: "images/developer-quotes/orgIcons/google-developer-expert-logo.png",
     orgRole: "Expert at",
-    text: "Accusamus eveniet tempore suscipit qui consectetur sequi rem repudiandae id. Nihil facilis qui veniam fugiat eum tempore. Reprehenderit nulla sint ea quis voluptatibus.Dolor optio aperiam accusantium magni quae.",
+    text: "If your application needs to display large amounts of data, we recommend AG Grid. Not only is it highly customizable and extensible, it’s also the fastest JavaScript grid on the planet.",
     order: 10,
   },
   ryanCarniato: {
