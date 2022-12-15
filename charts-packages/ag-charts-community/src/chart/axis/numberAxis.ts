@@ -1,4 +1,3 @@
-import { ContinuousScale, filter } from '../../scale/continuousScale';
 import { LinearScale } from '../../scale/linearScale';
 import { LogScale } from '../../scale/logScale';
 import { extent } from '../../util/array';
@@ -31,7 +30,7 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
 
     constructor(scale = new LinearScale() as LinearScale | LogScale) {
         super(scale);
-        (this.scale as ContinuousScale).clamper = filter;
+        scale.strictClampByDefault = true;
     }
 
     normaliseDataDomain(d: number[]) {
@@ -49,8 +48,6 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
         if (d[0] > d[1]) {
             d = [];
         }
-
-        (this.scale as ContinuousScale).clamp = true;
 
         return d;
     }
@@ -83,7 +80,9 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
 
         const [d, ticks] = calculateNiceSecondaryAxis(this.dataDomain, primaryTickCount ?? 0);
 
+        this.scale.nice = false;
         this.scale.domain = d;
+        this.scale.update();
 
         return ticks;
     }
