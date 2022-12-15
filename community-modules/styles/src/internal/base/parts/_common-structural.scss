@@ -736,14 +736,6 @@
         height: 100%;
     }
 
-    .ag-set-filter-item-label {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        flex: 1 !important;
-        margin-right: 0 !important;
-    }
-
     .ag-set-filter-item-checkbox {
         display: flex;
         overflow: hidden;
@@ -1537,6 +1529,13 @@
         > * {
             align-self: stretch;
         }
+    }
+
+    .ag-label-ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
     }
 
     .ag-color-panel {
