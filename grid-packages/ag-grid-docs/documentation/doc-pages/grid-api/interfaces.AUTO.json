@@ -210,8 +210,8 @@
   "DragItem": {
     "meta": {},
     "type": {
-      "rowNode?": "RowNode",
-      "rowNodes?": "RowNode[]",
+      "rowNode?": "IRowNode",
+      "rowNodes?": "IRowNode[]",
       "columns?": "Column[]",
       "visibleState?": "{ [key: string]: boolean; }"
     },
@@ -10603,8 +10603,8 @@
     "meta": {},
     "type": {
       "defaultTextValue": "string",
-      "rowNode?": "RowNode",
-      "rowNodes?": "RowNode[]",
+      "rowNode?": "IRowNode",
+      "rowNodes?": "IRowNode[]",
       "columns?": "Column[]",
       "visibleState?": "{ [key: string]: boolean; }"
     },
@@ -10617,11 +10617,11 @@
     }
   },
   "RowCtrlMap": { "meta": {}, "type": { "[key: string]": "RowCtrl" } },
-  "RowNodeMap": { "meta": {}, "type": { "[id: string]": "RowNode" } },
+  "RowNodeMap": { "meta": {}, "type": { "[id: string]": "IRowNode" } },
   "GetCellsParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "rowNodes?": "RowNode<TData>[]",
+      "rowNodes?": "IRowNode<TData>[]",
       "columns?": "(string | Column)[]"
     },
     "docs": {
@@ -10634,7 +10634,7 @@
     "type": {
       "force?": "boolean",
       "suppressFlash?": "boolean",
-      "rowNodes?": "RowNode<TData>[]",
+      "rowNodes?": "IRowNode<TData>[]",
       "columns?": "(string | Column)[]"
     },
     "docs": {
@@ -10649,7 +10649,7 @@
     "type": {
       "flashDelay?": "number",
       "fadeDelay?": "number",
-      "rowNodes?": "RowNode<TData>[]",
+      "rowNodes?": "IRowNode<TData>[]",
       "columns?": "(string | Column)[]"
     },
     "docs": {
@@ -10660,7 +10660,7 @@
   "GetCellRendererInstancesParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "rowNodes?": "RowNode<TData>[]",
+      "rowNodes?": "IRowNode<TData>[]",
       "columns?": "(string | Column)[]"
     },
     "docs": {
@@ -10671,7 +10671,7 @@
   "GetCellEditorInstancesParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "rowNodes?": "RowNode<TData>[]",
+      "rowNodes?": "IRowNode<TData>[]",
       "columns?": "(string | Column)[]"
     },
     "docs": {
@@ -10681,7 +10681,7 @@
   },
   "RedrawRowsParams": {
     "meta": { "typeParams": ["TData = any"] },
-    "type": { "rowNodes?": "RowNode<TData>[]" },
+    "type": { "rowNodes?": "IRowNode<TData>[]" },
     "docs": { "rowNodes?": "/** Row nodes to redraw */" }
   },
   "RefreshViewParams": {
@@ -10705,7 +10705,7 @@
       "colDef?": "ColDef<TData> | ColGroupDef<TData> | null",
       "column?": "Column | ColumnGroup",
       "rowIndex?": "number",
-      "node?": "RowNode<TData>",
+      "node?": "IRowNode<TData>",
       "data?": "TData",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -11076,7 +11076,7 @@
     "type": {
       "ePopup": "HTMLElement",
       "column?": "Column | null",
-      "rowNode?": "RowNode | null",
+      "rowNode?": "IRowNode | null",
       "nudgeX?": "number",
       "nudgeY?": "number",
       "position?": "'over' | 'under'",

@@ -70,6 +70,7 @@ export const TYPE_LINKS = {
     KeyboardEvent: 'https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent',
     MouseEvent: 'https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent',
     RowNode: '/row-object/',
+    IRowNode: '/row-object/',
     ServerSideTransaction: '/server-side-model-transactions/#transaction-api',
     Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
 };

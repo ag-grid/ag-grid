@@ -1,4 +1,4 @@
-import { GetRowIdParams, Grid, GridApi, GridOptions, GridReadyEvent, RowNode, ValueGetterParams } from '@ag-grid-community/core'
+import { GetRowIdParams, Grid, GridApi, GridOptions, GridReadyEvent, IRowNode, ValueGetterParams } from '@ag-grid-community/core'
 
 interface Student {
   student: number;
@@ -124,7 +124,7 @@ function createRandomNumber() {
 }
 
 function pickExistingRowNodeAtRandom(gridApi: GridApi) {
-  var allItems: RowNode[] = []
+  var allItems: IRowNode[] = []
   gridApi.forEachLeafNode(function (rowNode) {
     allItems.push(rowNode)
   })

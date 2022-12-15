@@ -1,11 +1,11 @@
-import { ICellRendererParams, ICellRendererComp, RowNode, RowEvent } from "@ag-grid-community/core";
+import { ICellRendererParams, ICellRendererComp, IRowNode, RowEvent } from "@ag-grid-community/core";
 
 export class CustomGroupCellRenderer implements ICellRendererComp {
     eGui: HTMLElement | undefined;
     eGroupStatus: HTMLElement | undefined;
     eValueContainer: HTMLElement | undefined;
 
-    node: RowNode | undefined;
+    node: IRowNode | undefined;
 
     onClick = () => {
         this.node!.setExpanded(!this.node!.expanded);

@@ -1,4 +1,4 @@
-import { GetRowIdParams, Grid, GridApi, GridOptions, RowNode, ValueParserParams } from '@ag-grid-community/core'
+import { GetRowIdParams, Grid, GridApi, GridOptions, IRowNode, ValueParserParams } from '@ag-grid-community/core'
 
 var rowIdCounter = 0
 var callCount = 0
@@ -140,8 +140,8 @@ function pickExistingRowItemAtRandom(gridApi: GridApi) {
   return rowNode ? rowNode.data : null
 }
 
-function pickExistingRowNodeAtRandom(gridApi: GridApi): RowNode | undefined {
-  var allItems: RowNode[] = []
+function pickExistingRowNodeAtRandom(gridApi: GridApi): IRowNode | undefined {
+  var allItems: IRowNode[] = []
   gridApi.forEachLeafNode(function (rowNode) {
     allItems.push(rowNode)
   })

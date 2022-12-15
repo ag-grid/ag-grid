@@ -1,4 +1,3 @@
-import { RowNode } from '@ag-grid-community/core';
 
 export default {
     data() {
@@ -36,9 +35,9 @@ export default {
         this.paddingLeft = `${this.params.node.level * 15}px`;
         this.rotation = this.params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)';
 
-        this.params.node.addEventListener(RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged);
+        this.params.node.addEventListener('expandedChanged', this.onExpandedChanged);
     },
     beforeDestroy() {
-        this.params.node.removeEventListener(RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged);
+        this.params.node.removeEventListener('expandedChanged', this.onExpandedChanged);
     }
 };

@@ -313,11 +313,11 @@
   "DragItem": {
     "rowNode": {
       "description": "/** When dragging a row, this contains the row node being dragged\n     * When dragging multiple rows, this contains the row that started the drag.\n     */",
-      "type": { "returnType": "RowNode", "optional": true }
+      "type": { "returnType": "IRowNode", "optional": true }
     },
     "rowNodes": {
       "description": "/** When dragging multiple rows, this contains all rows being dragged */",
-      "type": { "returnType": "RowNode[]", "optional": true }
+      "type": { "returnType": "IRowNode[]", "optional": true }
     },
     "columns": {
       "description": "/** When dragging columns, this contains the columns being dragged */",
@@ -19069,11 +19069,11 @@
     },
     "rowNode": {
       "description": "/** When dragging a row, this contains the row node being dragged\n     * When dragging multiple rows, this contains the row that started the drag.\n     */",
-      "type": { "returnType": "RowNode", "optional": true }
+      "type": { "returnType": "IRowNode", "optional": true }
     },
     "rowNodes": {
       "description": "/** When dragging multiple rows, this contains all rows being dragged */",
-      "type": { "returnType": "RowNode[]", "optional": true }
+      "type": { "returnType": "IRowNode[]", "optional": true }
     },
     "columns": {
       "description": "/** When dragging columns, this contains the columns being dragged */",
@@ -19089,7 +19089,7 @@
   "GetCellsParams": {
     "rowNodes": {
       "description": "/** Optional list of row nodes to restrict operation to */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": true }
     },
     "columns": {
       "description": "/** Optional list of columns to restrict operation to */",
@@ -19109,7 +19109,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "rowNodes": {
       "description": "/** Optional list of row nodes to restrict operation to */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": true }
     },
     "columns": {
       "description": "/** Optional list of columns to restrict operation to */",
@@ -19122,7 +19122,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "rowNodes": {
       "description": "/** Optional list of row nodes to restrict operation to */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": true }
     },
     "columns": {
       "description": "/** Optional list of columns to restrict operation to */",
@@ -19133,7 +19133,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "rowNodes": {
       "description": "/** Optional list of row nodes to restrict operation to */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": true }
     },
     "columns": {
       "description": "/** Optional list of columns to restrict operation to */",
@@ -19144,7 +19144,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "rowNodes": {
       "description": "/** Optional list of row nodes to restrict operation to */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": true }
     },
     "columns": {
       "description": "/** Optional list of columns to restrict operation to */",
@@ -19154,7 +19154,7 @@
   "RedrawRowsParams": {
     "rowNodes": {
       "description": "/** Row nodes to redraw */",
-      "type": { "returnType": "RowNode<TData>[]", "optional": true }
+      "type": { "returnType": "IRowNode<TData>[]", "optional": true }
     },
     "meta": { "typeParams": ["TData = any"] }
   },
@@ -19201,7 +19201,7 @@
     },
     "node": {
       "description": "/** The row node. */",
-      "type": { "returnType": "RowNode<TData>", "optional": true }
+      "type": { "returnType": "IRowNode<TData>", "optional": true }
     },
     "data": {
       "description": "/** Data for the row node in question. */",
@@ -19648,7 +19648,9 @@
   "PopupPositionParams": {
     "ePopup": { "type": { "returnType": "HTMLElement", "optional": false } },
     "column": { "type": { "returnType": "Column | null", "optional": true } },
-    "rowNode": { "type": { "returnType": "RowNode | null", "optional": true } },
+    "rowNode": {
+      "type": { "returnType": "IRowNode | null", "optional": true }
+    },
     "nudgeX": { "type": { "returnType": "number", "optional": true } },
     "nudgeY": { "type": { "returnType": "number", "optional": true } },
     "position": {

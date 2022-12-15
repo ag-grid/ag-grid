@@ -1,4 +1,4 @@
-import { Grid, GridOptions, FirstDataRenderedEvent, RowNode, CheckboxSelectionCallbackParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, FirstDataRenderedEvent, CheckboxSelectionCallbackParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [

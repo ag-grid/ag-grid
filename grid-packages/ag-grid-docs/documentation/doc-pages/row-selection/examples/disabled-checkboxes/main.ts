@@ -1,4 +1,4 @@
-import { Grid, GridOptions, FirstDataRenderedEvent, RowNode } from '@ag-grid-community/core'
+import { Grid, GridOptions, FirstDataRenderedEvent, IRowNode } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -17,7 +17,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   rowSelection: 'multiple',
   suppressRowClickSelection: true,
-  isRowSelectable: (params: RowNode<IOlympicData>) => {   
+  isRowSelectable: (params: IRowNode<IOlympicData>) => {   
     return !!params.data && params.data.year === 2012;
   },  
   onFirstDataRendered: (params: FirstDataRenderedEvent<IOlympicData>) => {

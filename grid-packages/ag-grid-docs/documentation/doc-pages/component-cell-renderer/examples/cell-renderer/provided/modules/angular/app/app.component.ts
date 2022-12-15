@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { DaysFrostRenderer } from './days-frost-renderer.component';
-import { ColDef, GridApi, ICellRenderer, ICellRendererParams, RowNode } from '@ag-grid-community/core';
+import { ColDef, GridApi, ICellRenderer, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
 
 /*
 * It's unlikely you'll use functions that create and manipulate DOM elements like this in an Angular application, but it
@@ -152,7 +152,7 @@ export class AppComponent {
         const extraDaysFrost = Math.floor(Math.random() * 2) + 1;
 
         // iterate over the rows and make each "days of air frost"
-        this.gridApi.forEachNode((rowNode: RowNode) => {
+        this.gridApi.forEachNode((rowNode: IRowNode) => {
             rowNode.setDataValue('Days of air frost (days)', rowNode.data['Days of air frost (days)'] + extraDaysFrost);
         });
     }

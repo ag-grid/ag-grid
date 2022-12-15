@@ -1,4 +1,4 @@
-import { CellClassParams, GetRowIdParams, Grid, GridApi, GridOptions, RefreshCellsParams, RowDragEndEvent, RowDragLeaveEvent, RowDragMoveEvent, RowNode, ValueFormatterParams } from '@ag-grid-community/core';
+import { CellClassParams, GetRowIdParams, Grid, GridApi, GridOptions, RefreshCellsParams, RowDragEndEvent, RowDragLeaveEvent, RowDragMoveEvent, IRowNode, ValueFormatterParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 declare var FileCellRenderer: any;
@@ -101,7 +101,7 @@ function onRowDragEnd(event: RowDragEndEvent) {
   setPotentialParentForNode(event.api, null)
 }
 
-function moveToPath(newParentPath: string[], node: RowNode, allUpdatedNodes: any[]) {
+function moveToPath(newParentPath: string[], node: IRowNode, allUpdatedNodes: any[]) {
   // last part of the file path is the file name
   var oldPath = node.data.filePath
   var fileName = oldPath[oldPath.length - 1]
@@ -119,7 +119,7 @@ function moveToPath(newParentPath: string[], node: RowNode, allUpdatedNodes: any
   }
 }
 
-function isSelectionParentOfTarget(selectedNode: RowNode, targetNode: any) {
+function isSelectionParentOfTarget(selectedNode: IRowNode, targetNode: any) {
   var children = selectedNode.childrenAfterGroup || []
   for (var i = 0; i < children.length; i++) {
     if (targetNode && children[i].key === targetNode.key) return true
@@ -143,7 +143,7 @@ function arePathsEqual(path1: string[], path2: string[]) {
   return equal
 }
 
-function setPotentialParentForNode(api: GridApi, overNode: RowNode | undefined | null) {
+function setPotentialParentForNode(api: GridApi, overNode: IRowNode | undefined | null) {
   var newPotentialParent
   if (overNode) {
     newPotentialParent =
@@ -176,7 +176,7 @@ function setPotentialParentForNode(api: GridApi, overNode: RowNode | undefined |
   refreshRows(api, rowsToRefresh)
 }
 
-function refreshRows(api: GridApi, rowsToRefresh: RowNode[]) {
+function refreshRows(api: GridApi, rowsToRefresh: IRowNode[]) {
   var params: RefreshCellsParams = {
     // refresh these rows only.
     rowNodes: rowsToRefresh,

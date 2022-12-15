@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { IToolPanelParams, RowNode } from "@ag-grid-community/core";
+import { IToolPanelParams, IRowNode } from "@ag-grid-community/core";
 import { IToolPanelAngularComp } from "@ag-grid-community/angular";
 
 @Component({
@@ -45,7 +45,7 @@ export class CustomStatsToolPanel implements IToolPanelAngularComp {
     updateTotals(): void {
         let numGold = 0, numSilver = 0, numBronze = 0;
 
-        this.params.api.forEachNode((rowNode: RowNode) => {
+        this.params.api.forEachNode((rowNode: IRowNode) => {
             const data = rowNode.data;
             if (data.gold) numGold += data.gold;
             if (data.silver) numSilver += data.silver;

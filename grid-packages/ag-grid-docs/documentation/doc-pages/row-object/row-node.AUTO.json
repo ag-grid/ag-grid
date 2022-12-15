@@ -211,13 +211,13 @@
     "description": "/** The top pixel for this row last time, makes sense if data set was ordered or filtered,\n     * it is used so new rows can animate in from their old position. */",
     "type": { "returnType": "number | null" }
   },
-  "daemon": {
-    "description": "/** `true` if this node is a daemon. This means row is not part of the model. Can happen when then\n     * the row is selected and then the user sets a different ID onto the node. The nodes is then\n     * representing a different entity, so the selection controller, if the node is selected, takes\n     * a copy where daemon=true. */",
-    "type": { "returnType": "boolean" }
-  },
   "selectable": {
     "description": "/** `true` by default - can be overridden via gridOptions.isRowSelectable(rowNode) */",
     "type": {}
+  },
+  "___daemon": {
+    "description": "/** `true` if this node is a daemon. This means row is not part of the model. Can happen when then\n     * the row is selected and then the user sets a different ID onto the node. The nodes is then\n     * representing a different entity, so the selection controller, if the node is selected, takes\n     * a copy where daemon=true. */",
+    "type": { "returnType": "boolean" }
   },
   "___cacheData": {
     "description": "/** Used by the value service, stores values for a particular change detection turn. */",

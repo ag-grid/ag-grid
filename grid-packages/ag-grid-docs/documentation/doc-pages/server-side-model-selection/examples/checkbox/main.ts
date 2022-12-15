@@ -1,4 +1,4 @@
-import { Grid, GridOptions, GetRowIdParams, IServerSideDatasource, RowNode } from '@ag-grid-community/core'
+import { Grid, GridOptions, GetRowIdParams, IServerSideDatasource, IRowNode } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -37,7 +37,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowSelection: 'multiple',
 
   // restrict selections to leaf rows
-  isRowSelectable: (rowNode: RowNode) => {
+  isRowSelectable: (rowNode: IRowNode) => {
     return !rowNode.group
   },
 

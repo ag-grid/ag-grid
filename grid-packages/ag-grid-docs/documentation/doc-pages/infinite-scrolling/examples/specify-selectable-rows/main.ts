@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, RowNode } from '@ag-grid-community/core'
+import { Grid, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, IRowNode } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -36,7 +36,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowBuffer: 0,
     // debug: true,
     rowSelection: 'multiple',
-    isRowSelectable: (rowNode: RowNode) => {
+    isRowSelectable: (rowNode: IRowNode) => {
         return rowNode.data ? rowNode.data.country === 'United States' : false
     },
     // tell grid we want virtual row model type

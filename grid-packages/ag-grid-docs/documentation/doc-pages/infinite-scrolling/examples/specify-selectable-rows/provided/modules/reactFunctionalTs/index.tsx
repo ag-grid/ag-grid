@@ -7,7 +7,7 @@ import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 
-import { ColDef, GridReadyEvent, ICellRendererParams, IDatasource, ModuleRegistry, RowNode } from '@ag-grid-community/core';
+import { ColDef, GridReadyEvent, ICellRendererParams, IDatasource, ModuleRegistry, IRowNode } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
@@ -50,7 +50,7 @@ const GridExample = () => {
             resizable: true,
         }
     }, []);
-    const isRowSelectable = useCallback(function (rowNode: RowNode) {
+    const isRowSelectable = useCallback(function (rowNode: IRowNode) {
         return rowNode.data ? rowNode.data.country === 'United States' : false;
     }, []);
 

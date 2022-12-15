@@ -1,4 +1,4 @@
-import { Grid, GridOptions, RowNode } from '@ag-grid-community/core'
+import { Grid, GridOptions, IRowNode } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -45,7 +45,7 @@ function onBtForEachLeafNode() {
   gridOptions.api!.forEachLeafNode(printNode)
 }
 
-const printNode = (node: RowNode<IOlympicData>, index?: number) => {
+const printNode = (node: IRowNode<IOlympicData>, index?: number) => {
   if (node.group) {
     console.log(index + ' -> group: ' + node.key)
   } else {

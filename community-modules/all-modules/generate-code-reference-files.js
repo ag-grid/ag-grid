@@ -93,7 +93,7 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
         }
     } else if (kind == 'MethodSignature' || kind == 'MethodDeclaration') {
         // i.e isExternalFilterPresent?(): boolean;
-        // i.e doesExternalFilterPass?(node: RowNode): boolean;        
+        // i.e doesExternalFilterPass?(node: IRowNode): boolean;        
         const methodArgs = getArgTypes(node.parameters, srcFile);
 
         nodeMembers[name] = {
