@@ -194,14 +194,14 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      * it is used so new rows can animate in from their old position. */
     public oldRowTop: number | null = null;
 
+    /** `true` by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
+    public selectable = true;
+
     /** `true` if this node is a daemon. This means row is not part of the model. Can happen when then
      * the row is selected and then the user sets a different ID onto the node. The nodes is then
      * representing a different entity, so the selection controller, if the node is selected, takes
      * a copy where daemon=true. */
-    public daemon: boolean;
-
-    /** `true` by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
-    public selectable = true;
+    public __daemon: boolean;
 
     /** Used by the value service, stores values for a particular change detection turn. */
     public __cacheData: { [colId: string]: any; };
@@ -309,7 +309,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         // place where daemon nodes can live).
         oldNode.id = this.id;
         oldNode.data = this.data;
-        oldNode.daemon = true;
+        oldNode.__daemon = true;
         oldNode.selected = this.selected;
         oldNode.level = this.level;
 

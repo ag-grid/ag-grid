@@ -1,5 +1,4 @@
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
@@ -16,12 +15,13 @@ import { setAriaLabel, setAriaRole } from "../utils/aria";
 import { PostProcessPopupParams } from "../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ResizeObserverService } from "../misc/resizeObserverService";
+import { IRowNode } from "../interfaces/iRowNode";
 
 
 export interface PopupPositionParams {
     ePopup: HTMLElement,
     column?: Column | null,
-    rowNode?: RowNode | null,
+    rowNode?: IRowNode | null,
     nudgeX?: number,
     nudgeY?: number,
     position?: 'over' | 'under',
@@ -234,7 +234,7 @@ export class PopupService extends BeanStub {
         eventSource?: HTMLElement | null,
         mouseEvent?: MouseEvent | Touch | null,
         column?: Column | null,
-        rowNode?: RowNode | null
+        rowNode?: IRowNode | null
     ): void {
         const callback = this.gridOptionsService.getCallback('postProcessPopup');
         if (callback) {

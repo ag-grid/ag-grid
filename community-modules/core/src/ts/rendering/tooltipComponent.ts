@@ -1,11 +1,11 @@
 import { PopupComponent } from '../widgets/popupComponent';
 import { IComponent } from '../interfaces/iComponent';
 import { escapeString } from '../utils/string';
-import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
 import { ColGroupDef, ColDef } from '../entities/colDef';
 import { AgGridCommon } from '../interfaces/iCommon';
+import { IRowNode } from '../interfaces/iRowNode';
 
 export interface ITooltipParams<TData = any, TValue = any> extends AgGridCommon<TData> {
     /** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */
@@ -21,7 +21,7 @@ export interface ITooltipParams<TData = any, TValue = any> extends AgGridCommon<
     /** The index of the row containing the cell rendering the tooltip. */
     rowIndex?: number;
     /** The row node. */
-    node?: RowNode<TData>;
+    node?: IRowNode<TData>;
     /** Data for the row node in question. */
     data?: TData;
 }

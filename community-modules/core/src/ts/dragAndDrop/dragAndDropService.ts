@@ -6,23 +6,23 @@ import { GridApi } from "../gridApi";
 import { DragService, DragListenerParams } from "./dragService";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
 import { RowDropZoneParams } from "../gridBodyComp/rowDragFeature";
-import { RowNode } from "../entities/rowNode";
 import { escapeString } from "../utils/string";
 import { createIcon } from "../utils/icon";
 import { flatten, removeFromArray } from "../utils/array";
 import { getBodyHeight, getBodyWidth } from "../utils/browser";
 import { loadTemplate, clearElement } from "../utils/dom";
 import { isFunction } from "../utils/function";
+import { IRowNode } from "../interfaces/iRowNode";
 
 export interface DragItem {
     /**
      * When dragging a row, this contains the row node being dragged
      * When dragging multiple rows, this contains the row that started the drag.
      */
-    rowNode?: RowNode;
+    rowNode?: IRowNode;
 
     /** When dragging multiple rows, this contains all rows being dragged */
-    rowNodes?: RowNode[];
+    rowNodes?: IRowNode[];
 
     /** When dragging columns, this contains the columns being dragged */
     columns?: Column[];
