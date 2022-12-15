@@ -166,6 +166,7 @@
     .ag-center-cols-viewport,
     .ag-floating-bottom-viewport,
     .ag-body-horizontal-scroll-viewport,
+    .ag-body-vertical-scroll-viewport,
     .ag-virtual-list-viewport,
     .ag-sticky-top-viewport {
         position: relative;
@@ -193,6 +194,10 @@
         overflow-x: scroll;
     }
 
+    .ag-body-vertical-scroll-viewport {
+        overflow-y: scroll;
+    }
+
     .ag-virtual-list-viewport {
         overflow: auto;
         width: 100%;
@@ -211,6 +216,7 @@
     .ag-pinned-left-cols-container,
     .ag-floating-bottom-container,
     .ag-body-horizontal-scroll-container,
+    .ag-body-vertical-scroll-container,
     .ag-full-width-container,
     .ag-floating-bottom-full-width-container,
     .ag-virtual-list-container,
@@ -237,6 +243,10 @@
 
     .ag-body-horizontal-scroll-container {
         height: 100%;
+    }
+
+    .ag-body-vertical-scroll-container {
+        width: 100%;
     }
 
     .ag-full-width-container,
@@ -285,11 +295,51 @@
         transform: translate3d(0,0,0);
     }
 
+    .ag-body {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: row !important; // we have to state this for rtl, otherwise row-reverse is inherited
+        min-height: 0;
+    }
+
+    .ag-body-clipper {
+        overflow: hidden;
+        min-width: 0px;
+        flex: 1 1 auto;
+        height: 100%;
+
+        // translate3d is necessary here due to a BUG in Safari
+        // where it becomes impossible to click on scrollbars
+        // that are only visible during scroll.
+        transform: translate3d(0,0,0);
+    }
+
     .ag-body-horizontal-scroll {
         min-height: 0;
         min-width: 0;
         width: 100%;
         display: flex;
+        position: relative;
+        &.ag-scrollbar-invisible {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            &.ag-apple-scrollbar {
+                display: none;
+                &.ag-scrollbar-scrolling, &.ag-scrollbar-active {
+                    display: inherit;
+                }
+            }
+        }
+    }
+    
+    .ag-body-vertical-scroll {
+        min-height: 0;
+        min-width: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
         position: relative;
         &.ag-scrollbar-invisible {
             position: absolute;
@@ -744,6 +794,13 @@
 
     .ag-set-filter-item-checkbox {
         display: flex;
+    }
+
+    .ag-set-filter-group-icons {
+        display: block;
+        > * {
+            cursor: pointer;
+        }
     }
 
     .ag-filter-body-wrapper {
@@ -1606,6 +1663,10 @@
     // Default values for themes that do not use the mixins
     @for $i from 1 to 10 {
         .ag-column-select-indent-#{$i} {
+            @include ag.unthemed-rtl(( padding-left: $i * 20px ));
+        }
+
+        .ag-set-filter-indent-#{$i} {
             @include ag.unthemed-rtl(( padding-left: $i * 20px ));
         }
 

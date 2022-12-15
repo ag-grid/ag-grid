@@ -95,7 +95,8 @@ export { IRowDragItem } from "./rendering/row/rowDragComp";
 export { Column, ColumnPinnedType } from "./entities/column";
 export { ColumnGroup } from "./entities/columnGroup";
 export { ProvidedColumnGroup } from "./entities/providedColumnGroup";
-export { RowNode, RowHighlightPosition, RowPinnedType } from "./entities/rowNode";
+export { RowNode } from "./entities/rowNode";
+export { RowHighlightPosition, RowPinnedType } from "./interfaces/iRowNode";
 
 // filter
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
@@ -437,14 +438,14 @@ export {
     PostSortRowsParams,
     GetLocaleTextParams,
     GetGroupAggFilteringParams,
-} from "./entities/iCallbackParams";
+} from "./interfaces/iCallbackParams";
 export {
     WithoutGridCommon
 } from "./interfaces/iCommon";
 
 export * from "./propertyKeys";
-export { IProvidedColumn } from "./entities/iProvidedColumn";
-export { IHeaderColumn } from "./entities/iHeaderColumn";
+export { IProvidedColumn } from "./interfaces/iProvidedColumn";
+export { IHeaderColumn } from "./interfaces/iHeaderColumn";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";

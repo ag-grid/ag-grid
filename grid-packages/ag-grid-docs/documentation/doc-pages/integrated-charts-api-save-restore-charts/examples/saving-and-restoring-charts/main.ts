@@ -21,18 +21,17 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   popupParent: document.body,
   enableCharts: true,
-  createChartContainer: createChartContainer,
+  createChartContainer,
 }
 
-var chartModel: ChartModel | null;
-var currentChartRef: ChartRef | null;
+let chartModel: ChartModel | null;
+let currentChartRef: ChartRef | null;
 
 function saveChart() {
-  var chartModels = gridOptions.api!.getChartModels() || []
+  const chartModels = gridOptions.api!.getChartModels() || []
   if (chartModels.length > 0) {
     chartModel = chartModels[0]
   }
-  alert('Chart saved!')
 }
 
 function clearChart() {
@@ -53,8 +52,8 @@ function createChartContainer(chartRef: ChartRef) {
     currentChartRef.destroyChart()
   }
 
-  var eChart = chartRef.chartElement
-  var eParent = document.querySelector('#myChart') as any;
+  const eChart = chartRef.chartElement
+  const eParent = document.querySelector('#myChart') as any;
   eParent.appendChild(eChart)
   currentChartRef = chartRef
 }
@@ -62,6 +61,6 @@ function createChartContainer(chartRef: ChartRef) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
 })

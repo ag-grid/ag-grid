@@ -8,7 +8,7 @@ import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
 import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
-import { LinearScale } from '../../../scale/linearScale';
+import { ColorScale } from '../../../scale/colorScale';
 import { ChartAxisDirection } from '../../chartAxis';
 import { LegendDatum } from '../../legend';
 import { toFixed } from '../../../util/number';
@@ -362,7 +362,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
         const { data, sizeKey, labelKey, colorKey, colorDomain, colorRange, groupFill } = this;
 
-        const colorScale = new LinearScale();
+        const colorScale = new ColorScale();
         colorScale.domain = colorDomain;
         colorScale.range = colorRange;
 

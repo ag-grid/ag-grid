@@ -45,6 +45,7 @@ export interface IGridBodyComp extends LayoutView {
     setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
     setPinnedTopBottomOverflowY(overflow: string): void;
     registerBodyViewportResizeListener(listener: (() => void)): void;
+    setBodyViewportWidth(width: string): void;
 }
 
 export class GridBodyCtrl extends BeanStub {
@@ -169,6 +170,10 @@ export class GridBodyCtrl extends BeanStub {
         const visible = this.scrollVisibleService.isVerticalScrollShowing();
         this.setVerticalScrollPaddingVisible(visible);
         this.setStickyTopWidth(visible);
+
+        const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
+        const width = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
+        this.comp.setBodyViewportWidth(width);
     }
 
     private onGridColumnsChanged(): void {

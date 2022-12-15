@@ -25,20 +25,14 @@ const gridOptions: GridOptions = {
 }
 
 function onFirstDataRendered(event: FirstDataRenderedEvent) {
-  var chartContainer = document.querySelector('#chart') as any;
+  const chartContainer = document.querySelector('#myChart') as HTMLElement;
 
-  var params: CreatePivotChartParams = {
+  const params: CreatePivotChartParams = {
     chartType: 'groupedColumn',
     chartContainer: chartContainer,
     chartThemeName: 'ag-vivid',
     chartThemeOverrides: {
       common: {
-        padding: {
-          top: 20,
-          left: 10,
-          bottom: 30,
-          right: 10,
-        },
         legend: {
           enabled: true,
           position: 'bottom',
@@ -61,7 +55,7 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')

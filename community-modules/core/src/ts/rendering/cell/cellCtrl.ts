@@ -1,7 +1,8 @@
 import { Beans } from "./../beans";
 import { Column } from "../../entities/column";
 import { NewValueParams } from "../../entities/colDef";
-import { CellChangedEvent, RowNode } from "../../entities/rowNode";
+import { RowNode } from "../../entities/rowNode";
+import { CellChangedEvent } from "../../interfaces/iRowNode";
 import { CellPosition } from "../../entities/cellPosition";
 import {
     CellContextMenuEvent,

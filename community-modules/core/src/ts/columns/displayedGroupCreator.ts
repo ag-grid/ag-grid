@@ -1,7 +1,7 @@
 import { Column, ColumnPinnedType } from "../entities/column";
-import { IProvidedColumn } from "../entities/iProvidedColumn";
+import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
-import { IHeaderColumn } from "../entities/iHeaderColumn";
+import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColumnGroup } from "../entities/columnGroup";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { Bean } from "../context/context";

@@ -83,7 +83,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     currentChartRef.destroyChart()
   }
 
-  var createRangeChartParams: CreateRangeChartParams = {
+  const createRangeChartParams: CreateRangeChartParams = {
     chartContainer: document.querySelector('#myChart') as any,
     suppressChartRanges: true,
     cellRange: {
@@ -105,7 +105,7 @@ function getChartToolbarItems(): ChartMenuOptions[] {
 }
 
 function toggleAxis() {
-  var axisBtn = document.querySelector('#axisBtn') as any;
+  const axisBtn = document.querySelector('#axisBtn') as any;
   axisBtn.textContent = axisBtn.value
   axisBtn.value = axisBtn.value === 'time' ? 'category' : 'time'
 

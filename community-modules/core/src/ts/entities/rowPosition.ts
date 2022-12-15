@@ -1,7 +1,8 @@
 import { Autowired, Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { IRowModel } from "../interfaces/iRowModel";
-import { RowNode, RowPinnedType } from "./rowNode";
+import { RowNode } from "./rowNode";
+import { RowPinnedType } from "../interfaces/iRowNode";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists } from "../utils/generic";
 import { PaginationProxy } from "../pagination/paginationProxy";

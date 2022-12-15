@@ -11,5 +11,6 @@
 }
 
 .wrapper #myChart {
-    flex: 3 3 0;
+    margin-top: 0.5rem;
+    border: 1px solid var(--ag-border-color);
 }

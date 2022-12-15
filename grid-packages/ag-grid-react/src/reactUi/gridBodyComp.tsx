@@ -1,5 +1,5 @@
 import { GridBodyCtrl, IGridBodyComp, RowContainerName } from 'ag-grid-community';
-import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
@@ -27,6 +27,7 @@ const GridBodyComp = () => {
     const [stickyTopWidth, setStickyTopWidth] = useState<string>('100%');
     const [topDisplay, setTopDisplay] = useState<string>('');
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
+    const [bodyViewportWidth, setBodyViewportWidth] = useState<string>('');
     
     const [movingCss, setMovingCss] = useState<string | null>(null);
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
@@ -43,6 +44,7 @@ const GridBodyComp = () => {
     const eRoot = useRef<HTMLDivElement>(null);
     const eTop = useRef<HTMLDivElement>(null);
     const eStickyTop = useRef<HTMLDivElement>(null);
+    const eBody = useRef<HTMLDivElement>(null);
     const eBodyViewport = useRef<HTMLDivElement>(null);
     const eBottom = useRef<HTMLDivElement>(null);
 
@@ -71,6 +73,9 @@ const GridBodyComp = () => {
         eRoot.current!.appendChild(document.createComment(' AG Overlay Wrapper '));
         eRoot.current!.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
 
+        eBody.current!.appendChild(document.createComment(' AG Fake Vertical Scroll '));
+        eBody.current!.appendChild(newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
+
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
             setColumnCount: setAriaColCount,
@@ -87,7 +92,7 @@ const GridBodyComp = () => {
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
             setCellSelectableCss: setCellSelectableCss,
-
+            setBodyViewportWidth: setBodyViewportWidth,
             registerBodyViewportResizeListener: listener => {
                 const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current!, listener);
                 destroyFuncs.push(() => unsubscribeFromResize());
@@ -119,6 +124,14 @@ const GridBodyComp = () => {
     const bodyViewportClasses = useMemo(() =>
         classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), 
         [rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss]
+    );
+    const bodyClasses = useMemo(() =>
+        classesList('ag-body', layoutClass), 
+        [layoutClass]
+    );
+    const bodyClipperClasses = useMemo(() =>
+        classesList('ag-body-clipper', layoutClass), 
+        [layoutClass]
     );
     const topClasses = useMemo(() =>
         classesList('ag-floating-top', cellSelectableCss), 
@@ -153,6 +166,10 @@ const GridBodyComp = () => {
         overflowY: (topAndBottomOverflowY as any)
     }), [bottomHeight, bottomDisplay, topAndBottomOverflowY]);
 
+    const bodyViewportStyle: React.CSSProperties = useMemo( ()=> ({
+        width: bodyViewportWidth
+    }), [bodyViewportWidth]);
+
     const createRowContainer = (container: RowContainerName) => <RowContainerComp name={ container } key={`${container}-container`} />;
     const createSection = ({
         section,
@@ -174,12 +191,17 @@ const GridBodyComp = () => {
                 RowContainerName.TOP_RIGHT,
                 RowContainerName.TOP_FULL_WIDTH,
             ]}) }
-            { createSection({ section: eBodyViewport, className: bodyViewportClasses, children: [
-                RowContainerName.LEFT,
-                RowContainerName.CENTER,
-                RowContainerName.RIGHT,
-                RowContainerName.FULL_WIDTH,
-            ]}) }
+            <div className={bodyClasses} ref={eBody} role="presentation">
+                <div className={bodyClipperClasses} role="presentation">
+                    { createSection({ section: eBodyViewport, className: bodyViewportClasses, 
+                                        style: bodyViewportStyle, children: [
+                        RowContainerName.LEFT,
+                        RowContainerName.CENTER,
+                        RowContainerName.RIGHT,
+                        RowContainerName.FULL_WIDTH,
+                    ]}) }
+                </div>
+            </div>
             { createSection({ section: eStickyTop, className: stickyTopClasses, style: stickyTopStyle, children: [
                 RowContainerName.STICKY_TOP_LEFT,
                 RowContainerName.STICKY_TOP_CENTER,

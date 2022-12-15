@@ -23,13 +23,13 @@ test('convert linear', () => {
     scale.domain = [-100, 100];
     scale.range = [0, 100];
 
-    expect(scale.convert(-100)).toBe(0);
-    expect(scale.convert(0)).toBe(50);
-    expect(scale.convert(100)).toBe(100);
+    expect(scale.convert(0, { strict: false })).toBe(50);
 
-    // non-clamping
-    expect(scale.convert(-300)).toBe(-100);
-    expect(scale.convert(300)).toBe(200);
+    expect(scale.convert(-100, { strict: false })).toBe(0);
+    expect(scale.convert(100, { strict: false })).toBe(100);
+
+    expect(scale.convert(-100, { strict: true })).toBe(0);
+    expect(scale.convert(100, { strict: true })).toBe(100);
 });
 
 test('convert linear clamp', () => {
@@ -37,10 +37,21 @@ test('convert linear clamp', () => {
 
     scale.domain = [-100, 100];
     scale.range = [0, 100];
-    scale.clamp = true;
 
-    expect(scale.convert(-300)).toBe(0);
-    expect(scale.convert(300)).toBe(100);
+    expect(scale.convert(-300, { strict: false })).toBe(0);
+    expect(scale.convert(300, { strict: false })).toBe(100);
+
+    expect(scale.convert(-300, { strict: true })).toBeNaN();
+    expect(scale.convert(300, { strict: true })).toBeNaN();
+});
+
+test('convert linear with zero width domain', () => {
+    const scale = new LinearScale();
+
+    scale.domain = [100, 100];
+    scale.range = [0, 100];
+
+    expect(scale.convert(100, { strict: false })).toBe(50);
 });
 
 test('invert linear', () => {
@@ -52,10 +63,6 @@ test('invert linear', () => {
     expect(scale.invert(50)).toBe(0);
     expect(scale.invert(0)).toBe(-100);
     expect(scale.invert(75)).toBe(50);
-
-    // non-clamping
-    expect(scale.invert(-50)).toBe(-200);
-    expect(scale.invert(150)).toBe(200);
 });
 
 test('invert linear clamp', () => {
@@ -63,34 +70,16 @@ test('invert linear clamp', () => {
 
     scale.domain = [-100, 100];
     scale.range = [0, 100];
-    scale.clamp = true;
 
     expect(scale.invert(-50)).toBe(-100);
     expect(scale.invert(150)).toBe(100);
 });
-// TODO: re-enable when we start using polylinear scales in the wild
-// test('convert polylinear', () => {
-//     const scale = new LinearScale();
 
-//     scale.domain = [-1, 0, 1];
-//     scale.range = [0, 100, 300];
+test('invert linear with zero length range', () => {
+    const scale = new LinearScale();
 
-//     expect(scale.convert(-1)).toBe(0);
-//     expect(scale.convert(-0.5)).toBe(50);
-//     expect(scale.convert(0)).toBe(100);
-//     expect(scale.convert(0.5)).toBe(200);
-//     expect(scale.convert(1)).toBe(300);
-// });
+    scale.domain = [0, 100];
+    scale.range = [100, 100];
 
-// test('invert polylinear', () => {
-//     const scale = new LinearScale();
-
-//     scale.domain = [-1, 0, 1];
-//     scale.range = [0, 100, 300];
-
-//     expect(scale.invert(50)).toBe(-0.5);
-//     expect(scale.invert(100)).toBe(0);
-//     expect(scale.invert(300)).toBe(1);
-//     expect(scale.invert(200)).toBe(0.5);
-//     expect(scale.invert(250)).toBe(0.75);
-// });
+    expect(scale.invert(100)).toBe(50);
+});

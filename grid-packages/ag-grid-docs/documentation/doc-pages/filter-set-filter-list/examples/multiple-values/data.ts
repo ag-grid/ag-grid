@@ -1,6 +1,11 @@
 export function getData(): any[] {
     return [
         {
+            "animalsArray": [],
+            "animalsString": '',
+            "animalsObjects": []
+        },
+        {
             "animalsArray": [
                 "Giraffe",
                 "Monkey"

@@ -13,7 +13,7 @@ import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 import { AgPromise } from "../utils";
 import { CtrlsService } from "../ctrlsService";
 import { setAriaLabel, setAriaRole } from "../utils/aria";
-import { PostProcessPopupParams } from "../entities/iCallbackParams";
+import { PostProcessPopupParams } from "../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 
@@ -252,9 +252,21 @@ export class PopupService extends BeanStub {
 
     public positionPopup(params: PopupPositionParams): void {
         const { ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver, updatePosition } = params;
+        const lastSize = { width: 0, height: 0 };
 
-        const updatePopupPosition = () => {
+        const updatePopupPosition = (fromResizeObserver: boolean = false) => {
             let { x, y } = updatePosition!();
+
+            if (
+                fromResizeObserver &&
+                ePopup.clientWidth === lastSize.width &&
+                ePopup.clientHeight === lastSize.height
+            ) {
+                return;
+            }
+
+            lastSize.width = ePopup.clientWidth;
+            lastSize.height = ePopup.clientHeight;
 
             if (nudgeX) { x += nudgeX; }
             if (nudgeY) { y += nudgeY; }
@@ -275,7 +287,7 @@ export class PopupService extends BeanStub {
         if (!skipObserver) {
             // Since rendering popup contents can be asynchronous, use a resize observer to
             // reposition the popup after initial updates to the size of the contents
-            const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, updatePopupPosition);
+            const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, () => updatePopupPosition(true));
             // Only need to reposition when first open, so can clean up after a bit of time
             setTimeout(() => resizeObserverDestroyFunc(), PopupService.WAIT_FOR_POPUP_CONTENT_RESIZE);
         }

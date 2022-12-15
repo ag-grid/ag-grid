@@ -116,6 +116,10 @@ dropNotAllowed: 'not-allowed'
 groupContracted: 'tree-closed'
 // shown on row group when expanded (click to contract)
 groupExpanded: 'tree-open'
+// set filter list group contracted (click to expand)
+setFilterGroupClosed: 'tree-closed',
+// set filter list group expanded (click to contract)
+setFilterGroupOpen: 'tree-open',
 // context menu chart item
 chart: 'chart'
 // chart window title bar

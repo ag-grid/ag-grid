@@ -7,6 +7,7 @@ import { GridHeaderCtrl } from "./headerRendering/gridHeaderCtrl";
 import { HeaderRowContainerCtrl } from "./headerRendering/rowContainer/headerRowContainerCtrl";
 import { ColumnPinnedType } from "./entities/column";
 import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
+import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.
@@ -32,6 +33,7 @@ interface ReadyParams {
     stickyTopRightRowContainerCtrl: RowContainerCtrl;
 
     fakeHScrollComp: FakeHScrollComp;
+    fakeVScrollComp: FakeVScrollComp;
     gridHeaderCtrl: GridHeaderCtrl;
 
     centerHeaderRowContainerCtrl: HeaderRowContainerCtrl;
@@ -68,6 +70,7 @@ export class CtrlsService extends BeanStub {
     private rightHeaderRowContainerCtrl: HeaderRowContainerCtrl;
 
     private fakeHScrollComp: FakeHScrollComp;
+    private fakeVScrollComp: FakeVScrollComp;
 
     private gridHeaderCtrl: GridHeaderCtrl;
 
@@ -100,6 +103,7 @@ export class CtrlsService extends BeanStub {
             && this.rightHeaderRowContainerCtrl != null
 
             && this.fakeHScrollComp != null
+            && this.fakeVScrollComp != null
             && this.gridHeaderCtrl != null;
 
         if (this.ready) {
@@ -140,6 +144,7 @@ export class CtrlsService extends BeanStub {
             rightHeaderRowContainerCtrl: this.rightHeaderRowContainerCtrl,
 
             fakeHScrollComp: this.fakeHScrollComp,
+            fakeVScrollComp: this.fakeVScrollComp,
             gridBodyCtrl: this.gridBodyCtrl,
             gridCtrl: this.gridCtrl,
             gridHeaderCtrl: this.gridHeaderCtrl,
@@ -148,6 +153,11 @@ export class CtrlsService extends BeanStub {
 
     public registerFakeHScrollComp(comp: FakeHScrollComp): void {
         this.fakeHScrollComp = comp;
+        this.checkReady();
+    }
+
+    public registerFakeVScrollComp(comp: FakeVScrollComp): void {
+        this.fakeVScrollComp = comp;
         this.checkReady();
     }
 
@@ -242,6 +252,10 @@ export class CtrlsService extends BeanStub {
 
     public getFakeHScrollComp(): FakeHScrollComp {
         return this.fakeHScrollComp;
+    }
+
+    public getFakeVScrollComp(): FakeVScrollComp {
+        return this.fakeVScrollComp;
     }
 
     public getGridHeaderCtrl(): GridHeaderCtrl {

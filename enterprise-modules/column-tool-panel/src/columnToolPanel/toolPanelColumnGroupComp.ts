@@ -288,7 +288,10 @@ export class ToolPanelColumnGroupComp extends Component {
     private refreshAriaLabel(): void {
         const translate = this.localeService.getLocaleTextFunc();
         const columnLabel = translate('ariaColumnGroup', 'Column Group');
-        const state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
+        const checkboxValue = this.cbSelect.getValue();
+        const state = checkboxValue === undefined ?
+            translate('ariaIndeterminate', 'indeterminate') : 
+            (checkboxValue ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden'));
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
 
         _.setAriaLabel(this.focusWrapper, `${this.displayName} ${columnLabel}`);

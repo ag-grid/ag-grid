@@ -218,8 +218,9 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 skipCols -= 1;
                 return;
             }
-            if (!this.config.gridOptionsService.is('groupHideOpenParents') && node.level) {
-                _.last(this.rows).outlineLevel = node.level;
+            if (!this.config.gridOptionsService.is('groupHideOpenParents') && node.level != null) {
+                const padding = node.footer ? 1 : 0;
+                _.last(this.rows).outlineLevel = node.level + padding;
             }
             const valueForCell = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
             const styleIds: string[] = this.config.styleLinker({ rowType: RowType.BODY, rowIndex, value: valueForCell, column, node });

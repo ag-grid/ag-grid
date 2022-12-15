@@ -17,7 +17,7 @@ import { Text } from '../../../scene/shape/text';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { checkDatum, isContinuous, isNumber } from '../../../util/value';
-import { clamper, ContinuousScale } from '../../../scale/continuousScale';
+import { ContinuousScale } from '../../../scale/continuousScale';
 import { doOnce } from '../../../util/function';
 import { Point, SizedPoint } from '../../../scene/point';
 import {
@@ -420,8 +420,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const prevY = cumulativePathValues[idx][side];
             const currY = cumulativePathValues[idx][side] + yDatum;
 
-            const prevYCoordinate = yScale.convert(prevY, continuousY ? clamper : undefined);
-            const currYCoordinate = yScale.convert(currY, continuousY ? clamper : undefined);
+            const prevYCoordinate = yScale.convert(prevY, { strict: false });
+            const currYCoordinate = yScale.convert(currY, { strict: false });
 
             cumulativePathValues[idx][side] = currY;
 
@@ -447,7 +447,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             }
 
             const x = xScale.convert(xDatum) + xOffset;
-            const y = yScale.convert(currY, continuousY ? clamper : undefined);
+            const y = yScale.convert(currY, { strict: false });
 
             return { x, y, size: marker.size };
         };

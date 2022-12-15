@@ -1,4 +1,4 @@
-import { IHeaderColumn } from "../../entities/iHeaderColumn";
+import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { Column } from "../../entities/column";
 import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";

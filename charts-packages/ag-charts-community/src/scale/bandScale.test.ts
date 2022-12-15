@@ -9,7 +9,6 @@ test('initial state', () => {
     expect(scale.paddingInner).toBe(0);
     expect(scale.paddingOuter).toBe(0);
     expect(scale.padding).toBe(0);
-    expect(scale.align).toBe(0.5);
 });
 
 test('no implicit domain construction', () => {
@@ -97,22 +96,4 @@ test('round', () => {
     expect(scale.convert('E')).toBe(396);
 
     expect(scale.bandwidth).toBe(97);
-});
-
-test('align', () => {
-    const scale = new BandScale();
-
-    scale.domain = ['A', 'B', 'C', 'D', 'E'];
-    scale.range = [0, 500];
-    scale.paddingInner = 1;
-    scale.paddingOuter = 0.5;
-    scale.align = 0;
-
-    expect(scale.convert('A')).toBe(0);
-    expect(scale.convert('B')).toBe(100);
-    expect(scale.convert('C')).toBe(200);
-    expect(scale.convert('D')).toBe(300);
-    expect(scale.convert('E')).toBe(400);
-
-    expect(scale.bandwidth).toBe(0);
 });

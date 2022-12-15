@@ -134,9 +134,24 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
+      // we don't have unique codes in our dataset, so generate unique ones
+      const namesToCodes: Map<string, string> = new Map();
+      const codesToNames: Map<string, string> = new Map();
       data.forEach((row: any) => {
         row.countryName = row.country;
-        row.countryCode = row.country.substring(0, 2).toUpperCase();
+        if (namesToCodes.has(row.countryName)) {
+          row.countryCode = namesToCodes.get(row.countryName);
+        } else {
+          row.countryCode = row.country.substring(0, 2).toUpperCase();
+          if (codesToNames.has(row.countryCode)) {
+            let num = 0;
+            do {
+              row.countryCode = `${row.countryCode[0]}${num++}`;
+            } while (codesToNames.has(row.countryCode));
+          } 
+          codesToNames.set(row.countryCode, row.countryName);
+          namesToCodes.set(row.countryName, row.countryCode);
+        }
         delete row.country;
       });
       // setup the fake server with entire dataset

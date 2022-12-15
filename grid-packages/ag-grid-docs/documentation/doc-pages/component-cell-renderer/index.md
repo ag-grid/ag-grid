@@ -217,14 +217,18 @@ The example below demonstrates custom methods on cell renderers called by the ap
 
 ## Cell Renderer Keyboard Navigation
 
-Within custom cell renderers, keyboard navigation and focus can be handled by writing a custom `suppressKeyboardEvent` function in grid options.
+When using custom cell renderers, the custom cell renderer is responsible for implementing support for keyboard navigation among its focusable elements. This is why by default, focusing a grid cell with a custom cell renderer will focus the entire cell instead of any of the elements inside the custom cell renderer. 
 
-An example of this is shown below, where the custom cell elements are able to be traversed using <kbd>tab</kbd> and <kbd>shift</kbd>+<kbd>tab</kbd>:
+Adding support for keyboard navigation and focus requires a custom `suppressKeyboardEvent` function in grid options. See [Suppress Keyboard Events](/keyboard-navigation/#suppress-keyboard-events).
 
-- Click on the top left `Natalie Coughlin` cell, press the <kbd>tab</kbd> key and notice that the button, textbox and link can be tabbed into. At the end of the cell elements, the tab focus moves to the next cell in the next row
-- Use <kbd>shift</kbd>+<kbd>tab</kbd> to navigate in the reverse direction
+An example of this is shown below, enabling keyboard navigation through the custom cell elements when pressing <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd>:
 
-The `suppressKeyboardEvent` function is used to capture tab events and determine if the user is tabbing forward or backwards. It also suppresses the default behaviour of moving to the next cell if tabbing within the child elements. If the focus is at the beginning or the end of the cell children and moving out of the cell, the keyboard event is not suppressed, so focus can move between the children elements. Also, when moving backwards, the focus needs to be manually set while preventing the default behaviour of the keyboard press event.
+- Click on the top left `Natalie Coughlin` cell, press the <kbd>Tab</kbd> key and notice that the button, textbox and link can be tabbed into. At the end of the cell elements, the tab focus moves to the next cell in the next row
+- Use <kbd>Shift</kbd>+<kbd>Tab</kbd> to navigate in the reverse direction
+
+The `suppressKeyboardEvent` callback is used to capture tab events and determine if the user is tabbing forward or backwards. It also suppresses the default behaviour of moving to the next cell if tabbing within the child elements. 
+
+If the focus is at the beginning or the end of the cell children and moving out of the cell, the keyboard event is not suppressed, so focus can move between the children elements. Also, when moving backwards, the focus needs to be manually set while preventing the default behaviour of the keyboard press event.
 
 <grid-example title='Cell Renderer Keyboard Navigation' name='cell-renderer-keyboard-navigation' type='mixed'></grid-example>
 

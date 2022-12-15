@@ -8,9 +8,9 @@ export class SetHeightFeature extends BeanStub {
     @Autowired("rowContainerHeightService") private maxDivHeightScaler: RowContainerHeightService;
 
     private eContainer: HTMLElement;
-    private eWrapper: HTMLElement;
+    private eWrapper: HTMLElement | undefined;
 
-    constructor(eContainer: HTMLElement, eWrapper: HTMLElement) {
+    constructor(eContainer: HTMLElement, eWrapper?: HTMLElement) {
         super();
         this.eContainer = eContainer;
         this.eWrapper = eWrapper;

@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
     },
   },
   rowData: getData(),
-  onFirstDataRendered: onFirstDataRendered,
+  onFirstDataRendered,
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

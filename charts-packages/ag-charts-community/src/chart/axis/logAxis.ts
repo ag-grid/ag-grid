@@ -1,4 +1,3 @@
-import { ContinuousScale, filter } from '../../scale/continuousScale';
 import { LogScale } from '../../scale/logScale';
 import { NumberAxis } from './numberAxis';
 
@@ -15,7 +14,6 @@ export class LogAxis extends NumberAxis {
 
     constructor() {
         super(new LogScale());
-
-        (this.scale as ContinuousScale).clamper = filter;
+        this.scale.strictClampByDefault = true;
     }
 }

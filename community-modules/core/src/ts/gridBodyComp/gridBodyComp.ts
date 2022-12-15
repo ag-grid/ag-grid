@@ -25,11 +25,16 @@ const GRID_BODY_TEMPLATE = /* html */
             <ag-row-container ref="topRightContainer" name="${RowContainerName.TOP_RIGHT}"></ag-row-container>
             <ag-row-container ref="topFullWidthContainer" name="${RowContainerName.TOP_FULL_WIDTH}"></ag-row-container>
         </div>
-        <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
-            <ag-row-container ref="leftContainer" name="${RowContainerName.LEFT}"></ag-row-container>
-            <ag-row-container ref="centerContainer" name="${RowContainerName.CENTER}"></ag-row-container>
-            <ag-row-container ref="rightContainer" name="${RowContainerName.RIGHT}"></ag-row-container>
-            <ag-row-container ref="fullWidthContainer" name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
+        <div class="ag-body" ref="eBody" role="presentation">
+            <div class="ag-body-clipper" ref="eBodyClipper" role="presentation">
+                <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
+                    <ag-row-container ref="leftContainer" name="${RowContainerName.LEFT}"></ag-row-container>
+                    <ag-row-container ref="centerContainer" name="${RowContainerName.CENTER}"></ag-row-container>
+                    <ag-row-container ref="rightContainer" name="${RowContainerName.RIGHT}"></ag-row-container>
+                    <ag-row-container ref="fullWidthContainer" name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
+                </div>
+            </div>
+            <ag-fake-vertical-scroll></ag-fake-vertical-scroll>
         </div>
         <div class="ag-sticky-top" ref="eStickyTop" role="presentation">
             <ag-row-container ref="stickyTopLeftContainer" name="${RowContainerName.STICKY_TOP_LEFT}"></ag-row-container>
@@ -58,6 +63,8 @@ export class GridBodyComp extends Component {
     @RefSelector('eTop') private eTop: HTMLElement;
     @RefSelector('eBottom') private eBottom: HTMLElement;
     @RefSelector('gridHeader') headerRootComp: GridHeaderComp;
+    @RefSelector('eBodyClipper') private eBodyClipper: HTMLElement;
+    @RefSelector('eBody') private eBody: HTMLElement;
 
     private ctrl: GridBodyCtrl;
 
@@ -87,10 +94,18 @@ export class GridBodyComp extends Component {
             setStickyTopWidth: width => this.eStickyTop.style.width = width,
             setColumnMovingCss: (cssClass, flag) => this.addOrRemoveCssClass(CSS_CLASS_COLUMN_MOVING, flag),
             updateLayoutClasses: (cssClass, params) => {
-                const bodyViewportClassList = this.eBodyViewport.classList;
-                bodyViewportClassList.toggle(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
-                bodyViewportClassList.toggle(LayoutCssClasses.NORMAL, params.normal);
-                bodyViewportClassList.toggle(LayoutCssClasses.PRINT, params.print);
+
+                const classLists = [
+                    this.eBodyViewport.classList,
+                    this.eBodyClipper.classList,
+                    this.eBody.classList
+                ];
+
+                classLists.forEach(classList => {
+                    classList.toggle(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+                    classList.toggle(LayoutCssClasses.NORMAL, params.normal);
+                    classList.toggle(LayoutCssClasses.PRINT, params.print);
+                });
 
                 this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
                 this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);
@@ -107,6 +122,7 @@ export class GridBodyComp extends Component {
                 [this.eTop, this.eBodyViewport, this.eBottom]
                     .forEach(ct => ct.classList.toggle(CSS_CLASS_CELL_SELECTABLE, selectable));
             },
+            setBodyViewportWidth: width => this.eBodyViewport.style.width = width
         };
 
         this.ctrl = this.createManagedBean(new GridBodyCtrl());

@@ -20,21 +20,19 @@ When adding event listeners to a row, they will stay with the row until the row 
 Be careful when adding listeners to `rowNodes` in cell renderers that you remove the listener when the rendered row is destroyed due to row virtualisation. You can cater for this as follows:
 
 ```js
-var renderer = function(params) {
+init(params: ICellRendererParams) {
     // add listener
-    var selectionChangedCallback = function () {
+    var selectionChangedCallback = () => {
         // some logic on selection changed here
         console.log('node selected = ' + params.node.isSelected());
     };
 
-    params.node.addEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
+    params.node.addEventListener('rowSelected', selectionChangedCallback);
 
     // remove listener on destroy
-    params.addRenderedRowEventListener('renderedRowRemoved', function() {
-        params.node.removeEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
+    params.api.addRenderedRowListener('virtualRowRemoved', params.rowIndex, () => {
+        params.node.removeEventListener('rowSelected', selectionChangedCallback);
     }
-
-    return params.value;
 }
 ```
 <api-documentation source='resources/events.json'></api-documentation>

@@ -56,38 +56,50 @@ type TestCase = {
     extraScreenshotActions?: (chart: Chart) => Promise<void>;
     compare?: AgCartesianAxisType[];
 };
-const EXAMPLES = mixinDerivedCases({
-    BASIC_CATEGORY_AXIS: {
-        options: axesExamples.CATEGORY_AXIS_BASIC_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+const EXAMPLES: Record<string, TestCase> = {
+    ...mixinDerivedCases({
+        BASIC_CATEGORY_AXIS: {
+            options: axesExamples.CATEGORY_AXIS_BASIC_EXAMPLE,
+            assertions: cartesianChartAssertions(),
+        },
+        BASIC_CATEGORY_UNIFORM_AXIS: {
+            options: axesExamples.CATEGORY_AXIS_UNIFORM_BASIC_EXAMPLE,
+            assertions: cartesianChartAssertions(),
+        },
+        GROUPED_CATEGORY_AXIS: {
+            options: axesExamples.GROUPED_CATEGORY_AXIS_EXAMPLE,
+            assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'] }),
+        },
+        BASIC_TIME_AXIS: {
+            options: axesExamples.TIME_AXIS_BASIC_EXAMPLE,
+            assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+        },
+        BASIC_TIME_MIN_MAX_DATE_AXIS: {
+            options: axesExamples.TIME_AXIS_MIN_MAX_DATE_EXAMPLE,
+            assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+            compare: ['time'],
+        },
+        BASIC_TIME_MIN_MAX_NUMBER_AXIS: {
+            options: axesExamples.TIME_AXIS_MIN_MAX_NUMBER_EXAMPLE,
+            assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+            compare: ['time'],
+        },
+        NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE: {
+            options: axesExamples.NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
+            assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line'] }),
+        },
+    }),
+    NUMBER_AXIS_LOG2_EXAMPLE: {
+        options: axesExamples.NUMBER_AXIS_LOG2_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'log'], seriesTypes: ['line'] }),
+        compare: ['log'],
     },
-    BASIC_CATEGORY_UNIFORM_AXIS: {
-        options: axesExamples.CATEGORY_AXIS_UNIFORM_BASIC_EXAMPLE,
-        assertions: cartesianChartAssertions(),
+    NUMBER_AXIS_LOG10_EXAMPLE: {
+        options: axesExamples.NUMBER_AXIS_LOG10_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'log'], seriesTypes: ['line'] }),
+        compare: ['log'],
     },
-    GROUPED_CATEGORY_AXIS: {
-        options: axesExamples.GROUPED_CATEGORY_AXIS_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'] }),
-    },
-    BASIC_TIME_AXIS: {
-        options: axesExamples.TIME_AXIS_BASIC_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
-    },
-    BASIC_TIME_MIN_MAX_DATE_AXIS: {
-        options: axesExamples.TIME_AXIS_MIN_MAX_DATE_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
-        compare: ['time'],
-    },
-    BASIC_TIME_MIN_MAX_NUMBER_AXIS: {
-        options: axesExamples.TIME_AXIS_MIN_MAX_NUMBER_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
-        compare: ['time'],
-    },
-    NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE: {
-        options: axesExamples.NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line'] }),
-    },
-});
+};
 
 const EXAMPLES_NO_SERIES: Record<string, TestCase> = {
     NUMBER_AXIS_NO_SERIES: {

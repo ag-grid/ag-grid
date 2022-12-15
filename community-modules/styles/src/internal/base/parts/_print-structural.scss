@@ -2,8 +2,13 @@
 
 @mixin output {
     .ag-layout-print {
-        &.ag-body-viewport {
-            flex: none;
+        &.ag-body {
+            display: block;
+            height: unset;
+        }
+
+        &.ag-body-clipper {
+            height: unset;
         }
 
         &.ag-root-wrapper {
@@ -12,6 +17,10 @@
 
         .ag-center-cols-clipper {
             min-width: 100%;
+        }
+
+        .ag-body-vertical-scroll {
+            display: none;
         }
 
         .ag-body-horizontal-scroll {

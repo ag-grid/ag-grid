@@ -94,6 +94,7 @@ import { WithoutGridCommon } from "./interfaces/iCommon";
 import { GridOptionsService } from "./gridOptionsService";
 import { LocaleService } from "./localeService";
 import { GridOptionsValidator } from "./gridOptionsValidator";
+import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 
 export interface GridParams {
     // used by Web Components
@@ -277,7 +278,8 @@ export class GridCoreCreator {
             { componentName: 'AgPanel', componentClass: AgPanel },
             { componentName: 'AgDialog', componentClass: AgDialog },
             { componentName: 'AgRowContainer', componentClass: RowContainerComp },
-            { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp }
+            { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp },
+            { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp }
         ];
 
         const moduleAgStackComps = this.extractModuleEntity(registeredModules,
