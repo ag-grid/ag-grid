@@ -388,7 +388,13 @@ body {
     }
 
     @include media-breakpoint-up(sm) {
+        h2 {
+            margin-top: 0;
+        }
+
         section {
+            margin-top: 45px;
+            margin-bottom: 0;
             padding-left: 30px;
             padding-right: 30px;
         }

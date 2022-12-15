@@ -1,14 +1,27 @@
+$breakpoint-medium: 940px;
+$breakpoint-large: 1200px;
+
 .container {
   --avatar-size: 54px;
 
   display: flex;
   flex-direction: column;
-  list-style: none;
-  margin: 0;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
   padding: 0;
+  list-style: none;
 
-  @media screen and (min-width: 600px) {
+  @media screen and (min-width: $breakpoint-medium) {
+    flex-direction: row;
+    max-width: none;
+    gap: 20px;
+  }
+
+  @media screen and (min-width: $breakpoint-large) {
     --avatar-size: 80px;
+
+    gap: 40px;
   }
 }
 
@@ -35,6 +48,25 @@ blockquote {
         <path style='fill: #{$background-color-rgb};' d='M0 21V0h18L1.8 21.6c-.577.769-1.8.361-1.8-.6Z'/>\
       </svg>"
     );
+
+    @media screen and (min-width: $breakpoint-large) {
+      bottom: -22px;
+    }
+  }
+}
+
+li:nth-child(odd) {
+  @media screen and (max-width: $breakpoint-medium) {
+    align-self: flex-end;
+  }
+}
+
+figure {
+  max-width: 540px;
+  margin-bottom: 48px;
+
+  li:last-child & {
+    margin-bottom: 0;
   }
 }
 
@@ -55,14 +87,6 @@ blockquote p {
 
   &:after {
     content: close-quote;
-  }
-}
-
-figure {
-  margin-bottom: 48px;
-
-  li:last-child & {
-    margin-bottom: 0;
   }
 }
 
@@ -102,6 +126,10 @@ figcaption {
   grid-area: orgContainer;
   display: flex;
   align-items: center;
+
+  @media screen and (min-width: $breakpoint-large) {
+    top: -7px;
+  }
 }
 
 .orgRole {

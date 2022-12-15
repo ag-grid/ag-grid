@@ -18,7 +18,7 @@ export const quotesData: QuotesData = {
   angularPerson: {
     name: "Brian Love",
     avatarUrl: "images/developer-quotes/portraits/brian-love-portrait.png",
-    orgName: "Google Developer Experts",
+    orgName: "Google Developers",
     orgIconUrl: "images/developer-quotes/orgIcons/google-developer-expert-logo.png",
     orgRole: "Expert at",
     text: "Accusamus eveniet tempore suscipit qui consectetur sequi rem repudiandae id. Nihil facilis qui veniam fugiat eum tempore. Reprehenderit nulla sint ea quis voluptatibus.Dolor optio aperiam accusantium magni quae.",
