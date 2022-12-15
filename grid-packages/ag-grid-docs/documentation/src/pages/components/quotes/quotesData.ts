@@ -7,7 +7,7 @@ export interface QuotesDataItem {
   text: string,
 
   /**
-    * The order to show on desktop. Leave empty to not show it.
+    * The order to show. Leave empty to not show it.
   */
   order?: number,
 };
