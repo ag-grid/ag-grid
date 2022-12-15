@@ -285,7 +285,7 @@ export class SetValueModel<V> implements IEventEmitter {
                 const firstKey = this.createKey(firstValue);
                 if  (firstKey == null) {
                     _.doOnce(() => console.warn(
-                            'AG Grid: Set Filter Key Creator is returning null for provided values and provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?'
+                            'Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'
                         ), 'setFilterComplexObjectsProvidedNull'
                     );
                 } else {

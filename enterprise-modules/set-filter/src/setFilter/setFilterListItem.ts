@@ -258,7 +258,7 @@ export class SetFilterListItem<V> extends Component {
             let valueToRender = (params.valueFormatted == null ? params.value : params.valueFormatted) ?? this.translate('blanks');
             if (typeof valueToRender !== 'string') {
                 _.doOnce(() => console.warn(
-                        'AG Grid: Set Filter Value Formatter must return string values. Check that complex objects are being handled correctly, or enable convertValuesToStrings.'
+                        'AG Grid: Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'
                     ), 'setFilterComplexObjectsValueFormatter'
                 );
                 valueToRender = '';

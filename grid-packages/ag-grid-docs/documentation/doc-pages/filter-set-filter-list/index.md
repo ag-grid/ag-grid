@@ -301,7 +301,7 @@ The Set Filter internally maintains the original type of the cell values, but al
 
 If you are providing complex objects as values, then you need to provide both a Key Creator function and a Value Formatter function when using the Set Filter.
 
-The Key Creator generates a unique string key from the complex object. This key is used within the Filter Model, and to compare objects. You can either provide a Key Creator within the filter params, which will be specific to the Set Filter, or you can provide one in the Column Definition that is shared with other features such as grouping.
+The Key Creator generates a unique string key from the complex object (note that if the key is `null`, `undefined` or `''` it will be converted to `null`, the same as for [missing values](#missing-values)). This key is used within the Filter Model, and to compare objects. You can either provide a Key Creator within the filter params, which will be specific to the Set Filter, or you can provide one in the Column Definition that is shared with other features such as grouping.
 
 The Value Formatter is used to generate the label that is displayed to the user within the Filter List. You can provide the Value Formatter in the filter params.
 
