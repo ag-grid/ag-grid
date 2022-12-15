@@ -308,13 +308,17 @@ md-include:open-close-vue.md
 
 ## Custom Header Keyboard Navigation
 
-Within custom header renderers, keyboard navigation and focus can be handled by writing a custom `suppressHeaderKeyboardEvent` function in grid options.
+When using custom header renderers, the custom header renderer is responsible for implementing support for keyboard navigation among its focusable elements. This is why by default, focusing a grid header with a custom header renderer will focus the entire cell instead of any of the elements inside the custom header renderer. 
 
-An example of this is shown below, where the custom header elements are able to be traversed using <kbd>tab</kbd> and <kbd>shift</kbd>+<kbd>tab</kbd>:
+Adding support for keyboard navigation and focus requires a custom `suppressHeaderKeyboardEvent` function in grid options. See [Suppress Keyboard Events](/keyboard-navigation/#suppress-keyboard-events).
 
-- Click on the top left `Athlete` header, press the <kbd>tab</kbd> key and notice that the button, textbox and link in the `Country` header can be tabbed into. At the end of the cell elements, the tab focus moves to the next `Age` header cell
-- Use <kbd>shift</kbd>+<kbd>tab</kbd> to navigate in the reverse direction
+An example of this is shown below, enabling keyboard navigation through the custom header elements when pressing <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd>:
 
-The `suppressHeaderKeyboardEvent` function is used to capture tab events and determine if the user is tabbing forward or backwards. It also suppresses the default behaviour of moving to the next cell if tabbing within the child elements. If the focus is at the beginning or the end of the cell children and moving out of the cell, the keyboard event is not suppressed, so focus can move between the children elements. Also, when moving backwards, the focus needs to be manually set while preventing the default behaviour of the keyboard press event.
+- Click on the top left `Athlete` header, press the <kbd>Tab</kbd> key and notice that the button, textbox and link in the `Country` header can be tabbed into. At the end of the cell elements, the tab focus moves to the next `Age` header cell
+- Use <kbd>Shift</kbd>+<kbd>Tab</kbd> to navigate in the reverse direction
+
+The `suppressHeaderKeyboardEvent` callback is used to capture tab events and determine if the user is tabbing forward or backwards. It also suppresses the default behaviour of moving to the next cell if tabbing within the child elements. 
+
+If the focus is at the beginning or the end of the cell children and moving out of the cell, the keyboard event is not suppressed, so focus can move between the children elements. Also, when moving backwards, the focus needs to be manually set while preventing the default behaviour of the keyboard press event.
 
 <grid-example title='Custom Header Keyboard Navigation' name='header-component-keyboard-navigation' type='mixed'></grid-example>
