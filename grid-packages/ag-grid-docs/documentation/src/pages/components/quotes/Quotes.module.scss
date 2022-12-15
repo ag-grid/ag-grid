@@ -1,101 +1,121 @@
 .container {
+  --avatar-size: 54px;
+
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   list-style: none;
-  justify-content: center;
   margin: 0;
   padding: 0;
-  gap: 45px;
-}
 
-li {
-  flex: 1;
+  @media screen and (min-width: 600px) {
+    --avatar-size: 80px;
+  }
 }
 
 blockquote {
+  $background-color: #d9f0fa;
+  $background-color-rgb: "rgb(217, 240, 250)";
+
   position: relative;
-  background: #bad9f0;
-  color: #212529;
-  padding: 20px;
+  margin-bottom: 20px;
+  padding: 12px 20px 14px;
+  background-color: $background-color;
+  border-radius: 4px;
 
-  p {
-    margin: 0;
+  &:before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 22px;
+    bottom: -16px;
+    left: var(--avatar-size);
+    background-image: url(
+      "data:image/svg+xml,\
+      <svg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 22'>\
+        <path style='fill: #{$background-color-rgb};' d='M0 21V0h18L1.8 21.6c-.577.769-1.8.361-1.8-.6Z'/>\
+      </svg>"
+    );
+  }
+}
 
-    &:before {
-      content: open-quote;
-      position: absolute;
-      top: 20px;
-      left: 12px;
-    }
+blockquote p {
+  position: relative;
+  font-size: 18px;
+  line-height: 1.4;
 
-    &:after {
-      content: close-quote;
-    }
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:before {
+    content: open-quote;
+    position: absolute;
+    left: -0.4em;
   }
 
   &:after {
-    content: "";
-    height: 0;
-    width: 0;
-    display: block;
-    border-top: 15px solid #bad9f0;
-    border-right: 15px solid transparent;
-    position: absolute;
-    bottom: -15px;
-    left: 70px;
+    content: close-quote;
+  }
+}
+
+figure {
+  margin-bottom: 48px;
+
+  li:last-child & {
+    margin-bottom: 0;
   }
 }
 
 figcaption {
   display: grid;
-  grid-template-columns: 80px auto;
-  column-gap: 9px;
+  grid-template-columns: var(--avatar-size) auto;
+  column-gap: 8px;
   grid-template-rows: auto;
   grid-template-areas: 
     "avatar name"
-    "avatar creatorOf";
+    "avatar orgContainer";
+  line-height: 1;
 }
 
 .avatar {
   grid-area: avatar;
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  margin-right: 8px;
   border-radius: 50%;
-  background-color: #cccccc;
+}
+
+.name,
+.orgContainer {
+  position: relative;
+  top: -3px;
 }
 
 .name {
   grid-area: name;
   align-self: end;
-  font-weight: 700;
   font-size: 22px;
-  line-height: 26px;
-  color: #212529;
+  font-weight: 700;
 }
 
 .orgContainer {
-  grid-area: creatorOf;
+  grid-area: orgContainer;
   display: flex;
   align-items: center;
-  align-self: start;
-  gap: 2px;
-  font-size: 14px;
-  line-height: 17px;
 }
 
 .orgRole {
-  font-weight: 400;
   font-size: 10px;
-  line-height: 12px;
-  color: #706D6E;
-}
-
-.orgName {
-  color: #212529;
+  color: #6c757d;
 }
 
 .orgIcon {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
+  margin: 0 4px;
+  border-radius: 2px;
+}
+
+.orgName {
+  font-size: 14px;
 }

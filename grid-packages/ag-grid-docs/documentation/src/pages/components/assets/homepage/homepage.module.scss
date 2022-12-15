@@ -378,9 +378,19 @@ body {
     }
 }
 
-.stage-quotes section {
+.stage-quotes {
+    h2 {
+        margin-top: 45px;
+    }
+
+    section {
+        margin-bottom: 45px;
+    }
+
     @include media-breakpoint-up(sm) {
-        padding-left: 30px;
-        padding-right: 30px;
+        section {
+            padding-left: 30px;
+            padding-right: 30px;
+        }
     }
 }
