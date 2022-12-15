@@ -3,7 +3,7 @@ import { Group } from '../../scene/group';
 import { Text } from '../../scene/shape/text';
 import { BBox } from '../../scene/bbox';
 import { Scale } from '../../scale/scale';
-import { clamper, ContinuousScale } from '../../scale/continuousScale';
+import { ContinuousScale } from '../../scale/continuousScale';
 import { createId } from '../../util/id';
 import { normalizeAngle360, toRadians } from '../../util/angle';
 import { ChartAxisDirection } from '../chartAxis';
@@ -219,9 +219,9 @@ export class CrossLine {
             return false;
         }
 
-        const isContinuous = scale instanceof ContinuousScale;
         const bandwidth = scale.bandwidth ?? 0;
-        const clippedRangeClamper = clamper(clippedRange);
+        const clippedRangeClamper = (x: number) =>
+            Math.max(Math.min(...clippedRange), Math.min(Math.max(...clippedRange), x));
 
         let xStart, xEnd, yStart, yEnd, clampedYStart, clampedYEnd;
 
@@ -229,8 +229,8 @@ export class CrossLine {
         [yStart, yEnd] = this.getRange();
 
         [clampedYStart, clampedYEnd] = [
-            Number(scale.convert(yStart, isContinuous ? clamper : undefined)),
-            scale.convert(yEnd, isContinuous ? clamper : undefined) + bandwidth,
+            Number(scale.convert(yStart, { strict: false })),
+            scale.convert(yEnd, { strict: false }) + bandwidth,
         ];
         clampedYStart = clippedRangeClamper(clampedYStart);
         clampedYEnd = clippedRangeClamper(clampedYEnd);

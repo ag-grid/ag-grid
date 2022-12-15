@@ -24,6 +24,7 @@ body {
   display: flex;
   align-items: center;
   gap: 5px;
+  height: 100%;
 }
 
 .custom-element button {
@@ -32,6 +33,10 @@ body {
 
 .custom-element input {
   width: 100px;
+}
+
+.custom-element a {
+  line-height: 1rem;
 }
 
 .ag-row:focus {

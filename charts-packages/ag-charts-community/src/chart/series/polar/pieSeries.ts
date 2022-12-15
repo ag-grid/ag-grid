@@ -5,7 +5,6 @@ import { Circle } from '../../marker/circle';
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
-import { clamper } from '../../../scale/continuousScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
 import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeClickEvent } from './../series';
@@ -773,7 +772,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const innerRadius = radiusScale.convert(0);
 
         const updateSectorFn = (sector: Sector, datum: PieNodeDatum, index: number, isDatumHighlighted: boolean) => {
-            const radius = radiusScale.convert(datum.radius, clamper);
+            const radius = radiusScale.convert(datum.radius);
             // Bring highlighted sector's parent group to front.
             const sectorParent = sector.parent;
             const sectorGrandParent = sectorParent?.parent;
@@ -827,7 +826,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const calloutStrokeWidth = calloutLine.strokeWidth;
         const calloutColors = calloutLine.colors || this.strokes;
         this.calloutLabelSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
-            const radius = radiusScale.convert(datum.radius, clamper);
+            const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
             if (datum.calloutLabel && outerRadius !== 0) {
@@ -855,7 +854,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum) => {
             const label = datum.calloutLabel;
-            const radius = radiusScale.convert(datum.radius, clamper);
+            const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
             if (!label || outerRadius === 0) {
@@ -897,7 +896,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const textBoxes = this.groupSelectionData
             .map((datum) => {
                 const label = datum.calloutLabel;
-                const radius = radiusScale.convert(datum.radius, clamper);
+                const radius = radiusScale.convert(datum.radius);
                 const outerRadius = Math.max(0, radius);
                 if (!label || outerRadius === 0) {
                     return null;
@@ -939,7 +938,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         this.sectorLabelSelection.each((text, datum) => {
             const sectorLabel = datum.sectorLabel;
-            const radius = radiusScale.convert(datum.radius, clamper);
+            const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
             let isTextVisible = false;

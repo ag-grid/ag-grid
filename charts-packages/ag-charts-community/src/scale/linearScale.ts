@@ -1,5 +1,5 @@
 import { ContinuousScale } from './continuousScale';
-import ticks, { tickIncrement } from '../util/ticks';
+import ticks, { tickStep } from '../util/ticks';
 import { tickFormat } from '../util/numberFormat';
 
 /**
@@ -8,59 +8,50 @@ import { tickFormat } from '../util/numberFormat';
 export class LinearScale extends ContinuousScale {
     readonly type = 'linear';
 
-    ticks(count = 10, offset?: number) {
-        const d = this._domain;
-        count = Math.max(0, count - (offset ?? 0));
-        return ticks(d[0], d[d.length - 1], count);
+    ticks() {
+        if (!this.domain || this.domain.length < 2) {
+            return [];
+        }
+        this.refresh();
+        const [d0, d1] = this.getDomain();
+        const count = this.tickCount ?? 10;
+        return ticks(d0, d1, count);
+    }
+
+    update() {
+        if (!this.domain || this.domain.length < 2) {
+            return;
+        }
+        if (this.nice) {
+            this.updateNiceDomain();
+        }
     }
 
     /**
      * Extends the domain so that it starts and ends on nice round values.
      * @param count Tick count.
      */
-    nice(count = 10) {
-        const d = this.domain;
-        let i0 = 0;
-        let i1 = d.length - 1;
-        let start = d[i0];
-        let stop = d[i1];
-        let step;
+    protected updateNiceDomain() {
+        const count = this.tickCount ?? 10;
+        let [start, stop] = this.domain;
 
-        if (stop < start) {
-            step = start;
-            start = stop;
-            stop = step;
-
-            step = i0;
-            i0 = i1;
-            i1 = step;
+        for (let i = 0; i < 2; i++) {
+            const step = tickStep(start, stop, count);
+            if (step >= 1) {
+                start = Math.floor(start / step) * step;
+                stop = Math.ceil(stop / step) * step;
+            } else {
+                // Prevent floating point error
+                const s = 1 / step;
+                start = Math.floor(start * s) / s;
+                stop = Math.ceil(stop * s) / s;
+            }
         }
-
-        step = tickIncrement(start, stop, count);
-
-        if (step > 0) {
-            start = Math.floor(start / step) * step;
-            stop = Math.ceil(stop / step) * step;
-            step = tickIncrement(start, stop, count);
-        } else if (step < 0) {
-            start = Math.ceil(start * step) / step;
-            stop = Math.floor(stop * step) / step;
-            step = tickIncrement(start, stop, count);
-        }
-
-        if (step > 0) {
-            d[i0] = Math.floor(start / step) * step;
-            d[i1] = Math.ceil(stop / step) * step;
-            this.domain = d;
-        } else if (step < 0) {
-            d[i0] = Math.ceil(start * step) / step;
-            d[i1] = Math.floor(stop * step) / step;
-            this.domain = d;
-        }
+        this.niceDomain = [start, stop];
     }
 
     tickFormat({ count, specifier }: { count?: number; ticks?: any[]; specifier?: string }) {
-        const d = this.domain;
-        return tickFormat(d[0], d[d.length - 1], count == undefined ? 10 : count, specifier);
+        const [d0, d1] = this.getDomain();
+        return tickFormat(d0, d1, count ?? 10, specifier);
     }
 }

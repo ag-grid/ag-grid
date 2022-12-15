@@ -90,7 +90,8 @@ const columnDefs: ColDef[] = [
   {
     field: "country",
     headerComponent: CustomHeader,
-    minWidth: 250,
+    minWidth: 270,
+    flex: 1,
   },
   {
     field: "age"

@@ -1,11 +1,34 @@
 import { Scale } from './scale';
 
+function clamp(x: number, min: number, max: number) {
+    return Math.max(min, Math.min(max, x));
+}
+
 /**
  * Maps a discrete domain to a continuous numeric range.
  * See https://github.com/d3/d3-scale#band-scales for more info.
  */
 export class BandScale<D> implements Scale<D, number> {
     readonly type = 'band';
+
+    private cache: any = null;
+    private cacheProps: string[] = ['_domain', 'range', '_paddingInner', '_paddingOuter', 'round'];
+    private didChange() {
+        const { cache } = this;
+        const didChange = !cache || this.cacheProps.some((p) => this[p as keyof BandScale<any>] !== cache[p]);
+        if (didChange) {
+            this.cache = {};
+            this.cacheProps.forEach((p) => (this.cache[p] = this[p as keyof BandScale<any>]));
+            return true;
+        }
+        return false;
+    }
+
+    private refresh() {
+        if (this.didChange()) {
+            this.update();
+        }
+    }
 
     /**
      * Maps datum to its index in the {@link domain} array.
@@ -25,8 +48,7 @@ export class BandScale<D> implements Scale<D, number> {
      */
     private _domain: D[] = [];
     set domain(values: D[]) {
-        const domain = this._domain;
-        domain.length = 0;
+        const domain: D[] = [];
 
         this.index = new Map<D, number>();
         const index = this.index;
@@ -41,27 +63,21 @@ export class BandScale<D> implements Scale<D, number> {
             }
         });
 
-        this.rescale();
+        this._domain = domain;
     }
     get domain(): D[] {
         return this._domain;
     }
 
-    private _range: number[] = [0, 1];
-    set range(values: number[]) {
-        this._range[0] = values[0];
-        this._range[1] = values[1];
-        this.rescale();
-    }
-    get range(): number[] {
-        return this._range;
-    }
+    range: number[] = [0, 1];
 
     ticks(): D[] {
+        this.refresh();
         return this._domain;
     }
 
     convert(d: D): number {
+        this.refresh();
         const i = this.index.get(d);
         if (i === undefined) {
             return NaN;
@@ -77,19 +93,20 @@ export class BandScale<D> implements Scale<D, number> {
 
     private _bandwidth: number = 1;
     get bandwidth(): number {
+        this.refresh();
         return this._bandwidth;
     }
 
     private _rawBandwidth: number = 1;
     get rawBandwidth(): number {
+        this.refresh();
         return this._rawBandwidth;
     }
 
     set padding(value: number) {
-        value = Math.max(0, Math.min(1, value));
+        value = clamp(value, 0, 1);
         this._paddingInner = value;
         this._paddingOuter = value;
-        this.rescale();
     }
     get padding(): number {
         return this._paddingInner;
@@ -100,8 +117,7 @@ export class BandScale<D> implements Scale<D, number> {
      */
     private _paddingInner = 0;
     set paddingInner(value: number) {
-        this._paddingInner = Math.max(0, Math.min(1, value)); // [0, 1]
-        this.rescale();
+        this._paddingInner = clamp(value, 0, 1);
     }
     get paddingInner(): number {
         return this._paddingInner;
@@ -113,69 +129,42 @@ export class BandScale<D> implements Scale<D, number> {
      */
     private _paddingOuter = 0;
     set paddingOuter(value: number) {
-        this._paddingOuter = Math.max(0, Math.min(1, value)); // [0, 1]
-        this.rescale();
+        this._paddingOuter = clamp(value, 0, 1);
     }
     get paddingOuter(): number {
         return this._paddingOuter;
     }
 
-    private _round = false;
-    set round(value: boolean) {
-        this._round = value;
-        this.rescale();
-    }
-    get round(): boolean {
-        return this._round;
-    }
+    round = false;
 
-    /**
-     * How the leftover range is distributed.
-     * `0.5` - equal distribution of space before the first and after the last band,
-     * with bands effectively centered within the range.
-     */
-    private _align = 0.5;
-    set align(value: number) {
-        this._align = Math.max(0, Math.min(1, value)); // [0, 1]
-        this.rescale();
-    }
-    get align(): number {
-        return this._align;
-    }
-
-    protected rescale() {
-        const n = this._domain.length;
-        if (!n) {
+    update() {
+        const count = this._domain.length;
+        if (count === 0) {
             return;
         }
 
-        let [a, b] = this._range;
-        const reversed = b < a;
+        const round = this.round;
+        const paddingInner = this._paddingInner;
+        const paddingOuter = this._paddingOuter;
+        const [r0, r1] = this.range;
+        const width = r1 - r0;
 
-        if (reversed) {
-            [a, b] = [b, a];
-        }
-        const rawStep = (b - a) / Math.max(1, n - this._paddingInner + this._paddingOuter * 2);
-        let step = rawStep;
-        if (this._round) {
-            step = Math.floor(step);
-        }
-        a += (b - a - step * (n - this._paddingInner)) * this._align;
-        this._bandwidth = step * (1 - this._paddingInner);
-        this._rawBandwidth = rawStep * (1 - this._paddingInner);
-        if (this._round) {
-            a = Math.round(a);
-            this._bandwidth = Math.round(this._bandwidth);
-        }
+        const rawStep = width / Math.max(1, count + 2 * paddingOuter - paddingInner);
+        const step = round ? Math.floor(rawStep) : rawStep;
+        const fullBandWidth = step * (count - paddingInner);
+        const x0 = r0 + (width - fullBandWidth) / 2;
+        const start = round ? Math.round(x0) : x0;
+        const bw = step * (1 - paddingInner);
+        const bandwidth = round ? Math.round(bw) : bw;
+        const rawBandwidth = rawStep * (1 - paddingInner);
 
         const values: number[] = [];
-        for (let i = 0; i < n; i++) {
-            values.push(a + step * i);
+        for (let i = 0; i < count; i++) {
+            values.push(start + step * i);
         }
 
-        if (reversed) {
-            values.reverse();
-        }
+        this._bandwidth = bandwidth;
+        this._rawBandwidth = rawBandwidth;
         this.ordinalRange = values;
     }
 }
