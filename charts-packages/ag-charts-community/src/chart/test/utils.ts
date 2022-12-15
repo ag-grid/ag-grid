@@ -87,13 +87,13 @@ export async function waitForChartStability(chartOrProxy: Chart | AgChartInstanc
 }
 
 export function mouseMoveEvent({ offsetX, offsetY }: { offsetX: number; offsetY: number }): MouseEvent {
-    const event = new MouseEvent('mousemove');
+    const event = new MouseEvent('mousemove', { bubbles: true } as any);
     Object.assign(event, { offsetX, offsetY, pageX: offsetX, pageY: offsetY });
     return event;
 }
 
 export function clickEvent({ offsetX, offsetY }: { offsetX: number; offsetY: number }): MouseEvent {
-    const event = new MouseEvent('click');
+    const event = new MouseEvent('click', { bubbles: true } as any);
     Object.assign(event, { offsetX, offsetY, pageX: offsetX, pageY: offsetY });
     return event;
 }
@@ -135,9 +135,10 @@ export function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
 export function hoverAction(x: number, y: number): (chart: Chart | AgChartInstance) => Promise<void> {
     return async (chartOrProxy) => {
         const chart = deproxy(chartOrProxy);
+        const target = chart.scene.canvas.element as HTMLElement;
         // Reveal tooltip.
-        chart.scene.container?.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1 }));
-        chart.scene.container?.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y }));
+        target?.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1 }));
+        target?.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y }));
 
         return new Promise((resolve) => {
             setTimeout(resolve, 50);
@@ -145,9 +146,11 @@ export function hoverAction(x: number, y: number): (chart: Chart | AgChartInstan
     };
 }
 
-export function clickAction(x: number, y: number): (chart: Chart) => Promise<void> {
-    return async (chart) => {
-        chart.scene.container?.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
+export function clickAction(x: number, y: number): (chart: Chart | AgChartInstance) => Promise<void> {
+    return async (chartOrProxy) => {
+        const chart = deproxy(chartOrProxy);
+        const target = chart.scene.canvas.element;
+        target?.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
         return new Promise((resolve) => {
             setTimeout(resolve, 50);
         });
