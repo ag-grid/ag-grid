@@ -36,6 +36,7 @@ const GridBodyComp = ()=> {
     let eRoot: HTMLDivElement;
     let eTop: HTMLDivElement;
     let eStickyTop: HTMLDivElement;
+    let eBody: HTMLDivElement;
     let eBodyViewport: HTMLDivElement;
     let eBottom: HTMLDivElement;
 
@@ -57,6 +58,7 @@ const GridBodyComp = ()=> {
 
         eRoot.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
         eRoot.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
+        eBody.appendChild(newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
 
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
@@ -101,6 +103,12 @@ const GridBodyComp = ()=> {
     const getRootClasses = createMemo(() =>
         classesList('ag-root','ag-unselectable', getMovingCss(), getLayoutClass())
     );
+    const getBodyClasses = createMemo(() =>
+        classesList('ag-body-viewport', getLayoutClass())
+    );
+    const getBodyClipperClasses = createMemo(() =>
+        classesList('ag-body-viewport', getLayoutClass())
+    );
     const getBodyViewportClasses = createMemo(() =>
         classesList('ag-body-viewport', getRowAnimationClass(), getLayoutClass(), getForceVerticalScrollClass(), getCellSelectableCss())
     );
@@ -134,6 +142,10 @@ const GridBodyComp = ()=> {
         'overflow-y': (getTopAndBottomOverflowY as any)
     }));
 
+    const getBodyViewportStyle = createMemo( ()=> ({
+        width: getBodyViewportWidth()
+    }));
+
     return (
         <div ref={ eRoot! } class={ getRootClasses() } role="treegrid" aria-colcount={ getAriaColCount() } aria-rowcount={ getAriaRowCount() }>
             <GridHeaderComp/>
@@ -143,11 +155,15 @@ const GridBodyComp = ()=> {
                 <RowContainerComp name={ RowContainerName.TOP_RIGHT } />
                 <RowContainerComp name={ RowContainerName.TOP_FULL_WIDTH } />
             </div>
-            <div ref={ eBodyViewport! } class={ getBodyViewportClasses() } role="presentation">
-                <RowContainerComp name={ RowContainerName.LEFT } />
-                <RowContainerComp name={ RowContainerName.CENTER } />
-                <RowContainerComp name={ RowContainerName.RIGHT } />
-                <RowContainerComp name={ RowContainerName.FULL_WIDTH } />
+            <div class={getBodyClasses()} ref={eBody!} role="presentation">
+                <div class={getBodyClipperClasses()} role="presentation">
+                    <div ref={ eBodyViewport! } class={ getBodyViewportClasses() } role="presentation" style={ getBodyViewportStyle() }>
+                        <RowContainerComp name={ RowContainerName.LEFT } />
+                        <RowContainerComp name={ RowContainerName.CENTER } />
+                        <RowContainerComp name={ RowContainerName.RIGHT } />
+                        <RowContainerComp name={ RowContainerName.FULL_WIDTH } />
+                    </div>
+                </div>
             </div>
             <div ref={ eStickyTop! } class={ getStickyTopClasses() } role="presentation" style={ getStickyTopStyle() }>
                 <RowContainerComp name={ RowContainerName.STICKY_TOP_LEFT } />
