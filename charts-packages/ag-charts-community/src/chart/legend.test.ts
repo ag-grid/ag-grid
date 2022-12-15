@@ -14,6 +14,7 @@ import {
 } from './test/utils';
 import * as examples from './test/examples';
 import { AgCartesianChartOptions } from './agChartOptions';
+import { seedRandom } from './test/random';
 
 expect.extend({ toMatchImageSnapshot });
 
@@ -27,9 +28,10 @@ function buildSeries(data) {
 }
 
 const SERIES = [];
+const seriesDataRandom = seedRandom(10763960837);
 
 for (let i = 0; i < 200; i++) {
-    SERIES.push(buildSeries({ x: i, y: Math.floor(Math.random() * 100) }));
+    SERIES.push(buildSeries({ x: i, y: Math.floor(seriesDataRandom() * 100) }));
 }
 
 const OPTIONS: AgCartesianChartOptions = {
