@@ -11,7 +11,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     private groupsExist: boolean;
 
-    private selectAllItem: SetFilterModelTreeItem = {
+    private readonly selectAllItem: SetFilterModelTreeItem = {
         depth: 0,
         filterPasses: true,
         treeKey: SetFilterDisplayValue.SELECT_ALL,
@@ -229,16 +229,18 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     private updateExpandAll(): void {
         const recursiveExpansionCheck = (items: SetFilterModelTreeItem[], someTrue: boolean, someFalse: boolean): boolean | undefined => {
-            for (const child of items) {
-                if (!child.filterPasses || !child.children) {
+            for (const item of items) {
+                if (!item.filterPasses || !item.children) {
                     continue;
                 }
-                someTrue = someTrue || !!child.expanded;
-                someFalse = someFalse || !child.expanded;
+                // indeterminate state only exists for expand all, so don't need to check for the current item
+                someTrue = someTrue || !!item.expanded;
+                someFalse = someFalse || !item.expanded;
                 if (someTrue && someFalse) {
+                    // already indeterminate. No need to check the children
                     return undefined;
                 }
-                const childExpanded = recursiveExpansionCheck(child.children, someTrue, someFalse);
+                const childExpanded = recursiveExpansionCheck(item.children, someTrue, someFalse);
                 if (childExpanded === undefined) {
                     return undefined;
                 } else if (childExpanded) {

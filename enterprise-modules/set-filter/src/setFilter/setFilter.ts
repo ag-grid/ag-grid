@@ -845,10 +845,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private onExpandAll(item: SetFilterModelTreeItem, isExpanded: boolean): void {
         const recursiveExpansion = (i: SetFilterModelTreeItem) => {
-            if (!i.filterPasses) {
-                return;
-            }
-            if (i.children) {
+            if (i.filterPasses && i.children) {
                 i.children.forEach(childItem => recursiveExpansion(childItem));
                 i.expanded = isExpanded;
             }
