@@ -18,20 +18,20 @@ function filterAndSortByKey(data: QuotesData, sortKey: keyof QuotesDataItem) {
 const QuoteItems = ({ quotes }: { quotes: QuotesDataItem[] }) => {
   return <>
     {
-      quotes.map(({ name, avatarUrl, creatorOf, creatorOfIconUrl, text }) => {
+      quotes.map(({ name, avatarUrl, orgName, orgIconUrl, orgRole, text }) => {
         const nonWidowText = addNonBreakingSpaceBetweenLastWords(text);
         return <li key={name}>
           <figure>
             <blockquote>
-                <p>{nonWidowText}</p>
+              <p>{nonWidowText}</p>
             </blockquote>
             <figcaption>
               <img className={styles.avatar} title={name} src={avatarUrl} alt={name} />
               <span className={styles.name}>{name}</span>
-              <div className={styles.creatorOfContainer}>
-                <span className={styles.creator}>Creator</span>
-                <img className={styles.creatorOfIcon} title={creatorOf} src={creatorOfIconUrl} alt={creatorOf} />
-                <span className={styles.creatorOf}>{creatorOf}</span>
+              <div className={styles.orgContainer}>
+                <span className={styles.orgRole}>{orgRole}</span>
+                <img className={styles.orgIcon} title={orgName} src={orgIconUrl} alt={orgName} />
+                <span className={styles.orgName}>{orgName}</span>
               </div>
             </figcaption>
           </figure>
