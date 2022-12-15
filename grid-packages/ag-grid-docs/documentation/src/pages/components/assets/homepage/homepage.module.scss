@@ -266,6 +266,7 @@ body {
 
     &.main {
         background-color: $blue-1;
+
         h1 {
             font-weight: 500 !important;
             color: $white;
@@ -279,7 +280,7 @@ body {
         }
     }
 
-    &:not(.main) {
+    &:not(.main, .stage-quotes) {
         @include media-breakpoint-down(sm) {
             display: none;
         }
@@ -374,5 +375,12 @@ body {
 
     &__bestHtml5Grid.small:not(.tall) {
         height: 320px;
+    }
+}
+
+.stage-quotes section {
+    @include media-breakpoint-up(sm) {
+        padding-left: 30px;
+        padding-right: 30px;
     }
 }
