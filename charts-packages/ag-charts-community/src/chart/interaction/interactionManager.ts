@@ -10,18 +10,18 @@ type SUPPORTED_EVENTS =
     | 'mousemove'
     | 'mouseup'
     | 'mouseout'
+    | 'mouseenter'
     | 'touchstart'
     | 'touchmove'
     | 'touchend'
     | 'touchcancel'
     | 'pagehide';
-const WINDOW_EVENT_HANDLERS: SUPPORTED_EVENTS[] = ['pagehide'];
+const WINDOW_EVENT_HANDLERS: SUPPORTED_EVENTS[] = ['pagehide', 'mousemove', 'mouseup'];
 const EVENT_HANDLERS: SUPPORTED_EVENTS[] = [
     'click',
     'mousedown',
-    'mousemove',
-    'mouseup',
     'mouseout',
+    'mouseenter',
     'touchstart',
     'touchmove',
     'touchend',
@@ -38,6 +38,15 @@ export type InteractionEvent<T extends InteractionTypes> = {
     /** Consume the event, don't notify other listeners! */
     consume(): void;
 } & (T extends 'drag' ? { startX: number; startY: number } : {});
+
+interface Coords {
+    clientX: number;
+    clientY: number;
+    pageX: number;
+    pageY: number;
+    offsetX: number;
+    offsetY: number;
+}
 
 const CSS = `
 .ag-chart-wrapper {
@@ -60,6 +69,7 @@ export class InteractionManager {
 
     private mouseDown = false;
     private touchDown = false;
+    private dragStartElement?: HTMLElement;
 
     public constructor(element: HTMLElement, doc = document) {
         this.rootElement = doc.body;
@@ -117,78 +127,25 @@ export class InteractionManager {
     }
 
     private processEvent(event: MouseEvent | TouchEvent | Event) {
-        let types: InteractionTypes[] = [];
-        switch (event.type) {
-            case 'click':
-                types = ['click'];
-                break;
+        const types: InteractionTypes[] = this.decideInteractionEventTypes(event);
 
-            case 'mousedown':
-                types = ['drag-start'];
-                this.mouseDown = true;
-                break;
-            case 'touchstart':
-                types = ['drag-start'];
-                this.touchDown = true;
-                break;
-
-            case 'touchmove':
-            case 'mousemove':
-                types = this.mouseDown || this.touchDown ? ['drag'] : ['hover'];
-                break;
-
-            case 'mouseup':
-                types = ['drag-end'];
-                this.mouseDown = false;
-                break;
-            case 'touchend':
-                types = ['drag-end', 'click'];
-                this.touchDown = false;
-                break;
-
-            case 'mouseout':
-            case 'touchcancel':
-                types = ['leave'];
-                break;
-
-            case 'pagehide':
-                types = ['page-left'];
-                break;
+        if (types.length > 0) {
+            // Async dispatch to avoid blocking the event-processing thread.
+            this.dispatchEvent(event, types);
         }
+    }
 
-        const NULL_COORDS = {
-            clientX: -Infinity,
-            clientY: -Infinity,
-            pageX: -Infinity,
-            pageY: -Infinity,
-            offsetX: -Infinity,
-            offsetY: -Infinity,
-        };
-        let coordSource;
-        if (event instanceof MouseEvent) {
-            const mouseEvent = event as MouseEvent;
-            const { clientX, clientY, pageX, pageY, offsetX, offsetY } = mouseEvent;
-            coordSource = { clientX, clientY, pageX, pageY, offsetX, offsetY };
-        } else if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
-            const touchEvent = event as TouchEvent;
-            const lastTouch = touchEvent.touches[0] ?? touchEvent.changedTouches[0];
-            const { clientX, clientY, pageX, pageY } = lastTouch;
-            coordSource = { clientX, clientY, pageX, pageY };
-        } else if (event instanceof PageTransitionEvent) {
-            if (event.persisted) {
-                // Don't fire the page-left event since the page maybe revisited.
-                return;
-            }
-            coordSource = NULL_COORDS;
-        } else {
-            // Unsupported event - abort.
+    private async dispatchEvent(event: MouseEvent | TouchEvent | Event, types: InteractionTypes[]) {
+        const coords = this.calculateCoordinates(event);
+
+        if (coords == null) {
             return;
         }
 
         for (const type of types) {
             const interactionType = type as InteractionTypes;
             const listeners = this.registeredListeners[interactionType] ?? [];
-            const interactionEvent = this.buildEvent({ event, ...coordSource, type: interactionType });
+            const interactionEvent = this.buildEvent({ event, ...coords, type: interactionType });
 
             listeners.forEach((listener: Listener<any>) => {
                 try {
@@ -200,6 +157,128 @@ export class InteractionManager {
                 }
             });
         }
+    }
+
+    private decideInteractionEventTypes(event: MouseEvent | TouchEvent | Event): InteractionTypes[] {
+        switch (event.type) {
+            case 'click':
+                return ['click'];
+
+            case 'mousedown':
+                this.mouseDown = true;
+                this.dragStartElement = event.target as HTMLElement;
+                return ['drag-start'];
+            case 'touchstart':
+                this.touchDown = true;
+                this.dragStartElement = event.target as HTMLElement;
+                return ['drag-start'];
+
+            case 'touchmove':
+            case 'mousemove':
+                if (!this.mouseDown && !this.touchDown && !this.isEventOverElement(event)) {
+                    // We only care about these events if the target is the canvas, unless
+                    // we're in the middle of a drag/slide.
+                    return [];
+                }
+                return this.mouseDown || this.touchDown ? ['drag'] : ['hover'];
+
+            case 'mouseup':
+                if (!this.mouseDown && !this.isEventOverElement(event)) {
+                    // We only care about these events if the target is the canvas, unless
+                    // we're in the middle of a drag.
+                    return [];
+                }
+                this.mouseDown = false;
+                this.dragStartElement = undefined;
+                return ['drag-end'];
+            case 'touchend':
+                if (!this.touchDown && !this.isEventOverElement(event)) {
+                    // We only care about these events if the target is the canvas, unless
+                    // we're in the middle of a slide.
+                    return [];
+                }
+                this.touchDown = false;
+                this.dragStartElement = undefined;
+                return ['drag-end', 'click'];
+
+            case 'mouseout':
+            case 'touchcancel':
+                return ['leave'];
+
+            case 'mouseenter':
+                const mouseButtonDown = event instanceof MouseEvent && (event.buttons & 1) === 1;
+                if (this.mouseDown !== mouseButtonDown) {
+                    this.mouseDown = mouseButtonDown;
+                    return [mouseButtonDown ? 'drag-start' : 'drag-end'];
+                }
+                return [];
+
+            case 'pagehide':
+                return ['page-left'];
+        }
+
+        return [];
+    }
+
+    private isEventOverElement(event: MouseEvent | TouchEvent | Event) {
+        return event.target === this.element || (event.target as any)?.parentElement === this.element;
+    }
+
+    private static readonly NULL_COORDS: Coords = {
+        clientX: -Infinity,
+        clientY: -Infinity,
+        pageX: -Infinity,
+        pageY: -Infinity,
+        offsetX: -Infinity,
+        offsetY: -Infinity,
+    };
+
+    private calculateCoordinates(event: MouseEvent | TouchEvent | Event): Coords | undefined {
+        if (event instanceof MouseEvent) {
+            const mouseEvent = event as MouseEvent;
+            const { clientX, clientY, pageX, pageY, offsetX, offsetY } = mouseEvent;
+            return this.fixOffsets(event, { clientX, clientY, pageX, pageY, offsetX, offsetY });
+        } else if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
+            const touchEvent = event as TouchEvent;
+            const lastTouch = touchEvent.touches[0] ?? touchEvent.changedTouches[0];
+            const { clientX, clientY, pageX, pageY } = lastTouch;
+            return { ...InteractionManager.NULL_COORDS, clientX, clientY, pageX, pageY };
+        } else if (event instanceof PageTransitionEvent) {
+            if (event.persisted) {
+                // Don't fire the page-left event since the page maybe revisited.
+                return;
+            }
+            return InteractionManager.NULL_COORDS;
+        }
+
+        // Unsupported event - abort.
+        return;
+    }
+
+    private fixOffsets(event: MouseEvent, coords: Coords) {
+        const offsets = (el: HTMLElement) => {
+            let x = 0;
+            let y = 0;
+
+            while (el) {
+                x += el.offsetLeft;
+                y += el.offsetTop;
+                el = el.offsetParent as HTMLElement;
+            }
+
+            return { x, y };
+        };
+
+        if (this.dragStartElement != null && event.target !== this.dragStartElement) {
+            // Offsets need to be relative to the drag-start element to avoid jumps when
+            // the pointer moves between element boundaries.
+
+            const offsetDragStart = offsets(this.dragStartElement);
+            const offsetEvent = offsets(event.target as HTMLElement);
+            coords.offsetX -= offsetDragStart.x - offsetEvent.x;
+            coords.offsetY -= offsetDragStart.y - offsetEvent.y;
+        }
+        return coords;
     }
 
     private buildEvent(opts: {

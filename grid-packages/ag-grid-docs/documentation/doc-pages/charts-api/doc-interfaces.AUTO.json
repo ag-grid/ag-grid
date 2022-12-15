@@ -4445,6 +4445,14 @@
   "InteractionEvent": {
     "meta": { "typeParams": ["T extends InteractionTypes"] }
   },
+  "Coords": {
+    "clientX": { "type": { "returnType": "number", "optional": false } },
+    "clientY": { "type": { "returnType": "number", "optional": false } },
+    "pageX": { "type": { "returnType": "number", "optional": false } },
+    "pageY": { "type": { "returnType": "number", "optional": false } },
+    "offsetX": { "type": { "returnType": "number", "optional": false } },
+    "offsetY": { "type": { "returnType": "number", "optional": false } }
+  },
   "Layers": {},
   "LegendDatum": {
     "id": { "type": { "returnType": "string", "optional": false } },
