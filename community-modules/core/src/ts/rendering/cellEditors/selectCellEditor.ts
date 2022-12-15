@@ -9,6 +9,7 @@ import { missing } from "../../utils/generic";
 import { KeyCode } from '../../constants/keyCode';
 
 export interface ISelectCellEditorParams extends ICellEditorParams {
+/** List of values to display */
     values: any[];
 }
 

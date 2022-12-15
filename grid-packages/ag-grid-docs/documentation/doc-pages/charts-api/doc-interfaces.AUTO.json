@@ -4436,6 +4436,9 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "CursorState": {
+    "style": { "type": { "returnType": "string", "optional": false } }
+  },
   "InteractionTypes": {},
   "Listener": { "meta": { "typeParams": ["T extends InteractionTypes"] } },
   "SUPPORTED_EVENTS": {},
@@ -5059,95 +5062,14 @@
   "NumberFormat": {},
   "DateFormat": {},
   "ValueFormat": {},
-  "FormatKeys": {},
-  "ParsedDate": {},
-  "Parse": {},
-  "StringFormat": {},
-  "FormatMap": {},
-  "TimeLocaleDefinition": {
-    "dateTime": {
-      "description": "/** The date and time (%c) format specifier (e.g., \"%a %b %e %X %Y\").\n     */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "date": {
-      "description": "/** The date (%x) format specifier (e.g., \"%m/%d/%Y\").\n     */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "time": {
-      "description": "/**  The time (%X) format specifier (e.g., \"%H:%M:%S\").\n     */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "periods": {
-      "description": "/** The A.M. and P.M. equivalents (e.g., [\"AM\", \"PM\"]).\n     */",
-      "type": { "returnType": "[string, string]", "optional": false }
-    },
-    "days": {
-      "description": "/** The full names of the weekdays, starting with Sunday.\n     */",
-      "type": {
-        "returnType": "[string, string, string, string, string, string, string]",
-        "optional": false
-      }
-    },
-    "shortDays": {
-      "description": "/** The abbreviated names of the weekdays, starting with Sunday.\n     */",
-      "type": {
-        "returnType": "[string, string, string, string, string, string, string]",
-        "optional": false
-      }
-    },
-    "months": {
-      "description": "/** The full names of the months (starting with January).\n     */",
-      "type": {
-        "returnType": "[string, string, string, string, string, string, string, string, string, string, string, string]",
-        "optional": false
-      }
-    },
-    "shortMonths": {
-      "description": "/** The abbreviated names of the months (starting with January).\n     */",
-      "type": {
-        "returnType": "[string, string, string, string, string, string, string, string, string, string, string, string]",
-        "optional": false
-      }
-    }
-  },
-  "TimeLocaleObject": {
-    "format": {
-      "description": "/** Returns a new formatter for the given string specifier. The specifier string may contain the following directives:\n     * - %a - abbreviated weekday name.*\n     * - %A - full weekday name.*\n     * - %b - abbreviated month name.*\n     * - %B - full month name.*\n     * - %c - the locale’s date and time, such as %x, %X.*\n     * - %d - zero-padded day of the month as a decimal number [01,31].\n     * - %e - space-padded day of the month as a decimal number [ 1,31]; equivalent to %_d.\n     * - %f - microseconds as a decimal number [000000, 999999].\n     * - %H - hour (24-hour clock) as a decimal number [00,23].\n     * - %I - hour (12-hour clock) as a decimal number [01,12].\n     * - %j - day of the year as a decimal number [001,366].\n     * - %m - month as a decimal number [01,12].\n     * - %M - minute as a decimal number [00,59].\n     * - %L - milliseconds as a decimal number [000, 999].\n     * - %p - either AM or PM.*\n     * - %Q - milliseconds since UNIX epoch.\n     * - %s - seconds since UNIX epoch.\n     * - %S - second as a decimal number [00,61].\n     * - %u - Monday-based (ISO) weekday as a decimal number [1,7].\n     * - %U - Sunday-based week of the year as a decimal number [00,53].\n     * - %V - ISO 8601 week number of the year as a decimal number [01, 53].\n     * - %w - Sunday-based weekday as a decimal number [0,6].\n     * - %W - Monday-based week of the year as a decimal number [00,53].\n     * - %x - the locale’s date, such as %-m/%-d/%Y.*\n     * - %X - the locale’s time, such as %-I:%M:%S %p.*\n     * - %y - year without century as a decimal number [00,99].\n     * - %Y - year with century as a decimal number.\n     * - %Z - time zone offset, such as -0700, -07:00, -07, or Z.\n     * - %% - a literal percent sign (%).\n     *\n     * Directives marked with an asterisk (*) may be affected by the locale definition.\n     *\n     * For %U, all days in a new year preceding the first Sunday are considered to be in week 0.\n     * For %W, all days in a new year preceding the first Monday are considered to be in week 0.\n     * Week numbers are computed using interval.count. For example, 2015-52 and 2016-00 represent\n     * Monday, December 28, 2015, while 2015-53 and 2016-01 represent Monday, January 4, 2016.\n     * This differs from the ISO week date specification (%V), which uses a more complicated definition!\n     *\n     * For %V, per the strftime man page:\n     *\n     * In this system, weeks start on a Monday, and are numbered from 01, for the first week, up to 52 or 53, for the last week.\n     * Week 1 is the first week where four or more days fall within the new year (or, synonymously,\n     * week 01 is: the first week of the year that contains a Thursday; or, the week that has 4 January in it).\n     *\n     * The % sign indicating a directive may be immediately followed by a padding modifier:\n     *\n     * 1) 0 - zero-padding\n     * 2) _ - space-padding\n     * 3) - disable padding\n     *\n     * If no padding modifier is specified, the default is 0 for all directives except %e, which defaults to _.\n     * (In some implementations of strftime and strptime, a directive may include an optional field width or precision;\n     * this feature is not yet implemented.)\n     *\n     * The returned function formats a specified date, returning the corresponding string.\n     *\n     * @param specifier A specifier string for the date format.\n     */",
-      "type": {
-        "arguments": { "specifier": "string" },
-        "returnType": "(date: Date | number) => string",
-        "optional": false
-      }
-    },
-    "parse": {
-      "description": "/** Returns a new parser for the given string specifier.\n     * The specifier string may contain the same directives as locale.format (TimeLocaleObject.format).\n     * The %d and %e directives are considered equivalent for parsing.\n     *\n     * The returned function parses a specified string, returning the corresponding date or undefined\n     * if the string could not be parsed according to this format’s specifier.\n     * Parsing is strict: if the specified string does not exactly match the associated specifier, this method returns undefined.\n     *\n     * For example, if the associated specifier is %Y-%m-%dT%H:%M:%SZ, then the string \"2011-07-01T19:15:28Z\"\n     * will be parsed as expected, but \"2011-07-01T19:15:28\", \"2011-07-01 19:15:28\" and \"2011-07-01\" will return undefined.\n     * (Note that the literal Z here is different from the time zone offset directive %Z.)\n     * If a more flexible parser is desired, try multiple formats sequentially until one returns non-undefined.\n     *\n     * @param specifier A specifier string for the date format.\n     */",
-      "type": {
-        "arguments": { "specifier": "string" },
-        "returnType": "(dateString: string) => Date | undefined",
-        "optional": false
-      }
-    },
-    "utcFormat": {
-      "description": "/** Equivalent to locale.format (TimeLocaleObject.format),\n     * except all directives are interpreted as Coordinated Universal Time (UTC) rather than local time.\n     *\n     * @param specifier A specifier string for the date format.\n     */",
-      "type": {
-        "arguments": { "specifier": "string" },
-        "returnType": "(date: Date | number) => string",
-        "optional": false
-      }
-    },
-    "utcParse": {
-      "description": "/** Equivalent to locale.parse (TimeLocaleObject.parse),\n     * except all directives are interpreted as Coordinated Universal Time (UTC) rather than local time.\n     *\n     * @param specifier A specifier string for the date format.\n     */",
-      "type": {
-        "arguments": { "specifier": "string" },
-        "returnType": "(dateString: string) => Date | undefined",
-        "optional": false
-      }
-    }
-  },
   "FloorFn": {},
   "OffsetFn": {},
   "CountFn": {},
   "FieldFn": {},
+  "FormattingFn": {},
+  "PaddingString": {},
+  "FormattingString": {},
+  "LiteralString": {},
   "ValidationContext": {},
   "ValidatePredicate": {}
 }

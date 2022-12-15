@@ -233,11 +233,11 @@
         flex-direction: row;
         overflow: auto;
         top: 5px;
-        gap: 7px;
+        gap: calc(var(--ag-grid-size) * 3 - 8px);
         width: auto;
 
         @include ag.unthemed-rtl((
-            right: 10px,
+            right: calc(var(--ag-cell-horizontal-padding) + var(--ag-grid-size) - 4px),
             justify-content: right
         ));
     }
@@ -249,7 +249,9 @@
     .ag-chart-tool-panel-button-enable {
         .ag-chart-menu-close {
             position: absolute;
-            top: 45%;
+            top: 50%;
+            transform: translate(3px, -50%) ;
+            transition: transform 0.33s ease-in-out;
             padding: 0;
             display: block;
             cursor: pointer;
@@ -258,7 +260,20 @@
             @include ag.unthemed-rtl((right: 0px));
 
             .ag-icon {
-                padding: 9px 0 9px 0;
+                padding: 14px 5px 14px 2px;
+            }
+
+            &:hover {
+                transform: translate(0, -50%);
+            }
+
+            &:before {
+                content: "";
+                position: absolute;
+                top: -40px;
+                bottom: -40px;
+                @include ag.unthemed-rtl((right: 0px));
+                @include ag.unthemed-rtl((left: -10px));
             }
         }
 
@@ -266,6 +281,10 @@
         .ag-icon-menu {
             display: none;
         }
+    }
+
+    .ag-chart-menu-visible .ag-chart-tool-panel-button-enable .ag-chart-menu-close:hover {
+        transform: translate(5px, -50%);
     }
 
     .ag-charts-font-size-color {
@@ -277,31 +296,6 @@
     .ag-charts-data-group-item {
         position: relative;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     .ag-chart-menu {
         border-radius: var(--ag-card-radius);

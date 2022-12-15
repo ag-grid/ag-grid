@@ -528,7 +528,7 @@ export default {
 +    getSelectedRows() {
 +        const selectedNodes = this.gridApi.getSelectedNodes();
 +        const selectedData = selectedNodes.map( node => node.data );
-+        const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ');
++        const selectedDataStringPresentation = selectedData.map( data => `${data.make} ${data.model}`).join(', ');
 +        alert(`Selected nodes: ${selectedDataStringPresentation}`);
 +    }
 + },

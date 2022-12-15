@@ -2,7 +2,6 @@ import {
     _,
     Component,
     Events,
-    IComponent,
     ISideBar,
     IToolPanel,
     ModuleNames,
@@ -22,10 +21,6 @@ import {
 import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
 import { SideBarDefParser } from "./sideBarDefParser";
 import { ToolPanelWrapper } from "./toolPanelWrapper";
-
-export interface IToolPanelChildComp extends IComponent<any> {
-    refresh(): void;
-}
 
 export class SideBarComp extends Component implements ISideBar {
 

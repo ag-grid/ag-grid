@@ -28,7 +28,7 @@ export class ChartOptionsService extends BeanStub {
         return _.get(this.getChart(), expression, undefined) as T;
     }
 
-    public setChartOption<T = string>(expression: string, value: T): void {
+    public setChartOption<T = string>(expression: string, value: T, isSilent?: boolean): void {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
             chartSeriesTypes.push('cartesian');
@@ -45,7 +45,9 @@ export class ChartOptionsService extends BeanStub {
         });
         this.updateChart(chartOptions);
 
-        this.raiseChartOptionsChangedEvent();
+        if (!isSilent) {
+            this.raiseChartOptionsChangedEvent();
+        }
     }
 
     public waitForUpdate() {

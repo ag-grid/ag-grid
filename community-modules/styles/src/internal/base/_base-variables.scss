@@ -80,9 +80,9 @@
 
         --ag-secondary-border-color: var(--ag-border-color);
 
-        --ag-borders-row: var(--ag-borders-secondary);
-
+        --ag-row-border-style: solid;
         --ag-row-border-color: var(--ag-secondary-border-color);
+        --ag-row-border-width: 1px;
 
         --ag-cell-horizontal-border: solid transparent;
         
@@ -160,6 +160,8 @@
         --ag-list-item-height: calc(var(--ag-grid-size) * 5);
 
         --ag-column-select-indent-size: calc(var(--ag-grid-size) + var(--ag-icon-size));
+
+        --ag-set-filter-indent-size: calc(var(--ag-grid-size) + var(--ag-icon-size));
 
         --ag-row-group-indent-size: calc(var(--ag-cell-widget-spacing) + var(--ag-icon-size));
 

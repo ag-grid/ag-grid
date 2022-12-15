@@ -1018,7 +1018,12 @@
             "description": "(Infinite Scroll only) How many blocks to keep in the cache. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value."
         },
         "maxConcurrentDatasourceRequests": {},
-        "blockLoadDebounceMillis": {},
+        "blockLoadDebounceMillis": {
+            "more": {
+                "name": "Block Loading Debounce",
+                "url": "/server-side-model-configuration/#block-loading-debounce"
+            }
+        },
         "purgeClosedRowNodes": {
             "description": "When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is [Row Grouping](/server-side-model-grouping/). Default: `false`"
         },
@@ -1029,7 +1034,7 @@
         "serverSideInitialRowCount": {
             "more": {
                 "name": "Initial Scroll Position",
-                "url": "/server-side-model-infinite-scroll/#initial-scroll-position"
+                "url": "/server-side-model-configuration/#initial-scroll-position"
             }
         },
         "getChildCount": {},

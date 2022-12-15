@@ -279,4 +279,42 @@ describe('CartesianChart', () => {
             await compare(chart);
         });
     });
+
+    describe('Small chart width', () => {
+        it.each([80, 160, 240, 320, 400])('should render chart correctly at width [%s]', async (width) => {
+            const options: AgCartesianChartOptions = {
+                ...examples.SIMPLE_LINE_CHART_EXAMPLE,
+                legend: {
+                    position: 'right',
+                },
+            };
+
+            options.autoSize = false;
+            options.width = width ?? CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+            await waitForChartStability(chart);
+            await compare(chart);
+        });
+    });
+
+    describe('Small chart height', () => {
+        it.each([80, 160, 240, 320, 400])('should render chart correctly at height [%s]', async (height) => {
+            const options: AgCartesianChartOptions = {
+                ...examples.SIMPLE_LINE_CHART_EXAMPLE,
+                legend: {
+                    position: 'bottom',
+                },
+            };
+
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = height ?? CANVAS_HEIGHT;
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+            await waitForChartStability(chart);
+            await compare(chart);
+        });
+    });
 });

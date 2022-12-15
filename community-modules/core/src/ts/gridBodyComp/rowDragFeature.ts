@@ -13,7 +13,8 @@ import { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, Ro
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { RowHighlightPosition, RowNode } from "../entities/rowNode";
+import { RowNode } from "../entities/rowNode";
+import { RowHighlightPosition } from "../interfaces/iRowNode";
 import { SelectionService } from "../selectionService";
 import { MouseEventService } from "./mouseEventService";
 import { last } from '../utils/array';

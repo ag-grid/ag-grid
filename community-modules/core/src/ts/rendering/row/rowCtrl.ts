@@ -1,11 +1,12 @@
-import { ProcessRowParams } from "../../entities/iCallbackParams";
+import { ProcessRowParams } from "../../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { BeanStub } from "../../context/beanStub";
 import { CellPosition } from "../../entities/cellPosition";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { RowClassParams } from "../../entities/gridOptions";
-import { DataChangedEvent, RowHighlightPosition, RowNode } from "../../entities/rowNode";
+import { RowNode } from "../../entities/rowNode";
+import { DataChangedEvent, RowHighlightPosition } from "../../interfaces/iRowNode";
 import { RowPosition } from "../../entities/rowPosition";
 import { CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
@@ -24,7 +25,7 @@ import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRender
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
 
-export enum RowType {
+enum RowType {
     Normal = 'Normal',
     FullWidth = 'FullWidth',
     FullWidthLoading = 'FullWidthLoading',

@@ -120,6 +120,24 @@ export const NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE: AgChartOptions = {
     ],
 };
 
+export const NUMBER_AXIS_LOG10_EXAMPLE: AgCartesianChartOptions = {
+    ...NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
+    data: data.DATA_YOUTUBE_VIDEOS_STATS_BY_DAY_OF_YEAR_LARGE_SCALE,
+    axes: [
+        { type: 'number', position: 'bottom' },
+        { type: 'log', position: 'left', base: 10, label: { format: '.0f' }, tick: { count: 4 } },
+    ],
+};
+
+export const NUMBER_AXIS_LOG2_EXAMPLE: AgCartesianChartOptions = {
+    ...NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
+    data: data.DATA_YOUTUBE_VIDEOS_STATS_BY_DAY_OF_YEAR_LARGE_SCALE,
+    axes: [
+        { type: 'number', position: 'bottom' },
+        { type: 'log', position: 'left', base: 2, label: { format: '.0f' }, tick: { count: 4 } },
+    ],
+};
+
 export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {
     ...examples.GROUPED_CATEGORY_AXIS_EXAMPLE,
     data: DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY_EXTENDED.slice(0, 20),

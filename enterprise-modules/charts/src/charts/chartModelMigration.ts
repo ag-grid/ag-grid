@@ -2,10 +2,7 @@ import { ChartModel } from '@ag-grid-community/core';
 import { AgChartThemeName } from 'ag-charts-community';
 import { getSeriesType } from './chartComp/utils/seriesTypeMapper';
 import { getLegacyAxisType, ALL_AXIS_TYPES } from './chartComp/utils/axisTypeMapper';
-
-// the line below is automatically modified during releases - do not modify
-// (see scripts/release/updateChartModel.js)
-export const CURRENT_VERSION = '28.2.0';
+import { VERSION } from '../version';
 
 const DEBUG = false;
 
@@ -28,7 +25,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = cleanup(model);
 
     // Bump version to latest.
-    model = migrateIfBefore(CURRENT_VERSION, model, (m) => m);
+    model = migrateIfBefore(VERSION, model, (m) => m);
 
     if (DEBUG && originalVersion !== model.version) {
         console.log('AG Grid: ChartModel migration complete', { model });

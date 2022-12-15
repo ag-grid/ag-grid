@@ -107,19 +107,6 @@ export function utf8_encode(s: string | null): string {
     return byteString;
 }
 
-/**
- * Converts a hyphenated string into camelCase string
- * from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
- * @param {string} str
- * @return {string}
- */
-export function hyphenToCamelCase(str: string): string | null {
-    if (str === null || str === undefined) {
-        return null;
-    }
-    return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-}
-
 export function capitalise(str: string): string {
     return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }

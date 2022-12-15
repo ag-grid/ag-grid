@@ -1,3 +1,5 @@
+import { isDesktop } from '../util/userAgent';
+
 type Size = { width: number; height: number };
 
 // Work-around for typing issues with Angular 13+ (see AG-6969),
@@ -25,7 +27,13 @@ export class HdpiCanvas {
         overrideDevicePixelRatio = undefined as undefined | number,
     }) {
         this.document = document;
+
+        // Create canvas and immediately apply width + height to avoid out-of-memory
+        // errors on iOS/iPadOS Safari.
         this.element = document.createElement('canvas');
+        this.element.width = width;
+        this.element.height = height;
+
         this.context = this.element.getContext('2d')!;
         this.imageSource = this.context.canvas;
 
@@ -85,7 +93,13 @@ export class HdpiCanvas {
 
     destroy() {
         this.element.remove();
-        (this as any)._canvas = undefined;
+
+        // Workaround memory allocation quirks in iOS Safari by resizing to 0x0 and clearing.
+        // See https://bugs.webkit.org/show_bug.cgi?id=195325.
+        this.element.width = 0;
+        this.element.height = 0;
+        this.context.clearRect(0, 0, 0, 0);
+
         Object.freeze(this);
     }
 
@@ -142,7 +156,13 @@ export class HdpiCanvas {
      * element accordingly (default).
      */
     setPixelRatio(ratio?: number) {
-        const pixelRatio = ratio || window.devicePixelRatio;
+        let pixelRatio = ratio ?? window.devicePixelRatio;
+        if (!isDesktop()) {
+            // Mobile browsers have stricter memory limits, we reduce rendering resolution to
+            // improve stability on mobile browsers. iOS Safari 12->16 are pain-points since they
+            // have memory allocation quirks - see https://bugs.webkit.org/show_bug.cgi?id=195325.
+            pixelRatio = 1;
+        }
 
         if (pixelRatio === this.pixelRatio) {
             return;

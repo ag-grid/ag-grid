@@ -1,6 +1,6 @@
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired } from "../../../context/context";
-import { IHeaderColumn } from "../../../entities/iHeaderColumn";
+import { IHeaderColumn } from "../../../interfaces/iHeaderColumn";
 import { FocusService } from "../../../focusService";
 import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";

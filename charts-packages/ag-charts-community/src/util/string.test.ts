@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { interpolate } from './string';
-import { locale } from './time/format/defaultLocale';
+import { buildFormatter } from './timeFormat';
 
 describe('interpolate', () => {
     it('should substitute #{key} with values from the given object', () => {
@@ -36,7 +36,7 @@ describe('interpolate', () => {
 
     it('should format numbers (using Intl.NumberFormat) and dates', () => {
         const format = '%A, %b %d %Y';
-        const formatter = locale.format(format);
+        const formatter = buildFormatter(format);
         const amount1 = 42000000;
         const amount2 = 1234;
         const locales = 'en-GB';

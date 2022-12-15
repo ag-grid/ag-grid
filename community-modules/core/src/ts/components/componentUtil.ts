@@ -127,7 +127,7 @@ export class ComponentUtil {
         const pGridOptions = gridOptions as any;
         const keys = ComponentUtil.getGridOptionKeys(component, isVue);
         // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
-        keys.map(key => {
+        keys.forEach(key => {
             const value = component[key];
             if (typeof value !== 'undefined') {
                 const coercedValue = ComponentUtil.getValue(key, value);
@@ -141,8 +141,8 @@ export class ComponentUtil {
 
 
 
-    public static processOnChange(changes: any, api: GridApi, isVue: boolean = false): void {
-        if (!changes) {
+    public static processOnChange(changes: any, api: GridApi): void {
+        if (!changes || Object.keys(changes).length === 0) {
             return;
         }
 

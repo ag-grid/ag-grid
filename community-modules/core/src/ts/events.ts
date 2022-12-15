@@ -1,4 +1,4 @@
-import { RowNode, RowPinnedType } from './entities/rowNode';
+import { RowNode } from './entities/rowNode';
 import { Column, ColumnPinnedType } from './entities/column';
 import { ColDef } from './entities/colDef';
 import { ProvidedColumnGroup } from './entities/providedColumnGroup';
@@ -10,6 +10,7 @@ import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction"
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
 import { AgGridCommon } from './interfaces/iCommon';
+import { RowPinnedType } from './interfaces/iRowNode';
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent<TData = any> extends AgGridEvent<TData> {
@@ -136,16 +137,16 @@ export interface ColumnPanelItemDragStartEvent<TData = any> extends AgGridEvent<
 
 export interface ColumnPanelItemDragEndEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface DragEvent<TData = any> extends AgGridEvent<TData> {
+export interface AgDragEvent<TData = any> extends AgGridEvent<TData> {
     /** The DOM element that started the event. */
     target: HTMLElement;
 }
 
-export interface DragStartedEvent<TData = any> extends DragEvent<TData> {
+export interface DragStartedEvent<TData = any> extends AgDragEvent<TData> {
     type: 'dragStarted';
 }
 
-export interface DragStoppedEvent<TData = any> extends DragEvent<TData> {
+export interface DragStoppedEvent<TData = any> extends AgDragEvent<TData> {
     type: 'dragStopped';
 }
 

@@ -142,6 +142,14 @@
       "type": { "returnType": "number", "optional": true }
     }
   },
+  "ColDefPropertyChangedEvent": {
+    "source": { "type": { "returnType": "ColumnEventType", "optional": true } },
+    "type": {
+      "type": { "returnType": "keyof GridOptions", "optional": false }
+    },
+    "currentValue": { "type": { "returnType": "any", "optional": false } },
+    "previousValue": { "type": { "returnType": "any", "optional": false } }
+  },
   "ColKey": {},
   "ComponentMetadata": {
     "mandatoryMethodList": {
@@ -221,12 +229,6 @@
       }
     }
   },
-  "RegisteredComponent": {
-    "component": { "type": { "returnType": "any", "optional": false } },
-    "componentFromFramework": {
-      "type": { "returnType": "boolean", "optional": false }
-    }
-  },
   "ContextParams": {
     "providedBeanInstances": {
       "type": { "returnType": "any", "optional": false }
@@ -292,8 +294,8 @@
     "stickyTopRightRowContainerCtrl": {
       "type": { "returnType": "RowContainerCtrl", "optional": false }
     },
-    "fakeHScrollComp": {
-      "type": { "returnType": "FakeHScrollComp", "optional": false }
+    "fakeHScrollCtrl": {
+      "type": { "returnType": "FakeHScrollCtrl", "optional": false }
     },
     "fakeVScrollComp": {
       "type": { "returnType": "FakeVScrollComp", "optional": false }
@@ -5251,864 +5253,6 @@
     }
   },
   "DomLayoutType": {},
-  "GetContextMenuItemsParams": {
-    "defaultItems": {
-      "description": "/** Names of the items that would be provided by default. */",
-      "type": { "returnType": "string[] | undefined", "optional": false }
-    },
-    "column": {
-      "description": "/** The column, if a cell was clicked, otherwise null. */",
-      "type": { "returnType": "Column | null", "optional": false }
-    },
-    "node": {
-      "description": "/** The row node, if a cell was clicked, otherwise null. */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": false }
-    },
-    "value": {
-      "description": "/** The value, if a cell was clicked, otherwise null.  */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "GetMainMenuItemsParams": {
-    "column": {
-      "description": "/** The column that was clicked */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "defaultItems": {
-      "description": "/** List of the items that would be displayed by default */",
-      "type": { "returnType": "string[]", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "PostProcessPopupParams": {
-    "column": {
-      "description": "/** If popup is for a column, this gives the Column */",
-      "type": { "returnType": "Column | null", "optional": true }
-    },
-    "rowNode": {
-      "description": "/** If popup is for a row, this gives the RowNode */",
-      "type": { "returnType": "RowNode<TData> | null", "optional": true }
-    },
-    "ePopup": {
-      "description": "/** The popup we are showing */",
-      "type": { "returnType": "HTMLElement", "optional": false }
-    },
-    "type": {
-      "description": "/** The different types are:\n     *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "eventSource": {
-      "description": "/** If the popup is as a result of a button click (eg menu button),\n     *  this is the component that the user clicked */",
-      "type": { "returnType": "HTMLElement | null", "optional": true }
-    },
-    "mouseEvent": {
-      "description": "/** If the popup is as a result of a click or touch,\n     *  this is the event - eg user showing context menu */",
-      "type": { "returnType": "MouseEvent | Touch | null", "optional": true }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "SendToClipboardParams": {
-    "data": { "type": { "returnType": "string", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "ProcessDataFromClipboardParams": {
-    "data": {
-      "description": "/** 2D array of all cells from the clipboard */",
-      "type": { "returnType": "string[][]", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "GetChartToolbarItemsParams": {
-    "defaultItems": {
-      "type": { "returnType": "ChartMenuOptions[]", "optional": true }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "NavigateToNextHeaderParams": {
-    "key": {
-      "description": "/** The key for the arrow key pressed,\n     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "previousHeaderPosition": {
-      "description": "/** The header that currently has focus */",
-      "type": { "returnType": "HeaderPosition | null", "optional": false }
-    },
-    "nextHeaderPosition": {
-      "description": "/** The header the grid would normally pick as the next header for this navigation */",
-      "type": { "returnType": "HeaderPosition | null", "optional": false }
-    },
-    "headerRowCount": {
-      "description": "/** The number of header rows present in the grid */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "event": { "type": { "returnType": "KeyboardEvent", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "TabToNextHeaderParams": {
-    "backwards": {
-      "description": "/** True if the Shift key is also down */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "previousHeaderPosition": {
-      "description": "/** The header that currently has focus */",
-      "type": { "returnType": "HeaderPosition | null", "optional": false }
-    },
-    "nextHeaderPosition": {
-      "description": "/** The header the grid would normally pick as the next header for this navigation */",
-      "type": { "returnType": "HeaderPosition | null", "optional": false }
-    },
-    "headerRowCount": {
-      "description": "/** The number of header rows present in the grid */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "TabToNextCellParams": {
-    "backwards": {
-      "description": "/** True if the Shift key is also down */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "editing": {
-      "description": "/** True if the current cell is editing\n     * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "previousCellPosition": {
-      "description": "/** The cell that currently has focus */",
-      "type": { "returnType": "CellPosition", "optional": false }
-    },
-    "nextCellPosition": {
-      "description": "/** The cell the grid would normally pick as the next cell for navigation.  */",
-      "type": { "returnType": "CellPosition | null", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "NavigateToNextCellParams": {
-    "key": {
-      "description": "/** The keycode for the arrow key pressed:\n     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "previousCellPosition": {
-      "description": "/** The cell that currently has focus */",
-      "type": { "returnType": "CellPosition", "optional": false }
-    },
-    "nextCellPosition": {
-      "description": "/** The cell the grid would normally pick as the next cell for navigation */",
-      "type": { "returnType": "CellPosition | null", "optional": false }
-    },
-    "event": {
-      "type": { "returnType": "KeyboardEvent | null", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "PaginationNumberFormatterParams": {
-    "value": { "type": { "returnType": "number", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "IsGroupOpenByDefaultParams": {
-    "rowNode": {
-      "description": "/** The row node being considered. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
-    },
-    "rowGroupColumn": {
-      "description": "/** The Column for which this row is grouping. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "level": {
-      "description": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "field": {
-      "description": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "key": {
-      "description": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "GetServerSideGroupLevelParamsParams": {
-    "level": {
-      "description": "/** The level of the store. Top level is 0. */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "parentRowNode": {
-      "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
-      "type": { "returnType": "RowNode", "optional": true }
-    },
-    "rowGroupColumns": {
-      "description": "/** Active Row Group Columns, if any. */",
-      "type": { "returnType": "Column[]", "optional": false }
-    },
-    "pivotColumns": {
-      "description": "/** Active Pivot Columns, if any. */",
-      "type": { "returnType": "Column[]", "optional": false }
-    },
-    "pivotMode": {
-      "description": "/** true if pivot mode is active. */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<any>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "GetServerSideStoreParamsParams": {
-    "level": {
-      "description": "/** The level of the store. Top level is 0. */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "parentRowNode": {
-      "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
-      "type": { "returnType": "RowNode", "optional": true }
-    },
-    "rowGroupColumns": {
-      "description": "/** Active Row Group Columns, if any. */",
-      "type": { "returnType": "Column[]", "optional": false }
-    },
-    "pivotColumns": {
-      "description": "/** Active Pivot Columns, if any. */",
-      "type": { "returnType": "Column[]", "optional": false }
-    },
-    "pivotMode": {
-      "description": "/** true if pivot mode is active. */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<any>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "IsServerSideGroupOpenByDefaultParams": {
-    "data": { "type": { "returnType": "any", "optional": false } },
-    "rowNode": { "type": { "returnType": "RowNode", "optional": false } },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<any>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "IsApplyServerSideTransactionParams": {
-    "transaction": {
-      "description": "/** The transaction getting applied. */",
-      "type": { "returnType": "ServerSideTransaction", "optional": false }
-    },
-    "parentNode": {
-      "description": "/** The parent RowNode, if transaction is applied to a group. */",
-      "type": { "returnType": "RowNode", "optional": false }
-    },
-    "storeInfo": {
-      "description": "/** @deprecated use groupLevelInfo instead */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "groupLevelInfo": {
-      "description": "/** Store info, if any, as passed via the success() callback when loading data. */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<any>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "GetRowIdParams": {
-    "data": {
-      "description": "/** The data item provided to the grid for the row in question */",
-      "type": { "returnType": "TData", "optional": false }
-    },
-    "level": {
-      "description": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "parentKeys": {
-      "description": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
-      "type": { "returnType": "string[]", "optional": true }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "ProcessRowParams": {
-    "eRow": { "type": { "returnType": "HTMLElement", "optional": false } },
-    "ePinnedLeftRow": {
-      "type": { "returnType": "HTMLElement", "optional": true }
-    },
-    "ePinnedRightRow": {
-      "type": { "returnType": "HTMLElement", "optional": true }
-    },
-    "rowIndex": { "type": { "returnType": "number", "optional": false } },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
-    "addRenderedRowListener": {
-      "type": {
-        "arguments": { "eventType": "string", "listener": "Function" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "FillOperationParams": {
-    "event": {
-      "description": "/** The mouse event for the fill operation. */",
-      "type": { "returnType": "MouseEvent", "optional": false }
-    },
-    "values": {
-      "description": "/** The values that have been processed by the fill operation. */",
-      "type": { "returnType": "any[]", "optional": false }
-    },
-    "rowNode": {
-      "description": "/** The RowNode of the current cell being changed. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
-    },
-    "column": {
-      "description": "/** The Column of the current cell being changed. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "initialValues": {
-      "description": "/** The values that were present before processing started. */",
-      "type": { "returnType": "any[]", "optional": false }
-    },
-    "currentIndex": {
-      "description": "/** The index of the current processed value. */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "currentCellValue": {
-      "description": "/** The value of the cell being currently processed by the Fill Operation. */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "direction": {
-      "description": "/** The direction of the Fill Operation. */",
-      "type": {
-        "returnType": "'up' | 'down' | 'left' | 'right'",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "RowHeightParams": {
-    "data": {
-      "description": "/** The data associated with this row from rowData. Data is `undefined` for row groups. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
-    },
-    "node": {
-      "description": "/** The RowNode of the row in question. */",
-      "type": { "returnType": "RowNode<TData>", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "IsExternalFilterPresentParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "InitialGroupOrderComparatorParams": {
-    "nodeA": { "type": { "returnType": "RowNode<TData>", "optional": false } },
-    "nodeB": { "type": { "returnType": "RowNode<TData>", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "GetGroupRowAggParams": {
-    "nodes": {
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "PostSortRowsParams": {
-    "nodes": {
-      "type": { "returnType": "RowNode<TData>[]", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "IsFullWidthRowParams": {
-    "rowNode": {
-      "type": { "returnType": "RowNode<TData>", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "GetLocaleTextParams": {
-    "key": { "type": { "returnType": "string", "optional": false } },
-    "defaultValue": { "type": { "returnType": "string", "optional": false } },
-    "variableValues": {
-      "type": { "returnType": "string[]", "optional": true }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "GetGroupAggFilteringParams": {
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "IHeaderColumn": {
-    "getUniqueId": {
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
-    },
-    "getActualWidth": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "getMinWidth": {
-      "type": {
-        "arguments": {},
-        "returnType": "number | null | undefined",
-        "optional": false
-      }
-    },
-    "getLeft": {
-      "type": {
-        "arguments": {},
-        "returnType": "number | null",
-        "optional": false
-      }
-    },
-    "getOldLeft": {
-      "type": {
-        "arguments": {},
-        "returnType": "number | null",
-        "optional": false
-      }
-    },
-    "getDefinition": {
-      "type": {
-        "arguments": {},
-        "returnType": "AbstractColDef | null",
-        "optional": false
-      }
-    },
-    "getColumnGroupShow": {
-      "type": {
-        "arguments": {},
-        "returnType": "string | undefined",
-        "optional": false
-      }
-    },
-    "getParent": {
-      "type": {
-        "arguments": {},
-        "returnType": "IHeaderColumn",
-        "optional": false
-      }
-    },
-    "isResizable": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    },
-    "setParent": {
-      "type": {
-        "arguments": { "parent": "ColumnGroup | null" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "isEmptyGroup": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    },
-    "isMoving": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    },
-    "getPinned": {
-      "type": {
-        "arguments": {},
-        "returnType": "ColumnPinnedType",
-        "optional": false
-      }
-    },
-    "addEventListener": {
-      "type": {
-        "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async?": "boolean",
-          "options?": "AddEventListenerOptions"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "removeEventListener": {
-      "type": {
-        "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async?": "boolean",
-          "options?": "AddEventListenerOptions"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    }
-  },
-  "IProvidedColumn": {
-    "isVisible": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    },
-    "getColumnGroupShow": {
-      "type": {
-        "arguments": {},
-        "returnType": "string | undefined",
-        "optional": false
-      }
-    },
-    "getId": {
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
-    },
-    "setOriginalParent": {
-      "type": {
-        "arguments": { "originalParent": "ProvidedColumnGroup | null" },
-        "returnType": "void",
-        "optional": false
-      }
-    }
-  },
-  "SetSelectedParams": {
-    "newValue": { "type": { "returnType": "boolean", "optional": false } },
-    "clearSelection": { "type": { "returnType": "boolean", "optional": true } },
-    "suppressFinishActions": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "rangeSelect": { "type": { "returnType": "boolean", "optional": true } },
-    "groupSelectsFiltered": {
-      "type": { "returnType": "boolean", "optional": true }
-    }
-  },
-  "RowNodeEvent": {
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
-  },
-  "DataChangedEvent": {
-    "oldData": {
-      "type": { "returnType": "TData | undefined", "optional": false }
-    },
-    "newData": {
-      "type": { "returnType": "TData | undefined", "optional": false }
-    },
-    "update": { "type": { "returnType": "boolean", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
-  },
-  "CellChangedEvent": {
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "newValue": {
-      "type": { "returnType": "TData | undefined", "optional": false }
-    },
-    "oldValue": {
-      "type": { "returnType": "TData | undefined", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
-  },
-  "RowHighlightPosition": {},
-  "RowPinnedType": {},
   "RowPosition": {
     "rowIndex": {
       "description": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n    * or -1 if you want to navigate to the grid header */",
@@ -6713,7 +5857,7 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "DragEvent": {
+  "AgDragEvent": {
     "target": {
       "description": "/** The DOM element that started the event. */",
       "type": { "returnType": "HTMLElement", "optional": false }
@@ -10420,6 +9564,78 @@
       "type": { "returnType": "string", "optional": true }
     }
   },
+  "IFakeHScrollComp": {
+    "setHeight": {
+      "type": {
+        "arguments": { "height": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setBottom": {
+      "type": {
+        "arguments": { "bottom": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setViewportHeight": {
+      "type": {
+        "arguments": { "height": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setContainerHeight": {
+      "type": {
+        "arguments": { "height": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setRightSpacerFixedWidth": {
+      "type": {
+        "arguments": { "width": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setLeftSpacerFixedWidth": {
+      "type": {
+        "arguments": { "width": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setDisplayed": {
+      "type": {
+        "arguments": { "displayed": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "addOrRemoveCssClass": {
+      "type": {
+        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "includeLeftSpacerScrollerCss": {
+      "type": {
+        "arguments": { "cssClass": "string", "include": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "includeRightSpacerScrollerCss": {
+      "type": {
+        "arguments": { "cssClass": "string", "include": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
   "RowAnimationCssClasses": {},
   "IGridBodyComp": {
     "setColumnMovingCss": {
@@ -10564,18 +9780,6 @@
     },
     "focusColumn": { "type": { "returnType": "Column", "optional": false } },
     "isAsync": { "type": { "returnType": "boolean", "optional": true } }
-  },
-  "RenderParams": {
-    "rows": { "type": { "returnType": "RowNode", "optional": false } }
-  },
-  "RenderRowsFeature": {
-    "render": {
-      "type": {
-        "arguments": { "rows": "RowNode[]" },
-        "returnType": "void",
-        "optional": false
-      }
-    }
   },
   "RowContainerName": {},
   "RowContainerType": {},
@@ -10751,7 +9955,6 @@
     }
   },
   "GetKeys": { "meta": { "typeParams": ["T", "U"] } },
-  "KeysLike": { "meta": { "typeParams": ["U"] } },
   "KeysOfType": { "meta": { "typeParams": ["U"] } },
   "BooleanProps": {},
   "NumberProps": {},
@@ -10776,7 +9979,9 @@
     "currentValue": { "type": { "returnType": "any", "optional": false } },
     "previousValue": { "type": { "returnType": "any", "optional": false } }
   },
-  "PropertyChangedListener": {},
+  "PropertyChangedListener": {
+    "meta": { "typeParams": ["T extends PropertyChangedEvent"] }
+  },
   "DeprecatedReference": { "meta": { "typeParams": ["T"] } },
   "IAbstractHeaderCellComp": {},
   "IHeaderCellComp": {
@@ -11821,6 +11026,694 @@
         "returnType": "any",
         "optional": false
       }
+    }
+  },
+  "GetContextMenuItemsParams": {
+    "defaultItems": {
+      "description": "/** Names of the items that would be provided by default. */",
+      "type": { "returnType": "string[] | undefined", "optional": false }
+    },
+    "column": {
+      "description": "/** The column, if a cell was clicked, otherwise null. */",
+      "type": { "returnType": "Column | null", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node, if a cell was clicked, otherwise null. */",
+      "type": { "returnType": "RowNode<TData> | null", "optional": false }
+    },
+    "value": {
+      "description": "/** The value, if a cell was clicked, otherwise null.  */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetMainMenuItemsParams": {
+    "column": {
+      "description": "/** The column that was clicked */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "defaultItems": {
+      "description": "/** List of the items that would be displayed by default */",
+      "type": { "returnType": "string[]", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "PostProcessPopupParams": {
+    "column": {
+      "description": "/** If popup is for a column, this gives the Column */",
+      "type": { "returnType": "Column | null", "optional": true }
+    },
+    "rowNode": {
+      "description": "/** If popup is for a row, this gives the RowNode */",
+      "type": { "returnType": "RowNode<TData> | null", "optional": true }
+    },
+    "ePopup": {
+      "description": "/** The popup we are showing */",
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "type": {
+      "description": "/** The different types are:\n     *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "eventSource": {
+      "description": "/** If the popup is as a result of a button click (eg menu button),\n     *  this is the component that the user clicked */",
+      "type": { "returnType": "HTMLElement | null", "optional": true }
+    },
+    "mouseEvent": {
+      "description": "/** If the popup is as a result of a click or touch,\n     *  this is the event - eg user showing context menu */",
+      "type": { "returnType": "MouseEvent | Touch | null", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "SendToClipboardParams": {
+    "data": { "type": { "returnType": "string", "optional": false } },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "ProcessDataFromClipboardParams": {
+    "data": {
+      "description": "/** 2D array of all cells from the clipboard */",
+      "type": { "returnType": "string[][]", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetChartToolbarItemsParams": {
+    "defaultItems": {
+      "type": { "returnType": "ChartMenuOptions[]", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "NavigateToNextHeaderParams": {
+    "key": {
+      "description": "/** The key for the arrow key pressed,\n     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "previousHeaderPosition": {
+      "description": "/** The header that currently has focus */",
+      "type": { "returnType": "HeaderPosition | null", "optional": false }
+    },
+    "nextHeaderPosition": {
+      "description": "/** The header the grid would normally pick as the next header for this navigation */",
+      "type": { "returnType": "HeaderPosition | null", "optional": false }
+    },
+    "headerRowCount": {
+      "description": "/** The number of header rows present in the grid */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "event": { "type": { "returnType": "KeyboardEvent", "optional": false } },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "TabToNextHeaderParams": {
+    "backwards": {
+      "description": "/** True if the Shift key is also down */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "previousHeaderPosition": {
+      "description": "/** The header that currently has focus */",
+      "type": { "returnType": "HeaderPosition | null", "optional": false }
+    },
+    "nextHeaderPosition": {
+      "description": "/** The header the grid would normally pick as the next header for this navigation */",
+      "type": { "returnType": "HeaderPosition | null", "optional": false }
+    },
+    "headerRowCount": {
+      "description": "/** The number of header rows present in the grid */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "TabToNextCellParams": {
+    "backwards": {
+      "description": "/** True if the Shift key is also down */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "editing": {
+      "description": "/** True if the current cell is editing\n     * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "previousCellPosition": {
+      "description": "/** The cell that currently has focus */",
+      "type": { "returnType": "CellPosition", "optional": false }
+    },
+    "nextCellPosition": {
+      "description": "/** The cell the grid would normally pick as the next cell for navigation.  */",
+      "type": { "returnType": "CellPosition | null", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "NavigateToNextCellParams": {
+    "key": {
+      "description": "/** The keycode for the arrow key pressed:\n     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "previousCellPosition": {
+      "description": "/** The cell that currently has focus */",
+      "type": { "returnType": "CellPosition", "optional": false }
+    },
+    "nextCellPosition": {
+      "description": "/** The cell the grid would normally pick as the next cell for navigation */",
+      "type": { "returnType": "CellPosition | null", "optional": false }
+    },
+    "event": {
+      "type": { "returnType": "KeyboardEvent | null", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "PaginationNumberFormatterParams": {
+    "value": { "type": { "returnType": "number", "optional": false } },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IsGroupOpenByDefaultParams": {
+    "rowNode": {
+      "description": "/** The row node being considered. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
+    "rowGroupColumn": {
+      "description": "/** The Column for which this row is grouping. */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "level": {
+      "description": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "field": {
+      "description": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "key": {
+      "description": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetServerSideGroupLevelParamsParams": {
+    "level": {
+      "description": "/** The level of the store. Top level is 0. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parentRowNode": {
+      "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "type": { "returnType": "RowNode", "optional": true }
+    },
+    "rowGroupColumns": {
+      "description": "/** Active Row Group Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotColumns": {
+      "description": "/** Active Pivot Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotMode": {
+      "description": "/** true if pivot mode is active. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<any>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetServerSideStoreParamsParams": {
+    "level": {
+      "description": "/** The level of the store. Top level is 0. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parentRowNode": {
+      "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "type": { "returnType": "RowNode", "optional": true }
+    },
+    "rowGroupColumns": {
+      "description": "/** Active Row Group Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotColumns": {
+      "description": "/** Active Pivot Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotMode": {
+      "description": "/** true if pivot mode is active. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<any>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IsServerSideGroupOpenByDefaultParams": {
+    "data": { "type": { "returnType": "any", "optional": false } },
+    "rowNode": { "type": { "returnType": "RowNode", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<any>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IsApplyServerSideTransactionParams": {
+    "transaction": {
+      "description": "/** The transaction getting applied. */",
+      "type": { "returnType": "ServerSideTransaction", "optional": false }
+    },
+    "parentNode": {
+      "description": "/** The parent RowNode, if transaction is applied to a group. */",
+      "type": { "returnType": "RowNode", "optional": false }
+    },
+    "storeInfo": {
+      "description": "/** @deprecated use groupLevelInfo instead */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "groupLevelInfo": {
+      "description": "/** Store info, if any, as passed via the success() callback when loading data. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<any>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetRowIdParams": {
+    "data": {
+      "description": "/** The data item provided to the grid for the row in question */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "level": {
+      "description": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parentKeys": {
+      "description": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "ProcessRowParams": {
+    "eRow": { "type": { "returnType": "HTMLElement", "optional": false } },
+    "ePinnedLeftRow": {
+      "type": { "returnType": "HTMLElement", "optional": true }
+    },
+    "ePinnedRightRow": {
+      "type": { "returnType": "HTMLElement", "optional": true }
+    },
+    "rowIndex": { "type": { "returnType": "number", "optional": false } },
+    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "addRenderedRowListener": {
+      "type": {
+        "arguments": { "eventType": "string", "listener": "Function" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "FillOperationParams": {
+    "event": {
+      "description": "/** The mouse event for the fill operation. */",
+      "type": { "returnType": "MouseEvent", "optional": false }
+    },
+    "values": {
+      "description": "/** The values that have been processed by the fill operation. */",
+      "type": { "returnType": "any[]", "optional": false }
+    },
+    "rowNode": {
+      "description": "/** The RowNode of the current cell being changed. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
+    "column": {
+      "description": "/** The Column of the current cell being changed. */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "initialValues": {
+      "description": "/** The values that were present before processing started. */",
+      "type": { "returnType": "any[]", "optional": false }
+    },
+    "currentIndex": {
+      "description": "/** The index of the current processed value. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "currentCellValue": {
+      "description": "/** The value of the cell being currently processed by the Fill Operation. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "direction": {
+      "description": "/** The direction of the Fill Operation. */",
+      "type": {
+        "returnType": "'up' | 'down' | 'left' | 'right'",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "RowHeightParams": {
+    "data": {
+      "description": "/** The data associated with this row from rowData. Data is `undefined` for row groups. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The RowNode of the row in question. */",
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IsExternalFilterPresentParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "InitialGroupOrderComparatorParams": {
+    "nodeA": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "nodeB": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetGroupRowAggParams": {
+    "nodes": {
+      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "PostSortRowsParams": {
+    "nodes": {
+      "type": { "returnType": "RowNode<TData>[]", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IsFullWidthRowParams": {
+    "rowNode": {
+      "type": { "returnType": "RowNode<TData>", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetLocaleTextParams": {
+    "key": { "type": { "returnType": "string", "optional": false } },
+    "defaultValue": { "type": { "returnType": "string", "optional": false } },
+    "variableValues": {
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetGroupAggFilteringParams": {
+    "node": { "type": { "returnType": "RowNode<TData>", "optional": false } },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ICellEditor": {
@@ -14041,6 +13934,103 @@
       }
     }
   },
+  "IHeaderColumn": {
+    "getUniqueId": {
+      "type": { "arguments": {}, "returnType": "string", "optional": false }
+    },
+    "getActualWidth": {
+      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    },
+    "getMinWidth": {
+      "type": {
+        "arguments": {},
+        "returnType": "number | null | undefined",
+        "optional": false
+      }
+    },
+    "getLeft": {
+      "type": {
+        "arguments": {},
+        "returnType": "number | null",
+        "optional": false
+      }
+    },
+    "getOldLeft": {
+      "type": {
+        "arguments": {},
+        "returnType": "number | null",
+        "optional": false
+      }
+    },
+    "getDefinition": {
+      "type": {
+        "arguments": {},
+        "returnType": "AbstractColDef | null",
+        "optional": false
+      }
+    },
+    "getColumnGroupShow": {
+      "type": {
+        "arguments": {},
+        "returnType": "string | undefined",
+        "optional": false
+      }
+    },
+    "getParent": {
+      "type": {
+        "arguments": {},
+        "returnType": "IHeaderColumn",
+        "optional": false
+      }
+    },
+    "isResizable": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "setParent": {
+      "type": {
+        "arguments": { "parent": "ColumnGroup | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "isEmptyGroup": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "isMoving": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "getPinned": {
+      "type": {
+        "arguments": {},
+        "returnType": "ColumnPinnedType",
+        "optional": false
+      }
+    },
+    "addEventListener": {
+      "type": {
+        "arguments": {
+          "eventType": "string",
+          "listener": "EventListener",
+          "async?": "boolean",
+          "options?": "AddEventListenerOptions"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "removeEventListener": {
+      "type": {
+        "arguments": {
+          "eventType": "string",
+          "listener": "EventListener",
+          "async?": "boolean",
+          "options?": "AddEventListenerOptions"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
   "IImmutableService": {
     "setRowData": {
       "type": {
@@ -14185,7 +14175,6 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
-  "IMenu": {},
   "IMenuFactory": {
     "showMenuAfterButtonClick": {
       "type": {
@@ -14223,7 +14212,19 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
+  "ModuleValidationValidResult": {},
+  "ModuleValidationInvalidResult": {},
+  "ModuleValidationResult": {},
   "Module": {
+    "version": { "type": { "returnType": "string", "optional": false } },
+    "validate": {
+      "description": "/** Validation run when registering the module\n     * \n     * @return Whether the module is valid or not. If not, a message explaining why it is not valid\n     */",
+      "type": {
+        "arguments": {},
+        "returnType": "ModuleValidationResult",
+        "optional": true
+      }
+    },
     "moduleName": { "type": { "returnType": "string", "optional": false } },
     "beans": { "type": { "returnType": "any[]", "optional": true } },
     "agStackComponents": {
@@ -14482,6 +14483,28 @@
         "arguments": { "params": "T" },
         "returnType": "AgPromise<void> | void",
         "optional": true
+      }
+    }
+  },
+  "IProvidedColumn": {
+    "isVisible": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "getColumnGroupShow": {
+      "type": {
+        "arguments": {},
+        "returnType": "string | undefined",
+        "optional": false
+      }
+    },
+    "getId": {
+      "type": { "arguments": {}, "returnType": "string", "optional": false }
+    },
+    "setOriginalParent": {
+      "type": {
+        "arguments": { "originalParent": "ProvidedColumnGroup | null" },
+        "returnType": "void",
+        "optional": false
       }
     }
   },
@@ -14751,16 +14774,29 @@
   },
   "CellValue": {},
   "IRichCellEditorParams": {
-    "values": { "type": { "returnType": "CellValue[]", "optional": false } },
-    "cellHeight": { "type": { "returnType": "number", "optional": false } },
+    "values": {
+      "description": "/** The list of values to be selected from. */",
+      "type": { "returnType": "CellValue[]", "optional": false }
+    },
+    "cellHeight": {
+      "description": "/** The row height, in pixels, of each value. */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "cellRenderer": {
-      "type": {
-        "returnType": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
-        "optional": false
-      }
+      "description": "/** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */",
+      "type": { "returnType": "any", "optional": false }
     },
     "searchDebounceDelay": {
+      "description": "/** The value in `ms` for the fuzzy search debounce delay. Default: `300` */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "formatValue": {
+      "description": "/** A callback function that allows you to change the displayed value for simple data. */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "any",
+        "optional": false
+      }
     },
     "value": {
       "description": "/** Current value of the cell */",
@@ -14820,14 +14856,6 @@
     },
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
-        "optional": false
-      }
-    },
-    "formatValue": {
-      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": {
         "arguments": { "value": "any" },
         "returnType": "any",
@@ -14966,77 +14994,471 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
-  "IRowNodeBlock": {
-    "getDisplayIndexStart": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
+  "RowNodeEventType": {},
+  "SetSelectedParams": {
+    "newValue": { "type": { "returnType": "boolean", "optional": false } },
+    "clearSelection": { "type": { "returnType": "boolean", "optional": true } },
+    "suppressFinishActions": {
+      "type": { "returnType": "boolean", "optional": true }
     },
-    "getDisplayIndexEnd": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    "rangeSelect": { "type": { "returnType": "boolean", "optional": true } },
+    "groupSelectsFiltered": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "RowNodeEvent": {
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "RowNodeEventType", "optional": false }
     },
-    "getLastAccessed": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    "node": { "type": { "returnType": "IRowNode<TData>", "optional": false } },
+    "meta": { "typeParams": ["TData = any"] }
+  },
+  "DataChangedEvent": {
+    "oldData": {
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
-    "getState": {
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
+    "newData": {
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
-    "isAnyNodeOpen": {
+    "update": { "type": { "returnType": "boolean", "optional": false } },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "RowNodeEventType", "optional": false }
+    },
+    "node": { "type": { "returnType": "IRowNode<TData>", "optional": false } }
+  },
+  "CellChangedEvent": {
+    "column": { "type": { "returnType": "Column", "optional": false } },
+    "newValue": {
+      "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "oldValue": {
+      "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "RowNodeEventType", "optional": false }
+    },
+    "node": { "type": { "returnType": "IRowNode<TData>", "optional": false } }
+  },
+  "RowHighlightPosition": {},
+  "RowPinnedType": {},
+  "BaseRowNode": {
+    "id": {
+      "description": "/** Unique ID for the node. Either provided by the application, or generated by the grid if not. */",
+      "type": { "returnType": "string | undefined", "optional": false }
+    },
+    "data": {
+      "description": "/** The data as provided by the application.\n     * Can be `undefined` when using row grouping or during grid initialisation.\n     */",
+      "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "displayed": {
+      "description": "/** This will be `true` if it has a rowIndex assigned, otherwise `false`.\n     */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
+    },
+    "selectable": {
+      "description": "/** `Is this row selectable. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "rowHeight": {
+      "description": "/** The height, in pixels, of this row */",
+      "type": { "returnType": "number | null | undefined", "optional": false }
+    },
+    "rowTop": {
+      "description": "/** The row top position in pixels. */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "group": {
+      "description": "/** `true` if this node is a group node (ie has children) */",
+      "type": { "returnType": "boolean | undefined", "optional": false }
+    },
+    "firstChild": {
+      "description": "/** `true` if this is the first child in this group. Changes when data is sorted. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "lastChild": {
+      "description": "/** `true` if this is the last child in this group. Changes when data is sorted. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "childIndex": {
+      "description": "/** Index of this row with respect to its parent when grouping. Changes when data is sorted. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "level": {
+      "description": "/** How many levels this node is from the top when grouping. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "uiLevel": {
+      "description": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`)*/",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parent": {
+      "description": "/** The parent node to this node, or empty if top level */",
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
+    },
+    "stub": {
+      "description": "/** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "quickFilterAggregateText": {
+      "description": "/** If using quick filter, stores a string representation of the row for searching against. */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "master": {
+      "description": "/** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "detail": {
+      "description": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "detailNode": {
+      "description": "/** If this row is a master row that was expanded, this points to the associated detail row. */",
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
+    },
+    "detailGridInfo": {
+      "description": "/** If master detail, this contains details about the detail grid */",
+      "type": { "returnType": "DetailGridInfo | null", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] }
+  },
+  "GroupRowNode": {
+    "field": {
+      "description": "/** The field we are grouping on from our row data. */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "key": {
+      "description": "/** The key value for this group. */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "groupData": {
+      "description": "/** If using row grouping, contains the group values for this group. */",
       "type": {
-        "arguments": { "rowCount": "number" },
-        "returnType": "boolean",
+        "returnType": "{ [key: string]: any | null; } | null",
         "optional": false
       }
     },
-    "getBlockNumber": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    "aggData": {
+      "description": "/** If using row grouping and aggregation, contains the aggregation data. */",
+      "type": { "returnType": "any", "optional": false }
     },
-    "forEachNodeDeep": {
+    "rowGroupColumn": {
+      "description": "/** The row group column used for this group */",
+      "type": { "returnType": "Column | null", "optional": false }
+    },
+    "rowGroupIndex": {
+      "description": "/** If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.\n     * This will always be the same as the level, unless we are collapsing groups, i.e. `groupRemoveSingleChildren=true`.\n    */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "expanded": {
+      "description": "/** `true` if group is expanded, otherwise `false`. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "leafGroup": {
+      "description": "/** `true` if this node is a group and the group is the bottom level in the tree. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "allLeafChildren": {
+      "description": "/** All lowest level nodes beneath this node, no groups. */",
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
+    },
+    "allChildrenCount": {
+      "description": "/** Number of children and grand children. */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "childrenAfterGroup": {
+      "description": "/** Children of this group. If multi levels of grouping, shows only immediate children. */",
+      "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
+    },
+    "childrenAfterSort": {
+      "description": "/** Sorted children of this group. */",
+      "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
+    },
+    "childrenAfterFilter": {
+      "description": "/** Filtered children of this group. */",
+      "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
+    },
+    "childrenAfterAggFilter": {
+      "description": "/** Aggregated and re-filtered children of this group. */",
+      "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
+    },
+    "footer": {
+      "description": "/** `true` if row is a footer. Footers have `group = true` and `footer = true`. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "sibling": {
+      "description": "/** If using footers, reference to the footer node for this group. */",
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] }
+  },
+  "IRowNode": {
+    "setSelected": {
+      "description": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     */",
       "type": {
         "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void",
-          "sequence": "NumberSequence",
-          "rowCount": "number"
+          "newValue": "boolean",
+          "clearSelection?": "boolean",
+          "suppressFinishActions?": "boolean"
         },
         "returnType": "void",
         "optional": false
       }
     },
-    "forEachNodeShallow": {
+    "isSelected": {
+      "description": "/** Returns:\n     * - `true` if node is selected,\n     * - `false` if the node isn't selected\n     * - `undefined` if it's partially selected (group where not all children are selected). \n     */",
+      "type": {
+        "arguments": {},
+        "returnType": "boolean | undefined",
+        "optional": false
+      }
+    },
+    "setExpanded": {
+      "description": "/** Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.\n     */",
       "type": {
         "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void",
-          "sequence": "NumberSequence",
-          "rowCount": "number"
+          "expanded": "boolean",
+          "e?": "MouseEvent | KeyboardEvent"
         },
         "returnType": "void",
         "optional": false
       }
-    },
-    "load": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "addEventListener": {
+      "description": "/** Add an event listener. */",
       "type": {
         "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async?": "boolean",
-          "options?": "AddEventListenerOptions"
+          "eventType": "RowNodeEventType",
+          "listener": "Function"
         },
         "returnType": "void",
         "optional": false
       }
     },
     "removeEventListener": {
+      "description": "/** Remove event listener. */",
       "type": {
         "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async?": "boolean",
-          "options?": "AddEventListenerOptions"
+          "eventType": "RowNodeEventType",
+          "listener": "Function"
         },
         "returnType": "void",
         "optional": false
       }
+    },
+    "resetQuickFilterAggregateText": {
+      "description": "/** The first time `quickFilter` runs, the grid creates a one-off string representation of the row.\n     * This string is then used for the quick filter instead of hitting each column separately.\n     * When you edit, using grid editing, this string gets cleared down.\n     * However if you edit without using grid editing, you will need to clear this string down for the row to be updated with the new values.\n     * Otherwise new values will not work with the `quickFilter`.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "depthFirstSearch": {
+      "description": "/** Perform a depth-first search of this node and its children. */",
+      "type": {
+        "arguments": { "callback": "(rowNode: IRowNode<TData>) => void" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setRowHeight": {
+      "description": "/** Sets the row height.\n     * Call if you want to change the height initially assigned to the row.\n     * After calling, you must call `api.onRowHeightChanged()` so the grid knows it needs to work out the placement of the rows.\n     * @param rowHeight - new height of the row\n     * @param estimated - is this an estimated height. Default: `false`\n     */",
+      "type": {
+        "arguments": {
+          "rowHeight": "number | undefined | null",
+          "estimated?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setData": {
+      "description": "/** Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */",
+      "type": {
+        "arguments": { "data": "TData" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setDataValue": {
+      "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     *\n     * @param colKey The column where the value should be updated\n     * @param newValue The new value\n     * @param eventSource The source of the event, optional.\n     * @returns `true` if the value was changed, otherwise `false`.\n     */",
+      "type": {
+        "arguments": {
+          "colKey": "string | Column",
+          "newValue": "any",
+          "eventSource?": "string"
+        },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "getRoute": {
+      "description": "/** Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.\n     * If the Row Node is not a group, it returns `undefined`.\n     */",
+      "type": {
+        "arguments": {},
+        "returnType": "string[] | undefined",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "id": {
+      "description": "/** Unique ID for the node. Either provided by the application, or generated by the grid if not. */",
+      "type": { "returnType": "string | undefined", "optional": false }
+    },
+    "data": {
+      "description": "/** The data as provided by the application.\n     * Can be `undefined` when using row grouping or during grid initialisation.\n     */",
+      "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "displayed": {
+      "description": "/** This will be `true` if it has a rowIndex assigned, otherwise `false`.\n     */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
+    },
+    "selectable": {
+      "description": "/** `Is this row selectable. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "rowHeight": {
+      "description": "/** The height, in pixels, of this row */",
+      "type": { "returnType": "number | null | undefined", "optional": false }
+    },
+    "rowTop": {
+      "description": "/** The row top position in pixels. */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "group": {
+      "description": "/** `true` if this node is a group node (ie has children) */",
+      "type": { "returnType": "boolean | undefined", "optional": false }
+    },
+    "firstChild": {
+      "description": "/** `true` if this is the first child in this group. Changes when data is sorted. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "lastChild": {
+      "description": "/** `true` if this is the last child in this group. Changes when data is sorted. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "childIndex": {
+      "description": "/** Index of this row with respect to its parent when grouping. Changes when data is sorted. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "level": {
+      "description": "/** How many levels this node is from the top when grouping. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "uiLevel": {
+      "description": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`)*/",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parent": {
+      "description": "/** The parent node to this node, or empty if top level */",
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
+    },
+    "stub": {
+      "description": "/** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "quickFilterAggregateText": {
+      "description": "/** If using quick filter, stores a string representation of the row for searching against. */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "master": {
+      "description": "/** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "detail": {
+      "description": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "detailNode": {
+      "description": "/** If this row is a master row that was expanded, this points to the associated detail row. */",
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
+    },
+    "detailGridInfo": {
+      "description": "/** If master detail, this contains details about the detail grid */",
+      "type": { "returnType": "DetailGridInfo | null", "optional": false }
+    },
+    "field": {
+      "description": "/** The field we are grouping on from our row data. */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "key": {
+      "description": "/** The key value for this group. */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "groupData": {
+      "description": "/** If using row grouping, contains the group values for this group. */",
+      "type": {
+        "returnType": "{ [key: string]: any | null; } | null",
+        "optional": false
+      }
+    },
+    "aggData": {
+      "description": "/** If using row grouping and aggregation, contains the aggregation data. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "rowGroupColumn": {
+      "description": "/** The row group column used for this group */",
+      "type": { "returnType": "Column | null", "optional": false }
+    },
+    "rowGroupIndex": {
+      "description": "/** If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.\n     * This will always be the same as the level, unless we are collapsing groups, i.e. `groupRemoveSingleChildren=true`.\n    */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "expanded": {
+      "description": "/** `true` if group is expanded, otherwise `false`. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "leafGroup": {
+      "description": "/** `true` if this node is a group and the group is the bottom level in the tree. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "allLeafChildren": {
+      "description": "/** All lowest level nodes beneath this node, no groups. */",
+      "type": { "returnType": "IRowNode<TData>[]", "optional": false }
+    },
+    "allChildrenCount": {
+      "description": "/** Number of children and grand children. */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "childrenAfterGroup": {
+      "description": "/** Children of this group. If multi levels of grouping, shows only immediate children. */",
+      "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
+    },
+    "childrenAfterSort": {
+      "description": "/** Sorted children of this group. */",
+      "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
+    },
+    "childrenAfterFilter": {
+      "description": "/** Filtered children of this group. */",
+      "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
+    },
+    "childrenAfterAggFilter": {
+      "description": "/** Aggregated and re-filtered children of this group. */",
+      "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
+    },
+    "footer": {
+      "description": "/** `true` if row is a footer. Footers have `group = true` and `footer = true`. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "sibling": {
+      "description": "/** If using footers, reference to the footer node for this group. */",
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
     }
   },
   "StageExecuteParams": {
@@ -15841,6 +16263,26 @@
     "convertValuesToStrings": {
       "description": "/** @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,\n     * as well as maintaining the type of primitives (e.g. number, boolean) when not used as keys.\n     * \n     * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.\n     * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.\n     */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "treeList": {
+      "description": "/** If `true`, the Set Filter List will be displayed in a tree format. If enabled, one of the following must be true:\n     * \n     * - A `treeListPathGetter` is provided to get the tree path for the column values.\n     * - The column values are of type `Date`, in which case the tree will be year -> month -> day.\n     * - Tree Data mode is enabled and the column is the group column. The Filter List will match the tree structure. A Key Creator must be supplied.\n     * - Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied.\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "treeListPathGetter": {
+      "description": "/** Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.\n     */",
+      "type": {
+        "arguments": { "value": "V" },
+        "returnType": "(string | null)[]",
+        "optional": true
+      }
+    },
+    "treeListFormatter": {
+      "description": "/** Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.\n     * `level` refers to the level of the tree (starting at 0).\n     */",
+      "type": {
+        "arguments": { "pathKey": "string | null", "level": "number" },
+        "returnType": "string",
+        "optional": true
+      }
     },
     "meta": { "typeParams": ["TData = any", "V = string"] },
     "buttons": {
@@ -17440,6 +17882,7 @@
   "ModuleNames": {},
   "GridOptionKey": {},
   "AnyGridOptions": {},
+  "KeysLike": { "meta": { "typeParams": ["U"] } },
   "CallbackKeys": {},
   "FunctionKeys": {},
   "ICellComp": {
@@ -17558,9 +18001,18 @@
     }
   },
   "ILargeTextEditorParams": {
-    "maxLength": { "type": { "returnType": "number", "optional": false } },
-    "rows": { "type": { "returnType": "number", "optional": false } },
-    "cols": { "type": { "returnType": "number", "optional": false } },
+    "maxLength": {
+      "description": "/** Max number of characters to allow. Default: `200` */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "rows": {
+      "description": "/** Number of character rows to display. Default: `10` */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "cols": {
+      "description": "/** Number of character columns to display. Default: `60` */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
@@ -17648,7 +18100,10 @@
     }
   },
   "ISelectCellEditorParams": {
-    "values": { "type": { "returnType": "any[]", "optional": false } },
+    "values": {
+      "description": "/** List of values to display */",
+      "type": { "returnType": "any[]", "optional": false }
+    },
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
@@ -17736,8 +18191,14 @@
     }
   },
   "ITextCellEditorParams": {
-    "useFormatter": { "type": { "returnType": "boolean", "optional": false } },
-    "maxLength": { "type": { "returnType": "number", "optional": true } },
+    "useFormatter": {
+      "description": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "maxLength": {
+      "description": "/** Max number of characters to allow. Default: `524288` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
@@ -18979,13 +19440,6 @@
       "type": { "returnType": "LabelAlignment", "optional": true }
     }
   },
-  "ChangeEvent": {
-    "selected": { "type": { "returnType": "boolean", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
-  },
   "DialogOptions": {
     "eWrapper": { "type": { "returnType": "HTMLElement", "optional": true } },
     "modal": { "type": { "returnType": "boolean", "optional": true } },
@@ -19446,6 +19900,79 @@
       }
     }
   },
+  "ISetDisplayValueModel": {
+    "updateDisplayedValuesToAllAvailable": {
+      "type": {
+        "arguments": {
+          "getValue": "(key: string | null) => V",
+          "availableKeys": "Iterable<string | null>"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "updateDisplayedValuesToMatchMiniFilter": {
+      "type": {
+        "arguments": {
+          "getValue": "(key: string | null) => V",
+          "availableKeys": "Iterable<string | null>",
+          "matchesFilter": "(valueToCheck: string | null) => boolean",
+          "nullMatchesFilter": "boolean",
+          "fromMiniFilter?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getDisplayedValueCount": {
+      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    },
+    "getDisplayedItem": {
+      "type": {
+        "arguments": { "index": "number" },
+        "returnType": "string | SetFilterModelTreeItem | null",
+        "optional": false
+      }
+    },
+    "getDisplayedKeys": {
+      "type": {
+        "arguments": {},
+        "returnType": "(string | null)[]",
+        "optional": false
+      }
+    },
+    "forEachDisplayedKey": {
+      "type": {
+        "arguments": { "func": "(key: string | null) => void" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "someDisplayedKey": {
+      "type": {
+        "arguments": { "func": "(key: string | null) => boolean" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "hasGroups": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "refresh": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "meta": { "typeParams": ["V"] }
+  },
+  "SetFilterModelTreeItem": {
+    "treeKey": { "type": { "returnType": "string | null", "optional": false } },
+    "depth": { "type": { "returnType": "number", "optional": false } },
+    "filterPasses": { "type": { "returnType": "boolean", "optional": false } },
+    "expanded": { "type": { "returnType": "boolean", "optional": true } },
+    "children": {
+      "type": { "returnType": "SetFilterModelTreeItem[]", "optional": true }
+    },
+    "key": { "type": { "returnType": "string | null", "optional": true } }
+  },
   "ISetFilterLocaleText": {
     "loadingOoo": { "type": { "returnType": "string", "optional": false } },
     "blanks": { "type": { "returnType": "string", "optional": false } },
@@ -19463,7 +19990,110 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "SetFilterListItemExpandedChangedEvent": {
+    "isExpanded": { "type": { "returnType": "boolean", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "SetFilterListItemParams": {
+    "focusWrapper": {
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "value": {
+      "type": { "returnType": "V | null | (() => string)", "optional": false }
+    },
+    "params": {
+      "type": { "returnType": "ISetFilterParams<any, V>", "optional": false }
+    },
+    "translate": {
+      "type": {
+        "arguments": { "key": "keyof ISetFilterLocaleText" },
+        "returnType": "string",
+        "optional": false
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "arguments": { "params": "ValueFormatterParams" },
+        "returnType": "string",
+        "optional": false
+      }
+    },
+    "isSelected": {
+      "type": { "returnType": "boolean | undefined", "optional": false }
+    },
+    "isTree": { "type": { "returnType": "boolean", "optional": true } },
+    "depth": { "type": { "returnType": "number", "optional": true } },
+    "groupsExist": { "type": { "returnType": "boolean", "optional": true } },
+    "isGroup": { "type": { "returnType": "boolean", "optional": true } },
+    "isExpanded": { "type": { "returnType": "boolean", "optional": true } },
+    "meta": { "typeParams": ["V"] }
+  },
   "SetFilterModelValuesType": {},
+  "SetValueModelParams": {
+    "valueFormatterService": {
+      "type": { "returnType": "ValueFormatterService", "optional": false }
+    },
+    "gridOptionsService": {
+      "type": { "returnType": "GridOptionsService", "optional": false }
+    },
+    "columnModel": {
+      "type": { "returnType": "ColumnModel", "optional": false }
+    },
+    "valueService": {
+      "type": { "returnType": "ValueService", "optional": false }
+    },
+    "filterParams": {
+      "type": { "returnType": "ISetFilterParams<any, V>", "optional": false }
+    },
+    "setIsLoading": {
+      "type": {
+        "arguments": { "loading": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "translate": {
+      "type": {
+        "arguments": { "key": "keyof ISetFilterLocaleText" },
+        "returnType": "string",
+        "optional": false
+      }
+    },
+    "caseFormat": {
+      "type": {
+        "arguments": { "valueToFormat": "T" },
+        "returnType": "typeof valueToFormat",
+        "optional": false
+      }
+    },
+    "createKey": {
+      "type": {
+        "arguments": { "value": "V | null", "node?": "RowNode" },
+        "returnType": "string | null",
+        "optional": false
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "arguments": { "params": "ValueFormatterParams" },
+        "returnType": "string",
+        "optional": false
+      }
+    },
+    "usingComplexObjects": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "treeDataTreeList": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "groupingTreeList": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "meta": { "typeParams": ["V"] }
+  },
   "ToolPanelFiltersCompParams": {
     "suppressExpandAll": {
       "description": "/** To suppress Expand / Collapse All */",
@@ -19949,15 +20579,6 @@
     }
   },
   "ChangeDetectionStrategyType": {},
-  "ChangeDetectionStrategy": {
-    "areEqual": {
-      "type": {
-        "arguments": { "a": "any", "b": "any" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    }
-  },
   "SharedProps": {
     "gridOptions": {
       "type": { "returnType": "GridOptions<TData>", "optional": true }
@@ -19979,6 +20600,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },
@@ -22697,6 +23319,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },
@@ -25420,6 +26043,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "rowDataChangeDetectionStrategy": {
+      "description": "/** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */",
       "type": { "returnType": "ChangeDetectionStrategyType", "optional": true }
     },
     "children": { "type": { "returnType": "any", "optional": true } },

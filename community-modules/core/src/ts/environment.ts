@@ -1,6 +1,5 @@
 import { Bean, Autowired } from './context/context';
 import { BeanStub } from "./context/beanStub";
-import { doOnce } from './utils/function';
 import { exists } from './utils/generic';
 
 export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
@@ -187,5 +186,10 @@ export class Environment extends BeanStub {
     public getMinColWidth(): number {
         const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
         return exists(measuredMin) ? Math.max(measuredMin, MIN_COL_WIDTH) : MIN_COL_WIDTH;
+    }
+
+    protected destroy(): void {
+        for (const prop in CALCULATED_SIZES) delete CALCULATED_SIZES[prop];
+        super.destroy();
     }
 }

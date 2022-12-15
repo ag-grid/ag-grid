@@ -40,8 +40,9 @@ import {
     RowHeightParams,
     TabToNextCellParams,
     TabToNextHeaderParams
-} from "./entities/iCallbackParams";
-import { RowNode, RowPinnedType } from "./entities/rowNode";
+} from "./interfaces/iCallbackParams";
+import { RowNode } from "./entities/rowNode";
+import { RowPinnedType } from "./interfaces/iRowNode";
 import { AgEvent, ColumnEventType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
@@ -106,7 +107,6 @@ import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { SelectionService } from "./selectionService";
 import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
-import { doOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { iterateObject, removeAllReferences } from "./utils/object";
 import { camelCaseToHumanText } from "./utils/string";
@@ -555,9 +555,11 @@ export class GridApi<TData = any> {
         }
     }
 
+
     /**
-     *  If after getting the model, you expand or collapse a group, call this method to inform the grid.
-     *  It will work out the final set of 'to be displayed' rows again (i.e. expand or collapse the group visually).
+     * Informs the grid that row group expanded state has changed and it needs to rerender the group nodes.
+     * Typically called after changing the row group expanded state manually across multiple groups and
+     * you want to update the grid view in a single rerender instead of on every group change.
      */
     public onGroupExpandedOrCollapsed() {
         if (missing(this.clientSideRowModel)) {
@@ -808,8 +810,8 @@ export class GridApi<TData = any> {
      * This is called for every node, ignoring any filtering or sorting applied within the grid.
      * If using the Infinite Row Model, then this gets called for each page loaded in the page cache.
      */
-    public forEachNode(callback: (rowNode: RowNode<TData>, index: number) => void) {
-        this.rowModel.forEachNode(callback);
+    public forEachNode(callback: (rowNode: RowNode<TData>, index: number) => void, includeFooterNodes?: boolean) {
+        this.rowModel.forEachNode(callback, includeFooterNodes);
     }
 
     /** Similar to `forEachNode`, except skips any filtered out data. */
@@ -1839,6 +1841,7 @@ export class GridApi<TData = any> {
 
     /**
      * Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.
+     * @deprecated v29
      */
     public getCacheBlockState(): any {
         return this.rowNodeBlockLoader.getBlockState();

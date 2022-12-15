@@ -199,5 +199,23 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.
      * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.
      */
-    convertValuesToStrings?: boolean
+    convertValuesToStrings?: boolean;
+    /**
+     * If `true`, the Set Filter List will be displayed in a tree format. If enabled, one of the following must be true:
+     * 
+     * - A `treeListPathGetter` is provided to get the tree path for the column values.
+     * - The column values are of type `Date`, in which case the tree will be year -> month -> day.
+     * - Tree Data mode is enabled and the column is the group column. The Filter List will match the tree structure. A Key Creator must be supplied.
+     * - Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied.
+     */
+    treeList?: boolean;
+    /**
+     * Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.
+     */
+    treeListPathGetter?: (value: V) => (string | null)[];
+    /**
+     * Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.
+     * `level` refers to the level of the tree (starting at 0).
+     */
+    treeListFormatter?: (pathKey: string | null, level: number) => string;
 }

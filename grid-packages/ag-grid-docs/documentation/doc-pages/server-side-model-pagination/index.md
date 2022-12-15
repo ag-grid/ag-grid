@@ -22,11 +22,31 @@ const gridOptions = {
 
 For more configuration details see the section on [Pagination](/row-pagination/).
 
-## Server Pagination
+## Server-Side Pagination
 
-The pagination of rows is performed on the client, where it provides a proxy in front of the rows in the row model.
-However if using Infinite Scrolling and have the `paginationPageSize` and `cacheBlockSize` equal, it will load
-each pagination page on demand as the user goes to the next page.
+The actual pagination of rows is performed on the server when using the Server-Side Row Model. When the grid needs more
+rows it makes a request via `getRows(params)` on the [Server-Side Datasource](/server-side-model-datasource/) with 
+metadata containing pagination details.
+
+The properties relevant to pagination in the request are shown below:
+
+```js
+// IServerSideGetRowsRequest
+{
+    // first row requested
+    startRow: number,
+
+    // last row requested
+    endRow: number,
+
+... // other params
+}
+```
+
+The `endRow` requested by the grid may not actually exist in the data so the correct `lastRowIndex` should be supplied
+in the response to the grid. See [Server-Side Datasource](/server-side-model-datasource/) for more details.
+
+## Example: Server-Side Pagination
 
 The example below demonstrates server-side Pagination. Note the following:
 
@@ -37,9 +57,9 @@ The example below demonstrates server-side Pagination. Note the following:
 out as the last row index is only supplied to the grid when the last row has been reached.
 - Open the browser's dev console to view the request supplied to the datasource.
 
-<grid-example title='Pagination' name='pagination' type='generated' options='{ "enterprise": true, "exampleHeight": 551, "extras": ["alasql"], "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Server-Side Pagination' name='pagination' type='generated' options='{ "enterprise": true, "exampleHeight": 551, "extras": ["alasql"], "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
 
-## Groups
+## Pagination with Groups
 
 When grouping, pagination splits rows according to top-level groups only. This has the following implications:
 
@@ -56,7 +76,7 @@ The example below demonstrates pagination with grouping. Note the following:
 
 <grid-example title='Pagination with Groups' name='pagination-with-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 551, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-## Child Rows
+## Pagination with Child Rows
 
 If it is desired to keep the row count exactly at the page size, then set grid property `paginateChildRows=true`.
 
@@ -72,7 +92,7 @@ The example below demonstrates pagination with grouping and `paginateChildRows=t
 
 - If the last visible row is expanded, the grid gives a confusing user experience, as the rows appear on the next page. So the user will have to click 'expand' and then click 'next page' to see the child rows. This is the desired behaviour as the grid keeps the number of rows on one page consistent. If this behaviour is not desired, then do not use `paginationAutoPageSize=true`.
 
-<grid-example title='Paginate Child Rows' name='paginate-child-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 551, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Pagination with Child Rows' name='paginate-child-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 551, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 ## Next Up
 

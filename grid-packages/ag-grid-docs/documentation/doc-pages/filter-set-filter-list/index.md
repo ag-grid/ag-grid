@@ -291,17 +291,17 @@ If case differences need to be normalised to remove redundant values from the da
 
 If there are missing / empty values in the row data of the grid, or missing values in the list of [Supplied Values](#supplying-filter-values), the Filter List will contain an entry called `(Blanks)` which can be used to select / deselect all of these values. If this not the desired behaviour, provide a [Formatter](#value-formatter) to present blank values in a different way.
 
-`undefined`, `null` and `''` are all treated as missing values. These will appear within the [Set Filter model](/filter-set-api/#set-filter-model) as a single entry of `null`. This also applies to supplied Filter List values (e.g. if you supply `''` it will appear in the filter model as `null`).
+`undefined`, `null` and `''`, as well as an empty array if using [multiple values](#multiple-values-per-cell), are all treated as missing values. These will appear within the [Set Filter model](/filter-set-api/#set-filter-model) as a single entry of `null`. This also applies to supplied Filter List values (e.g. if you supply `''` it will appear in the filter model as `null`).
 
 ## Filter Value Types
 
-The Set Filter internally maintains the original type of the cell values, but always uses strings for the keys. E.g. if the cell contains a number, the Filter Model will contain those numbers converted to strings, but if you specified a comparator, that would use the values with type number. Note that in AG Grid versions prior to 29.0, the Filter Model values were converted to strings for everything. This behaviour can be replicated by setting `filterParams.convertValuesToStrings = true`, but the setting is deprecated.
+The Set Filter internally maintains the original type of the cell values, but always uses strings for the keys. E.g. if the cell contains a number, the Filter Model will contain those numbers converted to strings, but if you specified a value formatter, that would use the values with type number. Note that in AG Grid versions prior to 29.0, the Filter Model values were converted to strings for everything. This behaviour can be replicated by setting `filterParams.convertValuesToStrings = true`, but the setting is deprecated.
 
 ### Complex Objects
 
 If you are providing complex objects as values, then you need to provide both a Key Creator function and a Value Formatter function when using the Set Filter.
 
-The Key Creator generates a unique string key from the complex object. This key is used within the Filter Model, and to compare objects. You can either provide a Key Creator within the filter params, which will be specific to the Set Filter, or you can provide one in the Column Definition that is shared with other features such as grouping.
+The Key Creator generates a unique string key from the complex object (note that if the key is `null`, `undefined` or `''` it will be converted to `null`, the same as for [missing values](#missing-values)). This key is used within the Filter Model, and to compare objects. You can either provide a Key Creator within the filter params, which will be specific to the Set Filter, or you can provide one in the Column Definition that is shared with other features such as grouping.
 
 The Value Formatter is used to generate the label that is displayed to the user within the Filter List. You can provide the Value Formatter in the filter params.
 
@@ -351,6 +351,7 @@ The example below demonstrates this in action. Note the following:
 - The **Animals (objects)** column retrieves values from an array of objects, using a [Key Creator](#complex-objects). The Key Creator is applied to the elements within the array (as is the Value Formatter). Note that if `convertValuesToStrings` is set in the filter params, the Key Creator will be applied to the raw value in the cell, and is expected to return an array of strings.
 - For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
 - Selecting values in the Set Filter will show rows where the data for that row contains **any** of the selected values.
+- The first row contains empty arrays for the **Animals (array)** and **Animals (objects)** columns, and an empty string for the **Animals (string)** column which is converted to an empty array. These all appear in the Filter List as `(Blanks)`.
 
 <grid-example title='Multiple Values' name='multiple-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
@@ -410,6 +411,48 @@ The following example demonstrates tooltips in the Set Filter. Note the followin
 - **Col C** has Set Filter Tooltips enabled and is supplied a Custom Tooltip Component.
 
 <grid-example title='Filter Value Tooltips' name='filter-value-tooltips' type='generated' options='{ "enterprise": true, "exampleHeight": 500, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+
+## Tree Structure
+
+The Filter List supports displaying the values grouped in a tree structure. This is enabled by setting `filterParams.treeList = true`. There are four different ways the tree structure can be created:
+- The column values are of type `Date`, in which case the tree will be year -> month -> day.
+- Tree Data mode is enabled and the column is a group column. The Filter List will match the tree structure. A Key Creator must be supplied to convert the array of keys.
+- Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied to convert the array of keys.
+- A `filterParams.treeListPathGetter` is provided to get a custom tree path for the column values.
+- When searching in the Mini Filter, all children will be included when a parent matches the search value. A parent will be included if it has any children that match the search value, or it matches itself.
+
+The values can be formatted in the Filter List via `filterParams.treeListFormatter`. This allows a different format to be used for each level of the tree (compared to the Value Formatter which is applied equally to every value).
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'date',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                treeList: true,
+            }
+        }
+    ],
+    autoGroupColumnDef: {
+        field: 'athlete',
+        filter: 'agSetColumnFilter',
+        filterParams: {
+            treeList: true,
+            keyCreator: params => params.value.join('#')
+        },
+    },
+}
+</snippet>
+
+The following example demonstrates tree structures in the Set Filter. Note the following:
+
+1. The **Group**, **Date** and **Gold** columns all have `filterParams.treeList = true`
+2. The **Group** column Filter List matches the format of the Row Grouping. A Key Creator is specified to convert the path into a string.
+3. The **Date** column is grouped by year -> month -> date. `filterParams.treeListFormatter` is provided which formats the numerical month value to display as the name of the month.
+4. The **Gold** column has `filterParams.treeListPathGetter` provided which groups the values into a tree of >2 and <=2.
+
+<grid-example title='Tree Structure Filter List' name='tree-structure-filter-list' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Next Up
 

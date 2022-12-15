@@ -14,13 +14,35 @@ import {
     RowNode,
     _,
     SetFilterModelValue,
-    ValueFormatterParams
+    ValueFormatterParams,
+    GridOptionsService,
+    ColumnModel,
+    ValueService
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
+import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
+import { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 export enum SetFilterModelValuesType {
     PROVIDED_LIST, PROVIDED_CALLBACK, TAKEN_FROM_GRID_VALUES
+}
+
+export interface SetValueModelParams<V> {
+    valueFormatterService: ValueFormatterService,
+    gridOptionsService: GridOptionsService,
+    columnModel: ColumnModel,
+    valueService: ValueService,
+    filterParams: ISetFilterParams<any, V>,
+    setIsLoading: (loading: boolean) => void,
+    translate: (key: keyof ISetFilterLocaleText) => string,
+    caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
+    createKey: (value: V | null, node?: RowNode) => string | null,
+    valueFormatter: (params: ValueFormatterParams) => string,
+    usingComplexObjects?: boolean,
+    treeDataTreeList?: boolean,
+    groupingTreeList?: boolean
 }
 
 /** @param V type of value in the Set Filter */
@@ -30,7 +52,6 @@ export class SetValueModel<V> implements IEventEmitter {
     private readonly localEventService = new EventService();
     private readonly formatter: TextFormatter;
     private readonly clientSideValuesExtractor: ClientSideValuesExtractor<V>;
-    private readonly column: Column;
     private readonly doesRowPassOtherFilters: (node: RowNode) => boolean;
     private readonly suppressSorting: boolean;
     private readonly keyComparator: (a: string | null, b: string | null) => number;
@@ -38,12 +59,16 @@ export class SetValueModel<V> implements IEventEmitter {
     private readonly compareByValue: boolean;
     private readonly convertValuesToStrings: boolean;
     private readonly caseSensitive: boolean;
+    private readonly displayValueModel: ISetDisplayValueModel<V>;
+    private readonly filterParams: ISetFilterParams<any, V>;
+    private readonly setIsLoading: (loading: boolean) => void;
+    private readonly translate: (key: keyof ISetFilterLocaleText) => string;
+    private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
+    private readonly createKey: (value: V | null, node?: RowNode) => string | null;
+    private readonly usingComplexObjects: boolean;
 
     private valuesType: SetFilterModelValuesType;
     private miniFilterText: string | null = null;
-
-    // The lookup for a set is much faster than the lookup for an array, especially when the length of the array is
-    // thousands of records long, so where lookups are important we use a set.
 
     /** Values provided to the filter for use. */
     private providedValues: SetFilterValues<any, V> | null = null;
@@ -57,24 +82,23 @@ export class SetValueModel<V> implements IEventEmitter {
     /** Remaining keys when filters from other columns have been applied. */
     private availableKeys = new Set<string | null>();
 
-    /** All keys that are currently displayed, after the mini-filter has been applied. */
-    private displayedKeys: (string | null)[] = [];
-
     /** Keys that have been selected for this filter. */
     private selectedKeys = new Set<string | null>();
 
     private initialised: boolean = false;
 
-    constructor(
-        private readonly filterParams: ISetFilterParams<any, V>,
-        private readonly setIsLoading: (loading: boolean) => void,
-        private readonly valueFormatterService: ValueFormatterService,
-        private readonly translate: (key: keyof ISetFilterLocaleText) => string,
-        private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
-        private readonly createKey: (value: V | null, node?: RowNode) => string | null,
-        private readonly valueFormatter: (params: ValueFormatterParams) => string,
-        private readonly usingComplexObjects: boolean
-    ) {
+    constructor(params: SetValueModelParams<V>) {
+        const {
+            usingComplexObjects,
+            columnModel,
+            valueService,
+            treeDataTreeList,
+            groupingTreeList,
+            filterParams,
+            gridOptionsService,
+            valueFormatterService,
+            valueFormatter
+        } = params;
         const {
             column,
             colDef,
@@ -86,29 +110,40 @@ export class SetValueModel<V> implements IEventEmitter {
             values,
             caseSensitive,
             convertValuesToStrings,
+            treeList,
+            treeListPathGetter,
         } = filterParams;
 
-        this.column = column;
+        this.filterParams = filterParams;
+        this.setIsLoading = params.setIsLoading;
+        this.translate = params.translate;
+        this.caseFormat = params.caseFormat;
+        this.createKey = params.createKey;
+        this.usingComplexObjects = !!params.usingComplexObjects;
         this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
         this.convertValuesToStrings = !!convertValuesToStrings;
         const keyComparator = comparator ?? colDef.comparator as (a: any, b: any) => number;
         // if using complex objects and a comparator is provided, sort by values, otherwise need to sort by the string keys
-        this.compareByValue = usingComplexObjects && !!keyComparator;
-        if (this.compareByValue) {
-            this.entryComparator = ([_aKey, aValue]: [string | null, V | null], [_bKey, bValue]: [string | null, V | null]) => keyComparator(aValue, bValue);    
-        } else {
-            this.keyComparator = keyComparator as any ?? _.defaultComparator;
-        }
+        this.compareByValue = !!usingComplexObjects && !!keyComparator;
+        this.entryComparator = ([_aKey, aValue]: [string | null, V | null], [_bKey, bValue]: [string | null, V | null]) => keyComparator(aValue, bValue);    
+        this.keyComparator = keyComparator as any ?? _.defaultComparator;
         this.caseSensitive = !!caseSensitive
+        const getDataPath = gridOptionsService.get('getDataPath');
+        const treeDataOrGrouping = !!treeDataTreeList || !!groupingTreeList;
 
         if (rowModel.getType() === 'clientSide') {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
                 rowModel as IClientSideRowModel,
                 this.filterParams,
                 this.createKey,
-                this.caseFormat
+                this.caseFormat,
+                columnModel,
+                valueService,
+                treeDataOrGrouping,
+                !!treeDataTreeList,
+                getDataPath
             );
         }
 
@@ -122,7 +157,18 @@ export class SetValueModel<V> implements IEventEmitter {
             this.providedValues = values;
         }
 
-        this.updateAllValues().then(updatedValues => this.resetSelectionState(updatedValues || []));
+        this.displayValueModel = treeList ? new TreeSetDisplayValueModel(
+            this.formatter,
+            treeListPathGetter,
+            treeDataTreeList || groupingTreeList
+        ) : new FlatSetDisplayValueModel<V>(
+            valueFormatterService,
+            valueFormatter,
+            this.formatter,
+            column
+        ) as any;
+
+        this.updateAllValues().then(updatedKeys => this.resetSelectionState(updatedKeys || []));
     }
 
     public addEventListener(eventType: string, listener: Function, async?: boolean): void {
@@ -183,13 +229,7 @@ export class SetValueModel<V> implements IEventEmitter {
             switch (this.valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
                 case SetFilterModelValuesType.PROVIDED_LIST: {
-                    const values = this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ?
-                        this.getValuesFromRows(false) : this.uniqueValues(this.validateProvidedValues(this.providedValues as (V | null)[]));
-                    const sortedKeys = this.sortKeys(values);
-
-                    this.allValues = values;
-
-                    resolve(sortedKeys);
+                    resolve(this.processAllKeys(this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES, this.providedValues as (V | null)[]));
 
                     break;
                 }
@@ -201,15 +241,9 @@ export class SetValueModel<V> implements IEventEmitter {
                     const { columnApi, api, context, column, colDef } = this.filterParams;
                     const params: SetFilterValuesFuncParams<any, V> = {
                         success: values => {
-                            const processedValues = this.uniqueValues(this.validateProvidedValues(values));
-
                             this.setIsLoading(false);
 
-                            const sortedKeys = this.sortKeys(processedValues);
-
-                            this.allValues = processedValues;
-
-                            resolve(sortedKeys);
+                            resolve(this.processAllKeys(false, values));
                         },
                         colDef,
                         column,
@@ -234,6 +268,16 @@ export class SetValueModel<V> implements IEventEmitter {
         return this.allValuesPromise;
     }
 
+    private processAllKeys(getFromRows: boolean, providedValues: (V | null)[] | null): (string | null)[] {
+        const values = getFromRows ? this.getValuesFromRows(false) : this.uniqueValues(this.validateProvidedValues(providedValues!));
+
+        const sortedKeys = this.sortKeys(values);
+
+        this.allValues = values ?? new Map();
+        
+        return sortedKeys;
+    }
+
     private validateProvidedValues(values: (V | null)[]): (V | null)[]{
         if (this.usingComplexObjects && values?.length) {
             const firstValue = values[0];
@@ -241,7 +285,7 @@ export class SetValueModel<V> implements IEventEmitter {
                 const firstKey = this.createKey(firstValue);
                 if  (firstKey == null) {
                     _.doOnce(() => console.warn(
-                            'AG Grid: Set Filter Key Creator is returning null for provided values and provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?'
+                            'Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'
                         ), 'setFilterComplexObjectsProvidedNull'
                     );
                 } else {
@@ -280,7 +324,9 @@ export class SetValueModel<V> implements IEventEmitter {
         this.updateDisplayedValues();
     }
 
-    private sortKeys(values: Map<string | null, V | null>): (string | null)[] {
+    public sortKeys(nullableValues: Map<string | null, V | null> | null): (string | null)[] {
+        const values = nullableValues ?? new Map();
+
         if (this.suppressSorting) { return Array.from(values.keys()); }
 
         let sortedKeys;
@@ -299,10 +345,10 @@ export class SetValueModel<V> implements IEventEmitter {
         return sortedKeys;
     }
 
-    private getValuesFromRows(removeUnavailableValues = false): Map<string | null, V | null> {
+    private getValuesFromRows(removeUnavailableValues = false): Map<string | null, V | null> | null {
         if (!this.clientSideValuesExtractor) {
             console.error('AG Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
-            return new Map();
+            return null;
         }
 
         const predicate = (node: RowNode) => (!removeUnavailableValues || this.doesRowPassOtherFilters(node));
@@ -320,7 +366,7 @@ export class SetValueModel<V> implements IEventEmitter {
         }
 
         this.miniFilterText = value;
-        this.updateDisplayedValues();
+        this.updateDisplayedValues(true);
 
         return true;
     }
@@ -329,47 +375,41 @@ export class SetValueModel<V> implements IEventEmitter {
         return this.miniFilterText;
     }
 
-    private updateDisplayedValues(): void {
+    public updateDisplayedValues(fromMiniFilter?: boolean, fromExpansion?: boolean): void {
+        if (fromExpansion) {
+            this.displayValueModel.refresh();
+            return;
+        }
+
         // if no filter, just display all available values
         if (this.miniFilterText == null) {
-            this.displayedKeys = _.values(this.availableKeys);
+            this.displayValueModel.updateDisplayedValuesToAllAvailable((key: string | null) => this.getValue(key)!, this.availableKeys);
             return;
         }
 
         // if filter present, we filter down the list
-        this.displayedKeys = [];
-
         // to allow for case insensitive searches, upper-case both filter text and value
         const formattedFilterText = this.caseFormat(this.formatter(this.miniFilterText) || '');
 
         const matchesFilter = (valueToCheck: string | null): boolean =>
             valueToCheck != null && this.caseFormat(valueToCheck).indexOf(formattedFilterText) >= 0;
 
-        this.availableKeys.forEach(key => {
-            if (key == null) {
-                if (this.filterParams.excelMode && matchesFilter(this.translate('blanks'))) {
-                    this.displayedKeys.push(key);
-                }
-            } else {
-                const value = this.allValues.get(key);
-                const valueFormatterValue = this.valueFormatterService.formatValue(
-                    this.column, null, value, this.valueFormatter, false);
+        const nullMatchesFilter = !!this.filterParams.excelMode && matchesFilter(this.translate('blanks'));
 
-                const textFormatterValue = this.formatter(valueFormatterValue);    
-
-                if (matchesFilter(textFormatterValue)) {
-                    this.displayedKeys.push(key);
-                }
-            }
-        });
+        this.displayValueModel.updateDisplayedValuesToMatchMiniFilter(
+            (key: string | null) => this.getValue(key)!,
+            this.availableKeys,
+            matchesFilter,
+            nullMatchesFilter,
+            fromMiniFilter);
     }
 
     public getDisplayedValueCount(): number {
-        return this.displayedKeys.length;
+        return this.displayValueModel.getDisplayedValueCount();
     }
 
-    public getDisplayedKey(index: number): string | null {
-        return this.displayedKeys[index];
+    public getDisplayedItem(index: number): string | SetFilterModelTreeItem | null {
+        return this.displayValueModel.getDisplayedItem(index);
     }
 
     public hasSelections(): boolean {
@@ -398,7 +438,7 @@ export class SetValueModel<V> implements IEventEmitter {
             // ensure everything that matches the mini filter is selected
             if (clearExistingSelection) { this.selectedKeys.clear(); }
 
-            this.displayedKeys.forEach(key => this.selectedKeys.add(key));
+            this.displayValueModel.forEachDisplayedKey(key => this.selectedKeys.add(key));
         }
     }
 
@@ -408,7 +448,7 @@ export class SetValueModel<V> implements IEventEmitter {
             this.selectedKeys.clear();
         } else {
             // ensure everything that matches the mini filter is deselected
-            this.displayedKeys.forEach(key => this.selectedKeys.delete(key));
+            this.displayValueModel.forEachDisplayedKey(key => this.selectedKeys.delete(key));
         }
     }
 
@@ -419,7 +459,7 @@ export class SetValueModel<V> implements IEventEmitter {
     public deselectKey(key: string | null): void {
         if (this.filterParams.excelMode && this.isEverythingVisibleSelected()) {
             // ensure we're starting from the correct "everything selected" state
-            this.resetSelectionState(this.displayedKeys);
+            this.resetSelectionState(this.displayValueModel.getDisplayedKeys());
         }
 
         this.selectedKeys.delete(key);
@@ -430,11 +470,11 @@ export class SetValueModel<V> implements IEventEmitter {
     }
 
     public isEverythingVisibleSelected(): boolean {
-        return !this.displayedKeys.some(it => !this.isKeySelected(it));
+        return !this.displayValueModel.someDisplayedKey(it => !this.isKeySelected(it));
     }
 
     public isNothingVisibleSelected(): boolean {
-        return !this.displayedKeys.some(it => this.isKeySelected(it));
+        return !this.displayValueModel.someDisplayedKey(it => this.isKeySelected(it));
     }
 
     public getModel(): SetFilterModelValue | null {
@@ -458,7 +498,7 @@ export class SetValueModel<V> implements IEventEmitter {
                     const formattedKey = this.caseFormat(unformattedKey);
                     const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
-                        this.selectedKeys.add(existingUnformattedKey);
+                        this.selectKey(existingUnformattedKey);
                     }
                 });
             }
@@ -491,5 +531,9 @@ export class SetValueModel<V> implements IEventEmitter {
         } else {
             this.selectedKeys = new Set(keys);
         }
+    }
+
+    public hasGroups(): boolean {
+        return this.displayValueModel.hasGroups();
     }
 }

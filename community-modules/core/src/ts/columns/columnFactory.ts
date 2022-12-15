@@ -2,7 +2,7 @@ import { Logger, LoggerFactory } from '../logger';
 import { ColumnUtils } from './columnUtils';
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnKeyCreator } from "./columnKeyCreator";
-import { IProvidedColumn } from "../entities/iProvidedColumn";
+import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { Column } from "../entities/column";
 import { Autowired, Bean, Qualifier } from "../context/context";
@@ -103,7 +103,7 @@ export class ColumnFactory extends BeanStub {
                 true,
                 i
             );
-            this.context.createBean(autoGroup);
+            this.createManagedBean(autoGroup);
             autoGroup.setChildren([nextChild]);
             nextChild.setOriginalParent(autoGroup);
             nextChild = autoGroup;
@@ -155,7 +155,7 @@ export class ColumnFactory extends BeanStub {
                     const colGroupDefMerged = this.createMergedColGroupDef(null);
 
                     const paddedGroup = new ProvidedColumnGroup(colGroupDefMerged, newColId, true, currentDept);
-                    this.context.createBean(paddedGroup);
+                    this.createManagedBean(paddedGroup);
 
                     if (currentPaddedGroup) {
                         currentPaddedGroup.setChildren([paddedGroup]);
@@ -244,7 +244,7 @@ export class ColumnFactory extends BeanStub {
             removeFromArray(existingGroups, existingGroup);
         } else {
             providedGroup = new ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
-            this.context.createBean(providedGroup);    
+            this.createManagedBean(providedGroup);
         }
 
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,

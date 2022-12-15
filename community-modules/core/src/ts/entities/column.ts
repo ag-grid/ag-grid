@@ -1,5 +1,5 @@
-import { IHeaderColumn } from "./iHeaderColumn";
-import { IProvidedColumn } from "./iProvidedColumn";
+import { IHeaderColumn } from "../interfaces/iHeaderColumn";
+import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import {
     AbstractColDef,
     BaseColDefParams,

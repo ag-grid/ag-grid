@@ -2,7 +2,7 @@
 title: "Building Applications With AG Grid Modules"
 ---
 
-In this section we demonstrate how you to cherry pick modules to provide the features you need with a reduced application bundle size.
+In this section we demonstrate how you can cherry pick modules to provide the features you need with a reduced application bundle size.
 
 [[only-frameworks]]
 | ## Introduction
@@ -61,9 +61,9 @@ In this section we demonstrate how you to cherry pick modules to provide the fea
 [[only-javascript]]
 | ## Building Your Own UMD Bundle
 |
-| `ag-grid-community` and `ag-grid-enterprise` provide UMD bundles with their distribution for ease of use, and these are great for getting started and making use of all features with very little | effort.
+| `ag-grid-community` and `ag-grid-enterprise` provide UMD bundles with their distribution for ease of use, and these are great for getting started and making use of all features with very little effort.
 |
-| If however you do not need all the features provided by either package (Community or Enterprise) then it's possible to create your own UMD bundle - the rest of this section describes how this can be done.
+| If however you do not need all the features provided by either package (Community or Enterprise), then it's possible to create your own UMD bundle - the rest of this section describes how this can be done.
 |
 | As with the sections above we're going to assume that we only require the following modules in our bundle:
 |
@@ -85,7 +85,7 @@ In this section we demonstrate how you to cherry pick modules to provide the fea
 | }
 | ```
 |
-| ### Specify What Include in the Bundle
+| ### Specify What Is Included In The Bundle
 |
 | Next we need to include the modules in the bundle we're going to create. We also need to ensure we include the relevant `core` packages - in our case we need both `@ag-grid-community/core` and
 | `@ag-grid-enterprise/core` as we're using both Community and Enterprise features. If you were only using the Community bundle you could omit the `@ag-grid-enterprise/core` entry here.

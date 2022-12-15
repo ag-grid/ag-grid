@@ -132,7 +132,7 @@ const fixFileLoadingIssue = () => {
 const jsxErrorProcessingIssue = () => {
     // Prevents Gatsby from dying when an JSX error is introduced
 
-    return applyCustomisation('gatsby-cli', '3.14.2', {
+    return applyCustomisation('gatsby-cli', '3.15.0', {
             name: 'JSX Error Processing Issue',
             apply: () => updateFileContents(
                 './node_modules/gatsby-cli/lib/structured-errors/construct-error.js',

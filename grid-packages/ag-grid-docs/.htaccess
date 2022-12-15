@@ -2254,14 +2254,15 @@ AddType text/javascript ts jsx
     Redirect 301 /react-data-grid/integrated-charts-cross-filtering/ /react-data-grid/integrated-charts-api-cross-filter-chart/
     Redirect 301 /vue-data-grid/integrated-charts-cross-filtering/ /vue-data-grid/integrated-charts-api-cross-filter-chart/
 
-    Redirect 301 /javascript-data-grid/server-side-model-configuration/ /javascript-data-grid/server-side-model-api-reference/
-    Redirect 301 /angular-data-grid/server-side-model-configuration/ /angular-data-grid/server-side-model-api-reference/
-    Redirect 301 /react-data-grid/server-side-model-configuration/ /react-data-grid/server-side-model-api-reference/
-    Redirect 301 /vue-data-grid/server-side-model-configuration/ /vue-data-grid/server-side-model-api-reference/
-    Redirect 301 /javascript-data-grid/server-side-model-row-stores/ /javascript-data-grid/server-side-model-infinite-scroll/
-    Redirect 301 /angular-data-grid/server-side-model-row-stores/ /angular-data-grid/server-side-model-infinite-scroll/
-    Redirect 301 /react-data-grid/server-side-model-row-stores/ /react-data-grid/server-side-model-infinite-scroll/
-    Redirect 301 /vue-data-grid/server-side-model-row-stores/ /vue-data-grid/server-side-model-infinite-scroll/
+    Redirect 301 /javascript-data-grid/server-side-model-infinite-scroll/ /javascript-data-grid/server-side-model-configuration/
+    Redirect 301 /angular-data-grid/server-side-model-infinite-scroll/ /angular-data-grid/server-side-model-configuration/
+    Redirect 301 /react-data-grid/server-side-model-infinite-scroll/ /react-data-grid/server-side-model-configuration/
+    Redirect 301 /vue-data-grid/server-side-model-infinite-scroll/ /vue-data-grid/server-side-model-configuration/
+
+    Redirect 301 /javascript-data-grid/server-side-model-row-stores/ /javascript-data-grid/server-side-model-configuration/
+    Redirect 301 /angular-data-grid/server-side-model-row-stores/ /angular-data-grid/server-side-model-configuration/
+    Redirect 301 /react-data-grid/server-side-model-row-stores/ /react-data-grid/server-side-model-configuration/
+    Redirect 301 /vue-data-grid/server-side-model-row-stores/ /vue-data-grid/server-side-model-configuration/
 
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy

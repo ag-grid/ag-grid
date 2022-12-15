@@ -1,11 +1,13 @@
 import { RangeSelector } from '../shapes/rangeSelector';
-import { CartesianChart } from '../cartesianChart';
 import { BBox } from '../../scene/bbox';
 import { NavigatorMask } from './navigatorMask';
 import { NavigatorHandle } from './navigatorHandle';
 import { ChartUpdateType } from '../chart';
 import { BOOLEAN, NUMBER, Validate } from '../../util/validation';
 import { InteractionManager } from '../interaction/interactionManager';
+import { CursorManager } from '../interaction/cursorManager';
+import { Scene } from '../../scene/scene';
+import { Series } from '../series/series';
 
 interface Offset {
     offsetX: number;
@@ -14,7 +16,6 @@ interface Offset {
 
 export class Navigator {
     private readonly rs = new RangeSelector();
-    private readonly chart: CartesianChart;
 
     readonly mask = new NavigatorMask(this.rs.mask);
     readonly minHandle = new NavigatorHandle(this.rs.minHandle);
@@ -23,8 +24,6 @@ export class Navigator {
     private minHandleDragging = false;
     private maxHandleDragging = false;
     private panHandleOffset = NaN;
-
-    private changedCursor = false;
 
     @Validate(BOOLEAN)
     private _enabled = false;
@@ -101,10 +100,18 @@ export class Navigator {
         this.rs.visible = this.enabled && this.visible;
     }
 
-    constructor(chart: CartesianChart, interactionManager: InteractionManager) {
-        this.chart = chart;
-
-        chart.scene.root!!.append(this.rs);
+    constructor(
+        private readonly chart: {
+            scene: Scene;
+            update(
+                type: ChartUpdateType,
+                opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
+            ): void;
+        },
+        interactionManager: InteractionManager,
+        private readonly cursorManager: CursorManager
+    ) {
+        this.chart.scene.root!.append(this.rs);
         this.rs.onRangeChange = () => chart.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
 
         interactionManager.addListener('drag-start', (event) => this.onDragStart(event));
@@ -141,7 +148,6 @@ export class Navigator {
 
         const { rs, panHandleOffset } = this;
         const { x, y, width, height, minHandle, maxHandle } = rs;
-        const { style } = this.chart.element;
         const { offsetX, offsetY } = offset;
         const minX = x + width * rs.min;
         const maxX = x + width * rs.max;
@@ -152,14 +158,11 @@ export class Navigator {
         }
 
         if (minHandle.containsPoint(offsetX, offsetY) || maxHandle.containsPoint(offsetX, offsetY)) {
-            this.changedCursor = true;
-            style.cursor = 'ew-resize';
+            this.cursorManager.updateCursor('navigator', 'ew-resize');
         } else if (visibleRange.containsPoint(offsetX, offsetY)) {
-            this.changedCursor = true;
-            style.cursor = 'grab';
-        } else if (this.changedCursor) {
-            this.changedCursor = false;
-            style.cursor = 'default';
+            this.cursorManager.updateCursor('navigator', 'grab');
+        } else {
+            this.cursorManager.updateCursor('navigator');
         }
 
         if (this.minHandleDragging) {

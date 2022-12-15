@@ -35,7 +35,7 @@ The Client-Side Row Model only renders the rows currently visible using [DOM Vir
 
 ### Server-Side Row Model
 
-However many real world applications contain much larger datasets, often involving millions of records. In this case it simply isn't feasible to load all the data into the browser in one go. Instead the data will need to be lazy-loaded as required and then purged to limit the memory footprint in the browser.
+However, many real world applications contain much larger datasets, often involving millions of records. In this case it simply isn't feasible to load all the data into the browser in one go. Instead the data will need to be lazy-loaded as required and then purged to limit the memory footprint in the browser.
 
 This is precisely the problem the SSRM addresses, along with delegating server-side operations such as filtering, sorting, grouping and pivoting.
 
@@ -54,8 +54,8 @@ You may benefit from the combination of all these features or just be interested
 - **Infinite Scrolling:** When active, rows are read back from the server in blocks to provide the experience of infinite scrolling. This allows viewing very large datasets in the browser by only bringing back data one block at a time. Using Infinite Scrolling is an optional feature. It is possible to bring back all the data for a particular group level and then allow the grid to do Sorting and Filtering of the data in the browsers memory.
 
 - **Server-Side Grouping, Pivot and Aggregation:** Because the data is coming back from the server one group level at
-a time, this allows you to do aggregation on the server, returning back the aggregated results for the top level parent
-rows. For example you could include 'employee count' as an attribute on the returned manager record, to say how many
+a time, this allows you to do aggregation on the server, returning the aggregated results for the top level parent
+rows. For example, you could include 'employee count' as an attribute on the returned manager record, to say how many
 employees a manager manages.
 
 - **Slice and Dice:** Assuming your server-side can build the data query, you can allow the user to use the Grid UI
@@ -64,16 +64,6 @@ be forwarded to your datasource as part of the request. This feature is advanced
 server-side coding from you, however when done your users will have an experience of slicing and dicing large data in
 real time, something previously only available in expensive reporting tools, which you can now embed into your
 JavaScript application.
-
-## AlaSQL
-
-All the examples in this documentation are standalone examples that can be run inside the documentation and
-exported to Plunker. This is excellent as you can easily inspect fully working examples. To allow this, all the
-examples have mocked servers, as the examples in the docs and Plunker are client-side only.
-
-The mocked servers generate SQL to imitate how a real server might use the requests sent from the grid. These examples use [AlaSQL](http://alasql.org/) which is a JavaScript SQL database that works in browsers.
-
-This dosn't mean SQL must be used, you can use whatever back-end technology you want, it's just used in our examples.
 
 ## Full Stack Examples
 

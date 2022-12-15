@@ -214,14 +214,14 @@
             "feature": "[Update via Transaction](/data-update-transactions/)",
             "clientSide": true,
             "infinite": false,
-            "serverSide": "*",
+            "serverSide": true,
             "viewport": false
         },
         {
             "feature": "[Update via Async Transactions](/data-update-high-frequency/)",
             "clientSide": true,
             "infinite": false,
-            "serverSide": "*",
+            "serverSide": true,
             "viewport": false
         },
         {

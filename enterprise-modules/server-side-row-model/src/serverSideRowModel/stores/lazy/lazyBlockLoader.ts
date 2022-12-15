@@ -44,8 +44,23 @@ export class LazyBlockLoader extends BeanStub {
         if (!node) {
             return false;
         }
-        // if node is a loading stub, or has manually been marked as needsRefresh we refresh
-        return (node.stub && !node.failedLoad) || node.needsRefresh;
+
+        // user has manually refreshed this node
+        if (node.__needsRefresh) {
+            return true;
+        }
+
+        const firstRow = this.api.getFirstDisplayedRow();
+        const lastRow = this.api.getLastDisplayedRow();
+        const isRowInViewport = node.rowIndex != null && node.rowIndex >= firstRow && node.rowIndex <= lastRow;
+        
+        // other than refreshing nodes, only ever load nodes in viewport
+        if (!isRowInViewport) {
+            return false;
+        }
+
+        // if node is a loading stub, or if it needs reverified, we refresh
+        return (node.stub && !node.failedLoad) || node.__needsRefreshWhenVisible;
     }
 
     private getBlocksToLoad() {

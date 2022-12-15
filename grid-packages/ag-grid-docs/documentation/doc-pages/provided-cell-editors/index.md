@@ -15,12 +15,9 @@ The grid comes with some cell editors provided out of the box. These cell editor
 
 Simple text editor that uses the standard HTML `input`. This editor is the default if none other specified.
 
-Specified with `agTextCellEditor`.
+Specified with `agTextCellEditor` and configured with `ITextCellEditorParams`.
 
-Takes the following parameters:
-
-- `useFormatter`: If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.
-- `maxLength`: Max number of characters to allow. Default is 524288.
+<interface-documentation interfaceName='ITextCellEditorParams' names='["useFormatter","maxLength"]'></interface-documentation>
 
 ```js
 columnDefs: [
@@ -40,13 +37,9 @@ columnDefs: [
 
 Simple editor that uses the standard HTML `textarea`. Best used in conjunction with `cellEditorPopup=true`.
 
-Specified with `agLargeTextCellEditor`.
+Specified with `agLargeTextCellEditor` and configured with `ILargeTextEditorParams`.
 
-Takes the following parameters:
-
-- `maxLength`: Max number of characters to allow. Default is 200.
-- `rows`: Number of character rows to display. Default is 10.
-- `cols`: Number of character columns to display. Default is 60.
+<interface-documentation interfaceName='ILargeTextEditorParams' names='["maxLength","rows","cols"]'></interface-documentation>
 
 ```js
 columnDefs: [
@@ -67,11 +60,9 @@ columnDefs: [
 
 Simple editor that uses HTML `select`.
 
-Specified with `agSelectCellEditor`.
+Specified with `agSelectCellEditor` and configured with `ILargeTextEditorParams`.
 
-Takes the following parameter:
-
-- `values`: List of values to display.
+<interface-documentation interfaceName='ISelectCellEditorParams' names='["values"]'></interface-documentation>
 
 ```js
 columnDefs: [
@@ -114,19 +105,12 @@ Benefits over browser's `select` are as follows:
 - Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.
 - FuzzySearch of values: You can type within the Editor to select a specific record.
 
-Specified with `agRichSelectCellEditor`.
-
 [[only-react]]
 |Should always set `cellEditorPopup=true`. Otherwise the editor will be clipped to the cell contents.
 
-Takes the following parameters:
+Specified with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
 
-- `values`: List of values to be selected from.
-- `cellHeight`: The row height, in pixels, of each value.
-- `formatValue`: A callback function that allows you to change the displayed value for simple data.
-- `cellRenderer`: The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. See [Cell Rendering Components](/component-cell-renderer/)
-    for creating custom cell renderers.
-- `searchDebounceDelay`: The value in `ms` for the fuzzy search debounce delay. Default is 300.
+<interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "formatValue", "cellRenderer", "searchDebounceDelay" ]'></interface-documentation>
 
 ```js
 columnDefs: [

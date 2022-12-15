@@ -1,11 +1,6 @@
 import { Events, CheckboxChangedEvent } from "../events";
-import { AgEvent } from '../events';
 import { AgAbstractInputField, IInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
-
-export interface ChangeEvent extends AgEvent {
-    selected: boolean;
-}
 
 export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
 

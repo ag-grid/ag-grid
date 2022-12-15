@@ -70,8 +70,6 @@ export interface UserCompDetails {
     newAgStackInstance: () => AgPromise<any>;
 }
 
-const ANNOTATIONS = '__annotations__';
-
 @Bean('userComponentFactory')
 export class UserComponentFactory extends BeanStub {
 

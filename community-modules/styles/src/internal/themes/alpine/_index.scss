@@ -181,6 +181,7 @@
     .ag-panel-title-bar-button,
     .ag-header-expand-icon,
     .ag-column-group-icons,
+    .ag-set-filter-group-icons,
     .ag-group-expanded .ag-icon,
     .ag-group-contracted .ag-icon,
     .ag-chart-settings-prev,
@@ -200,14 +201,14 @@
         background: var(--ag-background-color);
     }
 
-    .ag-chart-menu-close .ag-icon {
-        background: none;
-        border: 1px solid var(--ag-secondary-border-color);
-        border-right: none;
+    .ag-chart-menu-close:hover .ag-icon {
+        border-color: var(--ag-alpine-active-color);
     }
 
-    .ag-chart-menu-close .ag-icon:hover {
+    .ag-chart-menu-close .ag-icon {
         background: var(--ag-header-background-color);
+        border: 1px solid var(--ag-border-color);
+        border-right: none;
     }
 
     .ag-chart-settings-card-item.ag-not-selected:hover {

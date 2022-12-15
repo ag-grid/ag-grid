@@ -95,7 +95,8 @@ export { IRowDragItem } from "./rendering/row/rowDragComp";
 export { Column, ColumnPinnedType } from "./entities/column";
 export { ColumnGroup } from "./entities/columnGroup";
 export { ProvidedColumnGroup } from "./entities/providedColumnGroup";
-export { RowNode, RowHighlightPosition, RowPinnedType } from "./entities/rowNode";
+export { RowNode } from "./entities/rowNode";
+export { RowHighlightPosition, RowPinnedType } from "./interfaces/iRowNode";
 
 // filter
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
@@ -157,10 +158,12 @@ export { AnimationFrameService } from "./misc/animationFrameService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
-export { LargeTextCellEditor } from "./rendering/cellEditors/largeTextCellEditor";
+export { LargeTextCellEditor, ILargeTextEditorParams } from "./rendering/cellEditors/largeTextCellEditor";
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
-export { SelectCellEditor } from "./rendering/cellEditors/selectCellEditor";
-export { TextCellEditor } from "./rendering/cellEditors/textCellEditor";
+export { SelectCellEditor, ISelectCellEditorParams } from "./rendering/cellEditors/selectCellEditor";
+export { TextCellEditor, ITextCellEditorParams } from "./rendering/cellEditors/textCellEditor";
+export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
+
 
 // rendering / cellRenderers
 export { Beans } from "./rendering/beans";
@@ -435,14 +438,14 @@ export {
     PostSortRowsParams,
     GetLocaleTextParams,
     GetGroupAggFilteringParams,
-} from "./entities/iCallbackParams";
+} from "./interfaces/iCallbackParams";
 export {
     WithoutGridCommon
 } from "./interfaces/iCommon";
 
 export * from "./propertyKeys";
-export { IProvidedColumn } from "./entities/iProvidedColumn";
-export { IHeaderColumn } from "./entities/iHeaderColumn";
+export { IProvidedColumn } from "./interfaces/iProvidedColumn";
+export { IHeaderColumn } from "./interfaces/iHeaderColumn";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
@@ -453,7 +456,6 @@ export { IEventEmitter } from "./interfaces/iEventEmitter";
 export { IHeaderParams, IHeaderComp, IHeader } from "./headerRendering/cells/column/headerComp";
 export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/cells/columnGroup/headerGroupComp";
 export { ColumnApi } from "./columns/columnApi";
-export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
@@ -469,7 +471,7 @@ export * from "./interfaces/iAgChartOptions";
 export * from "./interfaces/iSparklineCellRendererParams";
 
 // modules
-export { Module } from "./interfaces/iModule";
+export { Module, ModuleValidationResult } from "./interfaces/iModule";
 export { ModuleNames } from "./modules/moduleNames";
 export { ModuleRegistry } from "./modules/moduleRegistry";
 

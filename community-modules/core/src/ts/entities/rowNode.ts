@@ -1,52 +1,20 @@
-import { EventService } from "../eventService";
 import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent } from "../events";
-import { Column } from "./column";
-import { IEventEmitter } from "../interfaces/iEventEmitter";
+import { EventService } from "../eventService";
 import { DetailGridInfo } from "../gridApi";
+import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
+import { WithoutGridCommon } from "../interfaces/iCommon";
+import { IEventEmitter } from "../interfaces/iEventEmitter";
+import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
+import { IServerSideStore } from "../interfaces/IServerSideStore";
+import { Beans } from "../rendering/beans";
+import { debounce } from "../utils/function";
 import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { getAllKeysInObjects } from "../utils/object";
-import { IServerSideStore } from "../interfaces/IServerSideStore";
-import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
-import { debounce } from "../utils/function";
-import { Beans } from "../rendering/beans";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { IsFullWidthRowParams } from "./iCallbackParams";
+import { Column } from "./column";
+import { IsFullWidthRowParams } from "../interfaces/iCallbackParams";
+import { CellChangedEvent, DataChangedEvent, IRowNode, RowHighlightPosition, RowNodeEvent, RowNodeEventType, RowPinnedType, SetSelectedParams } from "../interfaces/iRowNode";
 
-export interface SetSelectedParams {
-    // true or false, whatever you want to set selection to
-    newValue: boolean;
-    // whether to remove other selections after this selection is done
-    clearSelection?: boolean;
-    // true when action is NOT on this node, ie user clicked a group and this is the child of a group
-    suppressFinishActions?: boolean;
-    // gets used when user shift-selects a range
-    rangeSelect?: boolean;
-    // used in group selection, if true, filtered out children will not be selected
-    groupSelectsFiltered?: boolean;
-}
-
-export interface RowNodeEvent<TData = any> extends AgEvent {
-    node: RowNode<TData>;
-}
-
-export interface DataChangedEvent<TData = any> extends RowNodeEvent<TData> {
-    oldData: TData | undefined;
-    newData: TData | undefined;
-    update: boolean;
-}
-
-export interface CellChangedEvent<TData = any> extends RowNodeEvent<TData> {
-    column: Column;
-    newValue: TData | undefined;
-    oldValue: TData | undefined;
-}
-
-export enum RowHighlightPosition { Above, Below }
-
-export type RowPinnedType = 'top' | 'bottom' | null | undefined;
-
-export class RowNode<TData = any> implements IEventEmitter {
+export class RowNode<TData = any> implements IEventEmitter, IRowNode {
 
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
     public static ID_PREFIX_TOP_PINNED = 't-';
@@ -54,27 +22,27 @@ export class RowNode<TData = any> implements IEventEmitter {
 
     private static OBJECT_ID_SEQUENCE = 0;
 
-    public static EVENT_ROW_SELECTED = 'rowSelected';
-    public static EVENT_DATA_CHANGED = 'dataChanged';
-    public static EVENT_CELL_CHANGED = 'cellChanged';
-    public static EVENT_ALL_CHILDREN_COUNT_CHANGED = 'allChildrenCountChanged';
-    public static EVENT_MASTER_CHANGED = 'masterChanged';
-    public static EVENT_GROUP_CHANGED = 'groupChanged';
-    public static EVENT_MOUSE_ENTER = 'mouseEnter';
-    public static EVENT_MOUSE_LEAVE = 'mouseLeave';
-    public static EVENT_HEIGHT_CHANGED = 'heightChanged';
-    public static EVENT_TOP_CHANGED = 'topChanged';
-    public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
-    public static EVENT_FIRST_CHILD_CHANGED = 'firstChildChanged';
-    public static EVENT_LAST_CHILD_CHANGED = 'lastChildChanged';
-    public static EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
-    public static EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
-    public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
-    public static EVENT_HAS_CHILDREN_CHANGED = 'hasChildrenChanged';
-    public static EVENT_SELECTABLE_CHANGED = 'selectableChanged';
-    public static EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
-    public static EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';
-    public static EVENT_DRAGGING_CHANGED = 'draggingChanged';
+    public static EVENT_ROW_SELECTED: RowNodeEventType = 'rowSelected';
+    public static EVENT_DATA_CHANGED: RowNodeEventType = 'dataChanged';
+    public static EVENT_CELL_CHANGED: RowNodeEventType = 'cellChanged';
+    public static EVENT_ALL_CHILDREN_COUNT_CHANGED: RowNodeEventType = 'allChildrenCountChanged';
+    public static EVENT_MASTER_CHANGED: RowNodeEventType = 'masterChanged';
+    public static EVENT_GROUP_CHANGED: RowNodeEventType = 'groupChanged';
+    public static EVENT_MOUSE_ENTER: RowNodeEventType = 'mouseEnter';
+    public static EVENT_MOUSE_LEAVE: RowNodeEventType = 'mouseLeave';
+    public static EVENT_HEIGHT_CHANGED: RowNodeEventType = 'heightChanged';
+    public static EVENT_TOP_CHANGED: RowNodeEventType = 'topChanged';
+    public static EVENT_DISPLAYED_CHANGED: RowNodeEventType = 'displayedChanged';
+    public static EVENT_FIRST_CHILD_CHANGED: RowNodeEventType = 'firstChildChanged';
+    public static EVENT_LAST_CHILD_CHANGED: RowNodeEventType = 'lastChildChanged';
+    public static EVENT_CHILD_INDEX_CHANGED: RowNodeEventType = 'childIndexChanged';
+    public static EVENT_ROW_INDEX_CHANGED: RowNodeEventType = 'rowIndexChanged';
+    public static EVENT_EXPANDED_CHANGED: RowNodeEventType = 'expandedChanged';
+    public static EVENT_HAS_CHILDREN_CHANGED: RowNodeEventType = 'hasChildrenChanged';
+    public static EVENT_SELECTABLE_CHANGED: RowNodeEventType = 'selectableChanged';
+    public static EVENT_UI_LEVEL_CHANGED: RowNodeEventType = 'uiLevelChanged';
+    public static EVENT_HIGHLIGHT_CHANGED: RowNodeEventType = 'rowHighlightChanged';
+    public static EVENT_DRAGGING_CHANGED: RowNodeEventType = 'draggingChanged';
 
     /** Unique ID for the node. Either provided by the application, or generated by the grid if not. */
     public id: string | undefined;
@@ -170,7 +138,10 @@ export class RowNode<TData = any> implements IEventEmitter {
     public failedLoad: boolean;
 
     /** Used by server side row model, true if this row node requires reload */
-    public needsRefresh: boolean;
+    public __needsRefresh: boolean;
+
+    /** Used by server side row model, true if this node needs refreshed by the server when in viewport */
+    public __needsRefreshWhenVisible: boolean;
 
     /** All lowest level nodes beneath this node, no groups. */
     public allLeafChildren: RowNode<TData>[];
@@ -311,7 +282,7 @@ export class RowNode<TData = any> implements IEventEmitter {
         };
     }
 
-    private createLocalRowEvent(type: string): RowNodeEvent {
+    private createLocalRowEvent(type: RowNodeEventType): RowNodeEvent {
         return {
             type: type,
             node: this
@@ -565,7 +536,7 @@ export class RowNode<TData = any> implements IEventEmitter {
      * Sets the row height.
      * Call if you want to change the height initially assigned to the row.
      * After calling, you must call `api.onRowHeightChanged()` so the grid knows it needs to work out the placement of the rows. */
-    public setRowHeight(rowHeight: number | undefined | null, estimated = false): void {
+    public setRowHeight(rowHeight: number | undefined | null, estimated: boolean = false): void {
         this.rowHeight = rowHeight;
         this.rowHeightEstimated = estimated;
 
@@ -1065,7 +1036,7 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     /** Add an event listener. */
-    public addEventListener(eventType: string, listener: Function): void {
+    public addEventListener(eventType: RowNodeEventType, listener: Function): void {
         if (!this.eventService) {
             this.eventService = new EventService();
         }
@@ -1073,7 +1044,7 @@ export class RowNode<TData = any> implements IEventEmitter {
     }
 
     /** Remove event listener. */
-    public removeEventListener(eventType: string, listener: Function): void {
+    public removeEventListener(eventType: RowNodeEventType, listener: Function): void {
         if (!this.eventService) { return; }
 
         this.eventService.removeEventListener(eventType, listener);

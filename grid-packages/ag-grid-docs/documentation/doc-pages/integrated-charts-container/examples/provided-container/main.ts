@@ -27,29 +27,44 @@ const gridOptions: GridOptions = {
 var chartPanelTemplate =
   '<div class="chart-wrapper ag-theme-alpine">' +
   '<div class="chart-wrapper-top">' +
-  '<span class="chart-wrapper-title"></span>' +
+  '<h2 class="chart-wrapper-title"></h2>' +
   '<button class="chart-wrapper-close">Destroy Chart</button>' +
   '</div>' +
   '<div class="chart-wrapper-body"></div>' +
   '</div>'
 
+function appendTitle(el: Element) {
+  const formatter = new Intl.DateTimeFormat('en', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+    timeZone: 'UTC'
+  });
+  const date = formatter.format();
+  el.innerHTML = `Chart created ${date}`;
+}
+
 function createChartContainer(chartRef: ChartRef) {
-  var eChart = chartRef.chartElement
+  const eChart = chartRef.chartElement
 
-  var eTemp = document.createElement('div')
+  const eTemp = document.createElement('div')
   eTemp.innerHTML = chartPanelTemplate
-  var eChartWrapper = eTemp.firstChild as any;
+  const eChartWrapper = eTemp.firstChild as HTMLElement;
 
-  var eParent = document.querySelector('#container') as HTMLElement;
+  const eParent = document.querySelector('#container') as HTMLElement;
 
-  eParent.appendChild(eChartWrapper)
+  eParent.appendChild(eChartWrapper);
 
-  eChartWrapper.querySelector('.chart-wrapper-body').appendChild(eChart)
-  eChartWrapper.querySelector('.chart-wrapper-title').innerText =
-    'Chart Created At ' + new Date()
+  eChartWrapper.querySelector('.chart-wrapper-body')!.appendChild(eChart)
+
+  appendTitle(eChartWrapper.querySelector('.chart-wrapper-title')!);
 
   eChartWrapper
-    .querySelector('.chart-wrapper-close')
+    .querySelector('.chart-wrapper-close')!
     .addEventListener('click', function () {
       chartRef.destroyChart()
       eParent.removeChild(eChartWrapper)
@@ -58,7 +73,7 @@ function createChartContainer(chartRef: ChartRef) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')

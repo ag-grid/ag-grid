@@ -9,7 +9,7 @@ It is possible to manage data updates using the Server-Side Row Model (SSRM). Th
 - [Transactions](/server-side-model-transactions/) - Add, remove and update rows in the grid.
 - [High Frequency](/server-side-model-high-frequency/) - Apply transactions at high speed.
 
-If using [Infinite Scroll](/server-side-model-infinite-scroll/) (`serverSideInfiniteScroll=true`) then [Transactions](/server-side-model-transactions/) and [High Frequency](/server-side-model-high-frequency/) updates are not permitted. The only available option for updating data when using Infinite Scroll is [Single Row Updates](#single-row-updates).
+If using Infinite Scroll (`serverSideInfiniteScroll=true`) then [Transactions](/server-side-model-transactions/) and [High Frequency](/server-side-model-high-frequency/) updates are not permitted. The only available option for updating data when using Infinite Scroll is [Single Row Updates](#single-row-updates).
 
 [[note]]
 | The reason row inserts and removes are not allowed while using Infinite Scroll is that they impact the block boundaries.

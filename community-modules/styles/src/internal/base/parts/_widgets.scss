@@ -208,8 +208,8 @@
 
     .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
         // assign internal variables to simplify the `height` value
-        --ag-internal-calculated-line-height: var(--ag-line-height, calc(var(--ag-row-height) - 2px));
-        --ag-internal-padded-row-height: calc(var(--ag-row-height) - 2px);
+        --ag-internal-calculated-line-height: var(--ag-line-height, calc(var(--ag-row-height) - var(--ag-row-border-width)));
+        --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
         // Needed to capitalize min, because it clashes with old versions of Sass
         height: Min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
         display: flex;

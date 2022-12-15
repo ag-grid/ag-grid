@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ITextCellEditorParams, ILargeTextEditorParams, ISelectCellEditorParams, IRichCellEditorParams } from '@ag-grid-community/core'
 import { ColourCellRenderer } from './colourCellRenderer_typescript'
 
 const colors = ['Red','Green','Blue'];
@@ -8,7 +8,10 @@ const columnDefs: ColDef[] = [
     headerName: 'Text Editor', 
     field: 'color1', 
     cellRenderer: ColourCellRenderer,
-    cellEditor: 'agTextCellEditor' 
+    cellEditor: 'agTextCellEditor',
+    cellEditorParams: {
+      maxLength: 20
+    } as ITextCellEditorParams
   },
   { 
     headerName: 'Select Editor', 
@@ -17,7 +20,7 @@ const columnDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
       values: colors
-    }
+    } as ISelectCellEditorParams
   },
   { 
     headerName: 'Rich Select Editor', 
@@ -26,15 +29,20 @@ const columnDefs: ColDef[] = [
     cellEditor: 'agRichSelectCellEditor',
     cellEditorPopup: true,
     cellEditorParams: {
-      values: colors,
+      values: colors, 
       cellRenderer: ColourCellRenderer
-    }
+    } as IRichCellEditorParams
   },
   { 
     headerName: 'Large Text Editor', 
     field: 'description', 
     cellEditorPopup: true,
     cellEditor: 'agLargeTextCellEditor', 
+    cellEditorParams: {
+      maxLength: 250,
+      rows: 10,
+      cols: 50
+    } as ILargeTextEditorParams,
     flex: 2 
   }
 ];

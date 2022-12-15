@@ -11,7 +11,6 @@ import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
 import { RowNode } from '../../entities/rowNode';
-import { _ } from '../../utils';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -353,7 +352,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();
 
-        if (this.applyActive && !this.isReadOnly) {
+        if (this.applyActive && !this.isReadOnly()) {
             const isValid = this.isModelValid(this.getModelFromUi()!);
 
             setDisabled(this.getRefElement('applyFilterButton'), !isValid);

@@ -1,4 +1,5 @@
-import { RowNode, RowPinnedType } from "../entities/rowNode";
+import { RowNode } from "../entities/rowNode";
+import { RowPinnedType } from "../interfaces/iRowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events, PinnedRowDataChangedEvent } from "../events";
 import { BeanStub } from "../context/beanStub";

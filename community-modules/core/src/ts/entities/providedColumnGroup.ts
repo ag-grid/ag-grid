@@ -1,10 +1,11 @@
-import { IProvidedColumn } from "./iProvidedColumn";
+import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { ColGroupDef } from "./colDef";
 import { ColumnGroup } from "./columnGroup";
 import { Column } from "./column";
 import { EventService } from "../eventService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { AgEvent } from "../events";
+import { PreDestroy } from "../context/context";
 
 export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
 
@@ -25,6 +26,8 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
 
     private level: number;
 
+    private expandableListenerRemoveCallback: (() => void) | null = null;
+
     constructor(colGroupDef: ColGroupDef | null, groupId: string, padding: boolean, level: number) {
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
@@ -33,11 +36,22 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         this.level = level;
     }
 
-    public reset(colGroupDef: ColGroupDef | null, level: number): void {
+    @PreDestroy
+    private destroy() {
+        if (this.expandableListenerRemoveCallback) {
+            this.reset(null, undefined);
+        }
+    }
+
+    public reset(colGroupDef: ColGroupDef | null, level: number | undefined): void {
         this.colGroupDef = colGroupDef;
-        this.level = level;
+        this.level = level!;
 
         this.originalParent = null;
+
+        if (this.expandableListenerRemoveCallback) {
+            this.expandableListenerRemoveCallback();
+        }
 
         // we use ! below, as we want to set the object back to the
         // way it was when it was first created
@@ -137,8 +151,16 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
 
     public setupExpandable() {
         this.setExpandable();
-        // note - we should be removing this event listener
-        this.getLeafColumns().forEach(col => col.addEventListener(Column.EVENT_VISIBLE_CHANGED, this.onColumnVisibilityChanged.bind(this)));
+
+        if (this.expandableListenerRemoveCallback) { this.expandableListenerRemoveCallback(); }
+
+        const listener = this.onColumnVisibilityChanged.bind(this);
+        this.getLeafColumns().forEach(col => col.addEventListener(Column.EVENT_VISIBLE_CHANGED, listener));
+
+        this.expandableListenerRemoveCallback = () => {
+            this.getLeafColumns().forEach(col => col.removeEventListener(Column.EVENT_VISIBLE_CHANGED, listener));
+            this.expandableListenerRemoveCallback = null;
+        };
     }
 
     public setExpandable() {

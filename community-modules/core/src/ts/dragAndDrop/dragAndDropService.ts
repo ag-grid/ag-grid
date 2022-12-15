@@ -165,7 +165,7 @@ export class DragAndDropService extends BeanStub {
     private dragging: boolean;
 
     private eGhost: HTMLElement | null;
-    private eGhostParent: HTMLElement;
+    private eGhostParent: HTMLElement | ShadowRoot;
     private eGhostIcon: HTMLElement;
 
     private dropTargets: DropTarget[] = [];
@@ -336,11 +336,11 @@ export class DragAndDropService extends BeanStub {
         if (len === 0) { return  null; }
         if (len === 1) { return validDropTargets[0]; }
 
-        const eDocument = this.gridOptionsService.getDocument();
+        const rootNode = this.gridOptionsService.getRootNode();
 
         // elementsFromPoint return a list of elements under
         // the mouseEvent sorted from topMost to bottomMost
-        const elementStack = eDocument.elementsFromPoint(mouseEvent.clientX, mouseEvent.clientY) as HTMLElement[];
+        const elementStack = rootNode.elementsFromPoint(mouseEvent.clientX, mouseEvent.clientY) as HTMLElement[];
 
         // loop over the sorted elementStack to find which dropTarget comes first
         for (const el of elementStack) {
@@ -511,7 +511,7 @@ export class DragAndDropService extends BeanStub {
         this.eGhost.style.left = '20px';
 
         const eDocument = this.gridOptionsService.getDocument();
-        let targetEl: HTMLElement | null = null;
+        let targetEl: HTMLElement | ShadowRoot | null = null;
 
         try {
             targetEl = eDocument.fullscreenElement as HTMLElement | null;
@@ -520,11 +520,19 @@ export class DragAndDropService extends BeanStub {
             // simply by trying to read the fullscreenElement property
         } finally {
             if (!targetEl) {
-                targetEl = eDocument.querySelector('body');
+                const rootNode = this.gridOptionsService.getRootNode();
+                const body = rootNode.querySelector('body');
+                if (body) {
+                    targetEl = body;
+                } else if (rootNode instanceof ShadowRoot) {
+                    targetEl = rootNode;
+                } else {
+                    targetEl = rootNode?.documentElement;
+                }
             }
         }
 
-        this.eGhostParent = targetEl as HTMLElement;
+        this.eGhostParent = targetEl;
 
         if (!this.eGhostParent) {
             console.warn('AG Grid: could not find document body, it is needed for dragging columns');

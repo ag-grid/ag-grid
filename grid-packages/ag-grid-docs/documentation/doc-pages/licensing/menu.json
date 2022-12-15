@@ -613,13 +613,8 @@
                 "enterprise": true
               },
               {
-                "title": "Infinite Scroll",
-                "url": "/server-side-model-infinite-scroll/",
-                "enterprise": true
-              },
-              {
-                "title": "Row Grouping",
-                "url": "/server-side-model-grouping/",
+                "title": "Configuration",
+                "url": "/server-side-model-configuration/",
                 "enterprise": true
               },
               {
@@ -633,8 +628,8 @@
                 "enterprise": true
               },
               {
-                "title": "Refresh",
-                "url": "/server-side-model-refresh/",
+                "title": "Row Grouping",
+                "url": "/server-side-model-grouping/",
                 "enterprise": true
               },
               {
@@ -655,6 +650,11 @@
               {
                 "title": "Changing Columns",
                 "url": "/server-side-model-changing-columns/",
+                "enterprise": true
+              },
+              {
+                "title": "Refresh",
+                "url": "/server-side-model-refresh/",
                 "enterprise": true
               },
               {
@@ -693,6 +693,25 @@
                 "title": "Tree Data",
                 "url": "/server-side-model-tree-data/",
                 "enterprise": true
+              },
+              {
+                "title": "Client-Side Operations",
+                "url": "/server-side-model-client-side-operations/",
+                "showInCollapsed": true,
+                "enterprise": true,
+                "matrixExcludeChildren": true,
+                "items": [
+                  {
+                    "title": "Sorting",
+                    "url": "/server-side-model-client-side-sorting/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Filtering",
+                    "url": "/server-side-model-client-side-filtering/",
+                    "enterprise": true
+                  }
+                ]
               },
               {
                 "title": "See Also",

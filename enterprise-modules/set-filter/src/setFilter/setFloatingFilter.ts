@@ -6,7 +6,6 @@ import {
     ValueFormatterService,
     IFloatingFilterParams,
     AgInputTextField,
-    _,
     ColumnModel,
     SetFilterModel,
 } from '@ag-grid-community/core';
@@ -15,7 +14,7 @@ import { SetFilter } from './setFilter';
 import { SetValueModel } from './setValueModel';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
 
-export class SetFloatingFilterComp extends Component implements IFloatingFilter {
+export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
     @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
     @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
@@ -53,7 +52,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         this.updateFloatingFilterText(parentModel);
     }
 
-    private parentSetFilterInstance(cb: (instance: SetFilter<unknown>) => void): void {
+    private parentSetFilterInstance(cb: (instance: SetFilter<V>) => void): void {
         this.params.parentFilterInstance((filter) => {
             if (!(filter instanceof SetFilter)) {
                 throw new Error('AG Grid - SetFloatingFilter expects SetFilter as its parent');

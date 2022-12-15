@@ -7,8 +7,10 @@ import { PivotStage } from "./rowGrouping/pivotStage";
 import { AggFuncService } from "./rowGrouping/aggFuncService";
 import { GridHeaderDropZones } from "./rowGrouping/columnDropZones/gridHeaderDropZones";
 import { FilterAggregatesStage } from "./rowGrouping/filterAggregatesStage";
+import { VERSION } from "./version";
 
 export const RowGroupingModule: Module = {
+    version: VERSION,
     moduleName: ModuleNames.RowGroupingModule,
     beans: [AggregationStage, FilterAggregatesStage, GroupStage, PivotColDefService, PivotStage, AggFuncService],
     agStackComponents: [
