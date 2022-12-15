@@ -294,8 +294,8 @@
     "stickyTopRightRowContainerCtrl": {
       "type": { "returnType": "RowContainerCtrl", "optional": false }
     },
-    "fakeHScrollCtrl": {
-      "type": { "returnType": "FakeHScrollCtrl", "optional": false }
+    "fakeHScrollComp": {
+      "type": { "returnType": "FakeHScrollComp", "optional": false }
     },
     "fakeVScrollComp": {
       "type": { "returnType": "FakeVScrollComp", "optional": false }
@@ -9562,78 +9562,6 @@
     "charPress": {
       "description": "/** The charPress to pass to the cell editor */",
       "type": { "returnType": "string", "optional": true }
-    }
-  },
-  "IFakeHScrollComp": {
-    "setHeight": {
-      "type": {
-        "arguments": { "height": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setBottom": {
-      "type": {
-        "arguments": { "bottom": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setViewportHeight": {
-      "type": {
-        "arguments": { "height": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setContainerHeight": {
-      "type": {
-        "arguments": { "height": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setRightSpacerFixedWidth": {
-      "type": {
-        "arguments": { "width": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setLeftSpacerFixedWidth": {
-      "type": {
-        "arguments": { "width": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setDisplayed": {
-      "type": {
-        "arguments": { "displayed": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "addOrRemoveCssClass": {
-      "type": {
-        "arguments": { "cssClassName": "string", "on": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "includeLeftSpacerScrollerCss": {
-      "type": {
-        "arguments": { "cssClass": "string", "include": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "includeRightSpacerScrollerCss": {
-      "type": {
-        "arguments": { "cssClass": "string", "include": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
     }
   },
   "RowAnimationCssClasses": {},
