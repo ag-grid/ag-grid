@@ -547,6 +547,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     secondaryAxisTicks = this.updateSecondaryAxisTicks(primaryTickCount);
                 }
 
+                if (filteredTicks) {
+                    ticks = filteredTicks;
+                } else if (secondaryAxisTicks) {
+                    ticks = secondaryAxisTicks;
+                } else {
+                    scale.tickCount = this.tick.count ?? defaultTickCount - i;
+                    ticks = scale.ticks!();
+                }
                 ticks = filteredTicks ?? secondaryAxisTicks ?? scale.ticks!();
 
                 this.updateSelections({
