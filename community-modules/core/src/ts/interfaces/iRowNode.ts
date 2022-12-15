@@ -116,10 +116,6 @@ interface BaseRowNode<TData = any> {
     master: boolean;
     /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
     detail: boolean;
-    /** If this row is a master row that was expanded, this points to the associated detail row. */
-    detailNode: IRowNode<TData>;
-    /** If master detail, this contains details about the detail grid */
-    detailGridInfo: DetailGridInfo | null;
 }
 
 interface GroupRowNode<TData = any> {
@@ -156,9 +152,6 @@ interface GroupRowNode<TData = any> {
     childrenAfterSort: IRowNode<TData>[] | null;
     /** Filtered children of this group. */
     childrenAfterFilter: IRowNode<TData>[] | null;
-    /** Aggregated and re-filtered children of this group. */
-    childrenAfterAggFilter: IRowNode<TData>[] | null;
-
 
     /** `true` if row is a footer. Footers have `group = true` and `footer = true`. */
     footer: boolean;

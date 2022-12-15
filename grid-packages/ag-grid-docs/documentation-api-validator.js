@@ -89,9 +89,9 @@ validateDocFile('ColumnApi', './documentation/doc-pages/column-api/column-api.AU
 //validateDocFile('GridApi', './documentation/doc-pages/grid-api/grid-api.AUTO.json', ['./documentation/doc-pages/grid-api/api.json']);
 //validateDocFile('Column', './documentation/doc-pages/column-object/column.AUTO.json', ['./documentation/doc-pages/column-object/reference.json']);
 
-/* validateDocFile('IRowNode', './documentation/doc-pages/row-object/row-node.AUTO.json',
+validateDocFile('RowNode', './documentation/doc-pages/row-object/row-node.AUTO.json',
     [
         './documentation/doc-pages/row-object/resources/events.json',
         './documentation/doc-pages/row-object/resources/methods.json',
         './documentation/doc-pages/row-object/resources/reference.json'
-    ]); */
+    ]);

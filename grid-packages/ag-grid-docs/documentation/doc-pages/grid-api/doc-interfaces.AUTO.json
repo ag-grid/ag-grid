@@ -15045,14 +15045,6 @@
       "description": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "detailNode": {
-      "description": "/** If this row is a master row that was expanded, this points to the associated detail row. */",
-      "type": { "returnType": "IRowNode<TData>", "optional": false }
-    },
-    "detailGridInfo": {
-      "description": "/** If master detail, this contains details about the detail grid */",
-      "type": { "returnType": "DetailGridInfo | null", "optional": false }
-    },
     "meta": { "typeParams": ["TData = any"] }
   },
   "GroupRowNode": {
@@ -15109,10 +15101,6 @@
     },
     "childrenAfterFilter": {
       "description": "/** Filtered children of this group. */",
-      "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
-    },
-    "childrenAfterAggFilter": {
-      "description": "/** Aggregated and re-filtered children of this group. */",
       "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
     },
     "footer": {
@@ -15311,14 +15299,6 @@
       "description": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "detailNode": {
-      "description": "/** If this row is a master row that was expanded, this points to the associated detail row. */",
-      "type": { "returnType": "IRowNode<TData>", "optional": false }
-    },
-    "detailGridInfo": {
-      "description": "/** If master detail, this contains details about the detail grid */",
-      "type": { "returnType": "DetailGridInfo | null", "optional": false }
-    },
     "field": {
       "description": "/** The field we are grouping on from our row data. */",
       "type": { "returnType": "string | null", "optional": false }
@@ -15372,10 +15352,6 @@
     },
     "childrenAfterFilter": {
       "description": "/** Filtered children of this group. */",
-      "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
-    },
-    "childrenAfterAggFilter": {
-      "description": "/** Aggregated and re-filtered children of this group. */",
       "type": { "returnType": "IRowNode<TData>[] | null", "optional": false }
     },
     "footer": {
