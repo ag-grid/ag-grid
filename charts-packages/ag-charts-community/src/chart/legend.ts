@@ -561,7 +561,7 @@ export class Legend {
         for (const child of this.group.children) {
             if (!(child instanceof MarkerLabel)) continue;
 
-            if (child.computeBBox().containsPoint(x, y)) {
+            if (child.visible && child.computeBBox().containsPoint(x, y)) {
                 return child.datum;
             }
         }
