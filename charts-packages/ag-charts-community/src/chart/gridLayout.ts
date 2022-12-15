@@ -78,7 +78,7 @@ export function gridLayout({
                 continue;
             }
 
-            processedBBoxCount += pageIndices.length * pageIndices[0].length;
+            processedBBoxCount += pageIndices.length * pageIndices[0].length; // this is an estimate, not all rows/columns will have the same length
             rawPages.push(pageIndices);
             break;
         }
@@ -114,7 +114,7 @@ function calculatePage(
     let currentPrimaryIndices: number[] = [];
     let maxPrimaryValues: number[] = [];
     for (let bboxIndex = 0; bboxIndex < bboxes.length; bboxIndex++) {
-        const primaryValueIdx = (bboxIndex + 1) % primaryCount;
+        const primaryValueIdx = (bboxIndex + primaryCount) % primaryCount;
         if (primaryValueIdx === 0) {
             sumSecondary += currentMaxSecondary;
             currentMaxSecondary = 0;
@@ -170,9 +170,12 @@ function buildPages(
             indices = transpose(indices);
         }
 
-        const lastIndices = indices[indices.length - 1];
+        let endIndex = 0;
         const columns = indices.map((colIndices): Column => {
-            const colBBoxes = colIndices.map((bboxIndex) => bboxes[bboxIndex]);
+            const colBBoxes = colIndices.map((bboxIndex) => {
+                endIndex = Math.max(bboxIndex, endIndex);
+                return bboxes[bboxIndex];
+            });
             let columnHeight = 0;
             let columnWidth = 0;
             colBBoxes.forEach((bbox) => {
@@ -199,7 +202,7 @@ function buildPages(
         return {
             columns,
             startIndex: indices[0][0],
-            endIndex: lastIndices[lastIndices.length - 1],
+            endIndex,
             pageWidth,
             pageHeight,
         };
@@ -224,14 +227,19 @@ function transpose(data: number[][]) {
 }
 
 function estimateStartingGuess(bboxes: BBox[], primary: DimensionProps): number {
+    const n = bboxes.length;
     let primarySum = 0;
-    for (let bboxIndex = 0; bboxIndex < bboxes.length; bboxIndex++) {
-        primarySum += primary.fn(bboxes[bboxIndex]);
+    for (let bboxIndex = 0; bboxIndex < n; bboxIndex++) {
+        primarySum += primary.fn(bboxes[bboxIndex]) + primary.padding;
 
         if (primarySum > primary.max) {
+            const ratio = n / bboxIndex;
+            if (ratio < 2) {
+                return n / 2;
+            }
             return bboxIndex;
         }
     }
 
-    return bboxes.length;
+    return n;
 }

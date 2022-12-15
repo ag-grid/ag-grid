@@ -135,8 +135,6 @@ describe('horizontal layout', () => {
             maxWidth: MAX_WIDTH,
         });
 
-        console.log({ pages });
-
         expect(pages).toMatchSnapshot();
     });
 });
