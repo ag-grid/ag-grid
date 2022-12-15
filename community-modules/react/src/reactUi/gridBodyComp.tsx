@@ -27,6 +27,7 @@ const GridBodyComp = () => {
     const [stickyTopWidth, setStickyTopWidth] = useState<string>('100%');
     const [topDisplay, setTopDisplay] = useState<string>('');
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
+    const [bodyViewportWidth, setBodyViewportWidth] = useState<string>('');
     
     const [movingCss, setMovingCss] = useState<string | null>(null);
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
@@ -87,7 +88,7 @@ const GridBodyComp = () => {
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
             setCellSelectableCss: setCellSelectableCss,
-
+            setBodyViewportWidth: setBodyViewportWidth,
             registerBodyViewportResizeListener: listener => {
                 const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current!, listener);
                 destroyFuncs.push(() => unsubscribeFromResize());

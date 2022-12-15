@@ -196,7 +196,8 @@
       "stickyTopCenterRowContainerCtrl": "RowContainerCtrl",
       "stickyTopLeftRowContainerCtrl": "RowContainerCtrl",
       "stickyTopRightRowContainerCtrl": "RowContainerCtrl",
-      "fakeHScrollCtrl": "FakeHScrollCtrl",
+      "fakeHScrollComp": "FakeHScrollComp",
+      "fakeVScrollComp": "FakeVScrollComp",
       "gridHeaderCtrl": "GridHeaderCtrl",
       "centerHeaderRowContainerCtrl": "HeaderRowContainerCtrl",
       "leftHeaderRowContainerCtrl": "HeaderRowContainerCtrl",
@@ -5962,21 +5963,6 @@
       "charPress?": "/** The charPress to pass to the cell editor */"
     }
   },
-  "IFakeHScrollComp": {
-    "meta": {},
-    "type": {
-      "setHeight(height: number)": "void",
-      "setBottom(bottom: number)": "void",
-      "setViewportHeight(height: number)": "void",
-      "setContainerHeight(height: number)": "void",
-      "setRightSpacerFixedWidth(width: number)": "void",
-      "setLeftSpacerFixedWidth(width: number)": "void",
-      "setDisplayed(displayed: boolean)": "void",
-      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "includeLeftSpacerScrollerCss(cssClass: string, include: boolean)": "void",
-      "includeRightSpacerScrollerCss(cssClass: string, include: boolean)": "void"
-    }
-  },
   "RowAnimationCssClasses": {
     "meta": { "isEnum": true },
     "type": [
@@ -6003,6 +5989,7 @@
       "setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean)": "void",
       "setPinnedTopBottomOverflowY(overflow: string)": "void",
       "registerBodyViewportResizeListener(listener: (() => void))": "void",
+      "setBodyViewportWidth(width: string)": "void",
       "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
     }
   },
