@@ -45,10 +45,8 @@ export const Quotes = ({ data }: { data: QuotesData }) => {
   const quotes = filterAndSortByKey(data, 'order');
 
   return (
-    <>
-      <ul className={styles.container}>
-        <QuoteItems quotes={quotes} />
-      </ul>
-    </>
+    <ul className={styles.container}>
+      <QuoteItems quotes={quotes} />
+    </ul>
   );
 }
