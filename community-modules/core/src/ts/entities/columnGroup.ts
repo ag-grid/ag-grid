@@ -1,4 +1,4 @@
-import { IHeaderColumn } from "./iHeaderColumn";
+import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColGroupDef } from "./colDef";
 import { Column, ColumnPinnedType } from "./column";
 import { AbstractColDef } from "./colDef";

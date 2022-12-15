@@ -24,7 +24,6 @@ export class ResizeObserverService extends BeanStub {
         };
 
         const usePolyfill = () => {
-
             // initialise to the current width and height, so first call will have no changes
             let widthLastTime = offsetWidth(element);
             let heightLastTime = offsetHeight(element);

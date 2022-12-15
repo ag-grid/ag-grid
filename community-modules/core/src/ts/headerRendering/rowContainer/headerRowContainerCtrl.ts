@@ -3,7 +3,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
 import { Column, ColumnPinnedType } from "../../entities/column";
-import { IHeaderColumn } from "../../entities/iHeaderColumn";
+import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
 import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";

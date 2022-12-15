@@ -2494,576 +2494,6 @@
     "meta": { "isTypeAlias": true },
     "type": "'normal' | 'autoHeight' | 'print'"
   },
-  "GetContextMenuItemsParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "defaultItems": "string[] | undefined",
-      "column": "Column | null",
-      "node": "RowNode<TData> | null",
-      "value": "any",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "defaultItems": "/** Names of the items that would be provided by default. */",
-      "column": "/** The column, if a cell was clicked, otherwise null. */",
-      "node": "/** The row node, if a cell was clicked, otherwise null. */",
-      "value": "/** The value, if a cell was clicked, otherwise null.  */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "GetMainMenuItemsParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "column": "Column",
-      "defaultItems": "string[]",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "column": "/** The column that was clicked */",
-      "defaultItems": "/** List of the items that would be displayed by default */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "PostProcessPopupParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "column?": "Column | null",
-      "rowNode?": "RowNode<TData> | null",
-      "ePopup": "HTMLElement",
-      "type": "string",
-      "eventSource?": "HTMLElement | null",
-      "mouseEvent?": "MouseEvent | Touch | null",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "column?": "/** If popup is for a column, this gives the Column */",
-      "rowNode?": "/** If popup is for a row, this gives the RowNode */",
-      "ePopup": "/** The popup we are showing */",
-      "type": "/** The different types are:\n     *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
-      "eventSource?": "/** If the popup is as a result of a button click (eg menu button),\n     *  this is the component that the user clicked */",
-      "mouseEvent?": "/** If the popup is as a result of a click or touch,\n     *  this is the event - eg user showing context menu */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "SendToClipboardParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "data": "string",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "ProcessDataFromClipboardParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "data": "string[][]",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "data": "/** 2D array of all cells from the clipboard */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "GetChartToolbarItemsParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "defaultItems?": "ChartMenuOptions[]",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "NavigateToNextHeaderParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "key": "string",
-      "previousHeaderPosition": "HeaderPosition | null",
-      "nextHeaderPosition": "HeaderPosition | null",
-      "headerRowCount": "number",
-      "event": "KeyboardEvent",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "key": "/** The key for the arrow key pressed,\n     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
-      "previousHeaderPosition": "/** The header that currently has focus */",
-      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
-      "headerRowCount": "/** The number of header rows present in the grid */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "TabToNextHeaderParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "backwards": "boolean",
-      "previousHeaderPosition": "HeaderPosition | null",
-      "nextHeaderPosition": "HeaderPosition | null",
-      "headerRowCount": "number",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "backwards": "/** True if the Shift key is also down */",
-      "previousHeaderPosition": "/** The header that currently has focus */",
-      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
-      "headerRowCount": "/** The number of header rows present in the grid */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "TabToNextCellParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "backwards": "boolean",
-      "editing": "boolean",
-      "previousCellPosition": "CellPosition",
-      "nextCellPosition": "CellPosition | null",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "backwards": "/** True if the Shift key is also down */",
-      "editing": "/** True if the current cell is editing\n     * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
-      "previousCellPosition": "/** The cell that currently has focus */",
-      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation.  */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "NavigateToNextCellParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "key": "string",
-      "previousCellPosition": "CellPosition",
-      "nextCellPosition": "CellPosition | null",
-      "event": "KeyboardEvent | null",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "key": "/** The keycode for the arrow key pressed:\n     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
-      "previousCellPosition": "/** The cell that currently has focus */",
-      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "PaginationNumberFormatterParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "value": "number",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "IsGroupOpenByDefaultParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "rowNode": "RowNode<TData>",
-      "rowGroupColumn": "Column",
-      "level": "number",
-      "field": "string",
-      "key": "string",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "rowNode": "/** The row node being considered. */",
-      "rowGroupColumn": "/** The Column for which this row is grouping. */",
-      "level": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
-      "field": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
-      "key": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "GetServerSideGroupLevelParamsParams": {
-    "meta": {},
-    "type": {
-      "level": "number",
-      "parentRowNode?": "RowNode",
-      "rowGroupColumns": "Column[]",
-      "pivotColumns": "Column[]",
-      "pivotMode": "boolean",
-      "api": "GridApi<any>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "level": "/** The level of the store. Top level is 0. */",
-      "parentRowNode?": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
-      "rowGroupColumns": "/** Active Row Group Columns, if any. */",
-      "pivotColumns": "/** Active Pivot Columns, if any. */",
-      "pivotMode": "/** true if pivot mode is active. */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "GetServerSideStoreParamsParams": {
-    "meta": {
-      "doc": "/** @deprecated use GetServerSideGroupLevelParamsParams instead */"
-    },
-    "type": {
-      "level": "number",
-      "parentRowNode?": "RowNode",
-      "rowGroupColumns": "Column[]",
-      "pivotColumns": "Column[]",
-      "pivotMode": "boolean",
-      "api": "GridApi<any>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "level": "/** The level of the store. Top level is 0. */",
-      "parentRowNode?": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
-      "rowGroupColumns": "/** Active Row Group Columns, if any. */",
-      "pivotColumns": "/** Active Pivot Columns, if any. */",
-      "pivotMode": "/** true if pivot mode is active. */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "IsServerSideGroupOpenByDefaultParams": {
-    "meta": {},
-    "type": {
-      "data": "any",
-      "rowNode": "RowNode",
-      "api": "GridApi<any>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "IsApplyServerSideTransactionParams": {
-    "meta": {},
-    "type": {
-      "transaction": "ServerSideTransaction",
-      "parentNode": "RowNode",
-      "storeInfo": "any",
-      "groupLevelInfo": "any",
-      "api": "GridApi<any>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "transaction": "/** The transaction getting applied. */",
-      "parentNode": "/** The parent RowNode, if transaction is applied to a group. */",
-      "storeInfo": "/** @deprecated use groupLevelInfo instead */",
-      "groupLevelInfo": "/** Store info, if any, as passed via the success() callback when loading data. */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "GetRowIdParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "data": "TData",
-      "level": "number",
-      "parentKeys?": "string[]",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "data": "/** The data item provided to the grid for the row in question */",
-      "level": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
-      "parentKeys?": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "ProcessRowParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "eRow": "HTMLElement",
-      "ePinnedLeftRow?": "HTMLElement",
-      "ePinnedRightRow?": "HTMLElement",
-      "rowIndex": "number",
-      "node": "RowNode<TData>",
-      "addRenderedRowListener": "(eventType: string, listener: Function) => void",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "FillOperationParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "event": "MouseEvent",
-      "values": "any[]",
-      "rowNode": "RowNode<TData>",
-      "column": "Column",
-      "initialValues": "any[]",
-      "currentIndex": "number",
-      "currentCellValue": "any",
-      "direction": "'up' | 'down' | 'left' | 'right'",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "event": "/** The mouse event for the fill operation. */",
-      "values": "/** The values that have been processed by the fill operation. */",
-      "rowNode": "/** The RowNode of the current cell being changed. */",
-      "column": "/** The Column of the current cell being changed. */",
-      "initialValues": "/** The values that were present before processing started. */",
-      "currentIndex": "/** The index of the current processed value. */",
-      "currentCellValue": "/** The value of the cell being currently processed by the Fill Operation. */",
-      "direction": "/** The direction of the Fill Operation. */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "RowHeightParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "data": "TData | undefined",
-      "node": "RowNode<TData>",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "data": "/** The data associated with this row from rowData. Data is `undefined` for row groups. */",
-      "node": "/** The RowNode of the row in question. */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "IsExternalFilterPresentParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "InitialGroupOrderComparatorParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "nodeA": "RowNode<TData>",
-      "nodeB": "RowNode<TData>",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "GetGroupRowAggParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "nodes": "RowNode<TData>[]",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "PostSortRowsParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "nodes": "RowNode<TData>[]",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "IsFullWidthRowParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "rowNode": "RowNode<TData>",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "GetLocaleTextParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "key": "string",
-      "defaultValue": "string",
-      "variableValues?": "string[]",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "GetGroupAggFilteringParams": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "node": "RowNode<TData>",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "IHeaderColumn": {
-    "meta": {},
-    "type": {
-      "getUniqueId()": "string",
-      "getActualWidth()": "number",
-      "getMinWidth()": "number | null | undefined",
-      "getLeft()": "number | null",
-      "getOldLeft()": "number | null",
-      "getDefinition()": "AbstractColDef | null",
-      "getColumnGroupShow()": "string | undefined",
-      "getParent()": "IHeaderColumn",
-      "isResizable()": "boolean",
-      "setParent(parent: ColumnGroup | null)": "void",
-      "isEmptyGroup()": "boolean",
-      "isMoving()": "boolean",
-      "getPinned()": "ColumnPinnedType",
-      "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
-      "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void"
-    }
-  },
-  "IProvidedColumn": {
-    "meta": {},
-    "type": {
-      "isVisible()": "boolean",
-      "getColumnGroupShow()": "string | undefined",
-      "getId()": "string",
-      "setOriginalParent(originalParent: ProvidedColumnGroup | null)": "void"
-    }
-  },
-  "SetSelectedParams": {
-    "meta": {},
-    "type": {
-      "newValue": "boolean",
-      "clearSelection?": "boolean",
-      "suppressFinishActions?": "boolean",
-      "rangeSelect?": "boolean",
-      "groupSelectsFiltered?": "boolean"
-    }
-  },
-  "RowNodeEvent": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": { "node": "RowNode<TData>", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
-  },
-  "DataChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "oldData": "TData | undefined",
-      "newData": "TData | undefined",
-      "update": "boolean",
-      "node": "RowNode<TData>",
-      "type": "string"
-    },
-    "docs": { "type": "/** Event identifier */" }
-  },
-  "CellChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
-    "type": {
-      "column": "Column",
-      "newValue": "TData | undefined",
-      "oldValue": "TData | undefined",
-      "node": "RowNode<TData>",
-      "type": "string"
-    },
-    "docs": { "type": "/** Event identifier */" }
-  },
-  "RowHighlightPosition": {
-    "meta": { "isEnum": true },
-    "type": ["Above", "Below"],
-    "docs": [null, null]
-  },
-  "RowPinnedType": {
-    "meta": { "isTypeAlias": true },
-    "type": "'top' | 'bottom' | null | undefined"
-  },
   "RowPosition": {
     "meta": {},
     "type": { "rowIndex": "number", "rowPinned": "RowPinnedType" },
@@ -6693,6 +6123,501 @@
       "aggregateValues(values: any[], aggFuncOrString: string | IAggFunc)": "any"
     }
   },
+  "GetContextMenuItemsParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "defaultItems": "string[] | undefined",
+      "column": "Column | null",
+      "node": "RowNode<TData> | null",
+      "value": "any",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "defaultItems": "/** Names of the items that would be provided by default. */",
+      "column": "/** The column, if a cell was clicked, otherwise null. */",
+      "node": "/** The row node, if a cell was clicked, otherwise null. */",
+      "value": "/** The value, if a cell was clicked, otherwise null.  */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetMainMenuItemsParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "column": "Column",
+      "defaultItems": "string[]",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "column": "/** The column that was clicked */",
+      "defaultItems": "/** List of the items that would be displayed by default */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "PostProcessPopupParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "column?": "Column | null",
+      "rowNode?": "RowNode<TData> | null",
+      "ePopup": "HTMLElement",
+      "type": "string",
+      "eventSource?": "HTMLElement | null",
+      "mouseEvent?": "MouseEvent | Touch | null",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "column?": "/** If popup is for a column, this gives the Column */",
+      "rowNode?": "/** If popup is for a row, this gives the RowNode */",
+      "ePopup": "/** The popup we are showing */",
+      "type": "/** The different types are:\n     *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
+      "eventSource?": "/** If the popup is as a result of a button click (eg menu button),\n     *  this is the component that the user clicked */",
+      "mouseEvent?": "/** If the popup is as a result of a click or touch,\n     *  this is the event - eg user showing context menu */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "SendToClipboardParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "data": "string",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "ProcessDataFromClipboardParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "data": "string[][]",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "data": "/** 2D array of all cells from the clipboard */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetChartToolbarItemsParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "defaultItems?": "ChartMenuOptions[]",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "NavigateToNextHeaderParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "key": "string",
+      "previousHeaderPosition": "HeaderPosition | null",
+      "nextHeaderPosition": "HeaderPosition | null",
+      "headerRowCount": "number",
+      "event": "KeyboardEvent",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "key": "/** The key for the arrow key pressed,\n     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "previousHeaderPosition": "/** The header that currently has focus */",
+      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
+      "headerRowCount": "/** The number of header rows present in the grid */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "TabToNextHeaderParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "backwards": "boolean",
+      "previousHeaderPosition": "HeaderPosition | null",
+      "nextHeaderPosition": "HeaderPosition | null",
+      "headerRowCount": "number",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "backwards": "/** True if the Shift key is also down */",
+      "previousHeaderPosition": "/** The header that currently has focus */",
+      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
+      "headerRowCount": "/** The number of header rows present in the grid */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "TabToNextCellParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "backwards": "boolean",
+      "editing": "boolean",
+      "previousCellPosition": "CellPosition",
+      "nextCellPosition": "CellPosition | null",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "backwards": "/** True if the Shift key is also down */",
+      "editing": "/** True if the current cell is editing\n     * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
+      "previousCellPosition": "/** The cell that currently has focus */",
+      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation.  */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "NavigateToNextCellParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "key": "string",
+      "previousCellPosition": "CellPosition",
+      "nextCellPosition": "CellPosition | null",
+      "event": "KeyboardEvent | null",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "key": "/** The keycode for the arrow key pressed:\n     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "previousCellPosition": "/** The cell that currently has focus */",
+      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "PaginationNumberFormatterParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "value": "number",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsGroupOpenByDefaultParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "rowNode": "RowNode<TData>",
+      "rowGroupColumn": "Column",
+      "level": "number",
+      "field": "string",
+      "key": "string",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "rowNode": "/** The row node being considered. */",
+      "rowGroupColumn": "/** The Column for which this row is grouping. */",
+      "level": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
+      "field": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
+      "key": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetServerSideGroupLevelParamsParams": {
+    "meta": {},
+    "type": {
+      "level": "number",
+      "parentRowNode?": "RowNode",
+      "rowGroupColumns": "Column[]",
+      "pivotColumns": "Column[]",
+      "pivotMode": "boolean",
+      "api": "GridApi<any>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "level": "/** The level of the store. Top level is 0. */",
+      "parentRowNode?": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "rowGroupColumns": "/** Active Row Group Columns, if any. */",
+      "pivotColumns": "/** Active Pivot Columns, if any. */",
+      "pivotMode": "/** true if pivot mode is active. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetServerSideStoreParamsParams": {
+    "meta": {
+      "doc": "/** @deprecated use GetServerSideGroupLevelParamsParams instead */"
+    },
+    "type": {
+      "level": "number",
+      "parentRowNode?": "RowNode",
+      "rowGroupColumns": "Column[]",
+      "pivotColumns": "Column[]",
+      "pivotMode": "boolean",
+      "api": "GridApi<any>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "level": "/** The level of the store. Top level is 0. */",
+      "parentRowNode?": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "rowGroupColumns": "/** Active Row Group Columns, if any. */",
+      "pivotColumns": "/** Active Pivot Columns, if any. */",
+      "pivotMode": "/** true if pivot mode is active. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsServerSideGroupOpenByDefaultParams": {
+    "meta": {},
+    "type": {
+      "data": "any",
+      "rowNode": "RowNode",
+      "api": "GridApi<any>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsApplyServerSideTransactionParams": {
+    "meta": {},
+    "type": {
+      "transaction": "ServerSideTransaction",
+      "parentNode": "RowNode",
+      "storeInfo": "any",
+      "groupLevelInfo": "any",
+      "api": "GridApi<any>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "transaction": "/** The transaction getting applied. */",
+      "parentNode": "/** The parent RowNode, if transaction is applied to a group. */",
+      "storeInfo": "/** @deprecated use groupLevelInfo instead */",
+      "groupLevelInfo": "/** Store info, if any, as passed via the success() callback when loading data. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetRowIdParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "data": "TData",
+      "level": "number",
+      "parentKeys?": "string[]",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "data": "/** The data item provided to the grid for the row in question */",
+      "level": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
+      "parentKeys?": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "ProcessRowParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "eRow": "HTMLElement",
+      "ePinnedLeftRow?": "HTMLElement",
+      "ePinnedRightRow?": "HTMLElement",
+      "rowIndex": "number",
+      "node": "RowNode<TData>",
+      "addRenderedRowListener": "(eventType: string, listener: Function) => void",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "FillOperationParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "event": "MouseEvent",
+      "values": "any[]",
+      "rowNode": "RowNode<TData>",
+      "column": "Column",
+      "initialValues": "any[]",
+      "currentIndex": "number",
+      "currentCellValue": "any",
+      "direction": "'up' | 'down' | 'left' | 'right'",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "event": "/** The mouse event for the fill operation. */",
+      "values": "/** The values that have been processed by the fill operation. */",
+      "rowNode": "/** The RowNode of the current cell being changed. */",
+      "column": "/** The Column of the current cell being changed. */",
+      "initialValues": "/** The values that were present before processing started. */",
+      "currentIndex": "/** The index of the current processed value. */",
+      "currentCellValue": "/** The value of the cell being currently processed by the Fill Operation. */",
+      "direction": "/** The direction of the Fill Operation. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "RowHeightParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "data": "TData | undefined",
+      "node": "RowNode<TData>",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "data": "/** The data associated with this row from rowData. Data is `undefined` for row groups. */",
+      "node": "/** The RowNode of the row in question. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsExternalFilterPresentParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "InitialGroupOrderComparatorParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "nodeA": "RowNode<TData>",
+      "nodeB": "RowNode<TData>",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetGroupRowAggParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "nodes": "RowNode<TData>[]",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "PostSortRowsParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "nodes": "RowNode<TData>[]",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsFullWidthRowParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "rowNode": "RowNode<TData>",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetLocaleTextParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "key": "string",
+      "defaultValue": "string",
+      "variableValues?": "string[]",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetGroupAggFilteringParams": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "node": "RowNode<TData>",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
   "ICellEditor": {
     "meta": {},
     "type": {
@@ -7906,6 +7831,26 @@
       "addEventListener(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions)": "/** Again because Angular uses Zones, we allow adding some events outside of Zone JS so that we do not kick off\n     * the Angular change detection. We do this for some events ONLY, and not all events, just events that get fired\n     * a lot (eg mouse move), but we need to make sure in AG Grid that we do NOT call any grid callbacks while processing\n     * these events, as we will be outside of ZoneJS and hence Angular2 Change Detection won't work. However it's fine\n     * for our code to result in AG Grid events (and Angular application action on these) as these go through\n     * Event Emitter's.\n     *\n     * This was done by Niall and Sean. The problematic events are mouseover, mouseout, mouseenter and mouseleave.\n     */"
     }
   },
+  "IHeaderColumn": {
+    "meta": {},
+    "type": {
+      "getUniqueId()": "string",
+      "getActualWidth()": "number",
+      "getMinWidth()": "number | null | undefined",
+      "getLeft()": "number | null",
+      "getOldLeft()": "number | null",
+      "getDefinition()": "AbstractColDef | null",
+      "getColumnGroupShow()": "string | undefined",
+      "getParent()": "IHeaderColumn",
+      "isResizable()": "boolean",
+      "setParent(parent: ColumnGroup | null)": "void",
+      "isEmptyGroup()": "boolean",
+      "isMoving()": "boolean",
+      "getPinned()": "ColumnPinnedType",
+      "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
+      "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void"
+    }
+  },
   "IImmutableService": {
     "meta": {},
     "type": { "setRowData(data: any[])": "void", "isActive()": "boolean" }
@@ -8116,6 +8061,15 @@
       "init?(params: T)": "/** The init(params) method is called on the component once. */"
     }
   },
+  "IProvidedColumn": {
+    "meta": {},
+    "type": {
+      "isVisible()": "boolean",
+      "getColumnGroupShow()": "string | undefined",
+      "getId()": "string",
+      "setOriginalParent(originalParent: ProvidedColumnGroup | null)": "void"
+    }
+  },
   "IRangeService": {
     "meta": {},
     "type": {
@@ -8323,6 +8277,247 @@
       "isLastRowIndexKnown()": "/** It tells us if this row model knows about the last row that it can produce. This is used by the\n     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is\n     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.\n     */",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "/** Used by CSRM only - is makes sure there are now estimated row heights within the range. */",
       "start()": "/** Gets called after grid is initialised. What happens depends on row model. Client Side will take rowData\n     * from gridOptions, the other row models will start calling their datasources. */"
+    }
+  },
+  "RowNodeEventType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'rowSelected' | 'selectableChanged' | 'displayedChanged' | 'dataChanged' | 'cellChanged' | 'masterChanged' | 'heightChanged' | 'topChanged' | 'groupChanged' | 'allChildrenCountChanged' | 'firstChildChanged' | 'lastChildChanged' | 'childIndexChanged' | 'rowIndexChanged' | 'expandedChanged' | 'hasChildrenChanged' | 'uiLevelChanged' | 'rowHighlightChanged' | 'mouseEnter' | 'mouseLeave' | 'draggingChanged'"
+  },
+  "SetSelectedParams": {
+    "meta": {},
+    "type": {
+      "newValue": "boolean",
+      "clearSelection?": "boolean",
+      "suppressFinishActions?": "boolean",
+      "rangeSelect?": "boolean",
+      "groupSelectsFiltered?": "boolean"
+    }
+  },
+  "RowNodeEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": { "type": "RowNodeEventType", "node": "IRowNode<TData>" },
+    "docs": { "type": "/** Event identifier */" }
+  },
+  "DataChangedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "oldData": "TData | undefined",
+      "newData": "TData | undefined",
+      "update": "boolean",
+      "type": "RowNodeEventType",
+      "node": "IRowNode<TData>"
+    },
+    "docs": { "type": "/** Event identifier */" }
+  },
+  "CellChangedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "column": "Column",
+      "newValue": "TData | undefined",
+      "oldValue": "TData | undefined",
+      "type": "RowNodeEventType",
+      "node": "IRowNode<TData>"
+    },
+    "docs": { "type": "/** Event identifier */" }
+  },
+  "RowHighlightPosition": {
+    "meta": { "isEnum": true },
+    "type": ["Above", "Below"],
+    "docs": [null, null]
+  },
+  "RowPinnedType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'top' | 'bottom' | null | undefined"
+  },
+  "BaseRowNode": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "id": "string | undefined",
+      "data": "TData | undefined",
+      "displayed": "boolean",
+      "rowPinned": "RowPinnedType",
+      "selectable": "boolean",
+      "rowHeight": "number | null | undefined",
+      "rowTop": "number | null",
+      "group": "boolean | undefined",
+      "firstChild": "boolean",
+      "lastChild": "boolean",
+      "childIndex": "number",
+      "level": "number",
+      "uiLevel": "number",
+      "parent": "IRowNode<TData> | null",
+      "stub": "boolean",
+      "rowIndex": "number | null",
+      "quickFilterAggregateText": "string | null",
+      "master": "boolean",
+      "detail": "boolean",
+      "detailNode": "IRowNode<TData>",
+      "detailGridInfo": "DetailGridInfo | null"
+    },
+    "docs": {
+      "id": "/** Unique ID for the node. Either provided by the application, or generated by the grid if not. */",
+      "data": "/** The data as provided by the application.\n     * Can be `undefined` when using row grouping or during grid initialisation.\n     */",
+      "displayed": "/** This will be `true` if it has a rowIndex assigned, otherwise `false`.\n     */",
+      "rowPinned": "/** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */",
+      "selectable": "/** `Is this row selectable. */",
+      "rowHeight": "/** The height, in pixels, of this row */",
+      "rowTop": "/** The row top position in pixels. */",
+      "group": "/** `true` if this node is a group node (ie has children) */",
+      "firstChild": "/** `true` if this is the first child in this group. Changes when data is sorted. */",
+      "lastChild": "/** `true` if this is the last child in this group. Changes when data is sorted. */",
+      "childIndex": "/** Index of this row with respect to its parent when grouping. Changes when data is sorted. */",
+      "level": "/** How many levels this node is from the top when grouping. */",
+      "uiLevel": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`)*/",
+      "parent": "/** The parent node to this node, or empty if top level */",
+      "stub": "/** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */",
+      "rowIndex": "/** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */",
+      "quickFilterAggregateText": "/** If using quick filter, stores a string representation of the row for searching against. */",
+      "master": "/** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */",
+      "detail": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/",
+      "detailNode": "/** If this row is a master row that was expanded, this points to the associated detail row. */",
+      "detailGridInfo": "/** If master detail, this contains details about the detail grid */"
+    }
+  },
+  "GroupRowNode": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "field": "string | null",
+      "key": "string | null",
+      "groupData": "{ [key: string]: any | null; } | null",
+      "aggData": "any",
+      "rowGroupColumn": "Column | null",
+      "rowGroupIndex": "number | null",
+      "expanded": "boolean",
+      "leafGroup": "boolean",
+      "allLeafChildren": "IRowNode<TData>[]",
+      "allChildrenCount": "number | null",
+      "childrenAfterGroup": "IRowNode<TData>[] | null",
+      "childrenAfterSort": "IRowNode<TData>[] | null",
+      "childrenAfterFilter": "IRowNode<TData>[] | null",
+      "childrenAfterAggFilter": "IRowNode<TData>[] | null",
+      "footer": "boolean",
+      "sibling": "IRowNode<TData>"
+    },
+    "docs": {
+      "field": "/** The field we are grouping on from our row data. */",
+      "key": "/** The key value for this group. */",
+      "groupData": "/** If using row grouping, contains the group values for this group. */",
+      "aggData": "/** If using row grouping and aggregation, contains the aggregation data. */",
+      "rowGroupColumn": "/** The row group column used for this group */",
+      "rowGroupIndex": "/** If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.\n     * This will always be the same as the level, unless we are collapsing groups, i.e. `groupRemoveSingleChildren=true`.\n    */",
+      "expanded": "/** `true` if group is expanded, otherwise `false`. */",
+      "leafGroup": "/** `true` if this node is a group and the group is the bottom level in the tree. */",
+      "allLeafChildren": "/** All lowest level nodes beneath this node, no groups. */",
+      "allChildrenCount": "/** Number of children and grand children. */",
+      "childrenAfterGroup": "/** Children of this group. If multi levels of grouping, shows only immediate children. */",
+      "childrenAfterSort": "/** Sorted children of this group. */",
+      "childrenAfterFilter": "/** Filtered children of this group. */",
+      "childrenAfterAggFilter": "/** Aggregated and re-filtered children of this group. */",
+      "footer": "/** `true` if row is a footer. Footers have `group = true` and `footer = true`. */",
+      "sibling": "/** If using footers, reference to the footer node for this group. */"
+    }
+  },
+  "IRowNode": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean)": "void",
+      "isSelected()": "boolean | undefined",
+      "setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent)": "void",
+      "addEventListener(eventType: RowNodeEventType, listener: Function)": "void",
+      "removeEventListener(eventType: RowNodeEventType, listener: Function)": "void",
+      "resetQuickFilterAggregateText()": "void",
+      "depthFirstSearch(callback: (rowNode: IRowNode<TData>) => void)": "void",
+      "setRowHeight(rowHeight: number | undefined | null, estimated?: boolean)": "void",
+      "setData(data: TData)": "void",
+      "setDataValue(colKey: string | Column, newValue: any, eventSource?: string)": "boolean",
+      "getRoute()": "string[] | undefined",
+      "id": "string | undefined",
+      "data": "TData | undefined",
+      "displayed": "boolean",
+      "rowPinned": "RowPinnedType",
+      "selectable": "boolean",
+      "rowHeight": "number | null | undefined",
+      "rowTop": "number | null",
+      "group": "boolean | undefined",
+      "firstChild": "boolean",
+      "lastChild": "boolean",
+      "childIndex": "number",
+      "level": "number",
+      "uiLevel": "number",
+      "parent": "IRowNode<TData> | null",
+      "stub": "boolean",
+      "rowIndex": "number | null",
+      "quickFilterAggregateText": "string | null",
+      "master": "boolean",
+      "detail": "boolean",
+      "detailNode": "IRowNode<TData>",
+      "detailGridInfo": "DetailGridInfo | null",
+      "field": "string | null",
+      "key": "string | null",
+      "groupData": "{ [key: string]: any | null; } | null",
+      "aggData": "any",
+      "rowGroupColumn": "Column | null",
+      "rowGroupIndex": "number | null",
+      "expanded": "boolean",
+      "leafGroup": "boolean",
+      "allLeafChildren": "IRowNode<TData>[]",
+      "allChildrenCount": "number | null",
+      "childrenAfterGroup": "IRowNode<TData>[] | null",
+      "childrenAfterSort": "IRowNode<TData>[] | null",
+      "childrenAfterFilter": "IRowNode<TData>[] | null",
+      "childrenAfterAggFilter": "IRowNode<TData>[] | null",
+      "footer": "boolean",
+      "sibling": "IRowNode<TData>"
+    },
+    "docs": {
+      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean)": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     */",
+      "isSelected()": "/** Returns:\n     * - `true` if node is selected,\n     * - `false` if the node isn't selected\n     * - `undefined` if it's partially selected (group where not all children are selected). \n     */",
+      "setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent)": "/** Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.\n     */",
+      "addEventListener(eventType: RowNodeEventType, listener: Function)": "/** Add an event listener. */",
+      "removeEventListener(eventType: RowNodeEventType, listener: Function)": "/** Remove event listener. */",
+      "resetQuickFilterAggregateText()": "/** The first time `quickFilter` runs, the grid creates a one-off string representation of the row.\n     * This string is then used for the quick filter instead of hitting each column separately.\n     * When you edit, using grid editing, this string gets cleared down.\n     * However if you edit without using grid editing, you will need to clear this string down for the row to be updated with the new values.\n     * Otherwise new values will not work with the `quickFilter`.\n     */",
+      "depthFirstSearch(callback: (rowNode: IRowNode<TData>) => void)": "/** Perform a depth-first search of this node and its children. */",
+      "setRowHeight(rowHeight: number | undefined | null, estimated?: boolean)": "/** Sets the row height.\n     * Call if you want to change the height initially assigned to the row.\n     * After calling, you must call `api.onRowHeightChanged()` so the grid knows it needs to work out the placement of the rows.\n     * @param rowHeight - new height of the row\n     * @param estimated - is this an estimated height. Default: `false`\n     */",
+      "setData(data: TData)": "/** Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */",
+      "setDataValue(colKey: string | Column, newValue: any, eventSource?: string)": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     *\n     * @param colKey The column where the value should be updated\n     * @param newValue The new value\n     * @param eventSource The source of the event, optional.\n     * @returns `true` if the value was changed, otherwise `false`.\n     */",
+      "getRoute()": "/** Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.\n     * If the Row Node is not a group, it returns `undefined`.\n     */",
+      "id": "/** Unique ID for the node. Either provided by the application, or generated by the grid if not. */",
+      "data": "/** The data as provided by the application.\n     * Can be `undefined` when using row grouping or during grid initialisation.\n     */",
+      "displayed": "/** This will be `true` if it has a rowIndex assigned, otherwise `false`.\n     */",
+      "rowPinned": "/** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */",
+      "selectable": "/** `Is this row selectable. */",
+      "rowHeight": "/** The height, in pixels, of this row */",
+      "rowTop": "/** The row top position in pixels. */",
+      "group": "/** `true` if this node is a group node (ie has children) */",
+      "firstChild": "/** `true` if this is the first child in this group. Changes when data is sorted. */",
+      "lastChild": "/** `true` if this is the last child in this group. Changes when data is sorted. */",
+      "childIndex": "/** Index of this row with respect to its parent when grouping. Changes when data is sorted. */",
+      "level": "/** How many levels this node is from the top when grouping. */",
+      "uiLevel": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`)*/",
+      "parent": "/** The parent node to this node, or empty if top level */",
+      "stub": "/** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */",
+      "rowIndex": "/** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */",
+      "quickFilterAggregateText": "/** If using quick filter, stores a string representation of the row for searching against. */",
+      "master": "/** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */",
+      "detail": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/",
+      "detailNode": "/** If this row is a master row that was expanded, this points to the associated detail row. */",
+      "detailGridInfo": "/** If master detail, this contains details about the detail grid */",
+      "field": "/** The field we are grouping on from our row data. */",
+      "key": "/** The key value for this group. */",
+      "groupData": "/** If using row grouping, contains the group values for this group. */",
+      "aggData": "/** If using row grouping and aggregation, contains the aggregation data. */",
+      "rowGroupColumn": "/** The row group column used for this group */",
+      "rowGroupIndex": "/** If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.\n     * This will always be the same as the level, unless we are collapsing groups, i.e. `groupRemoveSingleChildren=true`.\n    */",
+      "expanded": "/** `true` if group is expanded, otherwise `false`. */",
+      "leafGroup": "/** `true` if this node is a group and the group is the bottom level in the tree. */",
+      "allLeafChildren": "/** All lowest level nodes beneath this node, no groups. */",
+      "allChildrenCount": "/** Number of children and grand children. */",
+      "childrenAfterGroup": "/** Children of this group. If multi levels of grouping, shows only immediate children. */",
+      "childrenAfterSort": "/** Sorted children of this group. */",
+      "childrenAfterFilter": "/** Filtered children of this group. */",
+      "childrenAfterAggFilter": "/** Aggregated and re-filtered children of this group. */",
+      "footer": "/** `true` if row is a footer. Footers have `group = true` and `footer = true`. */",
+      "sibling": "/** If using footers, reference to the footer node for this group. */"
     }
   },
   "StageExecuteParams": {

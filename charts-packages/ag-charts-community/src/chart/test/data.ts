@@ -19,7 +19,7 @@ export const DATA_REVENUE = (() => {
     const revenueData = [];
     // Two year's worth of monthly data
     for (let idx = 1000; idx > 0; idx--) {
-        const today = new Date();
+        const today = new Date(Date.UTC(2022, 12, 22));
         if (idx % 30 === 0) {
             today.setDate(today.getDate() - idx);
             revenueData.push({

@@ -1,0 +1,13 @@
+#myGrid {
+  flex: 1 1 auto;
+  overflow: hidden;
+  height: 40%;
+}
+
+#myChart {
+  flex: 1 1 auto;
+  overflow: hidden;
+  height: 60%;
+  margin-top: 0.5rem;
+  border: 1px solid var(--ag-border-color);
+}

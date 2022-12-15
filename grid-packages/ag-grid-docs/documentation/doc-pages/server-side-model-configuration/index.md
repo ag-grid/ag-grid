@@ -36,7 +36,7 @@ It may be desirable to scroll through the entire dataset without the need for in
 
 The example below shows how debouncing block loading can be achieved. Note the following:
 
-- The response from the server sets the `rowCount` property so that the vertical scrollbars bounds are set such that the entire dataset can be scrolled through. In other words, Infinite Scrolling is turned off, however rows are still loaded in blocks.
+- The response from the server sets the `rowCount` property so that the vertical scrollbars bounds are set such that the entire dataset can be scrolled through.
 
 - `blockLoadDebounceMillis = 1000` - loading of blocks is delayed by `1000ms`. This allows for skipping over blocks when scrolling to advanced positions.
 

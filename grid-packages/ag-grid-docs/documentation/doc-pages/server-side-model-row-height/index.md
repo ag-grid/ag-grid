@@ -5,7 +5,6 @@ enterprise: true
 
 Learn how to set Row Height when using the Server-Side Row Model.
 
-
 ## Dynamic Row Height
 
 To enable [Dynamic Row Height](/row-height/) when using the Server-Side Row Model you need to provide an implementation for the `getRowHeight` Grid Options property. This is demonstrated in the example below:
@@ -15,8 +14,7 @@ To enable [Dynamic Row Height](/row-height/) when using the Server-Side Row Mode
 <grid-example title='Dynamic Row Height Example' name='dynamic-row-height' type='generated' options='{ "enterprise": true, "exampleHeight": 630, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 [[note]]
-| If using Infinite Scroll, setting `maxBlocksInCache` will stop dynamic row heights from working. This is a
-| restriction in the design. If you are using dynamic row height, ensure `maxBlocksInCache` is not set.
+| Ensure `maxBlocksInCache` is not set when using dynamic row height.
 
 ## Auto Row Height
 
@@ -32,8 +30,7 @@ details on these properties.
 <grid-example title='Auto Row Height Example' name='auto-row-height' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 [[note]]
-| If using the Infinite Scroll, setting `maxBlocksInCache` will stop auto row height from working. This is a
-| restriction in the design. If you are using dynamic row height, ensure `maxBlocksInCache` is not set.
+| Ensure `maxBlocksInCache` is not set when using auto row height.
 
 ## Next Up
 

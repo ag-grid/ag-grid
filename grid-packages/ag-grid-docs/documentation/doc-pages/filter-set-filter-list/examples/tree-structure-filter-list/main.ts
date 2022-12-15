@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
         comparator: (a: Date, b: Date) => (a > b ? 1 : (a < b ? -1 : 0)),
         keyCreator: (params: KeyCreatorParams) => params.value.toString(),
         treeList: true,
-        treeListFormatter,
+        treeListFormatter: treeListFormatter,
       }
     },
     {

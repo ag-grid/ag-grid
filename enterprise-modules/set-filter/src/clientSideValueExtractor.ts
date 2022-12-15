@@ -59,6 +59,9 @@ export class ClientSideValuesExtractor<V> {
                 value.forEach(x => {
                     addValue(this.createKey(x, node), x);
                 });
+                if (value.length === 0) {
+                    addValue(null, null);
+                }
             } else {
                 addValue(this.createKey(value, node), value);
             }
@@ -74,6 +77,9 @@ export class ClientSideValuesExtractor<V> {
                 const processedPart = _.toStringOrNull(_.makeNull(part));
                 addValue(processedPart, processedPart as any);
             });
+            if (key.length === 0) {
+                addValue(null, null);
+            }
         } else {
             addValue(key, key as any);
         }

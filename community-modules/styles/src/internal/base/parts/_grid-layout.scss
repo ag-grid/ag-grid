@@ -69,7 +69,7 @@
         height: var(--ag-row-height);
         background-color: var(--ag-background-color);
         color: var(--ag-data-color);
-        border-bottom: var(--ag-borders-row) var(--ag-row-border-color);
+        border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
     }
 
     .ag-row-highlight-above::after, .ag-row-highlight-below::after {
@@ -164,8 +164,8 @@
 
     .ag-cell, .ag-full-width-row .ag-cell-wrapper.ag-row-group {
         // assign internal variables to simplify the `line-height` value
-        --ag-internal-calculated-line-height: var(--ag-line-height, calc(var(--ag-row-height) - 2px));
-        --ag-internal-padded-row-height: calc(var(--ag-row-height) - 2px);
+        --ag-internal-calculated-line-height: var(--ag-line-height, calc(var(--ag-row-height) - var(--ag-row-border-width)));
+        --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
         // draw a transparent border so that the cell size doesn't change when we add a range border
         border: 1px solid transparent;
         // adjust for transparent border

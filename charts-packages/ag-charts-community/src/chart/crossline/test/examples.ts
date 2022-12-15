@@ -108,27 +108,27 @@ const createChartOptions = (rangeConfig: CrossLinesRangeConfig): Record<string, 
 
 const crossLinesOptions: CrossLinesRangeConfig = {
     VALID_RANGE: {
-        vertical: [new Date(2019, 4, 1), new Date(2019, 8, 1)],
+        vertical: [new Date(Date.UTC(2019, 4, 1)), new Date(Date.UTC(2019, 8, 1))],
         horizontal: [128, 134],
     },
     INVALID_RANGE: {
-        vertical: [new Date(2019, 4, 1), undefined],
+        vertical: [new Date(Date.UTC(2019, 4, 1)), undefined],
         horizontal: [128, undefined],
     },
     RANGE_OUTSIDE_DOMAIN_MAX: {
-        vertical: [new Date(2019, 4, 1), new Date(2022, 8, 1)],
+        vertical: [new Date(Date.UTC(2019, 4, 1)), new Date(Date.UTC(2022, 8, 1))],
         horizontal: [134, 160],
     },
     RANGE_OUTSIDE_DOMAIN_MIN: {
-        vertical: [new Date(2017, 8, 1), new Date(2019, 4, 1)],
+        vertical: [new Date(Date.UTC(2017, 8, 1)), new Date(Date.UTC(2019, 4, 1))],
         horizontal: [100, 134],
     },
     RANGE_OUTSIDE_DOMAIN_MIN_MAX: {
-        vertical: [new Date(2017, 8, 1), new Date(2022, 4, 1)],
+        vertical: [new Date(Date.UTC(2017, 8, 1)), new Date(Date.UTC(2022, 4, 1))],
         horizontal: [100, 160],
     },
     RANGE_OUTSIDE_DOMAIN: {
-        vertical: [new Date(2022, 4, 1), new Date(2022, 8, 1)],
+        vertical: [new Date(Date.UTC(2022, 4, 1)), new Date(Date.UTC(2022, 8, 1))],
         horizontal: [90, 110],
     },
 };

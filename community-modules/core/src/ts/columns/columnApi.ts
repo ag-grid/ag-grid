@@ -1,5 +1,5 @@
 import { ColDef, ColGroupDef, IAggFunc } from "../entities/colDef";
-import { IHeaderColumn } from "../entities/iHeaderColumn";
+import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColumnModel, ColumnState, ApplyColumnStateParams } from "./columnModel";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";

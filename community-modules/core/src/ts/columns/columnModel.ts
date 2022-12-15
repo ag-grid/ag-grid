@@ -1,12 +1,12 @@
 import { ColumnGroup } from '../entities/columnGroup';
 import { Column, ColumnPinnedType } from '../entities/column';
 import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams } from '../entities/colDef';
-import { IHeaderColumn } from '../entities/iHeaderColumn';
+import { IHeaderColumn } from '../interfaces/iHeaderColumn';
 import { ExpressionService } from '../valueService/expressionService';
 import { ColumnFactory } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
 import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
-import { IProvidedColumn } from '../entities/iProvidedColumn';
+import { IProvidedColumn } from '../interfaces/iProvidedColumn';
 import { ColumnUtils } from './columnUtils';
 import { Logger, LoggerFactory } from '../logger';
 import {
