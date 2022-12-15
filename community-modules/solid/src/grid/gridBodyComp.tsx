@@ -104,10 +104,14 @@ const GridBodyComp = ()=> {
         classesList('ag-root','ag-unselectable', getMovingCss(), getLayoutClass())
     );
     const getBodyClasses = createMemo(() =>
-        classesList('ag-body-viewport', getLayoutClass())
+    {
+        const res = classesList('ag-body', getLayoutClass())
+        console.log('classes = ', res);
+        return res;
+    }
     );
     const getBodyClipperClasses = createMemo(() =>
-        classesList('ag-body-viewport', getLayoutClass())
+        classesList('ag-body-clipper', getLayoutClass())
     );
     const getBodyViewportClasses = createMemo(() =>
         classesList('ag-body-viewport', getRowAnimationClass(), getLayoutClass(), getForceVerticalScrollClass(), getCellSelectableCss())
