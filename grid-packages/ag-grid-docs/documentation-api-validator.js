@@ -84,7 +84,6 @@ validateDocFile('ColumnApi', './documentation/doc-pages/column-api/column-api.AU
 // So many missing will need to get clarification on this.
 // TODO 
 //   - Grid Api,
-//   - Row Object,
 //   - Column Object
 //validateDocFile('GridApi', './documentation/doc-pages/grid-api/grid-api.AUTO.json', ['./documentation/doc-pages/grid-api/api.json']);
 //validateDocFile('Column', './documentation/doc-pages/column-object/column.AUTO.json', ['./documentation/doc-pages/column-object/reference.json']);
