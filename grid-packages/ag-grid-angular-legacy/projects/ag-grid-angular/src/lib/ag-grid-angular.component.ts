@@ -92,6 +92,7 @@ import {
     IAggFunc,
     IDatasource,
     IRowDragItem,
+    IRowNode,
     IServerSideDatasource,
     IViewportDatasource,
     InitialGroupOrderComparatorParams,
@@ -135,7 +136,6 @@ import {
     RowGroupingDisplayType,
     RowHeightParams,
     RowModelType,
-    RowNode,
     RowSelectedEvent,
     RowStyle,
     RowValueChangedEvent,
@@ -875,7 +875,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Grid calls this method to know if an external filter is present.     */
     @Input() public isExternalFilterPresent: ((params: IsExternalFilterPresentParams<TData>) => boolean) | undefined = undefined;
     /** Should return `true` if external filter passes, otherwise `false`.     */
-    @Input() public doesExternalFilterPass: ((node: RowNode<TData>) => boolean) | undefined = undefined;
+    @Input() public doesExternalFilterPass: ((node: IRowNode<TData>) => boolean) | undefined = undefined;
     /** Callback to be used to customise the chart toolbar items.     */
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.     */
@@ -897,7 +897,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
     @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams<TData>) => string) | undefined = undefined;
     /** @deprecated v27.2 - Use `getGroupRowAgg` instead.     */
-    @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
+    @Input() public groupRowAggNodes: ((nodes: IRowNode[]) => any) | undefined = undefined;
     /** Callback to use when you need access to more then the current column for aggregation.     */
     @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams<TData>) => any) | undefined = undefined;
     /** (Client-side Row Model only) Allows groups to be open by default.     */
@@ -905,7 +905,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Allows default sorting of groups.     */
     @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams<TData>) => number) | undefined = undefined;
     /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead     */
-    @Input() public defaultGroupOrderComparator: ((nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number) | undefined = undefined;
+    @Input() public defaultGroupOrderComparator: ((nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number) | undefined = undefined;
     /** @deprecated v28 - Use `processPivotResultColDef` instead     */
     @Input() public processSecondaryColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
     /** @deprecated v28 - Use `processPivotResultColGroupDef` instead     */
@@ -933,7 +933,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
          * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
          */
-    @Input() public getBusinessKeyForNode: ((node: RowNode<TData>) => string) | undefined = undefined;
+    @Input() public getBusinessKeyForNode: ((node: IRowNode<TData>) => string) | undefined = undefined;
     /** @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
          * Allows you to set the ID for a particular row node based on the data.     */
     @Input() public getRowNodeId: GetRowNodeIdFunc<TData> | undefined = undefined;
@@ -950,7 +950,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.     */
     @Input() public fillOperation: ((params: FillOperationParams<TData>) => any) | undefined = undefined;
     /** @deprecated v27.2 Use `postSortRows` instead     */
-    @Input() public postSort: ((nodes: RowNode<TData>[]) => void) | undefined = undefined;
+    @Input() public postSort: ((nodes: IRowNode<TData>[]) => void) | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.     */
     @Input() public postSortRows: ((params: PostSortRowsParams<TData>) => void) | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.     */
@@ -960,7 +960,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
     @Input() public getRowHeight: ((params: RowHeightParams<TData>) => number | undefined | null) | undefined = undefined;
     /** @deprecated v27.2 Use `isFullWidthRow` instead.     */
-    @Input() public isFullWidthCell: ((rowNode: RowNode<TData>) => boolean) | undefined = undefined;
+    @Input() public isFullWidthCell: ((rowNode: IRowNode<TData>) => boolean) | undefined = undefined;
     /** Tells the grid if this row should be rendered as full width.     */
     @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
 

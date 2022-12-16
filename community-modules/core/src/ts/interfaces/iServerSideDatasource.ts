@@ -1,11 +1,11 @@
 // we pass a VO of the column and not the column itself,
 // so the data is read to be be converted to JSON and thrown
 // over the wire
-import { RowNode } from "../entities/rowNode";
 import { ColumnVO } from "./iColumnVO";
 import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
 import { SortModelItem } from "../sortController";
 import { AgGridCommon } from "./iCommon";
+import { IRowNode } from "./iRowNode";
 
 export interface IServerSideGetRowsRequest {
     /** First row requested or undefined for all rows. */
@@ -38,7 +38,7 @@ export interface IServerSideGetRowsParams<TData = any> extends AgGridCommon<TDat
      * The parent row node. The RootNode (level -1) if request is top level.
      * This is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods).
      */
-    parentNode: RowNode;
+    parentNode: IRowNode;
 
     /**
      * @deprecated Use `success` method instead and return result as a `LoadSuccessParams` object.

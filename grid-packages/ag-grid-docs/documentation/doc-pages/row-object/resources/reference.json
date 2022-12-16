@@ -10,6 +10,9 @@
         "data": {},
         "displayed": {},
         "rowPinned": {},
+        "selectable": {},
+        "master": {},
+        "detail": {},
         "rowHeight": {},
         "rowTop": {},
         "group": {},
@@ -21,6 +24,7 @@
         "uiLevel": {},
         "rowIndex": {},
         "stub": {},
+        "failedLoad": {},
         "quickFilterAggregateText": {}
     },
     "groupNodeAttributes": {

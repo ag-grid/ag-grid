@@ -1,4 +1,4 @@
-import { GetRowIdParams, Grid, GridOptions, ICellRendererComp, ICellRendererParams, RowNode } from '@ag-grid-community/core';
+import { GetRowIdParams, Grid, GridOptions, ICellRendererComp, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 declare var window: any
@@ -111,7 +111,7 @@ function removeSelected() {
   gridOptions.api!.applyTransaction({ remove: getRowsToRemove(selectedNode) })
 }
 
-function getRowsToRemove(node: RowNode) {
+function getRowsToRemove(node: IRowNode) {
   var res: any[] = []
   const children = node.childrenAfterGroup || [];
   for (var i = 0; i < children.length; i++) {
@@ -142,7 +142,7 @@ function moveSelectedNodeToTarget(targetRowId: string) {
   gridOptions.api!.applyTransaction({ update: rowsToUpdate })
 }
 
-function isSelectionParentOfTarget(selectedNode: RowNode, targetNode: RowNode) {
+function isSelectionParentOfTarget(selectedNode: IRowNode, targetNode: IRowNode) {
   var children = selectedNode.childrenAfterGroup || [];
   for (var i = 0; i < children.length; i++) {
     if (targetNode && children[i].key === targetNode.key) return true
@@ -151,7 +151,7 @@ function isSelectionParentOfTarget(selectedNode: RowNode, targetNode: RowNode) {
   return false
 }
 
-function getRowsToUpdate(node: RowNode, parentPath: string[]) {
+function getRowsToUpdate(node: IRowNode, parentPath: string[]) {
   var res: any[] = []
 
   var newPath = parentPath.concat([node.key!])

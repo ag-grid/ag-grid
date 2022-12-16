@@ -12,7 +12,8 @@ import {
     ValueCache,
     AsyncTransactionsFlushed,
     RowRenderer,
-    WithoutGridCommon
+    WithoutGridCommon,
+    RowNode
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "./serverSideRowModel";
 
@@ -138,7 +139,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
                 // if the rowIndex isn't calculated first the binarySearchForDisplayIndex will not be able to find the required rows
                 setTimeout(() => {
                     // refresh the full width rows
-                    this.rowRenderer.refreshFullWidthRows(res!.update);
+                    this.rowRenderer.refreshFullWidthRows(res!.update as RowNode[]);
                 }, 0);
             }
 

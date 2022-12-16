@@ -145,7 +145,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private getRowNodes(draggingEvent: DraggingEvent): RowNode[] {
         if (!this.isFromThisGrid(draggingEvent)) {
-            return draggingEvent.dragItem.rowNodes || [];
+            return (draggingEvent.dragItem.rowNodes || []) as RowNode[];
         }
 
         const isRowDragMultiRow = this.gridOptionsService.is('rowDragMultiRow');
@@ -157,7 +157,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         );
 
-        const currentNode = draggingEvent.dragItem.rowNode!;
+        const currentNode = draggingEvent.dragItem.rowNode! as RowNode;
 
         if (isRowDragMultiRow && selectedNodes.indexOf(currentNode) !== -1) {
             this.isMultiRowDrag = true;
@@ -221,7 +221,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
         const isFromThisGrid = this.isFromThisGrid(draggingEvent);
         const managedDrag = this.gridOptionsService.is('rowDragManaged');
-        const rowNodes = draggingEvent.dragItem.rowNodes!;
+        const rowNodes = draggingEvent.dragItem.rowNodes! as RowNode[];
 
         if (managedDrag && this.shouldPreventRowMove()) {
             return;
@@ -244,7 +244,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
         const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === RowHighlightPosition.Below;
         const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
-        const rowNodes = draggingEvent.dragItem.rowNodes;
+        const rowNodes = draggingEvent.dragItem.rowNodes as RowNode[];
 
         let increment = isBelow ? 1 : 0;
 

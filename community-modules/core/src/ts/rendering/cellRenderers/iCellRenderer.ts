@@ -1,7 +1,7 @@
 import { ColDef } from "../../entities/colDef";
 import { Column } from "../../entities/column";
-import { RowNode } from "../../entities/rowNode";
 import { AgGridCommon } from "../../interfaces/iCommon";
+import { IRowNode } from "../../interfaces/iRowNode";
 import { IComponent } from "../../interfaces/iComponent";
 
 export interface ICellRendererParams<TData = any, TValue = any> extends AgGridCommon<TData> {
@@ -16,7 +16,7 @@ export interface ICellRendererParams<TData = any, TValue = any> extends AgGridCo
     /** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */
     data: TData | undefined;
     /** The row node. */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
     /** The current index of the row (this changes after filter and sort). */
     rowIndex: number;
     /** The cell's column definition. */

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, RowNode } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IRowNode } from '@ag-grid-community/core'
 
 var dateFilterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
@@ -52,7 +52,7 @@ function isExternalFilterPresent(): boolean {
   return ageType !== 'everyone'
 }
 
-function doesExternalFilterPass(node: RowNode<IOlympicData>): boolean {
+function doesExternalFilterPass(node: IRowNode<IOlympicData>): boolean {
   if (node.data) {
     switch (ageType) {
       case 'below25':

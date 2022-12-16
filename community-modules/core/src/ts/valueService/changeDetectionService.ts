@@ -37,7 +37,7 @@ export class ChangeDetectionService extends BeanStub {
         // into one change detection).
         if (event.source === SOURCE_PASTE) { return; }
 
-        this.doChangeDetection(event.node, event.column);
+        this.doChangeDetection(event.node as RowNode, event.column);
     }
 
     private doChangeDetection(rowNode: RowNode, column: Column): void {

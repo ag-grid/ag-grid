@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {ICellRendererParams, RowNode} from "@ag-grid-community/core";
+import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
@@ -35,7 +35,7 @@ export class CustomGroupCellRenderer implements ICellRendererAngularComp {
         this.isGroup = !!params.node.group;
         this.rotation = params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)';
 
-        this.params.node.addEventListener(RowNode.EVENT_EXPANDED_CHANGED, this.onExpand);
+        this.params.node.addEventListener('expandedChanged', this.onExpand);
     }
 
     refresh(params: ICellRendererParams) {
@@ -43,7 +43,7 @@ export class CustomGroupCellRenderer implements ICellRendererAngularComp {
     }
 
     destroy() {
-        this.params.node.removeEventListener(RowNode.EVENT_EXPANDED_CHANGED, this.onExpand);
+        this.params.node.removeEventListener('expandedChanged', this.onExpand);
     }
 
     onClick() {

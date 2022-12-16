@@ -154,13 +154,13 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
             if (_.existsAndNotEmpty(tran.remove)) {
-                this.removeNodes(tran.remove, details, batchRemover);
+                this.removeNodes(tran.remove as RowNode[], details, batchRemover);
             }
             if (_.existsAndNotEmpty(tran.update)) {
-                this.moveNodesInWrongPath(tran.update, details, batchRemover);
+                this.moveNodesInWrongPath(tran.update as RowNode[], details, batchRemover);
             }
             if (_.existsAndNotEmpty(tran.add)) {
-                this.insertNodes(tran.add, details, false);
+                this.insertNodes(tran.add as RowNode[], details, false);
             }
             // must flush here, and not allow another transaction to be applied,
             // as each transaction must finish leaving the data in a consistent state.

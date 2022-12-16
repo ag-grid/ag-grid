@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
-import { GroupCellRendererParams, RowNode } from '@ag-grid-community/core';
+import { GroupCellRendererParams, IRowNode } from '@ag-grid-community/core';
 
 interface GroupRowParams extends GroupCellRendererParams {
     flagCodes: Record<string, string>;
@@ -54,7 +54,7 @@ export class GroupRowInnerRenderer implements ICellRendererAngularComp {
 
     public flagCodeImg!: string;
     public flagCode!: any;
-    public node!: RowNode;
+    public node!: IRowNode;
 
     agInit(params: GroupRowParams): void {
         this.node = params.node;

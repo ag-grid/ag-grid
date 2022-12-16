@@ -2,8 +2,8 @@ import { KeyCode } from '../constants/keyCode';
 import { SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams } from '../entities/colDef';
 import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
-import { RowNode } from '../entities/rowNode';
 import { GridOptionsService } from '../gridOptionsService';
+import { IRowNode } from '../interfaces/iRowNode';
 import { isBrowserEdge, isMacOsUserAgent } from './browser';
 import { exists } from './generic';
 
@@ -37,7 +37,7 @@ export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
  * Allows user to tell the grid to skip specific keyboard events
  * @param {GridOptionsService} gridOptionsService
  * @param {KeyboardEvent} keyboardEvent
- * @param {RowNode} rowNode
+ * @param {IRowNode} rowNode
  * @param {Column} column
  * @param {boolean} editing
  * @returns {boolean}
@@ -45,7 +45,7 @@ export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
 export function isUserSuppressingKeyboardEvent(
     gridOptionsService: GridOptionsService,
     keyboardEvent: KeyboardEvent,
-    rowNode: RowNode,
+    rowNode: IRowNode,
     column: Column,
     editing: boolean
 ): boolean {

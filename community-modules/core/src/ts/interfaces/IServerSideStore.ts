@@ -1,6 +1,6 @@
 import { NumberSequence } from "../utils";
-import { RowNode } from "../entities/rowNode";
 import { RowBounds } from "./iRowModel";
+import { IRowNode } from "./iRowNode";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSideTransaction";
 
 export interface IServerSideStore {
@@ -8,10 +8,10 @@ export interface IServerSideStore {
     getDisplayIndexEnd(): number | undefined;
     isDisplayIndexInStore(displayIndex: number): boolean;
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void;
-    forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void;
-    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void;
+    forEachNodeDeep(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
+    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
     retryLoads(): void;
-    getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): RowNode | undefined;
+    getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): IRowNode | undefined;
     getRowBounds(index: number): RowBounds | null;
     isPixelInRange(pixel: number): boolean;
     getRowIndexAtPixel(pixel: number): number | null;
@@ -23,7 +23,7 @@ export interface IServerSideStore {
     getRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     isLastRowIndexKnown(): boolean;
-    getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
+    getRowNodesInRange(firstInRange: IRowNode, lastInRange: IRowNode): IRowNode[];
     addStoreStates(result: ServerSideGroupLevelState[]): void;
 }
 

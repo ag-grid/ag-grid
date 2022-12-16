@@ -128,7 +128,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             columnApi: columnApi
         };
 
-        const rowNode = this.params.node;
+        const rowNode = this.params.node as RowNode;
 
         // register with api
         masterGridApi.addDetailGridInfo(rowId, gridInfo);

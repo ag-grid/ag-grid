@@ -488,8 +488,8 @@
       "arguments": {
         "valueA": "any",
         "valueB": "any",
-        "nodeA": "RowNode<TData>",
-        "nodeB": "RowNode<TData>",
+        "nodeA": "IRowNode<TData>",
+        "nodeB": "IRowNode<TData>",
         "isDescending": "boolean"
       },
       "returnType": "number"

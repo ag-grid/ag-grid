@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { RowNode } from '@ag-grid-community/core';
-
 
 export default class CustomGroupCellRenderer extends Component {
     constructor(props) {
@@ -13,11 +11,11 @@ export default class CustomGroupCellRenderer extends Component {
     expandListener = (event) => this.setState({ expanded: event.node.expanded });
 
     componentDidMount() {
-        this.props.node.addEventListener(RowNode.EVENT_EXPANDED_CHANGED, this.expandListener);
+        this.props.node.addEventListener('expandedChanged', this.expandListener);
     }
     
     componentWillUnmount() {
-        this.props.node.removeEventListener(RowNode.EVENT_EXPANDED_CHANGED, this.expandListener);
+        this.props.node.removeEventListener('expandedChanged', this.expandListener);
     }
 
     render() {

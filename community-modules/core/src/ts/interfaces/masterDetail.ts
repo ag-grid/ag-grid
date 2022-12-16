@@ -1,8 +1,8 @@
 import { GridOptions } from "../entities/gridOptions";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
-import { RowNode } from "../entities/rowNode";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columns/columnApi";
+import { IRowNode } from "./iRowNode";
 
 export interface IDetailCellRenderer<TData = any> {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -35,7 +35,7 @@ export interface GetDetailRowData<TData = any, TDetail = any> {
 
 export interface GetDetailRowDataParams<TData = any, TDetail = any> {
     /** Row node for the details request. */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
     /** Data for the current row. */
     data: TData;
     /** Success callback: pass the rows back for the grid request.  */

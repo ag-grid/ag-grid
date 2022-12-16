@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ICellRendererParams, RowNode, RowEvent } from '@ag-grid-community/core';
+import { ICellRendererParams, RowEvent } from '@ag-grid-community/core';
 
 export default (props: ICellRendererParams) => {
     const { node, value } = props;
@@ -8,10 +8,10 @@ export default (props: ICellRendererParams) => {
     useEffect(() => {
       const expandListener = (event: RowEvent) => setExpanded(event.node.expanded);
   
-      node.addEventListener(RowNode.EVENT_EXPANDED_CHANGED, expandListener);
+      node.addEventListener('expandedChanged', expandListener);
   
       return () => {
-        node.removeEventListener(RowNode.EVENT_EXPANDED_CHANGED, expandListener);
+        node.removeEventListener('expandedChanged', expandListener);
       }
     }, []);
   

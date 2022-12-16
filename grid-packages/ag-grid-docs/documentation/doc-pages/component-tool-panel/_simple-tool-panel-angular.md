@@ -4,7 +4,7 @@
 |
 |```js
 |import {Component} from "@angular/core";
-|import {IToolPanelParams, RowNode} from "ag-grid-community";
+|import {IToolPanelParams, IRowNode} from "ag-grid-community";
 |import {IToolPanelAngularComp} from "ag-grid-angular";
 |
 |@Component({
@@ -50,7 +50,7 @@
 |    updateTotals(): void {
 |        let numGold = 0, numSilver = 0, numBronze = 0;
 |
-|        this.params.api.forEachNode((rowNode:RowNode) => {
+|        this.params.api.forEachNode((rowNode:IRowNode) => {
 |            const data = rowNode.data;
 |            if (data.gold) numGold += data.gold;
 |            if (data.silver) numSilver += data.silver;

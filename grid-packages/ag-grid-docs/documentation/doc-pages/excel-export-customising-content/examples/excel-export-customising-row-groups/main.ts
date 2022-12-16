@@ -2,10 +2,8 @@ import {
   ExcelExportParams,
   Grid,
   GridOptions,
-  GroupCellRendererParams,
   ProcessCellForExportParams,
   ProcessRowGroupForExportParams,
-  RowNode,
 } from "@ag-grid-community/core"
 
 const getParams: () => ExcelExportParams = () => ({

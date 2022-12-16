@@ -12,7 +12,8 @@ import {
     ValueService,
     NumberSequence,
     Beans,
-    WithoutGridCommon
+    WithoutGridCommon,
+    IRowNode
 } from "@ag-grid-community/core";
 import { NodeManager } from "../nodeManager";
 
@@ -243,7 +244,7 @@ export class BlockUtils extends BeanStub {
         }
     }
 
-    public binarySearchForDisplayIndex(displayRowIndex: number, rowNodes: RowNode[]): RowNode | undefined {
+    public binarySearchForDisplayIndex(displayRowIndex: number, rowNodes: RowNode[]): IRowNode | undefined {
 
         let bottomPointer = 0;
         let topPointer = rowNodes.length - 1;

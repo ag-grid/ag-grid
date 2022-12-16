@@ -3,7 +3,6 @@ import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
 import { GetGroupAggFilteringParams, GetRowIdParams, RowHeightParams } from "./interfaces/iCallbackParams";
-import { RowNode } from "./entities/rowNode";
 import { Environment } from "./environment";
 import { AgEvent, Events } from "./events";
 import { EventService } from "./eventService";
@@ -17,6 +16,7 @@ import { getScrollbarWidth } from './utils/browser';
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { ModuleNames } from "./modules/moduleNames";
 import { matchesGroupDisplayType } from "./gridOptionsValidator";
+import { IRowNode } from "./interfaces/iRowNode";
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
@@ -249,7 +249,7 @@ export class GridOptionsService {
         return typeof this.gridOptions.getRowHeight === 'function';
     }
 
-    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false, defaultRowHeight?: number): { height: number; estimated: boolean; } {
+    public getRowHeightForNode(rowNode: IRowNode, allowEstimate = false, defaultRowHeight?: number): { height: number; estimated: boolean; } {
         if (defaultRowHeight == null) {
             defaultRowHeight = this.environment.getDefaultRowHeight();
         }

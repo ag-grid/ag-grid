@@ -211,8 +211,8 @@
   "DragItem": {
     "meta": {},
     "type": {
-      "rowNode?": "RowNode",
-      "rowNodes?": "RowNode[]",
+      "rowNode?": "IRowNode",
+      "rowNodes?": "IRowNode[]",
       "columns?": "Column[]",
       "visibleState?": "{ [key: string]: boolean; }"
     },
@@ -453,7 +453,7 @@
       "values": "TValue[]",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "rowNode": "RowNode<TData>",
+      "rowNode": "IRowNode<TData>",
       "data": "TData",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -607,7 +607,7 @@
       "sortIndex?": "number | null",
       "initialSortIndex?": "number",
       "sortingOrder?": "(SortDirection)[]",
-      "comparator?": "(valueA: any, valueB: any, nodeA: RowNode<TData>, nodeB: RowNode<TData>, isDescending: boolean) => number",
+      "comparator?": "(valueA: any, valueB: any, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number",
       "unSortIcon?": "boolean",
       "colSpan?": "(params: ColSpanParams<TData>) => number",
       "rowSpan?": "(params: RowSpanParams<TData>) => number",
@@ -773,7 +773,7 @@
   "ColumnFunctionCallbackParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -794,7 +794,7 @@
   "CheckboxSelectionCallbackParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -822,7 +822,7 @@
   "RowDragCallbackParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -850,7 +850,7 @@
   "DndSourceCallbackParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -871,7 +871,7 @@
   "DndSourceOnRowDragParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "rowNode": "RowNode<TData>",
+      "rowNode": "IRowNode<TData>",
       "dragEvent": "DragEvent",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -895,7 +895,7 @@
   "EditableCallbackParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -923,7 +923,7 @@
   "SuppressPasteCallbackParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -951,7 +951,7 @@
   "SuppressNavigableCallbackParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1015,7 +1015,7 @@
       "doc": "/** @deprecated\n * Replaced with ColumnFunctionCallbackParams\n */"
     },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1037,7 +1037,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "value": "TValue",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1082,7 +1082,7 @@
   "BaseColDefParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "data": "TData",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1103,7 +1103,7 @@
   "BaseColDefOptionalDataParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1125,7 +1125,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "getValue": "(field: string) => any",
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1185,7 +1185,7 @@
     "type": {
       "oldValue": "any",
       "newValue": "any",
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "data": "TData",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1210,7 +1210,7 @@
     "type": {
       "oldValue": "any",
       "newValue": "any",
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "data": "TData",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1242,7 +1242,7 @@
     "type": {
       "oldValue": "any",
       "newValue": "any",
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "data": "TData",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1276,7 +1276,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "value": "TValue",
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1306,7 +1306,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "value": "TValue",
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "data": "TData",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1328,7 +1328,7 @@
   "ColSpanParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1349,7 +1349,7 @@
   "RowSpanParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1372,7 +1372,7 @@
     "type": {
       "event": "KeyboardEvent",
       "editing": "boolean",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData | undefined",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -1418,7 +1418,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -1764,7 +1764,7 @@
       "sendToClipboard?": "(params: SendToClipboardParams<TData>) => void",
       "processDataFromClipboard?": "(params: ProcessDataFromClipboardParams<TData>) => string[][] | null",
       "isExternalFilterPresent?": "(params: IsExternalFilterPresentParams<TData>) => boolean",
-      "doesExternalFilterPass?": "(node: RowNode<TData>) => boolean",
+      "doesExternalFilterPass?": "(node: IRowNode<TData>) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
       "createChartContainer?": "(params: ChartRefParams<TData>) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)",
@@ -1775,11 +1775,11 @@
       "getLocaleText?": "(params: GetLocaleTextParams<TData>) => string",
       "getDocument?": "() => Document",
       "paginationNumberFormatter?": "(params: PaginationNumberFormatterParams<TData>) => string",
-      "groupRowAggNodes?": "(nodes: RowNode[]) => any",
+      "groupRowAggNodes?": "(nodes: IRowNode[]) => any",
       "getGroupRowAgg?": "(params: GetGroupRowAggParams<TData>) => any",
       "isGroupOpenByDefault?": "(params: IsGroupOpenByDefaultParams<TData>) => boolean",
       "initialGroupOrderComparator?": "(params: InitialGroupOrderComparatorParams<TData>) => number",
-      "defaultGroupOrderComparator?": "(nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number",
+      "defaultGroupOrderComparator?": "(nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number",
       "processSecondaryColDef?": "(colDef: ColDef<TData>) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef<TData>) => void",
       "processPivotResultColDef?": "(colDef: ColDef<TData>) => void",
@@ -1792,7 +1792,7 @@
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
       "getServerSideGroupKey?": "GetServerSideGroupKey",
-      "getBusinessKeyForNode?": "(node: RowNode<TData>) => string",
+      "getBusinessKeyForNode?": "(node: IRowNode<TData>) => string",
       "getRowNodeId?": "GetRowNodeIdFunc<TData>",
       "getRowId?": "GetRowIdFunc<TData>",
       "resetRowDataOnUpdate?": "boolean",
@@ -1800,12 +1800,12 @@
       "isRowSelectable?": "IsRowSelectable<TData>",
       "isRowMaster?": "IsRowMaster<TData>",
       "fillOperation?": "(params: FillOperationParams<TData>) => any",
-      "postSort?": "(nodes: RowNode<TData>[]) => void",
+      "postSort?": "(nodes: IRowNode<TData>[]) => void",
       "postSortRows?": "(params: PostSortRowsParams<TData>) => void",
       "getRowStyle?": "(params: RowClassParams<TData>) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams<TData>) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams<TData>) => number | undefined | null",
-      "isFullWidthCell?": "(rowNode: RowNode<TData>) => boolean",
+      "isFullWidthCell?": "(rowNode: IRowNode<TData>) => boolean",
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",
@@ -2286,7 +2286,7 @@
   "IsRowSelectable": {
     "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
     "type": {
-      "arguments": { "node": "RowNode<TData>" },
+      "arguments": { "node": "IRowNode<TData>" },
       "returnType": "boolean"
     }
   },
@@ -2304,7 +2304,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -3037,12 +3037,12 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "type": "string",
-      "node": "RowNode<TData>",
-      "nodes": "RowNode<TData>[]",
+      "node": "IRowNode<TData>",
+      "nodes": "IRowNode<TData>[]",
       "event": "MouseEvent",
       "vDirection": "string",
       "overIndex": "number",
-      "overNode?": "RowNode<TData>",
+      "overNode?": "IRowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -3066,12 +3066,12 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "type": "string",
-      "node": "RowNode<TData>",
-      "nodes": "RowNode<TData>[]",
+      "node": "IRowNode<TData>",
+      "nodes": "IRowNode<TData>[]",
       "event": "MouseEvent",
       "vDirection": "string",
       "overIndex": "number",
-      "overNode?": "RowNode<TData>",
+      "overNode?": "IRowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -3095,12 +3095,12 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "type": "string",
-      "node": "RowNode<TData>",
-      "nodes": "RowNode<TData>[]",
+      "node": "IRowNode<TData>",
+      "nodes": "IRowNode<TData>[]",
       "event": "MouseEvent",
       "vDirection": "string",
       "overIndex": "number",
-      "overNode?": "RowNode<TData>",
+      "overNode?": "IRowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -3124,12 +3124,12 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "type": "string",
-      "node": "RowNode<TData>",
-      "nodes": "RowNode<TData>[]",
+      "node": "IRowNode<TData>",
+      "nodes": "IRowNode<TData>[]",
       "event": "MouseEvent",
       "vDirection": "string",
       "overIndex": "number",
-      "overNode?": "RowNode<TData>",
+      "overNode?": "IRowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -3153,12 +3153,12 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "type": "string",
-      "node": "RowNode<TData>",
-      "nodes": "RowNode<TData>[]",
+      "node": "IRowNode<TData>",
+      "nodes": "IRowNode<TData>[]",
       "event": "MouseEvent",
       "vDirection": "string",
       "overIndex": "number",
-      "overNode?": "RowNode<TData>",
+      "overNode?": "IRowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -3397,7 +3397,7 @@
   "ItemsAddedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "items": "RowNode<TData>[]",
+      "items": "IRowNode<TData>[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -3764,7 +3764,7 @@
       "doc": "/**------------*/\n/** ROW EVENTS */\n/**------------*/"
     },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -3788,7 +3788,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -3816,7 +3816,7 @@
     },
     "type": {
       "data": "TData",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -3842,7 +3842,7 @@
     "type": {
       "expanded": "boolean",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -3868,7 +3868,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -3893,7 +3893,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -3918,7 +3918,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -3943,7 +3943,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -3968,7 +3968,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -3993,7 +3993,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4018,7 +4018,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4043,7 +4043,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4068,7 +4068,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4099,7 +4099,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue | undefined",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4131,7 +4131,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue",
       "data": "TData",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4160,7 +4160,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue | undefined",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4189,7 +4189,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue | undefined",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4218,7 +4218,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue | undefined",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4247,7 +4247,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue | undefined",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4276,7 +4276,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue | undefined",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4305,7 +4305,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue | undefined",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4334,7 +4334,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue | undefined",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4363,7 +4363,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue | undefined",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4392,7 +4392,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue",
       "data": "TData",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4424,7 +4424,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue",
       "data": "TData",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4459,7 +4459,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue",
       "data": "TData",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4491,7 +4491,7 @@
       "colDef": "ColDef<TData>",
       "value": "TValue",
       "data": "TData",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
@@ -4874,7 +4874,7 @@
       "filterChangedCallback": "(additionalEventAttributes?: any) => void",
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
-      "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
+      "doesRowPassOtherFilter": "(rowNode: IRowNode<TData>) => boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -4960,7 +4960,7 @@
       "filterChangedCallback": "(additionalEventAttributes?: any) => void",
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
-      "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
+      "doesRowPassOtherFilter": "(rowNode: IRowNode<TData>) => boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -5012,7 +5012,7 @@
       "filterChangedCallback": "(additionalEventAttributes?: any) => void",
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
-      "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
+      "doesRowPassOtherFilter": "(rowNode: IRowNode<TData>) => boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -5087,7 +5087,7 @@
       "filterChangedCallback": "(additionalEventAttributes?: any) => void",
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
-      "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
+      "doesRowPassOtherFilter": "(rowNode: IRowNode<TData>) => boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -5195,7 +5195,7 @@
       "filterChangedCallback": "(additionalEventAttributes?: any) => void",
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
-      "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
+      "doesRowPassOtherFilter": "(rowNode: IRowNode<TData>) => boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -5275,7 +5275,7 @@
       "value": "any",
       "filterText": "string | null",
       "textFormatter?": "TextFormatter",
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "data": "TData",
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -5330,7 +5330,7 @@
       "filterChangedCallback": "(additionalEventAttributes?: any) => void",
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
-      "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
+      "doesRowPassOtherFilter": "(rowNode: IRowNode<TData>) => boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6012,7 +6012,7 @@
   "ShouldRowBeSkippedParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6029,7 +6029,7 @@
     "type": {
       "value": "any",
       "accumulatedRowIndex?": "number",
-      "node?": "RowNode<TData> | null",
+      "node?": "IRowNode<TData> | null",
       "column": "Column",
       "type": "string",
       "api": "GridApi<TData>",
@@ -6073,7 +6073,7 @@
   "ProcessRowGroupForExportParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6130,7 +6130,7 @@
     "type": {
       "defaultItems": "string[] | undefined",
       "column": "Column | null",
-      "node": "RowNode<TData> | null",
+      "node": "IRowNode<TData> | null",
       "value": "any",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -6167,7 +6167,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "column?": "Column | null",
-      "rowNode?": "RowNode<TData> | null",
+      "rowNode?": "IRowNode<TData> | null",
       "ePopup": "HTMLElement",
       "type": "string",
       "eventSource?": "HTMLElement | null",
@@ -6332,7 +6332,7 @@
   "IsGroupOpenByDefaultParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "rowNode": "RowNode<TData>",
+      "rowNode": "IRowNode<TData>",
       "rowGroupColumn": "Column",
       "level": "number",
       "field": "string",
@@ -6356,7 +6356,7 @@
     "meta": {},
     "type": {
       "level": "number",
-      "parentRowNode?": "RowNode",
+      "parentRowNode?": "IRowNode",
       "rowGroupColumns": "Column[]",
       "pivotColumns": "Column[]",
       "pivotMode": "boolean",
@@ -6381,7 +6381,7 @@
     },
     "type": {
       "level": "number",
-      "parentRowNode?": "RowNode",
+      "parentRowNode?": "IRowNode",
       "rowGroupColumns": "Column[]",
       "pivotColumns": "Column[]",
       "pivotMode": "boolean",
@@ -6404,7 +6404,7 @@
     "meta": {},
     "type": {
       "data": "any",
-      "rowNode": "RowNode",
+      "rowNode": "IRowNode",
       "api": "GridApi<any>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6419,7 +6419,7 @@
     "meta": {},
     "type": {
       "transaction": "ServerSideTransaction",
-      "parentNode": "RowNode",
+      "parentNode": "IRowNode",
       "storeInfo": "any",
       "groupLevelInfo": "any",
       "api": "GridApi<any>",
@@ -6462,7 +6462,7 @@
       "ePinnedLeftRow?": "HTMLElement",
       "ePinnedRightRow?": "HTMLElement",
       "rowIndex": "number",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "addRenderedRowListener": "(eventType: string, listener: Function) => void",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -6479,7 +6479,7 @@
     "type": {
       "event": "MouseEvent",
       "values": "any[]",
-      "rowNode": "RowNode<TData>",
+      "rowNode": "IRowNode<TData>",
       "column": "Column",
       "initialValues": "any[]",
       "currentIndex": "number",
@@ -6507,7 +6507,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6536,8 +6536,8 @@
   "InitialGroupOrderComparatorParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "nodeA": "RowNode<TData>",
-      "nodeB": "RowNode<TData>",
+      "nodeA": "IRowNode<TData>",
+      "nodeB": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6551,7 +6551,7 @@
   "GetGroupRowAggParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "nodes": "RowNode<TData>[]",
+      "nodes": "IRowNode<TData>[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6565,7 +6565,7 @@
   "PostSortRowsParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "nodes": "RowNode<TData>[]",
+      "nodes": "IRowNode<TData>[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6579,7 +6579,7 @@
   "IsFullWidthRowParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "rowNode": "RowNode<TData>",
+      "rowNode": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6609,7 +6609,7 @@
   "GetGroupAggFilteringParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6651,7 +6651,7 @@
       "charPress": "string | null",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData",
       "rowIndex": "number",
       "cellStartedEdit": "boolean",
@@ -7754,7 +7754,7 @@
   },
   "IDoesFilterPassParams": {
     "meta": { "typeParams": ["TData = any"] },
-    "type": { "node": "RowNode<TData>", "data": "TData" },
+    "type": { "node": "IRowNode<TData>", "data": "TData" },
     "docs": {
       "node": "/** The row node in question. */",
       "data": "/** The data part of the row node in question. */"
@@ -7788,7 +7788,7 @@
       "filterChangedCallback": "(additionalEventAttributes?: any) => void",
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
-      "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
+      "doesRowPassOtherFilter": "(rowNode: IRowNode<TData>) => boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -8001,7 +8001,7 @@
       "filterChangedCallback": "(additionalEventAttributes?: any) => void",
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
-      "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
+      "doesRowPassOtherFilter": "(rowNode: IRowNode<TData>) => boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -8200,7 +8200,7 @@
       "charPress": "string | null",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData",
       "rowIndex": "number",
       "cellStartedEdit": "boolean",
@@ -8349,12 +8349,11 @@
       "uiLevel": "number",
       "parent": "IRowNode<TData> | null",
       "stub": "boolean",
+      "failedLoad": "boolean",
       "rowIndex": "number | null",
       "quickFilterAggregateText": "string | null",
       "master": "boolean",
-      "detail": "boolean",
-      "detailNode": "IRowNode<TData>",
-      "detailGridInfo": "DetailGridInfo | null"
+      "detail": "boolean"
     },
     "docs": {
       "id": "/** Unique ID for the node. Either provided by the application, or generated by the grid if not. */",
@@ -8372,12 +8371,11 @@
       "uiLevel": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`)*/",
       "parent": "/** The parent node to this node, or empty if top level */",
       "stub": "/** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */",
+      "failedLoad": "/** Used by server side row model, true if this row node failed a load */",
       "rowIndex": "/** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */",
       "quickFilterAggregateText": "/** If using quick filter, stores a string representation of the row for searching against. */",
       "master": "/** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */",
-      "detail": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/",
-      "detailNode": "/** If this row is a master row that was expanded, this points to the associated detail row. */",
-      "detailGridInfo": "/** If master detail, this contains details about the detail grid */"
+      "detail": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/"
     }
   },
   "GroupRowNode": {
@@ -8396,7 +8394,6 @@
       "childrenAfterGroup": "IRowNode<TData>[] | null",
       "childrenAfterSort": "IRowNode<TData>[] | null",
       "childrenAfterFilter": "IRowNode<TData>[] | null",
-      "childrenAfterAggFilter": "IRowNode<TData>[] | null",
       "footer": "boolean",
       "sibling": "IRowNode<TData>"
     },
@@ -8414,7 +8411,6 @@
       "childrenAfterGroup": "/** Children of this group. If multi levels of grouping, shows only immediate children. */",
       "childrenAfterSort": "/** Sorted children of this group. */",
       "childrenAfterFilter": "/** Filtered children of this group. */",
-      "childrenAfterAggFilter": "/** Aggregated and re-filtered children of this group. */",
       "footer": "/** `true` if row is a footer. Footers have `group = true` and `footer = true`. */",
       "sibling": "/** If using footers, reference to the footer node for this group. */"
     }
@@ -8448,12 +8444,11 @@
       "uiLevel": "number",
       "parent": "IRowNode<TData> | null",
       "stub": "boolean",
+      "failedLoad": "boolean",
       "rowIndex": "number | null",
       "quickFilterAggregateText": "string | null",
       "master": "boolean",
       "detail": "boolean",
-      "detailNode": "IRowNode<TData>",
-      "detailGridInfo": "DetailGridInfo | null",
       "field": "string | null",
       "key": "string | null",
       "groupData": "{ [key: string]: any | null; } | null",
@@ -8467,7 +8462,6 @@
       "childrenAfterGroup": "IRowNode<TData>[] | null",
       "childrenAfterSort": "IRowNode<TData>[] | null",
       "childrenAfterFilter": "IRowNode<TData>[] | null",
-      "childrenAfterAggFilter": "IRowNode<TData>[] | null",
       "footer": "boolean",
       "sibling": "IRowNode<TData>"
     },
@@ -8498,12 +8492,11 @@
       "uiLevel": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`)*/",
       "parent": "/** The parent node to this node, or empty if top level */",
       "stub": "/** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */",
+      "failedLoad": "/** Used by server side row model, true if this row node failed a load */",
       "rowIndex": "/** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */",
       "quickFilterAggregateText": "/** If using quick filter, stores a string representation of the row for searching against. */",
       "master": "/** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */",
       "detail": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/",
-      "detailNode": "/** If this row is a master row that was expanded, this points to the associated detail row. */",
-      "detailGridInfo": "/** If master detail, this contains details about the detail grid */",
       "field": "/** The field we are grouping on from our row data. */",
       "key": "/** The key value for this group. */",
       "groupData": "/** If using row grouping, contains the group values for this group. */",
@@ -8517,7 +8510,6 @@
       "childrenAfterGroup": "/** Children of this group. If multi levels of grouping, shows only immediate children. */",
       "childrenAfterSort": "/** Sorted children of this group. */",
       "childrenAfterFilter": "/** Filtered children of this group. */",
-      "childrenAfterAggFilter": "/** Aggregated and re-filtered children of this group. */",
       "footer": "/** `true` if row is a footer. Footers have `group = true` and `footer = true`. */",
       "sibling": "/** If using footers, reference to the footer node for this group. */"
     }
@@ -8566,7 +8558,7 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "request": "IServerSideGetRowsRequest",
-      "parentNode": "RowNode",
+      "parentNode": "IRowNode",
       "successCallback(rowsThisPage: any[], lastRow: number)": "void",
       "success(params: LoadSuccessParams)": "void",
       "failCallback()": "void",
@@ -8608,7 +8600,7 @@
       "retryLoads()": "void",
       "expandAll(value: boolean)": "void",
       "setDatasource(datasource: IServerSideDatasource)": "void",
-      "forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void)": "void",
+      "forEachNodeAfterFilterAndSort(callback: (node: IRowNode, index: number) => void)": "void",
       "resetRootStore()": "void",
       "getRow(index: number)": "RowNode | undefined",
       "getRowNode(id: string)": "RowNode | undefined",
@@ -8677,10 +8669,10 @@
       "getDisplayIndexEnd()": "number | undefined",
       "isDisplayIndexInStore(displayIndex: number)": "boolean",
       "setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number; })": "void",
-      "forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence)": "void",
-      "forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence)": "void",
+      "forEachNodeDeep(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence)": "void",
+      "forEachNodeDeepAfterFilterAndSort(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence)": "void",
       "retryLoads()": "void",
-      "getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean)": "RowNode | undefined",
+      "getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean)": "IRowNode | undefined",
       "getRowBounds(index: number)": "RowBounds | null",
       "isPixelInRange(pixel: number)": "boolean",
       "getRowIndexAtPixel(pixel: number)": "number | null",
@@ -8692,7 +8684,7 @@
       "getRowCount()": "number",
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
       "isLastRowIndexKnown()": "boolean",
-      "getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode)": "RowNode[]",
+      "getRowNodesInRange(firstInRange: IRowNode, lastInRange: IRowNode)": "IRowNode[]",
       "addStoreStates(result: ServerSideGroupLevelState[])": "void"
     }
   },
@@ -8875,7 +8867,7 @@
       "filterChangedCallback": "(additionalEventAttributes?: any) => void",
       "filterModifiedCallback": "() => void",
       "valueGetter": "ValueGetterFunc<TData>",
-      "doesRowPassOtherFilter": "(rowNode: RowNode<TData>) => boolean",
+      "doesRowPassOtherFilter": "(rowNode: IRowNode<TData>) => boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -8984,7 +8976,7 @@
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number",
       "colDef?": "ColDef",
       "column?": "Column",
@@ -9658,7 +9650,7 @@
     "type": {
       "setRowCount": "(count: number, keepRenderedRows?: boolean) => void",
       "setRowData": "(rowData: { [key: number]: any; }) => void",
-      "getRow": "(rowIndex: number) => RowNode"
+      "getRow": "(rowIndex: number) => IRowNode"
     },
     "docs": {
       "setRowCount": "/** Datasource calls this method when the total row count changes. This in turn sets the height of the grids vertical scroll. */",
@@ -9720,7 +9712,7 @@
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number",
       "colDef?": "ColDef",
       "column?": "Column",
@@ -9774,7 +9766,7 @@
   "GetDetailRowDataParams": {
     "meta": { "typeParams": ["TData = any", "TDetail = any"] },
     "type": {
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData",
       "successCallback(rowData: TDetail[])": "void"
     },
@@ -9817,9 +9809,9 @@
   "RowNodeTransaction": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "add": "RowNode<TData>[]",
-      "remove": "RowNode<TData>[]",
-      "update": "RowNode<TData>[]"
+      "add": "IRowNode<TData>[]",
+      "remove": "IRowNode<TData>[]",
+      "update": "IRowNode<TData>[]"
     },
     "docs": {
       "add": "/** Row nodes added */",
@@ -9848,9 +9840,9 @@
     "meta": {},
     "type": {
       "status": "ServerSideTransactionResultStatus",
-      "add?": "RowNode[]",
-      "remove?": "RowNode[]",
-      "update?": "RowNode[]"
+      "add?": "IRowNode[]",
+      "remove?": "IRowNode[]",
+      "update?": "IRowNode[]"
     },
     "docs": {
       "status": "/** The status of applying the transaction. */",
@@ -10028,7 +10020,7 @@
       "charPress": "string | null",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData",
       "rowIndex": "number",
       "cellStartedEdit": "boolean",
@@ -10073,7 +10065,7 @@
       "charPress": "string | null",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData",
       "rowIndex": "number",
       "cellStartedEdit": "boolean",
@@ -10119,7 +10111,7 @@
       "charPress": "string | null",
       "column": "Column",
       "colDef": "ColDef<TData>",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "data": "TData",
       "rowIndex": "number",
       "cellStartedEdit": "boolean",
@@ -10192,7 +10184,7 @@
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number",
       "colDef?": "ColDef",
       "column?": "Column",
@@ -10248,7 +10240,7 @@
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number",
       "colDef?": "ColDef",
       "column?": "Column",
@@ -10341,7 +10333,7 @@
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
-      "node": "RowNode<TData>",
+      "node": "IRowNode<TData>",
       "rowIndex": "number",
       "colDef?": "ColDef",
       "column?": "Column",
@@ -10601,8 +10593,8 @@
     "meta": {},
     "type": {
       "defaultTextValue": "string",
-      "rowNode?": "RowNode",
-      "rowNodes?": "RowNode[]",
+      "rowNode?": "IRowNode",
+      "rowNodes?": "IRowNode[]",
       "columns?": "Column[]",
       "visibleState?": "{ [key: string]: boolean; }"
     },
@@ -10615,11 +10607,11 @@
     }
   },
   "RowCtrlMap": { "meta": {}, "type": { "[key: string]": "RowCtrl" } },
-  "RowNodeMap": { "meta": {}, "type": { "[id: string]": "RowNode" } },
+  "RowNodeMap": { "meta": {}, "type": { "[id: string]": "IRowNode" } },
   "GetCellsParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "rowNodes?": "RowNode<TData>[]",
+      "rowNodes?": "IRowNode<TData>[]",
       "columns?": "(string | Column)[]"
     },
     "docs": {
@@ -10632,7 +10624,7 @@
     "type": {
       "force?": "boolean",
       "suppressFlash?": "boolean",
-      "rowNodes?": "RowNode<TData>[]",
+      "rowNodes?": "IRowNode<TData>[]",
       "columns?": "(string | Column)[]"
     },
     "docs": {
@@ -10647,7 +10639,7 @@
     "type": {
       "flashDelay?": "number",
       "fadeDelay?": "number",
-      "rowNodes?": "RowNode<TData>[]",
+      "rowNodes?": "IRowNode<TData>[]",
       "columns?": "(string | Column)[]"
     },
     "docs": {
@@ -10658,7 +10650,7 @@
   "GetCellRendererInstancesParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "rowNodes?": "RowNode<TData>[]",
+      "rowNodes?": "IRowNode<TData>[]",
       "columns?": "(string | Column)[]"
     },
     "docs": {
@@ -10669,7 +10661,7 @@
   "GetCellEditorInstancesParams": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "rowNodes?": "RowNode<TData>[]",
+      "rowNodes?": "IRowNode<TData>[]",
       "columns?": "(string | Column)[]"
     },
     "docs": {
@@ -10679,7 +10671,7 @@
   },
   "RedrawRowsParams": {
     "meta": { "typeParams": ["TData = any"] },
-    "type": { "rowNodes?": "RowNode<TData>[]" },
+    "type": { "rowNodes?": "IRowNode<TData>[]" },
     "docs": { "rowNodes?": "/** Row nodes to redraw */" }
   },
   "RefreshViewParams": {
@@ -10703,7 +10695,7 @@
       "colDef?": "ColDef<TData> | ColGroupDef<TData> | null",
       "column?": "Column | ColumnGroup",
       "rowIndex?": "number",
-      "node?": "RowNode<TData>",
+      "node?": "IRowNode<TData>",
       "data?": "TData",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -11074,7 +11066,7 @@
     "type": {
       "ePopup": "HTMLElement",
       "column?": "Column | null",
-      "rowNode?": "RowNode | null",
+      "rowNode?": "IRowNode | null",
       "nudgeX?": "number",
       "nudgeY?": "number",
       "position?": "'over' | 'under'",
@@ -11802,7 +11794,7 @@
       "sendToClipboard?": "(params: SendToClipboardParams<TData>) => void",
       "processDataFromClipboard?": "(params: ProcessDataFromClipboardParams<TData>) => string[][] | null",
       "isExternalFilterPresent?": "(params: IsExternalFilterPresentParams<TData>) => boolean",
-      "doesExternalFilterPass?": "(node: RowNode<TData>) => boolean",
+      "doesExternalFilterPass?": "(node: IRowNode<TData>) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
       "createChartContainer?": "(params: ChartRefParams<TData>) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)",
@@ -11813,11 +11805,11 @@
       "getLocaleText?": "(params: GetLocaleTextParams<TData>) => string",
       "getDocument?": "() => Document",
       "paginationNumberFormatter?": "(params: PaginationNumberFormatterParams<TData>) => string",
-      "groupRowAggNodes?": "(nodes: RowNode[]) => any",
+      "groupRowAggNodes?": "(nodes: IRowNode[]) => any",
       "getGroupRowAgg?": "(params: GetGroupRowAggParams<TData>) => any",
       "isGroupOpenByDefault?": "(params: IsGroupOpenByDefaultParams<TData>) => boolean",
       "initialGroupOrderComparator?": "(params: InitialGroupOrderComparatorParams<TData>) => number",
-      "defaultGroupOrderComparator?": "(nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number",
+      "defaultGroupOrderComparator?": "(nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number",
       "processSecondaryColDef?": "(colDef: ColDef<TData>) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef<TData>) => void",
       "processPivotResultColDef?": "(colDef: ColDef<TData>) => void",
@@ -11830,7 +11822,7 @@
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
       "getServerSideGroupKey?": "GetServerSideGroupKey",
-      "getBusinessKeyForNode?": "(node: RowNode<TData>) => string",
+      "getBusinessKeyForNode?": "(node: IRowNode<TData>) => string",
       "getRowNodeId?": "GetRowNodeIdFunc<TData>",
       "getRowId?": "GetRowIdFunc<TData>",
       "resetRowDataOnUpdate?": "boolean",
@@ -11838,12 +11830,12 @@
       "isRowSelectable?": "IsRowSelectable<TData>",
       "isRowMaster?": "IsRowMaster<TData>",
       "fillOperation?": "(params: FillOperationParams<TData>) => any",
-      "postSort?": "(nodes: RowNode<TData>[]) => void",
+      "postSort?": "(nodes: IRowNode<TData>[]) => void",
       "postSortRows?": "(params: PostSortRowsParams<TData>) => void",
       "getRowStyle?": "(params: RowClassParams<TData>) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams<TData>) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams<TData>) => number | undefined | null",
-      "isFullWidthCell?": "(rowNode: RowNode<TData>) => boolean",
+      "isFullWidthCell?": "(rowNode: IRowNode<TData>) => boolean",
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",
@@ -12545,7 +12537,7 @@
       "sendToClipboard?": "(params: SendToClipboardParams<TData>) => void",
       "processDataFromClipboard?": "(params: ProcessDataFromClipboardParams<TData>) => string[][] | null",
       "isExternalFilterPresent?": "(params: IsExternalFilterPresentParams<TData>) => boolean",
-      "doesExternalFilterPass?": "(node: RowNode<TData>) => boolean",
+      "doesExternalFilterPass?": "(node: IRowNode<TData>) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
       "createChartContainer?": "(params: ChartRefParams<TData>) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)",
@@ -12556,11 +12548,11 @@
       "getLocaleText?": "(params: GetLocaleTextParams<TData>) => string",
       "getDocument?": "() => Document",
       "paginationNumberFormatter?": "(params: PaginationNumberFormatterParams<TData>) => string",
-      "groupRowAggNodes?": "(nodes: RowNode[]) => any",
+      "groupRowAggNodes?": "(nodes: IRowNode[]) => any",
       "getGroupRowAgg?": "(params: GetGroupRowAggParams<TData>) => any",
       "isGroupOpenByDefault?": "(params: IsGroupOpenByDefaultParams<TData>) => boolean",
       "initialGroupOrderComparator?": "(params: InitialGroupOrderComparatorParams<TData>) => number",
-      "defaultGroupOrderComparator?": "(nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number",
+      "defaultGroupOrderComparator?": "(nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number",
       "processSecondaryColDef?": "(colDef: ColDef<TData>) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef<TData>) => void",
       "processPivotResultColDef?": "(colDef: ColDef<TData>) => void",
@@ -12573,7 +12565,7 @@
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
       "getServerSideGroupKey?": "GetServerSideGroupKey",
-      "getBusinessKeyForNode?": "(node: RowNode<TData>) => string",
+      "getBusinessKeyForNode?": "(node: IRowNode<TData>) => string",
       "getRowNodeId?": "GetRowNodeIdFunc<TData>",
       "getRowId?": "GetRowIdFunc<TData>",
       "resetRowDataOnUpdate?": "boolean",
@@ -12581,12 +12573,12 @@
       "isRowSelectable?": "IsRowSelectable<TData>",
       "isRowMaster?": "IsRowMaster<TData>",
       "fillOperation?": "(params: FillOperationParams<TData>) => any",
-      "postSort?": "(nodes: RowNode<TData>[]) => void",
+      "postSort?": "(nodes: IRowNode<TData>[]) => void",
       "postSortRows?": "(params: PostSortRowsParams<TData>) => void",
       "getRowStyle?": "(params: RowClassParams<TData>) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams<TData>) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams<TData>) => number | undefined | null",
-      "isFullWidthCell?": "(rowNode: RowNode<TData>) => boolean",
+      "isFullWidthCell?": "(rowNode: IRowNode<TData>) => boolean",
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",
@@ -13290,7 +13282,7 @@
       "sendToClipboard?": "(params: SendToClipboardParams<TData>) => void",
       "processDataFromClipboard?": "(params: ProcessDataFromClipboardParams<TData>) => string[][] | null",
       "isExternalFilterPresent?": "(params: IsExternalFilterPresentParams<TData>) => boolean",
-      "doesExternalFilterPass?": "(node: RowNode<TData>) => boolean",
+      "doesExternalFilterPass?": "(node: IRowNode<TData>) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
       "createChartContainer?": "(params: ChartRefParams<TData>) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)",
@@ -13301,11 +13293,11 @@
       "getLocaleText?": "(params: GetLocaleTextParams<TData>) => string",
       "getDocument?": "() => Document",
       "paginationNumberFormatter?": "(params: PaginationNumberFormatterParams<TData>) => string",
-      "groupRowAggNodes?": "(nodes: RowNode[]) => any",
+      "groupRowAggNodes?": "(nodes: IRowNode[]) => any",
       "getGroupRowAgg?": "(params: GetGroupRowAggParams<TData>) => any",
       "isGroupOpenByDefault?": "(params: IsGroupOpenByDefaultParams<TData>) => boolean",
       "initialGroupOrderComparator?": "(params: InitialGroupOrderComparatorParams<TData>) => number",
-      "defaultGroupOrderComparator?": "(nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number",
+      "defaultGroupOrderComparator?": "(nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number",
       "processSecondaryColDef?": "(colDef: ColDef<TData>) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef<TData>) => void",
       "processPivotResultColDef?": "(colDef: ColDef<TData>) => void",
@@ -13318,7 +13310,7 @@
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
       "getServerSideGroupKey?": "GetServerSideGroupKey",
-      "getBusinessKeyForNode?": "(node: RowNode<TData>) => string",
+      "getBusinessKeyForNode?": "(node: IRowNode<TData>) => string",
       "getRowNodeId?": "GetRowNodeIdFunc<TData>",
       "getRowId?": "GetRowIdFunc<TData>",
       "resetRowDataOnUpdate?": "boolean",
@@ -13326,12 +13318,12 @@
       "isRowSelectable?": "IsRowSelectable<TData>",
       "isRowMaster?": "IsRowMaster<TData>",
       "fillOperation?": "(params: FillOperationParams<TData>) => any",
-      "postSort?": "(nodes: RowNode<TData>[]) => void",
+      "postSort?": "(nodes: IRowNode<TData>[]) => void",
       "postSortRows?": "(params: PostSortRowsParams<TData>) => void",
       "getRowStyle?": "(params: RowClassParams<TData>) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams<TData>) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams<TData>) => number | undefined | null",
-      "isFullWidthCell?": "(rowNode: RowNode<TData>) => boolean",
+      "isFullWidthCell?": "(rowNode: IRowNode<TData>) => boolean",
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",

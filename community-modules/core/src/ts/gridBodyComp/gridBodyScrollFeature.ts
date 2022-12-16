@@ -14,8 +14,8 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { ColumnModel } from "../columns/columnModel";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 import { Column } from "../entities/column";
-import { RowNode } from "../entities/rowNode";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { IRowNode } from "../interfaces/iRowNode";
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
@@ -369,7 +369,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     // Valid values for position are bottom, middle and top
     public ensureNodeVisible<TData = any>(
-        comparator: TData | RowNode<TData> | ((row: RowNode<TData>) => boolean),
+        comparator: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean),
         position: 'top' | 'bottom' | 'middle' | null = null
     ) {
         // look for the node index we want to display
@@ -380,7 +380,7 @@ export class GridBodyScrollFeature extends BeanStub {
             const node = this.rowModel.getRow(i);
             if (typeof comparator === 'function') {
                 // Have to assert type here, as type could be TData & Function
-                const predicate = comparator as ((row: RowNode<TData>) => boolean);
+                const predicate = comparator as ((row: IRowNode<TData>) => boolean);
                 if (node && predicate(node)) {
                     indexToSelect = i;
                     break;

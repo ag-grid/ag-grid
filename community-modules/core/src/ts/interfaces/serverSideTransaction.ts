@@ -1,4 +1,4 @@
-import { RowNode } from "../entities/rowNode";
+import { IRowNode } from "./iRowNode";
 
 export interface ServerSideTransaction {
     /**
@@ -21,11 +21,11 @@ export interface ServerSideTransactionResult {
     /** The status of applying the transaction. */
     status: ServerSideTransactionResultStatus;
     /** If rows were added, the newly created Row Nodes for those rows. */
-    add?: RowNode[];
+    add?: IRowNode[];
     /** If rows were removed, the deleted Row Nodes. */
-    remove?: RowNode[];
+    remove?: IRowNode[];
     /** If rows were updated, the updated Row Nodes. */
-    update?: RowNode[];
+    update?: IRowNode[];
 }
 
 export enum ServerSideTransactionResultStatus {

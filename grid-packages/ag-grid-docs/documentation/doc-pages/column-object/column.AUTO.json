@@ -83,15 +83,15 @@
   },
   "createColumnFunctionCallbackParams": {
     "type": {
-      "arguments": { "rowNode": "RowNode" },
+      "arguments": { "rowNode": "IRowNode" },
       "returnType": "ColumnFunctionCallbackParams"
     }
   },
   "isSuppressNavigable": {
-    "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
+    "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "boolean" }
   },
   "isCellEditable": {
-    "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
+    "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "boolean" }
   },
   "isSuppressFillHandle": {
     "type": { "arguments": {}, "returnType": "boolean" }
@@ -101,16 +101,16 @@
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "isRowDrag": {
-    "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
+    "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "boolean" }
   },
   "isDndSource": {
-    "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
+    "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "boolean" }
   },
   "isCellCheckboxSelection": {
-    "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
+    "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "boolean" }
   },
   "isSuppressPaste": {
-    "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
+    "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "boolean" }
   },
   "isResizable": { "type": { "arguments": {}, "returnType": "boolean" } },
   "setMoving": {
@@ -275,10 +275,10 @@
     "type": { "arguments": { "height": "number" }, "returnType": "boolean" }
   },
   "getColSpan": {
-    "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "number" }
+    "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "number" }
   },
   "getRowSpan": {
-    "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "number" }
+    "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "number" }
   },
   "setActualWidth": {
     "type": {

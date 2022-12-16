@@ -83,8 +83,8 @@ import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCe
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SortDirection } from "./colDef";
 import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "../interfaces/iCallbackParams";
-import { RowNode } from "./rowNode";
 import { SideBarDef } from "../interfaces/iSideBar";
+import { IRowNode } from "../interfaces/iRowNode";
 
 export interface GridOptions<TData = any> {
 
@@ -814,7 +814,7 @@ export interface GridOptions<TData = any> {
     /** Grid calls this method to know if an external filter is present. */
     isExternalFilterPresent?: (params: IsExternalFilterPresentParams<TData>) => boolean;
     /** Should return `true` if external filter passes, otherwise `false`. */
-    doesExternalFilterPass?: (node: RowNode<TData>) => boolean;
+    doesExternalFilterPass?: (node: IRowNode<TData>) => boolean;
 
     // *** Integrated Charts *** //
     /** Callback to be used to customise the chart toolbar items. */
@@ -848,7 +848,7 @@ export interface GridOptions<TData = any> {
 
     // *** Row Grouping and Pivoting *** //
     /** @deprecated v27.2 - Use `getGroupRowAgg` instead. */
-    groupRowAggNodes?: (nodes: RowNode[]) => any;
+    groupRowAggNodes?: (nodes: IRowNode[]) => any;
     /** Callback to use when you need access to more then the current column for aggregation. */
     getGroupRowAgg?: (params: GetGroupRowAggParams<TData>) => any;
     /** (Client-side Row Model only) Allows groups to be open by default. */
@@ -856,7 +856,7 @@ export interface GridOptions<TData = any> {
     /** Allows default sorting of groups. */
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
     /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */
-    defaultGroupOrderComparator?: (nodeA: RowNode<TData>, nodeB: RowNode<TData>) => number;
+    defaultGroupOrderComparator?: (nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number;
     /** @deprecated v28 - Use `processPivotResultColDef` instead */
     processSecondaryColDef?: (colDef: ColDef<TData>) => void;
     /** @deprecated v28 - Use `processPivotResultColGroupDef` instead */
@@ -889,7 +889,7 @@ export interface GridOptions<TData = any> {
      * Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
-    getBusinessKeyForNode?: (node: RowNode<TData>) => string;
+    getBusinessKeyForNode?: (node: IRowNode<TData>) => string;
     /**
      * @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
      * Allows you to set the ID for a particular row node based on the data. */
@@ -909,7 +909,7 @@ export interface GridOptions<TData = any> {
 
     // *** Sorting *** //
     /** @deprecated v27.2 Use `postSortRows` instead */
-    postSort?: (nodes: RowNode<TData>[]) => void;
+    postSort?: (nodes: IRowNode<TData>[]) => void;
     /** Callback to perform additional sorting after the grid has sorted the rows. */
     postSortRows?: (params: PostSortRowsParams<TData>) => void;
 
@@ -921,7 +921,7 @@ export interface GridOptions<TData = any> {
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
     getRowHeight?: (params: RowHeightParams<TData>) => number | undefined | null;
     /** @deprecated v27.2 Use `isFullWidthRow` instead. */
-    isFullWidthCell?: (rowNode: RowNode<TData>) => boolean;
+    isFullWidthCell?: (rowNode: IRowNode<TData>) => boolean;
     /** Tells the grid if this row should be rendered as full width. */
     isFullWidthRow?: (params: IsFullWidthRowParams<TData>) => boolean;
 
@@ -1155,7 +1155,7 @@ export interface IsRowMaster<TData = any> {
 }
 
 export interface IsRowSelectable<TData = any> {
-    (node: RowNode<TData>): boolean;
+    (node: IRowNode<TData>): boolean;
 }
 
 export interface RowClassRules<TData = any> {
@@ -1168,7 +1168,7 @@ export interface RowClassParams<TData = any> extends AgGridCommon<TData> {
     /** The data associated with this row from rowData. Data is `undefined` for row groups. */
     data: TData | undefined;
     /** The RowNode associated with this row */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
     /** The index of the row */
     rowIndex: number;
 }

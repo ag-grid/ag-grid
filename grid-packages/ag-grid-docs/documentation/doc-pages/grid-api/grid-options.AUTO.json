@@ -1015,7 +1015,7 @@
   "doesExternalFilterPass": {
     "description": "/** Should return `true` if external filter passes, otherwise `false`. */",
     "type": {
-      "arguments": { "node": "RowNode<TData>" },
+      "arguments": { "node": "IRowNode<TData>" },
       "returnType": "boolean"
     }
   },
@@ -1089,7 +1089,7 @@
   },
   "groupRowAggNodes": {
     "description": "/** @deprecated v27.2 - Use `getGroupRowAgg` instead. */",
-    "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "any" }
+    "type": { "arguments": { "nodes": "IRowNode[]" }, "returnType": "any" }
   },
   "getGroupRowAgg": {
     "description": "/** Callback to use when you need access to more then the current column for aggregation. */",
@@ -1115,7 +1115,7 @@
   "defaultGroupOrderComparator": {
     "description": "/** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */",
     "type": {
-      "arguments": { "nodeA": "RowNode<TData>", "nodeB": "RowNode<TData>" },
+      "arguments": { "nodeA": "IRowNode<TData>", "nodeB": "IRowNode<TData>" },
       "returnType": "number"
     }
   },
@@ -1185,7 +1185,7 @@
   "getBusinessKeyForNode": {
     "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n     * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.\n     */",
     "type": {
-      "arguments": { "node": "RowNode<TData>" },
+      "arguments": { "node": "IRowNode<TData>" },
       "returnType": "string"
     }
   },
@@ -1226,7 +1226,7 @@
   "postSort": {
     "description": "/** @deprecated v27.2 Use `postSortRows` instead */",
     "type": {
-      "arguments": { "nodes": "RowNode<TData>[]" },
+      "arguments": { "nodes": "IRowNode<TData>[]" },
       "returnType": "void"
     }
   },
@@ -1261,7 +1261,7 @@
   "isFullWidthCell": {
     "description": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
     "type": {
-      "arguments": { "rowNode": "RowNode<TData>" },
+      "arguments": { "rowNode": "IRowNode<TData>" },
       "returnType": "boolean"
     }
   },

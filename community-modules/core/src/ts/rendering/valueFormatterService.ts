@@ -1,9 +1,9 @@
 import { Bean, Autowired } from '../context/context';
 import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
 import { ExpressionService } from '../valueService/expressionService';
 import { ValueFormatterParams } from '../entities/colDef';
 import { BeanStub } from "../context/beanStub";
+import { IRowNode } from '../interfaces/iRowNode';
 
 @Bean('valueFormatterService')
 export class ValueFormatterService extends BeanStub {
@@ -12,7 +12,7 @@ export class ValueFormatterService extends BeanStub {
 
     public formatValue(
         column: Column,
-        node: RowNode | null,
+        node: IRowNode | null,
         value: any,
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true

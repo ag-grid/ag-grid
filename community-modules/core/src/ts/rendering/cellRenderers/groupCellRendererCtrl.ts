@@ -7,6 +7,7 @@ import { CtrlsService } from "../../ctrlsService";
 import { CellRendererSelectorFunc } from "../../entities/colDef";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
+import { IRowNode } from "../../interfaces/iRowNode";
 import { removeAriaExpanded, setAriaExpanded } from "../../utils/aria";
 import { isElementInEventPath, isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../utils/event";
 import { missing } from "../../utils/generic";
@@ -219,7 +220,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
     private findDisplayedGroupNode(): void {
         const column = this.params.column;
-        const rowNode: RowNode = this.params.node;
+        const rowNode = this.params.node as RowNode;
 
         if (this.showingValueForOpenedParent) {
             let pointer = rowNode.parent;
@@ -242,7 +243,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     private setupShowingValueForOpenedParent(): void {
         // note - this code depends on sortService.updateGroupDataForHiddenOpenParents, where group data
         // is updated to reflect the dragged down parents
-        const rowNode: RowNode = this.params.node;
+        const rowNode = this.params.node;
         const column = this.params.column as Column;
 
         if (!this.gridOptionsService.is('groupHideOpenParents')) {
@@ -582,7 +583,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         // only do this if an indent - as this overwrites the padding that
         // the theme set, which will make things look 'not aligned' for the
         // first group level.
-        const node: RowNode = this.params.node;
+        const node: IRowNode = this.params.node;
         const suppressPadding = this.params.suppressPadding;
 
         if (!suppressPadding) {
@@ -595,7 +596,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         if (this.gridOptionsService.is('groupHideOpenParents')) { return; }
 
         const params = this.params;
-        const rowNode: RowNode = params.node;
+        const rowNode: IRowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
         const fullWithRow = !!params.colDef;
         const treeData = this.gridOptionsService.isTreeData();
@@ -613,7 +614,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     private addFullWidthRowDraggerIfNeeded(): void {
         if (!this.params.fullWidth || !this.params.rowDrag) { return; }
 
-        const rowDragComp = new RowDragComp(() => this.params.value, this.params.node);
+        const rowDragComp = new RowDragComp(() => this.params.value, this.params.node as RowNode);
         this.createManagedBean(rowDragComp, this.context);
 
         this.eGui.insertAdjacentElement('afterbegin', rowDragComp.getGui());
