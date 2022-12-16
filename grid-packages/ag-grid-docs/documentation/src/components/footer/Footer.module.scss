@@ -1,3 +1,6 @@
+$two-column-breakpoint: 480px;
+$four-column-breakpoint: 760px;
+
 .footer {
     color: $light;
     background-color: $ag-dark-blue;
@@ -10,7 +13,15 @@
     }
 
     &__row {
-        composes: d-flex flex-column flex-md-row justify-content-between mb-4 from global;
+        // composes: d-flex flex-column flex-md-row justify-content-between mb-4 from global;
+        @media screen and (min-width: $two-column-breakpoint) {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        @media screen and (min-width: $four-column-breakpoint) {
+            justify-content: space-between;
+        }
 
         p {
             color: $ag-grey;
@@ -19,6 +30,10 @@
 
     &__links {
         composes: mt-2 from global;
+
+        @media screen and (min-width: $two-column-breakpoint) and (max-width: $four-column-breakpoint) {
+            width: 50%;
+        }
 
         a {
             color: $ag-grey;
