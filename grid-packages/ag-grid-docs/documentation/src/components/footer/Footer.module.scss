@@ -6,7 +6,10 @@ $four-column-breakpoint: 760px;
     background-color: $ag-dark-blue;
 
     &__wrapper {
-        composes: container-lg py-4 from global;
+        composes: container-lg from global;
+
+        padding-top: 40px;
+        padding-bottom: 80px;
     }
 
     &__row {
