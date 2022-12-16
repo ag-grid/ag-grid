@@ -71,9 +71,22 @@ export class ModuleRegistry {
         const warningKey = reason + moduleName;
         let warningMessage: string;
         if (ModuleRegistry.moduleBased) {
-            warningMessage = `AG Grid: unable to use ${reason} as module ${moduleName} is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/`;
+            let modName = Object.entries(ModuleNames).find(([k, v]) => v === moduleName)?.[0];
+            warningMessage = `
+AG Grid: unable to use ${reason} as the ${modName} is not registered. Check if you have registered the module:
+            
+    import { ${modName} } from '${moduleName}';
+    
+    ModuleRegistry.registerModules([${modName}]);
+
+For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
         } else {
-            warningMessage = `AG Grid: unable to use ${reason} as package 'ag-grid-enterprise' is not present. Please see: https://www.ag-grid.com/javascript-grid/packages/`;
+            warningMessage = `
+AG Grid: unable to use ${reason} as package 'ag-grid-enterprise' is not present. Check that you have included the following import:
+            
+    import 'ag-grid-enterprise';
+            
+For more info see:: https://www.ag-grid.com/javascript-grid/packages/`;
         }
 
         doOnce(() => {
