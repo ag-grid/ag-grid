@@ -73,9 +73,14 @@ $four-column-breakpoint: 760px;
             padding-top: 12px;
             padding-bottom: 12px;
             color: $white;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            text-decoration-color: rgba($white, 0);
+            transition: text-decoration-color 0.25s ease-in-out;
 
             &:hover {
                 color: $white;
+                text-decoration-color: rgba($white, 1);
             }
         }
     }
