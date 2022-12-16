@@ -13,7 +13,6 @@ $four-column-breakpoint: 760px;
     }
 
     &__row {
-        // composes: d-flex flex-column flex-md-row justify-content-between mb-4 from global;
         @media screen and (min-width: $two-column-breakpoint) {
             display: flex;
             flex-wrap: wrap;
