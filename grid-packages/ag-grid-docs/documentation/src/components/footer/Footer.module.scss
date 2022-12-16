@@ -2,11 +2,8 @@ $two-column-breakpoint: 480px;
 $four-column-breakpoint: 760px;
 
 .footer {
-    color: $light;
+    color: $white;
     background-color: $ag-dark-blue;
-    font-size: 85%;
-    font-weight: 300;
-    text-shadow: 1px 1px 20px $ag-dark-blue;
 
     &__wrapper {
         composes: container-lg py-4 from global;
@@ -23,12 +20,19 @@ $four-column-breakpoint: 760px;
         }
 
         p {
-            color: $ag-grey;
+            margin-bottom: 8px;
+            line-height: 1.2;
+            font-weight: 300;
+            opacity: 0.3333;
+
+            &:first-child {
+                margin-right: 32px;
+            }
         }
     }
 
     &__links {
-        composes: mt-2 from global;
+        margin-bottom: 40px;
 
         @media screen and (min-width: $two-column-breakpoint) and (max-width: $four-column-breakpoint) {
             width: 50%;
@@ -45,15 +49,16 @@ $four-column-breakpoint: 760px;
         }
 
         a {
-            color: $ag-grey;
+            color: $white;
 
             &:hover {
-                color: $ag-grey;
+                color: $white;
             }
         }
 
-        h3 {
-            font-size: 1.2rem;
+        h4 {
+            font-size: 1rem;
+            opacity: 0.6666;
         }
 
         &__list {
