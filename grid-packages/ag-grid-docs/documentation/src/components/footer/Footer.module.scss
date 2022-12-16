@@ -23,7 +23,7 @@ $four-column-breakpoint: 760px;
             margin-bottom: 8px;
             line-height: 1.2;
             font-weight: 300;
-            opacity: 0.3333;
+            opacity: 0.6666;
 
             &:first-child {
                 margin-right: 32px;
@@ -48,12 +48,13 @@ $four-column-breakpoint: 760px;
             }
         }
 
-        a {
-            color: $white;
+        &__list {
+            padding-left: 0;
+            list-style-type: none;
+        }
 
-            &:hover {
-                color: $white;
-            }
+        li {
+            overflow: hidden;
         }
 
         h4 {
@@ -61,9 +62,18 @@ $four-column-breakpoint: 760px;
             opacity: 0.6666;
         }
 
-        &__list {
-            padding-left: 0;
-            list-style-type: none;
+        a {
+            display: inline-block;
+            min-width: 48px;
+            margin-top: -12px;
+            margin-bottom: -12px;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            color: $white;
+
+            &:hover {
+                color: $white;
+            }
         }
     }
 }
