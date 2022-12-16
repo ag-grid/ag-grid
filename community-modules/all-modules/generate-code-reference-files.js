@@ -93,7 +93,7 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
         }
     } else if (kind == 'MethodSignature' || kind == 'MethodDeclaration') {
         // i.e isExternalFilterPresent?(): boolean;
-        // i.e doesExternalFilterPass?(node: RowNode): boolean;        
+        // i.e doesExternalFilterPass?(node: IRowNode): boolean;        
         const methodArgs = getArgTypes(node.parameters, srcFile);
 
         nodeMembers[name] = {
@@ -518,8 +518,23 @@ function getColumnApi() {
     return getClassProperties(colApiFile, 'ColumnApi');
 }
 function getRowNode() {
-    const file = "../core/src/ts/entities/rowNode.ts";
-    return getClassProperties(file, 'RowNode');
+    const file = "../core/src/ts/interfaces/iRowNode.ts";
+    const srcFile = parseFile(file);
+    const iRowNode = findNode('IRowNode', srcFile);
+    const baseRowNode = findNode('BaseRowNode', srcFile);
+    const groupRowNode = findNode('GroupRowNode', srcFile);
+
+    let rowNodeMembers = {};
+    const addToMembers = (node) => {
+        ts.forEachChild(node, n => {
+            rowNodeMembers = { ...rowNodeMembers, ...extractTypesFromNode(n, srcFile, false) }
+        });
+    }
+    addToMembers(baseRowNode);
+    addToMembers(groupRowNode);
+    addToMembers(iRowNode);
+
+    return rowNodeMembers;
 }
 function getColumn() {
     const file = "../core/src/ts/entities/column.ts";

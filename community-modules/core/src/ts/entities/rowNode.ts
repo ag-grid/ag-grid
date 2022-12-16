@@ -14,7 +14,7 @@ import { Column } from "./column";
 import { IsFullWidthRowParams } from "../interfaces/iCallbackParams";
 import { CellChangedEvent, DataChangedEvent, IRowNode, RowHighlightPosition, RowNodeEvent, RowNodeEventType, RowPinnedType, SetSelectedParams } from "../interfaces/iRowNode";
 
-export class RowNode<TData = any> implements IEventEmitter, IRowNode {
+export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
     public static ID_PREFIX_TOP_PINNED = 't-';
@@ -194,14 +194,14 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode {
      * it is used so new rows can animate in from their old position. */
     public oldRowTop: number | null = null;
 
+    /** `true` by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
+    public selectable = true;
+
     /** `true` if this node is a daemon. This means row is not part of the model. Can happen when then
      * the row is selected and then the user sets a different ID onto the node. The nodes is then
      * representing a different entity, so the selection controller, if the node is selected, takes
      * a copy where daemon=true. */
-    public daemon: boolean;
-
-    /** `true` by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
-    public selectable = true;
+    public __daemon: boolean;
 
     /** Used by the value service, stores values for a particular change detection turn. */
     public __cacheData: { [colId: string]: any; };
@@ -309,7 +309,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode {
         // place where daemon nodes can live).
         oldNode.id = this.id;
         oldNode.data = this.data;
-        oldNode.daemon = true;
+        oldNode.__daemon = true;
         oldNode.selected = this.selected;
         oldNode.level = this.level;
 
@@ -771,6 +771,10 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode {
         this.quickFilterAggregateText = null;
     }
 
+    /** Returns:
+    * - `true` if the node can be expanded, i.e it is a group or master row.
+    * - `false` if the node cannot be expanded
+    */
     public isExpandable(): boolean {
         return (this.hasChildren() && !this.footer) || this.master ? true : false;
     }
@@ -862,6 +866,11 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode {
         });
     }
 
+    /**
+     * Returns:
+     * - `true` if node is either pinned to the `top` or `bottom`
+     * - `false` if the node isn't pinned
+     */
     public isRowPinned(): boolean {
         return this.rowPinned === 'top' || this.rowPinned === 'bottom';
     }
@@ -1088,6 +1097,11 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode {
         return foundFirstChildPath ? nodeToSwapIn : null;
     }
 
+    /**
+     * Returns:
+     * - `true` if the node is a full width cell
+     * - `false` if the node is not a full width cell
+     */
     public isFullWidthCell(): boolean {
         const isFullWidthCellFunc = this.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;

@@ -2,6 +2,7 @@ import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } fr
 import { BBox } from '../../../scene/bbox';
 import { ChartAxisDirection } from '../../chartAxis';
 import { PointLabelDatum } from '../../../util/labelPlacement';
+
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
     directionKeys = {
         [ChartAxisDirection.X]: ['angleKey'],

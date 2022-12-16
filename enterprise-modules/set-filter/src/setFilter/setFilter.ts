@@ -20,13 +20,13 @@ import {
     _,
     ISetFilter,
     SetFilterModel,
-    RowNode,
     SetFilterModelValue,
     ValueFormatterParams,
     ColumnModel,
     ValueService,
     GetDataPath,
     GROUP_AUTO_COLUMN_ID,
+    IRowNode,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
@@ -60,7 +60,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private appliedModelKeys: Set<string | null> | null = null;
     private noAppliedModelKeys: boolean = false;
 
-    private createKey: (value: V | null, node?: RowNode | null) => string | null;
+    private createKey: (value: V | null, node?: IRowNode | null) => string | null;
 
     private valueFormatter: (params: ValueFormatterParams) => string;
 
@@ -268,7 +268,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined,
         convertValuesToStrings: boolean,
         treeDataOrGrouping: boolean
-    ): (value: V | null, node?: RowNode | null) => string | null {
+    ): (value: V | null, node?: IRowNode | null) => string | null {
         if (treeDataOrGrouping && !keyCreator) {
             throw new Error('AG Grid: Must supply a Key Creator in Set Filter params when `treeList = true` on a group column, and Tree Data or Row Grouping is enabled.');
         }
@@ -607,7 +607,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.isInAppliedModel(this.createKey(value, node));
     }
 
-    private doesFilterPassForConvertValuesToString(node: RowNode, value: V | null) {
+    private doesFilterPassForConvertValuesToString(node: IRowNode, value: V | null) {
         const key = this.createKey(value, node);
         if (key != null && Array.isArray(key)) {
             if (key.length === 0) {
@@ -619,7 +619,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.isInAppliedModel(key as any);
     }
 
-    private doesFilterPassForTreeData(node: RowNode, data: any): boolean {
+    private doesFilterPassForTreeData(node: IRowNode, data: any): boolean {
         if (node.childrenAfterGroup?.length) {
             // only perform checking on leaves. The core filtering logic for tree data won't work properly otherwise
             return false;
@@ -627,7 +627,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.isInAppliedModel(this.createKey(this.getDataPath!(data) as any) as any);
     }
 
-    private doesFilterPassForGrouping(node: RowNode, data: any): boolean {
+    private doesFilterPassForGrouping(node: IRowNode, data: any): boolean {
         const dataPath = this.columnModel.getRowGroupColumns().map(groupCol => this.valueService.getKeyForNode(groupCol, node));
         dataPath.push(_.toStringOrNull(_.makeNull(this.getValueFromNode(node, data))));
         return this.isInAppliedModel(this.createKey(dataPath as any) as any);
@@ -638,7 +638,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.appliedModelKeys!.has(this.caseFormat(key));
     }
 
-    private getValueFromNode(node: RowNode, data: any): V | null {
+    private getValueFromNode(node: IRowNode, data: any): V | null {
         const { valueGetter, api, colDef, column, columnApi, context } = this.setFilterParams!;
 
         return valueGetter({
@@ -653,7 +653,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         });
     }
 
-    private getKeyCreatorParams(value: V | null, node: RowNode | null = null): KeyCreatorParams {
+    private getKeyCreatorParams(value: V | null, node: IRowNode | null = null): KeyCreatorParams {
         return {
             value,
             colDef: this.setFilterParams!.colDef,

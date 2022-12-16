@@ -1,4 +1,4 @@
-import { GetRowIdParams, Grid, GridOptions, RowDragEndEvent, RowNode, ValueFormatterParams } from '@ag-grid-community/core';
+import { GetRowIdParams, Grid, GridOptions, RowDragEndEvent, IRowNode, ValueFormatterParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 declare var FileCellRenderer: any;
@@ -86,7 +86,7 @@ function onRowDragEnd(event: RowDragEndEvent) {
 
 // this updates the filePath locations in our data, we update the data
 // before we send it to AG Grid
-function moveToPath(newParentPath: string[], node: RowNode, allUpdatedNodes: any[]) {
+function moveToPath(newParentPath: string[], node: IRowNode, allUpdatedNodes: any[]) {
   // last part of the file path is the file name
   var oldPath = node.data.filePath
   var fileName = oldPath[oldPath.length - 1]
@@ -104,7 +104,7 @@ function moveToPath(newParentPath: string[], node: RowNode, allUpdatedNodes: any
   }
 }
 
-function isSelectionParentOfTarget(selectedNode: RowNode, targetNode: RowNode | null) {
+function isSelectionParentOfTarget(selectedNode: IRowNode, targetNode: IRowNode | null) {
   let children = [...(selectedNode.childrenAfterGroup || [])];
 
   if (!targetNode) { return false; }

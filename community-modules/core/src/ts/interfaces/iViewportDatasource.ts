@@ -1,4 +1,4 @@
-import { RowNode } from "../entities/rowNode";
+import { IRowNode } from "./iRowNode";
 
 export interface IViewportDatasource {
 
@@ -18,5 +18,5 @@ export interface IViewportDatasourceParams {
     /** Datasource calls this when new data arrives. The grid then updates the provided rows. The rows are mapped [rowIndex]=>rowData].*/
     setRowData: (rowData: { [key: number]: any }) => void;
     /** Datasource calls this when it wants a row node - typically used when it wants to update the row node. */
-    getRow: (rowIndex: number) => RowNode;
+    getRow: (rowIndex: number) => IRowNode;
 }

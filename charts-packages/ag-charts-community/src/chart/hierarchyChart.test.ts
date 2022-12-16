@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgChartOptions } from './agChartOptions';
 import { AgChart } from './agChartV2';
-import { Chart, ChartUpdateType } from './chart';
+import { Chart } from './chart';
 import {
     waitForChartStability,
     IMAGE_SNAPSHOT_DEFAULTS,
@@ -82,8 +82,8 @@ describe('HierarchyChart', () => {
                 depth--;
             }
 
-            chart.changeHighlightDatum({ datum: node as any });
-            chart.update(ChartUpdateType.SERIES_UPDATE);
+            const highlightManager = (chart as any).highlightManager;
+            highlightManager.updateHighlight(chart.id, node as any);
             await compare(chart);
         });
     });

@@ -80,8 +80,9 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     public onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void {
         // We don't want to update the floating filter if the floating filter caused the change,
         // because the UI is already in sync. if we didn't do this, the UI would behave strangely
-        // as it would be updating as the user is typing
-        if (this.isEventFromFloatingFilter(event)) { return; }
+        // as it would be updating as the user is typing.
+        // This is similar for data changes, which don't affect provided date floating filters
+        if (this.isEventFromFloatingFilter(event) || this.isEventFromDataChange(event)) { return; }
 
         super.setLastTypeFromModel(model);
 

@@ -3034,21 +3034,30 @@
       "padding": "number"
     }
   },
+  "Listener": {
+    "meta": { "isTypeAlias": true, "typeParams": ["E"] },
+    "type": "{ symbol?: Symbol; handler: (event: E) => void; }"
+  },
   "CursorState": { "meta": {}, "type": { "style": "string" } },
+  "HighlightState": {
+    "meta": {},
+    "type": { "highlightedDatum": "SeriesNodeDatum" }
+  },
+  "HighlightChangeEvent": {
+    "meta": {},
+    "type": {
+      "type": "'highlight-change'",
+      "previousHighlight?": "SeriesNodeDatum",
+      "currentHighlight?": "SeriesNodeDatum"
+    }
+  },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
     "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
   },
-  "Listener": {
-    "meta": {
-      "isTypeAlias": true,
-      "typeParams": ["T extends InteractionTypes"]
-    },
-    "type": "{ symbol?: Symbol; handler: (event: InteractionEvent<T>) => void; }"
-  },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
+    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
   },
   "InteractionEvent": {
     "meta": {
@@ -3056,6 +3065,17 @@
       "typeParams": ["T extends InteractionTypes"]
     },
     "type": "{ type: T; offsetX: number; offsetY: number; pageX: number; pageY: number; sourceEvent: Event; consume(): void; } & (T extends 'drag' ? { startX: number; startY: number; } : {})"
+  },
+  "Coords": {
+    "meta": {},
+    "type": {
+      "clientX": "number",
+      "clientY": "number",
+      "pageX": "number",
+      "pageY": "number",
+      "offsetX": "number",
+      "offsetY": "number"
+    }
   },
   "Layers": {
     "meta": { "isEnum": true },

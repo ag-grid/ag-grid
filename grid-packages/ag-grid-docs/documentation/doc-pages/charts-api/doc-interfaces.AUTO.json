@@ -4544,14 +4544,38 @@
     },
     "padding": { "type": { "returnType": "number", "optional": false } }
   },
+  "Listener": { "meta": { "typeParams": ["E"] } },
   "CursorState": {
     "style": { "type": { "returnType": "string", "optional": false } }
   },
+  "HighlightState": {
+    "highlightedDatum": {
+      "type": { "returnType": "SeriesNodeDatum", "optional": false }
+    }
+  },
+  "HighlightChangeEvent": {
+    "type": {
+      "type": { "returnType": "'highlight-change'", "optional": false }
+    },
+    "previousHighlight": {
+      "type": { "returnType": "SeriesNodeDatum", "optional": true }
+    },
+    "currentHighlight": {
+      "type": { "returnType": "SeriesNodeDatum", "optional": true }
+    }
+  },
   "InteractionTypes": {},
-  "Listener": { "meta": { "typeParams": ["T extends InteractionTypes"] } },
   "SUPPORTED_EVENTS": {},
   "InteractionEvent": {
     "meta": { "typeParams": ["T extends InteractionTypes"] }
+  },
+  "Coords": {
+    "clientX": { "type": { "returnType": "number", "optional": false } },
+    "clientY": { "type": { "returnType": "number", "optional": false } },
+    "pageX": { "type": { "returnType": "number", "optional": false } },
+    "pageY": { "type": { "returnType": "number", "optional": false } },
+    "offsetX": { "type": { "returnType": "number", "optional": false } },
+    "offsetY": { "type": { "returnType": "number", "optional": false } }
   },
   "Layers": {},
   "LegendDatum": {

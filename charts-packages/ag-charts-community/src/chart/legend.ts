@@ -32,10 +32,11 @@ import {
     Validate,
 } from '../util/validation';
 import { Layers } from './layers';
+import { Series } from './series/series';
+import { ChartUpdateType } from './chart';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { CursorManager } from './interaction/cursorManager';
-import { Series, SeriesNodeDatum } from './series/series';
-import { ChartUpdateType } from './chart';
+import { HighlightManager } from './interaction/highlightManager';
 import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
 import { Orientation } from './gridLayout';
@@ -240,16 +241,15 @@ export class Legend {
     constructor(
         private readonly chart: {
             readonly series: Series<any>[];
-            readonly highlightedDatum?: SeriesNodeDatum;
             togglePointer(visible: boolean): void;
-            changeHighlightDatum(opts?: { datum: SeriesNodeDatum }): void;
             update(
                 type: ChartUpdateType,
                 opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
             ): void;
         },
         private readonly interactionManager: InteractionManager,
-        private readonly cursorManager: CursorManager
+        private readonly cursorManager: CursorManager,
+        private readonly highlightManager: HighlightManager
     ) {
         this.item.marker.parent = this;
         this.pagination = new Pagination(
@@ -579,6 +579,7 @@ export class Legend {
         const {
             listeners: { legendItemClick },
             chart,
+            highlightManager,
         } = this;
         const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
@@ -596,19 +597,12 @@ export class Legend {
         series.toggleSeriesItem(itemId, newEnabled);
         if (!newEnabled) {
             chart.togglePointer(false);
-        }
-
-        if (!newEnabled && chart.highlightedDatum?.series === series) {
-            chart.changeHighlightDatum();
-        }
-
-        if (newEnabled) {
-            chart.changeHighlightDatum({
-                datum: {
-                    series,
-                    itemId,
-                    datum: undefined,
-                },
+            highlightManager.updateHighlight(this.id);
+        } else {
+            highlightManager.updateHighlight(this.id, {
+                series,
+                itemId,
+                datum: undefined,
             });
         }
 
@@ -623,23 +617,13 @@ export class Legend {
             return;
         }
 
-        const maybeDeHighlight = () => {
-            // Remove highlight IF the current highlight was from legend interactions. The only way
-            // a highlight is from the legend is if it isn't for a specific datum right now, so if
-            // the highlight points to a specific datum, don't remove it.
-            if (this.chart.highlightedDatum?.datum != null) {
-                return;
-            }
-            this.chart.changeHighlightDatum();
-        };
-
         const legendBBox = this.computeBBox();
         const { offsetX, offsetY } = event;
         const pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
 
         if (!pointerInsideLegend) {
             this.cursorManager.updateCursor(this.id);
-            maybeDeHighlight();
+            this.highlightManager.updateHighlight(this.id);
             return;
         }
 
@@ -651,7 +635,7 @@ export class Legend {
         const pointerOverLegendDatum = pointerInsideLegend && datum !== undefined;
         if (!pointerOverLegendDatum) {
             this.cursorManager.updateCursor(this.id);
-            maybeDeHighlight();
+            this.highlightManager.updateHighlight(this.id);
             return;
         }
 
@@ -659,15 +643,13 @@ export class Legend {
 
         const series = datum ? this.chart.series.find((series) => series.id === datum?.id) : undefined;
         if (datum?.enabled && series) {
-            this.chart.changeHighlightDatum({
-                datum: {
-                    series,
-                    itemId: datum?.itemId,
-                    datum: undefined,
-                },
+            this.highlightManager.updateHighlight(this.id, {
+                series,
+                itemId: datum?.itemId,
+                datum: undefined,
             });
         } else {
-            maybeDeHighlight();
+            this.highlightManager.updateHighlight(this.id);
         }
     }
 }

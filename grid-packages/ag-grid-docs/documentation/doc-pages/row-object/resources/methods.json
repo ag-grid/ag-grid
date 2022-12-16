@@ -10,7 +10,10 @@
             "description": "Select (or deselect) the node. <ul class='content'><li>`newValue` - `true` for selection, `false` for deselection.</li><li>`clearSelection` - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.</li><li>`suppressFinishActions` - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. </li>"
         },
         "isSelected": {},
+        "isRowPinned": {},
+        "isExpandable": {},
         "setExpanded": {},
+        "isFullWidthCell": {},
         "addEventListener": {},
         "removeEventListener": {},
         "resetQuickFilterAggregateText": {},

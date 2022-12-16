@@ -34,18 +34,19 @@ import { StickyRowFeature } from "./features/stickyRowFeature";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { browserSupportsPreventScroll } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { IRowNode } from "../interfaces/iRowNode";
 
 export interface RowCtrlMap {
     [key: string]: RowCtrl;
 }
 
 interface RowNodeMap {
-    [id: string]: RowNode;
+    [id: string]: IRowNode;
 }
 
 export interface GetCellsParams<TData = any> {
     /** Optional list of row nodes to restrict operation to */
-    rowNodes?: RowNode<TData>[];
+    rowNodes?: IRowNode<TData>[];
     /** Optional list of columns to restrict operation to */
     columns?: (string | Column)[];
 }
@@ -68,7 +69,7 @@ export interface GetCellEditorInstancesParams<TData = any> extends GetCellsParam
 
 export interface RedrawRowsParams<TData = any> {
     /** Row nodes to redraw */
-    rowNodes?: RowNode<TData>[];
+    rowNodes?: IRowNode<TData>[];
 }
 
 const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
@@ -421,7 +422,7 @@ export class RowRenderer extends BeanStub {
     }
 
     // if the row nodes are not rendered, no index is returned
-    private getRenderedIndexesForRowNodes(rowNodes: RowNode[]): string[] {
+    private getRenderedIndexesForRowNodes(rowNodes: IRowNode[]): string[] {
         const result: string[] = [];
 
         if (missing(rowNodes)) { return result; }
@@ -436,7 +437,7 @@ export class RowRenderer extends BeanStub {
         return result;
     }
 
-    public redrawRows(rowNodes?: RowNode[]): void {
+    public redrawRows(rowNodes?: IRowNode[]): void {
         // if no row nodes provided, then refresh everything
         const partialRefresh = rowNodes != null && rowNodes.length > 0;
 
@@ -693,7 +694,7 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
-    private mapRowNodes(rowNodes?: RowNode[] | null): {top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap} | undefined {
+    private mapRowNodes(rowNodes?: IRowNode[] | null): { top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap } | undefined {
         if (!rowNodes) { return; }
 
         const res: {top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap} = {
@@ -734,7 +735,7 @@ export class RowRenderer extends BeanStub {
 
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
-    private getCellCtrls(rowNodes?: RowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
+    private getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
         const rowIdsMap = this.mapRowNodes(rowNodes);
         const res: CellCtrl[] = [];
 
@@ -984,7 +985,7 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterScroll();
     }
 
-    public getFullWidthRowCtrls(rowNodes?: RowNode[]): RowCtrl[] {
+    public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {
         const rowNodesMap = this.mapRowNodes(rowNodes);
         return getAllValuesInObject(this.rowCtrlsByRowIndex).filter((rowCtrl: RowCtrl) => {
             // include just full width

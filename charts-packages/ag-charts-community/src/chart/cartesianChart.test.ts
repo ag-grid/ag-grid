@@ -3,7 +3,7 @@ import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgCartesianChartOptions, AgChartOptions } from './agChartOptions';
 import { AgChart } from './agChartV2';
 import { CartesianChart } from './cartesianChart';
-import { Chart, ChartUpdateType } from './chart';
+import { Chart } from './chart';
 import { SeriesNodeDataContext } from './series/series';
 import {
     waitForChartStability,
@@ -230,8 +230,8 @@ describe('CartesianChart', () => {
                 const nodeDataArray: SeriesNodeDataContext<any, any>[] = seriesImpl!['contextNodeData'];
                 const nodeData = nodeDataArray.find((n) => n.itemId === yKey);
 
-                chart.changeHighlightDatum({ datum: nodeData?.nodeData[3] });
-                chart.update(ChartUpdateType.SERIES_UPDATE);
+                const highlightManager = (chart as any).highlightManager;
+                highlightManager.updateHighlight(chart.id, nodeData?.nodeData[3]);
                 await compare(chart);
             });
         });

@@ -30,7 +30,7 @@ export class ExpandListener extends BeanStub {
     }
 
     private onRowGroupOpened(event: RowGroupOpenedEvent): void {
-        const rowNode: RowNode = event.node;
+        const rowNode = event.node as RowNode;
 
         if (rowNode.expanded) {
             if (rowNode.master) {

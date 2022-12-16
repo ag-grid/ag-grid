@@ -497,12 +497,12 @@ export class FilterManager extends BeanStub {
             });
         });
 
-        this.updateFilterFlagInColumns(source);
+        this.updateFilterFlagInColumns(source, { afterDataChange: true });
         this.updateActiveFilters();
     }
 
     private createValueGetter(column: Column): IFilterParams['valueGetter'] {
-        return ({ node }) => this.valueService.getValue(column, node, true);
+        return ({ node }) => this.valueService.getValue(column, node as RowNode, true);
     }
 
     public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): AgPromise<IFilterComp> | null {

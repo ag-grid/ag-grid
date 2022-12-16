@@ -14,7 +14,6 @@ import {
 import { EventService } from "../eventService";
 import { Autowired, PostConstruct } from "../context/context";
 import { ColumnUtils } from "../columns/columnUtils";
-import { RowNode } from "./rowNode";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ColumnEvent, ColumnEventType } from "../events";
 import { ColumnGroup } from "./columnGroup";
@@ -25,6 +24,7 @@ import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
 import { GridOptionsService } from "../gridOptionsService";
+import { IRowNode } from "../interfaces/iRowNode";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 
@@ -341,7 +341,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.eventService.removeEventListener(eventType, listener);
     }
 
-    public createColumnFunctionCallbackParams(rowNode: RowNode): ColumnFunctionCallbackParams {
+    public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
         return {
             node: rowNode,
             data: rowNode.data,
@@ -353,7 +353,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         };
     }
 
-    public isSuppressNavigable(rowNode: RowNode): boolean {
+    public isSuppressNavigable(rowNode: IRowNode): boolean {
         // if boolean set, then just use it
         if (typeof this.colDef.suppressNavigable === 'boolean') {
             return this.colDef.suppressNavigable;
@@ -369,7 +369,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return false;
     }
 
-    public isCellEditable(rowNode: RowNode): boolean {
+    public isCellEditable(rowNode: IRowNode): boolean {
 
         // only allow editing of groups if the user has this option enabled
         if (rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
@@ -391,19 +391,19 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return !!attrToBoolean(this.colDef.autoHeaderHeight);
     }
 
-    public isRowDrag(rowNode: RowNode): boolean {
+    public isRowDrag(rowNode: IRowNode): boolean {
         return this.isColumnFunc(rowNode, this.colDef.rowDrag);
     }
 
-    public isDndSource(rowNode: RowNode): boolean {
+    public isDndSource(rowNode: IRowNode): boolean {
         return this.isColumnFunc(rowNode, this.colDef.dndSource);
     }
 
-    public isCellCheckboxSelection(rowNode: RowNode): boolean {
+    public isCellCheckboxSelection(rowNode: IRowNode): boolean {
         return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
     }
 
-    public isSuppressPaste(rowNode: RowNode): boolean {
+    public isSuppressPaste(rowNode: IRowNode): boolean {
         return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
     }
 
@@ -411,7 +411,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return !!attrToBoolean(this.colDef.resizable);
     }
 
-    private isColumnFunc(rowNode: RowNode, value?: boolean | ((params: ColumnFunctionCallbackParams) => boolean) | null): boolean {
+    private isColumnFunc(rowNode: IRowNode, value?: boolean | ((params: ColumnFunctionCallbackParams) => boolean) | null): boolean {
         // if boolean set, then just use it
         if (typeof value === 'boolean') {
             return value;
@@ -656,7 +656,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return changed;
     }
 
-    private createBaseColDefParams(rowNode: RowNode): BaseColDefParams {
+    private createBaseColDefParams(rowNode: IRowNode): BaseColDefParams {
         const params: BaseColDefParams = {
             node: rowNode,
             data: rowNode.data,
@@ -669,7 +669,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return params;
     }
 
-    public getColSpan(rowNode: RowNode): number {
+    public getColSpan(rowNode: IRowNode): number {
         if (missing(this.colDef.colSpan)) { return 1; }
         const params: ColSpanParams = this.createBaseColDefParams(rowNode);
         const colSpan = this.colDef.colSpan(params);
@@ -678,7 +678,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return Math.max(colSpan, 1);
     }
 
-    public getRowSpan(rowNode: RowNode): number {
+    public getRowSpan(rowNode: IRowNode): number {
         if (missing(this.colDef.rowSpan)) { return 1; }
         const params: RowSpanParams = this.createBaseColDefParams(rowNode);
         const rowSpan = this.colDef.rowSpan(params);

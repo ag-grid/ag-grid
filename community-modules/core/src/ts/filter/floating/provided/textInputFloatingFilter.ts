@@ -40,8 +40,9 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     }
 
     public onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void {
-        if (this.isEventFromFloatingFilter(event)) {
-            // if the floating filter triggered the change, it is already in sync
+        if (this.isEventFromFloatingFilter(event) || this.isEventFromDataChange(event)) {
+            // if the floating filter triggered the change, it is already in sync.
+            // Data changes also do not affect provided text floating filters
             return;
         }
 

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest, RowNode } from '@ag-grid-community/core'
+import { Grid, ColDef, GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest, IRowNode } from '@ag-grid-community/core'
 declare var _: any;
 
 const columnDefs: ColDef[] = [
@@ -30,7 +30,7 @@ function getRowId(params: GetRowIdParams) {
 }
 
 // only select group rows
-function isRowSelectable(rowNode: RowNode) {
+function isRowSelectable(rowNode: IRowNode) {
   return !rowNode.group
 }
 

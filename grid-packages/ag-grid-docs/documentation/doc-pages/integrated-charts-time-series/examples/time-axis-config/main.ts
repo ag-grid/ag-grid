@@ -23,10 +23,6 @@ const gridOptions: GridOptions = {
       legend: {
         enabled: false,
       },
-      padding: {
-        top: 15,
-        bottom: 25,
-      },
       navigator: {
         enabled: true,
         height: 20,
@@ -35,7 +31,7 @@ const gridOptions: GridOptions = {
       axes: {
         time: {
           label: {
-            rotation: 45,
+            rotation: 315,
             format: '%H:%M',
           },
         },

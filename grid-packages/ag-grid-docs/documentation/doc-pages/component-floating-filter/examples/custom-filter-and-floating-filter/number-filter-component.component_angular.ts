@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 
 import { IFilterAngularComp } from "@ag-grid-community/angular";
-import { IDoesFilterPassParams, IFilterParams, RowNode } from "@ag-grid-community/core";
+import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
 
 @Component({
     selector: 'number-component',

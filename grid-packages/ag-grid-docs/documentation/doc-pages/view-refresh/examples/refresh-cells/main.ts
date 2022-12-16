@@ -1,4 +1,4 @@
-import { Grid, GridApi, GridOptions, RefreshCellsParams, RowNode } from '@ag-grid-community/core'
+import { Grid, GridApi, GridOptions, IRowNode, RefreshCellsParams } from '@ag-grid-community/core'
 
 // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
 // the row animation look nice when you see all the rows
@@ -104,7 +104,7 @@ function scrambleAndRefreshTopToBottom() {
     refreshRow(rowNode, api)
   }
 
-  function refreshRow(rowNode: RowNode, api: GridApi) {
+  function refreshRow(rowNode: IRowNode, api: GridApi) {
     var millis = frame++ * 100
     var rowNodes = [rowNode] // params needs an array
     var params: RefreshCellsParams = {

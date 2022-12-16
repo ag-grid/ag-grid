@@ -1,10 +1,10 @@
-import { RowNode } from "../entities/rowNode";
+import { IRowNode } from "./iRowNode";
 
 export interface RowNodeTransaction<TData = any> {
     /** Row nodes added */
-    add: RowNode<TData>[];
+    add: IRowNode<TData>[];
     /** Row nodes removed */
-    remove: RowNode<TData>[];
+    remove: IRowNode<TData>[];
     /** Row nodes updated */
-    update: RowNode<TData>[];
+    update: IRowNode<TData>[];
 }

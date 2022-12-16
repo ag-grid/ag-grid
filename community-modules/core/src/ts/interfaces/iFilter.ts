@@ -1,12 +1,12 @@
 import { ColDef, ValueGetterFunc } from '../entities/colDef';
 import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
 import { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import { AgPromise } from '../utils';
 import { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import { IComponent } from './iComponent';
 import { AgGridCommon } from './iCommon';
 import { IRowModel } from './iRowModel';
+import { IRowNode } from './iRowNode';
 
 export type IFilterType = string | { new(): IFilterComp; } | boolean;
 export type IFloatingFilterType = string | { new(): IFloatingFilterComp; };
@@ -99,7 +99,7 @@ export interface IFilterComp<TData = any> extends IComponent<IFilterParams<TData
 
 export interface IDoesFilterPassParams<TData = any> {
     /** The row node in question. */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
     /** The data part of the row node in question. */
     data: TData;
 }
@@ -165,5 +165,5 @@ export interface IFilterParams<TData = any> extends AgGridCommon<TData> {
      * The set filter uses this to remove from the list,
      * items that are no longer available due to the state of other filters (like Excel type filtering).
      */
-    doesRowPassOtherFilter: (rowNode: RowNode<TData>) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
+    doesRowPassOtherFilter: (rowNode: IRowNode<TData>) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
 }

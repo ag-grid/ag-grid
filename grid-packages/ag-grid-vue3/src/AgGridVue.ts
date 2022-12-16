@@ -1,6 +1,6 @@
 import {defineComponent, getCurrentInstance, h, PropType} from 'vue';
 import {markRaw, toRaw} from '@vue/reactivity';
-import {ComponentUtil, Grid, GridOptions, Module, RowNode} from 'ag-grid-community';
+import { ComponentUtil, Grid, GridOptions, Module, IRowNode } from 'ag-grid-community';
 
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import { getAgGridProperties, Properties } from './Utils';
@@ -95,7 +95,7 @@ export const AgGridVue = defineComponent({
         },
         getRowData(): any[] {
             const rowData: any[] = [];
-            this.gridOptions.api!.forEachNode((rowNode: RowNode) => {
+            this.gridOptions.api!.forEachNode((rowNode: IRowNode) => {
                 rowData.push(rowNode.data);
             });
             return rowData;

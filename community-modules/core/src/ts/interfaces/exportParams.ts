@@ -1,8 +1,8 @@
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
-import { RowNode } from "../entities/rowNode";
 import { RowPosition } from "../entities/rowPosition";
 import { AgGridCommon } from "./iCommon";
+import { IRowNode } from "./iRowNode";
 
 export interface BaseExportParams {
     /**
@@ -151,13 +151,13 @@ export interface CsvExportParams extends ExportParams<CsvCustomContent> {
 
 export interface ShouldRowBeSkippedParams<TData = any> extends AgGridCommon<TData> {
     /** Row node. */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
 }
 
 export interface ProcessCellForExportParams<TData = any> extends AgGridCommon<TData> {
     value: any;
     accumulatedRowIndex?: number;
-    node?: RowNode<TData> | null;
+    node?: IRowNode<TData> | null;
     column: Column;
     type: string; // clipboard, dragCopy (ctrl+D), export
 }
@@ -172,5 +172,5 @@ export interface ProcessGroupHeaderForExportParams<TData = any> extends AgGridCo
 
 export interface ProcessRowGroupForExportParams<TData = any> extends AgGridCommon<TData> {
     /** Row node. */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
 }

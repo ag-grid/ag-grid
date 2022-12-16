@@ -54,11 +54,11 @@ export class Rect extends Path {
                 gradient.stops = [
                     {
                         offset: 0,
-                        color: Color.fromString(fill).brighter().toString(),
+                        color: Color.tryParseFromString(fill).brighter().toString(),
                     },
                     {
                         offset: 1,
-                        color: Color.fromString(fill).darker().toString(),
+                        color: Color.tryParseFromString(fill).darker().toString(),
                     },
                 ];
                 this.gradientInstance = gradient;

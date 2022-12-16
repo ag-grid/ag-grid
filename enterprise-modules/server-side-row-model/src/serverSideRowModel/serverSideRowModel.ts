@@ -298,7 +298,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public getRow(index: number): RowNode | undefined {
         const rootStore = this.getRootStore();
         if (!rootStore) { return undefined; }
-        return rootStore.getRowUsingDisplayIndex(index);
+        return rootStore.getRowUsingDisplayIndex(index) as RowNode;
     }
 
     public expandAll(value: boolean): void {
@@ -423,7 +423,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (_.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
-        return firstInRange.parent!.childStore!.getRowNodesInRange(lastInRange, firstInRange);
+        return firstInRange.parent!.childStore!.getRowNodesInRange(lastInRange, firstInRange) as RowNode[];
     }
 
     public getRowNode(id: string): RowNode | undefined {

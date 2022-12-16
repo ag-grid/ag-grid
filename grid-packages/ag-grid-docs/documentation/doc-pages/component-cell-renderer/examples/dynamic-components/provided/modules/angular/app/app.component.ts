@@ -7,7 +7,7 @@ import { SquareRenderer } from './square-renderer.component';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ColDef, ColumnApi, GridApi, GridReadyEvent, RowNode } from '@ag-grid-community/core';
+import { ColDef, ColumnApi, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -96,7 +96,7 @@ export class AppComponent {
     }
 
     refreshEvenRowsCurrencyData() {
-        this.gridApi.forEachNode((rowNode: RowNode) => {
+        this.gridApi.forEachNode((rowNode: IRowNode) => {
             if (rowNode.data.value % 2 === 0) {
                 rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
             }

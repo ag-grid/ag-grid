@@ -4,7 +4,7 @@ import { AgGridCommon } from "./iCommon";
 import { ServerSideTransaction } from "./serverSideTransaction";
 import { CellPosition } from "../entities/cellPosition";
 import { Column } from "../entities/column";
-import { RowNode } from "../entities/rowNode";
+import { IRowNode } from "./iRowNode";
 
 export interface GetContextMenuItemsParams<TData = any> extends AgGridCommon<TData> {
     /** Names of the items that would be provided by default. */
@@ -12,7 +12,7 @@ export interface GetContextMenuItemsParams<TData = any> extends AgGridCommon<TDa
     /** The column, if a cell was clicked, otherwise null. */
     column: Column | null;
     /** The row node, if a cell was clicked, otherwise null. */
-    node: RowNode<TData> | null;
+    node: IRowNode<TData> | null;
     /** The value, if a cell was clicked, otherwise null.  */
     value: any;
 }
@@ -28,7 +28,7 @@ export interface PostProcessPopupParams<TData = any> extends AgGridCommon<TData>
     /** If popup is for a column, this gives the Column */
     column?: Column | null;
     /** If popup is for a row, this gives the RowNode */
-    rowNode?: RowNode<TData> | null;
+    rowNode?: IRowNode<TData> | null;
     /** The popup we are showing */
     ePopup: HTMLElement;
     /** The different types are:
@@ -111,7 +111,7 @@ export interface PaginationNumberFormatterParams<TData = any> extends AgGridComm
 
 export interface IsGroupOpenByDefaultParams<TData = any> extends AgGridCommon<TData> {
     /** The row node being considered. */
-    rowNode: RowNode<TData>;
+    rowNode: IRowNode<TData>;
     /** The Column for which this row is grouping. */
     rowGroupColumn: Column;
     /** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */
@@ -126,7 +126,7 @@ export interface GetServerSideGroupLevelParamsParams extends AgGridCommon<any> {
     /** The level of the store. Top level is 0. */
     level: number;
     /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
-    parentRowNode?: RowNode;
+    parentRowNode?: IRowNode;
     /** Active Row Group Columns, if any. */
     rowGroupColumns: Column[];
     /** Active Pivot Columns, if any. */
@@ -140,14 +140,14 @@ export interface GetServerSideStoreParamsParams extends GetServerSideGroupLevelP
 
 export interface IsServerSideGroupOpenByDefaultParams extends AgGridCommon<any> {
     data: any;
-    rowNode: RowNode;
+    rowNode: IRowNode;
 }
 
 export interface IsApplyServerSideTransactionParams extends AgGridCommon<any> {
     /** The transaction getting applied. */
     transaction: ServerSideTransaction;
     /** The parent RowNode, if transaction is applied to a group. */
-    parentNode: RowNode;
+    parentNode: IRowNode;
     /** @deprecated use groupLevelInfo instead */
     storeInfo: any;
     /** Store info, if any, as passed via the success() callback when loading data. */
@@ -168,7 +168,7 @@ export interface ProcessRowParams<TData = any> extends AgGridCommon<TData> {
     ePinnedLeftRow?: HTMLElement;
     ePinnedRightRow?: HTMLElement;
     rowIndex: number;
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
 }
 
@@ -178,7 +178,7 @@ export interface FillOperationParams<TData = any> extends AgGridCommon<TData> {
     /** The values that have been processed by the fill operation. */
     values: any[];
     /** The RowNode of the current cell being changed. */
-    rowNode: RowNode<TData>;
+    rowNode: IRowNode<TData>;
     /** The Column of the current cell being changed. */
     column: Column;
     /** The values that were present before processing started. */
@@ -195,26 +195,26 @@ export interface RowHeightParams<TData = any> extends AgGridCommon<TData> {
     /** The data associated with this row from rowData. Data is `undefined` for row groups. */
     data: TData | undefined;
     /** The RowNode of the row in question. */
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
 }
 
 export interface IsExternalFilterPresentParams<TData = any> extends AgGridCommon<TData> { }
 
 export interface InitialGroupOrderComparatorParams<TData = any> extends AgGridCommon<TData> {
-    nodeA: RowNode<TData>;
-    nodeB: RowNode<TData>;
+    nodeA: IRowNode<TData>;
+    nodeB: IRowNode<TData>;
 }
 
 export interface GetGroupRowAggParams<TData = any> extends AgGridCommon<TData> {
-    nodes: RowNode<TData>[];
+    nodes: IRowNode<TData>[];
 }
 
 export interface PostSortRowsParams<TData = any> extends AgGridCommon<TData> {
-    nodes: RowNode<TData>[];
+    nodes: IRowNode<TData>[];
 }
 
 export interface IsFullWidthRowParams<TData = any> extends AgGridCommon<TData> {
-    rowNode: RowNode<TData>;
+    rowNode: IRowNode<TData>;
 }
 
 export interface GetLocaleTextParams<TData = any> extends AgGridCommon<TData> {
@@ -224,5 +224,5 @@ export interface GetLocaleTextParams<TData = any> extends AgGridCommon<TData> {
 }
 
 export interface GetGroupAggFilteringParams<TData = any> extends AgGridCommon<TData> {
-    node: RowNode<TData>;
+    node: IRowNode<TData>;
 }

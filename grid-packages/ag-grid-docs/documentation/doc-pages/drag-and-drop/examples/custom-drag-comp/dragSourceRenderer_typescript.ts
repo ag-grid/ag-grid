@@ -1,8 +1,8 @@
-import { ICellRendererComp, ICellRendererParams, RowNode } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams, IRowNode } from "@ag-grid-community/core";
 
 export class DragSourceRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
-    rowNode!: RowNode;
+    rowNode!: IRowNode;
     onDragStartListener: any;
 
     init(params: ICellRendererParams) {

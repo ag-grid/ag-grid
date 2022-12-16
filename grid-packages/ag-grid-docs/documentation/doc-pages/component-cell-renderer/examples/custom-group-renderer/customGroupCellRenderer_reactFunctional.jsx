@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { RowNode } from '@ag-grid-community/core';
 
 export default (props) => {
     const { node, value } = props;
@@ -8,10 +7,10 @@ export default (props) => {
     useEffect(() => {
         const expandListener = (event) => setExpanded(event.node.expanded);
 
-        node.addEventListener(RowNode.EVENT_EXPANDED_CHANGED, expandListener);
+        node.addEventListener('expandedChanged', expandListener);
 
         return () => {
-            node.removeEventListener(RowNode.EVENT_EXPANDED_CHANGED, expandListener);
+            node.removeEventListener('expandedChanged', expandListener);
         }
     }, []);
 
