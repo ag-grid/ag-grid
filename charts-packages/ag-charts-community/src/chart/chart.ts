@@ -731,16 +731,21 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const height = this.height - captionAutoPadding;
 
         const aspectRatio = width / height;
+        const maxCoefficient = 0.5;
+        const minHeightCoefficient = 0.2;
+        const minWidthCoefficient = 0.25;
 
-        // A horizontal legend should take maximum between 25 to 50 percent of the chart height if height is larger than width
+        // A horizontal legend should take maximum between 20 to 50 percent of the chart height if height is larger than width
         // and maximum 20 percent of the chart height if height is smaller than width.
-        const heightCoefficient = aspectRatio < 1 ? Math.min(0.5, 0.25 * (1 / aspectRatio)) : 0.2;
+        const heightCoefficient =
+            aspectRatio < 1 ? Math.min(maxCoefficient, minHeightCoefficient * (1 / aspectRatio)) : minHeightCoefficient;
         const horizontalLegendWidth = legend.maxWidth ?? width - legendSpacing * 2;
         const horizontalLegendHeight = legend.maxHeight ?? Math.round(height * heightCoefficient);
 
         // A vertical legend should take maximum between 25 to 50 percent of the chart width if width is larger than height
         // and maximum 25 percent of the chart width if width is smaller than height.
-        const widthCoefficient = aspectRatio > 1 ? Math.min(0.5, 0.25 * aspectRatio) : 0.25;
+        const widthCoefficient =
+            aspectRatio > 1 ? Math.min(maxCoefficient, minWidthCoefficient * aspectRatio) : minWidthCoefficient;
         const verticalLegendWidth = legend.maxWidth ?? Math.round(width * widthCoefficient);
         const verticalLegendHeight = legend.maxHeight ?? height - legendSpacing * 2;
 

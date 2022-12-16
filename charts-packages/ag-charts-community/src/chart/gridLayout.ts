@@ -44,50 +44,16 @@ export function gridLayout({
     let processedBBoxCount = 0;
     const rawPages: number[][][] = [];
     while (processedBBoxCount < bboxes.length) {
-        // If calculatePage() fails on the first guess, we could use the number of items that fit
-        // as a good guess for the next iteration.
         const unprocessedBBoxes = bboxes.slice(processedBBoxCount);
-        const minGuess = 1;
-        const startingGuess = estimateStartingGuess(unprocessedBBoxes, primary);
 
-        if (startingGuess < minGuess) {
+        const result = processBBoxes(unprocessedBBoxes, processedBBoxCount, primary, secondary);
+
+        if (!result) {
             return;
         }
 
-        for (let guess = startingGuess; guess >= minGuess; guess--) {
-            const pageIndices = calculatePage(unprocessedBBoxes, processedBBoxCount, guess, primary, secondary);
-
-            if (pageIndices == null && guess <= minGuess) {
-                // Can't layout!
-                return undefined;
-            }
-
-            if (pageIndices == null) {
-                // Guess again!
-                continue;
-            }
-
-            if (typeof pageIndices === 'number') {
-                // calculatePage() suggested a better guess, use that.
-                if (pageIndices === minGuess) {
-                    processedBBoxCount = bboxes.length;
-                    break;
-                }
-
-                guess = pageIndices < guess && pageIndices > minGuess ? pageIndices : guess;
-                continue;
-            }
-
-            processedBBoxCount += pageIndices.length * pageIndices[0].length; // this is an estimate, not all rows/columns will have the same length
-            rawPages.push(pageIndices);
-            break;
-        }
-    }
-
-    // rawPages[pageNumber][secondaryDim][primaryDim]
-
-    if (rawPages.length === 0) {
-        return;
+        processedBBoxCount += result.processedBBoxCount;
+        rawPages.push(result.pageIndices);
     }
 
     return buildPages(rawPages, orientation, bboxes, itemPaddingY, itemPaddingX);
@@ -99,6 +65,50 @@ interface DimensionProps {
     padding: number;
 }
 
+function processBBoxes(
+    bboxes: BBox[],
+    indexOffset: number,
+    primary: DimensionProps,
+    secondary: DimensionProps
+): { processedBBoxCount: number; pageIndices: number[][] } | undefined {
+    // If calculatePage() fails on the first guess, we could use the number of items that fit
+    // as a good guess for the next iteration.
+    const minGuess = 1;
+    const startingGuess = estimateStartingGuess(bboxes, primary);
+
+    if (startingGuess < minGuess) {
+        // Can't layout!
+        return undefined;
+    }
+
+    for (let guess = startingGuess; guess >= minGuess; guess--) {
+        const pageIndices = calculatePage(bboxes, indexOffset, guess, primary, secondary);
+
+        if (pageIndices == null && guess <= minGuess) {
+            // Can't layout!
+            return undefined;
+        }
+
+        if (pageIndices == null) {
+            // Guess again!
+            continue;
+        }
+
+        if (typeof pageIndices === 'number') {
+            // calculatePage() suggested a better guess, use that if it's more than minGuess.
+            if (pageIndices <= minGuess) {
+                // Can't layout!
+                return undefined;
+            }
+
+            guess = pageIndices < guess && pageIndices > minGuess ? pageIndices : guess;
+            continue;
+        }
+
+        const processedBBoxCount = pageIndices.length * pageIndices[0].length; // this is an estimate, not all rows/columns will have the same length
+        return { processedBBoxCount, pageIndices };
+    }
+}
 function calculatePage(
     bboxes: BBox[],
     indexOffset: number,
