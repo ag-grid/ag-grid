@@ -154,6 +154,14 @@
     "description": "/** Returns:\n     * - `true` if node is selected,\n     * - `false` if the node isn't selected\n     * - `undefined` if it's partially selected (group where not all children are selected). \n     */",
     "type": { "arguments": {}, "returnType": "boolean | undefined" }
   },
+  "isRowPinned": {
+    "description": "/** Returns:\n     * - `true` if node is either pinned to the `top` or `bottom`\n     * - `false` if the node isn't pinned\n     */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "isExpandable": {
+    "description": "/** Returns:\n    * - `true` if the node can be expanded, i.e it is a group or master row.\n    * - `false` if the node cannot be expanded\n    */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "setExpanded": {
     "description": "/** Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.\n     */",
     "type": {
@@ -163,6 +171,10 @@
       },
       "returnType": "void"
     }
+  },
+  "isFullWidthCell": {
+    "description": "/** Returns:\n     * - `true` if the node is a full width cell\n     * - `false` if the node is not a full width cell\n     */",
+    "type": { "arguments": {}, "returnType": "boolean" }
   },
   "addEventListener": {
     "description": "/** Add an event listener. */",

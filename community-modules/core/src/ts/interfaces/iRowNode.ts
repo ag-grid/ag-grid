@@ -178,9 +178,28 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     isSelected(): boolean | undefined;
 
     /**
+     * Returns:
+     * - `true` if node is either pinned to the `top` or `bottom`
+     * - `false` if the node isn't pinned
+     */
+    isRowPinned(): boolean;
+
+    /** Returns:
+    * - `true` if the node can be expanded, i.e it is a group or master row.
+    * - `false` if the node cannot be expanded
+    */
+    isExpandable(): boolean;
+    /**
      * Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.
      */
     setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent): void;
+
+    /**
+     * Returns:
+     * - `true` if the node is a full width cell
+     * - `false` if the node is not a full width cell
+     */
+    isFullWidthCell(): boolean
 
     /** Add an event listener. */
     addEventListener(eventType: RowNodeEventType, listener: Function): void;

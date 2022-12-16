@@ -15144,6 +15144,14 @@
         "optional": false
       }
     },
+    "isRowPinned": {
+      "description": "/** Returns:\n     * - `true` if node is either pinned to the `top` or `bottom`\n     * - `false` if the node isn't pinned\n     */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "isExpandable": {
+      "description": "/** Returns:\n    * - `true` if the node can be expanded, i.e it is a group or master row.\n    * - `false` if the node cannot be expanded\n    */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
     "setExpanded": {
       "description": "/** Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.\n     */",
       "type": {
@@ -15154,6 +15162,10 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "isFullWidthCell": {
+      "description": "/** Returns:\n     * - `true` if the node is a full width cell\n     * - `false` if the node is not a full width cell\n     */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "addEventListener": {
       "description": "/** Add an event listener. */",

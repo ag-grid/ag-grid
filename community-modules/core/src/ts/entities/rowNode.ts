@@ -771,6 +771,10 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.quickFilterAggregateText = null;
     }
 
+    /** Returns:
+    * - `true` if the node can be expanded, i.e it is a group or master row.
+    * - `false` if the node cannot be expanded
+    */
     public isExpandable(): boolean {
         return (this.hasChildren() && !this.footer) || this.master ? true : false;
     }
@@ -862,6 +866,11 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         });
     }
 
+    /**
+     * Returns:
+     * - `true` if node is either pinned to the `top` or `bottom`
+     * - `false` if the node isn't pinned
+     */
     public isRowPinned(): boolean {
         return this.rowPinned === 'top' || this.rowPinned === 'bottom';
     }
@@ -1088,6 +1097,11 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return foundFirstChildPath ? nodeToSwapIn : null;
     }
 
+    /**
+     * Returns:
+     * - `true` if the node is a full width cell
+     * - `false` if the node is not a full width cell
+     */
     public isFullWidthCell(): boolean {
         const isFullWidthCellFunc = this.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
