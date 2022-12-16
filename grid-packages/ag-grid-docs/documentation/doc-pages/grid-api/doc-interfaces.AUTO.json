@@ -589,7 +589,7 @@
     },
     "columnGroupShow": {
       "description": "/** Whether to show the column when the group is open / closed. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "ColumnGroupShowType", "optional": true }
     },
     "toolPanelClass": {
       "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
@@ -683,7 +683,7 @@
     },
     "columnGroupShow": {
       "description": "/** Whether to show the column when the group is open / closed. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "ColumnGroupShowType", "optional": true }
     },
     "toolPanelClass": {
       "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
@@ -1377,7 +1377,7 @@
     },
     "columnGroupShow": {
       "description": "/** Whether to show the column when the group is open / closed. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "ColumnGroupShowType", "optional": true }
     },
     "toolPanelClass": {
       "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
@@ -2341,6 +2341,7 @@
   "SortDirection": {},
   "ColumnPinnedType": {},
   "ColumnEventName": {},
+  "ColumnGroupShowType": {},
   "GridOptions": {
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
@@ -13901,7 +13902,7 @@
     "getColumnGroupShow": {
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "ColumnGroupShowType | undefined",
         "optional": false
       }
     },
@@ -14422,7 +14423,7 @@
     "getColumnGroupShow": {
       "type": {
         "arguments": {},
-        "returnType": "string | undefined",
+        "returnType": "ColumnGroupShowType | undefined",
         "optional": false
       }
     },

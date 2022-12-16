@@ -1,6 +1,6 @@
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { ColGroupDef } from "./colDef";
-import { ColumnGroup } from "./columnGroup";
+import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { Column } from "./column";
 import { EventService } from "../eventService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -138,7 +138,7 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         });
     }
 
-    public getColumnGroupShow(): string | undefined {
+    public getColumnGroupShow(): ColumnGroupShowType | undefined {
         const colGroupDef = this.colGroupDef;
 
         if (!colGroupDef) { return; }
@@ -182,10 +182,10 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
             // if the abstractColumn is a grid generated group, there will be no colDef
             const headerGroupShow = abstractColumn.getColumnGroupShow();
 
-            if (headerGroupShow === ColumnGroup.HEADER_GROUP_SHOW_OPEN) {
+            if (headerGroupShow === 'open') {
                 atLeastOneShowingWhenOpen = true;
                 atLeastOneChangeable = true;
-            } else if (headerGroupShow === ColumnGroup.HEADER_GROUP_SHOW_CLOSED) {
+            } else if (headerGroupShow === 'closed') {
                 atLeastOneShowingWhenClosed = true;
                 atLeastOneChangeable = true;
             } else {

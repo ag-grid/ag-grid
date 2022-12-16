@@ -10,10 +10,9 @@ import { last } from "../utils/array";
 import { GridOptionsService } from "../gridOptionsService";
 import { logDeprecation } from "../gridOptionsValidator";
 
-export class ColumnGroup implements IHeaderColumn {
+export type ColumnGroupShowType = 'open' | 'closed';
 
-    public static HEADER_GROUP_SHOW_OPEN = 'open';
-    public static HEADER_GROUP_SHOW_CLOSED = 'closed';
+export class ColumnGroup implements IHeaderColumn {
 
     public static EVENT_LEFT_CHANGED = 'leftChanged';
     public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
@@ -265,7 +264,7 @@ export class ColumnGroup implements IHeaderColumn {
         return this.children;
     }
 
-    public getColumnGroupShow(): string | undefined {
+    public getColumnGroupShow(): ColumnGroupShowType | undefined {
         return this.providedColumnGroup.getColumnGroupShow();
     }
 
@@ -318,13 +317,13 @@ export class ColumnGroup implements IHeaderColumn {
 
             const headerGroupShow = child.getColumnGroupShow();
             switch (headerGroupShow) {
-                case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
+                case 'open':
                     // when set to open, only show col if group is open
                     if (parentWithExpansion.providedColumnGroup.isExpanded()) {
                         this.displayedChildren!.push(child);
                     }
                     break;
-                case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
+                case 'closed':
                     // when set to open, only show col if group is open
                     if (!parentWithExpansion.providedColumnGroup.isExpanded()) {
                         this.displayedChildren!.push(child);

@@ -6,7 +6,7 @@ import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ITooltipParams } from "../rendering/tooltipComponent";
 import { Column } from "./column";
-import { ColumnGroup } from "./columnGroup";
+import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { RowClassParams } from "./gridOptions";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { IRowNode } from "../interfaces/iRowNode";
@@ -25,7 +25,7 @@ export interface AbstractColDef<TData = any> {
     suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams<TData>) => boolean;
 
     /** Whether to show the column when the group is open / closed. */
-    columnGroupShow?: string;
+    columnGroupShow?: ColumnGroupShowType;
     /** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */
     toolPanelClass?: ToolPanelClass<TData>;
     /** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */

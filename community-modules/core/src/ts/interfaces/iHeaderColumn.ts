@@ -1,6 +1,6 @@
 import { AbstractColDef } from "../entities/colDef";
 import { IEventEmitter } from "./iEventEmitter";
-import { ColumnGroup } from "../entities/columnGroup";
+import { ColumnGroup, ColumnGroupShowType } from "../entities/columnGroup";
 import { ColumnPinnedType } from "../entities/column";
 
 // Implemented by Column and ColumnGroup. Allows the groups to contain a list of this type for it's children.
@@ -12,7 +12,7 @@ export interface IHeaderColumn extends IEventEmitter {
     getLeft(): number | null;
     getOldLeft(): number | null;
     getDefinition(): AbstractColDef | null;
-    getColumnGroupShow(): string | undefined;
+    getColumnGroupShow(): ColumnGroupShowType | undefined;
     getParent(): IHeaderColumn;
     isResizable(): boolean;
     setParent(parent: ColumnGroup | null): void;

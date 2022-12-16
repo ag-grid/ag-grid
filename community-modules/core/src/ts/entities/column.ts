@@ -16,7 +16,7 @@ import { Autowired, PostConstruct } from "../context/context";
 import { ColumnUtils } from "../columns/columnUtils";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ColumnEvent, ColumnEventType } from "../events";
-import { ColumnGroup } from "./columnGroup";
+import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
@@ -626,7 +626,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return this.colDef;
     }
 
-    public getColumnGroupShow(): string | undefined {
+    public getColumnGroupShow(): ColumnGroupShowType | undefined {
         return this.colDef.columnGroupShow;
     }
     /**

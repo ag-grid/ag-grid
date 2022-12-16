@@ -24,7 +24,7 @@
   },
   "columnGroupShow": {
     "description": "/** Whether to show the column when the group is open / closed. */",
-    "type": { "returnType": "string" }
+    "type": { "returnType": "ColumnGroupShowType" }
   },
   "toolPanelClass": {
     "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",

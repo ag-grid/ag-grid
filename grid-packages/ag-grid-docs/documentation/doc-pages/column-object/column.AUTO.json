@@ -252,7 +252,7 @@
     "type": { "arguments": {}, "returnType": "ColDef" }
   },
   "getColumnGroupShow": {
-    "type": { "arguments": {}, "returnType": "string | undefined" }
+    "type": { "arguments": {}, "returnType": "ColumnGroupShowType | undefined" }
   },
   "getColId": {
     "description": "/** Returns the unique ID for the column.\n     *\n     * Equivalent: `getId`, `getUniqueId` */",

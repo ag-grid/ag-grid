@@ -93,7 +93,7 @@ export { IRowDragItem } from "./rendering/row/rowDragComp";
 
 // entities
 export { Column, ColumnPinnedType } from "./entities/column";
-export { ColumnGroup } from "./entities/columnGroup";
+export { ColumnGroup, ColumnGroupShowType } from "./entities/columnGroup";
 export { ProvidedColumnGroup } from "./entities/providedColumnGroup";
 export { RowNode } from "./entities/rowNode";
 export { RowHighlightPosition, RowPinnedType, IRowNode } from "./interfaces/iRowNode";

@@ -362,7 +362,7 @@
       "headerTooltip?": "string",
       "headerClass?": "HeaderClass",
       "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
-      "columnGroupShow?": "string",
+      "columnGroupShow?": "ColumnGroupShowType",
       "toolPanelClass?": "ToolPanelClass<TData>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
@@ -405,7 +405,7 @@
       "headerTooltip?": "string",
       "headerClass?": "HeaderClass",
       "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
-      "columnGroupShow?": "string",
+      "columnGroupShow?": "ColumnGroupShowType",
       "toolPanelClass?": "ToolPanelClass<TData>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
@@ -627,7 +627,7 @@
       "headerTooltip?": "string",
       "headerClass?": "HeaderClass",
       "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
-      "columnGroupShow?": "string",
+      "columnGroupShow?": "ColumnGroupShowType",
       "toolPanelClass?": "ToolPanelClass<TData>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
@@ -1515,6 +1515,10 @@
   "ColumnEventName": {
     "meta": { "isTypeAlias": true },
     "type": "'movingChanged' | 'leftChanged' | 'widthChanged' | 'lastLeftPinnedChanged' | 'firstRightPinnedChanged' | 'visibleChanged' | 'filterChanged' | 'filterActiveChanged' | 'sortChanged' | 'colDefChanged' | 'menuVisibleChanged' | 'columnRowGroupChanged' | 'columnPivotChanged' | 'columnValueChanged'"
+  },
+  "ColumnGroupShowType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'open' | 'closed'"
   },
   "GridOptions": {
     "meta": { "typeParams": ["TData = any"] },
@@ -7846,7 +7850,7 @@
       "getLeft()": "number | null",
       "getOldLeft()": "number | null",
       "getDefinition()": "AbstractColDef | null",
-      "getColumnGroupShow()": "string | undefined",
+      "getColumnGroupShow()": "ColumnGroupShowType | undefined",
       "getParent()": "IHeaderColumn",
       "isResizable()": "boolean",
       "setParent(parent: ColumnGroup | null)": "void",
@@ -8071,7 +8075,7 @@
     "meta": {},
     "type": {
       "isVisible()": "boolean",
-      "getColumnGroupShow()": "string | undefined",
+      "getColumnGroupShow()": "ColumnGroupShowType | undefined",
       "getId()": "string",
       "setOriginalParent(originalParent: ProvidedColumnGroup | null)": "void"
     }
