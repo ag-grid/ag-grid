@@ -414,6 +414,8 @@ export class Legend {
             return false;
         }
 
+        // Force pagination component layout to get more accurate paginationBBox
+        this.pagination.totalPages = 0;
         const paginationBBox = this.pagination.computeBBox();
         const verticalOrientation = this.orientation === Orientation.Vertical;
 

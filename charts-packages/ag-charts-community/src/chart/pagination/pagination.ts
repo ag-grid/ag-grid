@@ -121,7 +121,7 @@ export class Pagination {
     private nextButtonDisabled = false;
     private previousButtonDisabled = false;
 
-    private _totalPages: number = 0;
+    private _totalPages: number = NaN;
     set totalPages(value: number) {
         if (this._totalPages !== value) {
             this._totalPages = value;
