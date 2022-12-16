@@ -74,6 +74,10 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         return event && event.afterFloatingFilter;
     }
 
+    protected isEventFromDataChange(event: FilterChangedEvent): boolean | undefined {
+        return event?.afterDataChange;
+    }
+
     protected getLastType(): string | null | undefined {
         return this.lastType;
     }

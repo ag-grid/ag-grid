@@ -497,7 +497,7 @@ export class FilterManager extends BeanStub {
             });
         });
 
-        this.updateFilterFlagInColumns(source);
+        this.updateFilterFlagInColumns(source, { afterDataChange: true });
         this.updateActiveFilters();
     }
 
