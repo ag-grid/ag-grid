@@ -28,10 +28,6 @@ const gridOptions: GridOptions = {
       legend: {
         enabled: false,
       },
-      padding: {
-        top: 15,
-        bottom: 25,
-      },
       navigator: {
         enabled: true,
         height: 20,
