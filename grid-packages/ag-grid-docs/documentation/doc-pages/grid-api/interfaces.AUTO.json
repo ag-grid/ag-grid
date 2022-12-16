@@ -1512,6 +1512,10 @@
     "meta": { "isTypeAlias": true },
     "type": "'left' | 'right' | boolean | null | undefined"
   },
+  "ColumnEventName": {
+    "meta": { "isTypeAlias": true },
+    "type": "'movingChanged' | 'leftChanged' | 'widthChanged' | 'lastLeftPinnedChanged' | 'firstRightPinnedChanged' | 'visibleChanged' | 'filterChanged' | 'filterActiveChanged' | 'sortChanged' | 'colDefChanged' | 'menuVisibleChanged' | 'columnRowGroupChanged' | 'columnPivotChanged' | 'columnValueChanged'"
+  },
   "GridOptions": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {

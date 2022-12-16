@@ -155,10 +155,10 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         if (this.expandableListenerRemoveCallback) { this.expandableListenerRemoveCallback(); }
 
         const listener = this.onColumnVisibilityChanged.bind(this);
-        this.getLeafColumns().forEach(col => col.addEventListener(Column.EVENT_VISIBLE_CHANGED, listener));
+        this.getLeafColumns().forEach(col => col.addEventListener('visibleChanged', listener));
 
         this.expandableListenerRemoveCallback = () => {
-            this.getLeafColumns().forEach(col => col.removeEventListener(Column.EVENT_VISIBLE_CHANGED, listener));
+            this.getLeafColumns().forEach(col => col.removeEventListener('visibleChanged', listener));
             this.expandableListenerRemoveCallback = null;
         };
     }

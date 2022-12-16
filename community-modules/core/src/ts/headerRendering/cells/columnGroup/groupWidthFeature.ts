@@ -41,11 +41,11 @@ export class GroupWidthFeature extends BeanStub {
         // now add new listeners to the new set of children
         const widthChangedListener = this.onWidthChanged.bind(this);
         this.columnGroup.getLeafColumns().forEach(column => {
-            column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-            column.addEventListener(Column.EVENT_VISIBLE_CHANGED, widthChangedListener);
+            column.addEventListener('widthChanged', widthChangedListener);
+            column.addEventListener('visibleChanged', widthChangedListener);
             this.removeChildListenersFuncs.push(() => {
-                column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-                column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, widthChangedListener);
+                column.removeEventListener('widthChanged', widthChangedListener);
+                column.removeEventListener('visibleChanged', widthChangedListener);
             });
         });
     }

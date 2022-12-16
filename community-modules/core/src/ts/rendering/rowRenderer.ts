@@ -302,18 +302,18 @@ export class RowRenderer extends BeanStub {
                 forEachCellWithThisCol(cellCtrl => cellCtrl.onColDefChanged());
             };
 
-            col.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
-            col.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-            col.addEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstRightPinnedChangedListener);
-            col.addEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, lastLeftPinnedChangedListener);
-            col.addEventListener(Column.EVENT_COL_DEF_CHANGED, colDefChangedListener);
+            col.addEventListener('leftChanged', leftChangedListener);
+            col.addEventListener('widthChanged', widthChangedListener);
+            col.addEventListener('firstRightPinnedChanged', firstRightPinnedChangedListener);
+            col.addEventListener('lastLeftPinnedChanged', lastLeftPinnedChangedListener);
+            col.addEventListener('colDefChanged', colDefChangedListener);
 
             this.destroyFuncsForColumnListeners.push(() => {
-                col.removeEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
-                col.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-                col.removeEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstRightPinnedChangedListener);
-                col.removeEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, lastLeftPinnedChangedListener);
-                col.removeEventListener(Column.EVENT_COL_DEF_CHANGED, colDefChangedListener);
+                col.removeEventListener('leftChanged', leftChangedListener);
+                col.removeEventListener('widthChanged', widthChangedListener);
+                col.removeEventListener('firstRightPinnedChanged', firstRightPinnedChangedListener);
+                col.removeEventListener('lastLeftPinnedChanged', lastLeftPinnedChangedListener);
+                col.removeEventListener('colDefChanged', colDefChangedListener);
             });
         });
     }

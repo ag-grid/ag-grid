@@ -27,6 +27,21 @@ import { GridOptionsService } from "../gridOptionsService";
 import { IRowNode } from "../interfaces/iRowNode";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
+export type ColumnEventName =
+    'movingChanged' |
+    'leftChanged' |
+    'widthChanged' |
+    'lastLeftPinnedChanged' |
+    'firstRightPinnedChanged' |
+    'visibleChanged' |
+    'filterChanged' |
+    'filterActiveChanged' |
+    'sortChanged' |
+    'colDefChanged' |
+    'menuVisibleChanged' |
+    'columnRowGroupChanged' |
+    'columnPivotChanged' |
+    'columnValueChanged';
 
 let instanceIdSequence = 0;
 
@@ -39,33 +54,33 @@ let instanceIdSequence = 0;
 export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
     // + renderedHeaderCell - for making header cell transparent when moving
-    public static EVENT_MOVING_CHANGED = 'movingChanged';
+    public static EVENT_MOVING_CHANGED: ColumnEventName = 'movingChanged';
     // + renderedCell - changing left position
-    public static EVENT_LEFT_CHANGED = 'leftChanged';
+    public static EVENT_LEFT_CHANGED: ColumnEventName = 'leftChanged';
     // + renderedCell - changing width
-    public static EVENT_WIDTH_CHANGED = 'widthChanged';
+    public static EVENT_WIDTH_CHANGED: ColumnEventName = 'widthChanged';
     // + renderedCell - for changing pinned classes
-    public static EVENT_LAST_LEFT_PINNED_CHANGED = 'lastLeftPinnedChanged';
-    public static EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
+    public static EVENT_LAST_LEFT_PINNED_CHANGED: ColumnEventName = 'lastLeftPinnedChanged';
+    public static EVENT_FIRST_RIGHT_PINNED_CHANGED: ColumnEventName = 'firstRightPinnedChanged';
     // + renderedColumn - for changing visibility icon
-    public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
+    public static EVENT_VISIBLE_CHANGED: ColumnEventName = 'visibleChanged';
     // + every time the filter changes, used in the floating filters
-    public static EVENT_FILTER_CHANGED = 'filterChanged';
+    public static EVENT_FILTER_CHANGED: ColumnEventName = 'filterChanged';
     // + renderedHeaderCell - marks the header with filter icon
-    public static EVENT_FILTER_ACTIVE_CHANGED = 'filterActiveChanged';
+    public static EVENT_FILTER_ACTIVE_CHANGED: ColumnEventName = 'filterActiveChanged';
     // + renderedHeaderCell - marks the header with sort icon
-    public static EVENT_SORT_CHANGED = 'sortChanged';
+    public static EVENT_SORT_CHANGED: ColumnEventName = 'sortChanged';
     // + renderedHeaderCell - marks the header with sort icon
-    public static EVENT_COL_DEF_CHANGED = 'colDefChanged';
+    public static EVENT_COL_DEF_CHANGED: ColumnEventName = 'colDefChanged';
 
-    public static EVENT_MENU_VISIBLE_CHANGED = 'menuVisibleChanged';
+    public static EVENT_MENU_VISIBLE_CHANGED: ColumnEventName = 'menuVisibleChanged';
 
     // + toolpanel, for gui updates
-    public static EVENT_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
+    public static EVENT_ROW_GROUP_CHANGED: ColumnEventName = 'columnRowGroupChanged';
     // + toolpanel, for gui updates
-    public static EVENT_PIVOT_CHANGED = 'columnPivotChanged';
+    public static EVENT_PIVOT_CHANGED: ColumnEventName = 'columnPivotChanged';
     // + toolpanel, for gui updates
-    public static EVENT_VALUE_CHANGED = 'columnValueChanged';
+    public static EVENT_VALUE_CHANGED: ColumnEventName = 'columnValueChanged';
 
     @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
@@ -191,7 +206,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
         this.initDotNotation();
-        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_COL_DEF_CHANGED, "api"));
+        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', "api"));
     }
 
     /**
@@ -323,7 +338,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         }
 
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
-            warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
+            warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
         }
 
         if (colDefAny.pinnedRowCellRenderer || colDefAny.pinnedRowCellRendererParams || colDefAny.pinnedRowCellRendererFramework) {
@@ -332,12 +347,12 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     /** Add an event listener to the column. */
-    public addEventListener(eventType: string, listener: Function): void {
+    public addEventListener(eventType: ColumnEventName, listener: Function): void {
         this.eventService.addEventListener(eventType, listener);
     }
 
     /** Remove event listener from the column. */
-    public removeEventListener(eventType: string, listener: Function): void {
+    public removeEventListener(eventType: ColumnEventName, listener: Function): void {
         this.eventService.removeEventListener(eventType, listener);
     }
 
@@ -429,10 +444,10 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
     public setMoving(moving: boolean, source: ColumnEventType = "api"): void {
         this.moving = moving;
-        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MOVING_CHANGED, source));
+        this.eventService.dispatchEvent(this.createColumnEvent('movingChanged', source));
     }
 
-    private createColumnEvent(type: string, source: ColumnEventType): ColumnEvent {
+    private createColumnEvent(type: ColumnEventName, source: ColumnEventType): ColumnEvent {
         return {
             type: type,
             column: this,
@@ -456,14 +471,14 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public setSort(sort: SortDirection | undefined, source: ColumnEventType = "api"): void {
         if (this.sort !== sort) {
             this.sort = sort;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED, source));
+            this.eventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
         }
     }
 
     public setMenuVisible(visible: boolean, source: ColumnEventType = "api"): void {
         if (this.menuVisible !== visible) {
             this.menuVisible = visible;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MENU_VISIBLE_CHANGED, source));
+            this.eventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
         }
     }
 
@@ -520,7 +535,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_LEFT_CHANGED, source));
+            this.eventService.dispatchEvent(this.createColumnEvent('leftChanged', source));
         }
     }
 
@@ -533,9 +548,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public setFilterActive(active: boolean, source: ColumnEventType = "api", additionalEventAttributes?: any): void {
         if (this.filterActive !== active) {
             this.filterActive = active;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_ACTIVE_CHANGED, source));
+            this.eventService.dispatchEvent(this.createColumnEvent('filterActiveChanged', source));
         }
-        const filterChangedEvent = this.createColumnEvent(Column.EVENT_FILTER_CHANGED, source);
+        const filterChangedEvent = this.createColumnEvent('filterChanged', source);
         if (additionalEventAttributes) {
             mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
@@ -555,14 +570,14 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType = "api"): void {
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, source));
+            this.eventService.dispatchEvent(this.createColumnEvent('firstRightPinnedChanged', source));
         }
     }
 
     public setLastLeftPinned(lastLeftPinned: boolean, source: ColumnEventType = "api"): void {
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_LAST_LEFT_PINNED_CHANGED, source));
+            this.eventService.dispatchEvent(this.createColumnEvent('lastLeftPinnedChanged', source));
         }
     }
 
@@ -594,7 +609,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         const newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VISIBLE_CHANGED, source));
+            this.eventService.dispatchEvent(this.createColumnEvent('visibleChanged', source));
         }
     }
 
@@ -708,7 +723,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public fireColumnWidthChangedEvent(source: ColumnEventType): void {
-        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
+        this.eventService.dispatchEvent(this.createColumnEvent('widthChanged', source));
     }
 
     public isGreaterThanMax(width: number): boolean {
@@ -745,7 +760,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public setRowGroupActive(rowGroup: boolean, source: ColumnEventType = "api"): void {
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_ROW_GROUP_CHANGED, source));
+            this.eventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
         }
     }
 
@@ -757,7 +772,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public setPivotActive(pivot: boolean, source: ColumnEventType = "api"): void {
         if (this.pivotActive !== pivot) {
             this.pivotActive = pivot;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_PIVOT_CHANGED, source));
+            this.eventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
         }
     }
 
@@ -777,7 +792,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public setValueActive(value: boolean, source: ColumnEventType = "api"): void {
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VALUE_CHANGED, source));
+            this.eventService.dispatchEvent(this.createColumnEvent('columnValueChanged', source));
         }
     }
 

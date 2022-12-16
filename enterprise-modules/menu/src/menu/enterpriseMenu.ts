@@ -213,12 +213,12 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         if (!stopAnchoringPromise) { return; }
 
         stopAnchoringPromise.then((stopAnchoringFunc: Function) => {
-            column.addEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
-            column.addEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
+            column.addEventListener('leftChanged', stopAnchoringFunc);
+            column.addEventListener('visibleChanged', stopAnchoringFunc);
 
             closedFuncsArr.push(() => {
-                column.removeEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
-                column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
+                column.removeEventListener('leftChanged', stopAnchoringFunc);
+                column.removeEventListener('visibleChanged', stopAnchoringFunc);
             });
         });
     }

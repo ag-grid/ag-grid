@@ -1,18 +1,24 @@
 {
-  "EVENT_MOVING_CHANGED": { "type": {} },
-  "EVENT_LEFT_CHANGED": { "type": {} },
-  "EVENT_WIDTH_CHANGED": { "type": {} },
-  "EVENT_LAST_LEFT_PINNED_CHANGED": { "type": {} },
-  "EVENT_FIRST_RIGHT_PINNED_CHANGED": { "type": {} },
-  "EVENT_VISIBLE_CHANGED": { "type": {} },
-  "EVENT_FILTER_CHANGED": { "type": {} },
-  "EVENT_FILTER_ACTIVE_CHANGED": { "type": {} },
-  "EVENT_SORT_CHANGED": { "type": {} },
-  "EVENT_COL_DEF_CHANGED": { "type": {} },
-  "EVENT_MENU_VISIBLE_CHANGED": { "type": {} },
-  "EVENT_ROW_GROUP_CHANGED": { "type": {} },
-  "EVENT_PIVOT_CHANGED": { "type": {} },
-  "EVENT_VALUE_CHANGED": { "type": {} },
+  "EVENT_MOVING_CHANGED": { "type": { "returnType": "ColumnEventName" } },
+  "EVENT_LEFT_CHANGED": { "type": { "returnType": "ColumnEventName" } },
+  "EVENT_WIDTH_CHANGED": { "type": { "returnType": "ColumnEventName" } },
+  "EVENT_LAST_LEFT_PINNED_CHANGED": {
+    "type": { "returnType": "ColumnEventName" }
+  },
+  "EVENT_FIRST_RIGHT_PINNED_CHANGED": {
+    "type": { "returnType": "ColumnEventName" }
+  },
+  "EVENT_VISIBLE_CHANGED": { "type": { "returnType": "ColumnEventName" } },
+  "EVENT_FILTER_CHANGED": { "type": { "returnType": "ColumnEventName" } },
+  "EVENT_FILTER_ACTIVE_CHANGED": {
+    "type": { "returnType": "ColumnEventName" }
+  },
+  "EVENT_SORT_CHANGED": { "type": { "returnType": "ColumnEventName" } },
+  "EVENT_COL_DEF_CHANGED": { "type": { "returnType": "ColumnEventName" } },
+  "EVENT_MENU_VISIBLE_CHANGED": { "type": { "returnType": "ColumnEventName" } },
+  "EVENT_ROW_GROUP_CHANGED": { "type": { "returnType": "ColumnEventName" } },
+  "EVENT_PIVOT_CHANGED": { "type": { "returnType": "ColumnEventName" } },
+  "EVENT_VALUE_CHANGED": { "type": { "returnType": "ColumnEventName" } },
   "getInstanceId": { "type": { "arguments": {}, "returnType": "number" } },
   "setColDef": {
     "type": {
@@ -70,14 +76,14 @@
   "addEventListener": {
     "description": "/** Add an event listener to the column. */",
     "type": {
-      "arguments": { "eventType": "string", "listener": "Function" },
+      "arguments": { "eventType": "ColumnEventName", "listener": "Function" },
       "returnType": "void"
     }
   },
   "removeEventListener": {
     "description": "/** Remove event listener from the column. */",
     "type": {
-      "arguments": { "eventType": "string", "listener": "Function" },
+      "arguments": { "eventType": "ColumnEventName", "listener": "Function" },
       "returnType": "void"
     }
   },

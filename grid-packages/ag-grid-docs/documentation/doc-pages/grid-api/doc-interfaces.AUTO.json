@@ -2340,6 +2340,7 @@
   },
   "SortDirection": {},
   "ColumnPinnedType": {},
+  "ColumnEventName": {},
   "GridOptions": {
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
