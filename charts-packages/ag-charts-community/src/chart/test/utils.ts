@@ -78,12 +78,13 @@ export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): D
 export async function waitForChartStability(chartOrProxy: Chart | AgChartInstance, timeoutMs = 5000): Promise<void> {
     const chart = deproxy(chartOrProxy);
     const chartAny = chart as any;
+    await chart.waitForUpdate(timeoutMs);
     if (chart.autoSize === true && !chartAny._lastAutoSize) {
         // Bypass wait for SizeObservable callback - it's never going to be invoked.
         chartAny._lastAutoSize = [chart.width, chart.height];
         chartAny.resize(chart.width, chart.height);
+        await chart.waitForUpdate(timeoutMs);
     }
-    return chart.waitForUpdate(timeoutMs);
 }
 
 export function mouseMoveEvent({ offsetX, offsetY }: { offsetX: number; offsetY: number }): MouseEvent {

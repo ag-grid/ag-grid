@@ -19,9 +19,7 @@ export default {
             </label>
             <br/>
           </div>
-          <div class="full-width-center">
-            {{ latinText() }}
-          </div>
+          <div class="full-width-center" v-html="latinText()"></div>
       </div>
     `,
   data: function () {
@@ -34,8 +32,6 @@ export default {
   beforeMount() {
     this.maxValue = this.params.maxValue;
     this.imgSrc = `https://www.ag-grid.com/example-assets/large-flags/${this.params.node.data.code}.png`;
-  },
-  mounted() {
   },
   methods: {
     latinText() {

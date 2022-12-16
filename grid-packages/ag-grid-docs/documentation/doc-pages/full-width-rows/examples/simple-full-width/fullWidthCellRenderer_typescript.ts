@@ -8,8 +8,6 @@ export class FullWidthCellRenderer implements ICellRendererComp {
         const eTemp = document.createElement('div');
         eTemp.innerHTML = this.getTemplate(params);
         this.eGui = eTemp.firstElementChild as HTMLElement;
-
-        this.consumeMouseWheelOnCenterText();
     }
 
     getTemplate(params: ICellRendererParams) {
@@ -39,22 +37,6 @@ export class FullWidthCellRenderer implements ICellRendererComp {
 
     getGui() {
         return this.eGui;
-    }
-
-    // if we don't do this, then the mouse wheel will be picked up by the main
-    // grid and scroll the main grid and not this component. this ensures that
-    // the wheel move is only picked up by the text field
-    consumeMouseWheelOnCenterText() {
-        const eFullWidthCenter = this.eGui.querySelector('.full-width-center')!;
-
-        const mouseWheelListener = function (event: any) {
-            event.stopPropagation();
-        };
-
-        // event is 'mousewheel' for IE9, Chrome, Safari, Opera
-        eFullWidthCenter.addEventListener('mousewheel', mouseWheelListener);
-        // event is 'DOMMouseScroll' Firefox
-        eFullWidthCenter.addEventListener('DOMMouseScroll', mouseWheelListener);
     }
 
     refresh(params: ICellRendererParams): boolean {

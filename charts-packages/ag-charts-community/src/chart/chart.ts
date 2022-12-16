@@ -726,9 +726,28 @@ export abstract class Chart extends Observable implements AgChartInstance {
             return;
         }
 
+        const legendSpacing = legend.spacing;
         const width = this.width;
         const height = this.height - captionAutoPadding;
-        const legendSpacing = legend.spacing;
+
+        const aspectRatio = width / height;
+        const maxCoefficient = 0.5;
+        const minHeightCoefficient = 0.2;
+        const minWidthCoefficient = 0.25;
+
+        // A horizontal legend should take maximum between 20 to 50 percent of the chart height if height is larger than width
+        // and maximum 20 percent of the chart height if height is smaller than width.
+        const heightCoefficient =
+            aspectRatio < 1 ? Math.min(maxCoefficient, minHeightCoefficient * (1 / aspectRatio)) : minHeightCoefficient;
+        const horizontalLegendWidth = legend.maxWidth ?? width - legendSpacing * 2;
+        const horizontalLegendHeight = legend.maxHeight ?? Math.round(height * heightCoefficient);
+
+        // A vertical legend should take maximum between 25 to 50 percent of the chart width if width is larger than height
+        // and maximum 25 percent of the chart width if width is smaller than height.
+        const widthCoefficient =
+            aspectRatio > 1 ? Math.min(maxCoefficient, minWidthCoefficient * aspectRatio) : minWidthCoefficient;
+        const verticalLegendWidth = legend.maxWidth ?? Math.round(width * widthCoefficient);
+        const verticalLegendHeight = legend.maxHeight ?? height - legendSpacing * 2;
 
         let translationX = 0;
         let translationY = 0;
@@ -736,9 +755,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         let legendBBox: BBox;
         switch (legend.position) {
             case 'bottom':
-                legend.performLayout(width - legendSpacing * 2, 0);
+                legend.performLayout(horizontalLegendWidth, horizontalLegendHeight);
                 legendBBox = legend.computeBBox();
-                legend.visible = legendBBox.height < Math.floor(height * 0.5); // Remove legend if it takes up more than 50% of the chart height.
 
                 if (legend.visible) {
                     translationX = (width - legendBBox.width) / 2 - legendBBox.x;
@@ -752,9 +770,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 break;
 
             case 'top':
-                legend.performLayout(width - legendSpacing * 2, 0);
+                legend.performLayout(horizontalLegendWidth, horizontalLegendHeight);
                 legendBBox = legend.computeBBox();
-                legend.visible = legendBBox.height < Math.floor(height * 0.5);
 
                 if (legend.visible) {
                     translationX = (width - legendBBox.width) / 2 - legendBBox.x;
@@ -768,9 +785,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 break;
 
             case 'left':
-                legend.performLayout(width, height - legendSpacing * 2);
+                legend.performLayout(verticalLegendWidth, verticalLegendHeight);
                 legendBBox = legend.computeBBox();
-                legend.visible = legendBBox.width < Math.floor(width * 0.5); // Remove legend if it takes up more than 50% of the chart width.
 
                 if (legend.visible) {
                     translationX = legendSpacing - legendBBox.x;
@@ -784,9 +800,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 break;
 
             default: // case 'right':
-                legend.performLayout(width, height - legendSpacing * 2);
+                legend.performLayout(verticalLegendWidth, verticalLegendHeight);
                 legendBBox = legend.computeBBox();
-                legend.visible = legendBBox.width < Math.floor(width * 0.5);
 
                 if (legend.visible) {
                     translationX = width - legendBBox.width - legendBBox.x - legendSpacing;

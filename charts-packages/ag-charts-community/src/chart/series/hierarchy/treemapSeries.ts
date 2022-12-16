@@ -392,7 +392,11 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             } else {
                 datum.children!.forEach((child) => {
                     const childNodeDatum = createTreeNodeDatum(child, depth + 1, nodeDatum);
-                    nodeDatum.value += childNodeDatum.value;
+                    const value = childNodeDatum.value;
+                    if (isNaN(value) || !isFinite(value) || value === 0) {
+                        return;
+                    }
+                    nodeDatum.value += value;
                     nodeDatum.children.push(childNodeDatum);
                 });
                 nodeDatum.children.sort((a, b) => {

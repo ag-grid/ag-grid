@@ -808,18 +808,87 @@
     "type": {
       "enabled?": "boolean",
       "position?": "AgChartLegendPosition",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
       "spacing?": "PixelSize",
       "item?": "AgChartLegendItemOptions",
       "reverseOrder?": "boolean",
-      "listeners?": "AgChartLegendListeners"
+      "listeners?": "AgChartLegendListeners",
+      "pagination?": "AgChartLegendPaginationOptions"
     },
     "docs": {
       "enabled?": "/** Whether or not to show the legend. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
+      "maxWidth?": "/** Used to constrain the width of the legend. */",
+      "maxHeight?": "/** Used to constrain the height of the legend. */",
       "spacing?": "/** The spacing in pixels to use outside the legend. */",
       "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
       "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
       "listeners?": "/** Optional callbacks for specific legend-related events. */"
+    }
+  },
+  "AgChartLegendPaginationOptions": {
+    "meta": {},
+    "type": {
+      "marker?": "AgPaginationMarkerOptions",
+      "activeStyle?": "AgPaginationMarkerStyle",
+      "inactiveStyle?": "AgPaginationMarkerStyle",
+      "highlightStyle?": "AgPaginationMarkerStyle",
+      "label?": "AgPaginationLabelOptions"
+    },
+    "docs": {
+      "marker?": "/** Configuration for the pagination markers. */",
+      "activeStyle?": "/** Configuration for pagination buttons when a button is active. */",
+      "inactiveStyle?": "/** Configuration for pagination buttons when a button is inactive. */",
+      "highlightStyle?": "/** Configuration for pagination buttons when a button is hovered over. */",
+      "label?": "/** Configuration for the pagination label. */"
+    }
+  },
+  "AgPaginationMarkerOptions": {
+    "meta": {},
+    "type": {
+      "size?": "PixelSize",
+      "shape?": "MarkerShape",
+      "padding?": "PixelSize"
+    },
+    "docs": {
+      "size?": "/** The size in pixels of the pagination buttons. */",
+      "shape?": "/** If set, overrides the marker shape for the pagination buttons. If not set, the pagination buttons will default to the `'triangle'` marker shape. */",
+      "padding?": "/** The inner padding in pixels between a pagination button and the pagination label. */"
+    }
+  },
+  "AgPaginationMarkerStyle": {
+    "meta": {},
+    "type": {
+      "fill?": "CssColor",
+      "fillOpacity?": "Opacity",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
+      "strokeOpacity?": "Opacity"
+    },
+    "docs": {
+      "fill?": "/** The fill colour to use for the pagination button markers. */",
+      "fillOpacity?": "/** Opacity of the pagination buttons. */",
+      "stroke?": "/** The colour to use for the button strokes. */",
+      "strokeWidth?": "/** The width in pixels of the button strokes. */",
+      "strokeOpacity?": "/** Opacity of the button strokes. */"
+    }
+  },
+  "AgPaginationLabelOptions": {
+    "meta": {},
+    "type": {
+      "color?": "CssColor",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily"
+    },
+    "docs": {
+      "color?": "/** The colour of the text. */",
+      "fontStyle?": "/** The font style to use for the pagination label. */",
+      "fontWeight?": "/** The font weight to use for the pagination label. */",
+      "fontSize?": "/** The font size in pixels to use for the pagination label. */",
+      "fontFamily?": "/** The font family to use for the pagination label. */"
     }
   },
   "AgChartTooltipOptions": {
@@ -2884,7 +2953,7 @@
   },
   "VisibilityMap": {
     "meta": { "isTypeAlias": true },
-    "type": "{ crossLines: boolean; series: boolean; legend: boolean; }"
+    "type": "{ crossLines: boolean; series: boolean; }"
   },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
@@ -2943,6 +3012,27 @@
   "CrossLinesRangeConfig": {
     "meta": { "isTypeAlias": true },
     "type": "Record<string, { vertical: [ Date, Date ]; horizontal: [ number, number ]; }>"
+  },
+  "Page": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
+  },
+  "Orientation": {
+    "meta": { "isEnum": true },
+    "type": ["Vertical", "Horizontal"],
+    "docs": [null, null]
+  },
+  "Column": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ columnWidth: number; columnHeight: number; indices: number[]; bboxes: BBox[]; }"
+  },
+  "DimensionProps": {
+    "meta": {},
+    "type": {
+      "max": "number",
+      "fn": "(bbox: BBox) => number",
+      "padding": "number"
+    }
   },
   "Listener": {
     "meta": { "isTypeAlias": true, "typeParams": ["E"] },
@@ -3011,11 +3101,6 @@
       "marker": "{ shape?: string | (new () => Marker); fill: string; stroke: string; fillOpacity: number; strokeOpacity: number; }",
       "label": "{ text: string; }"
     }
-  },
-  "LegendOrientation": {
-    "meta": { "isEnum": true },
-    "type": ["Vertical", "Horizontal"],
-    "docs": [null, null]
   },
   "SeriesOptionsTypes": {
     "meta": { "isTypeAlias": true },
