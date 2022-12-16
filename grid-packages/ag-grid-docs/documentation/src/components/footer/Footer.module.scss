@@ -37,8 +37,4 @@
             list-style-type: none;
         }
     }
-
-    &__buttons {
-        composes: d-flex flex-column justify-content-center from global;
-    }
 }
