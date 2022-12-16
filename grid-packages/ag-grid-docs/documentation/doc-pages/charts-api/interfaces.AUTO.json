@@ -2958,7 +2958,7 @@
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
+    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
   },
   "InteractionEvent": {
     "meta": {
@@ -2966,6 +2966,17 @@
       "typeParams": ["T extends InteractionTypes"]
     },
     "type": "{ type: T; offsetX: number; offsetY: number; pageX: number; pageY: number; sourceEvent: Event; consume(): void; } & (T extends 'drag' ? { startX: number; startY: number; } : {})"
+  },
+  "Coords": {
+    "meta": {},
+    "type": {
+      "clientX": "number",
+      "clientY": "number",
+      "pageX": "number",
+      "pageY": "number",
+      "offsetX": "number",
+      "offsetY": "number"
+    }
   },
   "Layers": {
     "meta": { "isEnum": true },
