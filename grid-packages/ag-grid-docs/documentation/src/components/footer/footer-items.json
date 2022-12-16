@@ -1,6 +1,6 @@
 [
     {
-        "title": "DOCUMENTATION",
+        "title": "Documentation",
         "links": [
             {
                 "name": "Getting Started",
@@ -21,7 +21,7 @@
         ]
     },
     {
-        "title": "SUPPORT & COMMUNITY",
+        "title": "Support & Community",
         "links": [
             {
                 "name": "Stack Overflow",
@@ -40,7 +40,7 @@
         ]
     },
     {
-        "title": "THE COMPANY",
+        "title": "The Company",
         "links": [
             {
                 "name": "About",
@@ -61,7 +61,7 @@
         ]
     },
     {
-        "title": "FOLLOW",
+        "title": "Follow",
         "links": [
             {
                 "name": "Github",
