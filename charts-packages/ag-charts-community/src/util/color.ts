@@ -1,3 +1,5 @@
+import { doOnce } from '../util/function';
+
 export class Color {
     readonly r: number;
     readonly g: number;
@@ -72,6 +74,15 @@ export class Color {
         }
 
         throw new Error(`Invalid color string: '${str}'`);
+    }
+
+    static tryParseFromString(str: string): Color {
+        try {
+            return Color.fromString(str);
+        } catch (e) {
+            doOnce(() => console.warn(`AG Charts - Invalid color string: '${str}'.`), `unable to parse color ${str}`);
+            return Color.fromArray([0, 0, 0]);
+        }
     }
 
     // See https://drafts.csswg.org/css-color/#hex-notation
