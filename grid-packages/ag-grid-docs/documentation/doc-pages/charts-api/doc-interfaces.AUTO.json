@@ -1290,6 +1290,14 @@
       "description": "/** Where the legend should show in relation to the chart. */",
       "type": { "returnType": "AgChartLegendPosition", "optional": true }
     },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
     "spacing": {
       "description": "/** The spacing in pixels to use outside the legend. */",
       "type": { "returnType": "PixelSize", "optional": true }
@@ -1305,6 +1313,92 @@
     "listeners": {
       "description": "/** Optional callbacks for specific legend-related events. */",
       "type": { "returnType": "AgChartLegendListeners", "optional": true }
+    },
+    "pagination": {
+      "type": {
+        "returnType": "AgChartLegendPaginationOptions",
+        "optional": true
+      }
+    }
+  },
+  "AgChartLegendPaginationOptions": {
+    "marker": {
+      "description": "/** Configuration for the pagination markers. */",
+      "type": { "returnType": "AgPaginationMarkerOptions", "optional": true }
+    },
+    "activeStyle": {
+      "description": "/** Configuration for pagination buttons when a button is active. */",
+      "type": { "returnType": "AgPaginationMarkerStyle", "optional": true }
+    },
+    "inactiveStyle": {
+      "description": "/** Configuration for pagination buttons when a button is inactive. */",
+      "type": { "returnType": "AgPaginationMarkerStyle", "optional": true }
+    },
+    "highlightStyle": {
+      "description": "/** Configuration for pagination buttons when a button is hovered over. */",
+      "type": { "returnType": "AgPaginationMarkerStyle", "optional": true }
+    },
+    "label": {
+      "description": "/** Configuration for the pagination label. */",
+      "type": { "returnType": "AgPaginationLabelOptions", "optional": true }
+    }
+  },
+  "AgPaginationMarkerOptions": {
+    "size": {
+      "description": "/** The size in pixels of the pagination buttons. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "shape": {
+      "description": "/** If set, overrides the marker shape for the pagination buttons. If not set, the pagination buttons will default to the `'triangle'` marker shape. */",
+      "type": { "returnType": "MarkerShape", "optional": true }
+    },
+    "padding": {
+      "description": "/** The inner padding in pixels between a pagination button and the pagination label. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    }
+  },
+  "AgPaginationMarkerStyle": {
+    "fill": {
+      "description": "/** The fill colour to use for the pagination button markers. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** Opacity of the pagination buttons. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour to use for the button strokes. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the button strokes. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** Opacity of the button strokes. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    }
+  },
+  "AgPaginationLabelOptions": {
+    "color": {
+      "description": "/** The colour of the text. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the pagination label. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the pagination label. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the pagination label. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the pagination label. */",
+      "type": { "returnType": "FontFamily", "optional": true }
     }
   },
   "AgChartTooltipOptions": {
@@ -4436,6 +4530,20 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "Page": {},
+  "Orientation": {},
+  "Column": {},
+  "DimensionProps": {
+    "max": { "type": { "returnType": "number", "optional": false } },
+    "fn": {
+      "type": {
+        "arguments": { "bbox": "BBox" },
+        "returnType": "number",
+        "optional": false
+      }
+    },
+    "padding": { "type": { "returnType": "number", "optional": false } }
+  },
   "Listener": { "meta": { "typeParams": ["E"] } },
   "CursorState": {
     "style": { "type": { "returnType": "string", "optional": false } }
@@ -4488,7 +4596,6 @@
       }
     }
   },
-  "LegendOrientation": {},
   "SeriesOptionsTypes": {},
   "AxesOptionsTypes": {},
   "PreparationContext": {

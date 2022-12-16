@@ -32,11 +32,14 @@ import {
     Validate,
 } from '../util/validation';
 import { Layers } from './layers';
-import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { Series } from './series/series';
 import { ChartUpdateType } from './chart';
+import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightManager } from './interaction/highlightManager';
+import { gridLayout, Page } from './gridLayout';
+import { Pagination } from './pagination/pagination';
+import { Orientation } from './gridLayout';
 
 export interface LegendDatum {
     id: string; // component ID
@@ -53,11 +56,6 @@ export interface LegendDatum {
     label: {
         text: string; // display name for the sub-component
     };
-}
-
-enum LegendOrientation {
-    Vertical,
-    Horizontal,
 }
 
 class LegendLabel {
@@ -160,6 +158,8 @@ export class Legend {
     ).selectAll<MarkerLabel>();
 
     private oldSize: [number, number] = [0, 0];
+    private pages: Page[] = [];
+    private pagination: Pagination;
 
     readonly item = new LegendItem();
     readonly listeners = new LegendListeners();
@@ -197,7 +197,6 @@ export class Legend {
         return this._enabled;
     }
 
-    orientation: LegendOrientation = LegendOrientation.Vertical;
     @Validate(POSITION)
     private _position: AgChartLegendPosition = 'right';
     set position(value: AgChartLegendPosition) {
@@ -206,11 +205,11 @@ export class Legend {
         switch (value) {
             case 'right':
             case 'left':
-                this.orientation = LegendOrientation.Vertical;
+                this.orientation = Orientation.Vertical;
                 break;
             case 'bottom':
             case 'top':
-                this.orientation = LegendOrientation.Horizontal;
+                this.orientation = Orientation.Horizontal;
                 break;
         }
     }
@@ -218,9 +217,26 @@ export class Legend {
         return this._position;
     }
 
+    /** Used to constrain the width of the legend. */
+    @Validate(OPT_NUMBER(0))
+    maxWidth?: number = undefined;
+
+    /** Used to constrain the height of the legend. */
+    @Validate(OPT_NUMBER(0))
+    maxHeight?: number = undefined;
+
     /** Reverse the display order of legend items if `true`. */
     @Validate(OPT_BOOLEAN)
     reverseOrder?: boolean = undefined;
+
+    private _orientation: Orientation = Orientation.Vertical;
+    set orientation(value: Orientation) {
+        this._orientation = value;
+        this.pagination.orientation = value;
+    }
+    get orientation() {
+        return this._orientation;
+    }
 
     constructor(
         private readonly chart: {
@@ -235,6 +251,14 @@ export class Legend {
         private readonly cursorManager: CursorManager,
         private readonly highlightManager: HighlightManager
     ) {
+        this.item.marker.parent = this;
+        this.pagination = new Pagination(
+            (page) => this.updatePageNumber(page),
+            this.interactionManager,
+            this.cursorManager
+        );
+        this.pagination.attachPagination(this.group);
+
         this.item.marker.parent = this;
 
         this.interactionManager.addListener('click', (e) => this.checkLegendClick(e));
@@ -324,7 +348,6 @@ export class Legend {
             node.marker = new Marker();
         });
         const itemSelection = (this.itemSelection = updateSelection.merge(enterSelection));
-        const itemCount = itemSelection.size;
 
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
@@ -384,139 +407,139 @@ export class Legend {
             bboxes.push(markerLabel.computeBBox());
         });
 
-        const itemHeight = bboxes.length && bboxes[0].height;
-        let rowCount = 0;
-
-        let columnWidth = 0;
-        let paddedItemsWidth = 0;
-        let paddedItemsHeight = 0;
-
         width = Math.max(1, width);
         height = Math.max(1, height);
 
-        switch (this.orientation) {
-            case LegendOrientation.Horizontal:
-                if (!(isFinite(width) && width > 0)) {
-                    return false;
-                }
-
-                rowCount = 0;
-                let columnCount = 0;
-
-                // Split legend items into columns until the width is suitable.
-                do {
-                    let itemsWidth = 0;
-
-                    columnCount = 0;
-                    columnWidth = 0;
-                    rowCount++;
-
-                    let i = 0;
-                    while (i < itemCount) {
-                        const bbox = bboxes[i];
-                        if (bbox.width > columnWidth) {
-                            columnWidth = bbox.width;
-                        }
-                        i++;
-                        if (i % rowCount === 0) {
-                            itemsWidth += columnWidth;
-                            columnWidth = 0;
-                            columnCount++;
-                        }
-                    }
-                    if (i % rowCount !== 0) {
-                        itemsWidth += columnWidth;
-                        columnCount++;
-                    }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * paddingX;
-                } while (paddedItemsWidth > width && columnCount > 1);
-
-                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * paddingY;
-
-                break;
-
-            case LegendOrientation.Vertical:
-                if (!(isFinite(height) && height > 0)) {
-                    return false;
-                }
-
-                rowCount = itemCount * 2;
-
-                // Split legend items into columns until the height is suitable.
-                do {
-                    rowCount = (rowCount >> 1) + (rowCount % 2);
-                    columnWidth = 0;
-
-                    let itemsWidth = 0;
-                    let itemsHeight = 0;
-                    let columnCount = 0;
-
-                    let i = 0;
-                    while (i < itemCount) {
-                        const bbox = bboxes[i];
-                        if (!columnCount) {
-                            itemsHeight += bbox.height;
-                        }
-                        if (bbox.width > columnWidth) {
-                            columnWidth = bbox.width;
-                        }
-                        i++;
-                        if (i % rowCount === 0) {
-                            itemsWidth += columnWidth;
-                            columnWidth = 0;
-                            columnCount++;
-                        }
-                    }
-                    if (i % rowCount !== 0) {
-                        itemsWidth += columnWidth;
-                        columnCount++;
-                    }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * paddingX;
-                    paddedItemsHeight = itemsHeight + (rowCount - 1) * paddingY;
-                } while (paddedItemsHeight > height && rowCount > 1);
-
-                break;
+        if (!isFinite(width)) {
+            return false;
         }
 
-        // Top-left corner of the first legend item.
-        const startX = (width - paddedItemsWidth) / 2;
-        const startY = (height - paddedItemsHeight) / 2;
+        // Force pagination component layout to get more accurate paginationBBox
+        this.pagination.totalPages = 0;
+        const paginationBBox = this.pagination.computeBBox();
+        const verticalOrientation = this.orientation === Orientation.Vertical;
 
-        let x = 0;
-        let y = 0;
-        columnWidth = 0;
-
-        // Position legend items using the layout computed above.
-        itemSelection.each((markerLabel, _, i) => {
-            // Round off for pixel grid alignment to work properly.
-            markerLabel.translationX = Math.floor(startX + x);
-            markerLabel.translationY = Math.floor(startY + y);
-
-            const bbox = bboxes[i];
-            if (bbox.width > columnWidth) {
-                columnWidth = bbox.width;
-            }
-            if ((i + 1) % rowCount === 0) {
-                x += columnWidth + paddingX;
-                y = 0;
-                columnWidth = 0;
-            } else {
-                y += bbox.height + paddingY;
-            }
-        });
-
-        // Update legend item properties that don't affect the layout.
-        this.update();
+        width = width - (verticalOrientation ? 0 : paginationBBox.width);
+        height = height - (verticalOrientation ? paginationBBox.height : 0);
 
         const size = this.size;
         const oldSize = this.oldSize;
-        size[0] = paddedItemsWidth;
-        size[1] = paddedItemsHeight;
+        size[0] = width;
+        size[1] = height;
 
         if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
             oldSize[0] = size[0];
             oldSize[1] = size[1];
         }
+
+        const {
+            pages = [],
+            maxPageWidth = 0,
+            maxPageHeight = 0,
+        } = gridLayout({
+            orientation: this.orientation,
+            bboxes,
+            maxHeight: height,
+            maxWidth: width,
+            itemPaddingY: paddingY,
+            itemPaddingX: paddingX,
+        }) || {};
+
+        this.pages = pages;
+        const totalPages = pages.length;
+        this.pagination.visible = totalPages > 1;
+        this.pagination.totalPages = totalPages;
+
+        const pageNumber = this.pagination.getCurrentPage();
+        const page = this.pages[pageNumber];
+
+        if (totalPages < 1 || !page) {
+            this.visible = false;
+            return;
+        }
+
+        this.visible = true;
+
+        // Position legend items
+        // Top-left corner of the first legend item.
+        const startX = width / 2;
+        const startY = height / 2;
+        this.updatePositions(startX, startY, pageNumber);
+
+        this.pagination.translationX = verticalOrientation ? startX : startX + maxPageWidth;
+        this.pagination.translationY = verticalOrientation
+            ? startY + maxPageHeight
+            : startY + maxPageHeight / 2 - paginationBBox.height;
+
+        // Update legend item properties that don't affect the layout.
+        this.update();
+    }
+
+    updatePositions(startX: number, startY: number, pageNumber: number = 0) {
+        const {
+            item: { paddingY },
+            itemSelection,
+            pages,
+        } = this;
+
+        if (pages.length < 1 || !pages[pageNumber]) {
+            return;
+        }
+
+        const { columns, startIndex: visibleStart, endIndex: visibleEnd } = pages[pageNumber];
+
+        // Position legend items using the layout computed above.
+        let x = 0;
+        let y = 0;
+
+        const columnCount = columns.length;
+        const rowCount = columns[0].indices.length;
+        const horizontal = this.orientation === Orientation.Horizontal;
+
+        const itemHeight = columns[0].bboxes[0].height + paddingY;
+
+        const rowSumColumnWidths: number[] = [];
+
+        itemSelection.each((markerLabel, _, i) => {
+            if (i < visibleStart || i > visibleEnd) {
+                markerLabel.visible = false;
+                return;
+            }
+
+            const pageIndex = i - visibleStart;
+            let columnIndex = 0;
+            let rowIndex = 0;
+            if (horizontal) {
+                columnIndex = pageIndex % columnCount;
+                rowIndex = Math.floor(pageIndex / columnCount);
+            } else {
+                columnIndex = Math.floor(pageIndex / rowCount);
+                rowIndex = pageIndex % rowCount;
+            }
+
+            markerLabel.visible = true;
+            let column = columns[columnIndex];
+
+            if (!column) {
+                return;
+            }
+
+            y = itemHeight * rowIndex;
+            x = rowSumColumnWidths[rowIndex] ?? 0;
+
+            rowSumColumnWidths[rowIndex] = (rowSumColumnWidths[rowIndex] ?? 0) + column.columnWidth;
+
+            // Round off for pixel grid alignment to work properly.
+            markerLabel.translationX = Math.floor(startX + x);
+            markerLabel.translationY = Math.floor(startY + y);
+        });
+    }
+
+    updatePageNumber(pageNumber: number) {
+        const startX = this.size[0] / 2;
+        const startY = this.size[1] / 2;
+        this.updatePositions(startX, startY, pageNumber);
+        this.chart.update(ChartUpdateType.SCENE_RENDER);
     }
 
     update() {
@@ -540,7 +563,7 @@ export class Legend {
         for (const child of this.group.children) {
             if (!(child instanceof MarkerLabel)) continue;
 
-            if (child.computeBBox().containsPoint(x, y)) {
+            if (child.visible && child.computeBBox().containsPoint(x, y)) {
                 return child.datum;
             }
         }
@@ -596,7 +619,7 @@ export class Legend {
 
         const legendBBox = this.computeBBox();
         const { offsetX, offsetY } = event;
-        const pointerInsideLegend = legendBBox.containsPoint(offsetX, offsetY);
+        const pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
 
         if (!pointerInsideLegend) {
             this.cursorManager.updateCursor(this.id);

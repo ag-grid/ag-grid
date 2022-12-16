@@ -13,8 +13,37 @@ import {
     deproxy,
 } from './test/utils';
 import * as examples from './test/examples';
+import { AgCartesianChartOptions } from './agChartOptions';
+import { seedRandom } from './test/random';
 
 expect.extend({ toMatchImageSnapshot });
+
+function buildSeries(data) {
+    return {
+        data: [data],
+        xKey: 'x',
+        yKey: 'y',
+        yName: String(data.y),
+    };
+}
+
+const SERIES = [];
+const seriesDataRandom = seedRandom(10763960837);
+
+for (let i = 0; i < 200; i++) {
+    SERIES.push(buildSeries({ x: i, y: Math.floor(seriesDataRandom() * 100) }));
+}
+
+const OPTIONS: AgCartesianChartOptions = {
+    container: document.getElementById('myChart'),
+    title: {
+        text: 'Browser Usage Statistics',
+    },
+    subtitle: {
+        text: '2009-2019',
+    },
+    series: SERIES,
+};
 
 describe('Legend', () => {
     let chart: CartesianChart;
@@ -52,6 +81,25 @@ describe('Legend', () => {
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
             await waitForChartStability(chart);
+            await compare(chart);
+        });
+    });
+
+    describe('Large series count chart legend pagination', () => {
+        const positions = ['right', 'bottom'];
+
+        it.each(positions)('should render legend correctly at position [%s]', async (position) => {
+            const options = {
+                ...OPTIONS,
+                autoSize: false,
+                width: CANVAS_WIDTH,
+                height: CANVAS_HEIGHT,
+                legend: {
+                    position,
+                },
+            };
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
             await compare(chart);
         });
     });

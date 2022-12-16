@@ -365,6 +365,10 @@ export interface AgChartLegendOptions {
     enabled?: boolean;
     /** Where the legend should show in relation to the chart. */
     position?: AgChartLegendPosition;
+    /** Used to constrain the width of the legend. */
+    maxWidth?: PixelSize;
+    /** Used to constrain the height of the legend. */
+    maxHeight?: PixelSize;
     /** The spacing in pixels to use outside the legend. */
     spacing?: PixelSize;
     /** Configuration for the legend items that consist of a marker and a label. */
@@ -373,6 +377,55 @@ export interface AgChartLegendOptions {
     reverseOrder?: boolean;
     /** Optional callbacks for specific legend-related events. */
     listeners?: AgChartLegendListeners;
+    pagination?: AgChartLegendPaginationOptions;
+}
+
+export interface AgChartLegendPaginationOptions {
+    /** Configuration for the pagination markers. */
+    marker?: AgPaginationMarkerOptions;
+    /** Configuration for pagination buttons when a button is active. */
+    activeStyle?: AgPaginationMarkerStyle;
+    /** Configuration for pagination buttons when a button is inactive. */
+    inactiveStyle?: AgPaginationMarkerStyle;
+    /** Configuration for pagination buttons when a button is hovered over. */
+    highlightStyle?: AgPaginationMarkerStyle;
+    /** Configuration for the pagination label. */
+    label?: AgPaginationLabelOptions;
+}
+
+export interface AgPaginationMarkerOptions {
+    /** The size in pixels of the pagination buttons. */
+    size?: PixelSize;
+    /** If set, overrides the marker shape for the pagination buttons. If not set, the pagination buttons will default to the `'triangle'` marker shape. */
+    shape?: MarkerShape;
+    /** The inner padding in pixels between a pagination button and the pagination label. */
+    padding?: PixelSize;
+}
+
+export interface AgPaginationMarkerStyle {
+    /** The fill colour to use for the pagination button markers. */
+    fill?: CssColor;
+    /** Opacity of the pagination buttons. */
+    fillOpacity?: Opacity;
+    /** The colour to use for the button strokes. */
+    stroke?: CssColor;
+    /** The width in pixels of the button strokes. */
+    strokeWidth?: PixelSize;
+    /** Opacity of the button strokes. */
+    strokeOpacity?: Opacity;
+}
+
+export interface AgPaginationLabelOptions {
+    /** The colour of the text. */
+    color?: CssColor;
+    /** The font style to use for the pagination label. */
+    fontStyle?: FontStyle;
+    /** The font weight to use for the pagination label. */
+    fontWeight?: FontWeight;
+    /** The font size in pixels to use for the pagination label. */
+    fontSize?: FontSize;
+    /** The font family to use for the pagination label. */
+    fontFamily?: FontFamily;
 }
 
 export interface AgChartTooltipOptions {
