@@ -33,6 +33,16 @@ $four-column-breakpoint: 760px;
 
         @media screen and (min-width: $two-column-breakpoint) and (max-width: $four-column-breakpoint) {
             width: 50%;
+
+            &:nth-child(even) {
+                text-align: right;
+            }
+        }
+
+        @media screen and (min-width: $four-column-breakpoint) {
+            &:last-child {
+                text-align: right;
+            }
         }
 
         a {
