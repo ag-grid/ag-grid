@@ -12,6 +12,7 @@ import { PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import { SizedPoint, Point } from '../../scene/point';
 import { BBox } from '../../scene/bbox';
+import { HighlightManager } from '../interaction/highlightManager';
 
 /**
  * Processed series datum used in node selections,
@@ -145,6 +146,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     // Package-level visibility, not meant to be set by the user.
     chart?: Chart;
+    highlightManager?: HighlightManager;
     xAxis?: ChartAxis;
     yAxis?: ChartAxis;
 
@@ -326,13 +328,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     protected isItemIdHighlighted(datum?: {
         itemId?: any;
     }): 'highlighted' | 'other-highlighted' | 'peer-highlighted' | 'no-highlight' {
-        const {
-            chart: {
-                highlightedDatum: { series = undefined, itemId = undefined } = {},
-                highlightedDatum = undefined,
-            } = {},
-        } = this;
-
+        const highlightedDatum = this.highlightManager?.getActiveHighlight();
+        const { series, itemId } = highlightedDatum ?? {};
         const highlighting = series != null;
 
         if (!highlighting) {

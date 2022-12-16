@@ -4436,11 +4436,27 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "Listener": { "meta": { "typeParams": ["E"] } },
   "CursorState": {
     "style": { "type": { "returnType": "string", "optional": false } }
   },
+  "HighlightState": {
+    "highlightedDatum": {
+      "type": { "returnType": "SeriesNodeDatum", "optional": false }
+    }
+  },
+  "HighlightChangeEvent": {
+    "type": {
+      "type": { "returnType": "'highlight-change'", "optional": false }
+    },
+    "previousHighlight": {
+      "type": { "returnType": "SeriesNodeDatum", "optional": true }
+    },
+    "currentHighlight": {
+      "type": { "returnType": "SeriesNodeDatum", "optional": true }
+    }
+  },
   "InteractionTypes": {},
-  "Listener": { "meta": { "typeParams": ["T extends InteractionTypes"] } },
   "SUPPORTED_EVENTS": {},
   "InteractionEvent": {
     "meta": { "typeParams": ["T extends InteractionTypes"] }

@@ -607,7 +607,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private getSectorFormat(datum: any, itemId: any, index: number, highlight: any): AgPieSeriesFormat {
         const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, formatter, id: seriesId } = this;
 
-        const highlightedDatum = this.chart!.highlightedDatum;
+        const highlightedDatum = this.highlightManager?.getActiveHighlight();
         const isDatumHighlighted = highlight && highlightedDatum?.series === this && itemId === highlightedDatum.itemId;
         const highlightedStyle = isDatumHighlighted ? this.highlightStyle.item : null;
 
@@ -749,25 +749,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private datumSectorRefs = new WeakMap<PieNodeDatum, Sector>();
 
     private async updateNodes() {
-        if (!this.chart) {
-            return;
-        }
-
+        const highlightedDatum = this.highlightManager?.getActiveHighlight();
         const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
         this.rootGroup.visible = isVisible;
         this.backgroundGroup.visible = isVisible;
         this.contentGroup.visible = isVisible;
-        this.highlightGroup.visible = isVisible && this.chart?.highlightedDatum?.series === this;
+        this.highlightGroup.visible = isVisible && highlightedDatum?.series === this;
         this.labelGroup!.visible = isVisible;
 
         this.contentGroup.opacity = this.getOpacity();
 
         this.updateInnerCircle();
 
-        const {
-            radiusScale,
-            chart: { highlightedDatum },
-        } = this;
+        const { radiusScale } = this;
 
         const innerRadius = radiusScale.convert(0);
 

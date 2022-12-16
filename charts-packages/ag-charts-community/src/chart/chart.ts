@@ -24,6 +24,7 @@ import { jsonMerge } from '../util/json';
 import { ClipRect } from '../scene/clipRect';
 import { Layers } from './layers';
 import { CursorManager } from './interaction/cursorManager';
+import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
 
 /** Types of chart-update, in pipeline execution order. */
 export enum ChartUpdateType {
@@ -193,6 +194,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     protected readonly interactionManager: InteractionManager;
     protected readonly cursorManager: CursorManager;
+    protected readonly highlightManager: HighlightManager;
     protected readonly axisGroup: Group;
 
     protected constructor(
@@ -231,6 +233,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.interactionManager = new InteractionManager(element);
         this.cursorManager = new CursorManager(element);
+        this.highlightManager = new HighlightManager();
 
         background.width = this.scene.width;
         background.height = this.scene.height;
@@ -255,7 +258,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         });
 
         this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
-        this.legend = new Legend(this, this.interactionManager, this.cursorManager);
+        this.legend = new Legend(this, this.interactionManager, this.cursorManager, this.highlightManager);
         this.container = container;
 
         // Add interaction listeners last so child components are registered first.
@@ -263,6 +266,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
         this.interactionManager.addListener('leave', () => this.togglePointer(false));
         this.interactionManager.addListener('page-left', () => this.destroy());
+
+        this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
     }
 
     destroy(opts?: { keepTransferableResources: boolean }): TransferableResources | undefined {
@@ -307,8 +312,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (this.tooltip.enabled) {
             this.tooltip.toggle(visible);
         }
-        if (!visible && this.lastPick?.datum?.datum != null) {
-            this.changeHighlightDatum();
+        if (!visible) {
+            this.highlightManager.updateHighlight(this.id);
         }
         if (!visible && this.lastInteractionEvent) {
             this.lastInteractionEvent = undefined;
@@ -404,7 +409,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 splits.push(performance.now());
 
                 // Disable tooltip/highlight if the data fundamentally shifted.
-                this.disablePointer({ updateProcessing: false });
+                this.disablePointer();
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (this._autoSize && !this._lastAutoSize) {
@@ -498,6 +503,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     protected initSeries(series: Series<any>) {
         series.chart = this;
+        series.highlightManager = this.highlightManager;
         if (!series.data) {
             series.data = this.data;
         }
@@ -873,10 +879,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.update(ChartUpdateType.SCENE_RENDER);
     }
 
-    private disablePointer({ updateProcessing = true } = {}) {
-        if (this.highlightedDatum?.datum?.datum != null) {
-            this.changeHighlightDatum(undefined, { updateProcessing });
-        }
+    private disablePointer() {
+        this.highlightManager.updateHighlight(this.id);
         this.togglePointer(false);
     }
 
@@ -941,9 +945,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
     private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
         const { lastPick } = this;
 
-        if (lastPick && lastPick.event) {
-            const { event, datum } = lastPick;
-            datum.series.fireNodeClickEvent(event, datum);
+        if (lastPick?.datum) {
+            const { datum } = lastPick;
+            datum.series.fireNodeClickEvent(event.sourceEvent, datum);
             return true;
         } else if (event.sourceEvent.type.startsWith('touch')) {
             const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY });
@@ -978,10 +982,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             }
         }
 
-        this.changeHighlightDatum({
-            datum,
-            event: meta.event,
-        });
+        this.highlightManager.updateHighlight(this.id, datum);
 
         if (datum) {
             meta = this.mergePointerDatum(meta, datum);
@@ -1012,13 +1013,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return meta;
     }
 
-    highlightedDatum?: SeriesNodeDatum;
-
-    changeHighlightDatum(newPick?: { datum: SeriesNodeDatum; event?: Event }, opts?: { updateProcessing: boolean }) {
-        const { updateProcessing = true } = opts ?? {};
+    changeHighlightDatum(event: HighlightChangeEvent) {
         const seriesToUpdate: Set<Series> = new Set<Series>();
-        const { datum: { series: newSeries = undefined } = {}, datum = undefined } = newPick || {};
-        const { lastPick: { datum: { series: lastSeries = undefined } = {} } = {}, lastPick } = this;
+        const { datum: { series: newSeries = undefined } = {}, datum: newDatum } = event.currentHighlight || {};
+        const { datum: { series: lastSeries = undefined } = {}, datum: lastDatum } = event.previousHighlight || {};
 
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);
@@ -1029,19 +1027,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         // Adjust cursor if a specific datum is highlighted, rather than just a series.
-        if (lastSeries?.cursor && lastPick?.datum?.datum) {
+        if (lastSeries?.cursor && lastDatum?.datum) {
             this.cursorManager.updateCursor(lastSeries.id);
         }
-        if (newSeries?.cursor && datum?.datum) {
+        if (newSeries?.cursor && newDatum?.datum) {
             this.cursorManager.updateCursor(newSeries.id, newSeries.cursor);
         }
 
-        this.lastPick = newPick;
-        this.highlightedDatum = datum;
-
-        if (!updateProcessing) {
-            return;
-        }
+        this.lastPick = event.currentHighlight ? { datum: event.currentHighlight } : undefined;
 
         let updateAll = newSeries == null || lastSeries == null;
         if (updateAll) {

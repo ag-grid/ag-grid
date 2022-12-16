@@ -1,8 +1,6 @@
+import { BaseManager, Listener } from './baseManager';
+
 type InteractionTypes = 'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left';
-type Listener<T extends InteractionTypes> = {
-    symbol?: Symbol;
-    handler: (event: InteractionEvent<T>) => void;
-};
 
 type SUPPORTED_EVENTS =
     | 'click'
@@ -58,13 +56,12 @@ const CSS = `
  * Manages user interactions with a specific HTMLElement (or interactions that bubble from it's
  * children)
  */
-export class InteractionManager {
+export class InteractionManager extends BaseManager<InteractionTypes, InteractionEvent<InteractionTypes>> {
     private static interactionDocuments: Document[] = [];
 
     private readonly rootElement: HTMLElement;
     private readonly element: HTMLElement;
 
-    private registeredListeners: Partial<{ [I in InteractionTypes]: Listener<I>[] }> = {};
     private eventHandler = (event: MouseEvent | TouchEvent | Event) => this.processEvent(event);
 
     private mouseDown = false;
@@ -72,6 +69,8 @@ export class InteractionManager {
     private dragStartElement?: HTMLElement;
 
     public constructor(element: HTMLElement, doc = document) {
+        super();
+
         this.rootElement = doc.body;
         this.element = element;
 
@@ -89,31 +88,6 @@ export class InteractionManager {
             document.head.insertBefore(styleElement, document.head.querySelector('style'));
             InteractionManager.interactionDocuments.push(doc);
         }
-    }
-
-    public addListener<T extends InteractionTypes>(type: T, cb: (event: InteractionEvent<T>) => void): Symbol {
-        const symbol = Symbol(type);
-
-        if (!this.registeredListeners[type]) {
-            this.registeredListeners[type] = [];
-        }
-
-        this.registeredListeners[type]?.push({ symbol, handler: cb as any });
-
-        return symbol;
-    }
-
-    public removeListener(listenerSymbol: Symbol) {
-        Object.entries(this.registeredListeners).forEach(([type, listeners]) => {
-            const match = listeners?.findIndex((entry: Listener<any>) => entry.symbol === listenerSymbol);
-
-            if (match != null && match >= 0) {
-                listeners?.splice(match, 1);
-            }
-            if (match != null && listeners?.length === 0) {
-                delete this.registeredListeners[type as InteractionTypes];
-            }
-        });
     }
 
     public destroy() {
