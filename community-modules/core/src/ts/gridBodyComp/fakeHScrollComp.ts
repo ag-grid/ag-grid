@@ -1,17 +1,13 @@
-import { ColumnModel } from "../columns/columnModel";
 import { Autowired, PostConstruct } from "../context/context";
-import { CtrlsService } from "../ctrlsService";
-import { Events } from "../eventKeys";
-import { BodyScrollEvent } from "../events";
-import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { isInvisibleScrollbar, isIOSUserAgent, isMacOsUserAgent } from "../utils/browser";
+import { AbstractFakeScrollComp } from "./abstractFakeScrollComp";
 import { setFixedHeight, setFixedWidth } from "../utils/dom";
-import { Component } from "../widgets/component";
+import { ColumnModel } from "../columns/columnModel";
+import { Events } from "../eventKeys";
+import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { CenterWidthFeature } from "./centerWidthFeature";
-import { ScrollVisibleService } from "./scrollVisibleService";
 
-export class FakeHScrollComp extends Component {
+export class FakeHScrollComp extends AbstractFakeScrollComp {
 
     private static TEMPLATE = /* html */
         `<div class="ag-body-horizontal-scroll" aria-hidden="true">
@@ -24,25 +20,19 @@ export class FakeHScrollComp extends Component {
 
     @RefSelector('eLeftSpacer') private eLeftSpacer: HTMLElement;
     @RefSelector('eRightSpacer') private eRightSpacer: HTMLElement;
-    @RefSelector('eViewport') private eViewport: HTMLElement;
-    @RefSelector('eContainer') private eContainer: HTMLElement;
 
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
     private enableRtl: boolean;
-    private invisibleScrollbar: boolean;
 
     constructor() {
-        super(FakeHScrollComp.TEMPLATE);
+        super(FakeHScrollComp.TEMPLATE, 'horizontal');
     }
 
     @PostConstruct
-    private postConstruct(): void {
-
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+    protected postConstruct(): void {
+        super.postConstruct();
 
         // When doing printing, this changes whether cols are pinned or not
         const spacerWidthsListener = this.setFakeHScrollSpacerWidths.bind(this);
@@ -50,40 +40,18 @@ export class FakeHScrollComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, spacerWidthsListener);
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedPropertyListener('domLayout', spacerWidthsListener);
-        this.onScrollVisibilityChanged();
 
         this.ctrlsService.registerFakeHScrollComp(this);
-        this.addOrRemoveCssClass('ag-apple-scrollbar', isMacOsUserAgent() || isIOSUserAgent());
-
         this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
     }
 
-    private addActiveListenerToggles(): void {
-        const activateEvents = ['mouseenter', 'mousedown', 'touchstart'];
-        const deactivateEvents = ['mouseleave', 'touchend'];
-        const eGui = this.getGui();
-
-        activateEvents.forEach(
-            eventName => this.addManagedListener(
-                eGui, eventName, () => this.addOrRemoveCssClass('ag-scrollbar-active', true)
-            )
-        );
-        deactivateEvents.forEach(
-            eventName => this.addManagedListener(
-                eGui, eventName, () => this.addOrRemoveCssClass('ag-scrollbar-active', false)
-            )
-        );
-    }
-
-    private initialiseInvisibleScrollbar(): void {
+    protected initialiseInvisibleScrollbar(): void {
         if (this.invisibleScrollbar !== undefined) { return; }
 
         this.enableRtl = this.gridOptionsService.is('enableRtl');
-        this.invisibleScrollbar = isInvisibleScrollbar();
+        super.initialiseInvisibleScrollbar();
 
         if (this.invisibleScrollbar) {
-            this.hideAndShowInvisibleScrollAsNeeded();
-            this.addActiveListenerToggles();
             this.refreshCompBottom();
         }
     }
@@ -99,24 +67,9 @@ export class FakeHScrollComp extends Component {
         this.getGui().style.bottom = `${bottomPinnedHeight}px`
     }
 
-    private onScrollVisibilityChanged(): void {
-        // initialiseInvisibleScrollbar should only be called once, but the reason
-        // this can't be inside `setComp` or `PostConstruct` is the DOM might not
-        // be ready, so we call it until eventually, it gets calculated.
-        if (this.invisibleScrollbar === undefined) {
-            this.initialiseInvisibleScrollbar();
-        }
-        this.setScrollVisible();
+    protected onScrollVisibilityChanged(): void {
+        super.onScrollVisibilityChanged();
         this.setFakeHScrollSpacerWidths();
-    }
-
-    private hideAndShowInvisibleScrollAsNeeded(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, (params: BodyScrollEvent) => {
-            if (params.direction === 'horizontal') {
-                this.addOrRemoveCssClass('ag-scrollbar-scrolling', true);
-            }
-        });
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, () => this.addOrRemoveCssClass('ag-scrollbar-scrolling', false));
     }
 
     private setFakeHScrollSpacerWidths(): void {
@@ -147,7 +100,7 @@ export class FakeHScrollComp extends Component {
         this.eLeftSpacer.classList.toggle('ag-scroller-corner', leftSpacing <= scrollbarWidth);
     }
 
-    private setScrollVisible(): void {
+    protected setScrollVisible(): void {
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
         const isSuppressHorizontalScroll = this.gridOptionsService.is('suppressHorizontalScroll');
@@ -160,13 +113,5 @@ export class FakeHScrollComp extends Component {
         setFixedHeight(this.eViewport, scrollContainerSize);
         setFixedHeight(this.eContainer, scrollContainerSize);
         this.setDisplayed(hScrollShowing, { skipAriaHidden: true });
-    }
-
-    public getViewport(): HTMLElement {
-        return this.eViewport;
-    }
-
-    public getContainer(): HTMLElement {
-        return this.eContainer;
     }
 }

@@ -296,6 +296,7 @@
     }
 
     .ag-body {
+        position: relative;
         display: flex;
         flex: 1 1 auto;
         flex-direction: row !important; // we have to state this for rtl, otherwise row-reverse is inherited
@@ -314,44 +315,40 @@
         transform: translate3d(0,0,0);
     }
 
-    .ag-body-horizontal-scroll {
+    .ag-body-horizontal-scroll,
+    .ag-body-vertical-scroll {
         min-height: 0;
         min-width: 0;
-        width: 100%;
         display: flex;
         position: relative;
         &.ag-scrollbar-invisible {
             position: absolute;
             bottom: 0;
-            left: 0;
-            right: 0;
             &.ag-apple-scrollbar {
-                display: none;
+                opacity: 0;
+                transition: opacity 400ms;
+                visibility: hidden;
                 &.ag-scrollbar-scrolling, &.ag-scrollbar-active {
-                    display: inherit;
+                    visibility: visible;
+                    opacity: 1;
                 }
             }
         }
     }
-    
-    .ag-body-vertical-scroll {
-        min-height: 0;
-        min-width: 0;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        position: relative;
+
+    .ag-body-horizontal-scroll {
+        width: 100%;
         &.ag-scrollbar-invisible {
-            position: absolute;
-            bottom: 0;
             left: 0;
             right: 0;
-            &.ag-apple-scrollbar {
-                display: none;
-                &.ag-scrollbar-scrolling, &.ag-scrollbar-active {
-                    display: inherit;
-                }
-            }
+        }
+    }
+
+    .ag-body-vertical-scroll {
+        height: 100%;
+        &.ag-scrollbar-invisible {
+            top: 0;
+            @include ag.unthemed-rtl(( right: 0 ));
         }
     }
 
