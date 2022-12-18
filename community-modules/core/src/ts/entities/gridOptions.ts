@@ -635,7 +635,7 @@ export interface GridOptions<TData = any> {
      */
     serverSideStoreType?: ServerSideStoreType;
     /**
-     * Set whether Server-side Row Model will use Infinite Scrolling
+     * When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
      * Default: `false`
      */
     suppressServerSideInfiniteScroll?: boolean;

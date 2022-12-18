@@ -34,7 +34,7 @@ export interface StoreRefreshAfterParams {
 }
 
 export interface ServerSideGroupLevelState {
-    /** True if infininte scrolling */
+    /** True if suppressing infinite scrolling and loading all the data at the current level */
     suppressInfiniteScroll: boolean;
     /** The route that identifies this level. */
     route: string[];
