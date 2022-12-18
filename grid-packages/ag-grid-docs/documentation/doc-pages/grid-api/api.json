@@ -412,8 +412,7 @@
         "purgeInfiniteCache": {},
         "getInfiniteRowCount": {},
         "isLastRowIndexKnown": {},
-        "setRowCount": {},
-        "getCacheBlockState": {}
+        "setRowCount": {}
     },
     "viewportRowModel": {
         "meta": {
