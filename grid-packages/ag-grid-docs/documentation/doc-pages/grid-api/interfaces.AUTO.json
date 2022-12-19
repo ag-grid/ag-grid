@@ -11188,7 +11188,11 @@
     "type": {
       "getRowCount()": "number",
       "getRow(index: number)": "any",
-      "isRowSelected?(index: number)": "boolean | undefined"
+      "isRowSelected?(index: number)": "boolean | undefined",
+      "areRowsEqual?(oldRow: any, newRow: any)": "boolean"
+    },
+    "docs": {
+      "areRowsEqual?(oldRow: any, newRow: any)": "/** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */"
     }
   },
   "ISetDisplayValueModel": {
@@ -11229,13 +11233,21 @@
     }
   },
   "SetFilterListItemSelectionChangedEvent": {
-    "meta": {},
-    "type": { "isSelected": "boolean", "type": "string" },
+    "meta": {
+      "typeParams": [
+        "I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null"
+      ]
+    },
+    "type": { "isSelected": "boolean", "item": "I", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "SetFilterListItemExpandedChangedEvent": {
-    "meta": {},
-    "type": { "isExpanded": "boolean", "type": "string" },
+    "meta": {
+      "typeParams": [
+        "I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null"
+      ]
+    },
+    "type": { "isExpanded": "boolean", "item": "I", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "SetFilterListItemParams": {
@@ -11246,6 +11258,7 @@
       "params": "ISetFilterParams<any, V>",
       "translate": "(key: keyof ISetFilterLocaleText) => string",
       "valueFormatter": "(params: ValueFormatterParams) => string",
+      "item": "SetFilterModelTreeItem | string | null",
       "isSelected": "boolean | undefined",
       "isTree?": "boolean",
       "depth?": "number",

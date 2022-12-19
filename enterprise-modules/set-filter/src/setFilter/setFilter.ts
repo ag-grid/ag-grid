@@ -375,6 +375,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const componentCreator = (item: SetFilterModelTreeItem | string | null, listItemElement: HTMLElement) => this.createSetListItem(item, isTree, listItemElement);
         virtualList.setComponentCreator(componentCreator);
 
+        const componentUpdater = (item: SetFilterModelTreeItem | string | null, component: SetFilterListItem<V | string | null>) => this.updateSetListItem(item, component);
+        virtualList.setComponentUpdater(componentUpdater);
+
         let model: VirtualListModel;
 
         if (this.setFilterParams.suppressSelectAll) {
@@ -399,55 +402,48 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.translateForSetFilter(key);
     }
 
-    private createSetListItem(item: SetFilterModelTreeItem | string | null, isTree: boolean, focusWrapper: HTMLElement): Component {
+    private createSetListItem(item: SetFilterModelTreeItem | string | null, isTree: boolean, focusWrapper: HTMLElement): SetFilterListItem<V | string | null> {
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         const groupsExist = this.valueModel.hasGroups();
         let value: V | string | (() => string) | null;
-        let isSelected: boolean | undefined;
         let depth: number | undefined;
         let isGroup: boolean | undefined;
-        let isExpanded: boolean | undefined;
         let hasIndeterminateExpandState: boolean | undefined;
         let selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
         let expandedListener: ((e: SetFilterListItemExpandedChangedEvent) => void) | undefined;
 
         if(this.isSetFilterModelTreeItem(item)) {
             depth = item.depth;
-            isExpanded = item.expanded;
             if (item.key === SetFilterDisplayValue.SELECT_ALL) {
                 // select all
                 value = () => this.getSelectAllLabel();
-                isSelected = this.isSelectAllSelected();
                 isGroup = groupsExist;
                 hasIndeterminateExpandState = true;
                 selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onSelectAll(e.isSelected);
-                expandedListener = (e: SetFilterListItemExpandedChangedEvent) => this.onExpandAll(item, e.isExpanded);
+                expandedListener = (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) => this.onExpandAll(e.item, e.isExpanded);
             } else if (item.children) {
                 // group
                 value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey;
-                isSelected = this.areAllChildrenSelected(item);
                 isGroup = true;
-                selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onGroupItemSelected(item, e.isSelected);
-                expandedListener = (e: SetFilterListItemExpandedChangedEvent) => this.onExpandedChanged(item, e.isExpanded);
+                selectedListener = (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) => this.onGroupItemSelected(e.item, e.isSelected);
+                expandedListener = (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) => this.onExpandedChanged(e.item, e.isExpanded);
             } else {
                 // leaf
                 value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey;
-                isSelected = this.valueModel.isKeySelected(item.key!);
-                selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onItemSelected(item.key!, e.isSelected);
+                selectedListener = (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) => this.onItemSelected(e.item.key!, e.isSelected);
             }
         } else {
             if (item === SetFilterDisplayValue.SELECT_ALL) {
                 value = () => this.getSelectAllLabel();
-                isSelected = this.isSelectAllSelected();
-                selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onSelectAll(e.isSelected);
+                selectedListener = (e: SetFilterListItemSelectionChangedEvent<string>) => this.onSelectAll(e.isSelected);
             } else {
                 value = this.valueModel.getValue(item);
-                isSelected = this.valueModel.isKeySelected(item);
-                selectedListener = (e: SetFilterListItemSelectionChangedEvent) => this.onItemSelected(item, e.isSelected);
+                selectedListener = (e: SetFilterListItemSelectionChangedEvent<string | null>) => this.onItemSelected(e.item, e.isSelected);
             }
         }
+        const {isSelected, isExpanded} = this.isSelectedExpanded(item);
 
         const itemParams: SetFilterListItemParams<V | string | null> = {
             focusWrapper,
@@ -455,6 +451,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             params: this.setFilterParams,
             translate: (translateKey: any) => this.translateForSetFilter(translateKey),
             valueFormatter: this.valueFormatter,
+            item,
             isSelected,
             isTree,
             depth,
@@ -471,6 +468,33 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         return listItem;
+    }
+
+    private updateSetListItem(item: SetFilterModelTreeItem | string | null, component: SetFilterListItem<V | string | null>): void {
+        const { isSelected, isExpanded } = this.isSelectedExpanded(item);
+        component.refresh(item, isSelected, isExpanded);
+    }
+
+    private isSelectedExpanded(item: SetFilterModelTreeItem | string | null): { isSelected: boolean | undefined, isExpanded: boolean | undefined } {
+        let isSelected: boolean | undefined;
+        let isExpanded: boolean | undefined;
+        if(this.isSetFilterModelTreeItem(item)) {
+            isExpanded = item.expanded;
+            if (item.key === SetFilterDisplayValue.SELECT_ALL) {
+                isSelected = this.isSelectAllSelected();
+            } else if (item.children) {
+                isSelected = this.areAllChildrenSelected(item);
+            } else {
+                isSelected = this.valueModel!.isKeySelected(item.key!);
+            }
+        } else {
+            if (item === SetFilterDisplayValue.SELECT_ALL) {
+                isSelected = this.isSelectAllSelected();
+            } else {
+                isSelected = this.valueModel!.isKeySelected(item);
+            }
+        }
+        return { isSelected, isExpanded };
     }
 
     private isSetFilterModelTreeItem(item: any): item is SetFilterModelTreeItem {
@@ -891,7 +915,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private refresh() {
         if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
 
-        this.virtualList.refresh();
+        this.virtualList.refresh(true);
     }
 
     public getFilterKeys(): SetFilterModelValue {
@@ -1015,6 +1039,10 @@ class ModelWrapper<V> implements VirtualListModel {
     public isRowSelected(index: number): boolean {
         return this.model.isKeySelected(this.getRow(index));
     }
+
+    public areRowsEqual(oldRow: string | null, newRow: string | null): boolean {
+        return oldRow === newRow;
+    }
 }
 
 class ModelWrapperWithSelectAll<V> implements VirtualListModel {
@@ -1034,6 +1062,10 @@ class ModelWrapperWithSelectAll<V> implements VirtualListModel {
     public isRowSelected(index: number): boolean | undefined {
         return index === 0 ? this.isSelectAllSelected() : this.model.isKeySelected(this.getRow(index));
     }
+
+    public areRowsEqual(oldRow: string | null, newRow: string | null): boolean {
+        return oldRow === newRow;
+    }
 }
 
 // isRowSelected is used by VirtualList to add aria tags for flat lists. We want to suppress this when using trees
@@ -1046,5 +1078,12 @@ class TreeModelWrapper implements VirtualListModel {
 
     public getRow(index: number): SetFilterModelTreeItem | null {
         return this.model.getRow(index);
+    }
+
+    public areRowsEqual(oldRow: SetFilterModelTreeItem | null, newRow: SetFilterModelTreeItem | null): boolean {
+        if (oldRow == null && newRow == null) {
+            return true;
+        }
+        return oldRow != null && newRow != null && oldRow.treeKey === newRow.treeKey && oldRow.depth === newRow.depth;
     }
 }

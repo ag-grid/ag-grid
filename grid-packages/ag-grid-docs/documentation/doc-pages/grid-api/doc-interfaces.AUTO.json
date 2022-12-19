@@ -19834,6 +19834,14 @@
         "returnType": "boolean | undefined",
         "optional": true
       }
+    },
+    "areRowsEqual": {
+      "description": "/** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */",
+      "type": {
+        "arguments": { "oldRow": "any", "newRow": "any" },
+        "returnType": "boolean",
+        "optional": true
+      }
     }
   },
   "ISetDisplayValueModel": {
@@ -19929,6 +19937,12 @@
   },
   "SetFilterListItemSelectionChangedEvent": {
     "isSelected": { "type": { "returnType": "boolean", "optional": false } },
+    "item": { "type": { "returnType": "I", "optional": false } },
+    "meta": {
+      "typeParams": [
+        "I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null"
+      ]
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -19936,6 +19950,12 @@
   },
   "SetFilterListItemExpandedChangedEvent": {
     "isExpanded": { "type": { "returnType": "boolean", "optional": false } },
+    "item": { "type": { "returnType": "I", "optional": false } },
+    "meta": {
+      "typeParams": [
+        "I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null"
+      ]
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -19962,6 +19982,12 @@
       "type": {
         "arguments": { "params": "ValueFormatterParams" },
         "returnType": "string",
+        "optional": false
+      }
+    },
+    "item": {
+      "type": {
+        "returnType": "SetFilterModelTreeItem | string | null",
         "optional": false
       }
     },

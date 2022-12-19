@@ -12,12 +12,15 @@ export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
     isRowSelected?(index: number): boolean | undefined;
+    /** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */
+    areRowsEqual?(oldRow: any, newRow: any): boolean;
 }
 
 export class VirtualList extends TabGuardComp {
     private model: VirtualListModel;
-    private renderedRows = new Map<number, { rowComponent: Component, eDiv: HTMLDivElement; }>();
+    private renderedRows = new Map<number, { rowComponent: Component; eDiv: HTMLDivElement; value: any; }>();
     private componentCreator: (value: any, listItemElement: HTMLElement) => Component;
+    private componentUpdater: (value: any, component: Component) => void;
     private rowHeight = 20;
     private lastFocusedRowIndex: number | null;
 
@@ -191,6 +194,10 @@ export class VirtualList extends TabGuardComp {
         this.componentCreator = componentCreator;
     }
 
+    public setComponentUpdater(componentUpdater: (value: any, component: Component) => void): void {
+        this.componentUpdater = componentUpdater;
+    }
+
     public getRowHeight(): number {
         return this.rowHeight;
     }
@@ -204,7 +211,7 @@ export class VirtualList extends TabGuardComp {
         this.refresh();
     }
 
-    public refresh(): void {
+    public refresh(softRefresh?: boolean): void {
         if (this.model == null || !this.isAlive()) { return; }
 
         const rowCount = this.model.getRowCount();
@@ -215,17 +222,25 @@ export class VirtualList extends TabGuardComp {
             () => {
                 if (!this.isAlive()) { return; }
 
-                this.clearVirtualRows();
-                this.drawVirtualRows();
+                if (this.canSoftRefresh(softRefresh)) {
+                    this.drawVirtualRows(true);
+                } else {
+                    this.clearVirtualRows();
+                    this.drawVirtualRows();
+                }
             }
         );
+    }
+
+    private canSoftRefresh(softRefresh: boolean | undefined): boolean {
+        return !!(softRefresh && this.renderedRows.size && typeof this.model.areRowsEqual === 'function' && this.componentUpdater);
     }
 
     private clearVirtualRows() {
         this.renderedRows.forEach((_, rowIndex) => this.removeRow(rowIndex));
     }
 
-    private drawVirtualRows() {
+    private drawVirtualRows(softRefresh?: boolean) {
         if (!this.isAlive()) { return; }
 
         const gui = this.getGui();
@@ -234,16 +249,21 @@ export class VirtualList extends TabGuardComp {
         const firstRow = Math.floor(topPixel / this.rowHeight);
         const lastRow = Math.floor(bottomPixel / this.rowHeight);
 
-        this.ensureRowsRendered(firstRow, lastRow);
+        this.ensureRowsRendered(firstRow, lastRow, softRefresh);
     }
 
-    private ensureRowsRendered(start: number, finish: number) {
+    private ensureRowsRendered(start: number, finish: number, softRefresh?: boolean) {
         // remove any rows that are no longer required
         this.renderedRows.forEach((_, rowIndex) => {
             if ((rowIndex < start || rowIndex > finish) && rowIndex !== this.lastFocusedRowIndex) {
                 this.removeRow(rowIndex);
             }
         });
+
+        if (softRefresh) {
+            // refresh any existing rows
+            this.refreshRows();
+        }
 
         // insert any required new rows
         for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
@@ -291,7 +311,7 @@ export class VirtualList extends TabGuardComp {
             this.eContainer.appendChild(eDiv);
         }
 
-        this.renderedRows.set(rowIndex, { rowComponent, eDiv });
+        this.renderedRows.set(rowIndex, { rowComponent, eDiv, value });
     }
 
     private removeRow(rowIndex: number) {
@@ -300,6 +320,23 @@ export class VirtualList extends TabGuardComp {
         this.eContainer.removeChild(component.eDiv);
         this.destroyBean(component.rowComponent);
         this.renderedRows.delete(rowIndex);
+    }
+
+    private refreshRows(): void {
+        const rowCount = this.model.getRowCount();
+        this.renderedRows.forEach((row, rowIndex) => {
+            if (rowIndex >= rowCount) {
+                this.removeRow(rowIndex);
+            } else {
+                const newValue = this.model.getRow(rowIndex);
+                if (this.model.areRowsEqual?.(row.value, newValue)) {
+                    this.componentUpdater(newValue, row.rowComponent);
+                } else {
+                    // to be replaced later
+                    this.removeRow(rowIndex);
+                }
+            }
+        });
     }
 
     private addScrollListener() {
