@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import { gridLayout, Orientation } from './gridLayout';
+import { gridLayout } from './gridLayout';
 import { BBox } from '../scene/bbox';
 
 describe('horizontal layout', () => {
@@ -14,7 +14,7 @@ describe('horizontal layout', () => {
         ];
 
         const { pages } = gridLayout({
-            orientation: Orientation.Horizontal,
+            orientation: 'horizontal',
             bboxes: BBOXES,
             maxHeight: MAX_HEIGHT,
             maxWidth: MAX_WIDTH,
@@ -38,7 +38,7 @@ describe('horizontal layout', () => {
         ];
 
         const { pages } = gridLayout({
-            orientation: Orientation.Horizontal,
+            orientation: 'horizontal',
             bboxes: BBOXES,
             maxHeight: MAX_HEIGHT,
             maxWidth: MAX_WIDTH,
@@ -62,7 +62,7 @@ describe('horizontal layout', () => {
         ];
 
         const { pages } = gridLayout({
-            orientation: Orientation.Horizontal,
+            orientation: 'horizontal',
             bboxes: BBOXES,
             maxHeight: MAX_HEIGHT,
             maxWidth: MAX_WIDTH,
@@ -97,7 +97,7 @@ describe('horizontal layout', () => {
         ];
 
         const { pages } = gridLayout({
-            orientation: Orientation.Horizontal,
+            orientation: 'horizontal',
             bboxes: BBOXES,
             maxHeight: MAX_HEIGHT,
             maxWidth: MAX_WIDTH,
@@ -129,7 +129,7 @@ describe('horizontal layout', () => {
         // 120, 100
 
         const { pages } = gridLayout({
-            orientation: Orientation.Horizontal,
+            orientation: 'horizontal',
             bboxes: BBOXES,
             maxHeight: MAX_HEIGHT,
             maxWidth: MAX_WIDTH,
@@ -151,7 +151,7 @@ describe('vertical layout', () => {
         ];
 
         const { pages } = gridLayout({
-            orientation: Orientation.Vertical,
+            orientation: 'vertical',
             bboxes: BBOXES,
             maxHeight: MAX_HEIGHT,
             maxWidth: MAX_WIDTH,
@@ -175,7 +175,7 @@ describe('vertical layout', () => {
         ];
 
         const { pages } = gridLayout({
-            orientation: Orientation.Vertical,
+            orientation: 'vertical',
             bboxes: BBOXES,
             maxHeight: MAX_HEIGHT,
             maxWidth: MAX_WIDTH,
@@ -199,7 +199,7 @@ describe('vertical layout', () => {
         ];
 
         const { pages } = gridLayout({
-            orientation: Orientation.Vertical,
+            orientation: 'vertical',
             bboxes: BBOXES,
             maxHeight: MAX_HEIGHT,
             maxWidth: MAX_WIDTH,
@@ -234,7 +234,7 @@ describe('vertical layout', () => {
         ];
 
         const { pages } = gridLayout({
-            orientation: Orientation.Vertical,
+            orientation: 'vertical',
             bboxes: BBOXES,
             maxHeight: MAX_HEIGHT,
             maxWidth: MAX_WIDTH,
@@ -267,7 +267,7 @@ describe('vertical layout', () => {
         ];
 
         const { pages } = gridLayout({
-            orientation: Orientation.Vertical,
+            orientation: 'vertical',
             bboxes: BBOXES,
             maxHeight: MAX_HEIGHT,
             maxWidth: MAX_WIDTH,

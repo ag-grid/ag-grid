@@ -1,11 +1,7 @@
 import { BBox } from '../scene/bbox';
+import { AgChartOrientation } from './agChartOptions';
 
 export type Page = { columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number };
-
-export enum Orientation {
-    Vertical,
-    Horizontal,
-}
 
 type Column = {
     columnWidth: number;
@@ -22,14 +18,14 @@ export function gridLayout({
     itemPaddingY = 0,
     itemPaddingX = 0,
 }: {
-    orientation: Orientation;
+    orientation: AgChartOrientation;
     bboxes: BBox[];
     maxHeight: number;
     maxWidth: number;
     itemPaddingY?: number;
     itemPaddingX?: number;
 }): { pages: Page[]; maxPageWidth: number; maxPageHeight: number } | undefined {
-    const horizontal = orientation === Orientation.Horizontal;
+    const horizontal = orientation === 'horizontal';
     const primary: DimensionProps = {
         max: horizontal ? maxWidth : maxHeight,
         fn: horizontal ? (b: BBox) => b.width : (b: BBox) => b.height,
@@ -168,7 +164,7 @@ function calculatePage(
 
 function buildPages(
     rawPages: number[][][],
-    orientation: Orientation,
+    orientation: AgChartOrientation,
     bboxes: BBox[],
     itemPaddingY: number,
     itemPaddingX: number
@@ -176,7 +172,7 @@ function buildPages(
     let maxPageWidth = 0;
     let maxPageHeight = 0;
     const pages = rawPages.map((indices): Page => {
-        if (orientation === Orientation.Horizontal) {
+        if (orientation === 'horizontal') {
             indices = transpose(indices);
         }
 
