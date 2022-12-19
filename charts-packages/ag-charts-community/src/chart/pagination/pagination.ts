@@ -18,8 +18,7 @@ import {
     STRING,
     Validate,
 } from '../../util/validation';
-import { FontStyle, FontWeight } from '../agChartOptions';
-import { Orientation } from '../gridLayout';
+import { AgChartOrientation, FontStyle, FontWeight } from '../agChartOptions';
 
 class PaginationLabel {
     @Validate(COLOR_STRING)
@@ -155,17 +154,17 @@ export class Pagination {
         this.group.visible = this.enabled && this.visible;
     }
 
-    private _orientation: Orientation = Orientation.Vertical;
-    set orientation(value: Orientation) {
+    private _orientation: AgChartOrientation = 'vertical';
+    set orientation(value: AgChartOrientation) {
         this._orientation = value;
 
         switch (value) {
-            case Orientation.Horizontal: {
+            case 'horizontal': {
                 this.previousButton.rotation = -Math.PI / 2;
                 this.nextButton.rotation = Math.PI / 2;
                 break;
             }
-            case Orientation.Vertical:
+            case 'vertical':
             default: {
                 this.nextButton.rotation = Math.PI;
             }

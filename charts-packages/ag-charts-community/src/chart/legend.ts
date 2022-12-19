@@ -12,6 +12,7 @@ import {
     AgChartLegendPosition,
     FontStyle,
     FontWeight,
+    AgChartOrientation,
 } from './agChartOptions';
 import { getMarker } from './marker/util';
 import { createId } from '../util/id';
@@ -30,6 +31,8 @@ import {
     COLOR_STRING,
     STRING,
     Validate,
+    predicateWithMessage,
+    OPTIONAL,
 } from '../util/validation';
 import { Layers } from './layers';
 import { Series } from './series/series';
@@ -39,7 +42,12 @@ import { CursorManager } from './interaction/cursorManager';
 import { HighlightManager } from './interaction/highlightManager';
 import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
-import { Orientation } from './gridLayout';
+
+const ORIENTATIONS = ['horizontal', 'vertical'];
+export const OPT_ORIENTATION = predicateWithMessage(
+    (v: any, ctx) => OPTIONAL(v, ctx, (v) => ORIENTATIONS.includes(v)),
+    `expecting an orientation keyword such as 'horizontal' or 'vertical'`
+);
 
 export interface LegendDatum {
     id: string; // component ID
@@ -198,23 +206,20 @@ export class Legend {
     }
 
     @Validate(POSITION)
-    private _position: AgChartLegendPosition = 'right';
-    set position(value: AgChartLegendPosition) {
-        this._position = value;
+    position: AgChartLegendPosition = 'right';
 
-        switch (value) {
+    getOrientation(): AgChartOrientation {
+        if (this.orientation !== undefined) {
+            return this.orientation;
+        }
+        switch (this.position) {
             case 'right':
             case 'left':
-                this.orientation = Orientation.Vertical;
-                break;
+                return 'vertical';
             case 'bottom':
             case 'top':
-                this.orientation = Orientation.Horizontal;
-                break;
+                return 'horizontal';
         }
-    }
-    get position() {
-        return this._position;
     }
 
     /** Used to constrain the width of the legend. */
@@ -229,14 +234,8 @@ export class Legend {
     @Validate(OPT_BOOLEAN)
     reverseOrder?: boolean = undefined;
 
-    private _orientation: Orientation = Orientation.Vertical;
-    set orientation(value: Orientation) {
-        this._orientation = value;
-        this.pagination.orientation = value;
-    }
-    get orientation() {
-        return this._orientation;
-    }
+    @Validate(OPT_ORIENTATION)
+    orientation?: AgChartOrientation;
 
     constructor(
         private readonly chart: {
@@ -416,9 +415,12 @@ export class Legend {
 
         // Force pagination component layout to get more accurate paginationBBox
         this.pagination.totalPages = 0;
-        const paginationBBox = this.pagination.computeBBox();
-        const verticalOrientation = this.orientation === Orientation.Vertical;
 
+        const orientation = this.getOrientation();
+        const verticalOrientation = orientation === 'vertical';
+        this.pagination.orientation = orientation;
+
+        const paginationBBox = this.pagination.computeBBox();
         width = width - (verticalOrientation ? 0 : paginationBBox.width);
         height = height - (verticalOrientation ? paginationBBox.height : 0);
 
@@ -437,7 +439,7 @@ export class Legend {
             maxPageWidth = 0,
             maxPageHeight = 0,
         } = gridLayout({
-            orientation: this.orientation,
+            orientation,
             bboxes,
             maxHeight: height,
             maxWidth: width,
@@ -494,7 +496,7 @@ export class Legend {
 
         const columnCount = columns.length;
         const rowCount = columns[0].indices.length;
-        const horizontal = this.orientation === Orientation.Horizontal;
+        const horizontal = this.getOrientation() === 'horizontal';
 
         const itemHeight = columns[0].bboxes[0].height + paddingY;
 
