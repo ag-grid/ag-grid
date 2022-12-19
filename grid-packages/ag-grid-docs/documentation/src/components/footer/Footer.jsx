@@ -8,11 +8,16 @@ const MenuColumns = ({ framework }) => footerItems.map(({ title, links }) => (
     <div key={title} className={styles['footer__links']}>
         <h4>{title}</h4>
         <ul className={styles['footer__links__list']}>
-            {links.map(({ name, url, newTab }) => (
+            {links.map(({ name, url, newTab, iconUrl }) => (
                 <li key={`${title}_${name}`}>
                     {url.indexOf('../') === 0 ?
                         <DocumentationLink framework={framework} href={url.replace('../', '/')}>{name}</DocumentationLink> :
-                        <a href={url} {...newTab ? { target: '_blank', rel: 'noreferrer' } : {}}>{name}</a>
+                        <a href={url} {...newTab ? { target: '_blank', rel: 'noreferrer' } : {}}>
+                            { iconUrl &&
+                                <img src={iconUrl} alt={name}/>
+                            }
+                            {name}
+                        </a>
                     }
                 </li>
             ))}

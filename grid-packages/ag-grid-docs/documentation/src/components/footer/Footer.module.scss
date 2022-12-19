@@ -82,7 +82,22 @@ $four-column-breakpoint: 760px;
             &:hover {
                 color: $white;
                 text-decoration-color: rgba($white, 1);
+
+                img {
+                    opacity: 1;
+                }
             }
+        }
+
+        img {
+            display: inline;
+            position: relative;
+            width: 18px;
+            height: 18px;
+            top: -1px;
+            margin-right: 4px;
+            opacity: 0.6666;
+            transition: opacity 0.25s ease-in-out;
         }
     }
 }
