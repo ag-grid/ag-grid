@@ -378,6 +378,8 @@ export interface AgChartLegendOptions {
     item?: AgChartLegendItemOptions;
     /** Reverse the display order of legend items if `true`. */
     reverseOrder?: boolean;
+    /** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */
+    seriesToggleEnabled?: boolean;
     /** Optional callbacks for specific legend-related events. */
     listeners?: AgChartLegendListeners;
     pagination?: AgChartLegendPaginationOptions;

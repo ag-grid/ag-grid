@@ -1315,6 +1315,10 @@
       "description": "/** Reverse the display order of legend items if `true`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "seriesToggleEnabled": {
+      "description": "/** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "listeners": {
       "description": "/** Optional callbacks for specific legend-related events. */",
       "type": { "returnType": "AgChartLegendListeners", "optional": true }
