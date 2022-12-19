@@ -241,7 +241,7 @@ function estimateStartingGuess(bboxes: BBox[], primary: DimensionProps): number 
         if (primarySum > primary.max) {
             const ratio = n / bboxIndex;
             if (ratio < 2) {
-                return n / 2;
+                return Math.ceil(n / 2);
             }
             return bboxIndex;
         }
