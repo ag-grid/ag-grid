@@ -128,11 +128,10 @@ const gridOptions = {
 
 The following example demonstrates providing custom column layouts in the column menu tab via the **columnLayout** property. Note the following:
 
-- Open the column menu for the `name` column and note that the column layout in unchanged (as a custom column layout is not synchronized with the grid column order).
-- Open the column menu for any other column and note it shows the same column layout as the grid.
+- Open the column menu for the `age` column and note it shows the actual column order shown in the grid.
 - Reorder columns in the grid - drag the `age` column and drop it on the left of the `name` column.
-- Open the column menu for the name column and note that the column layout in unchanged (as a custom column layout is not synchronized with the grid column order).
-- Open the column menu for any other column and note that the column layout shows the `age` column before the `name` column.
+- Open the column menu for the `name` column and note that the column layout shows the `name` column followed by the `age` column  (as a custom column layout is not synchronized with the grid column order).
+- Open the column menu for the `age` column and note that the column layout shows the `age` column before the `name` column.
 
 <grid-example title='Customising Columns Layout' name='customising-columns-layout' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
 
