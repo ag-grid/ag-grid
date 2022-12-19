@@ -724,7 +724,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Full Store is used.
          */
     @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
-    /** Set whether Server-side Row Model will use Infinite Scrolling
+    /** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
          * Default: `false`
          */
     @Input() public suppressServerSideInfiniteScroll: boolean | undefined = undefined;

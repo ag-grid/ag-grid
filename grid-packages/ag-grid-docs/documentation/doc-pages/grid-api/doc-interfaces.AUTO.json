@@ -3108,7 +3108,7 @@
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
     "suppressServerSideInfiniteScroll": {
-      "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
+      "description": "/** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
@@ -15222,6 +15222,14 @@
         "optional": false
       }
     },
+    "updateData": {
+      "description": "/** Updates the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */",
+      "type": {
+        "arguments": { "data": "TData" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "setDataValue": {
       "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     *\n     * @param colKey The column where the value should be updated\n     * @param newValue The new value\n     * @param eventSource The source of the event, optional.\n     * @returns `true` if the value was changed, otherwise `false`.\n     */",
       "type": {
@@ -15882,7 +15890,7 @@
   },
   "ServerSideGroupLevelState": {
     "suppressInfiniteScroll": {
-      "description": "/** True if infininte scrolling */",
+      "description": "/** True if suppressing infinite scrolling and loading all the data at the current level */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "route": {
@@ -15912,7 +15920,7 @@
   },
   "ServerSideGroupState": {
     "suppressInfiniteScroll": {
-      "description": "/** True if infininte scrolling */",
+      "description": "/** True if suppressing infinite scrolling and loading all the data at the current level */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "route": {
@@ -21298,7 +21306,7 @@
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
     "suppressServerSideInfiniteScroll": {
-      "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
+      "description": "/** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
@@ -24016,7 +24024,7 @@
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
     "suppressServerSideInfiniteScroll": {
-      "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
+      "description": "/** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
@@ -26740,7 +26748,7 @@
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
     "suppressServerSideInfiniteScroll": {
-      "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
+      "description": "/** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {

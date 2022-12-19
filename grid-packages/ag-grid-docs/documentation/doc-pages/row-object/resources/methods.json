@@ -19,6 +19,7 @@
         "resetQuickFilterAggregateText": {},
         "depthFirstSearch": {},
         "setRowHeight": {},
+        "updateData": {},
         "setData": {
             "more": {
                 "name": "Client-Side Single Row Update",

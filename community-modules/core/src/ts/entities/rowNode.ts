@@ -246,6 +246,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
     // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
     // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
+
+    /** Update the data on the `rowNode`. */
     public updateData(data: TData): void {
         this.setDataCommon(data, true);
     }

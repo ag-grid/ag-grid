@@ -729,7 +729,7 @@
     "type": { "returnType": "ServerSideStoreType" }
   },
   "suppressServerSideInfiniteScroll": {
-    "description": "/** Set whether Server-side Row Model will use Infinite Scrolling\n     * Default: `false`\n     */",
+    "description": "/** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
   "cacheBlockSize": {

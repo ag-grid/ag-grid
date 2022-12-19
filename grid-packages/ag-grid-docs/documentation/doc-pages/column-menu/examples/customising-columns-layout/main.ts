@@ -42,11 +42,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     resizable: true,
-    menuTabs: ['columnsMenuTab'],
-    columnsMenuParams: {
-      // suppresses updating the layout of columns as they are rearranged in the grid
-      suppressSyncLayoutWithGrid: true,
-    },
+    menuTabs: ['columnsMenuTab']
   },
 }
 

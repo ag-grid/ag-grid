@@ -412,8 +412,7 @@
         "purgeInfiniteCache": {},
         "getInfiniteRowCount": {},
         "isLastRowIndexKnown": {},
-        "setRowCount": {},
-        "getCacheBlockState": {}
+        "setRowCount": {}
     },
     "viewportRowModel": {
         "meta": {
@@ -745,7 +744,13 @@
         "applyServerSideTransaction": {
             "more": {
                 "name": "Transactions",
-                "url": "/server-side-model-transactions/"
+                "url": "/server-side-model-updating-transactions/"
+            }
+        },
+        "applyServerSideTransactionAsync": {
+            "more": {
+                "name": "Transactions",
+                "url": "/server-side-model-updating-transactions/#high-frequency-updates"
             }
         }
     }

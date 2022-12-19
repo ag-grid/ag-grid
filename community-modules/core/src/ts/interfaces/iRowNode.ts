@@ -229,6 +229,10 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
 
     /** Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */
     setData(data: TData): void;
+
+    /** Updates the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */
+    updateData(data: TData): void;
+
     /**
      * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
