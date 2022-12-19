@@ -86,6 +86,8 @@ export class GridOptionsValidator {
         validateRegistered('statusBar', ModuleNames.StatusBarModule);
         validateRegistered('enableCharts', ModuleNames.GridChartsModule);
         validateRegistered('getMainMenuItems', ModuleNames.MenuModule);
+        validateRegistered('getContextMenuItems', ModuleNames.MenuModule);
+        validateRegistered('allowContextMenuWithControlKey', ModuleNames.MenuModule);
 
         if (this.gridOptionsService.is('groupRowsSticky')) {
             if (this.gridOptionsService.is('groupHideOpenParents')) {
