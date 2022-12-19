@@ -1174,6 +1174,7 @@
     }
   },
   "AgChartLegendPosition": {},
+  "AgChartOrientation": {},
   "AgChartLegendMarkerOptions": {
     "size": {
       "description": "/** The size in pixels of the markers in the legend. */",
@@ -1289,6 +1290,10 @@
     "position": {
       "description": "/** Where the legend should show in relation to the chart. */",
       "type": { "returnType": "AgChartLegendPosition", "optional": true }
+    },
+    "orientation": {
+      "description": "/** How the legend items should be arranged. */",
+      "type": { "returnType": "AgChartOrientation", "optional": true }
     },
     "maxWidth": {
       "description": "/** Used to constrain the width of the legend. */",
@@ -4531,7 +4536,6 @@
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
   "Page": {},
-  "Orientation": {},
   "Column": {},
   "DimensionProps": {
     "max": { "type": { "returnType": "number", "optional": false } },

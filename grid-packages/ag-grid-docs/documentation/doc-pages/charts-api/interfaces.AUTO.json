@@ -722,6 +722,10 @@
     "meta": { "isTypeAlias": true },
     "type": "'top' | 'right' | 'bottom' | 'left'"
   },
+  "AgChartOrientation": {
+    "meta": { "isTypeAlias": true },
+    "type": "'horizontal' | 'vertical'"
+  },
   "AgChartLegendMarkerOptions": {
     "meta": {},
     "type": {
@@ -808,6 +812,7 @@
     "type": {
       "enabled?": "boolean",
       "position?": "AgChartLegendPosition",
+      "orientation?": "AgChartOrientation",
       "maxWidth?": "PixelSize",
       "maxHeight?": "PixelSize",
       "spacing?": "PixelSize",
@@ -819,6 +824,7 @@
     "docs": {
       "enabled?": "/** Whether or not to show the legend. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
+      "orientation?": "/** How the legend items should be arranged. */",
       "maxWidth?": "/** Used to constrain the width of the legend. */",
       "maxHeight?": "/** Used to constrain the height of the legend. */",
       "spacing?": "/** The spacing in pixels to use outside the legend. */",
@@ -3016,11 +3022,6 @@
   "Page": {
     "meta": { "isTypeAlias": true },
     "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
-  },
-  "Orientation": {
-    "meta": { "isEnum": true },
-    "type": ["Vertical", "Horizontal"],
-    "docs": [null, null]
   },
   "Column": {
     "meta": { "isTypeAlias": true },

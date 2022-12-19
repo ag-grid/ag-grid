@@ -296,6 +296,7 @@ export interface AgNavigatorOptions {
 }
 
 export type AgChartLegendPosition = 'top' | 'right' | 'bottom' | 'left';
+export type AgChartOrientation = 'horizontal' | 'vertical';
 
 export interface AgChartLegendMarkerOptions {
     /** The size in pixels of the markers in the legend. */
@@ -365,6 +366,8 @@ export interface AgChartLegendOptions {
     enabled?: boolean;
     /** Where the legend should show in relation to the chart. */
     position?: AgChartLegendPosition;
+    /** How the legend items should be arranged. */
+    orientation?: AgChartOrientation;
     /** Used to constrain the width of the legend. */
     maxWidth?: PixelSize;
     /** Used to constrain the height of the legend. */
