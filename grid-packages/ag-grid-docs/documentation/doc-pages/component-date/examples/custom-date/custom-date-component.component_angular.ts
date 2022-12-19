@@ -51,6 +51,7 @@ export class CustomDateComponent implements IDateAngularComp {
     ngAfterViewInit(): void {
         this.picker = flatpickr(this.flatpickrEl.nativeElement, {
             onChange: this.onDateChanged.bind(this),
+            dateFormat: 'd/m/Y',
             wrap: true
         });
 
