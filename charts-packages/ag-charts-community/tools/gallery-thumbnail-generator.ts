@@ -74,7 +74,8 @@ const genThumbnails = async () => {
         const mockCtx = mockCanvas.setup({ width, height });
 
         const options = { ...example, ...optionOverrides };
-        const chart = AgChart.create(options) as Chart;
+        const chartProxy = AgChart.create(options);
+        const chart: Chart = (chartProxy as any).chart;
         await chart.waitForUpdate(5_000);
 
         fs.writeFileSync(`${outputPath}/${thumbnail}.png`, mockCtx.ctx.nodeCanvas?.toBuffer());
