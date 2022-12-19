@@ -5370,7 +5370,7 @@ Object {
     },
     "position": "bottom",
     "reverseOrder": false,
-    "spacing": 20,
+    "spacing": 30,
   },
   "navigator": Object {
     "enabled": false,
@@ -5401,7 +5401,7 @@ Object {
     },
   },
   "padding": Object {
-    "bottom": 30,
+    "bottom": 20,
     "left": 20,
     "right": 20,
     "top": 20,
@@ -10484,7 +10484,7 @@ Object {
     },
     "position": "bottom",
     "reverseOrder": false,
-    "spacing": 40,
+    "spacing": 20,
   },
   "navigator": Object {
     "enabled": false,
@@ -10515,7 +10515,7 @@ Object {
     },
   },
   "padding": Object {
-    "bottom": 20,
+    "bottom": 40,
     "left": 20,
     "right": 20,
     "top": 20,

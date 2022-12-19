@@ -223,9 +223,7 @@ const options: AgChartOptions = {
     item: {
       paddingY: 15,
     },
-  },
-  padding: {
-    bottom: 30,
+    spacing: 30,
   },
 }
 
