@@ -555,11 +555,10 @@ export class GridApi<TData = any> {
         }
     }
 
-
     /**
      * Informs the grid that row group expanded state has changed and it needs to rerender the group nodes.
-     * Typically called after changing the row group expanded state manually across multiple groups and
-     * you want to update the grid view in a single rerender instead of on every group change.
+     * Typically called after updating the row node expanded state explicitly, i.e `rowNode.expanded = false`,
+     * across multiple groups and you want to update the grid view in a single rerender instead of on every group change.
      */
     public onGroupExpandedOrCollapsed() {
         if (missing(this.clientSideRowModel)) {

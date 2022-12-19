@@ -248,7 +248,7 @@
     }
   },
   "onGroupExpandedOrCollapsed": {
-    "description": "/** Informs the grid that row group expanded state has changed and it needs to rerender the group nodes.\n     * Typically called after changing the row group expanded state manually across multiple groups and\n     * you want to update the grid view in a single rerender instead of on every group change.\n     */",
+    "description": "/** Informs the grid that row group expanded state has changed and it needs to rerender the group nodes.\n     * Typically called after updating the row node expanded state explicitly, i.e `rowNode.expanded = false`,\n     * across multiple groups and you want to update the grid view in a single rerender instead of on every group change.\n     */",
     "type": { "arguments": {} }
   },
   "refreshClientSideRowModel": {
