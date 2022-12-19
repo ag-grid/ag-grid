@@ -72,6 +72,24 @@
                 "name": "Refreshing Values",
                 "url": "/filter-set-filter-list/#refreshing-values"
             }
+        },
+        "treeList": {
+            "more": {
+                "name": "Tree List",
+                "url": "/filter-set-tree-list"
+            }
+        },
+        "treeListPathGetter": {
+            "more": {
+                "name": "Tree List",
+                "url": "/filter-set-tree-list"
+            }
+        },
+        "treeListFormatter": {
+            "more": {
+                "name": "Tree List",
+                "url": "/filter-set-tree-list"
+            }
         }
     }
 }

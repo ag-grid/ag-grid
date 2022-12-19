@@ -37,7 +37,8 @@ export interface SetFilterListItemParams<V> {
     depth?: number,
     groupsExist?: boolean,
     isGroup?: boolean,
-    isExpanded?: boolean
+    isExpanded?: boolean,
+    hasIndeterminateExpandState?: boolean,
 }
 
 /** @param V type of value in the Set Filter */
@@ -53,6 +54,7 @@ export class SetFilterListItem<V> extends Component {
             <span class="ag-set-filter-group-icons">
                 <span class="ag-set-filter-group-closed-icon" ref="eGroupClosedIcon"></span>
                 <span class="ag-set-filter-group-opened-icon" ref="eGroupOpenedIcon"></span>
+                <span class="ag-set-filter-group-indeterminate-icon" ref="eGroupIndeterminateIcon"></span>
             </span>
             <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
         </div>`;
@@ -66,6 +68,7 @@ export class SetFilterListItem<V> extends Component {
 
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
+    @RefSelector('eGroupIndeterminateIcon') private eGroupIndeterminateIcon: HTMLElement;
 
     private readonly focusWrapper: HTMLElement;
     private readonly value: V | null | (() => string);
@@ -76,9 +79,10 @@ export class SetFilterListItem<V> extends Component {
     private readonly depth: number;
     private readonly isGroup?: boolean;
     private readonly groupsExist?: boolean
+    private readonly hasIndeterminateExpandState?: boolean;
 
     private isSelected: boolean | undefined;
-    private isExpanded?: boolean;
+    private isExpanded: boolean | undefined;
 
     constructor(params: SetFilterListItemParams<V>) {
         super(params.isGroup ? SetFilterListItem.GROUP_TEMPLATE : SetFilterListItem.TEMPLATE);
@@ -93,6 +97,7 @@ export class SetFilterListItem<V> extends Component {
         this.isGroup = params.isGroup;
         this.groupsExist = params.groupsExist;
         this.isExpanded = params.isExpanded;
+        this.hasIndeterminateExpandState = params.hasIndeterminateExpandState;
     }
 
     @PostConstruct
@@ -101,6 +106,7 @@ export class SetFilterListItem<V> extends Component {
 
         this.eCheckbox.setValue(this.isSelected, true);
         this.eCheckbox.setDisabled(!!this.params.readOnly);
+        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
 
         this.refreshVariableAriaLabels();
 
@@ -130,12 +136,16 @@ export class SetFilterListItem<V> extends Component {
     private setupExpansion(): void {
         this.eGroupClosedIcon.appendChild(_.createIcon('setFilterGroupClosed', this.gridOptionsService, null));
         this.eGroupOpenedIcon.appendChild(_.createIcon('setFilterGroupOpen', this.gridOptionsService, null));
-
-        this.setOpenClosedIcons();
-        this.refreshAriaExpanded();
-
         this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+
+        if (this.hasIndeterminateExpandState) {
+            this.eGroupIndeterminateIcon.appendChild(_.createIcon('setFilterGroupIndeterminate', this.gridOptionsService, null));
+            this.addManagedListener(this.eGroupIndeterminateIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        }
+
+        this.setExpandedIcons();
+        this.refreshAriaExpanded();
     }
 
     private onExpandOrContractClicked(): void {
@@ -153,7 +163,7 @@ export class SetFilterListItem<V> extends Component {
 
             this.dispatchEvent(event);
 
-            this.setOpenClosedIcons();
+            this.setExpandedIcons();
             this.refreshAriaExpanded();
         }
     }
@@ -162,10 +172,12 @@ export class SetFilterListItem<V> extends Component {
         _.setAriaExpanded(this.focusWrapper, !!this.isExpanded);
     }
 
-    private setOpenClosedIcons(): void {
-        const folderOpen = !!this.isExpanded;
-        _.setDisplayed(this.eGroupClosedIcon, !folderOpen);
-        _.setDisplayed(this.eGroupOpenedIcon, folderOpen);
+    private setExpandedIcons(): void {
+        _.setDisplayed(this.eGroupClosedIcon, this.hasIndeterminateExpandState ? this.isExpanded === false : !this.isExpanded);
+        _.setDisplayed(this.eGroupOpenedIcon, this.isExpanded === true);
+        if (this.hasIndeterminateExpandState) {
+            _.setDisplayed(this.eGroupIndeterminateIcon, this.isExpanded === undefined);
+        }
     }
 
     private onCheckboxChanged(isSelected: boolean): void {
@@ -196,6 +208,7 @@ export class SetFilterListItem<V> extends Component {
             translate('ariaIndeterminate', 'indeterminate') : 
             (checkboxValue ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden'));
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
+        _.setAriaLabelledBy(this.eCheckbox.getInputElement(), undefined as any);
         this.eCheckbox.setInputAriaLabel(`${visibilityLabel} (${state})`);
     }
     

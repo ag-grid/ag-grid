@@ -116,10 +116,13 @@ dropNotAllowed: 'not-allowed'
 groupContracted: 'tree-closed'
 // shown on row group when expanded (click to contract)
 groupExpanded: 'tree-open'
-// set filter list group contracted (click to expand)
+// set filter tree list group contracted (click to expand)
 setFilterGroupClosed: 'tree-closed',
-// set filter list group expanded (click to contract)
+// set filter tree list group expanded (click to contract)
 setFilterGroupOpen: 'tree-open',
+// set filter tree list expand/collapse all button, shown when some children are expanded and
+//     others are collapsed
+setFilterGroupIndeterminate: 'tree-indeterminate',
 // context menu chart item
 chart: 'chart'
 // chart window title bar

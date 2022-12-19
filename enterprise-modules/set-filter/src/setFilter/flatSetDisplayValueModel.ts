@@ -1,5 +1,5 @@
 import { Column, TextFormatter, ValueFormatterParams, ValueFormatterService } from '@ag-grid-community/core';
-import { ISetDisplayValueModel } from './iSetDisplayValueModel';
+import { ISetDisplayValueModel, SetFilterDisplayValue } from './iSetDisplayValueModel';
 
 export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     /** All keys that are currently displayed, after the mini-filter has been applied. */
@@ -49,6 +49,10 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     public getDisplayedItem(index: number): string | null {
         return this.displayedKeys[index];
+    }
+
+    getSelectAllItem(): string {
+        return SetFilterDisplayValue.SELECT_ALL;
     }
 
     public getDisplayedKeys(): (string | null)[] {

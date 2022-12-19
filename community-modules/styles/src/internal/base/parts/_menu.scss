@@ -121,6 +121,10 @@
         height: calc(var(--ag-list-item-height) * 6);
     }
 
+    .ag-set-filter-tree-list {
+        height: calc(var(--ag-list-item-height) * 10);
+    }
+
     .ag-set-filter-filter {
         margin-top: var(--ag-widget-container-vertical-padding);
         margin-left: var(--ag-widget-container-horizontal-padding);

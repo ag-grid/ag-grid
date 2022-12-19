@@ -1,5 +1,5 @@
 export interface ISetDisplayValueModel<V> {
-    updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>): void;
+    updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>, fromMiniFilter?: boolean): void;
 
     updateDisplayedValuesToMatchMiniFilter(
         getValue: (key: string | null) => V,
@@ -13,6 +13,8 @@ export interface ISetDisplayValueModel<V> {
 
     getDisplayedItem(index: number): string | SetFilterModelTreeItem | null;
 
+    getSelectAllItem(): string | SetFilterModelTreeItem;
+
     getDisplayedKeys(): (string | null)[];
 
     forEachDisplayedKey(func: (key: string | null) => void): void;
@@ -22,6 +24,10 @@ export interface ISetDisplayValueModel<V> {
     hasGroups(): boolean;
 
     refresh(): void;
+}
+
+export class SetFilterDisplayValue {
+    public static readonly SELECT_ALL = '__AG_SELECT_ALL__';
 }
 
 export interface SetFilterModelTreeItem {

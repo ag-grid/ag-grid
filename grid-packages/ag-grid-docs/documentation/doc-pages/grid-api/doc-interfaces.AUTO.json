@@ -16175,7 +16175,7 @@
       }
     },
     "keyCreator": {
-      "description": "/** Function to return a string key for a value. This is required when the filter values are complex objects.\n     * If not provided, the Column Definition Key Creator is used.\n     */",
+      "description": "/** Function to return a string key for a value. This is required when the filter values are complex objects,\n     * or when `treeList = true` and the column is a group column with Tree Data or Grouping enabled.\n     * If not provided, the Column Definition Key Creator is used.\n     */",
       "type": {
         "arguments": { "params": "KeyCreatorParams<TData>" },
         "returnType": "string",
@@ -19841,7 +19841,8 @@
       "type": {
         "arguments": {
           "getValue": "(key: string | null) => V",
-          "availableKeys": "Iterable<string | null>"
+          "availableKeys": "Iterable<string | null>",
+          "fromMiniFilter?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -19867,6 +19868,13 @@
       "type": {
         "arguments": { "index": "number" },
         "returnType": "string | SetFilterModelTreeItem | null",
+        "optional": false
+      }
+    },
+    "getSelectAllItem": {
+      "type": {
+        "arguments": {},
+        "returnType": "string | SetFilterModelTreeItem",
         "optional": false
       }
     },
@@ -19965,6 +19973,9 @@
     "groupsExist": { "type": { "returnType": "boolean", "optional": true } },
     "isGroup": { "type": { "returnType": "boolean", "optional": true } },
     "isExpanded": { "type": { "returnType": "boolean", "optional": true } },
+    "hasIndeterminateExpandState": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "meta": { "typeParams": ["V"] }
   },
   "SetFilterModelValuesType": {},

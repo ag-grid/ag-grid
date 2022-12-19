@@ -383,7 +383,7 @@ export class SetValueModel<V> implements IEventEmitter {
 
         // if no filter, just display all available values
         if (this.miniFilterText == null) {
-            this.displayValueModel.updateDisplayedValuesToAllAvailable((key: string | null) => this.getValue(key)!, this.availableKeys);
+            this.displayValueModel.updateDisplayedValuesToAllAvailable((key: string | null) => this.getValue(key)!, this.availableKeys, fromMiniFilter);
             return;
         }
 
@@ -410,6 +410,10 @@ export class SetValueModel<V> implements IEventEmitter {
 
     public getDisplayedItem(index: number): string | SetFilterModelTreeItem | null {
         return this.displayValueModel.getDisplayedItem(index);
+    }
+
+    public getSelectAllItem(): string | SetFilterModelTreeItem  {
+        return this.displayValueModel.getSelectAllItem();
     }
 
     public hasSelections(): boolean {
