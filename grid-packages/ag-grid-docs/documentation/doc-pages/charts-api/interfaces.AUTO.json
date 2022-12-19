@@ -818,6 +818,7 @@
       "spacing?": "PixelSize",
       "item?": "AgChartLegendItemOptions",
       "reverseOrder?": "boolean",
+      "seriesToggleEnabled?": "boolean",
       "listeners?": "AgChartLegendListeners",
       "pagination?": "AgChartLegendPaginationOptions"
     },
@@ -830,6 +831,7 @@
       "spacing?": "/** The spacing in pixels to use outside the legend. */",
       "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
       "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
+      "seriesToggleEnabled?": "/** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */",
       "listeners?": "/** Optional callbacks for specific legend-related events. */"
     }
   },

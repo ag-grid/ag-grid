@@ -237,6 +237,9 @@ export class Legend {
     @Validate(OPT_ORIENTATION)
     orientation?: AgChartOrientation;
 
+    @Validate(BOOLEAN)
+    seriesToggleEnabled: boolean = true;
+
     constructor(
         private readonly chart: {
             readonly series: Series<any>[];
@@ -582,6 +585,7 @@ export class Legend {
             listeners: { legendItemClick },
             chart,
             highlightManager,
+            seriesToggleEnabled,
         } = this;
         const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
@@ -596,7 +600,10 @@ export class Legend {
         event.consume();
 
         const newEnabled = !enabled;
-        series.toggleSeriesItem(itemId, newEnabled);
+        if (seriesToggleEnabled) {
+            series.toggleSeriesItem(itemId, newEnabled);
+        }
+
         if (!newEnabled) {
             chart.togglePointer(false);
             highlightManager.updateHighlight(this.id);
@@ -614,7 +621,7 @@ export class Legend {
     }
 
     private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
-        const { enabled } = this;
+        const { enabled, seriesToggleEnabled, listeners } = this;
         if (!enabled) {
             return;
         }
@@ -641,7 +648,9 @@ export class Legend {
             return;
         }
 
-        this.cursorManager.updateCursor(this.id, 'pointer');
+        if (seriesToggleEnabled || listeners.legendItemClick !== NO_OP_LISTENER) {
+            this.cursorManager.updateCursor(this.id, 'pointer');
+        }
 
         const series = datum ? this.chart.series.find((series) => series.id === datum?.id) : undefined;
         if (datum?.enabled && series) {
