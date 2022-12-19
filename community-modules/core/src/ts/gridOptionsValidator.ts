@@ -130,7 +130,7 @@ export class GridOptionsValidator {
             ...ComponentUtil.EVENT_CALLBACKS
         ];
 
-        const validPropertiesAndExceptions: string[] = [...validProperties, 'api', 'columnApi'];
+        const validPropertiesAndExceptions: string[] = [...validProperties, 'api', 'columnApi', ...Object.keys(this.deprecatedProperties)];
 
         this.checkProperties(
             userProperties,
