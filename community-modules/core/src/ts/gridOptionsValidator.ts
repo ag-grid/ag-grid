@@ -78,17 +78,14 @@ export class GridOptionsValidator {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
 
-        if (this.gridOptionsService.exists('sideBar')) {
-            // Ensure the SideBar is registered which will then lead them to register Column / Filter Tool panels as required by their config.
-            // It is possible to use the SideBar only with your own custom tool panels.
-            ModuleRegistry.assertRegistered(ModuleNames.SideBarModule, 'sideBar');
-        }
-        if (this.gridOptionsService.exists('statusBar')) {
-            ModuleRegistry.assertRegistered(ModuleNames.StatusBarModule, 'statusBar');
-        }
-        if (this.gridOptionsService.exists('enableCharts')) {
-            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'enableCharts');
-        }
+        const validateRegistered = (prop: keyof GridOptions, module: ModuleNames) => this.gridOptionsService.exists(prop) && ModuleRegistry.assertRegistered(module, prop);
+
+        // Ensure the SideBar is registered which will then lead them to register Column / Filter Tool panels as required by their config.
+        // It is possible to use the SideBar only with your own custom tool panels.            
+        validateRegistered('sideBar', ModuleNames.SideBarModule);
+        validateRegistered('statusBar', ModuleNames.StatusBarModule);
+        validateRegistered('enableCharts', ModuleNames.GridChartsModule);
+        validateRegistered('getMainMenuItems', ModuleNames.MenuModule);
 
         if (this.gridOptionsService.is('groupRowsSticky')) {
             if (this.gridOptionsService.is('groupHideOpenParents')) {

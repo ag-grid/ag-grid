@@ -330,12 +330,15 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         if (this.gridOptionsService.isTreeData()) {
             const itemsNotAllowedWithTreeData: (keyof ColDef)[] = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
-            itemsNotAllowedWithTreeData.forEach(item => {
-                if (exists(colDefAny[item])) {
-                    warnOnce(`AG Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`, 'TreeDataCannotRowGroup');
-                }
-            });
+            const itemsUsed = itemsNotAllowedWithTreeData.filter(x => exists(colDefAny[x]));
+            if (itemsUsed.length > 0) {
+                warnOnce(`AG Grid: ${itemsUsed.join()} is not possible when doing tree data, your column definition should not have ${itemsUsed.join()}`, 'TreeDataCannotRowGroup');
+            }
         }
+
+        exists(colDefAny['menuTabs']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'menuTabs');
+        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams');
+        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.ColumnToolPanelModule, 'columnMenuParams');
 
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
