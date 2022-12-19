@@ -43,7 +43,7 @@ Provided Filters provide the following methods:
 
 Each of the provided filters can optionally include Apply, Clear, Reset and Cancel buttons.
 
-When the Apply button is used, the filter is only applied once the Apply button is pressed. This is useful if the filtering operation will take a long time because the dataset is large, or if using server-side filtering (thus preventing unnecessary calls to the server).
+When the Apply button is used, the filter is only applied once the Apply button is pressed. This is useful if the filtering operation will take a long time because the dataset is large, or if using server-side filtering (thus preventing unnecessary calls to the server). Pressing <kbd>Enter</kbd> is equivalent to pressing the Apply button.
 
 The Clear button clears just the filter UI, whereas the Reset button clears the filter UI and removes any active filters for that column.
 
@@ -56,7 +56,7 @@ The example below demonstrates using the different buttons. It also demonstrates
 - The **Athlete** and **Age** columns have filters with Apply and Reset buttons, but different orders.
 - The **Country** column has a filter with Apply and Clear buttons.
 - The **Year** column has a filter with Apply and Cancel buttons.
-- The **Age** and **Year** columns have `closeOnApply` set to `true`, so the filter popup will be closed immediately when the filter is applied, reset or cancelled.
+- The **Age** and **Year** columns have `closeOnApply` set to `true`, so the filter popup will be closed immediately when the filter is applied, reset or cancelled. Pressing <kbd>Enter</kbd> will also apply the filter and close the popup.
 - `onFilterOpened` is called when the filter is opened.
 - `onFilterModified` is called when the filter changes regardless of whether the Apply button is present.
 - `onFilterChanged` is called only after a new filter is applied.
