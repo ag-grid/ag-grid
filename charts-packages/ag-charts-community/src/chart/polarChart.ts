@@ -27,6 +27,8 @@ export class PolarChart extends Chart {
     }
 
     private computeSeriesRect(captionAutoPadding: number) {
+        const { legend, padding } = this;
+
         const shrinkRect = new BBox(0, 0, this.width, this.height);
 
         shrinkRect.y += captionAutoPadding;
@@ -43,22 +45,25 @@ export class PolarChart extends Chart {
             switch (this.legend.position) {
                 case 'right':
                     shrinkRect.width -= legendPadding;
+                    legend.translationX -= padding.right;
                     break;
                 case 'bottom':
                     shrinkRect.height -= legendPadding;
+                    legend.translationY -= padding.bottom;
                     break;
                 case 'left':
                     shrinkRect.x += legendPadding;
                     shrinkRect.width -= legendPadding;
+                    legend.translationX += padding.left;
                     break;
                 case 'top':
                     shrinkRect.y += legendPadding;
                     shrinkRect.height -= legendPadding;
+                    legend.translationY += padding.top;
                     break;
             }
         }
 
-        const padding = this.padding;
         shrinkRect.x += padding.left;
         shrinkRect.y += padding.top;
         shrinkRect.width -= padding.left + padding.right;
