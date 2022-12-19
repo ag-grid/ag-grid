@@ -104,6 +104,7 @@ export class SetFilterListItem<V> extends Component {
     private init(): void {
         this.render();
 
+        this.eCheckbox.setLabelEllipsis(true);
         this.eCheckbox.setValue(this.isSelected, true);
         this.eCheckbox.setDisabled(!!this.params.readOnly);
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');

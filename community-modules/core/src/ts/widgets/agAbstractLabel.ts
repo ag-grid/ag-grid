@@ -115,6 +115,12 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
         return this;
     }
 
+    public setLabelEllipsis(hasEllipsis: boolean): this {
+        this.eLabel.classList.toggle('ag-label-ellipsis', hasEllipsis);
+
+        return this;
+    }
+
     public setLabelWidth(width: number | 'flex'): this {
         if (this.label == null) {
             return this;
