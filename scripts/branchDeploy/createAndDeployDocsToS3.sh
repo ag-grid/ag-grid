@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+if [ "$#" -lt 1 ]
+  then
+    echo "You must supply a jira number"
+    exit 1
+fi
+
 TARGET_DIRECTORY=$1
 
 cd grid-packages/ag-grid-docs
