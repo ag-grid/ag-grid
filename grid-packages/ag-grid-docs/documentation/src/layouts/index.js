@@ -7,7 +7,8 @@ import Footer from 'components/footer/Footer';
 import Search from 'components/search/Search';
 import FrameworkSelector from 'components/FrameworkSelector';
 import favIcons from '../images/favicons';
-import logo from '../images/ag-grid.svg';
+import logoType from '../images/ag-grid-logotype.svg';
+import logoMark from '../images/ag-grid-logomark.svg';
 import styles from './index.module.scss';
 import './mailchimp.css';
 
@@ -64,7 +65,11 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
             <Helmet htmlAttributes={{lang: 'en'}}/>
             <header className={styles.header}>
                 <div className={styles.header__wrapper}>
-                    <a href="/" aria-label="Home" className={styles['header__logo']}><img src={logo} alt="AG Grid" style={{width: 235, height: 40}}/></a>
+                    <a href="/" aria-label="Home" className={styles['header__logo']}>
+                        <img src={logoType} alt="AG Grid" style={{width: 154, height: 40}}/>
+                        <img src={logoMark} alt="AG Grid" style={{width: 64, height: 48}}/>
+                    </a>
+
                     <HeaderNav path={path}/>
                 </div>
             </header>
