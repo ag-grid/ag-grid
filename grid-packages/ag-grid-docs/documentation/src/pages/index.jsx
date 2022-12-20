@@ -31,6 +31,7 @@ const Default = () => {
                                 <BestHtmlDemo/>
                             </React.Suspense>}
                         </div>
+                        <img className={styles['mobile-demo-image']} src="./images/ag-grid-demo-image.webp" alt="AG Grid demo" width="400" height="196"/>
                     </section>
                 </div>
                 <div className={styles['stage-frameworks']}>

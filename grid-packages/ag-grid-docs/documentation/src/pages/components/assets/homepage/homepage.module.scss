@@ -376,3 +376,12 @@ body {
         height: 320px;
     }
 }
+
+.mobile-demo-image {
+    width: 100%;
+    margin-bottom: 16px;
+
+    @media screen and ( min-width: 640px ){
+        display: none;
+    }
+}
