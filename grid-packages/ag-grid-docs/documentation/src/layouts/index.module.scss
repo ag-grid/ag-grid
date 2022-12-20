@@ -26,7 +26,7 @@ main {
 .header {
     composes: d-flex align-items-center px-2 px-md-3 py-1 from global;
     position: relative;
-    background-image: linear-gradient(to top left, $primary, darken($primary, 25%));
+    background-color: #003264;
 
     &__wrapper {
         composes: container-lg my-2 px-0 d-flex from global;
