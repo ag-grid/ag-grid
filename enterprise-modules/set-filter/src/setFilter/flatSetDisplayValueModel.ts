@@ -12,13 +12,18 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         private readonly column: Column
     ) {}
 
-    public updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>): void {
+    public updateDisplayedValuesToAllAvailable(
+        _getValue: (key: string | null) => V,
+        _allKeys: Iterable<string | null> | undefined,
+        availableKeys: Set<string | null>
+    ): void {
         this.displayedKeys = Array.from(availableKeys);
     }
 
     public updateDisplayedValuesToMatchMiniFilter(
         getValue: (key: string | null) => V,
-        availableKeys: Iterable<string | null>,
+        _allKeys: Iterable<string | null> | undefined, 
+        availableKeys: Set<string | null>,
         matchesFilter: (valueToCheck: string | null) => boolean,
         nullMatchesFilter: boolean
     ): void {
