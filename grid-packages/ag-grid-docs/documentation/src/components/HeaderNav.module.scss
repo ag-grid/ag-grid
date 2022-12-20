@@ -34,17 +34,21 @@
         position: relative;
 
         a {
-            color: lighten($primary, 30%);
+            color: white;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            
             &:hover {
-                color: $light;
+                color: white;
                 text-decoration: none;
+            }
+
+            @media screen and (min-width: 768px) {
+                font-size: 18px;
             }
         }
 
         &--active {
-            a {
-                color: $light;
-            }
             @include media-breakpoint-up(md) {
                 &::after {
                     content: "";
