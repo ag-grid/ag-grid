@@ -236,6 +236,17 @@ export class TimeScale extends ContinuousScale {
             return [];
         }
         this.refresh();
+
+        if (this.nice) {
+            const { tickCount } = this;
+            if (tickCount === 2) {
+                return this.niceDomain;
+            }
+            if (tickCount === 1) {
+                return this.niceDomain[1];
+            }
+        }
+
         const [t0, t1] = this.getDomain().map(toNumber);
         const t = this.getTickInterval({ start: t0, stop: t1 });
         return t ? t.range(new Date(t0), new Date(t1 + 1)) : []; // inclusive stop
