@@ -19841,8 +19841,9 @@
       "type": {
         "arguments": {
           "getValue": "(key: string | null) => V",
-          "availableKeys": "Iterable<string | null>",
-          "fromMiniFilter?": "boolean"
+          "allKeys": "Iterable<string | null> | undefined",
+          "availableKeys": "Set<string | null>",
+          "source": "'reload' | 'otherFilter' | 'miniFilter'"
         },
         "returnType": "void",
         "optional": false
@@ -19852,10 +19853,11 @@
       "type": {
         "arguments": {
           "getValue": "(key: string | null) => V",
-          "availableKeys": "Iterable<string | null>",
+          "allKeys": "Iterable<string | null> | undefined",
+          "availableKeys": "Set<string | null>",
           "matchesFilter": "(valueToCheck: string | null) => boolean",
           "nullMatchesFilter": "boolean",
-          "fromMiniFilter?": "boolean"
+          "source": "'reload' | 'otherFilter' | 'miniFilter'"
         },
         "returnType": "void",
         "optional": false
@@ -19911,6 +19913,7 @@
     "treeKey": { "type": { "returnType": "string | null", "optional": false } },
     "depth": { "type": { "returnType": "number", "optional": false } },
     "filterPasses": { "type": { "returnType": "boolean", "optional": false } },
+    "available": { "type": { "returnType": "boolean", "optional": false } },
     "expanded": { "type": { "returnType": "boolean", "optional": true } },
     "children": {
       "type": { "returnType": "SetFilterModelTreeItem[]", "optional": true }
