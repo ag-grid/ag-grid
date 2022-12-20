@@ -34,7 +34,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             const floatingFilterParams: IFloatingFilterParams<IFilter> = {
                 ...params,
                 // set the parent filter instance for each floating filter to the relevant child filter instance
-                parentFilterInstance: (callback) => {
+                parentFilterInstance: (callback) => {   
                     this.parentMultiFilterInstance((parent) => {
                         const child = parent.getChildFilterInstance(index);
                         if (child == null) { return; }
@@ -43,6 +43,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                     });
                 }
             };
+            _.mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);
 
             const floatingFilterPromise = this.createFloatingFilter(filterDef, floatingFilterParams);
 
