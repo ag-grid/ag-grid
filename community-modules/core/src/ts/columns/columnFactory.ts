@@ -103,7 +103,7 @@ export class ColumnFactory extends BeanStub {
                 true,
                 i
             );
-            this.createManagedBean(autoGroup);
+            this.createBean(autoGroup);
             autoGroup.setChildren([nextChild]);
             nextChild.setOriginalParent(autoGroup);
             nextChild = autoGroup;
@@ -155,7 +155,7 @@ export class ColumnFactory extends BeanStub {
                     const colGroupDefMerged = this.createMergedColGroupDef(null);
 
                     const paddedGroup = new ProvidedColumnGroup(colGroupDefMerged, newColId, true, currentDept);
-                    this.createManagedBean(paddedGroup);
+                    this.createBean(paddedGroup);
 
                     if (currentPaddedGroup) {
                         currentPaddedGroup.setChildren([paddedGroup]);
@@ -244,7 +244,7 @@ export class ColumnFactory extends BeanStub {
             removeFromArray(existingGroups, existingGroup);
         } else {
             providedGroup = new ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
-            this.createManagedBean(providedGroup);
+            this.createBean(providedGroup);
         }
 
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,

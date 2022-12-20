@@ -44,6 +44,9 @@ export type ColumnEventName =
     'columnValueChanged';
 
 let instanceIdSequence = 0;
+export function getNextColInstanceId() {
+    return instanceIdSequence++;
+}
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -88,8 +91,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     private readonly colId: any;
     private colDef: ColDef;
 
-    // used by React (and possibly other frameworks) as key for rendering
-    private instanceId = instanceIdSequence++;
+    // used by React (and possibly other frameworks) as key for rendering. also used to
+    // identify old vs new columns for destroying cols when no longer used.
+    private instanceId = getNextColInstanceId();
 
     // We do NOT use this anywhere, we just keep a reference. this is to check object equivalence
     // when the user provides an updated list of columns - so we can check if we have a column already

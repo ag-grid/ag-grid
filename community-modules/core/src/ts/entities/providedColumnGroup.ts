@@ -1,7 +1,7 @@
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { ColGroupDef } from "./colDef";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
-import { Column } from "./column";
+import { Column, getNextColInstanceId } from "./column";
 import { EventService } from "../eventService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { AgEvent } from "../events";
@@ -25,6 +25,10 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     private padding: boolean;
 
     private level: number;
+
+    // used by React (and possibly other frameworks) as key for rendering. also used to
+    // identify old vs new columns for destroying cols when no longer used.
+    private instanceId = getNextColInstanceId();
 
     private expandableListenerRemoveCallback: (() => void) | null = null;
 
@@ -57,6 +61,10 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         // way it was when it was first created
         this.children = undefined!;
         this.expandable = undefined!;
+    }
+
+    public getInstanceId(): number {
+        return this.instanceId;
     }
 
     public setOriginalParent(originalParent: ProvidedColumnGroup | null): void {

@@ -14420,6 +14420,9 @@
     "isVisible": {
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
+    "getInstanceId": {
+      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    },
     "getColumnGroupShow": {
       "type": {
         "arguments": {},
