@@ -4,14 +4,20 @@ import styles from './components/assets/homepage/homepage.module.scss';
 import Footer from '../components/footer/Footer';
 import Seo from "./components/SEO";
 import {agGridVersion} from "../utils/consts";
+import {useDeviceWidth} from '../utils/use-device-width';
 
 const IS_SSR = typeof window === "undefined"
+const MOBILE_WIDTH = 640;
 
 const BestHtmlDemo = React.lazy(() => import("./components/home-page-demos/BestHtmlGrid"));
 const LiveStreamingDemo = React.lazy(() => import("./components/home-page-demos/LiveStreaming"));
 const ChartingDashboardDemo = React.lazy(() => import("./components/home-page-demos/ChartingDashboard"));
 
 const Default = () => {
+    const deviceWidth = useDeviceWidth();
+    const isMobile = deviceWidth < MOBILE_WIDTH;
+    const showGrid = !IS_SSR && !isMobile;
+
     return (
         <>
             <Seo title="AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid"
@@ -21,7 +27,7 @@ const Default = () => {
                     <h1 className={styles['heading-scenarios']}>The Best JavaScript Grid in the World</h1>
                     <section>
                         <div className={styles['demo']}>
-                            {!IS_SSR && <React.Suspense fallback={<div>Loading...</div>}>
+                            {showGrid && <React.Suspense fallback={<div>Loading...</div>}>
                                 <BestHtmlDemo/>
                             </React.Suspense>}
                         </div>
@@ -118,7 +124,7 @@ const Default = () => {
                     <h2 className={styles['heading-scenarios']}>Live Streaming Updates</h2>
                     <section>
                         <div className={styles['demo']}>
-                            {!IS_SSR && <React.Suspense fallback={<div>Loading...</div>}>
+                            {showGrid && <React.Suspense fallback={<div>Loading...</div>}>
                                 <LiveStreamingDemo />
                             </React.Suspense>}
                         </div>
@@ -129,7 +135,7 @@ const Default = () => {
                     <h2 className={styles['heading-scenarios']}>Integrated Charting</h2>
                     <section>
                         <div className={styles['demo']}>
-                            {!IS_SSR && <React.Suspense fallback={<div>Loading...</div>}>
+                            {showGrid && <React.Suspense fallback={<div>Loading...</div>}>
                                 <ChartingDashboardDemo />
                             </React.Suspense>}
                         </div>
