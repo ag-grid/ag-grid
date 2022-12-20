@@ -845,7 +845,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private onExpandAll(item: SetFilterModelTreeItem, isExpanded: boolean): void {
         const recursiveExpansion = (i: SetFilterModelTreeItem) => {
-            if (i.filterPasses && i.children) {
+            if (i.filterPasses && i.available && i.children) {
                 i.children.forEach(childItem => recursiveExpansion(childItem));
                 i.expanded = isExpanded;
             }
@@ -865,7 +865,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private refreshAfterExpansion(): void {
         const focusedRow = this.virtualList!.getLastFocusedRow();
 
-        this.valueModel!.updateDisplayedValues(false, true);
+        this.valueModel!.updateDisplayedValues('expansion');
 
         this.refresh();
         this.focusRowIfAlive(focusedRow);
@@ -948,7 +948,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private areAllChildrenSelected(item: SetFilterModelTreeItem): boolean | undefined {
         const recursiveChildSelectionCheck = (i: SetFilterModelTreeItem): boolean | undefined => {
-            if (!i.filterPasses) {
+            if (!i.filterPasses || !i.available) {
                 return true;
             }
             if (i.children) {

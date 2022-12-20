@@ -213,7 +213,7 @@ export class SetValueModel<V> implements IEventEmitter {
     public refreshAfterAnyFilterChanged(): AgPromise<boolean> {
         if (this.showAvailableOnly()) {
             return this.allValuesPromise.then(keys => {
-                this.updateAvailableKeys(keys ?? []);
+                this.updateAvailableKeys(keys ?? [], 'otherFilter');
                 return true;
             });
         }
@@ -263,7 +263,7 @@ export class SetValueModel<V> implements IEventEmitter {
             }
         });
 
-        this.allValuesPromise.then(values => this.updateAvailableKeys(values || [])).then(() => this.initialised = true);
+        this.allValuesPromise.then(values => this.updateAvailableKeys(values || [], 'reload')).then(() => this.initialised = true);
 
         return this.allValuesPromise;
     }
@@ -315,13 +315,13 @@ export class SetValueModel<V> implements IEventEmitter {
         return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
-    private updateAvailableKeys(allKeys: (string | null)[]): void {
+    private updateAvailableKeys(allKeys: (string | null)[], source: 'reload' | 'otherFilter'): void {
         const availableKeys = this.showAvailableOnly() ? this.sortKeys(this.getValuesFromRows(true)) : allKeys;
 
         this.availableKeys = new Set(availableKeys);
         this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
 
-        this.updateDisplayedValues();
+        this.updateDisplayedValues(source, allKeys);
     }
 
     public sortKeys(nullableValues: Map<string | null, V | null> | null): (string | null)[] {
@@ -366,7 +366,7 @@ export class SetValueModel<V> implements IEventEmitter {
         }
 
         this.miniFilterText = value;
-        this.updateDisplayedValues(true);
+        this.updateDisplayedValues('miniFilter');
 
         return true;
     }
@@ -375,15 +375,15 @@ export class SetValueModel<V> implements IEventEmitter {
         return this.miniFilterText;
     }
 
-    public updateDisplayedValues(fromMiniFilter?: boolean, fromExpansion?: boolean): void {
-        if (fromExpansion) {
+    public updateDisplayedValues(source: 'reload' | 'otherFilter' | 'miniFilter' | 'expansion', allKeys?: (string | null)[]): void {
+        if (source === 'expansion') {
             this.displayValueModel.refresh();
             return;
         }
 
         // if no filter, just display all available values
         if (this.miniFilterText == null) {
-            this.displayValueModel.updateDisplayedValuesToAllAvailable((key: string | null) => this.getValue(key)!, this.availableKeys, fromMiniFilter);
+            this.displayValueModel.updateDisplayedValuesToAllAvailable((key: string | null) => this.getValue(key)!, allKeys, this.availableKeys, source);
             return;
         }
 
@@ -398,10 +398,11 @@ export class SetValueModel<V> implements IEventEmitter {
 
         this.displayValueModel.updateDisplayedValuesToMatchMiniFilter(
             (key: string | null) => this.getValue(key)!,
+            allKeys,
             this.availableKeys,
             matchesFilter,
             nullMatchesFilter,
-            fromMiniFilter);
+            source);
     }
 
     public getDisplayedValueCount(): number {
