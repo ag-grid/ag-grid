@@ -714,7 +714,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
             this.valueModel.refreshAfterAnyFilterChanged().then(refresh => {
-                if (refresh) { this.refresh(); }
+                if (refresh) {
+                    this.refresh();
+                    this.showOrHideResults();
+                }
             });
         }, 0);
     }
