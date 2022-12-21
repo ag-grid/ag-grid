@@ -377,7 +377,7 @@ export class Legend {
                 addEllipsis = true;
             }
 
-            const labelWidth = markerSize + markerPadding + HdpiCanvas.getTextSize(text, font).width;
+            const labelWidth = Math.floor(markerSize + markerPadding + HdpiCanvas.getTextSize(text, font).width);
             if (labelWidth > maxItemWidth) {
                 let truncatedText = '';
                 const characterWidths = this.getCharacterWidths(font);
