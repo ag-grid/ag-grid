@@ -10,8 +10,8 @@ import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
-import { ITextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
-import { NumberFilterModel, INumberFilterParams } from '../../provided/number/numberFilter';
+import { TextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
+import { NumberFilterModel, NumberFilterParams } from '../../provided/number/numberFilter';
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
@@ -57,7 +57,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         this.params = params;
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
 
-        const { allowedCharPattern } = this.params.filterParams as INumberFilterParams;
+        const { allowedCharPattern } = this.params.filterParams as NumberFilterParams;
         if (allowedCharPattern != null) {
             this.resetTemplate({ eFloatingFilterInput: { allowedCharPattern } });
         }
@@ -94,7 +94,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
 
         let value = this.eFloatingFilterInput.getValue();
 
-        if ((this.params.filterParams as ITextFilterParams).trimInput) {
+        if ((this.params.filterParams as TextFilterParams).trimInput) {
             value = TextFilter.trimInput(value);
             this.eFloatingFilterInput.setValue(value, true); // ensure visible value is trimmed
         }

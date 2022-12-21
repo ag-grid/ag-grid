@@ -6,7 +6,7 @@ import {
     IAfterGuiAttachedParams,
     IFilterComp,
     IMultiFilterDef,
-    IMultiFilterParams,
+    MultiFilterParams,
     IMultiFilterModel,
     Autowired,
     UserComponentFactory,
@@ -29,7 +29,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    private params: IMultiFilterParams;
+    private params: MultiFilterParams;
     private filterDefs: IMultiFilterDef[] = [];
     private filters: IFilterComp[] | null = [];
     private guiDestroyFuncs: (() => void)[] = [];
@@ -52,7 +52,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         });
     }
 
-    public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
+    public static getFilterDefs(params: MultiFilterParams): IMultiFilterDef[] {
         const { filters } = params;
 
         return filters && filters.length > 0 ?
@@ -60,7 +60,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
     }
 
-    public init(params: IMultiFilterParams): AgPromise<void> {
+    public init(params: MultiFilterParams): AgPromise<void> {
         this.params = params;
         this.filterDefs = MultiFilter.getFilterDefs(params);
 

@@ -14,7 +14,11 @@ import { IRowNode } from '../../interfaces/iRowNode';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
-export interface IProvidedFilterParams extends IFilterParams {
+// internal type
+export type ProvidedFilterParams<TData = any> = IProvidedFilterParams & IFilterParams<TData>;
+
+// external type
+export interface IProvidedFilterParams {
     /**
      * Specifies the buttons to be shown in the filter, in the order they should be displayed in.
      * The options are:
@@ -71,7 +75,7 @@ export interface IProvidedFilter extends IFilter {
  */
 export abstract class ProvidedFilter<M, V> extends Component implements IProvidedFilter, IFilterComp {
     // each level in the hierarchy will save params with the appropriate type for that level.
-    private providedFilterParams: IProvidedFilterParams;
+    private providedFilterParams: ProvidedFilterParams;
 
     private applyActive = false;
     private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
@@ -155,7 +159,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         return !!this.providedFilterParams.readOnly;
     }
 
-    public init(params: IProvidedFilterParams): void {
+    public init(params: ProvidedFilterParams): void {
         this.setParams(params);
 
         this.resetUiToDefaults(true).then(() => {
@@ -164,7 +168,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         });
     }
 
-    protected setParams(params: IProvidedFilterParams): void {
+    protected setParams(params: ProvidedFilterParams): void {
         this.providedFilterParams = params;
 
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
@@ -372,7 +376,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     // static, as used by floating filter also
-    public static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number {
+    public static getDebounceMs(params: ProvidedFilterParams, debounceDefault: number): number {
         if (ProvidedFilter.isUseApplyButton(params)) {
             if (params.debounceMs != null) {
                 console.warn('AG Grid: debounceMs is ignored when apply button is present');
@@ -385,7 +389,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     // static, as used by floating filter also
-    public static isUseApplyButton(params: IProvidedFilterParams): boolean {
+    public static isUseApplyButton(params: ProvidedFilterParams): boolean {
         return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     }
 

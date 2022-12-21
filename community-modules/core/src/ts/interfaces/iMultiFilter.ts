@@ -31,7 +31,11 @@ export interface IMultiFilterDef extends IFilterDef {
     floatingFilterComponentParams?: any;
 }
 
-export interface IMultiFilterParams<TData = any> extends IFilterParams<TData> {
+// internal type
+export type MultiFilterParams<TData = any> = IMultiFilterParams & IFilterParams<TData>;
+
+// external type
+export interface IMultiFilterParams {
     /** An array of filter definition objects. */
     filters?: IMultiFilterDef[];
     /**

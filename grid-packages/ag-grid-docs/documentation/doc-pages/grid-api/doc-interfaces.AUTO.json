@@ -8606,6 +8606,7 @@
       }
     }
   },
+  "DateFilterParams": { "meta": { "typeParams": ["TData = any"] } },
   "IDateFilterParams": {
     "comparator": {
       "description": "/** Required if the data for the column are not native JS `Date` objects. */",
@@ -8692,55 +8693,6 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n     * be used in conjunction with the Filter API.\n     * \n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "column": {
-      "description": "/** The column this filter is for. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "colDef": {
-      "description": "/** The column definition for the column. */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
-    },
-    "rowModel": {
-      "description": "/** The row model, helpful for looking up data values if needed.\n     * If the filter needs to know which rows are\n     * a) in the table,\n     * b) currently visible (i.e. not already filtered),\n     * c) which groups,\n     * d) what order - all of this can be read from the rowModel.\n     */",
-      "type": { "returnType": "IRowModel", "optional": false }
-    },
-    "filterChangedCallback": {
-      "description": "/** A function callback to be called when the filter changes. The\n     * grid will then respond by filtering the grid data. The callback\n     * takes one optional parameter which, if included, will get merged\n     * to the FilterChangedEvent object (useful for passing additional\n     * information to anyone listening to this event, however such extra\n     * attributes are not used by the grid).\n     */",
-      "type": {
-        "arguments": { "additionalEventAttributes?": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "filterModifiedCallback": {
-      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n     * The grid will respond with emitting a FilterModifiedEvent.\n     * Apart from emitting the event, the grid takes no further action.\n     */",
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n     * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n     *\n     * The callback takes care of selecting the right column definition and deciding whether to use\n     * the column `valueGetter` or raw field etc.\n     */",
-      "type": { "returnType": "ValueGetterFunc<TData>", "optional": false }
-    },
-    "doesRowPassOtherFilter": {
-      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
-      "type": {
-        "arguments": { "rowNode": "IRowNode<TData>" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
     }
   },
   "IDateComparatorFunc": {},
@@ -8765,6 +8717,7 @@
       }
     }
   },
+  "NumberFilterParams": { "meta": { "typeParams": ["TData = any"] } },
   "INumberFilterParams": {
     "allowedCharPattern": {
       "description": "/** When specified, the input field will be of type `text` instead of `number`, and this will be used as a regex of all the characters that are allowed to be typed.\n     * This will be compared against any typed character and prevent the character from appearing in the input if it does not match, in supported browsers (all except Safari).\n     */",
@@ -8843,58 +8796,10 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n     * be used in conjunction with the Filter API.\n     * \n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "column": {
-      "description": "/** The column this filter is for. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "colDef": {
-      "description": "/** The column definition for the column. */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
-    },
-    "rowModel": {
-      "description": "/** The row model, helpful for looking up data values if needed.\n     * If the filter needs to know which rows are\n     * a) in the table,\n     * b) currently visible (i.e. not already filtered),\n     * c) which groups,\n     * d) what order - all of this can be read from the rowModel.\n     */",
-      "type": { "returnType": "IRowModel", "optional": false }
-    },
-    "filterChangedCallback": {
-      "description": "/** A function callback to be called when the filter changes. The\n     * grid will then respond by filtering the grid data. The callback\n     * takes one optional parameter which, if included, will get merged\n     * to the FilterChangedEvent object (useful for passing additional\n     * information to anyone listening to this event, however such extra\n     * attributes are not used by the grid).\n     */",
-      "type": {
-        "arguments": { "additionalEventAttributes?": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "filterModifiedCallback": {
-      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n     * The grid will respond with emitting a FilterModifiedEvent.\n     * Apart from emitting the event, the grid takes no further action.\n     */",
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n     * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n     *\n     * The callback takes care of selecting the right column definition and deciding whether to use\n     * the column `valueGetter` or raw field etc.\n     */",
-      "type": { "returnType": "ValueGetterFunc<TData>", "optional": false }
-    },
-    "doesRowPassOtherFilter": {
-      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
-      "type": {
-        "arguments": { "rowNode": "IRowNode<TData>" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
     }
   },
   "FilterButtonType": {},
+  "ProvidedFilterParams": { "meta": { "typeParams": ["TData = any"] } },
   "IProvidedFilterParams": {
     "buttons": {
       "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n     * The options are:\n     * \n     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.\n     */",
@@ -8911,55 +8816,6 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n     * be used in conjunction with the Filter API.\n     * \n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "column": {
-      "description": "/** The column this filter is for. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "colDef": {
-      "description": "/** The column definition for the column. */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
-    },
-    "rowModel": {
-      "description": "/** The row model, helpful for looking up data values if needed.\n     * If the filter needs to know which rows are\n     * a) in the table,\n     * b) currently visible (i.e. not already filtered),\n     * c) which groups,\n     * d) what order - all of this can be read from the rowModel.\n     */",
-      "type": { "returnType": "IRowModel", "optional": false }
-    },
-    "filterChangedCallback": {
-      "description": "/** A function callback to be called when the filter changes. The\n     * grid will then respond by filtering the grid data. The callback\n     * takes one optional parameter which, if included, will get merged\n     * to the FilterChangedEvent object (useful for passing additional\n     * information to anyone listening to this event, however such extra\n     * attributes are not used by the grid).\n     */",
-      "type": {
-        "arguments": { "additionalEventAttributes?": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "filterModifiedCallback": {
-      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n     * The grid will respond with emitting a FilterModifiedEvent.\n     * Apart from emitting the event, the grid takes no further action.\n     */",
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n     * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n     *\n     * The callback takes care of selecting the right column definition and deciding whether to use\n     * the column `valueGetter` or raw field etc.\n     */",
-      "type": { "returnType": "ValueGetterFunc<TData>", "optional": false }
-    },
-    "doesRowPassOtherFilter": {
-      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
-      "type": {
-        "arguments": { "rowNode": "IRowNode<TData>" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
     }
   },
   "IProvidedFilter": {
@@ -9020,6 +8876,7 @@
       }
     }
   },
+  "ScalarFilterParams": { "meta": { "typeParams": ["TData = any"] } },
   "IScalarFilterParams": {
     "inRangeInclusive": {
       "description": "/** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */",
@@ -9086,55 +8943,6 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n     * be used in conjunction with the Filter API.\n     * \n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "column": {
-      "description": "/** The column this filter is for. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "colDef": {
-      "description": "/** The column definition for the column. */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
-    },
-    "rowModel": {
-      "description": "/** The row model, helpful for looking up data values if needed.\n     * If the filter needs to know which rows are\n     * a) in the table,\n     * b) currently visible (i.e. not already filtered),\n     * c) which groups,\n     * d) what order - all of this can be read from the rowModel.\n     */",
-      "type": { "returnType": "IRowModel", "optional": false }
-    },
-    "filterChangedCallback": {
-      "description": "/** A function callback to be called when the filter changes. The\n     * grid will then respond by filtering the grid data. The callback\n     * takes one optional parameter which, if included, will get merged\n     * to the FilterChangedEvent object (useful for passing additional\n     * information to anyone listening to this event, however such extra\n     * attributes are not used by the grid).\n     */",
-      "type": {
-        "arguments": { "additionalEventAttributes?": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "filterModifiedCallback": {
-      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n     * The grid will respond with emitting a FilterModifiedEvent.\n     * Apart from emitting the event, the grid takes no further action.\n     */",
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n     * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n     *\n     * The callback takes care of selecting the right column definition and deciding whether to use\n     * the column `valueGetter` or raw field etc.\n     */",
-      "type": { "returnType": "ValueGetterFunc<TData>", "optional": false }
-    },
-    "doesRowPassOtherFilter": {
-      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
-      "type": {
-        "arguments": { "rowNode": "IRowNode<TData>" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
     }
   },
   "Comparator": { "meta": { "typeParams": ["T"] } },
@@ -9220,6 +9028,7 @@
     }
   },
   "FilterPlaceholderFunction": {},
+  "SimpleFilterParams": { "meta": { "typeParams": ["TData = any"] } },
   "ISimpleFilterParams": {
     "filterOptions": {
       "description": "/** Array of filter options to present to the user.\n     */",
@@ -9266,55 +9075,6 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n     * be used in conjunction with the Filter API.\n     * \n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "column": {
-      "description": "/** The column this filter is for. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "colDef": {
-      "description": "/** The column definition for the column. */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
-    },
-    "rowModel": {
-      "description": "/** The row model, helpful for looking up data values if needed.\n     * If the filter needs to know which rows are\n     * a) in the table,\n     * b) currently visible (i.e. not already filtered),\n     * c) which groups,\n     * d) what order - all of this can be read from the rowModel.\n     */",
-      "type": { "returnType": "IRowModel", "optional": false }
-    },
-    "filterChangedCallback": {
-      "description": "/** A function callback to be called when the filter changes. The\n     * grid will then respond by filtering the grid data. The callback\n     * takes one optional parameter which, if included, will get merged\n     * to the FilterChangedEvent object (useful for passing additional\n     * information to anyone listening to this event, however such extra\n     * attributes are not used by the grid).\n     */",
-      "type": {
-        "arguments": { "additionalEventAttributes?": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "filterModifiedCallback": {
-      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n     * The grid will respond with emitting a FilterModifiedEvent.\n     * Apart from emitting the event, the grid takes no further action.\n     */",
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n     * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n     *\n     * The callback takes care of selecting the right column definition and deciding whether to use\n     * the column `valueGetter` or raw field etc.\n     */",
-      "type": { "returnType": "ValueGetterFunc<TData>", "optional": false }
-    },
-    "doesRowPassOtherFilter": {
-      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
-      "type": {
-        "arguments": { "rowNode": "IRowNode<TData>" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
     }
   },
   "ISimpleFilterModelType": {},
@@ -9401,6 +9161,7 @@
   },
   "TextMatcher": {},
   "TextFormatter": {},
+  "TextFilterParams": { "meta": { "typeParams": ["TData = any"] } },
   "ITextFilterParams": {
     "textMatcher": {
       "description": "/** Used to override how to filter based on the user input.\n     */",
@@ -9467,55 +9228,6 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n     * be used in conjunction with the Filter API.\n     * \n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "column": {
-      "description": "/** The column this filter is for. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "colDef": {
-      "description": "/** The column definition for the column. */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
-    },
-    "rowModel": {
-      "description": "/** The row model, helpful for looking up data values if needed.\n     * If the filter needs to know which rows are\n     * a) in the table,\n     * b) currently visible (i.e. not already filtered),\n     * c) which groups,\n     * d) what order - all of this can be read from the rowModel.\n     */",
-      "type": { "returnType": "IRowModel", "optional": false }
-    },
-    "filterChangedCallback": {
-      "description": "/** A function callback to be called when the filter changes. The\n     * grid will then respond by filtering the grid data. The callback\n     * takes one optional parameter which, if included, will get merged\n     * to the FilterChangedEvent object (useful for passing additional\n     * information to anyone listening to this event, however such extra\n     * attributes are not used by the grid).\n     */",
-      "type": {
-        "arguments": { "additionalEventAttributes?": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "filterModifiedCallback": {
-      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n     * The grid will respond with emitting a FilterModifiedEvent.\n     * Apart from emitting the event, the grid takes no further action.\n     */",
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n     * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n     *\n     * The callback takes care of selecting the right column definition and deciding whether to use\n     * the column `valueGetter` or raw field etc.\n     */",
-      "type": { "returnType": "ValueGetterFunc<TData>", "optional": false }
-    },
-    "doesRowPassOtherFilter": {
-      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
-      "type": {
-        "arguments": { "rowNode": "IRowNode<TData>" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
     }
   },
   "GridParams": {
@@ -14282,6 +13994,7 @@
       "type": { "returnType": "any", "optional": true }
     }
   },
+  "MultiFilterParams": { "meta": { "typeParams": ["TData = any"] } },
   "IMultiFilterParams": {
     "filters": {
       "description": "/** An array of filter definition objects. */",
@@ -14290,55 +14003,6 @@
     "readOnly": {
       "description": "/** If true, all UI inputs managed by this filter are for display only, and the filter can only\n     * be affected by API calls. Does NOT affect child filters, they need to be individually\n     * configured with `readOnly` where applicable.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "meta": { "typeParams": ["TData = any"] },
-    "column": {
-      "description": "/** The column this filter is for. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "colDef": {
-      "description": "/** The column definition for the column. */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
-    },
-    "rowModel": {
-      "description": "/** The row model, helpful for looking up data values if needed.\n     * If the filter needs to know which rows are\n     * a) in the table,\n     * b) currently visible (i.e. not already filtered),\n     * c) which groups,\n     * d) what order - all of this can be read from the rowModel.\n     */",
-      "type": { "returnType": "IRowModel", "optional": false }
-    },
-    "filterChangedCallback": {
-      "description": "/** A function callback to be called when the filter changes. The\n     * grid will then respond by filtering the grid data. The callback\n     * takes one optional parameter which, if included, will get merged\n     * to the FilterChangedEvent object (useful for passing additional\n     * information to anyone listening to this event, however such extra\n     * attributes are not used by the grid).\n     */",
-      "type": {
-        "arguments": { "additionalEventAttributes?": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "filterModifiedCallback": {
-      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n     * The grid will respond with emitting a FilterModifiedEvent.\n     * Apart from emitting the event, the grid takes no further action.\n     */",
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n     * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n     *\n     * The callback takes care of selecting the right column definition and deciding whether to use\n     * the column `valueGetter` or raw field etc.\n     */",
-      "type": { "returnType": "ValueGetterFunc<TData>", "optional": false }
-    },
-    "doesRowPassOtherFilter": {
-      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
-      "type": {
-        "arguments": { "rowNode": "IRowNode<TData>" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
     }
   },
   "IMultiFilterModel": {
@@ -16112,6 +15776,9 @@
   "SetFilterValues": {
     "meta": { "typeParams": ["TData = any", "V = string"] }
   },
+  "SetFilterParams": {
+    "meta": { "typeParams": ["TData = any", "V = string"] }
+  },
   "ISetFilterParams": {
     "values": {
       "description": "/** The values to display in the Filter List. If this is not set, the filter will takes its\n     * values from what is loaded in the table.\n     */",
@@ -16237,54 +15904,6 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n     * be used in conjunction with the Filter API.\n     * \n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "column": {
-      "description": "/** The column this filter is for. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "colDef": {
-      "description": "/** The column definition for the column. */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
-    },
-    "rowModel": {
-      "description": "/** The row model, helpful for looking up data values if needed.\n     * If the filter needs to know which rows are\n     * a) in the table,\n     * b) currently visible (i.e. not already filtered),\n     * c) which groups,\n     * d) what order - all of this can be read from the rowModel.\n     */",
-      "type": { "returnType": "IRowModel", "optional": false }
-    },
-    "filterChangedCallback": {
-      "description": "/** A function callback to be called when the filter changes. The\n     * grid will then respond by filtering the grid data. The callback\n     * takes one optional parameter which, if included, will get merged\n     * to the FilterChangedEvent object (useful for passing additional\n     * information to anyone listening to this event, however such extra\n     * attributes are not used by the grid).\n     */",
-      "type": {
-        "arguments": { "additionalEventAttributes?": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "filterModifiedCallback": {
-      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n     * The grid will respond with emitting a FilterModifiedEvent.\n     * Apart from emitting the event, the grid takes no further action.\n     */",
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n     * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n     *\n     * The callback takes care of selecting the right column definition and deciding whether to use\n     * the column `valueGetter` or raw field etc.\n     */",
-      "type": { "returnType": "ValueGetterFunc<TData>", "optional": false }
-    },
-    "doesRowPassOtherFilter": {
-      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n     * The set filter uses this to remove from the list,\n     * items that are no longer available due to the state of other filters (like Excel type filtering).\n     */",
-      "type": {
-        "arguments": { "rowNode": "IRowNode<TData>" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
     }
   },
   "ISideBar": {
@@ -18754,7 +18373,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "filterParams": {
-      "type": { "returnType": "IDateFilterParams", "optional": false }
+      "type": { "returnType": "DateFilterParams", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
@@ -19955,7 +19574,7 @@
       "type": { "returnType": "V | null | (() => string)", "optional": false }
     },
     "params": {
-      "type": { "returnType": "ISetFilterParams<any, V>", "optional": false }
+      "type": { "returnType": "SetFilterParams<any, V>", "optional": false }
     },
     "translate": {
       "type": {
@@ -19999,7 +19618,7 @@
       "type": { "returnType": "ValueService", "optional": false }
     },
     "filterParams": {
-      "type": { "returnType": "ISetFilterParams<any, V>", "optional": false }
+      "type": { "returnType": "SetFilterParams<any, V>", "optional": false }
     },
     "setIsLoading": {
       "type": {

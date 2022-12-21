@@ -4,6 +4,7 @@ import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isBrowserChrome, isBrowserEdge } from '../../../utils/browser';
+import { IFilterParams } from '../../../interfaces/iFilter';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'number'` */
@@ -20,6 +21,10 @@ export interface NumberFilterModel extends ISimpleFilterModel {
     filterTo?: number | null;
 }
 
+// internal type
+export type NumberFilterParams<TData = any> = INumberFilterParams & IFilterParams<TData>;
+
+// external type
 export interface INumberFilterParams extends IScalarFilterParams {
     /**
      * When specified, the input field will be of type `text` instead of `number`, and this will be used as a regex of all the characters that are allowed to be typed.
@@ -51,7 +56,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     @RefSelector('eValue-index0-2') private readonly eValueFrom2: AgInputTextField;
     @RefSelector('eValue-index1-2') private readonly eValueTo2: AgInputTextField;
 
-    private numberFilterParams: INumberFilterParams;
+    private numberFilterParams: NumberFilterParams;
 
     constructor() {
         super('numberFilter');
@@ -77,7 +82,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         };
     }
 
-    protected setParams(params: INumberFilterParams): void {
+    protected setParams(params: NumberFilterParams): void {
         this.numberFilterParams = params;
 
         const allowedCharPattern = this.getAllowedCharPattern();

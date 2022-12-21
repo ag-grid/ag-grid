@@ -100,17 +100,17 @@ export { RowHighlightPosition, RowPinnedType, IRowNode } from "./interfaces/iRow
 
 // filter
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
-export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilter";
+export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
-export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
+export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, MultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
 
-export { ProvidedFilter, IProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
-export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator, IFilterPlaceholderFunctionParams, FilterPlaceholderFunction } from "./filter/provided/simpleFilter";
-export { ScalarFilter, IScalarFilterParams } from "./filter/provided/scalarFilter";
+export { ProvidedFilter, IProvidedFilter, IProvidedFilterParams, ProvidedFilterParams } from "./filter/provided/providedFilter";
+export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, SimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator, IFilterPlaceholderFunctionParams, FilterPlaceholderFunction } from "./filter/provided/simpleFilter";
+export { ScalarFilter, IScalarFilterParams, ScalarFilterParams } from "./filter/provided/scalarFilter";
 
-export { NumberFilter, INumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";
-export { TextFilter, ITextFilterParams, TextFilterModel, TextFormatter } from "./filter/provided/text/textFilter";
-export { DateFilter, IDateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
+export { NumberFilter, INumberFilterParams, NumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";
+export { TextFilter, ITextFilterParams, TextFilterParams, TextFilterModel, TextFormatter } from "./filter/provided/text/textFilter";
+export { DateFilter, IDateFilterParams, DateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
 
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange, IFloatingFilterParent, IFloatingFilterParentCallback } from "./filter/floating/floatingFilter";
 export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';

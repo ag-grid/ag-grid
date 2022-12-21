@@ -1,11 +1,11 @@
 import { MultiFilter, } from './multiFilter';
 import {
     ColDef,
-    IMultiFilterParams,
+    MultiFilterParams,
     IMultiFilterModel,
     IClientSideRowModel,
     FilterManager,
-    IProvidedFilterParams,
+    ProvidedFilterParams,
     Column,
     UserComponentFactory,
     IRowModel,
@@ -45,7 +45,7 @@ describe('dummyTest', () => {
 
 /*
 function createFilter(filterParams: any = {}): MultiFilter {
-    const baseFilterParams: IProvidedFilterParams = {
+    const baseFilterParams: ProvidedFilterParams = {
         // @ts-ignore
         api: null,
         columnApi: null,
@@ -64,7 +64,7 @@ function createFilter(filterParams: any = {}): MultiFilter {
         .mockReturnValueOnce(AgPromise.resolve(filter1))
         .mockReturnValueOnce(AgPromise.resolve(filter2));
 
-    const params: IMultiFilterParams = {
+    const params: MultiFilterParams = {
         ...baseFilterParams,
         ...filterParams,
     };

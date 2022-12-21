@@ -133,7 +133,7 @@ The example below shows how you can access child filter instances and call metho
 
 ## Multi Filter Parameters
 
-<interface-documentation interfaceName='IMultiFilterParams' overrideSrc='filter-multi/resources/multi-filter.json' names='["filters", "readOnly"]' ></interface-documentation>
+<interface-documentation interfaceName='IMultiFilterParams' overrideSrc='filter-multi/resources/multi-filter.json'></interface-documentation>
 
 ### IMultiFilterDef
 

@@ -2,7 +2,7 @@ import {
     ColDef,
     IClientSideRowModel,
     ValueFormatterService,
-    ISetFilterParams,
+    SetFilterParams,
     Context,
     AgInputTextField,
     AgCheckbox,
@@ -69,7 +69,7 @@ beforeEach(() => {
 function createSetFilter(filterParams?: any): SetFilter<unknown> {
     const colDef: ColDef = {};
 
-    const params: ISetFilterParams = {
+    const params: SetFilterParams = {
         api: null,
         colDef,
         rowModel,

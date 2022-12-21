@@ -1,7 +1,7 @@
 import {
     IClientSideRowModel,
     Column,
-    ISetFilterParams,
+    SetFilterParams,
     AgPromise,
     SetFilterValues,
     SetFilterValuesFunc,
@@ -34,7 +34,7 @@ export interface SetValueModelParams<V> {
     gridOptionsService: GridOptionsService,
     columnModel: ColumnModel,
     valueService: ValueService,
-    filterParams: ISetFilterParams<any, V>,
+    filterParams: SetFilterParams<any, V>,
     setIsLoading: (loading: boolean) => void,
     translate: (key: keyof ISetFilterLocaleText) => string,
     caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
@@ -60,7 +60,7 @@ export class SetValueModel<V> implements IEventEmitter {
     private readonly convertValuesToStrings: boolean;
     private readonly caseSensitive: boolean;
     private readonly displayValueModel: ISetDisplayValueModel<V>;
-    private readonly filterParams: ISetFilterParams<any, V>;
+    private readonly filterParams: SetFilterParams<any, V>;
     private readonly setIsLoading: (loading: boolean) => void;
     private readonly translate: (key: keyof ISetFilterLocaleText) => string;
     private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;

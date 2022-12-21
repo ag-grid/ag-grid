@@ -9,7 +9,7 @@ import { IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/head
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IFilterDef, IFilterParams } from "../../interfaces/iFilter";
 import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
-import { ISetFilterParams } from "../../interfaces/iSetFilter";
+import { SetFilterParams } from "../../interfaces/iSetFilter";
 import { IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
 import { IToolPanelParams } from "../../interfaces/iToolPanel";
 import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRendererCtrl";
@@ -55,7 +55,7 @@ export type DefinitionObject =
     | ColDef
     | ColGroupDef
     | IFilterDef
-    | ISetFilterParams
+    | SetFilterParams
     | IRichCellEditorParams
     | ToolPanelDef
     | StatusPanelDef;
@@ -143,7 +143,7 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(params.colDef!, TooltipComponent, 'agTooltipComponent', params, true)!;
     }
 
-    public getSetFilterCellRendererDetails<TData, V>(def: ISetFilterParams<TData, V>, params: WithoutGridCommon<ISetFilterCellRendererParams>): UserCompDetails | undefined {
+    public getSetFilterCellRendererDetails<TData, V>(def: SetFilterParams<TData, V>, params: WithoutGridCommon<ISetFilterCellRendererParams>): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent, null, params);
     }
 

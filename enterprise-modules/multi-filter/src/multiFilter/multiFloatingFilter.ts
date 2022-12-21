@@ -8,7 +8,7 @@ import {
     Autowired,
     IFilterDef,
     AgPromise,
-    IMultiFilterParams,
+    MultiFilterParams,
     IMultiFilterModel,
     IFilter,
 } from '@ag-grid-community/core';
@@ -27,7 +27,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     public init(params: IFloatingFilterParams<MultiFilter>): AgPromise<void> {
         this.params = params;
 
-        const filterParams = params.filterParams as IMultiFilterParams;
+        const filterParams = params.filterParams as MultiFilterParams;
         const floatingFilterPromises: AgPromise<IFloatingFilterComp>[] = [];
 
         MultiFilter.getFilterDefs(filterParams).forEach((filterDef, index) => {

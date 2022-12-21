@@ -105,6 +105,29 @@ const gridOptions = {
 }
 </snippet>
 
+## Filter Values
+
+By default, the values supplied to the filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition as shown below. This is similar to using a [Value Getter](/value-getters), but is specific to the filter. This parameter is required when [filtering on row group columns](/grouping-filtering/#enabling-group-filtering).
+
+<api-documentation source='column-properties/properties.json' section='filtering' names='["filterValueGetter"]'></api-documentation>
+
+<snippet>
+const gridOptions = {  
+    columnDefs: [
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
+        { field: 'gold' },
+    ], 
+    autoGroupColumnDef: { 
+        // enables filtering on the group column
+        filter: true,
+        // supplies 'country' values to the filter 
+        filterValueGetter: params => params.data.country,                          
+    }, 
+    groupDisplayType: 'singleColumn',
+}
+</snippet>
+
 ## Filter Events
 
 Filtering causes the following events to be emitted:
