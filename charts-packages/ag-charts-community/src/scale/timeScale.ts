@@ -243,7 +243,7 @@ export class TimeScale extends ContinuousScale {
                 return this.niceDomain;
             }
             if (tickCount === 1) {
-                return this.niceDomain[1];
+                return this.niceDomain.slice(0, 1);
             }
         }
 
