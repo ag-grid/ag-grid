@@ -166,6 +166,7 @@ export class Pagination {
             }
             case 'vertical':
             default: {
+                this.previousButton.rotation = 0;
                 this.nextButton.rotation = Math.PI;
             }
         }
@@ -238,9 +239,19 @@ export class Pagination {
     }
 
     private updateLabel() {
-        const { currentPage, totalPages: pages } = this;
+        const {
+            currentPage,
+            totalPages: pages,
+            labelNode,
+            label: { color, fontStyle, fontWeight, fontSize, fontFamily },
+        } = this;
 
-        this.labelNode.text = `${currentPage + 1} / ${pages}`;
+        labelNode.text = `${currentPage + 1} / ${pages}`;
+        labelNode.fill = color;
+        labelNode.fontStyle = fontStyle;
+        labelNode.fontWeight = fontWeight;
+        labelNode.fontSize = fontSize;
+        labelNode.fontFamily = fontFamily;
     }
 
     private updateMarkers() {
