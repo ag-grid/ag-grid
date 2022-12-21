@@ -7,8 +7,8 @@ import Footer from 'components/footer/Footer';
 import Search from 'components/search/Search';
 import FrameworkSelector from 'components/FrameworkSelector';
 import favIcons from '../images/favicons';
-import logoType from '../images/ag-grid-logotype.svg';
-import logoMark from '../images/ag-grid-logomark.svg';
+import LogoType from '../images/inline-svgs/ag-grid-logotype.svg';
+import LogoMark from '../images/inline-svgs/ag-grid-logomark.svg';
 import styles from './index.module.scss';
 import './mailchimp.css';
 
@@ -66,8 +66,8 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
             <header className={styles.header}>
                 <div className={styles.header__wrapper}>
                     <a href="/" aria-label="Home" className={styles['header__logo']}>
-                        <img src={logoType} alt="AG Grid" style={{width: 154, height: 40}}/>
-                        <img src={logoMark} alt="AG Grid" style={{width: 64, height: 48}}/>
+                        <LogoType />
+                        <LogoMark />
                     </a>
 
                     <HeaderNav path={path}/>
