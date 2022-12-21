@@ -18,6 +18,10 @@
         padding-bottom: 6px;
         border: none;
         background-color: transparent;
+
+        @media screen and (min-width: 768px) {
+            display: none;
+        }
     }
 
     &__navbar-collapse {
@@ -43,7 +47,7 @@
                 text-decoration: none;
             }
 
-            @media screen and (min-width: 768px) {
+            @media screen and (min-width: 860px) {
                 font-size: 18px;
             }
         }
