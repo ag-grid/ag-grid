@@ -166,6 +166,7 @@ export class Pagination {
             }
             case 'vertical':
             default: {
+                this.previousButton.rotation = 0;
                 this.nextButton.rotation = Math.PI;
             }
         }
