@@ -31,13 +31,17 @@ main {
     &__wrapper {
         composes: container-lg my-2 px-0 d-flex from global;
     }
+}
 
-    &__logo {
-        composes: d-block from global;
+.header__logo {
+    display: block;
 
-        img {
-            height: 40px;
-        }
+    &:hover :global(.logomark) rect[class*="right"] {
+        animation-play-state: running;
+    }
+
+    &:not(:hover) :global(.logomark) rect[class*="right"] {
+        transform: translateX(0) !important;
     }
 }
 
