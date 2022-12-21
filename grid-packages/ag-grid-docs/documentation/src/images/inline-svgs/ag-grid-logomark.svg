@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="48" viewBox="0 0 64 48">
+<svg xmlns="http://www.w3.org/2000/svg" class="logomark" width="64" height="48" viewBox="0 0 64 48">
   <style>
-    .aqua { fill: #55b4c8; }
-    .orange { fill: #ff8c00; }
-    .red { fill: #f00; }
-    .grey { fill: #b4bebe; }
+    .logomark .aqua { fill: #55b4c8; }
+    .logomark .orange { fill: #ff8c00; }
+    .logomark .red { fill: #f00; }
+    .logomark .grey { fill: #b4bebe; }
   </style>
   
   <rect class="aqua right-1" x="51" y="10" width="7" height="8"/>
