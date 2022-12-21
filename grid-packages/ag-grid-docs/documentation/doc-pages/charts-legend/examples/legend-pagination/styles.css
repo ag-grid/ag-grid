@@ -1,0 +1,30 @@
+.wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.toolPanel {
+    text-align: center;
+    font-size: 12px;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+.spacer {
+    display: inline-block;
+    min-width: 20px;
+}
+
+.button--code {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.button-group {
+    white-space: nowrap;
+    display: inline-block;
+}
+
+#myChart {
+    height: 100%;
+}
+

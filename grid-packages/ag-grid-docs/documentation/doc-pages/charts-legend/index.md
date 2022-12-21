@@ -4,15 +4,7 @@ title: "Legend"
 
 A legend makes it easier to tell at a glance which series or series items correspond to which pieces of data. This section describes the legend options and layout behaviour.
 
-## Position and Visibility
-
-A legend can be positioned to any side of a chart using the `position` config:
-
-```js
-legend: {
-    position: 'right' // 'bottom', 'left', 'top'
-}
-```
+## Position
 
 A legend is shown by default but can be hidden using the `enabled` config:
 
@@ -22,26 +14,44 @@ legend: {
 }
 ```
 
-### Example: Legend Position and Visibility
+When enabled, it can be positioned to any side of a chart using the `position` config:
+
+```js
+legend: {
+    position: 'right' // 'bottom', 'left', 'top'
+}
+```
+
+### Example: Legend Position
 
 Notice how when you click on one of the buttons in the example to change the position of the legend:
 
 - the layout of the legend items also changes
 - the layout of the chart changes as well, with series moving around and growing/shrinking slightly to accommodate the legend
 
-<chart-example title='Legend Position and Visibility' name='legend-position' type='generated'></chart-example>
+<chart-example title='Legend Position' name='legend-position' type='generated'></chart-example>
 
-## Vertical Layout
+## Orientation
 
-Whenever the size of a chart changes, the legend layout is triggered. If the legend is vertical (positioned to the `'right'` or `'left'` of a chart), the layout algorithm tries to use the minimum number of columns possible to render all legend items using current constraints. Notice how the number of columns in a legend increases as the height of a chart shrinks.
+The legend can have a `vertical` or `horizontal` orientation. The arrangement of legend items can be configured using the `legend.orientation` property.
+
+### Vertical Orientation
+
+In the `vertical` orientation, the legend items are arranged using the minimum number of columns possible given the current dimension constraints.
+
+By default, when the legend is positioned to the `'right'` or `'left'` of a chart, it is rendered in a `vertical` orientation.
+The number of columns in a `vertical` legend increases as the height of a chart shrinks, as less legend items can be placed in a given column.
 
 ### Example: Vertical Legend Layout
 
 <chart-example title='Vertical Legend Layout' name='legend-layout-vertical' type='generated'></chart-example>
 
-## Horizontal Layout
+### Horizontal Layout
 
-If the legend is horizontal (positioned to the `'bottom'` or `'top'` of a chart), the layout algorithm tries to use the minimum possible number of rows. If a chart is not wide enough, the legend will keep subdividing its items into more rows until everything fits.
+If the legend is `horizontal`, the legend items are arranged using the minimum possible number of rows. If the legend is not wide enough, the items are divided into more rows until everything fits.
+
+By default, when the legend is positioned to the `'bottom'` or `'top'` of a chart, it is rendered in a `horizontal` orientation. The number of rows in a `horizontal` legend increases as the width of a chart shrinks, as less legend items can be placed in a given row.
+
 
 ### Example: Horizontal Legend Layout
 
@@ -49,7 +59,11 @@ If the legend is horizontal (positioned to the `'bottom'` or `'top'` of a chart)
 
 ## Constraints
 
-In addition to the width and height of the chart, the legend's layout is also affected by the amount of padding between and within the legend items. For example, `legend.item.paddingX` controls the amount of padding between adjacent horizontal legend items:
+The legend width and height can be constrained using the `legend.maxWidth` and `legend.maxHeight` properties.
+
+By default, the legend width and height will be a percentage of the chart width and height depending on the legend's orientation.
+
+In addition to `maxWidth` and `maxHeight`, the legend's layout is also affected by the amount of padding between the legend items. For example, `legend.item.paddingX` controls the amount of padding between adjacent horizontal legend items:
 
 ```js
 legend: {
@@ -87,7 +101,49 @@ Please refer to the example below to get a better idea of how the above configs 
 
 <chart-example title='Legend Constraints' name='legend-constraints' type='generated'></chart-example>
 
-## Fonts
+## Pagination
+
+If the legend items don't fit within the contraints, the items will be paginated and the pagination component will be dislayed.
+
+The pagination component can be customised using `legend.pagination`. For example, the pagination button markers can be made larger with `legend.pagination.marker`:
+
+```js
+legend: {
+    pagination: {
+        marker: {
+            size: 18
+        }
+    }
+}
+```
+
+`legend.pagination.activeStyle` and `legend.pagination.inactiveStyle` can be used to style the pagination buttons when in the active and inactive states.
+
+```js
+legend: {
+    pagination: {
+        activeStyle: {
+            fill: 'blue',
+            strokeWidth: 0,
+        },
+        inactiveStyle: {
+            fillOpcacity: 0,
+        }
+    }
+}
+```
+
+### Example: Legend Pagination
+
+- Initially the legend is positioned at the bottom of the chart so by default, the legend is rendered in the `horizontal` orientation.
+- `legend.maxHeight` is used to restrict the height of the legend, resulting in a single row of legend items spread across different pages.
+- The pagination component appears automatically when the legend items combined with their configured padding do not fit in the given width and height constraints.
+- `legend.pagination` is used to customise the styles of the pagination label and buttons.
+- You can switch between different legend positions using the buttons above the chart to see how the legend pagination component behaves.
+
+<chart-example title='Legend Pagination' name='legend-pagination' type='generated'></chart-example>
+
+## Labels
 
 There are a number of configs that affect the `fontSize`, `fontStyle`, `fontWeight`, `fontFamily`, and `color` of the legend item labels.
 
