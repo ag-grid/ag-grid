@@ -62,6 +62,7 @@ export class ComponentUtil {
     public static BOOLEAN_PROPERTIES = PropertyKeys.BOOLEAN_PROPERTIES;
     public static FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
     public static ALL_PROPERTIES = PropertyKeys.ALL_PROPERTIES;
+    public static ALL_PROPERTIES_SET = new Set(PropertyKeys.ALL_PROPERTIES);
 
     private static getCoercionLookup() {
         let coercionLookup = {} as any;

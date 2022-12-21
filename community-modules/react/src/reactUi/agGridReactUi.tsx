@@ -146,7 +146,8 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
         const debugLogging = !!nextProps.debug;
 
         Object.keys(nextProps).forEach(propKey => {
-            if (_.includes(ComponentUtil.ALL_PROPERTIES, propKey)) {
+            console.count('check prop')
+            if (ComponentUtil.ALL_PROPERTIES_SET.has(propKey as any)) {
                 if (prevProps[propKey] !== nextProps[propKey]) {
                     if (debugLogging) {
                         console.log(`agGridReact: [${propKey}] property changed`);
