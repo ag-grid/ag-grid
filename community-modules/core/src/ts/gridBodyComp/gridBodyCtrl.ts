@@ -266,6 +266,7 @@ export class GridBodyCtrl extends BeanStub {
         listener();
 
         this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
+        this.addManagedPropertyListener('animateRows', listener);
     }
 
     public getGridBodyElement(): HTMLElement {
