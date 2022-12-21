@@ -927,6 +927,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 return;
             }
 
+            label.visible = true;
+
             const { width = 0, height = 0 } = bbox;
 
             const { translationY } = datum;
