@@ -35,16 +35,16 @@
 
     &__link {
         composes: nav-link from global;
-        position: relative;
 
         a {
-            color: white;
+            position: relative;
             font-weight: 500;
             letter-spacing: 0.01em;
+            color: white;
             
             &:hover {
-                color: white;
                 text-decoration: none;
+                color: white;
             }
 
             @media screen and (min-width: 860px) {
@@ -52,17 +52,29 @@
             }
         }
 
-        &--active {
-            @include media-breakpoint-up(md) {
-                &::after {
-                    content: "";
-                    height: 0.2rem;
-                    width: 100%;
-                    background-color: #fff;
-                    position: absolute;
-                    left: 0;
-                    bottom: -0.7rem;
-                }
+        @media screen and (min-width: 768px) {
+            a::after {
+                content: '';
+                position: absolute;
+                height: 3px;
+                bottom: 0;
+                left: 24px;
+                right: 24px;
+                background-color: white;
+                opacity: 0;
+                transform: scaleX(0);
+                transition: transform 0.33s ease-in-out,
+                            opacity 0.33s ease-in-out;
+            }
+
+            &:hover a::after {
+                opacity: 0.33;
+                transform: scaleX(1);
+            }
+    
+            &--active a::after {
+                opacity: 1 !important;
+                transform: scaleX(1);
             }
         }
     }
