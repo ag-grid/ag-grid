@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {withPrefix} from 'gatsby';
+import MenuIcon from '../images/inline-svgs/menu-icon.svg';
 import classnames from 'classnames';
 import styles from './HeaderNav.module.scss';
 
@@ -63,7 +64,8 @@ const HeaderExpandButton = () => (
         aria-controls="main-nav"
         aria-expanded="false"
         aria-label="Toggle navigation">
-        <span className={styles['header-nav__button-icon']}></span>
+
+        <MenuIcon />
     </button>
 );
 

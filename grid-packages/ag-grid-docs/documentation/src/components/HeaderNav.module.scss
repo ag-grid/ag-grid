@@ -12,12 +12,12 @@
     }
 
     &__button {
-        composes: navbar-toggler from global;
+        appearance: none;
         margin-left: auto;
-
-        &-icon {
-            composes: navbar-toggler-icon from global;
-        }
+        padding-top: 6px;
+        padding-bottom: 6px;
+        border: none;
+        background-color: transparent;
     }
 
     &__navbar-collapse {
