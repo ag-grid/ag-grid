@@ -1,6 +1,5 @@
-import { DetailGridInfo } from "../gridApi";
 import { Column } from "../entities/column";
-import { AgEvent } from "../events";
+import { AgEvent, SelectionEventType } from "../events";
 
 export type RowNodeEventType =
     'rowSelected' |
@@ -36,6 +35,8 @@ export interface SetSelectedParams {
     rangeSelect?: boolean;
     // used in group selection, if true, filtered out children will not be selected
     groupSelectsFiltered?: boolean;
+    // event source, if from an event
+    source: SelectionEventType;
 }
 
 export interface RowNodeEvent<TData = any> extends AgEvent {
@@ -167,8 +168,9 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * @param newValue -`true` for selection, `false` for deselection.
      * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`
      * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`
+     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`
      */
-    setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean): void;
+    setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventType): void;
 
     /** Returns:
      * - `true` if node is selected,

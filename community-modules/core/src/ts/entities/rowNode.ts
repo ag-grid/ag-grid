@@ -1,4 +1,4 @@
-import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent } from "../events";
+import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent, SelectionEventType } from "../events";
 import { EventService } from "../eventService";
 import { DetailGridInfo } from "../gridApi";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
@@ -348,7 +348,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
             const isGroupSelectsChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
             if (isGroupSelectsChildren) {
                 const selected = this.calculateSelectedFromChildren();
-                this.setSelected(selected ?? false);
+                this.setSelectedParams({ newValue: selected ?? false, source: 'parentSelected' });
             }
         }
     }
@@ -859,12 +859,13 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
      * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired.
      */
-    public setSelected(newValue: boolean, clearSelection: boolean = false, suppressFinishActions: boolean = false) {
+    public setSelected(newValue: boolean, clearSelection: boolean = false, suppressFinishActions: boolean = false, source: SelectionEventType = 'api') {
         this.setSelectedParams({
             newValue,
             clearSelection,
             suppressFinishActions,
-            rangeSelect: false
+            rangeSelect: false,
+            source
         });
     }
 
@@ -886,6 +887,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const rangeSelect = params.rangeSelect === true;
         // groupSelectsFiltered only makes sense when group selects children
         const groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
+        const source = params.source ?? 'api';
 
         if (this.id === undefined) {
             console.warn('AG Grid: cannot select node until id for node is known');
@@ -907,7 +909,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
             const newRowClicked = this.beans.selectionService.getLastSelectedNode() !== this;
             const allowMultiSelect = this.beans.gridOptionsService.get('rowSelection') === 'multiple';
             if (newRowClicked && allowMultiSelect) {
-                const nodesChanged = this.doRowRangeSelection(params.newValue);
+                const nodesChanged = this.doRowRangeSelection(params.newValue, source);
                 this.beans.selectionService.setLastSelectedNode(this);
                 return nodesChanged;
             }
@@ -922,31 +924,32 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const skipThisNode = groupSelectsFiltered && this.group;
 
         if (!skipThisNode) {
-            const thisNodeWasSelected = this.selectThisNode(newValue, params.event);
+            const thisNodeWasSelected = this.selectThisNode(newValue, params.event, source);
             if (thisNodeWasSelected) {
                 updatedCount++;
             }
         }
 
         if (groupSelectsChildren && this.childrenAfterGroup?.length) {
-            updatedCount += this.selectChildNodes(newValue, groupSelectsFiltered);
+            updatedCount += this.selectChildNodes(newValue, groupSelectsFiltered, source);
         }
 
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
             const clearOtherNodes = newValue && (clearSelection || this.beans.gridOptionsService.get('rowSelection') !== 'multiple');
             if (clearOtherNodes) {
-                updatedCount += this.beans.selectionService.clearOtherNodes(this);
+                updatedCount += this.beans.selectionService.clearOtherNodes(this, source);
             }
 
             // only if we selected something, then update groups and fire events
             if (updatedCount > 0) {
-                this.beans.selectionService.updateGroupsFromChildrenSelections();
+                this.beans.selectionService.updateGroupsFromChildrenSelections(source);
 
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
                 const event: WithoutGridCommon<SelectionChangedEvent> = {
-                    type: Events.EVENT_SELECTION_CHANGED
+                    type: Events.EVENT_SELECTION_CHANGED,
+                    source
                 };
                 this.beans.eventService.dispatchEvent(event);
             }
@@ -963,7 +966,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    private doRowRangeSelection(value: boolean = true): number {
+    private doRowRangeSelection(value: boolean = true, source: SelectionEventType): number {
         const groupsSelectChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
         const lastSelectedNode = this.beans.selectionService.getLastSelectedNode();
         const nodesToSelect = this.beans.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
@@ -973,16 +976,17 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         nodesToSelect.forEach(rowNode => {
             if (rowNode.group && groupsSelectChildren || (value === false && this === rowNode)) { return; }
 
-            const nodeWasSelected = rowNode.selectThisNode(value);
+            const nodeWasSelected = rowNode.selectThisNode(value, undefined, source);
             if (nodeWasSelected) {
                 updatedCount++;
             }
         });
 
-        this.beans.selectionService.updateGroupsFromChildrenSelections();
+        this.beans.selectionService.updateGroupsFromChildrenSelections(source);
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: Events.EVENT_SELECTION_CHANGED
+            type: Events.EVENT_SELECTION_CHANGED,
+            source
         };
 
         this.beans.eventService.dispatchEvent(event);
@@ -1003,7 +1007,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return false;
     }
 
-    public selectThisNode(newValue?: boolean, e?: Event): boolean {
+    public selectThisNode(newValue?: boolean, e?: Event, source: SelectionEventType = 'api'): boolean {
 
         // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
         // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
@@ -1015,11 +1019,12 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.selected = newValue;
 
         if (this.eventService) {
-            this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
+            this.dispatchLocalEvent(Object.assign({}, this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED), {source}));
         }
 
         const event: RowSelectedEvent = Object.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED), {
-            event: e || null
+            event: e || null,
+            source
         });
 
         this.beans.eventService.dispatchEvent(event);
@@ -1027,7 +1032,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return true;
     }
 
-    private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): number {
+    private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean, source: SelectionEventType): number {
         const children = groupSelectsFiltered ? this.childrenAfterAggFilter : this.childrenAfterGroup;
 
         if (missing(children)) { return 0; }
@@ -1039,7 +1044,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                 newValue: newValue,
                 clearSelection: false,
                 suppressFinishActions: true,
-                groupSelectsFiltered
+                groupSelectsFiltered,
+                source
             });
         }
 

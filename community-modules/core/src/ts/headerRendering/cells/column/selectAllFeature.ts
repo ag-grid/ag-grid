@@ -187,9 +187,9 @@ export class SelectAllFeature extends BeanStub {
         const value = this.cbSelectAll.getValue();
 
         if (value) {
-            this.selectionService.selectAllRowNodes(this.filteredOnly);
+            this.selectionService.selectAllRowNodes('uiSelectAll', this.filteredOnly);
         } else {
-            this.selectionService.deselectAllRowNodes(this.filteredOnly);
+            this.selectionService.deselectAllRowNodes('uiSelectAll', this.filteredOnly);
         }
     }
 

@@ -5590,7 +5590,11 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "SelectionEventType": {},
   "SelectionChangedEvent": {
+    "source": {
+      "type": { "returnType": "SelectionEventType", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -7209,6 +7213,9 @@
     }
   },
   "RowSelectedEvent": {
+    "source": {
+      "type": { "returnType": "SelectionEventType", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
@@ -14937,6 +14944,9 @@
     "rangeSelect": { "type": { "returnType": "boolean", "optional": true } },
     "groupSelectsFiltered": {
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "source": {
+      "type": { "returnType": "SelectionEventType", "optional": false }
     }
   },
   "RowNodeEvent": {
@@ -15130,12 +15140,13 @@
   },
   "IRowNode": {
     "setSelected": {
-      "description": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     */",
+      "description": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
       "type": {
         "arguments": {
           "newValue": "boolean",
           "clearSelection?": "boolean",
-          "suppressFinishActions?": "boolean"
+          "suppressFinishActions?": "boolean",
+          "source?": "SelectionEventType"
         },
         "returnType": "void",
         "optional": false

@@ -681,22 +681,22 @@ export class GridApi<TData = any> {
 
     /** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded. */
     public selectAll() {
-        this.selectionService.selectAllRowNodes();
+        this.selectionService.selectAllRowNodes('selectAll');
     }
 
     /** Clear all row selections, regardless of filtering. */
     public deselectAll() {
-        this.selectionService.deselectAllRowNodes();
+        this.selectionService.deselectAllRowNodes('deselectAll');
     }
 
     /** Select all filtered rows. */
     public selectAllFiltered() {
-        this.selectionService.selectAllRowNodes(true);
+        this.selectionService.selectAllRowNodes('selectAllFiltered', true);
     }
 
     /** Clear all filtered selections. */
     public deselectAllFiltered() {
-        this.selectionService.deselectAllRowNodes(true);
+        this.selectionService.deselectAllRowNodes('deselectAllFiltered', true);
     }
 
     /**

@@ -140,7 +140,7 @@ export class ClientSideNodeManager {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
             nodesToUnselect.forEach(rowNode => {
-                rowNode.setSelected(false, false, true);
+                rowNode.setSelected(false, false, true, 'rowDataChanged');
             });
         }
 
@@ -148,11 +148,12 @@ export class ClientSideNodeManager {
         // a new node was inserted, so a parent that was previously selected (as all
         // children were selected) should not be tri-state (as new one unselected against
         // all other selected children).
-        this.selectionService.updateGroupsFromChildrenSelections();
+        this.selectionService.updateGroupsFromChildrenSelections('rowDataChanged');
 
         if (selectionChanged) {
             const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED
+                type: Events.EVENT_SELECTION_CHANGED,
+                source: 'rowDataChanged'
             };
             this.eventService.dispatchEvent(event);
         }
