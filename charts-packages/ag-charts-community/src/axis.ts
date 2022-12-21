@@ -601,8 +601,22 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const visibleFn = (node: Group) => {
             const min = Math.floor(requestedRangeMin);
             const max = Math.ceil(requestedRangeMax);
-            const visible = min !== max && node.translationY >= min && node.translationY <= max;
-            anyTickVisible = visible || anyTickVisible;
+            if (min === max) {
+                return false;
+            }
+
+            // Fix an effect of rounding error
+            if (node.translationY >= min - 1 && node.translationY < min) {
+                node.translationY = min;
+            }
+            if (node.translationY > max && node.translationY <= max + 1) {
+                node.translationY = max;
+            }
+
+            const visible = node.translationY >= min && node.translationY <= max;
+            if (visible) {
+                anyTickVisible = true;
+            }
             return visible;
         };
 
@@ -910,12 +924,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
             label.x = labelX;
             label.rotationCenterX = labelX;
             label.rotation = combinedRotation;
-
-            const userHidden = label.text === '' || label.text == undefined;
-
-            if (userHidden) {
-                return;
-            }
 
             // Text.computeBBox() does not take into account any of the transformations that have been applied to the label nodes, only the width and height are useful.
             // Rather than taking into account all transformations including those of parent nodes which would be the result of `computeTransformedBBox()`, giving the x and y in the entire axis coordinate space,
