@@ -558,6 +558,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
         'series[].innerLabels[]': DoughnutInnerLabel,
     },
     allowedTypes: {
+        'legend.pagination.marker.shape': ['primitive', 'function'],
         'series[].marker.shape': ['primitive', 'function'],
         'axis[].tick.count': ['primitive', 'class-instance'],
     },
