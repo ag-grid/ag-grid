@@ -2,22 +2,34 @@ $mobile-header-breakpoint: 768px;
 
 .header-nav {
     composes: navbar navbar-expand-md navbar-dark px-0 py-0 from global;
+    
+    width: 100%;
     margin-left: auto;
+    background-color: #002952;
+
+    @media screen and (min-width: $mobile-header-breakpoint) {
+        width: unset;
+        margin-left: unset;
+        background-color: unset;
+    }
 
     &__wrapper {
         composes: d-flex flex-column-reverse flex-md-row px-md-0 from global;
-        text-align: right;
+
+        width: 100%;
     }
 
     &__widgets {
         composes: d-flex from global;
+
+        margin-left: auto;
     }
 
     &__button {
         appearance: none;
+        width: 64px;
+        height: 64px;
         margin-left: auto;
-        padding-top: 6px;
-        padding-bottom: 6px;
         border: none;
         background-color: transparent;
 
@@ -40,39 +52,11 @@ $mobile-header-breakpoint: 768px;
     }
 
     &__link {
-        composes: nav-link from global;
-
-        a {
-            position: relative;
-            font-weight: 500;
-            letter-spacing: 0.01em;
-            color: white;
-            
-            &:hover {
-                text-decoration: none;
-                color: white;
-            }
-
-            @media screen and (min-width: 860px) {
-                font-size: 18px;
-            }
+        &:not(:last-child) {
+          border-bottom: 1px solid #003264;
         }
 
         @media screen and (min-width: $mobile-header-breakpoint) {
-            a::after {
-                content: '';
-                position: absolute;
-                height: 3px;
-                bottom: 0;
-                left: 24px;
-                right: 24px;
-                background-color: white;
-                opacity: 0;
-                transform: scaleX(0);
-                transition: transform 0.33s ease-in-out,
-                            opacity 0.33s ease-in-out;
-            }
-
             &:hover a::after {
                 opacity: 0.33;
                 transform: scaleX(1);
@@ -86,6 +70,39 @@ $mobile-header-breakpoint: 768px;
     }
 
     &__link-anchor {
-        composes: py-2 px-md-4 from global;
+        display: block;
+        position: relative;
+        padding: 10px 14px 11px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        color: white;
+        
+        &:hover {
+            text-decoration: none;
+            color: white;
+        }
+
+        @media screen and (min-width: $mobile-header-breakpoint) {
+            padding-left: 24px;
+            padding-right: 24px;
+
+            &::after {
+              content: '';
+              position: absolute;
+              height: 3px;
+              bottom: 6px;
+              left: 24px;
+              right: 24px;
+              background-color: white;
+              opacity: 0;
+              transform: scaleX(0);
+              transition: transform 0.33s ease-in-out,
+                          opacity 0.33s ease-in-out;
+          }
+        }
+
+        @media screen and (min-width: 860px) {
+            font-size: 18px;
+        }
     }
 }

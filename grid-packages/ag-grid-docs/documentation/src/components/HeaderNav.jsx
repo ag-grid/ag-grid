@@ -70,16 +70,18 @@ const HeaderExpandButton = () => (
 );
 
 const HeaderNav = ({path}) => (
-    <nav className={styles['header-nav']}>
-        <div className={styles['header-nav__wrapper']}>
-            <div className={styles['header-nav__navbar-collapse']} id="main-nav">
-                <HeaderLinks path={path}/>
-            </div>
-            <div className={styles['header-nav__widgets']}>
-                <HeaderExpandButton/>
-            </div>
-        </div>
-    </nav>
+    <>
+      <div className={styles['header-nav__widgets']}>
+          <HeaderExpandButton/>
+      </div>
+      <nav className={styles['header-nav']}>
+          <div className={styles['header-nav__wrapper']}>
+              <div className={styles['header-nav__navbar-collapse']} id="main-nav">
+                  <HeaderLinks path={path}/>
+              </div>
+          </div>
+      </nav>
+    </>
 );
 
 export default HeaderNav;
