@@ -1645,6 +1645,12 @@
             "showInCollapsed": true
           },
           {
+            "title": "Chart Tool Panels",
+            "url": "/integrated-charts-chart-tool-panels/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "Chart Events",
             "url": "/integrated-charts-events/",
             "enterprise": true

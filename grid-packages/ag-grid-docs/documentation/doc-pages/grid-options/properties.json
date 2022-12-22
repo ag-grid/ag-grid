@@ -351,7 +351,7 @@
         "suppressChartToolPanelsButton": {
             "more": {
                 "name": "Suppress Chart Tool Panels Button",
-                "url": "/integrated-charts-toolbar/#chart-tool-panels-button"
+                "url": "/integrated-charts-chart-tool-panels/#showing-legacy-chart-toolbar"
             }
         },
         "getChartToolbarItems": {
