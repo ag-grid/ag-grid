@@ -13,8 +13,12 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
 
+    let unmount = false;
+    const didUnmount = () => unmount;
+
     useEffect(() => {
-        updateFiles(exampleInfo, setFiles, setActiveFile);
+        updateFiles(exampleInfo, setFiles, setActiveFile, didUnmount);
+        return () => unmount = true;
     }, [exampleInfo]);
 
     const keys = files ? Object.keys(files).sort() : [];
@@ -38,12 +42,14 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
     </div>;
 };
 
-const updateFiles = (exampleInfo, setFiles, setActiveFile) => {
+const updateFiles = (exampleInfo, setFiles, setActiveFile, didUnmount) => {
     if (isServerSideRendering()) { return; }
 
     const { framework, internalFramework } = exampleInfo;
 
     getExampleFiles(exampleInfo).then(files => {
+        if (didUnmount()) { return; }
+
         setFiles(files);
 
         const entryFile = getEntryFile(framework, internalFramework);
