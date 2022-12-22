@@ -44,6 +44,9 @@ export type ColumnEventName =
     'columnValueChanged';
 
 let instanceIdSequence = 0;
+export function getNextColInstanceId() {
+    return instanceIdSequence++;
+}
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -88,8 +91,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     private readonly colId: any;
     private colDef: ColDef;
 
-    // used by React (and possibly other frameworks) as key for rendering
-    private instanceId = instanceIdSequence++;
+    // used by React (and possibly other frameworks) as key for rendering. also used to
+    // identify old vs new columns for destroying cols when no longer used.
+    private instanceId = getNextColInstanceId();
 
     // We do NOT use this anywhere, we just keep a reference. this is to check object equivalence
     // when the user provides an updated list of columns - so we can check if we have a column already
@@ -330,12 +334,15 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         if (this.gridOptionsService.isTreeData()) {
             const itemsNotAllowedWithTreeData: (keyof ColDef)[] = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
-            itemsNotAllowedWithTreeData.forEach(item => {
-                if (exists(colDefAny[item])) {
-                    warnOnce(`AG Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`, 'TreeDataCannotRowGroup');
-                }
-            });
+            const itemsUsed = itemsNotAllowedWithTreeData.filter(x => exists(colDefAny[x]));
+            if (itemsUsed.length > 0) {
+                warnOnce(`AG Grid: ${itemsUsed.join()} is not possible when doing tree data, your column definition should not have ${itemsUsed.join()}`, 'TreeDataCannotRowGroup');
+            }
         }
+
+        exists(colDefAny['menuTabs']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'menuTabs');
+        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams');
+        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.ColumnToolPanelModule, 'columnMenuParams');
 
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');

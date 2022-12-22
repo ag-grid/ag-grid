@@ -29,7 +29,7 @@ export class CartesianChart extends Chart {
     async performLayout() {
         this.scene.root!.visible = true;
 
-        const { width, height, legend, navigator } = this;
+        const { width, height, legend, navigator, padding } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
 
@@ -48,22 +48,25 @@ export class CartesianChart extends Chart {
             switch (this.legend.position) {
                 case 'right':
                     shrinkRect.width -= legendPadding;
+                    legend.translationX -= padding.right;
                     break;
                 case 'bottom':
                     shrinkRect.height -= legendPadding;
+                    legend.translationY -= padding.bottom;
                     break;
                 case 'left':
                     shrinkRect.x += legendPadding;
                     shrinkRect.width -= legendPadding;
+                    legend.translationX += padding.left;
                     break;
                 case 'top':
                     shrinkRect.y += legendPadding;
                     shrinkRect.height -= legendPadding;
+                    legend.translationY += padding.top;
                     break;
             }
         }
 
-        const { padding } = this;
         shrinkRect.x += padding.left;
         shrinkRect.width -= padding.left + padding.right;
 

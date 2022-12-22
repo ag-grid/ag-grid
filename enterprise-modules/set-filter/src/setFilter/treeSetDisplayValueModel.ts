@@ -14,6 +14,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     private readonly selectAllItem: SetFilterModelTreeItem = {
         depth: 0,
         filterPasses: true,
+        available: true,
         treeKey: SetFilterDisplayValue.SELECT_ALL,
         children: this.allDisplayedItemsTree,
         expanded: true,
@@ -26,12 +27,20 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         private readonly treeDataOrGrouping?: boolean
     ) {};
 
-    public updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>, fromMiniFilter?: boolean): void {
-        if (fromMiniFilter) {
+    public updateDisplayedValuesToAllAvailable(
+        getValue: (key: string | null) => V,
+        allKeys: Iterable<string | null> | undefined,
+        availableKeys: Set<string | null>,
+        source: 'reload' | 'otherFilter' | 'miniFilter'
+    ): void {
+        if (source === 'reload') {
+            this.generateItemTree(getValue, allKeys!, availableKeys);
+        } else if (source === 'otherFilter') {
+            this.updateAvailable(availableKeys);
+            this.updateExpandAll();
+        } else if (source === 'miniFilter') {
             this.resetFilter();
             this.updateExpandAll();
-        } else {
-            this.generateItemTree(getValue, availableKeys);
         }
 
         this.flattenItems();
@@ -39,14 +48,16 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     public updateDisplayedValuesToMatchMiniFilter(
         getValue: (key: string | null) => V,
-        availableKeys: Iterable<string | null>,
+        allKeys: Iterable<string | null> | undefined, 
+        availableKeys: Set<string | null>,
         matchesFilter: (valueToCheck: string | null) => boolean,
         nullMatchesFilter: boolean,
-        fromMiniFilter?: boolean
+        source: 'reload' | 'otherFilter' | 'miniFilter'
     ): void {
-        // if it's just the mini filter being updated, we don't need to rebuild the full list of displayed items
-        if (!fromMiniFilter) {
-            this.generateItemTree(getValue, availableKeys);
+        if (source === 'reload') {
+            this.generateItemTree(getValue, allKeys!, availableKeys);
+        } else if (source === 'otherFilter') {
+            this.updateAvailable(availableKeys);
         }
 
         this.updateFilter(matchesFilter, nullMatchesFilter);
@@ -55,17 +66,18 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         this.flattenItems();
     }
 
-    private generateItemTree(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>): void {
+    private generateItemTree(getValue: (key: string | null) => V, allKeys: Iterable<string | null>, availableKeys: Set<string | null>): void {
         this.allDisplayedItemsTree = [];
         this.groupsExist = false;
         
         const treeListPathGetter = this.getTreeListPathGetter(getValue, availableKeys);
-        for (let key of availableKeys) {
+        for (let key of allKeys) {
             const value = getValue(key)!;
             const dataPath = treeListPathGetter(value) ?? [null];
             if (dataPath.length > 1) {
                 this.groupsExist = true;
             }
+            const available = availableKeys.has(key);
             let children: SetFilterModelTreeItem[] | undefined = this.allDisplayedItemsTree;
             let item: SetFilterModelTreeItem | undefined;
             dataPath.forEach((treeKey, depth) => {
@@ -75,7 +87,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                 }
                 item = children.find(child => child.treeKey?.toUpperCase() === treeKey?.toUpperCase());
                 if (!item) {
-                    item = { treeKey, depth, filterPasses: true, expanded: true };
+                    item = { treeKey, depth, filterPasses: true, expanded: true, available };
                     if (depth === dataPath.length - 1) {
                         item.key = key;
                     }
@@ -112,7 +124,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         this.activeDisplayedItemsFlat = [];
         const recursivelyFlattenDisplayedItems = (items: SetFilterModelTreeItem[]) => {
             items.forEach(item => {
-                if (!item.filterPasses) { return; }
+                if (!item.filterPasses || !item.available) { return; }
                 this.activeDisplayedItemsFlat.push(item);
                 if (item.children && item.expanded) {
                     recursivelyFlattenDisplayedItems(item.children)
@@ -138,6 +150,9 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     private updateFilter(matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean): void {
         const passesFilter = (item: SetFilterModelTreeItem) => {
+            if (!item.available) {
+                return false;
+            }
             if (item.treeKey == null) {
                 return nullMatchesFilter;
             }
@@ -145,21 +160,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
             return matchesFilter(this.formatter(item.treeKey));
         };
 
-        const recursiveFilterCheck = (item: SetFilterModelTreeItem, parentPasses: boolean) => {
-            let atLeastOneChildPassed = false;
-            if (item.children) {
-                item.children.forEach(child => {
-                    const childPasses = recursiveFilterCheck(child, parentPasses || passesFilter(item));
-                    atLeastOneChildPassed = atLeastOneChildPassed || childPasses;
-                });
-            }
-
-            const filterPasses = parentPasses || atLeastOneChildPassed || passesFilter(item);
-            item.filterPasses = filterPasses;
-            return filterPasses;
-        };
-
-        this.allDisplayedItemsTree.forEach(item => recursiveFilterCheck(item, false));
+        this.allDisplayedItemsTree.forEach(item => this.recursiveItemCheck(item, false, passesFilter, 'filterPasses'));
     }
 
     public getDisplayedValueCount(): number {
@@ -230,7 +231,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     private updateExpandAll(): void {
         const recursiveExpansionCheck = (items: SetFilterModelTreeItem[], someTrue: boolean, someFalse: boolean): boolean | undefined => {
             for (const item of items) {
-                if (!item.filterPasses || !item.children) {
+                if (!item.filterPasses || !item.available || !item.children) {
                     continue;
                 }
                 // indeterminate state only exists for expand all, so don't need to check for the current item
@@ -254,5 +255,30 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
         const item = this.getSelectAllItem();
         item.expanded = recursiveExpansionCheck(item.children!, false, false);
+    }
+
+    private recursiveItemCheck(
+        item: SetFilterModelTreeItem,
+        parentPasses: boolean,
+        checkFunction: (item: SetFilterModelTreeItem) => boolean,
+        itemProp: 'filterPasses' | 'available'
+    ): boolean {
+        let atLeastOneChildPassed = false;
+            if (item.children) {
+                item.children.forEach(child => {
+                    const childPasses = this.recursiveItemCheck(child, parentPasses || checkFunction(item), checkFunction, itemProp);
+                    atLeastOneChildPassed = atLeastOneChildPassed || childPasses;
+                });
+            }
+
+            const itemPasses = parentPasses || atLeastOneChildPassed || checkFunction(item);
+            item[itemProp] = itemPasses;
+            return itemPasses;
+    }
+
+    private updateAvailable(availableKeys: Set<string | null>) {
+        const isAvailable = (item: SetFilterModelTreeItem) => availableKeys.has(item.treeKey);
+
+        this.allDisplayedItemsTree.forEach(item => this.recursiveItemCheck(item, false, isAvailable, 'available'));
     }
 }

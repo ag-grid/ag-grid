@@ -8075,6 +8075,7 @@
     "meta": {},
     "type": {
       "isVisible()": "boolean",
+      "getInstanceId()": "number",
       "getColumnGroupShow()": "ColumnGroupShowType | undefined",
       "getId()": "string",
       "setOriginalParent(originalParent: ProvidedColumnGroup | null)": "void"
@@ -11188,14 +11189,18 @@
     "type": {
       "getRowCount()": "number",
       "getRow(index: number)": "any",
-      "isRowSelected?(index: number)": "boolean | undefined"
+      "isRowSelected?(index: number)": "boolean | undefined",
+      "areRowsEqual?(oldRow: any, newRow: any)": "boolean"
+    },
+    "docs": {
+      "areRowsEqual?(oldRow: any, newRow: any)": "/** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */"
     }
   },
   "ISetDisplayValueModel": {
     "meta": { "typeParams": ["V"] },
     "type": {
-      "updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>, fromMiniFilter?: boolean)": "void",
-      "updateDisplayedValuesToMatchMiniFilter(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>, matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean, fromMiniFilter?: boolean)": "void",
+      "updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, allKeys: Iterable<string | null> | undefined, availableKeys: Set<string | null>, source: 'reload' | 'otherFilter' | 'miniFilter')": "void",
+      "updateDisplayedValuesToMatchMiniFilter(getValue: (key: string | null) => V, allKeys: Iterable<string | null> | undefined, availableKeys: Set<string | null>, matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean, source: 'reload' | 'otherFilter' | 'miniFilter')": "void",
       "getDisplayedValueCount()": "number",
       "getDisplayedItem(index: number)": "string | SetFilterModelTreeItem | null",
       "getSelectAllItem()": "string | SetFilterModelTreeItem",
@@ -11212,6 +11217,7 @@
       "treeKey": "string | null",
       "depth": "number",
       "filterPasses": "boolean",
+      "available": "boolean",
       "expanded?": "boolean",
       "children?": "SetFilterModelTreeItem[]",
       "key?": "string | null"
@@ -11229,13 +11235,21 @@
     }
   },
   "SetFilterListItemSelectionChangedEvent": {
-    "meta": {},
-    "type": { "isSelected": "boolean", "type": "string" },
+    "meta": {
+      "typeParams": [
+        "I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null"
+      ]
+    },
+    "type": { "isSelected": "boolean", "item": "I", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "SetFilterListItemExpandedChangedEvent": {
-    "meta": {},
-    "type": { "isExpanded": "boolean", "type": "string" },
+    "meta": {
+      "typeParams": [
+        "I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null"
+      ]
+    },
+    "type": { "isExpanded": "boolean", "item": "I", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "SetFilterListItemParams": {
@@ -11246,6 +11260,7 @@
       "params": "ISetFilterParams<any, V>",
       "translate": "(key: keyof ISetFilterLocaleText) => string",
       "valueFormatter": "(params: ValueFormatterParams) => string",
+      "item": "SetFilterModelTreeItem | string | null",
       "isSelected": "boolean | undefined",
       "isTree?": "boolean",
       "depth?": "number",

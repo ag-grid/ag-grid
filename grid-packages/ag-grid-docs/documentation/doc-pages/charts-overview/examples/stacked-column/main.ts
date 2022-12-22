@@ -88,8 +88,10 @@ const options: AgChartOptions = {
     },
   ],
   legend: {
-    spacing: 40,
     position: "bottom",
+  },
+  padding: {
+    bottom: 40,
   },
 }
 

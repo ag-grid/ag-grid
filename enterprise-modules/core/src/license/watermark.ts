@@ -29,12 +29,12 @@ export class WatermarkComp extends Component {
         const eDocument = this.gridOptionsService.getDocument();
         const win = (eDocument.defaultView || window);
         const loc = win.location;
-        const { hostname = '', pathname } = loc;
+        const { pathname } = loc;
 
         const isDisplayWatermark = this.licenseManager.isDisplayWatermark();
-        const isWhiteListURL = hostname.match('^(?:127\.0\.0\.1|localhost|(?:\w+\.)?ag-grid\.com)$') != null;
+        
         const isForceWatermark = pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
 
-        return isForceWatermark || (isDisplayWatermark && !isWhiteListURL);
+        return isForceWatermark || isDisplayWatermark;
     }
 }

@@ -30,7 +30,7 @@ export class ColumnGroup implements IHeaderColumn {
     private displayedChildren: IHeaderColumn[] | null = [];
 
     private readonly groupId: string;
-    private readonly instanceId: number;
+    private readonly partId: number;
     private readonly providedColumnGroup: ProvidedColumnGroup;
     private readonly pinned: ColumnPinnedType;
 
@@ -41,9 +41,9 @@ export class ColumnGroup implements IHeaderColumn {
 
     private parent: ColumnGroup | null;
 
-    constructor(providedColumnGroup: ProvidedColumnGroup, groupId: string, instanceId: number, pinned: ColumnPinnedType) {
+    constructor(providedColumnGroup: ProvidedColumnGroup, groupId: string, partId: number, pinned: ColumnPinnedType) {
         this.groupId = groupId;
-        this.instanceId = instanceId;
+        this.partId = partId;
         this.providedColumnGroup = providedColumnGroup;
         this.pinned = pinned;
     }
@@ -65,7 +65,7 @@ export class ColumnGroup implements IHeaderColumn {
     }
 
     public getUniqueId(): string {
-        return ColumnGroup.createUniqueId(this.groupId, this.instanceId);
+        return ColumnGroup.createUniqueId(this.groupId, this.partId);
     }
 
     public isEmptyGroup(): boolean {
@@ -140,8 +140,8 @@ export class ColumnGroup implements IHeaderColumn {
         return this.groupId;
     }
 
-    public getInstanceId(): number {
-        return this.instanceId;
+    public getPartId(): number {
+        return this.partId;
     }
 
     public isChildInThisGroupDeepSearch(wantedChild: IHeaderColumn): boolean {

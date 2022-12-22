@@ -122,7 +122,7 @@ export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<T
         const debugLogging = !!nextProps.debug;
 
         Object.keys(nextProps).forEach(propKey => {
-            if (_.includes(ComponentUtil.ALL_PROPERTIES, propKey)) {                
+            if (ComponentUtil.ALL_PROPERTIES_SET.has(propKey as any)) {
 
                 if (prevProps[propKey] !== nextProps[propKey]) {
                     if (debugLogging) {

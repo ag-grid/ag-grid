@@ -764,7 +764,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
                 if (legend.visible) {
                     translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                    translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendSpacing;
+                    translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y;
 
                     legendAutoPadding.bottom = legendBBox.height;
                 } else {
@@ -779,7 +779,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
                 if (legend.visible) {
                     translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                    translationY = captionAutoPadding + legendSpacing - legendBBox.y;
+                    translationY = captionAutoPadding - legendBBox.y;
 
                     legendAutoPadding.top = legendBBox.height;
                 } else {
@@ -793,7 +793,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 legendBBox = legend.computeBBox();
 
                 if (legend.visible) {
-                    translationX = legendSpacing - legendBBox.x;
+                    translationX = -legendBBox.x;
                     translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
                     legendAutoPadding.left = legendBBox.width;
@@ -808,7 +808,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 legendBBox = legend.computeBBox();
 
                 if (legend.visible) {
-                    translationX = width - legendBBox.width - legendBBox.x - legendSpacing;
+                    translationX = width - legendBBox.width - legendBBox.x;
                     translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
                     legendAutoPadding.right = legendBBox.width;

@@ -31,7 +31,7 @@ import {
 import { BeanStub } from "../context/beanStub";
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
-import { Autowired, Bean, Optional, PostConstruct, Qualifier } from '../context/context';
+import { Autowired, Bean, Optional, PostConstruct, PreDestroy, Qualifier } from '../context/context';
 import { IAggFuncService } from '../interfaces/iAggFuncService';
 import { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { AutoGroupColService, GROUP_AUTO_COLUMN_ID } from './autoGroupColService';
@@ -168,6 +168,8 @@ export class ColumnModel extends BeanStub {
     private gridColumns: Column[];
     private gridColumnsMap: { [id: string]: Column };
 
+    private groupAutoColsBalancedTree: IProvidedColumn[] | null;
+
     // header row count, either above, or based on pivoting if we are pivoting
     private gridHeaderRowCount = 0;
 
@@ -297,6 +299,35 @@ export class ColumnModel extends BeanStub {
         this.createColumnsFromColumnDefs(colsPreviouslyExisted, source);
     }
 
+    private destroyOldColumns(oldTree: IProvidedColumn[] | null, newTree?: IProvidedColumn[] | null): void {
+        const oldObjectsById: {[id: number]: IProvidedColumn | null} = {};
+
+        if (!oldTree) { return; }
+
+        // add in all old columns to be destroyed
+        this.columnUtils.depthFirstOriginalTreeSearch(null, oldTree, child => {
+            oldObjectsById[child.getInstanceId()] = child;
+        });
+
+        // however we don't destroy anything in the new tree. if destroying the grid, there is no new tree
+        if (newTree) {
+            this.columnUtils.depthFirstOriginalTreeSearch(null, newTree, child => {
+                oldObjectsById[child.getInstanceId()] = null;
+            });
+        }
+
+        // what's left can be destroyed
+        const colsToDestroy = Object.values(oldObjectsById).filter( item => item != null);
+        this.destroyBeans(colsToDestroy);
+    }
+
+    @PreDestroy
+    private destroyColumns(): void {
+        this.destroyOldColumns(this.primaryColumnTree);
+        this.destroyOldColumns(this.secondaryBalancedTree);
+        this.destroyOldColumns(this.groupAutoColsBalancedTree);
+    }
+
     private createColumnsFromColumnDefs(colsPreviouslyExisted: boolean, source: ColumnEventType = 'api'): void {
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = colsPreviouslyExisted ? this.compareColumnStatesAndDispatchEvents(source) : undefined;
@@ -314,6 +345,7 @@ export class ColumnModel extends BeanStub {
         const oldPrimaryTree = this.primaryColumnTree;
         const balancedTreeResult = this.columnFactory.createColumnTree(this.columnDefs, true, oldPrimaryTree);
 
+        this.destroyOldColumns(this.primaryColumnTree, balancedTreeResult.columnTree);
         this.primaryColumnTree = balancedTreeResult.columnTree;
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
 
@@ -2708,12 +2740,12 @@ export class ColumnModel extends BeanStub {
 
     // returns the group with matching colId and instanceId. If instanceId is missing,
     // matches only on the colId.
-    public getColumnGroup(colId: string | ColumnGroup, instanceId?: number): ColumnGroup | null {
+    public getColumnGroup(colId: string | ColumnGroup, partId?: number): ColumnGroup | null {
         if (!colId) { return null; }
         if (colId instanceof ColumnGroup) { return colId; }
 
         const allColumnGroups = this.getAllDisplayedTrees();
-        const checkInstanceId = typeof instanceId === 'number';
+        const checkPartId = typeof partId === 'number';
         let result: ColumnGroup | null = null;
 
         this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, (child: IHeaderColumn) => {
@@ -2721,8 +2753,8 @@ export class ColumnModel extends BeanStub {
                 const columnGroup = child;
                 let matched: boolean;
 
-                if (checkInstanceId) {
-                    matched = colId === columnGroup.getGroupId() && instanceId === columnGroup.getInstanceId();
+                if (checkPartId) {
+                    matched = colId === columnGroup.getGroupId() && partId === columnGroup.getPartId();
                 } else {
                     matched = colId === columnGroup.getGroupId();
                 }
@@ -3121,6 +3153,7 @@ export class ColumnModel extends BeanStub {
                 false,
                 this.secondaryBalancedTree || this.previousSecondaryColumns || undefined,
             );
+            this.destroyOldColumns(this.secondaryBalancedTree, balancedTreeResult.columnTree);
             this.secondaryBalancedTree = balancedTreeResult.columnTree;
             this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.secondaryColumns = this.getColumnsFromTree(this.secondaryBalancedTree);
@@ -3360,13 +3393,20 @@ export class ColumnModel extends BeanStub {
 
     private addAutoGroupToGridColumns(): void {
 
-        if (missing(this.groupAutoColumns)) { return; }
+        if (missing(this.groupAutoColumns)) { 
+            this.destroyOldColumns(this.groupAutoColsBalancedTree);
+            this.groupAutoColsBalancedTree = null;
+            return; 
+        }
 
         this.gridColumns = this.groupAutoColumns ? this.groupAutoColumns.concat(this.gridColumns) : this.gridColumns;
 
-        const autoColBalancedTree = this.columnFactory.createForAutoGroups(this.groupAutoColumns, this.gridBalancedTree);
+        const newAutoColsTree = this.columnFactory.createForAutoGroups(this.groupAutoColumns, this.gridBalancedTree);
 
-        this.gridBalancedTree = autoColBalancedTree.concat(this.gridBalancedTree);
+        this.destroyOldColumns(this.groupAutoColsBalancedTree, newAutoColsTree);
+        this.groupAutoColsBalancedTree = newAutoColsTree;
+
+        this.gridBalancedTree = newAutoColsTree.concat(this.gridBalancedTree);
     }
 
     // gets called after we copy down grid columns, to make sure any part of the gui

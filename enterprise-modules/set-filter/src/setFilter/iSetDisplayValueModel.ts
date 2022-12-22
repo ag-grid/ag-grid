@@ -1,12 +1,18 @@
 export interface ISetDisplayValueModel<V> {
-    updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>, fromMiniFilter?: boolean): void;
+    updateDisplayedValuesToAllAvailable(
+        getValue: (key: string | null) => V,
+        allKeys: Iterable<string | null> | undefined,
+        availableKeys: Set<string | null>,
+        source: 'reload' | 'otherFilter' | 'miniFilter'
+    ): void;
 
     updateDisplayedValuesToMatchMiniFilter(
         getValue: (key: string | null) => V,
-        availableKeys: Iterable<string | null>,
+        allKeys: Iterable<string | null> | undefined, 
+        availableKeys: Set<string | null>,
         matchesFilter: (valueToCheck: string | null) => boolean,
         nullMatchesFilter: boolean,
-        fromMiniFilter?: boolean
+        source: 'reload' | 'otherFilter' | 'miniFilter'
     ): void;
 
     getDisplayedValueCount(): number;
@@ -34,6 +40,7 @@ export interface SetFilterModelTreeItem {
     treeKey: string | null;
     depth: number;
     filterPasses: boolean;
+    available: boolean;
     expanded?: boolean;
     children?: SetFilterModelTreeItem[];
     key?: string | null;
