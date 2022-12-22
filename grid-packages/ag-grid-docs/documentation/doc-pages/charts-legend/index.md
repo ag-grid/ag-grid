@@ -197,6 +197,38 @@ legend: {
 }
 ```
 
+## Legend Click Event - Series Toggling
+
+By default, when a legend item is clicked, the visibility of the series associated with that legend item will be toggled. This allows the users to control which series are displayed in the chart by clicking on legend items.
+
+To disable series toggling on legend item click, the `legend.seriesToggleEnabled` property can be set to `false`:
+
+```js
+legend: {
+    seriesToggleEnabled: false
+}
+```
+
+If a callback function is configured via `legend.listeners.legendItemClick`, it will still be invoked when the legend click event is fired:
+
+```js
+legend: {
+    listeners: {
+        legendItemClick: ({
+            seriesId,
+            itemId,
+            enabled,
+        }: AgChartLegendClickEvent) => {
+            window.alert(
+                `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
+            );
+        }
+    }
+}
+```
+
+<chart-example title='Legend Click' name='legend-click-series-toggle' type='generated'></chart-example>
+
 ## API Reference
 
 <interface-documentation interfaceName='AgChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
