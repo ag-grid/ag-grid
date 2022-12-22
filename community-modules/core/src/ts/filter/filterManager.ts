@@ -18,6 +18,7 @@ import { mergeDeep, cloneObject } from '../utils/object';
 import { loadTemplate } from '../utils/dom';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { WithoutGridCommon } from '../interfaces/iCommon';
+import { PropertyChangedEvent } from '../gridOptionsService';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -56,6 +57,8 @@ export class FilterManager extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () => this.refreshFiltersForAggregations());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.refreshFiltersForAggregations());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.refreshFiltersForAggregations());
+
+        this.addManagedPropertyListener('quickFilterText', (e: PropertyChangedEvent) => this.setQuickFilter(e.currentValue));
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsService.get('quickFilterText'));
         this.setQuickFilterParts();

@@ -181,13 +181,6 @@ export class ComponentUtil {
             }
         });
 
-        if (changesToApply.quickFilterText) {
-            // Name of api method does not follow convention so we have to manually call it.
-            // GridOptions property will be set above and fire event which could be used by the 
-            // filter manager to trigger update instead of via this api call.
-            api.setQuickFilter(changesToApply.quickFilterText.currentValue);
-        }
-
         // copy changes into an event for dispatch
         const event: WithoutGridCommon<ComponentStateChangedEvent> = {
             type: Events.EVENT_COMPONENT_STATE_CHANGED
