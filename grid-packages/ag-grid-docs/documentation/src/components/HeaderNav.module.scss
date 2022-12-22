@@ -28,7 +28,7 @@ $mobile-header-breakpoint: 768px;
     &__button {
         appearance: none;
         width: 64px;
-        height: 64px;
+        height: 64px !important; // !important used to overide bootstrap .collapse { height: 0 }
         margin-left: auto;
         border: none;
         background-color: transparent;

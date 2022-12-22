@@ -59,7 +59,8 @@ const HeaderLinks = ({path}) => {
 const HeaderExpandButton = () => (
     <button
         className={styles['header-nav__button']}
-        type="button" data-toggle="collapse"
+        type="button"
+        data-toggle="collapse"
         data-target="#main-nav"
         aria-controls="main-nav"
         aria-expanded="false"
