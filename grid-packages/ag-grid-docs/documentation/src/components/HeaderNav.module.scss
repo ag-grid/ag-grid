@@ -32,6 +32,20 @@ $mobile-header-breakpoint: 768px;
         margin-left: auto;
         border: none;
         background-color: transparent;
+        transition: background-color 0.4s ease-in-out;
+
+        &:hover {
+            background-color: rgba(#002952, 0.6666);
+        }
+
+        &[aria-expanded="true"] {
+            background-color: #002952;
+        }
+
+        svg {
+            position: relative;
+            left: 1px;
+        }
 
         @media screen and (min-width: $mobile-header-breakpoint) {
             display: none;

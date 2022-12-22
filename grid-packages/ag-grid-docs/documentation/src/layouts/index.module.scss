@@ -49,7 +49,12 @@ main {
 
 .header__logo {
     display: block;
-    margin: 8px;
+    padding: 8px;
+    transition: background-color 0.4s ease-in-out;
+
+    &:hover {
+        background-color: rgba(#002952, 0.6666);
+    }
 
     &:hover :global(.logomark) rect[class*="right"] {
         animation-play-state: running;
