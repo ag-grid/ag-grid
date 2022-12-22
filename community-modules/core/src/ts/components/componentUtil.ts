@@ -169,16 +169,7 @@ export class ComponentUtil {
             const gridKey = key as keyof GridOptions;
 
             const coercedValue = ComponentUtil.getValue(gridKey, changesToApply[gridKey].currentValue);
-            // Ensure the GridOptions property gets updated and fires the change event as we
-            // cannot assume that the dynamic Api call updated GridOptions or fired the event.
-            // If the dynamic api did already update GridOptions then the change detection in the 
-            // setter should prevent the event being fired twice.
-            api.__setProperty(gridKey, coercedValue);
-
-            const setterName = `set${key.charAt(0).toUpperCase()}${key.substring(1)}`;
-            if (dynamicApi[setterName]) {
-                dynamicApi[setterName](coercedValue);
-            }
+            api.setProperty(gridKey, coercedValue);
         });
 
         if (changesToApply.quickFilterText) {
