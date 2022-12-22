@@ -1,6 +1,6 @@
 import * as agCharts from "ag-charts-community"
 import { AgChartLegendClickEvent, AgChartOptions } from "ag-charts-community"
-import { getData } from './data';
+import { getData } from "./data"
 
 const colors = [
   "#AC9BF5",
@@ -38,7 +38,7 @@ const options: AgChartOptions = {
           scatter: {
             marker: {
               fillOpacity: 0,
-              strokeWidth: 2
+              strokeWidth: 2,
             },
           },
         },
@@ -127,8 +127,8 @@ const options: AgChartOptions = {
       type: "time",
       gridStyle: [],
       label: {
-        padding: 15
-      }
+        padding: 15,
+      },
     },
     {
       position: "right",
@@ -151,21 +151,21 @@ const options: AgChartOptions = {
     position: "left",
     seriesToggleEnabled: false,
     listeners: {
-        legendItemClick: ({
-            seriesId,
-            itemId,
-            enabled,
-        }: AgChartLegendClickEvent) => {
-            window.alert(
-                `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
-            );
-        }
+      legendItemClick: ({
+        seriesId,
+        itemId,
+        enabled,
+      }: AgChartLegendClickEvent) => {
+        window.alert(
+          `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
+        )
+      },
     },
     item: {
       marker: {
         strokeWidth: 2,
-      }
-    }
+      },
+    },
   },
 }
 
