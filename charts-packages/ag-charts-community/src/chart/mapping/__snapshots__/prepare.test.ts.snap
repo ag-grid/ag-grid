@@ -135,6 +135,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -574,6 +577,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -928,6 +934,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -1562,6 +1571,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -1871,6 +1883,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -2116,6 +2131,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -2567,6 +2585,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -3162,6 +3183,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -3432,6 +3456,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -3691,6 +3718,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -3944,6 +3974,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -4190,6 +4223,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -4484,6 +4520,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -4781,6 +4820,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -5094,6 +5136,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -5359,6 +5404,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -6527,6 +6575,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -6688,6 +6739,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -6969,6 +7023,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -7286,6 +7343,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -7586,6 +7646,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -7905,6 +7968,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -8389,6 +8455,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -8559,6 +8628,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -8853,6 +8925,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -9107,6 +9182,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -9340,6 +9418,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -9613,6 +9694,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -9859,6 +9943,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -10181,6 +10268,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -10473,6 +10563,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -10787,6 +10880,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {

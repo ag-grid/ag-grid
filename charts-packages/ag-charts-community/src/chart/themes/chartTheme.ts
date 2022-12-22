@@ -256,6 +256,9 @@ export class ChartTheme {
                     inactiveStyle: {
                         fill: 'rgb(219, 219, 219)',
                     },
+                    highlightStyle: {
+                        fill: 'rgb(70, 70, 70)',
+                    },
                 },
             },
             tooltip: {

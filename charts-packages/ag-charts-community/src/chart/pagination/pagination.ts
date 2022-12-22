@@ -8,6 +8,7 @@ import { getMarker } from '../marker/util';
 import { createId } from '../../util/id';
 import { InteractionEvent, InteractionManager } from '../interaction/interactionManager';
 import { CursorManager } from '../interaction/cursorManager';
+import { ChartUpdateType } from '../chart';
 import {
     COLOR_STRING,
     NUMBER,
@@ -96,7 +97,8 @@ export class Pagination {
     private currentPage: number = 0;
 
     constructor(
-        private readonly updateCallback: (newPage: number) => void,
+        private readonly chartUpdateCallback: (type: ChartUpdateType) => void,
+        private readonly pageUpdateCallback: (newPage: number) => void,
         private readonly interactionManager: InteractionManager,
         private readonly cursorManager: CursorManager
     ) {
@@ -114,13 +116,13 @@ export class Pagination {
 
         this.marker.parent = this;
 
-        this.updatePositions();
+        this.update();
     }
 
     private nextButtonDisabled = false;
     private previousButtonDisabled = false;
 
-    private _totalPages: number = NaN;
+    private _totalPages: number = 0;
     set totalPages(value: number) {
         if (this._totalPages !== value) {
             this._totalPages = value;
@@ -215,7 +217,7 @@ export class Pagination {
 
     private update() {
         this.updateLabel();
-        this.updateNextButtonPosition();
+        this.updatePositions();
         this.enableOrDisableButtons();
     }
 
@@ -273,6 +275,8 @@ export class Pagination {
         marker.stroke = style.stroke;
         marker.strokeWidth = style.strokeWidth;
         marker.strokeOpacity = style.strokeOpacity;
+
+        marker.markDirty(marker, RedrawType.MINOR);
     }
 
     private enableOrDisableButtons() {
@@ -312,16 +316,23 @@ export class Pagination {
     private onPaginationMouseMove(event: InteractionEvent<'hover'>) {
         const { offsetX, offsetY } = event;
 
-        if (this.nextButtonContainsPoint(offsetX, offsetY) || this.previousButtonContainsPoint(offsetX, offsetY)) {
+        if (this.nextButtonContainsPoint(offsetX, offsetY)) {
             this.cursorManager.updateCursor(this.id, 'pointer');
+            this.updateMarker(this.nextButton, this.highlightStyle);
+        } else if (this.previousButtonContainsPoint(offsetX, offsetY)) {
+            this.cursorManager.updateCursor(this.id, 'pointer');
+            this.updateMarker(this.previousButton, this.highlightStyle);
         } else {
+            this.updateMarkers();
             this.cursorManager.updateCursor(this.id);
         }
+
+        this.chartUpdateCallback(ChartUpdateType.SCENE_RENDER);
     }
 
     private onPaginationChanged() {
         this.update();
-        this.updateCallback(this.currentPage);
+        this.pageUpdateCallback(this.currentPage);
     }
 
     private incrementPage() {
@@ -350,7 +361,7 @@ export class Pagination {
         this.nextButton = new Marker();
         this.updatePositions();
         this.updateMarkers();
-        this.group.markDirty(this.group, RedrawType.MINOR);
+        this.chartUpdateCallback(ChartUpdateType.SCENE_RENDER);
     }
 
     attachPagination(node: Node) {
