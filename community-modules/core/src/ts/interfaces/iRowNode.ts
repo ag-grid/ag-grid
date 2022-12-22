@@ -1,5 +1,5 @@
 import { Column } from "../entities/column";
-import { AgEvent, SelectionEventType } from "../events";
+import { AgEvent, SelectionEventSourceType } from "../events";
 
 export type RowNodeEventType =
     'rowSelected' |
@@ -36,7 +36,7 @@ export interface SetSelectedParams {
     // used in group selection, if true, filtered out children will not be selected
     groupSelectsFiltered?: boolean;
     // event source, if from an event
-    source: SelectionEventType;
+    source: SelectionEventSourceType;
 }
 
 export interface RowNodeEvent<TData = any> extends AgEvent {
@@ -170,7 +170,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`
      * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`
      */
-    setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventType): void;
+    setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType): void;
 
     /** Returns:
      * - `true` if node is selected,

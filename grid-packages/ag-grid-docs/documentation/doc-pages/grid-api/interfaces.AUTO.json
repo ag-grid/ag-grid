@@ -2763,14 +2763,14 @@
       "type": "/** Event identifier */"
     }
   },
-  "SelectionEventType": {
+  "SelectionEventSourceType": {
     "meta": { "isTypeAlias": true },
-    "type": "'api' | 'spacePressed' | 'rowClicked' | 'checkboxSelected' | 'uiSelectAll' | 'rowDataChanged' | 'parentSelected' | 'rowGroupChanged' | 'selectAll' | 'deselectAll' | 'selectAllFiltered' | 'deselectAllFiltered'"
+    "type": "'api' | 'spacePressed' | 'rowClicked' | 'checkboxSelected' | 'uiSelectAll' | 'uiDeselectAll' | 'rowDataChanged' | 'parentSelected' | 'rowGroupChanged' | 'apiSelectAll' | 'apiDeselectAll' | 'apiSelectAllFiltered' | 'apiDeselectAllFiltered'"
   },
   "SelectionChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "source": "SelectionEventType",
+      "source": "SelectionEventSourceType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -3905,7 +3905,7 @@
   "RowSelectedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "source": "SelectionEventType",
+      "source": "SelectionEventSourceType",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -8308,7 +8308,7 @@
       "suppressFinishActions?": "boolean",
       "rangeSelect?": "boolean",
       "groupSelectsFiltered?": "boolean",
-      "source": "SelectionEventType"
+      "source": "SelectionEventSourceType"
     }
   },
   "RowNodeEvent": {
@@ -8434,7 +8434,7 @@
   "IRowNode": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventType)": "void",
+      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType)": "void",
       "isSelected()": "boolean | undefined",
       "isRowPinned()": "boolean",
       "isExpandable()": "boolean",
@@ -8486,7 +8486,7 @@
       "sibling": "IRowNode<TData>"
     },
     "docs": {
-      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventType)": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
+      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType)": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
       "isSelected()": "/** Returns:\n     * - `true` if node is selected,\n     * - `false` if the node isn't selected\n     * - `undefined` if it's partially selected (group where not all children are selected). \n     */",
       "isRowPinned()": "/** Returns:\n     * - `true` if node is either pinned to the `top` or `bottom`\n     * - `false` if the node isn't pinned\n     */",
       "isExpandable()": "/** Returns:\n    * - `true` if the node can be expanded, i.e it is a group or master row.\n    * - `false` if the node cannot be expanded\n    */",

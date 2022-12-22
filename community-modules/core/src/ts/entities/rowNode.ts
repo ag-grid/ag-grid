@@ -1,4 +1,4 @@
-import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent, SelectionEventType } from "../events";
+import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent, SelectionEventSourceType } from "../events";
 import { EventService } from "../eventService";
 import { DetailGridInfo } from "../gridApi";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
@@ -859,7 +859,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
      * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired.
      */
-    public setSelected(newValue: boolean, clearSelection: boolean = false, suppressFinishActions: boolean = false, source: SelectionEventType = 'api') {
+    public setSelected(newValue: boolean, clearSelection: boolean = false, suppressFinishActions: boolean = false, source: SelectionEventSourceType = 'api') {
         this.setSelectedParams({
             newValue,
             clearSelection,
@@ -966,7 +966,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    private doRowRangeSelection(value: boolean = true, source: SelectionEventType): number {
+    private doRowRangeSelection(value: boolean = true, source: SelectionEventSourceType): number {
         const groupsSelectChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
         const lastSelectedNode = this.beans.selectionService.getLastSelectedNode();
         const nodesToSelect = this.beans.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
@@ -1007,7 +1007,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return false;
     }
 
-    public selectThisNode(newValue?: boolean, e?: Event, source: SelectionEventType = 'api'): boolean {
+    public selectThisNode(newValue?: boolean, e?: Event, source: SelectionEventSourceType = 'api'): boolean {
 
         // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
         // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
@@ -1032,7 +1032,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return true;
     }
 
-    private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean, source: SelectionEventType): number {
+    private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean, source: SelectionEventSourceType): number {
         const children = groupSelectsFiltered ? this.childrenAfterAggFilter : this.childrenAfterGroup;
 
         if (missing(children)) { return 0; }

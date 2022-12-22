@@ -5590,10 +5590,10 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "SelectionEventType": {},
+  "SelectionEventSourceType": {},
   "SelectionChangedEvent": {
     "source": {
-      "type": { "returnType": "SelectionEventType", "optional": false }
+      "type": { "returnType": "SelectionEventSourceType", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
@@ -7214,7 +7214,7 @@
   },
   "RowSelectedEvent": {
     "source": {
-      "type": { "returnType": "SelectionEventType", "optional": false }
+      "type": { "returnType": "SelectionEventSourceType", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "data": {
@@ -14946,7 +14946,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "source": {
-      "type": { "returnType": "SelectionEventType", "optional": false }
+      "type": { "returnType": "SelectionEventSourceType", "optional": false }
     }
   },
   "RowNodeEvent": {
@@ -15146,7 +15146,7 @@
           "newValue": "boolean",
           "clearSelection?": "boolean",
           "suppressFinishActions?": "boolean",
-          "source?": "SelectionEventType"
+          "source?": "SelectionEventSourceType"
         },
         "returnType": "void",
         "optional": false

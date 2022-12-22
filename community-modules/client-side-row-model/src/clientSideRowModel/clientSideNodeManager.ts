@@ -8,7 +8,8 @@ import {
     SelectionChangedEvent,
     SelectionService, _,
     WithoutGridCommon,
-    GridOptionsService
+    GridOptionsService,
+    SelectionEventSourceType
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -127,7 +128,7 @@ export class ClientSideNodeManager {
         this.executeUpdate(rowDataTran, rowNodeTransaction, nodesToUnselect);
         this.executeAdd(rowDataTran, rowNodeTransaction);
 
-        this.updateSelection(nodesToUnselect);
+        this.updateSelection(nodesToUnselect, 'rowDataChanged');
 
         if (rowNodeOrder) {
             _.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
@@ -136,11 +137,11 @@ export class ClientSideNodeManager {
         return rowNodeTransaction;
     }
 
-    private updateSelection(nodesToUnselect: RowNode[]): void {
+    private updateSelection(nodesToUnselect: RowNode[], source: SelectionEventSourceType): void {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
             nodesToUnselect.forEach(rowNode => {
-                rowNode.setSelected(false, false, true, 'rowDataChanged');
+                rowNode.setSelected(false, false, true, source);
             });
         }
 
@@ -148,12 +149,12 @@ export class ClientSideNodeManager {
         // a new node was inserted, so a parent that was previously selected (as all
         // children were selected) should not be tri-state (as new one unselected against
         // all other selected children).
-        this.selectionService.updateGroupsFromChildrenSelections('rowDataChanged');
+        this.selectionService.updateGroupsFromChildrenSelections(source);
 
         if (selectionChanged) {
             const event: WithoutGridCommon<SelectionChangedEvent> = {
                 type: Events.EVENT_SELECTION_CHANGED,
-                source: 'rowDataChanged'
+                source: source
             };
             this.eventService.dispatchEvent(event);
         }

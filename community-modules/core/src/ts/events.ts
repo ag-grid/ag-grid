@@ -86,30 +86,32 @@ export interface PinnedRowDataChangedEvent<TData = any> extends AgGridEvent<TDat
  * - `spacePressed` - space key pressed on row
  * - `rowClicked` - row clicked when row selection enabled
  * - `checkboxSelected` - row selection checkbox clicked
- * - `uiSelectAll` - select all in header clicked
+ * - `uiSelectAll` - select all in header clicked (select)
+ * - `uiDeselectAll` - select all in header clicked (deselect)
  * - `rowDataChanged` - row data updated which triggered selection updates
  * - `parentSelected`- parent selected when groupSelectsChildren enabled
  * - `rowGroupChanged` - grouping changed which updated the selection
- * - `selectAll` - API selectAll called
- * - `deselectAll` - API deselectAll called
- * - `selectAllFiltered` - API selectAllFiltered called
- * - `deselectAllFiltered` - API deselectAllFiltered called
+ * - `apiSelectAll` - API selectAll called
+ * - `apiDeselectAll` - API deselectAll called
+ * - `apiSelectAllFiltered` - API selectAllFiltered called
+ * - `apiDeselectAllFiltered` - API deselectAllFiltered called
  */
-export type SelectionEventType =
+export type SelectionEventSourceType =
     'api' |
     'spacePressed' |
     'rowClicked' |
     'checkboxSelected' |
     'uiSelectAll' |
+    'uiDeselectAll' |
     'rowDataChanged' |
     'parentSelected' |
     'rowGroupChanged' |
-    'selectAll' |
-    'deselectAll' |
-    'selectAllFiltered' |
-    'deselectAllFiltered';
+    'apiSelectAll' |
+    'apiDeselectAll' |
+    'apiSelectAllFiltered' |
+    'apiDeselectAllFiltered';
 export interface SelectionChangedEvent<TData = any> extends AgGridEvent<TData> { 
-    source: SelectionEventType;
+    source: SelectionEventSourceType;
 }
 
 export interface FilterChangedEvent<TData = any> extends AgGridEvent<TData> {
@@ -461,7 +463,7 @@ export interface RowGroupOpenedEvent<TData = any> extends RowEvent<TData> {
 export interface RowValueChangedEvent<TData = any> extends RowEvent<TData> { }
 
 export interface RowSelectedEvent<TData = any> extends RowEvent<TData> {
-    source: SelectionEventType;
+    source: SelectionEventSourceType;
  }
 
 export interface VirtualRowRemovedEvent<TData = any> extends RowEvent<TData> { }

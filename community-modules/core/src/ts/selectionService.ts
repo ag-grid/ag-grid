@@ -4,7 +4,7 @@ import { BeanStub } from "./context/beanStub";
 import { Qualifier } from "./context/context";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
-import { Events, SelectionChangedEvent, SelectionEventType } from "./events";
+import { Events, SelectionChangedEvent, SelectionEventSourceType } from "./events";
 import { Autowired } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { PostConstruct } from "./context/context";
@@ -75,7 +75,7 @@ export class SelectionService extends BeanStub {
     }
 
     // should only be called if groupSelectsChildren=true
-    public updateGroupsFromChildrenSelections(source: SelectionEventType, changedPath?: ChangedPath): void {
+    public updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath): void {
         // we only do this when group selection state depends on selected children
         if (!this.gridOptionsService.is('groupSelectsChildren')) {
             return;
@@ -113,7 +113,7 @@ export class SelectionService extends BeanStub {
         return this.selectedNodes[id];
     }
 
-    public clearOtherNodes(rowNodeToKeepSelected: RowNode, source: SelectionEventType): number {
+    public clearOtherNodes(rowNodeToKeepSelected: RowNode, source: SelectionEventSourceType): number {
         const groupsToRefresh: any = {};
         let updatedCount = 0;
         iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode) => {
@@ -251,7 +251,7 @@ export class SelectionService extends BeanStub {
         return count === 0;
     }
 
-    public deselectAllRowNodes(source: SelectionEventType, justFiltered = false) {
+    public deselectAllRowNodes(source: SelectionEventSourceType, justFiltered = false) {
         const callback = (rowNode: RowNode) => rowNode.selectThisNode(false, undefined, source);
         const rowModelClientSide = this.rowModel.getType() === 'clientSide';
 
@@ -286,7 +286,7 @@ export class SelectionService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public selectAllRowNodes(source: SelectionEventType, justFiltered = false) {
+    public selectAllRowNodes(source: SelectionEventSourceType, justFiltered = false) {
         if (this.rowModel.getType() !== 'clientSide') {
             throw new Error(`selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`);
         }

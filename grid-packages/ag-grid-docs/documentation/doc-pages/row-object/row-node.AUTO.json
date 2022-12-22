@@ -146,7 +146,7 @@
         "newValue": "boolean",
         "clearSelection?": "boolean",
         "suppressFinishActions?": "boolean",
-        "source?": "SelectionEventType"
+        "source?": "SelectionEventSourceType"
       },
       "returnType": "void"
     }
