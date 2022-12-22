@@ -16,15 +16,6 @@ export class LinearScale extends ContinuousScale {
         const [d0, d1] = this.getDomain();
         const count = this.tickCount ?? 10;
 
-        if (this.nice) {
-            if (count === 2) {
-                return this.niceDomain;
-            }
-            if (count === 1) {
-                return this.niceDomain.slice(0, 1);
-            }
-        }
-
         return ticks(d0, d1, count);
     }
 
