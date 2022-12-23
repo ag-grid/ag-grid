@@ -134,6 +134,12 @@ export class AxisLabel {
     padding: number = 5;
 
     /**
+     * Minimum gap in pixels between the axis labels before being removed to avoid collisions.
+     */
+    @Validate(OPT_NUMBER(0))
+    minGap?: number = undefined;
+
+    /**
      * The color of the labels.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
@@ -483,17 +489,22 @@ export class Axis<S extends Scale<D, number>, D = any> {
     update(primaryTickCount?: number): number | undefined {
         this.calculateDomain();
 
-        const { scale, gridLength, tick, label, requestedRange } = this;
+        const {
+            scale,
+            gridLength,
+            tick,
+            label: { parallel: parallelLabels, mirrored, avoidCollision, minGap },
+            requestedRange,
+        } = this;
         const requestedRangeMin = Math.min(...requestedRange);
         const requestedRangeMax = Math.max(...requestedRange);
         const rotation = toRadians(this.rotation);
-        const parallelLabels = label.parallel;
         const anySeriesActive = this.isAnySeriesActive();
 
         // The side of the axis line to position the labels on.
         // -1 = left (default)
         //  1 = right
-        const sideFlag = label.mirrored ? 1 : -1;
+        const sideFlag = mirrored ? 1 : -1;
         // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
@@ -517,7 +528,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const nice = this.nice;
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
-        const { avoidCollision } = label;
 
         scale.domain = this.dataDomain;
         if (scale instanceof ContinuousScale) {
@@ -587,7 +597,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 ticks,
             });
 
-            const labelPadding = rotated ? 0 : 10;
+            const labelPadding = minGap ?? (rotated ? 0 : 10);
 
             // no need for further iterations if `avoidCollision` is false
             labelOverlap = avoidCollision ? axisLabelsOverlap(labelData, labelPadding) : false;
@@ -816,7 +826,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }) {
         const {
             label,
-            label: { parallel: parallelLabels },
+            label: { parallel: parallelLabels, minGap },
             tick,
         } = this;
         let labelAutoRotation = 0;
@@ -883,7 +893,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
             });
         });
 
-        const rotate = axisLabelsOverlap(labelData, 10);
+        const labelPadding = minGap ?? 10;
+        const rotate = axisLabelsOverlap(labelData, labelPadding);
 
         if (label.rotation === undefined && label.autoRotate === true && rotate) {
             // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),

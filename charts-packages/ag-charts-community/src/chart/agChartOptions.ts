@@ -591,6 +591,8 @@ export interface AgAxisLabelOptions {
     autoRotateAngle?: number;
     /** Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide. */
     avoidCollision?: boolean;
+    /** Minimum gap in pixels between the axis labels before being removed to avoid collisions. */
+    minGap?: PixelSize;
     // mirrored?: boolean;
     // parallel?: boolean;
     /** Format string used when rendering labels for time axes. */
