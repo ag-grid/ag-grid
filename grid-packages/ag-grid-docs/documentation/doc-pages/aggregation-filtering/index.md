@@ -80,6 +80,7 @@ Note the following:
 | Take note of the following while using `groupAggFiltering`:
 | - [Set Filters](/filter-set/) are not fully supported in conjunction with this feature.
 | - When `groupAggFiltering` is enabled, [Suppressing Filtered Aggregation](/aggregation-filtering/#suppressing-aggregation-updates-when-filtering) is enabled by default.
+| - If Tree Data mode is enabled, the behaviour of `groupAggFiltering` will be different. See [Tree Data Filtering](/tree-data/#tree-data-filtering).
 
 ### Custom Group Aggregation Filtering
 
