@@ -1,6 +1,6 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IDateFilterParams, ITextFilterParams, INumberFilterParams } from '@ag-grid-community/core'
 
-var filterParams = {
+var filterParams: IDateFilterParams = {
   suppressAndOrCondition: true,
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var dateAsString = cellValue
@@ -23,6 +23,7 @@ var filterParams = {
     if (cellDate > filterLocalDateAtMidnight) {
       return 1
     }
+    return 0;
   },
   browserDatePicker: true,
 }
@@ -34,7 +35,7 @@ const columnDefs: ColDef[] = [
     filterParams: {
       filterOptions: ['contains', 'startsWith', 'endsWith'],
       defaultOption: 'startsWith',
-    },
+    }as ITextFilterParams,
   },
   {
     field: 'age',
@@ -42,7 +43,7 @@ const columnDefs: ColDef[] = [
     filterParams: {
       alwaysShowBothConditions: true,
       defaultJoinOperator: 'OR',
-    },
+    } as INumberFilterParams,
     maxWidth: 100,
   },
   {

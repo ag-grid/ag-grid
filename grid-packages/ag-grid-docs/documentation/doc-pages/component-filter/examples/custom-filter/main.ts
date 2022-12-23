@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core'
 import { PersonFilter } from './personFilter_typescript'
 import { YearFilter } from './yearFilter_typescript'
 
@@ -36,7 +36,7 @@ const columnDefs: ColDef[] = [
           return 1
         }
       },
-    },
+    } as IDateFilterParams,
   },
   { field: 'sport' },
   { field: 'gold', filter: 'agNumberColumnFilter' },

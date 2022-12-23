@@ -42,10 +42,15 @@ export interface TextFormatter {
     (from?: string | null): string | null;
 }
 
-// internal type
+/**
+ * Parameters provided by the grid to the `init` method of a `TextFilter`.
+ * Do not use in `colDef.filterParams` - see `ITextFilterParams` instead.
+ */
 export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TData>;
 
-// external type
+/**
+ * Parameters used in `colDef.filterParams` to configure a  Text Filter (`agTextColumnFilter`).
+ */
 export interface ITextFilterParams extends ISimpleFilterParams {
     /**
      * Used to override how to filter based on the user input.
@@ -60,7 +65,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
      * Formats the text before applying the filter compare logic.
      * Useful if you want to substitute accented characters, for example.
      */
-    textFormatter?: (from: string) => string;
+    textFormatter?: (from: string) => string | null;
 
     /**
      * If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.

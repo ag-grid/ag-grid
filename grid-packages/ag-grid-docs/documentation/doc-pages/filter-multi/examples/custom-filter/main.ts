@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, IMultiFilterParams } from '@ag-grid-community/core'
 import { YearFilter } from "./YearFilter_typescript";
 import { YearFloatingFilter } from "./YearFloatingFilter_typescript";
 
@@ -19,7 +19,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             filter: 'agNumberColumnFilter',
           },
         ],
-      },
+      } as IMultiFilterParams,
     },
   ],
   defaultColDef: {

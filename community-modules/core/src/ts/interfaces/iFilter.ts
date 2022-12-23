@@ -119,6 +119,9 @@ export interface IFilterOptionDef {
     hideFilterInput?: boolean;
 }
 
+/**
+ * Parameters provided by the grid to the `init` method of an `IFilterComp`
+ */
 export interface IFilterParams<TData = any> extends AgGridCommon<TData> {
     /** The column this filter is for. */
     column: Column;

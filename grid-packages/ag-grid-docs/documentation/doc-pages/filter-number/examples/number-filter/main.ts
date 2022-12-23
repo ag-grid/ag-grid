@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, ValueFormatterParams } from '@ag-grid-community/core';
+import { ColDef, Grid, GridOptions, INumberFilterParams, ValueFormatterParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -6,7 +6,7 @@ var numberValueFormatter = function (params: ValueFormatterParams) {
   return params.value.toFixed(2)
 }
 
-var saleFilterParams = {
+var saleFilterParams: INumberFilterParams = {
   allowedCharPattern: '\\d\\-\\,\\$',
   numberParser: (text: string | null) => {
     return text == null

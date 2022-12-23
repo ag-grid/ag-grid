@@ -2,7 +2,7 @@ import {
   FirstDataRenderedEvent, Grid,
   GridOptions,
   ICellRendererParams,
-  IFiltersToolPanel
+  ISetFilterParams
 } from '@ag-grid-community/core';
 import { getData } from "./data";
 
@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
       filterParams: {
         caseSensitive: false,
         cellRenderer: colourCellRenderer,
-      },
+      } as ISetFilterParams,
     },
     {
       headerName: 'Case Sensitive',
@@ -25,7 +25,7 @@ const gridOptions: GridOptions = {
       filterParams: {
         caseSensitive: true,
         cellRenderer: colourCellRenderer,
-      },
+      } as ISetFilterParams,
     },
   ],
   defaultColDef: {

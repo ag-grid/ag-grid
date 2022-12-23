@@ -38,10 +38,15 @@ export interface IFilterPlaceholderFunctionParams {
 }
 export type FilterPlaceholderFunction = (params: IFilterPlaceholderFunctionParams) => string;
 
-// internal type
+/**
+ * Parameters provided by the grid to the `init` method of a `SimpleFilter`.
+ * Do not use in `colDef.filterParams` - see `ISimpleFilterParams` instead.
+ */
 export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParams<TData>;
 
-// external type
+/**
+ * Common parameters in `colDef.filterParams` used by all simple filters. Extended by the specific filter types.
+ */
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     /**
      * Array of filter options to present to the user.

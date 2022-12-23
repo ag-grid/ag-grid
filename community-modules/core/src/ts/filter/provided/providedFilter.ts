@@ -14,10 +14,15 @@ import { IRowNode } from '../../interfaces/iRowNode';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
-// internal type
+/**
+ * Parameters provided by the grid to the `init` method of a `ProvidedFilter`.
+ * Do not use in `colDef.filterParams` - see `IProvidedFilterParams` instead.
+ */
 export type ProvidedFilterParams<TData = any> = IProvidedFilterParams & IFilterParams<TData>;
 
-// external type
+/**
+ * Common parameters in `colDef.filterParams` used by all provided filters. Extended by the specific filter types.
+ */
 export interface IProvidedFilterParams {
     /**
      * Specifies the buttons to be shown in the filter, in the order they should be displayed in.

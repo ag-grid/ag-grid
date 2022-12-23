@@ -1,7 +1,7 @@
 import {
   FirstDataRenderedEvent, Grid,
   GridOptions,
-  IFiltersToolPanel,
+  ISetFilterParams,
 } from '@ag-grid-community/core'
 
 var listOfDays = [
@@ -14,16 +14,16 @@ var listOfDays = [
   'Sunday',
 ]
 
-var daysValuesNotProvidedFilterParams = {
-  comparator: (a: string, b: string) => {
-    var aIndex = listOfDays.indexOf(a)
-    var bIndex = listOfDays.indexOf(b)
+var daysValuesNotProvidedFilterParams: ISetFilterParams = {
+  comparator: (a: string | null, b: string | null) => {
+    var aIndex = a == null ? -1 : listOfDays.indexOf(a)
+    var bIndex = b == null ? -1 : listOfDays.indexOf(b)
     if (aIndex === bIndex) return 0
     return aIndex > bIndex ? 1 : -1
   },
 }
 
-var daysValuesProvidedFilterParams = {
+var daysValuesProvidedFilterParams: ISetFilterParams = {
   values: listOfDays,
   suppressSorting: true, // use provided order
 }

@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, IMultiFilterParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -15,7 +15,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             filter: 'agSetColumnFilter',
           },
         ],
-      },
+      } as IMultiFilterParams,
     },
     {
       field: 'country',
@@ -32,7 +32,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             display: 'accordion',
           },
         ],
-      },
+      } as IMultiFilterParams,
     },
     {
       field: 'sport',

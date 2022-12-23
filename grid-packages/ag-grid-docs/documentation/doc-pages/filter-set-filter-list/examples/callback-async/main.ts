@@ -1,6 +1,6 @@
-import { Grid, GridOptions, SetFilterValuesFuncParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ISetFilterParams, SetFilterValuesFuncParams } from '@ag-grid-community/core'
 
-var filterParams = {
+var filterParams: ISetFilterParams = {
   values: (params: SetFilterValuesFuncParams) => {
     setTimeout(function () {
       params.success(['value 1', 'value 2'])

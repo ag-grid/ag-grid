@@ -1,4 +1,4 @@
-import {Grid, GridOptions} from '@ag-grid-community/core'
+import {Grid, GridOptions, ISetFilterParams} from '@ag-grid-community/core'
 
 function replaceAccents(value: string) {
     return value
@@ -15,7 +15,7 @@ function replaceAccents(value: string) {
         .replace(new RegExp('\\W', 'g'), '')
 }
 
-const filterParams = {
+const filterParams: ISetFilterParams = {
     textFormatter: replaceAccents,
 };
 

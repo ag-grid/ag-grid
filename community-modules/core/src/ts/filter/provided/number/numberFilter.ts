@@ -21,10 +21,15 @@ export interface NumberFilterModel extends ISimpleFilterModel {
     filterTo?: number | null;
 }
 
-// internal type
+/**
+ * Parameters provided by the grid to the `init` method of a `NumberFilter`.
+ * Do not use in `colDef.filterParams` - see `INumberFilterParams` instead.
+ */
 export type NumberFilterParams<TData = any> = INumberFilterParams & IFilterParams<TData>;
 
-// external type
+/**
+ * Parameters used in `colDef.filterParams` to configure a Number Filter (`agNumberColumnFilter`).
+ */
 export interface INumberFilterParams extends IScalarFilterParams {
     /**
      * When specified, the input field will be of type `text` instead of `number`, and this will be used as a regex of all the characters that are allowed to be typed.
@@ -34,7 +39,7 @@ export interface INumberFilterParams extends IScalarFilterParams {
     /**
      * Typically used alongside `allowedCharPattern`, this provides a custom parser to convert the value entered in the filter inputs into a number that can be used for comparisons.
      */
-    numberParser?: (text: string | null) => number;
+    numberParser?: (text: string | null) => number | null;
 }
 
 export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {

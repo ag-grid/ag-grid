@@ -2,10 +2,15 @@ import { AgInputTextField } from "../../widgets/agInputTextField";
 import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ISimpleFilterModelType, Tuple } from "./simpleFilter";
 import { IFilterParams } from "../../interfaces/iFilter";
 
-// internal type
+/**
+ * Parameters provided by the grid to the `init` method of a `ScalarFilter`.
+ * Do not use in `colDef.filterParams` - see `IScalarFilterParams` instead.
+ */
 export type ScalarFilterParams<TData = any> = IScalarFilterParams & IFilterParams<TData>;
 
-// external type
+/**
+ * Common parameters in `colDef.filterParams` used by all scalar filters. Extended by the specific filter types.
+ */
 export interface IScalarFilterParams extends ISimpleFilterParams {
     /** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */
     inRangeInclusive?: boolean;

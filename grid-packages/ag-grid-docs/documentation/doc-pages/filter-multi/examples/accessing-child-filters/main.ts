@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IMultiFilter, ISetFilter } from '@ag-grid-community/core';
+import { Grid, GridOptions, IMultiFilter, IMultiFilterParams, ISetFilter, ITextFilterParams } from '@ag-grid-community/core';
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -11,13 +11,13 @@ const gridOptions: GridOptions<IOlympicData> = {
             filter: 'agTextColumnFilter',
             filterParams: {
               buttons: ['apply', 'clear'],
-            },
+            } as ITextFilterParams,
           },
           {
             filter: 'agSetColumnFilter',
           },
         ],
-      },
+      } as IMultiFilterParams,
     },
   ],
   defaultColDef: {

@@ -24,7 +24,7 @@ var athleteFilterParams: ITextFilterParams = {
   },
   debounceMs: 200,
   suppressAndOrCondition: true,
-} as ITextFilterParams;
+};
 
 var countryFilterParams: ITextFilterParams = {
   filterOptions: ['contains'],
@@ -50,7 +50,7 @@ var countryFilterParams: ITextFilterParams = {
   },
   trimInput: true,
   debounceMs: 1000,
-} as ITextFilterParams;
+};
 
 const columnDefs: ColDef[] = [
   {
@@ -68,7 +68,7 @@ const columnDefs: ColDef[] = [
     filterParams: {
       caseSensitive: true,
       defaultOption: 'startsWith',
-    },
+    } as ITextFilterParams,
   },
 ]
 

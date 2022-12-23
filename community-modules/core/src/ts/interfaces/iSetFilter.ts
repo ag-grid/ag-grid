@@ -99,11 +99,14 @@ export type SetFilterValuesFunc<TData = any, V = string> = (params: SetFilterVal
  */
 export type SetFilterValues<TData = any, V = string> = SetFilterValuesFunc<TData, V> | (V | null)[];
 
-// internal type
+/**
+ * Parameters provided by the grid to the `init` method of a `SetFilter`.
+ * Do not use in `colDef.filterParams` - see `ISetFilterParams` instead.
+ */
 export type SetFilterParams<TData = any, V = string> = ISetFilterParams<TData, V> & IFilterParams<TData>;
 
-// external type
 /** 
+ * Parameters used in `colDef.filterParams` to configure a Set Filter (`agSetColumnFilter`).
  * @param TData type of data row
  * @param V type of value in the Set Filter
  */

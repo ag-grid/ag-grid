@@ -1,7 +1,7 @@
-import { Grid, ColDef, GridOptions, IFilterOptionDef, GetLocaleTextParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IFilterOptionDef, GetLocaleTextParams, INumberFilterParams, ITextFilterParams, IDateFilterParams } from '@ag-grid-community/core'
 declare var window: any;
 
-var filterParams = {
+var filterParams: INumberFilterParams = {
   filterOptions: [
     'empty',
     {
@@ -40,7 +40,7 @@ var filterParams = {
   suppressAndOrCondition: true,
 }
 
-var containsFilterParams = {
+var containsFilterParams: ITextFilterParams = {
   filterOptions: [
     'contains',
     {
@@ -74,7 +74,7 @@ var containsFilterParams = {
   ] as IFilterOptionDef[],
 }
 
-var equalsFilterParams = {
+var equalsFilterParams: IDateFilterParams = {
   filterOptions: [
     'equals',
     {
@@ -147,11 +147,12 @@ var equalsFilterParams = {
     if (cellDate > filterLocalDateAtMidnight) {
       return 1
     }
+    return 0;
   },
   browserDatePicker: true,
 }
 
-var notEqualsFilterParams = {
+var notEqualsFilterParams: ITextFilterParams = {
   filterOptions: [
     'notEqual',
     {

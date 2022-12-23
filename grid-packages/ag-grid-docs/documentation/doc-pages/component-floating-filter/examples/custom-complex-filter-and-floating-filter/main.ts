@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ITextFilterParams, INumberFilterParams, IDateFilterParams } from '@ag-grid-community/core'
 
 import { CustomNumberFilter } from "./custom-number-filter_typescript";
 import { NumberFloatingFilter, CustomFloatingParams } from "./number-floating-filter_typescript";
@@ -10,14 +10,14 @@ const columnDefs: ColDef[] = [
     filter: 'agTextColumnFilter',
     filterParams: {
       debounceMs: 2000,
-    },
+    } as ITextFilterParams,
   },
   {
     field: 'age',
     filter: 'agNumberColumnFilter',
     filterParams: {
       debounceMs: 0,
-    },
+    } as INumberFilterParams,
   },
   { field: 'country' },
   { field: 'year' },
@@ -50,7 +50,7 @@ const columnDefs: ColDef[] = [
           return 1
         }
       },
-    },
+    } as IDateFilterParams,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
     },

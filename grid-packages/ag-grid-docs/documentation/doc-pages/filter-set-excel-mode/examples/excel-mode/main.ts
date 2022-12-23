@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core';
+import { Grid, GridOptions, ISetFilterParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 const gridOptions: GridOptions = {
@@ -14,7 +14,7 @@ const gridOptions: GridOptions = {
       filter: 'agSetColumnFilter',
       filterParams: {
         excelMode: 'windows',
-      },
+      } as ISetFilterParams,
     },
     {
       headerName: 'Excel (Mac)',
@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
       filter: 'agSetColumnFilter',
       filterParams: {
         excelMode: 'mac',
-      },
+      } as ISetFilterParams,
     },
   ],
   defaultColDef: {

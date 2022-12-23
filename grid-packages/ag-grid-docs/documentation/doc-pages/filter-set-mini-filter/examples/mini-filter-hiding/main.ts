@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, ISetFilterParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -9,7 +9,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       filter: 'agSetColumnFilter',
       filterParams: {
         suppressMiniFilter: true,
-      },
+      } as ISetFilterParams,
     },
 
     // number filters

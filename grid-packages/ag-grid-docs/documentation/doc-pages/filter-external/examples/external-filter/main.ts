@@ -1,6 +1,6 @@
-import { Grid, ColDef, GridOptions, IRowNode } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IDateFilterParams, IRowNode } from '@ag-grid-community/core'
 
-var dateFilterParams = {
+var dateFilterParams: IDateFilterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var cellDate = asDate(cellValue)
 
@@ -15,6 +15,7 @@ var dateFilterParams = {
     if (cellDate > filterLocalDateAtMidnight) {
       return 1
     }
+    return 0;
   },
 }
 

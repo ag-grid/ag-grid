@@ -4858,7 +4858,9 @@
     "type": "IDateFilterParams & IFilterParams<TData>"
   },
   "IDateFilterParams": {
-    "meta": {},
+    "meta": {
+      "doc": "/** Parameters used in `colDef.filterParams` to configure a Date Filter (`agDateColumnFilter`).\n */"
+    },
     "type": {
       "comparator?": "IDateComparatorFunc",
       "browserDatePicker?": "boolean",
@@ -4931,10 +4933,12 @@
     "type": "INumberFilterParams & IFilterParams<TData>"
   },
   "INumberFilterParams": {
-    "meta": {},
+    "meta": {
+      "doc": "/** Parameters used in `colDef.filterParams` to configure a Number Filter (`agNumberColumnFilter`).\n */"
+    },
     "type": {
       "allowedCharPattern?": "string",
-      "numberParser?": "(text: string | null) => number",
+      "numberParser?": "(text: string | null) => number | null",
       "inRangeInclusive?": "boolean",
       "includeBlanksInEquals?": "boolean",
       "includeBlanksInLessThan?": "boolean",
@@ -4980,7 +4984,9 @@
     "type": "IProvidedFilterParams & IFilterParams<TData>"
   },
   "IProvidedFilterParams": {
-    "meta": {},
+    "meta": {
+      "doc": "/** Common parameters in `colDef.filterParams` used by all provided filters. Extended by the specific filter types.\n */"
+    },
     "type": {
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
@@ -5028,7 +5034,9 @@
     "type": "IScalarFilterParams & IFilterParams<TData>"
   },
   "IScalarFilterParams": {
-    "meta": {},
+    "meta": {
+      "doc": "/** Common parameters in `colDef.filterParams` used by all scalar filters. Extended by the specific filter types.\n */"
+    },
     "type": {
       "inRangeInclusive?": "boolean",
       "includeBlanksInEquals?": "boolean",
@@ -5125,7 +5133,9 @@
     "type": "ISimpleFilterParams & IFilterParams<TData>"
   },
   "ISimpleFilterParams": {
-    "meta": {},
+    "meta": {
+      "doc": "/** Common parameters in `colDef.filterParams` used by all simple filters. Extended by the specific filter types.\n */"
+    },
     "type": {
       "filterOptions?": "(IFilterOptionDef | ISimpleFilterModelType)[]",
       "defaultOption?": "string",
@@ -5240,11 +5250,13 @@
     "type": "ITextFilterParams & IFilterParams<TData>"
   },
   "ITextFilterParams": {
-    "meta": {},
+    "meta": {
+      "doc": "/** Parameters used in `colDef.filterParams` to configure a  Text Filter (`agTextColumnFilter`).\n */"
+    },
     "type": {
       "textMatcher?": "TextMatcher",
       "caseSensitive?": "boolean",
-      "textFormatter?": "(from: string) => string",
+      "textFormatter?": "(from: string) => string | null",
       "trimInput?": "boolean",
       "filterOptions?": "(IFilterOptionDef | ISimpleFilterModelType)[]",
       "defaultOption?": "string",
@@ -7692,7 +7704,10 @@
     }
   },
   "IFilterParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": {
+      "typeParams": ["TData = any"],
+      "doc": "/** Parameters provided by the grid to the `init` method of an `IFilterComp`\n */"
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -7907,7 +7922,9 @@
     "type": "IMultiFilterParams & IFilterParams<TData>"
   },
   "IMultiFilterParams": {
-    "meta": {},
+    "meta": {
+      "doc": "/** Parameters used in `colDef.filterParams` to configure a Multi Filter (`agMultiColumnFilter`).\n */"
+    },
     "type": { "filters?": "IMultiFilterDef[]", "readOnly?": "boolean" },
     "docs": {
       "filters?": "/** An array of filter definition objects. */",
@@ -8742,7 +8759,7 @@
   "ISetFilterParams": {
     "meta": {
       "typeParams": ["TData = any", "V = string"],
-      "doc": "/** \n * @param TData type of data row\n * @param V type of value in the Set Filter\n */"
+      "doc": "/** \n * Parameters used in `colDef.filterParams` to configure a Set Filter (`agSetColumnFilter`).\n * @param TData type of data row\n * @param V type of value in the Set Filter\n */"
     },
     "type": {
       "values?": "SetFilterValues<TData, V>",

@@ -8727,7 +8727,7 @@
       "description": "/** Typically used alongside `allowedCharPattern`, this provides a custom parser to convert the value entered in the filter inputs into a number that can be used for comparisons.\n     */",
       "type": {
         "arguments": { "text": "string | null" },
-        "returnType": "number",
+        "returnType": "number | null",
         "optional": true
       }
     },
@@ -9175,7 +9175,7 @@
       "description": "/** Formats the text before applying the filter compare logic.\n     * Useful if you want to substitute accented characters, for example.\n     */",
       "type": {
         "arguments": { "from": "string" },
-        "returnType": "string",
+        "returnType": "string | null",
         "optional": true
       }
     },

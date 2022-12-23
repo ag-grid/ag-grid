@@ -1,11 +1,11 @@
-import { Grid, GridOptions, IFiltersToolPanel } from '@ag-grid-community/core'
+import { Grid, GridOptions, ISetFilterParams } from '@ag-grid-community/core'
 
-var filterParams = {
-  comparator: (a: string, b: string) => {
-    var valA = parseInt(a)
-    var valB = parseInt(b)
-    if (valA === valB) return 0
-    return valA > valB ? 1 : -1
+var filterParams: ISetFilterParams = {
+  comparator: (a: string | null, b: string | null) => {
+    var valA = a == null ? 0 : parseInt(a);
+    var valB = b == null ? 0 : parseInt(b);
+    if (valA === valB) return 0;
+    return valA > valB ? 1 : -1;
   },
 }
 

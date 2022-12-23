@@ -25,10 +25,15 @@ export interface DateFilterModel extends ISimpleFilterModel {
     dateTo: string | null;
 }
 
-// internal type
+/**
+ * Parameters provided by the grid to the `init` method of a `DateFilter`.
+ * Do not use in `colDef.filterParams` - see `IDateFilterParams` instead.
+ */
 export type DateFilterParams<TData = any> = IDateFilterParams & IFilterParams<TData>;
 
-// external type
+/**
+ * Parameters used in `colDef.filterParams` to configure a Date Filter (`agDateColumnFilter`).
+ */
 export interface IDateFilterParams extends IScalarFilterParams {
     /** Required if the data for the column are not native JS `Date` objects. */
     comparator?: IDateComparatorFunc;
