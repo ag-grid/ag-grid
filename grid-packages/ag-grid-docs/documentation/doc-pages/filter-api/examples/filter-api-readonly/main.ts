@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IDateFilterParams, IMultiFilterParams, IProvidedFilterParams, ISetFilter } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IDateFilterParams, IMultiFilterParams, IProvidedFilterParams, ISetFilter, ITextFilterParams, ISetFilterParams } from '@ag-grid-community/core'
 
 declare var dateComparator: any;
 var defaultFilterParams: IProvidedFilterParams = { readOnly: true }
@@ -37,8 +37,8 @@ const columnDefs: ColDef[] = [
     filter: 'agMultiColumnFilter',
     filterParams: {
       filters: [
-        { filter: 'agTextColumnFilter', filterParams: { readOnly: true } as IProvidedFilterParams },
-        { filter: 'agSetColumnFilter', filterParams: { readOnly: true } as IProvidedFilterParams },
+        { filter: 'agTextColumnFilter', filterParams: { readOnly: true } as ITextFilterParams },
+        { filter: 'agSetColumnFilter', filterParams: { readOnly: true } as ISetFilterParams },
       ],
       readOnly: true,
     } as IMultiFilterParams,
