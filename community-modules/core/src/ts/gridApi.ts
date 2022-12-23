@@ -221,21 +221,38 @@ export class GridApi<TData = any> {
         });
     }
 
+    /** Will destroy the grid and release resources. If you are using a framework you do not need to call this, as the grid links in with the framework lifecycle. However if you are using Web Components or native JavaScript, you do need to call this, to avoid a memory leak in your application. */
+    public destroy(): void {
+        // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
+        // of context.destroy(). so we need to stop the infinite loop.
+        if (this.destroyCalled) { return; }
+        this.destroyCalled = true;
+
+        // destroy the UI first (as they use the services)
+        const gridCtrl = this.ctrlsService.getGridCtrl();
+
+        if (gridCtrl) {
+            gridCtrl.destroyGridUi();
+        }
+
+        // destroy the services
+        this.context.destroy();
+    }
+
+    @PreDestroy
+    private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {
+        // some users were raising support issues with regards memory leaks. the problem was the customers applications
+        // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
+        // all references in the API so at least the core grid can be garbage collected.
+        //
+        // wait about 100ms before clearing down the references, in case user has some cleanup to do,
+        // and needs to deference the API first
+        setTimeout(removeAllReferences.bind(window, this, 'Grid API'), 100);
+    }
+
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getAlignedGridService(): AlignedGridsService {
         return this.alignedGridsService;
-    }
-
-    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __getContext(): Context {
-        return this.context;
-    }
-
-    /**
-     * Used internally by grid. Not intended to be used by the client. Interface may change between releases
-     */
-    public __setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]) {
-        this.gridOptionsService.set(propertyName, value);
     }
 
     private getSetterMethod(key: keyof GridOptions) {
@@ -695,6 +712,11 @@ export class GridApi<TData = any> {
     /** Pass a quick filter text into the grid for filtering. */
     public setQuickFilter(newFilter: string): void {
         this.gridOptionsService.set('quickFilterText', newFilter);
+    }
+    /** Reset the quick filter cache text on every rowNode. */
+    public resetQuickFilter(): void {
+        if (this.warnIfDestroyed('resetQuickFilter')) { return; }
+        this.rowModel.forEachNode(node => node.resetQuickFilterAggregateText());
     }
 
     /** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded. */
@@ -1399,46 +1421,13 @@ export class GridApi<TData = any> {
         this.eventService.dispatchEvent(event);
     }
 
-    /** Will destroy the grid and release resources. If you are using a framework you do not need to call this, as the grid links in with the framework lifecycle. However if you are using Web Components or native JavaScript, you do need to call this, to avoid a memory leak in your application. */
-    public destroy(): void {
-        // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
-        // of context.destroy(). so we need to stop the infinite loop.
-        if (this.destroyCalled) { return; }
-        this.destroyCalled = true;
 
-        // destroy the UI first (as they use the services)
-        const gridCtrl = this.ctrlsService.getGridCtrl();
-
-        if (gridCtrl) {
-            gridCtrl.destroyGridUi();
-        }
-
-        // destroy the services
-        this.context.destroy();
-    }
-
-    @PreDestroy
-    private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {
-        // some users were raising support issues with regards memory leaks. the problem was the customers applications
-        // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
-        // all references in the API so at least the core grid can be garbage collected.
-        //
-        // wait about 100ms before clearing down the references, in case user has some cleanup to do,
-        // and needs to deference the API first
-        setTimeout(removeAllReferences.bind(window, this, 'Grid API'), 100);
-    }
 
     private warnIfDestroyed(methodName: string): boolean {
         if (this.destroyCalled) {
             console.warn(`AG Grid: Grid API method ${methodName} was called on a grid that was destroyed.`);
         }
         return this.destroyCalled;
-    }
-
-    /** Reset the quick filter cache text on every rowNode. */
-    public resetQuickFilter(): void {
-        if (this.warnIfDestroyed('resetQuickFilter')) { return; }
-        this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
     }
 
     /** Returns the list of selected cell ranges. */

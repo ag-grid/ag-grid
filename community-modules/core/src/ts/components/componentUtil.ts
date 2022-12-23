@@ -150,7 +150,7 @@ export class ComponentUtil {
         const changesToApply = { ...changes };
 
         // We manually call these updates so that we can provide a different source of gridOptionsChanged
-        // We do not call __setProperty as this will be called by the grid api methods
+        // We do not call setProperty as this will be called by the grid api methods
         if (changesToApply.autoGroupColumnDef) {
             api.setAutoGroupColumnDef(changesToApply.autoGroupColumnDef.currentValue, "gridOptionsChanged");
             delete changesToApply.autoGroupColumnDef;
