@@ -164,6 +164,12 @@ export class AxisLabel {
     autoRotateAngle: number = 335;
 
     /**
+     * Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide.
+     */
+    @Validate(BOOLEAN)
+    avoidCollision: boolean = true;
+
+    /**
      * By default labels and ticks are positioned to the left of the axis line.
      * `true` positions the labels to the right of the axis line.
      * However, if the axis is rotated, it's easier to think in terms
@@ -508,11 +514,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let labelOverlap = true;
         let ticks: any[] = [];
         const defaultTickCount = 10;
-        const tickCount = this.tick.count !== undefined;
         const nice = this.nice;
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
-        const calculatePrimaryDomain = !secondaryAxis && !tickCount && nice;
+        const { avoidCollision } = label;
 
         scale.domain = this.dataDomain;
         if (scale instanceof ContinuousScale) {
@@ -531,15 +536,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     break;
                 }
 
-                if (calculatePrimaryDomain) {
-                    scale.tickCount = defaultTickCount - i;
-                }
-
                 const prevTicks = ticks;
 
-                // filter generated ticks if this is a category axis or this.tick.count is specified
                 const filteredTicks =
-                    (continuous && !tickCount) || i === 0 ? undefined : ticks.filter((_, i) => i % 2 === 0);
+                    !avoidCollision || (continuous && this.tick.count === undefined) || i === 0
+                        ? undefined
+                        : ticks.filter((_, i) => i % 2 === 0);
 
                 let secondaryAxisTicks;
                 if (secondaryAxis) {
@@ -555,7 +557,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     scale.tickCount = this.tick.count ?? defaultTickCount - i;
                     ticks = scale.ticks!();
                 }
-                ticks = filteredTicks ?? secondaryAxisTicks ?? scale.ticks!();
 
                 this.updateSelections({
                     halfBandwidth,
@@ -567,7 +568,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     primaryTickCount = ticks.length;
                 }
 
-                unchanged = ticks.every((t, i) => Number(t) === Number(prevTicks[i]));
+                unchanged = avoidCollision ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
                 i++;
             }
 
@@ -588,7 +589,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
             const labelPadding = rotated ? 0 : 10;
 
-            labelOverlap = axisLabelsOverlap(labelData, labelPadding);
+            // no need for further iterations if `avoidCollision` is false
+            labelOverlap = avoidCollision ? axisLabelsOverlap(labelData, labelPadding) : false;
         }
 
         this.updateGridLines({
