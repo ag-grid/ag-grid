@@ -676,7 +676,7 @@ export class GridApi<TData = any> {
 
     /** Pass a quick filter text into the grid for filtering. */
     public setQuickFilter(newFilter: string): void {
-        this.filterManager.setQuickFilter(newFilter);
+        this.gridOptionsService.set('quickFilterText', newFilter);
     }
 
     /** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded. */
