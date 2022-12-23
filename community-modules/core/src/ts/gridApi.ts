@@ -259,6 +259,16 @@ export class GridApi<TData = any> {
         return `set${key.charAt(0).toUpperCase()}${key.substring(1)}`;
     }
 
+    // TODO: What about properties that should not be updated? Currently they would not 
+    // be updatable via the gridApi. 
+
+    // Do we need to have an exclusion list that is tied into which properties can be updated 
+    // so that we can stop the user updating properties that should not be?
+
+    // In old version via framework wrappers you could update any property so there is not
+    // to much changed exposing this method to make that possible for JS too. Also JS users
+    // could just update their gridOptions object which is still used by the grid.
+
     public setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]) {
 
         // Ensure the GridOptions property gets updated and fires the change event as we
