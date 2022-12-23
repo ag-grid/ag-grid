@@ -43,7 +43,7 @@ import {
 } from "./interfaces/iCallbackParams";
 import { RowNode } from "./entities/rowNode";
 import { RowPinnedType, IRowNode } from "./interfaces/iRowNode";
-import { AgEvent, ColumnEventType } from "./events";
+import { AgEvent, ColumnEventType, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
 import { FocusService } from "./focusService";
@@ -679,24 +679,36 @@ export class GridApi<TData = any> {
         this.filterManager.setQuickFilter(newFilter);
     }
 
-    /** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded. */
-    public selectAll() {
-        this.selectionService.selectAllRowNodes('apiSelectAll');
+    /**
+     * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     */
+    public selectAll(source: SelectionEventSourceType = 'apiSelectAll') {
+        this.selectionService.selectAllRowNodes(source);
     }
 
-    /** Clear all row selections, regardless of filtering. */
-    public deselectAll() {
-        this.selectionService.deselectAllRowNodes('apiDeselectAll');
+    /**
+     * Clear all row selections, regardless of filtering.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     */
+    public deselectAll(source: SelectionEventSourceType = 'apiSelectAll') {
+        this.selectionService.deselectAllRowNodes(source);
     }
 
-    /** Select all filtered rows. */
-    public selectAllFiltered() {
-        this.selectionService.selectAllRowNodes('apiSelectAllFiltered', true);
+    /**
+     * Select all filtered rows.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     */
+    public selectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
+        this.selectionService.selectAllRowNodes(source, true);
     }
 
-    /** Clear all filtered selections. */
-    public deselectAllFiltered() {
-        this.selectionService.deselectAllRowNodes('apiDeselectAllFiltered', true);
+    /**
+     * Clear all filtered selections.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     */
+    public deselectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
+        this.selectionService.deselectAllRowNodes(source, true);
     }
 
     /**

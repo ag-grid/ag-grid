@@ -858,6 +858,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      * @param newValue -`true` for selection, `false` for deselection.
      * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
      * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired.
+     * @param source - Source property that will appear in the `selectionChanged` event.
      */
     public setSelected(newValue: boolean, clearSelection: boolean = false, suppressFinishActions: boolean = false, source: SelectionEventSourceType = 'api') {
         this.setSelectedParams({
@@ -1019,13 +1020,14 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.selected = newValue;
 
         if (this.eventService) {
-            this.dispatchLocalEvent(Object.assign({}, this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED), {source}));
+            this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
         }
 
-        const event: RowSelectedEvent = Object.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED), {
+        const event: RowSelectedEvent = {
+            ...this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED),
             event: e || null,
             source
-        });
+        };
 
         this.beans.eventService.dispatchEvent(event);
 
