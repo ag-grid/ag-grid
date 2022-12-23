@@ -158,10 +158,28 @@ Three rotation approaches are available:
 - Enabling automatic rotation via the `autoRotate` property, and optionally specifying a rotation angle via the
   `autoRotateAngle` property. Rotation is applied if any label will be wider than the gap between ticks.
 
-Label skipping is performed automatically when there is a high likelihood of collisions.
+Label skipping is performed automatically when there is a high likelihood of collisions. To disable this, set `label.avoidCollision` to false:
+
+```js
+{
+    label: {
+      avoidCollision: false
+    }
+}
+```
 
 If `autoRotate` is enabled, rotation will be attempted first to find a label fit, before label skipping applies.
 Category axes have `autoRotate` enabled by default with the default `autoRotateAngle` of `335`.
+
+When `label.avoidCollision` is `true`, the axis labels are dropped if they do not have a minimum of `10`px between them. This minimum gap between the axis labels can be configured using the `label.minGap` property:
+
+```js
+{
+    label: {
+      minGap: 20
+    }
+}
+```
 
 The following example demonstrates label rotation and skipping:
 - There is a grab handle in the bottom right to allow resizing of the chart to see how labels change with available

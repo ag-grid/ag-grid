@@ -188,7 +188,7 @@ function timeOperation(name: string, operation: any) {
   )
 }
 
-var columnDefs: ColDef[] = [
+const columnDefs: ColDef[] = [
   { field: "city", rowGroup: true, hide: true, },
   { field: 'laptop', rowGroup: true, hide: true, },
   { field: 'distro', sort: 'asc', comparator: myComparator },

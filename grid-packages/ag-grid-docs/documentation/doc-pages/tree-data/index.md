@@ -160,6 +160,8 @@ const gridOptions = {
 }
 </snippet>
 
+Please note that Tree Data filtering will override some of the functionality of [Filtering Group Aggregations](/aggregation-filtering/#filtering-group-aggregations). Specifically, passing `true` or `false` to `groupAggFiltering` will have no impact on the behaviour. However, [passing a function to the property](/aggregation-filtering/#custom-group-aggregation-filtering) will work as expected. If Tree Data filtering is disabled by setting `excludeChildrenWhenTreeDataFiltering = true`, then `groupAggFiltering` will work as normal (e.g. `true`/`false` will affect the behaviour).
+
 Also note the [Set Filter](/filter-set/) will contain a list of all unique values across each level of the group hierarchy. The [File Browser](#example-file-browser) example below demonstrates how the Set Filter works with Tree Data.
 
 ## File Browser Example

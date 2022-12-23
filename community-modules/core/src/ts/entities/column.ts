@@ -342,7 +342,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         exists(colDefAny['menuTabs']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'menuTabs');
         exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams');
-        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.ColumnToolPanelModule, 'columnMenuParams');
+        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.ColumnToolPanelModule, 'columnsMenuParams');
 
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
@@ -350,6 +350,10 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         if (colDefAny.pinnedRowCellRenderer || colDefAny.pinnedRowCellRendererParams || colDefAny.pinnedRowCellRendererFramework) {
             warnOnce('AG Grid: pinnedRowCellRenderer[Params,Framework] no longer exist. Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.', 'colDef.pinnedRowCellRenderer-deprecated');
+        }
+
+        if (exists(colDefAny.columnGroupShow) && colDefAny.columnGroupShow !== 'closed' && colDefAny.columnGroupShow !== 'open') {
+            warnOnce(`AG Grid: '${colDefAny.columnGroupShow}' is not valid for columnGroupShow. Valid values are 'open', 'closed'`, 'columnGroupShow_invalid')
         }
     }
 

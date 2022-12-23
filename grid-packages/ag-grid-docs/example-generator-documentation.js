@@ -519,6 +519,9 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     // replace Typescript AgChart. with Javascript agCharts.AgChart.
                     jsFile = jsFile.replace(/(?<!\.)AgChart\./g, 'agCharts.AgChart.');
 
+                    jsFile = jsFile.replace(`const columnDefs = [`, `/** @type {(import('ag-grid-community').ColDef | import('ag-grid-community').ColGroupDef )[]} */\nconst columnDefs = [`);
+                    jsFile = jsFile.replace(`const gridOptions = {`, `/** @type {import('ag-grid-community').GridOptions} */\nconst gridOptions = {`);
+
                     const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');
                     jsFiles[jsFileName] = jsFile;
                 });
@@ -574,7 +577,9 @@ const modules = moduleMapping
 
 /** If you provide a package.json file to plunker it will load the types and provide JsDocs and type checking. */
 function addPackageJson(type, framework, importType, basePath) {
-    if (framework !== 'angular' && framework !== 'typescript' && framework !== 'reactFunctionalTs') {
+
+    const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla'])
+    if (!supportedFrameworks.has(framework)) {
         return;
     }
 
@@ -597,7 +602,7 @@ function addPackageJson(type, framework, importType, basePath) {
         addDependency('react-dom', '17');
     }
 
-    if (importType === 'modules') {
+    if (importType === 'modules' && framework !== 'vanilla') {
         if (type === 'grid' && framework === 'angular') {
             addDependency('@ag-grid-community/angular', agGridAngularVersion);
         }

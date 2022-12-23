@@ -1,6 +1,6 @@
 import { Grid, GridOptions, GridReadyEvent } from "@ag-grid-community/core";
 
-var gridOptions: GridOptions = {
+const gridOptions: GridOptions = {
     columnDefs: [
         // colId will be 'firstCol'
         { headerName: 'Col 1', colId: 'firstCol', field: 'height' },

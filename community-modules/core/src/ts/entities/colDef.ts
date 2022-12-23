@@ -24,7 +24,7 @@ export interface AbstractColDef<TData = any> {
     /** Suppress the grid taking action for the relevant keyboard event when a header is focused. */
     suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams<TData>) => boolean;
 
-    /** Whether to show the column when the group is open / closed. */
+    /** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */
     columnGroupShow?: ColumnGroupShowType;
     /** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */
     toolPanelClass?: ToolPanelClass<TData>;

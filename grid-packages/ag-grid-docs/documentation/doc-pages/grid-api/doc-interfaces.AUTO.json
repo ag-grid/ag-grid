@@ -588,7 +588,7 @@
       }
     },
     "columnGroupShow": {
-      "description": "/** Whether to show the column when the group is open / closed. */",
+      "description": "/** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */",
       "type": { "returnType": "ColumnGroupShowType", "optional": true }
     },
     "toolPanelClass": {
@@ -682,7 +682,7 @@
       }
     },
     "columnGroupShow": {
-      "description": "/** Whether to show the column when the group is open / closed. */",
+      "description": "/** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */",
       "type": { "returnType": "ColumnGroupShowType", "optional": true }
     },
     "toolPanelClass": {
@@ -1376,7 +1376,7 @@
       }
     },
     "columnGroupShow": {
-      "description": "/** Whether to show the column when the group is open / closed. */",
+      "description": "/** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */",
       "type": { "returnType": "ColumnGroupShowType", "optional": true }
     },
     "toolPanelClass": {
