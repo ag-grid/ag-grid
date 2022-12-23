@@ -57,6 +57,13 @@ pre[class*="language-"] {
     color: #8292a2;
 }
 
+/* Align code comments to grid lines */
+.token.comment {
+    line-height: 1.275rem;
+    padding-bottom: .6375rem;
+    padding-top: .6375rem;
+}
+
 .token.punctuation {
     color: #f8f8f2;
 }
