@@ -40,6 +40,12 @@ const options: AgChartOptions = {
               fillOpacity: 0,
               strokeWidth: 2,
             },
+            highlightStyle: {
+              item: {
+                fillOpacity: 0,
+                strokeWidth: 6,
+              },
+            },
           },
         },
       },
