@@ -588,7 +588,7 @@
       }
     },
     "columnGroupShow": {
-      "description": "/** Whether to show the column when the group is open / closed. */",
+      "description": "/** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */",
       "type": { "returnType": "ColumnGroupShowType", "optional": true }
     },
     "toolPanelClass": {
@@ -682,7 +682,7 @@
       }
     },
     "columnGroupShow": {
-      "description": "/** Whether to show the column when the group is open / closed. */",
+      "description": "/** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */",
       "type": { "returnType": "ColumnGroupShowType", "optional": true }
     },
     "toolPanelClass": {
@@ -1376,7 +1376,7 @@
       }
     },
     "columnGroupShow": {
-      "description": "/** Whether to show the column when the group is open / closed. */",
+      "description": "/** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */",
       "type": { "returnType": "ColumnGroupShowType", "optional": true }
     },
     "toolPanelClass": {
@@ -5590,7 +5590,11 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "SelectionEventSourceType": {},
   "SelectionChangedEvent": {
+    "source": {
+      "type": { "returnType": "SelectionEventSourceType", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -7209,6 +7213,9 @@
     }
   },
   "RowSelectedEvent": {
+    "source": {
+      "type": { "returnType": "SelectionEventSourceType", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
@@ -14601,6 +14608,9 @@
     "rangeSelect": { "type": { "returnType": "boolean", "optional": true } },
     "groupSelectsFiltered": {
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "source": {
+      "type": { "returnType": "SelectionEventSourceType", "optional": false }
     }
   },
   "RowNodeEvent": {
@@ -14794,12 +14804,13 @@
   },
   "IRowNode": {
     "setSelected": {
-      "description": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     */",
+      "description": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
       "type": {
         "arguments": {
           "newValue": "boolean",
           "clearSelection?": "boolean",
-          "suppressFinishActions?": "boolean"
+          "suppressFinishActions?": "boolean",
+          "source?": "SelectionEventSourceType"
         },
         "returnType": "void",
         "optional": false
@@ -19456,6 +19467,14 @@
         "returnType": "boolean | undefined",
         "optional": true
       }
+    },
+    "areRowsEqual": {
+      "description": "/** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */",
+      "type": {
+        "arguments": { "oldRow": "any", "newRow": "any" },
+        "returnType": "boolean",
+        "optional": true
+      }
     }
   },
   "ISetDisplayValueModel": {
@@ -19554,6 +19573,12 @@
   },
   "SetFilterListItemSelectionChangedEvent": {
     "isSelected": { "type": { "returnType": "boolean", "optional": false } },
+    "item": { "type": { "returnType": "I", "optional": false } },
+    "meta": {
+      "typeParams": [
+        "I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null"
+      ]
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -19561,6 +19586,12 @@
   },
   "SetFilterListItemExpandedChangedEvent": {
     "isExpanded": { "type": { "returnType": "boolean", "optional": false } },
+    "item": { "type": { "returnType": "I", "optional": false } },
+    "meta": {
+      "typeParams": [
+        "I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null"
+      ]
+    },
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
@@ -19587,6 +19618,12 @@
       "type": {
         "arguments": { "params": "ValueFormatterParams" },
         "returnType": "string",
+        "optional": false
+      }
+    },
+    "item": {
+      "type": {
+        "returnType": "SetFilterModelTreeItem | string | null",
         "optional": false
       }
     },

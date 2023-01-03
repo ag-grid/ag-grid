@@ -14,7 +14,7 @@ const columnDefs: ColDef[] = [
       wrapHeaderText: true,
       autoHeaderHeight: true,
       valueFormatter: (params) => {
-        const ts = params.data?.lastUpdated;
+        const ts = params.data!.lastUpdated;
         if (ts) {
           const hh_mm_ss = ts.toLocaleString().split(' ')[1];   
           const SSS = ts.getMilliseconds();       
@@ -31,17 +31,15 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
-    sortable: true,    
+    resizable: true,  
   },
   autoGroupColumnDef: {
     minWidth: 220,
   },
-  rowGroupPanelShow: 'always',
   enableCellChangeFlash: true,
   getRowId: (params) => {  
     var rowId = '';
-    if (params.parentKeys?.length) {
+    if (params.parentKeys && params.parentKeys.length) {
       rowId += params.parentKeys.join('-') + '-';
     }
     const groupCols = params.columnApi.getRowGroupColumns();
@@ -53,6 +51,21 @@ const gridOptions: GridOptions = {
       rowId += params.data.tradeId;
     }
     return rowId;
+  },
+  onGridReady: (params) => {
+    // setup the fake server
+    const server = new FakeServer();
+
+    // create datasource with a reference to the fake server
+    const datasource = getServerSideDatasource(server);
+
+    // register the datasource with the grid
+    params.api.setServerSideDatasource(datasource);
+
+    // register interest in data changes
+    dataObservers.push((t: ServerSideTransaction) => {
+      params.api.applyServerSideTransactionAsync(t);
+    });
   },
   asyncTransactionWaitMillis: 1000,
   rowModelType: 'serverSide',
@@ -90,23 +103,4 @@ function getServerSideDatasource(server: any) {
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
   new Grid(gridDiv, gridOptions);
-
-  // setup the fake server
-  const server = new FakeServer();
-
-  // create datasource with a reference to the fake server
-  const datasource = getServerSideDatasource(server);
-
-  // register the datasource with the grid
-  gridOptions.api!.setServerSideDatasource(datasource);
-
-  const getGroupRouteForData = (data: any) => {
-    const rowGroupColumns = gridOptions.columnApi!.getRowGroupColumns();
-    return rowGroupColumns.map(col => data[col.getColDef().field!]);
-  }
-
-  // register interest in data changes
-  dataObservers.push((t: ServerSideTransaction) => {
-    gridOptions.api!.applyServerSideTransactionAsync(t);
-  });
 });

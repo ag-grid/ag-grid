@@ -377,7 +377,7 @@
       "headerTooltip?": "/** Tooltip for the column header */",
       "headerClass?": "/** CSS class to use for the header cell. Can be a string, array of strings, or function. */",
       "suppressHeaderKeyboardEvent?": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
-      "columnGroupShow?": "/** Whether to show the column when the group is open / closed. */",
+      "columnGroupShow?": "/** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */",
       "toolPanelClass?": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
       "suppressColumnsToolPanel?": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
       "suppressFiltersToolPanel?": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
@@ -427,7 +427,7 @@
       "headerTooltip?": "/** Tooltip for the column header */",
       "headerClass?": "/** CSS class to use for the header cell. Can be a string, array of strings, or function. */",
       "suppressHeaderKeyboardEvent?": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
-      "columnGroupShow?": "/** Whether to show the column when the group is open / closed. */",
+      "columnGroupShow?": "/** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */",
       "toolPanelClass?": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
       "suppressColumnsToolPanel?": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
       "suppressFiltersToolPanel?": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
@@ -754,7 +754,7 @@
       "headerTooltip?": "/** Tooltip for the column header */",
       "headerClass?": "/** CSS class to use for the header cell. Can be a string, array of strings, or function. */",
       "suppressHeaderKeyboardEvent?": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
-      "columnGroupShow?": "/** Whether to show the column when the group is open / closed. */",
+      "columnGroupShow?": "/** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */",
       "toolPanelClass?": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
       "suppressColumnsToolPanel?": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
       "suppressFiltersToolPanel?": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
@@ -2763,9 +2763,14 @@
       "type": "/** Event identifier */"
     }
   },
+  "SelectionEventSourceType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'api' | 'apiSelectAll' | 'apiSelectAllFiltered' | 'checkboxSelected' | 'parentSelected' | 'rowClicked' | 'rowDataChanged' | 'rowGroupChanged' | 'spacePressed' | 'uiSelectAll'"
+  },
   "SelectionChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
+      "source": "SelectionEventSourceType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -3900,6 +3905,7 @@
   "RowSelectedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
+      "source": "SelectionEventSourceType",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -8203,7 +8209,8 @@
       "clearSelection?": "boolean",
       "suppressFinishActions?": "boolean",
       "rangeSelect?": "boolean",
-      "groupSelectsFiltered?": "boolean"
+      "groupSelectsFiltered?": "boolean",
+      "source": "SelectionEventSourceType"
     }
   },
   "RowNodeEvent": {
@@ -8329,7 +8336,7 @@
   "IRowNode": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean)": "void",
+      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType)": "void",
       "isSelected()": "boolean | undefined",
       "isRowPinned()": "boolean",
       "isExpandable()": "boolean",
@@ -8381,7 +8388,7 @@
       "sibling": "IRowNode<TData>"
     },
     "docs": {
-      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean)": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     */",
+      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType)": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
       "isSelected()": "/** Returns:\n     * - `true` if node is selected,\n     * - `false` if the node isn't selected\n     * - `undefined` if it's partially selected (group where not all children are selected). \n     */",
       "isRowPinned()": "/** Returns:\n     * - `true` if node is either pinned to the `top` or `bottom`\n     * - `false` if the node isn't pinned\n     */",
       "isExpandable()": "/** Returns:\n    * - `true` if the node can be expanded, i.e it is a group or master row.\n    * - `false` if the node cannot be expanded\n    */",
@@ -11078,7 +11085,11 @@
     "type": {
       "getRowCount()": "number",
       "getRow(index: number)": "any",
-      "isRowSelected?(index: number)": "boolean | undefined"
+      "isRowSelected?(index: number)": "boolean | undefined",
+      "areRowsEqual?(oldRow: any, newRow: any)": "boolean"
+    },
+    "docs": {
+      "areRowsEqual?(oldRow: any, newRow: any)": "/** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */"
     }
   },
   "ISetDisplayValueModel": {
@@ -11120,13 +11131,21 @@
     }
   },
   "SetFilterListItemSelectionChangedEvent": {
-    "meta": {},
-    "type": { "isSelected": "boolean", "type": "string" },
+    "meta": {
+      "typeParams": [
+        "I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null"
+      ]
+    },
+    "type": { "isSelected": "boolean", "item": "I", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "SetFilterListItemExpandedChangedEvent": {
-    "meta": {},
-    "type": { "isExpanded": "boolean", "type": "string" },
+    "meta": {
+      "typeParams": [
+        "I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null"
+      ]
+    },
+    "type": { "isExpanded": "boolean", "item": "I", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "SetFilterListItemParams": {
@@ -11137,6 +11156,7 @@
       "params": "SetFilterParams<any, V>",
       "translate": "(key: keyof ISetFilterLocaleText) => string",
       "valueFormatter": "(params: ValueFormatterParams) => string",
+      "item": "SetFilterModelTreeItem | string | null",
       "isSelected": "boolean | undefined",
       "isTree?": "boolean",
       "depth?": "number",

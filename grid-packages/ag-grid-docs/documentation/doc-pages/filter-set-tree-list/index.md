@@ -43,7 +43,9 @@ const gridOptions = {
 
 ## Formatting Values
 
-The values can be formatted in the Filter List via `filterParams.treeListFormatter`. This allows a different format to be used for each level of the tree (compared to the Value Formatter which is applied equally to every value).
+The values can be formatted in the Filter List via `filterParams.treeListFormatter`. This allows a different format to be used for each level of the tree.
+
+`filterParams.valueFormatter` is not used in the Filter List when Tree List is turned on. However, it is still used to format the values displayed in the Floating Filter. The value provided to the Value Formatter is the original value, e.g. a `Date` object for dates, the child value for Tree Data or Grouping, or the cell value for a custom tree path.
 
 <interface-documentation interfaceName='ISetFilterParams' names='["treeListFormatter"]' config='{"description":""}'></interface-documentation>
 
@@ -57,7 +59,7 @@ The following example demonstrates some different types of Tree List in the Set 
 
 1. The **Group**, **Date** and **Gold** columns all have `filterParams.treeList = true`
 2. The **Group** column Filter List matches the format of the Row Grouping. A Key Creator is specified to convert the path into a string.
-3. The **Date** column is grouped by year -> month -> date. `filterParams.treeListFormatter` is provided which formats the numerical month value to display as the name of the month.
+3. The **Date** column is grouped by year -> month -> date. `filterParams.treeListFormatter` is provided which formats the numerical month value to display as the name of the month. When a date is filtered, `filterParams.valueFormatter` is used to format the value displayed in the Floating Filter.
 4. The **Gold** column has `filterParams.treeListPathGetter` provided which groups the values into a tree of >2 and <=2.
 
 <grid-example title='Filter Tree List' name='filter-tree-list' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>

@@ -1,7 +1,7 @@
 import { ColDef, Grid, GridOptions, NewValueParams, ValueSetterParams } from "@ag-grid-community/core"
 
 ///// left table
-var columnDefsLeft: ColDef[] = [
+const columnDefsLeft: ColDef[] = [
   { headerName: 'Function', field: 'function', minWidth: 150 },
   { headerName: 'Value', field: 'value' },
   { headerName: 'Times 10', valueGetter: 'getValue("value") * 10' },
@@ -12,7 +12,7 @@ interface LeftData {
   value: string;
 }
 
-var rowDataLeft: LeftData[] = [
+const rowDataLeft: LeftData[] = [
   { function: 'Number Squared', value: '=ctx.theNumber * ctx.theNumber' },
   { function: 'Number x 2', value: '=ctx.theNumber * 2' },
   { function: "Today's Date", value: '=new Date().toLocaleDateString()' },
@@ -20,7 +20,7 @@ var rowDataLeft: LeftData[] = [
   { function: 'Sum B', value: '=ctx.sum("b")' },
 ]
 
-var gridOptionsLeft: GridOptions = {
+const gridOptionsLeft: GridOptions = {
   columnDefs: columnDefsLeft,
   defaultColDef: {
     flex: 1,
@@ -33,7 +33,7 @@ var gridOptionsLeft: GridOptions = {
 }
 
 ///// Right table
-var columnDefsRight: ColDef[] = [
+const columnDefsRight: ColDef[] = [
   {
     headerName: 'A',
     field: 'a',
@@ -56,7 +56,7 @@ interface RightData {
   a: number;
   b: number;
 }
-var rowDataRight: RightData[] = [
+const rowDataRight: RightData[] = [
   { a: 1, b: 22 },
   { a: 2, b: 33 },
   { a: 3, b: 44 },
@@ -66,7 +66,7 @@ var rowDataRight: RightData[] = [
   { a: 7, b: 88 },
 ]
 
-var gridOptionsRight: GridOptions = {
+const gridOptionsRight: GridOptions = {
   columnDefs: columnDefsRight,
   defaultColDef: {
     flex: 1,

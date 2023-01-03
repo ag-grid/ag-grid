@@ -96,6 +96,8 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                 children = item.children;
             });
         }
+        // update the parent availability based on the children
+        this.updateAvailable(availableKeys);
 
         this.selectAllItem.children = this.allDisplayedItemsTree;
         this.selectAllItem.expanded = true;
@@ -277,7 +279,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     }
 
     private updateAvailable(availableKeys: Set<string | null>) {
-        const isAvailable = (item: SetFilterModelTreeItem) => availableKeys.has(item.treeKey);
+        const isAvailable = (item: SetFilterModelTreeItem) => availableKeys.has(item.key!);
 
         this.allDisplayedItemsTree.forEach(item => this.recursiveItemCheck(item, false, isAvailable, 'available'));
     }

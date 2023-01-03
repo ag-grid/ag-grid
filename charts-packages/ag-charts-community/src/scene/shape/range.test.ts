@@ -69,7 +69,7 @@ describe('Range', () => {
 
         it('should render as expected', () => {
             const ctx = canvasCtx.nodeCanvas!.getContext('2d');
-            ctx.canvas.width = CANVAS_WIDTH;
+            (ctx as any).canvas.width = CANVAS_WIDTH;
             ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 

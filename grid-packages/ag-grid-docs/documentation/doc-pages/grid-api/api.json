@@ -676,6 +676,7 @@
         "meta": {
             "displayName": "Miscellaneous"
         },
+        "setProperty": {},
         "getValue": {},
         "setDomLayout": {
             "more": {

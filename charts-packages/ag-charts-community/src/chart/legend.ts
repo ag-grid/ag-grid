@@ -255,6 +255,7 @@ export class Legend {
     ) {
         this.item.marker.parent = this;
         this.pagination = new Pagination(
+            (type: ChartUpdateType) => this.chart.update(type),
             (page) => this.updatePageNumber(page),
             this.interactionManager,
             this.cursorManager
@@ -415,9 +416,6 @@ export class Legend {
         if (!isFinite(width)) {
             return false;
         }
-
-        // Force pagination component layout to get more accurate paginationBBox
-        this.pagination.totalPages = 0;
 
         const orientation = this.getOrientation();
         const verticalOrientation = orientation === 'vertical';

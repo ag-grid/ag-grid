@@ -237,8 +237,6 @@ const Search = ({ value, onChange }) => {
     );
 };
 
-const CACHED_MODELS: Record<string, JsonModel> = {};
-
 /**
  * This displays the list of options in the Standalone Charts API Explorer.
  */
@@ -268,25 +266,22 @@ export const Options = ({ chartType, axisType, updateOption }) => {
     const isSearching = getTrimmedSearchText() !== '';
 
     const optionsType = chartType === 'pie' ? 'AgPolarChartOptions' : 'AgCartesianChartOptions';
-    if (CACHED_MODELS[chartType] == null) {
-        const { interfaceLookup, codeLookup } = loadLookups('charts-api', 'charts-api/api.json');
-        const model = CACHED_MODELS[chartType] = buildModel(optionsType, interfaceLookup, codeLookup);
-        const seriesModelDesc = model.properties['series']?.desc;
-        if (seriesModelDesc.type === 'array' && seriesModelDesc.elements.type === 'union') {
-            seriesModelDesc.elements.options = seriesModelDesc.elements.options.filter(
-                (o) => o.type === 'nested-object' && o.model.properties['type'].desc.tsType.indexOf(chartType) >= 0
-            );
-        }
-    
-        const axesModelDesc = model.properties['axes']?.desc;
-        if (axesModelDesc?.type === 'array' && axesModelDesc.elements.type === 'union') {
-            axesModelDesc.elements.options = axesModelDesc.elements.options.filter(
-                (o) => o.type === 'nested-object' && o.model.properties['type'].desc.tsType.indexOf(axisType) >= 0
-            );
-        }
+    const { interfaceLookup, codeLookup } = loadLookups('charts-api', 'charts-api/api.json');
+    const model = buildModel(optionsType, interfaceLookup, codeLookup);
+    const seriesModelDesc = model.properties['series']?.desc;
+    if (seriesModelDesc.type === 'array' && seriesModelDesc.elements.type === 'union') {
+        seriesModelDesc.elements.options = seriesModelDesc.elements.options.filter(
+            (o) => o.type === 'nested-object' && o.model.properties['type'].desc.tsType.indexOf(chartType) >= 0
+        );
     }
 
-    const model = CACHED_MODELS[chartType];
+    const axesModelDesc = model.properties['axes']?.desc;
+    if (axesModelDesc?.type === 'array' && axesModelDesc.elements.type === 'union') {
+        axesModelDesc.elements.options = axesModelDesc.elements.options.filter(
+            (o) => o.type === 'nested-object' && o.model.properties['type'].desc.tsType.indexOf(axisType) >= 0
+        );
+    }
+
     const context = {
         chartType,
         childMatchesSearch,

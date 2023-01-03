@@ -94,25 +94,12 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
                 return;
             }
 
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
-            const availableKeys = values.filter(v => valueModel.isKeyAvailable(v))!;
+            const availableKeys = values.filter(v => valueModel.isKeyAvailable(v));
+            const numValues = availableKeys.length;
 
-            const valueFormatter = setFilter.getValueFormatter();
+            const formattedValues = availableKeys.slice(0, 10).map(key => setFilter.getFormattedValue(key));
 
-            // format all the values, if a formatter is provided
-            const formattedValues = availableKeys.map(key => {
-                const value = valueModel.getValue(key);
-                const { column } = this.params;
-                const formattedValue = this.valueFormatterService.formatValue(
-                    column, null, value, valueFormatter, false);
-
-                const valueToRender = formattedValue != null ? formattedValue : value;
-
-                return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT.blanks) : valueToRender;
-            })!;
-
-            const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
-            const valuesString = `(${formattedValues.length}) ${arrayToDisplay.join(',')}`;
+            const valuesString = `(${numValues}) ${formattedValues.join(',')}${numValues > 10 ? ',...' : ''}`;
 
             this.eFloatingFilterText.setValue(valuesString);
         });

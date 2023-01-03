@@ -35,7 +35,7 @@ const gridOptions: GridOptions = {
     return parts.join('-');
   },
   isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
-    return params.rowNode.key === 'Canada' || params.rowNode.key?.toString() === '2002';
+    return params.rowNode.key === 'Canada' || params.rowNode.key!.toString() === '2002';
   },
   // use the server-side row model
   rowModelType: 'serverSide',

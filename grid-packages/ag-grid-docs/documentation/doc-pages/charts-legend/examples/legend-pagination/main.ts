@@ -147,6 +147,9 @@ const options: AgChartOptions = {
       inactiveStyle: {
         fillOpacity: 0.5,
       },
+      highlightStyle: {
+        fill: "#7BAFDF",
+      },
       label: {
         color: "rgb(87, 87, 87)",
       },

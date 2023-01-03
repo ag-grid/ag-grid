@@ -6,20 +6,20 @@ interface ICar {
   price: number;
 }
 
-var columnDefs: ColDef<ICar>[] = [
+const columnDefs: ColDef<ICar>[] = [
   {field: "make"},
   {field: "model"},
   {field: "price"}
 ];
 
 // specify the data
-var rowDataA: ICar[] = [
+const rowDataA: ICar[] = [
   {make: "Toyota", model: "Celica", price: 35000},
   {make: "Porsche", model: "Boxster", price: 72000},
   {make: "Aston Martin", model: "DBX", price: 190000}
 ];
 
-var rowDataB: ICar[] = [
+const rowDataB: ICar[] = [
   {make: "Toyota", model: "Celica", price: 35000},
   {make: "Ford", model: "Mondeo", price: 32000},
   {make: "Porsche", model: "Boxster", price: 72000},
@@ -28,7 +28,7 @@ var rowDataB: ICar[] = [
 ];
 
 // let the grid know which columns and what data to use
-var gridOptions: GridOptions<ICar> = {
+const gridOptions: GridOptions<ICar> = {
   columnDefs: columnDefs,
   rowData: rowDataA,
   rowSelection: 'single',

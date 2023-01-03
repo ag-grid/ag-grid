@@ -14,7 +14,7 @@ const columnDefs: ColDef[] = [
       wrapHeaderText: true,
       autoHeaderHeight: true,
       valueFormatter: (params) => {
-        const ts = params.data?.lastUpdated;
+        const ts = params.data!.lastUpdated;
         if (ts) {
           const hh_mm_ss = ts.toLocaleString().split(' ')[1];   
           const SSS = ts.getMilliseconds();       
@@ -32,7 +32,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 100,
     resizable: true,
-    sortable: true,    
   },
   autoGroupColumnDef: {
     minWidth: 220,
@@ -41,7 +40,7 @@ const gridOptions: GridOptions = {
   enableCellChangeFlash: true,
   getRowId: (params) => {  
     var rowId = '';
-    if (params.parentKeys?.length) {
+    if (params.parentKeys && params.parentKeys.length) {
       rowId += params.parentKeys.join('-') + '-';
     }
     const groupCols = params.columnApi.getRowGroupColumns();
@@ -53,6 +52,52 @@ const gridOptions: GridOptions = {
       rowId += params.data.tradeId;
     }
     return rowId;
+  },
+  onGridReady: (params) => {
+    // setup the fake server
+    const server = new FakeServer();
+
+    // create datasource with a reference to the fake server
+    const datasource = getServerSideDatasource(server);
+
+    // register the datasource with the grid
+    params.api.setServerSideDatasource(datasource);
+
+    const getGroupRouteForData = (data: any) => {
+      const rowGroupColumns = gridOptions.columnApi!.getRowGroupColumns();
+      return rowGroupColumns.map(col => data[col.getColDef().field!]);
+    }
+
+    // register interest in data changes
+    dataObservers.push((t: { add?: any[], remove?: any[], update?: any[] }) => {
+      if (t.add) {
+        t.add.forEach(item => {
+          const route = getGroupRouteForData(item);
+          params.api.applyServerSideTransactionAsync({
+            route,
+            add: [item],
+          });
+        });
+      }
+      if (t.update) {
+        t.update.forEach(item => {
+          const route = getGroupRouteForData(item);
+          params.api.applyServerSideTransactionAsync({
+            route,
+            update: [item],
+          });
+        });
+      }
+      if (t.remove) {
+        t.remove.forEach(item => {
+          const route = getGroupRouteForData(item);
+          params.api.applyServerSideTransactionAsync({
+            route,
+            remove: [item],
+          });
+        });
+      }
+    });
   },
 
   rowModelType: 'serverSide',
@@ -90,43 +135,4 @@ function getServerSideDatasource(server: any) {
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
   new Grid(gridDiv, gridOptions);
-
-  // setup the fake server
-  const server = new FakeServer();
-
-  // create datasource with a reference to the fake server
-  const datasource = getServerSideDatasource(server);
-
-  // register the datasource with the grid
-  gridOptions.api!.setServerSideDatasource(datasource);
-
-  const getGroupRouteForData = (data: any) => {
-    const rowGroupColumns = gridOptions.columnApi!.getRowGroupColumns();
-    return rowGroupColumns.map(col => data[col.getColDef().field!]);
-  }
-
-  // register interest in data changes
-  dataObservers.push((t: { add?: any[], remove?: any[], update?: any[] }) => {
-    t.add?.forEach(item => {
-      const route = getGroupRouteForData(item);
-      gridOptions.api!.applyServerSideTransactionAsync({
-        route,
-        add: [item],
-      });
-    });
-    t.update?.forEach(item => {
-      const route = getGroupRouteForData(item);
-      gridOptions.api!.applyServerSideTransactionAsync({
-        route,
-        update: [item],
-      });
-    });
-    t.remove?.forEach(item => {
-      const route = getGroupRouteForData(item);
-      gridOptions.api!.applyServerSideTransactionAsync({
-        route,
-        remove: [item],
-      });
-    });
-  });
 });

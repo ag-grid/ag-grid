@@ -12,7 +12,9 @@ export class LicenseManager extends BeanStub {
     @PreConstruct
     public validateLicense(): void {
         if (_.missingOrEmpty(LicenseManager.licenseKey)) {
-            this.outputMissingLicenseKey();
+            if (!this.isWebsiteUrl()) {
+                this.outputMissingLicenseKey();
+            }
         } else if (LicenseManager.licenseKey.length > 32) {
             const {md5, license, version, isTrial} = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
 
@@ -69,11 +71,30 @@ export class LicenseManager extends BeanStub {
     }
 
     public isDisplayWatermark(): boolean {
-        return !_.missingOrEmpty(this.watermarkMessage);
+        return !this.isLocalhost() && !this.isWebsiteUrl() && !_.missingOrEmpty(this.watermarkMessage);
     }
 
     public getWatermarkMessage() : string {
         return this.watermarkMessage || '';
+    }
+
+    private getHostname(): string {
+        const eDocument = this.gridOptionsService.getDocument();
+        const win = (eDocument.defaultView || window);
+        const loc = win.location;
+        const { hostname = '' } = loc;
+
+        return hostname;
+    }
+
+    private isWebsiteUrl(): boolean {
+        const hostname = this.getHostname();
+        return hostname.match('^((?:\w+\.)?ag-grid\.com)$') !== null;
+    }
+
+    private isLocalhost(): boolean {
+        const hostname = this.getHostname();
+        return hostname.match('^(?:127\.0\.0\.1|localhost)$') !== null;
     }
 
     private static formatDate(date: any): string {

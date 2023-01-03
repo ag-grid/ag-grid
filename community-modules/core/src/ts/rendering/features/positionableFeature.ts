@@ -225,7 +225,7 @@ export class PositionableFeature extends BeanStub {
 
         Object.keys(resizable).forEach((side: ResizableSides) => {
             const resizableStructure = resizable as ResizableStructure;
-            const val = !!resizableStructure[side];
+            const isSideResizable = !!resizableStructure[side];
             const resizerEl = this.getResizerElement(side);
 
             const params: DragListenerParams = {
@@ -236,15 +236,15 @@ export class PositionableFeature extends BeanStub {
                 onDragStop: (e: MouseEvent) => this.onResizeEnd(e, side),
             };
 
-            if (!!this.resizable[side] !== val || (!this.isAlive() && !val)) {
-                if (val) {
+            if (isSideResizable || (!this.isAlive() && !isSideResizable)) {
+                if (isSideResizable) {
                     this.dragService.addDragSource(params);
                     this.resizeListeners.push(params);
                     resizerEl!.style.pointerEvents = 'all';
                 } else {
                     resizerEl!.style.pointerEvents = 'none';
                 }
-                this.resizable[side] = val;
+                this.resizable[side] = isSideResizable;
             }
         });
     }

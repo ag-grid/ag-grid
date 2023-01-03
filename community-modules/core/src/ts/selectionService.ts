@@ -4,7 +4,7 @@ import { BeanStub } from "./context/beanStub";
 import { Qualifier } from "./context/context";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
-import { Events, SelectionChangedEvent } from "./events";
+import { Events, SelectionChangedEvent, SelectionEventSourceType } from "./events";
 import { Autowired } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { PostConstruct } from "./context/context";
@@ -75,7 +75,7 @@ export class SelectionService extends BeanStub {
     }
 
     // should only be called if groupSelectsChildren=true
-    public updateGroupsFromChildrenSelections(changedPath?: ChangedPath): void {
+    public updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath): void {
         // we only do this when group selection state depends on selected children
         if (!this.gridOptionsService.is('groupSelectsChildren')) {
             return;
@@ -96,7 +96,7 @@ export class SelectionService extends BeanStub {
         changedPath.forEachChangedNodeDepthFirst(rowNode => {
             if (rowNode !== rootNode) {
                 const selected = rowNode.calculateSelectedFromChildren();
-                rowNode.selectThisNode(selected === null ? false : selected);
+                rowNode.selectThisNode(selected === null ? false : selected, undefined, source);
             }
         });
 
@@ -113,7 +113,7 @@ export class SelectionService extends BeanStub {
         return this.selectedNodes[id];
     }
 
-    public clearOtherNodes(rowNodeToKeepSelected: RowNode): number {
+    public clearOtherNodes(rowNodeToKeepSelected: RowNode, source: SelectionEventSourceType): number {
         const groupsToRefresh: any = {};
         let updatedCount = 0;
         iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode) => {
@@ -122,7 +122,8 @@ export class SelectionService extends BeanStub {
                 updatedCount += rowNode!.setSelectedParams({
                     newValue: false,
                     clearSelection: false,
-                    suppressFinishActions: true
+                    suppressFinishActions: true,
+                    source
                 });
                 if (this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id!] = otherRowNode.parent;
@@ -131,7 +132,7 @@ export class SelectionService extends BeanStub {
         });
         iterateObject(groupsToRefresh, (key: string, group: RowNode) => {
             const selected = group.calculateSelectedFromChildren();
-            group.selectThisNode(selected === null ? false : selected);
+            group.selectThisNode(selected === null ? false : selected, undefined, source);
         });
         return updatedCount;
     }
@@ -250,8 +251,8 @@ export class SelectionService extends BeanStub {
         return count === 0;
     }
 
-    public deselectAllRowNodes(justFiltered = false) {
-        const callback = (rowNode: RowNode) => rowNode.selectThisNode(false);
+    public deselectAllRowNodes(source: SelectionEventSourceType, justFiltered = false) {
+        const callback = (rowNode: RowNode) => rowNode.selectThisNode(false, undefined, source);
         const rowModelClientSide = this.rowModel.getType() === 'clientSide';
 
         if (justFiltered) {
@@ -274,23 +275,24 @@ export class SelectionService extends BeanStub {
 
         // the above does not clean up the parent rows if they are selected
         if (rowModelClientSide && this.groupSelectsChildren) {
-            this.updateGroupsFromChildrenSelections();
+            this.updateGroupsFromChildrenSelections(source);
         }
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
             type: Events.EVENT_SELECTION_CHANGED,
+            source
         };
 
         this.eventService.dispatchEvent(event);
     }
 
-    public selectAllRowNodes(justFiltered = false) {
+    public selectAllRowNodes(source: SelectionEventSourceType, justFiltered = false) {
         if (this.rowModel.getType() !== 'clientSide') {
             throw new Error(`selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`);
         }
 
         const clientSideRowModel = this.rowModel as IClientSideRowModel;
-        const callback = (rowNode: RowNode) => rowNode.selectThisNode(true);
+        const callback = (rowNode: RowNode) => rowNode.selectThisNode(true, undefined, source);
 
         if (justFiltered) {
             clientSideRowModel.forEachNodeAfterFilter(callback);
@@ -300,11 +302,12 @@ export class SelectionService extends BeanStub {
 
         // the above does not clean up the parent rows if they are selected
         if (this.rowModel.getType() === 'clientSide' && this.groupSelectsChildren) {
-            this.updateGroupsFromChildrenSelections();
+            this.updateGroupsFromChildrenSelections(source);
         }
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
             type: Events.EVENT_SELECTION_CHANGED,
+            source
         };
         this.eventService.dispatchEvent(event);
     }

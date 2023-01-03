@@ -1,7 +1,7 @@
 import { Grid, GridOptions, ColDef, GetRowIdParams } from '@ag-grid-community/core'
 
 
-var columnDefs: ColDef[] = [
+const columnDefs: ColDef[] = [
   { headerName: "Row ID", valueGetter: 'node.id' },
   { field: "make" },
   { field: "model" },
@@ -9,7 +9,7 @@ var columnDefs: ColDef[] = [
 ];
 
 // specify the data
-var rowData = [
+const rowData = [
   { id: 'c1', make: "Toyota", model: "Celica", price: 35000 },
   { id: 'c2', make: "Ford", model: "Mondeo", price: 32000 },
   { id: 'c8', make: "Porsche", model: "Boxster", price: 72000 },
@@ -18,7 +18,7 @@ var rowData = [
 ];
 
 // let the grid know which columns and what data to use
-var gridOptions: GridOptions = {
+const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowData: rowData,
   getRowId: (params: GetRowIdParams) => params.data.id

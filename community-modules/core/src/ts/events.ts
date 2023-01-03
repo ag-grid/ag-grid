@@ -81,7 +81,33 @@ export interface RowDataUpdatedEvent<TData = any> extends AgGridEvent<TData> { }
 
 export interface PinnedRowDataChangedEvent<TData = any> extends AgGridEvent<TData> { }
 
-export interface SelectionChangedEvent<TData = any> extends AgGridEvent<TData> { }
+/**
+ * - `api` - from API method
+ * - `apiSelectAll` - from API methods `selectAll`/`deselectAll`
+ * - `apiSelectAllFiltered` - from API methods `selectAllFiltered`/`deselectAllFiltered`
+ * - `checkboxSelected` - row selection checkbox clicked
+ * - `parentSelected`- parent selected when `groupSelectsChildren` enabled
+ * - `rowClicked` - row clicked when row selection enabled
+ * - `rowDataChanged` - row data updated which triggered selection updates
+ * - `rowGroupChanged` - grouping changed which updated the selection
+ * - `spacePressed` - space key pressed on row
+ * - `uiSelectAll` - select all in header clicked
+ */
+export type SelectionEventSourceType =
+    'api' |
+    'apiSelectAll' |
+    'apiSelectAllFiltered' |
+    'checkboxSelected' |
+    'parentSelected' |
+    'rowClicked' |
+    'rowDataChanged' |
+    'rowGroupChanged' |
+    'spacePressed' |
+    'uiSelectAll';
+
+export interface SelectionChangedEvent<TData = any> extends AgGridEvent<TData> { 
+    source: SelectionEventSourceType;
+}
 
 export interface FilterChangedEvent<TData = any> extends AgGridEvent<TData> {
     /** True if the filter was changed as a result of data changing */
@@ -431,7 +457,9 @@ export interface RowGroupOpenedEvent<TData = any> extends RowEvent<TData> {
 
 export interface RowValueChangedEvent<TData = any> extends RowEvent<TData> { }
 
-export interface RowSelectedEvent<TData = any> extends RowEvent<TData> { }
+export interface RowSelectedEvent<TData = any> extends RowEvent<TData> {
+    source: SelectionEventSourceType;
+ }
 
 export interface VirtualRowRemovedEvent<TData = any> extends RowEvent<TData> { }
 

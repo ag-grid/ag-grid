@@ -177,9 +177,17 @@
       "description": "Colour for borders used to separate elements within a major UI component",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
-    "--ag-borders-row": {
-      "description": "Draw borders between rows. Set this to a border style and thickness, e.g. `solid 1px` to enable borders, or `none` to disable borders.",
-      "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
+    "--ag-row-border-style": {
+      "description": "Default border style for the grid rows. Set this to a border style, e.g. `solid`, `dotted`.",
+      "type": "a CSS border style (e.g. `solid` or `dotted`)"
+    },
+    "--ag-row-border-width": {
+      "description": "The thickness of the border between grid rows. Set this to a border thickness, e.g. `1px`.",
+      "type": "a CSS border style (e.g. `solid` or `dotted`)"
+    },
+    "--ag-row-border-color": {
+      "description": "Colour of the border between grid rows, or `transparent` to display no border",
+      "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-cell-horizontal-border": {
       "description": "Default border for cells. This can be used to specify the border-style and border-color properties e.g. `dashed red` but the border-width is fixed at 1px. Set to `solid transparent` to show no border.",
@@ -208,10 +216,6 @@
     "--ag-border-radius": {
       "description": "Border radius applied to many elements such as dialogs and form widgets",
       "type": "CSS size (e.g. `0`, `4px` or `50%`)"
-    },
-    "--ag-row-border-color": {
-      "description": "Colour of the border between grid rows, or `transparent` to display no border",
-      "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-invalid-color": {
       "description": "The color applied to form elements in an invalid state",

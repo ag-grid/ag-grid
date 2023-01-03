@@ -43,7 +43,7 @@ import {
 } from "./interfaces/iCallbackParams";
 import { RowNode } from "./entities/rowNode";
 import { RowPinnedType, IRowNode } from "./interfaces/iRowNode";
-import { AgEvent, ColumnEventType } from "./events";
+import { AgEvent, ColumnEventType, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
 import { FocusService } from "./focusService";
@@ -231,11 +231,27 @@ export class GridApi<TData = any> {
         return this.context;
     }
 
+    private getSetterMethod(key: keyof GridOptions) {
+        return `set${key.charAt(0).toUpperCase()}${key.substring(1)}`;
+    }
+
     /**
-     * Used internally by grid. Not intended to be used by the client. Interface may change between releases
+     * Updates the GridOption property with the new value provided.
+     * @param propertyName - Name of the GridOption property to be updated.
+     * @param value - The new value for the property.
      */
-    public __setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]) {
+    public setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]) {
+
+        // Ensure the GridOptions property gets updated and fires the change event as we
+        // cannot assume that the dynamic Api call will updated GridOptions.
         this.gridOptionsService.set(propertyName, value);
+        // If the dynamic api does update GridOptions then change detection in the 
+        // GridOptionsService will prevent the event being fired twice.
+        const setterName = this.getSetterMethod(propertyName);
+        const dynamicApi = (this as any);
+        if (dynamicApi[setterName]) {
+            dynamicApi[setterName](value);
+        }
     }
 
     /** Register a detail grid with the master grid when it is created. */
@@ -676,27 +692,39 @@ export class GridApi<TData = any> {
 
     /** Pass a quick filter text into the grid for filtering. */
     public setQuickFilter(newFilter: string): void {
-        this.filterManager.setQuickFilter(newFilter);
+        this.gridOptionsService.set('quickFilterText', newFilter);
     }
 
-    /** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded. */
-    public selectAll() {
-        this.selectionService.selectAllRowNodes();
+    /**
+     * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     */
+    public selectAll(source: SelectionEventSourceType = 'apiSelectAll') {
+        this.selectionService.selectAllRowNodes(source);
     }
 
-    /** Clear all row selections, regardless of filtering. */
-    public deselectAll() {
-        this.selectionService.deselectAllRowNodes();
+    /**
+     * Clear all row selections, regardless of filtering.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     */
+    public deselectAll(source: SelectionEventSourceType = 'apiSelectAll') {
+        this.selectionService.deselectAllRowNodes(source);
     }
 
-    /** Select all filtered rows. */
-    public selectAllFiltered() {
-        this.selectionService.selectAllRowNodes(true);
+    /**
+     * Select all filtered rows.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     */
+    public selectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
+        this.selectionService.selectAllRowNodes(source, true);
     }
 
-    /** Clear all filtered selections. */
-    public deselectAllFiltered() {
-        this.selectionService.deselectAllRowNodes(true);
+    /**
+     * Clear all filtered selections.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     */
+    public deselectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
+        this.selectionService.deselectAllRowNodes(source, true);
     }
 
     /**
@@ -1843,6 +1871,7 @@ export class GridApi<TData = any> {
      * @deprecated v29
      */
     public getCacheBlockState(): any {
+        logDeprecation<GridApi>('28.0', 'getCacheBlockState');
         return this.rowNodeBlockLoader.getBlockState();
     }
 

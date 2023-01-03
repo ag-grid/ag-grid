@@ -544,11 +544,12 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
             nodesToUnselect.forEach(rowNode => {
-                rowNode.setSelected(false, false, true);
+                rowNode.setSelected(false, false, true, 'rowDataChanged');
             });
 
             const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED
+                type: Events.EVENT_SELECTION_CHANGED,
+                source: 'rowDataChanged'
             };
             this.eventService.dispatchEvent(event);
         }

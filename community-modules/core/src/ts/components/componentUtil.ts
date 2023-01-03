@@ -150,7 +150,7 @@ export class ComponentUtil {
         const changesToApply = { ...changes };
 
         // We manually call these updates so that we can provide a different source of gridOptionsChanged
-        // We do not call __setProperty as this will be called by the grid api methods
+        // We do not call setProperty as this will be called by the grid api methods
         if (changesToApply.autoGroupColumnDef) {
             api.setAutoGroupColumnDef(changesToApply.autoGroupColumnDef.currentValue, "gridOptionsChanged");
             delete changesToApply.autoGroupColumnDef;
@@ -169,24 +169,8 @@ export class ComponentUtil {
             const gridKey = key as keyof GridOptions;
 
             const coercedValue = ComponentUtil.getValue(gridKey, changesToApply[gridKey].currentValue);
-            // Ensure the GridOptions property gets updated and fires the change event as we
-            // cannot assume that the dynamic Api call updated GridOptions or fired the event.
-            // If the dynamic api did already update GridOptions then the change detection in the 
-            // setter should prevent the event being fired twice.
-            api.__setProperty(gridKey, coercedValue);
-
-            const setterName = `set${key.charAt(0).toUpperCase()}${key.substring(1)}`;
-            if (dynamicApi[setterName]) {
-                dynamicApi[setterName](coercedValue);
-            }
+            api.setProperty(gridKey, coercedValue);
         });
-
-        if (changesToApply.quickFilterText) {
-            // Name of api method does not follow convention so we have to manually call it.
-            // GridOptions property will be set above and fire event which could be used by the 
-            // filter manager to trigger update instead of via this api call.
-            api.setQuickFilter(changesToApply.quickFilterText.currentValue);
-        }
 
         // copy changes into an event for dispatch
         const event: WithoutGridCommon<ComponentStateChangedEvent> = {

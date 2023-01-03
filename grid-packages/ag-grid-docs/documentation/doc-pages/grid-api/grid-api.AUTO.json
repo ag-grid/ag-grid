@@ -16,8 +16,8 @@
     "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
     "type": { "arguments": {}, "returnType": "Context" }
   },
-  "___setProperty": {
-    "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases\n     */",
+  "setProperty": {
+    "description": "/** Updates the GridOption property with the new value provided.\n     * @param propertyName - Name of the GridOption property to be updated.\n     * @param value - The new value for the property.\n     */",
     "type": { "arguments": { "propertyName": "K", "value": "GridOptions[K]" } }
   },
   "addDetailGridInfo": {
@@ -301,20 +301,32 @@
     "type": { "arguments": { "newFilter": "string" }, "returnType": "void" }
   },
   "selectAll": {
-    "description": "/** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded. */",
-    "type": { "arguments": {} }
+    "description": "/** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`\n     */",
+    "type": {
+      "arguments": { "source": "SelectionEventSourceType = 'apiSelectAll'" }
+    }
   },
   "deselectAll": {
-    "description": "/** Clear all row selections, regardless of filtering. */",
-    "type": { "arguments": {} }
+    "description": "/** Clear all row selections, regardless of filtering.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`\n     */",
+    "type": {
+      "arguments": { "source": "SelectionEventSourceType = 'apiSelectAll'" }
+    }
   },
   "selectAllFiltered": {
-    "description": "/** Select all filtered rows. */",
-    "type": { "arguments": {} }
+    "description": "/** Select all filtered rows.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`\n     */",
+    "type": {
+      "arguments": {
+        "source": "SelectionEventSourceType = 'apiSelectAllFiltered'"
+      }
+    }
   },
   "deselectAllFiltered": {
-    "description": "/** Clear all filtered selections. */",
-    "type": { "arguments": {} }
+    "description": "/** Clear all filtered selections.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`\n     */",
+    "type": {
+      "arguments": {
+        "source": "SelectionEventSourceType = 'apiSelectAllFiltered'"
+      }
+    }
   },
   "sizeColumnsToFit": {
     "description": "/** Sets columns to adjust in size to fit the grid horizontally.\n     **/",

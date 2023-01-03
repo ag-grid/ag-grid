@@ -80,6 +80,7 @@ export class ChartTheme {
                 color: 'rgb(87, 87, 87)',
                 formatter: undefined,
                 autoRotate: false,
+                avoidCollision: true,
             },
             line: {
                 width: 1,
@@ -255,6 +256,9 @@ export class ChartTheme {
                     },
                     inactiveStyle: {
                         fill: 'rgb(219, 219, 219)',
+                    },
+                    highlightStyle: {
+                        fill: 'rgb(70, 70, 70)',
                     },
                 },
             },

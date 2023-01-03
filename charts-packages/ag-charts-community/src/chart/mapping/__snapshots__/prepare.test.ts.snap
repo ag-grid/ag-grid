@@ -23,6 +23,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "#3f7cbf",
         "fontFamily": "Impact, Charcoal, Sans-Serif",
         "fontSize": 14,
@@ -71,6 +72,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "#3f7cbf",
         "fontFamily": "Impact, Charcoal, Sans-Serif",
         "fontSize": 14,
@@ -133,6 +135,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -419,6 +424,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -466,6 +472,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -512,6 +519,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -572,6 +580,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -825,6 +836,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -868,6 +880,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -928,6 +941,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -1457,6 +1473,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1500,6 +1517,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1560,6 +1578,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -1766,6 +1787,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1809,6 +1831,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1869,6 +1892,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -2013,6 +2039,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2057,6 +2084,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2116,6 +2144,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -2464,6 +2495,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2507,6 +2539,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2567,6 +2600,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -3057,6 +3093,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3100,6 +3137,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3160,6 +3198,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -3327,6 +3368,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3370,6 +3412,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3430,6 +3473,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -3589,6 +3635,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3627,6 +3674,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3689,6 +3737,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -3833,6 +3884,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3879,6 +3931,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3942,6 +3995,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -4087,6 +4143,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4130,6 +4187,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4190,6 +4248,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -4381,6 +4442,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4424,6 +4486,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4484,6 +4547,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -4678,6 +4744,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4721,6 +4788,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4781,6 +4849,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -4989,6 +5060,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5032,6 +5104,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5092,6 +5165,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -5253,6 +5329,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5296,6 +5373,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5359,6 +5437,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -6421,6 +6502,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 10,
@@ -6465,6 +6547,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 10,
@@ -6525,6 +6608,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -6688,6 +6774,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -6865,6 +6954,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -6908,6 +6998,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -6969,6 +7060,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -7180,6 +7274,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7223,6 +7318,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7284,6 +7380,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -7482,6 +7581,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7525,6 +7625,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7586,6 +7687,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -7802,6 +7906,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7845,6 +7950,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7905,6 +8011,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -8284,6 +8393,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8327,6 +8437,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8387,6 +8498,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -8559,6 +8673,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -8748,6 +8865,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8791,6 +8909,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8851,6 +8970,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -8998,6 +9120,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9045,6 +9168,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9105,6 +9229,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -9342,6 +9469,9 @@ Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
+      "highlightStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
@@ -9508,6 +9638,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9551,6 +9682,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9611,6 +9743,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -9755,6 +9890,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9799,6 +9935,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9859,6 +9996,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -10076,6 +10216,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10119,6 +10260,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10179,6 +10321,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -10370,6 +10515,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10413,6 +10559,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10473,6 +10620,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
@@ -10684,6 +10834,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10727,6 +10878,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
+        "avoidCollision": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10787,6 +10939,9 @@ Object {
     },
     "pagination": Object {
       "activeStyle": Object {
+        "fill": "rgb(70, 70, 70)",
+      },
+      "highlightStyle": Object {
         "fill": "rgb(70, 70, 70)",
       },
       "inactiveStyle": Object {
