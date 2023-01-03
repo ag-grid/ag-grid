@@ -284,8 +284,16 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
     }
 
-    public getValueFormatter() {
-        return this.valueFormatter;
+    public getFormattedValue(key: string | null): string | null {
+        let value: V | string | null = this.valueModel!.getValue(key);
+        // essentially get back the cell value
+        if ((this.treeDataTreeList || this.groupingTreeList) && Array.isArray(value)) {
+            value = value[value.length - 1] as string;
+        }
+        const formattedValue = this.valueFormatterService.formatValue(
+            this.setFilterParams!.column, null, value, this.valueFormatter, false);
+
+        return (formattedValue == null ? _.toStringOrNull(value) : formattedValue) ?? this.translateForSetFilter('blanks')
     }
 
     private applyExcelModeOptions(params: ISetFilterParams<any, V>): void {
