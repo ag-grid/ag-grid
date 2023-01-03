@@ -1,6 +1,6 @@
 {
     "_config_": {},
-    "INumberFilterParams": {
+    "ISimpleFilterParams": {
         "filterOptions": {
             "more": {
                 "url": "/filter-provided-simple/#simple-filter-options",

@@ -1,6 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, IDateFilterParams, IMultiFilterParams, ISetFilterParams } from '@ag-grid-community/core'
 
-var dateFilterParams = {
+var dateFilterParams: IMultiFilterParams = {
   filters: [
     {
       filter: 'agDateColumnFilter',
@@ -10,7 +10,7 @@ var dateFilterParams = {
 
           return getDate(cellValue).getTime() - filterDate.getTime()
         },
-      },
+      } as IDateFilterParams,
     },
     {
       filter: 'agSetColumnFilter',
@@ -18,7 +18,7 @@ var dateFilterParams = {
         comparator: (a: string, b: string) => {
           return getDate(a).getTime() - getDate(b).getTime()
         },
-      },
+      } as ISetFilterParams,
     },
   ],
 }
@@ -38,7 +38,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             filter: 'agSetColumnFilter',
           },
         ],
-      },
+      } as IMultiFilterParams,
     },
     {
       field: 'date',

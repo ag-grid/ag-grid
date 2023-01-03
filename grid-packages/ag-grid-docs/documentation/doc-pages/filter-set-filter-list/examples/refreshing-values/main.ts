@@ -1,7 +1,8 @@
 import {
   FirstDataRenderedEvent, Grid,
   GridOptions,
-  IFiltersToolPanel, ISetFilter, ISetFilterParams,
+  ISetFilter,
+  ISetFilterParams,
   SetFilterValuesFuncParams
 } from '@ag-grid-community/core';
 import { getData } from "./data";
@@ -19,11 +20,11 @@ function valuesCallback(params: SetFilterValuesFuncParams) {
   }, 1000)
 }
 
-var arrayFilterParams = {
+var arrayFilterParams: ISetFilterParams = {
   values: valuesArray,
 }
 
-var callbackFilterParams: Partial<ISetFilterParams> = {
+var callbackFilterParams: ISetFilterParams = {
   values: valuesCallback,
   refreshValuesOnOpen: true,
 }

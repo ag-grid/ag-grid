@@ -1,5 +1,5 @@
 import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
-import { RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams, ValueFormatterFunc, _, GridOptionsService, ColumnModel, ValueService } from '@ag-grid-community/core';
+import { RowNode, IClientSideRowModel, ValueFormatterService, SetFilterParams, ValueFormatterFunc, _, GridOptionsService, ColumnModel, ValueService } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 type ValueType = string | number | boolean | Date;
@@ -59,7 +59,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     const valueFormatterService = mock<ValueFormatterService>('formatValue');
     valueFormatterService.formatValue.mockImplementation((_1, _2, value) => value);
 
-    const svmParams: ISetFilterParams = {
+    const svmParams: SetFilterParams = {
         rowModel,
         valueGetter: ({node}) => node.data.value,
         colDef: {},

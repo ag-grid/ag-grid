@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IFilterPlaceholderFunctionParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, IFilterPlaceholderFunctionParams, INumberFilterParams, ITextFilterParams } from '@ag-grid-community/core'
 
 const columnDefs = [
   {
@@ -9,7 +9,7 @@ const columnDefs = [
     filter: 'agTextColumnFilter',
     filterParams: {
       filterPlaceholder: 'Country...'
-    }
+    } as ITextFilterParams
   },
   {
     field: 'sport',
@@ -19,7 +19,7 @@ const columnDefs = [
         const { filterOptionKey, placeholder } = params;
         return `${filterOptionKey} - ${placeholder}`;
       }
-    },
+    } as ITextFilterParams,
   },
   {
     field: 'total',
@@ -29,7 +29,7 @@ const columnDefs = [
         const { filterOption } = params;
         return `${filterOption} total`;
       }
-    }
+    } as INumberFilterParams
   }
 ]
 

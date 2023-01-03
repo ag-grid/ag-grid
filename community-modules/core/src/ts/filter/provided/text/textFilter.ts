@@ -11,7 +11,7 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
 import { _ } from '../../../utils';
 import { BaseColDefParams } from '../../../entities/colDef';
-import { IDoesFilterPassParams } from '../../../interfaces/iFilter';
+import { IDoesFilterPassParams, IFilterParams } from '../../../interfaces/iFilter';
 
 export interface TextFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'text'` */
@@ -42,6 +42,15 @@ export interface TextFormatter {
     (from?: string | null): string | null;
 }
 
+/**
+ * Parameters provided by the grid to the `init` method of a `TextFilter`.
+ * Do not use in `colDef.filterParams` - see `ITextFilterParams` instead.
+ */
+export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TData>;
+
+/**
+ * Parameters used in `colDef.filterParams` to configure a  Text Filter (`agTextColumnFilter`).
+ */
 export interface ITextFilterParams extends ISimpleFilterParams {
     /**
      * Used to override how to filter based on the user input.
@@ -56,7 +65,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
      * Formats the text before applying the filter compare logic.
      * Useful if you want to substitute accented characters, for example.
      */
-    textFormatter?: (from: string) => string;
+    textFormatter?: (from: string) => string | null;
 
     /**
      * If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.
@@ -114,7 +123,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     private matcher: TextMatcher;
     private formatter: TextFormatter;
 
-    private textFilterParams: ITextFilterParams;
+    private textFilterParams: TextFilterParams;
 
     constructor() {
         super('textFilter');
@@ -131,7 +140,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return 500;
     }
 
-    protected setParams(params: ITextFilterParams): void {
+    protected setParams(params: TextFilterParams): void {
         super.setParams(params);
 
         this.textFilterParams = params;

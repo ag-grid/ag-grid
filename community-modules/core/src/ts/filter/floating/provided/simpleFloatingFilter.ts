@@ -3,9 +3,9 @@ import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 import { IFilterOptionDef, ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { ICombinedSimpleModel, ISimpleFilter, ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
-import { IScalarFilterParams } from '../../provided/scalarFilter';
+import { ScalarFilterParams } from '../../provided/scalarFilter';
 import { FilterChangedEvent } from '../../../events';
-import { IProvidedFilterParams } from '../../provided/providedFilter';
+import { ProvidedFilterParams } from '../../provided/providedFilter';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
 
@@ -128,12 +128,12 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
     public init(params: IFloatingFilterParams): void {
         this.optionsFactory = new OptionsFactory();
-        this.optionsFactory.init(params.filterParams as IScalarFilterParams, this.getDefaultFilterOptions());
+        this.optionsFactory.init(params.filterParams as ScalarFilterParams, this.getDefaultFilterOptions());
         this.lastType = this.optionsFactory.getDefaultOption();
 
-        // readOnly is a property of IProvidedFilterParams - we need to find a better (type-safe)
+        // readOnly is a property of ProvidedFilterParams - we need to find a better (type-safe)
         // way to support reading this in the future.
-        this.readOnly = !!(params.filterParams as IProvidedFilterParams).readOnly;
+        this.readOnly = !!(params.filterParams as ProvidedFilterParams).readOnly;
 
         // we are editable if:
         // 1) there is a type (user has configured filter wrong if not type)

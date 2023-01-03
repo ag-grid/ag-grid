@@ -1,10 +1,10 @@
-import { Column, ColumnModel, GetDataPath, IClientSideRowModel, ISetFilterParams, RowNode, ValueService, _ } from '@ag-grid-community/core';
+import { Column, ColumnModel, GetDataPath, IClientSideRowModel, SetFilterParams, RowNode, ValueService, _ } from '@ag-grid-community/core';
 
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor<V> {
     constructor(
         private readonly rowModel: IClientSideRowModel,
-        private readonly filterParams: ISetFilterParams<any, V>,
+        private readonly filterParams: SetFilterParams<any, V>,
         private readonly createKey: (value: V | null, node?: RowNode) => string | null,
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
         private readonly columnModel: ColumnModel,

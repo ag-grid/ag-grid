@@ -1,4 +1,4 @@
-import { FirstDataRenderedEvent, Grid, GridOptions, IFiltersToolPanel, } from '@ag-grid-community/core'
+import { FirstDataRenderedEvent, Grid, GridOptions, ISetFilterParams, } from '@ag-grid-community/core'
 import { CountryCellRenderer } from './countryCellRenderer_typescript'
 
 const COUNTRY_CODES: Record<string, string> = {
@@ -42,7 +42,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             filterParams: {
                 cellRenderer: CountryCellRenderer,
                 cellRendererParams: { isFilterRenderer: true }
-            },
+            } as ISetFilterParams,
         },
     ],
     context: {

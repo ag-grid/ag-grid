@@ -6,6 +6,12 @@
                 "url": "/filter-provided-simple/#simple-filter-options",
                 "name": "Filter Options"
             }
+        },
+        "readOnly": {
+            "more": {
+                "url": "/filter-api/#read-only-filter-ui",
+                "name": "Read-only Filter UI"
+            }
         }
     }
 }

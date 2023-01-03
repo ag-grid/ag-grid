@@ -1,6 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, IDateFilterParams } from '@ag-grid-community/core'
 
-var filterParams = {
+var filterParams: IDateFilterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var dateAsString = cellValue
     if (dateAsString == null) return -1
@@ -22,6 +22,7 @@ var filterParams = {
     if (cellDate > filterLocalDateAtMidnight) {
       return 1
     }
+    return 0;
   },
   browserDatePicker: true,
 }

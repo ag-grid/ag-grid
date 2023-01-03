@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IDateFilterParams, INumberFilterParams } from '@ag-grid-community/core'
 
 var filterParams: IDateFilterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
@@ -28,7 +28,7 @@ var filterParams: IDateFilterParams = {
   includeBlanksInLessThan: false,
   includeBlanksInGreaterThan: false,
   includeBlanksInRange: false,
-} as IDateFilterParams;
+};
 
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
@@ -41,7 +41,7 @@ const columnDefs: ColDef[] = [
       includeBlanksInLessThan: false,
       includeBlanksInGreaterThan: false,
       includeBlanksInRange: false,
-    },
+    } as INumberFilterParams,
   },
   {
     field: 'date',

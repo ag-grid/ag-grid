@@ -1,6 +1,12 @@
 {
     "_config_": {},
     "ISetFilterParams": {
+        "readOnly": {
+            "more": {
+                "url": "/filter-api/#read-only-filter-ui",
+                "name": "Read-only Filter UI"
+            }
+        },
         "applyMiniFilterWhileTyping": {
             "more": {
                 "name": "Keyboard Shortcuts",

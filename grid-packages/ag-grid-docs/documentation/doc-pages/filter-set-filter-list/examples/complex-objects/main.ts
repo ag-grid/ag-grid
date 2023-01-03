@@ -1,6 +1,7 @@
 import {
   FirstDataRenderedEvent, Grid,
   GridOptions,
+  ISetFilterParams,
   KeyCreatorParams,
   ValueFormatterParams,
 } from '@ag-grid-community/core'
@@ -15,7 +16,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       filterParams: {
         valueFormatter: countryValueFormatter,
         keyCreator: countryCodeKeyCreator,
-      },
+      } as ISetFilterParams,
     },
     {
       headerName: 'Country (Complex Object as String)',
@@ -25,7 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       filterParams: {
         keyCreator: countryNameKeyCreator,
         convertValuesToStrings: true,
-      },
+      } as ISetFilterParams,
     },
   ],
   defaultColDef: {

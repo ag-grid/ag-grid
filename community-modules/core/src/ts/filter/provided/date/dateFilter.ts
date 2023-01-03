@@ -6,6 +6,7 @@ import { ConditionPosition, ISimpleFilterModel, Tuple } from '../simpleFilter';
 import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
 import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { IFilterParams } from '../../../interfaces/iFilter';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -24,6 +25,15 @@ export interface DateFilterModel extends ISimpleFilterModel {
     dateTo: string | null;
 }
 
+/**
+ * Parameters provided by the grid to the `init` method of a `DateFilter`.
+ * Do not use in `colDef.filterParams` - see `IDateFilterParams` instead.
+ */
+export type DateFilterParams<TData = any> = IDateFilterParams & IFilterParams<TData>;
+
+/**
+ * Parameters used in `colDef.filterParams` to configure a Date Filter (`agDateColumnFilter`).
+ */
 export interface IDateFilterParams extends IScalarFilterParams {
     /** Required if the data for the column are not native JS `Date` objects. */
     comparator?: IDateComparatorFunc;
@@ -77,7 +87,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
 
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    private dateFilterParams: IDateFilterParams;
+    private dateFilterParams: DateFilterParams;
     private minValidYear: number = DEFAULT_MIN_YEAR;
     private maxValidYear: number = DEFAULT_MAX_YEAR;
 
@@ -121,12 +131,12 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return 0;
     }
 
-    protected setParams(params: IDateFilterParams): void {
+    protected setParams(params: DateFilterParams): void {
         super.setParams(params);
 
         this.dateFilterParams = params;
 
-        const yearParser = (param: keyof IDateFilterParams, fallback: number) => {
+        const yearParser = (param: keyof DateFilterParams, fallback: number) => {
             if (params[param] != null) {
                 if (!isNaN(params[param])) {
                     return params[param] == null ? fallback : Number(params[param]);

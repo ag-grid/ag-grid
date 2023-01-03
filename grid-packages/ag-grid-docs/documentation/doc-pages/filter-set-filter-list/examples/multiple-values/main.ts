@@ -1,6 +1,7 @@
 import {
   Grid,
   GridOptions,
+  ISetFilterParams,
   KeyCreatorParams,
   ValueFormatterParams,
   ValueGetterParams
@@ -40,7 +41,7 @@ const gridOptions: GridOptions = {
       keyCreator: (params: KeyCreatorParams) => params.value.name,
       filterParams: {
         valueFormatter: (params: ValueFormatterParams) => params.value ? params.value.name : '(Blanks)'
-      },
+      } as ISetFilterParams,
     },
   ],
   defaultColDef: {

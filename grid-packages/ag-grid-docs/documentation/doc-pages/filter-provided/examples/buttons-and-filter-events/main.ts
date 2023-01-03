@@ -1,4 +1,4 @@
-import { Grid, ColDef, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, GridOptions, IProvidedFilter } from '@ag-grid-community/core'
+import { Grid, ColDef, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, GridOptions, IProvidedFilter, INumberFilterParams, ITextFilterParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   {
@@ -6,7 +6,7 @@ const columnDefs: ColDef[] = [
     filter: 'agTextColumnFilter',
     filterParams: {
       buttons: ['reset', 'apply'],
-    },
+    } as ITextFilterParams,
   },
   {
     field: 'age',
@@ -15,14 +15,14 @@ const columnDefs: ColDef[] = [
     filterParams: {
       buttons: ['apply', 'reset'],
       closeOnApply: true,
-    },
+    } as INumberFilterParams,
   },
   {
     field: 'country',
     filter: 'agTextColumnFilter',
     filterParams: {
       buttons: ['clear', 'apply'],
-    },
+    } as ITextFilterParams,
   },
   {
     field: 'year',
@@ -30,7 +30,7 @@ const columnDefs: ColDef[] = [
     filterParams: {
       buttons: ['apply', 'cancel'],
       closeOnApply: true,
-    },
+    } as INumberFilterParams,
     maxWidth: 100,
   },
   { field: 'sport' },

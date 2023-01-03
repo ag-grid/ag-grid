@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '../../interfaces/iFilter';
+import { IDoesFilterPassParams, IFilterOptionDef, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { OptionsFactory } from './optionsFactory';
 import { IProvidedFilter, IProvidedFilterParams, ProvidedFilter } from './providedFilter';
@@ -38,6 +38,15 @@ export interface IFilterPlaceholderFunctionParams {
 }
 export type FilterPlaceholderFunction = (params: IFilterPlaceholderFunctionParams) => string;
 
+/**
+ * Parameters provided by the grid to the `init` method of a `SimpleFilter`.
+ * Do not use in `colDef.filterParams` - see `ISimpleFilterParams` instead.
+ */
+export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParams<TData>;
+
+/**
+ * Common parameters in `colDef.filterParams` used by all simple filters. Extended by the specific filter types.
+ */
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     /**
      * Array of filter options to present to the user.
@@ -135,7 +144,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     private allowTwoConditions: boolean;
     private alwaysShowBothConditions: boolean;
     private defaultJoinOperator: JoinOperator | undefined;
-    private filterPlaceholder: ISimpleFilterParams['filterPlaceholder'];
+    private filterPlaceholder: SimpleFilterParams['filterPlaceholder'];
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -312,7 +321,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return models[combineFunction](m => this.individualConditionPasses(params, m));
     }
 
-    protected setParams(params: ISimpleFilterParams): void {
+    protected setParams(params: SimpleFilterParams): void {
         super.setParams(params);
 
         this.optionsFactory = new OptionsFactory();

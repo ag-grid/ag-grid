@@ -1,4 +1,4 @@
-import { DateFilter, DateFilterModel, IDateFilterParams } from './dateFilter';
+import { DateFilter, DateFilterModel, DateFilterParams } from './dateFilter';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { IDateParams } from '../../../rendering/dateComponent';
@@ -24,7 +24,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private dateComp: DateCompWrapper;
     private params: IFloatingFilterParams;
-    private filterParams: IDateFilterParams;
+    private filterParams: DateFilterParams;
 
     constructor() {
         super(/* html */`

@@ -7,7 +7,7 @@ import {
     Column,
     Component,
     ISetFilterCellRendererParams,
-    ISetFilterParams,
+    SetFilterParams,
     ITooltipParams,
     PostConstruct,
     RefSelector,
@@ -37,7 +37,7 @@ export interface SetFilterListItemExpandedChangedEvent<
 export interface SetFilterListItemParams<V> {
     focusWrapper: HTMLElement,
     value: V | null | (() => string),
-    params: ISetFilterParams<any, V>,
+    params: SetFilterParams<any, V>,
     translate: (key: keyof ISetFilterLocaleText) => string,
     valueFormatter: (params: ValueFormatterParams) => string,
     item: SetFilterModelTreeItem | string | null,
@@ -81,7 +81,7 @@ export class SetFilterListItem<V> extends Component {
 
     private readonly focusWrapper: HTMLElement;
     private readonly value: V | null | (() => string);
-    private readonly params: ISetFilterParams<any, V>;
+    private readonly params: SetFilterParams<any, V>;
     private readonly translate: (key: keyof ISetFilterLocaleText) => string;
     private readonly valueFormatter: (params: ValueFormatterParams) => string;
     private readonly isTree?: boolean;

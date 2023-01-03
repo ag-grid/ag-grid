@@ -43,13 +43,9 @@ The following example demonstrates how the Set Filter can be enabled. Note the f
 
 ## Set Filter Parameters
 
-Parameters that are common to all [Provided Filters](/filter-provided/):
+Set Filters are configured though the `filterParams` attribute of the column definition:
 
-<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly","valueGetter"]' config='{"description":""}' overrideSrc="filter-provided/resources/provided-filters.json"></interface-documentation>
-
-Parameters that are specific to the Set Filter:
-
-<interface-documentation interfaceName='ISetFilterParams' overrideSrc='filter-set/resources/set-filter-params.json'  names='["values","refreshValuesOnOpen","cellHeight","suppressSorting","cellRenderer","suppressMiniFilter","applyMiniFilterWhileTyping","suppressSelectAll","defaultToNothingSelected","comparator","textFormatter","valueFormatter","keyCreator","showTooltips","caseSensitive","excelMode","convertValuesToStrings","treeList","treeListPathGetter","treeListFormatter"]' config='{"description":""}'></interface-documentation>
+<interface-documentation interfaceName='ISetFilterParams' overrideSrc='filter-set/resources/set-filter-params.json' config='{"description":""}'></interface-documentation>
 
 ## Next Up
 

@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core';
+import { Grid, GridOptions, ISetFilterParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 declare var CustomTooltip: any
@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
       filter: 'agSetColumnFilter',
       filterParams: {
         showTooltips: true,
-      },
+      } as ISetFilterParams,
     },
     {
       field: 'colC',
@@ -25,7 +25,7 @@ const gridOptions: GridOptions = {
       filter: 'agSetColumnFilter',
       filterParams: {
         showTooltips: true,
-      },
+      } as ISetFilterParams,
     },
   ],
   sideBar: 'filters',

@@ -1,7 +1,7 @@
-import { Grid, ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IDateFilterParams, IMultiFilterParams, IProvidedFilterParams, ISetFilter, ITextFilterParams, ISetFilterParams } from '@ag-grid-community/core'
 
 declare var dateComparator: any;
-var defaultFilterParams = { readOnly: true }
+var defaultFilterParams: IProvidedFilterParams = { readOnly: true }
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', filter: true, filterParams: defaultFilterParams },
@@ -28,7 +28,7 @@ const columnDefs: ColDef[] = [
     filterParams: {
       readOnly: true,
       comparator: dateComparator,
-    },
+    } as IDateFilterParams,
     suppressMenu: true,
   },
   {
@@ -37,11 +37,11 @@ const columnDefs: ColDef[] = [
     filter: 'agMultiColumnFilter',
     filterParams: {
       filters: [
-        { filter: 'agTextColumnFilter', filterParams: { readOnly: true } },
-        { filter: 'agSetColumnFilter', filterParams: { readOnly: true } },
+        { filter: 'agTextColumnFilter', filterParams: { readOnly: true } as ITextFilterParams },
+        { filter: 'agSetColumnFilter', filterParams: { readOnly: true } as ISetFilterParams },
       ],
       readOnly: true,
-    },
+    } as IMultiFilterParams,
   },
   { field: 'gold', filterParams: defaultFilterParams },
   { field: 'silver', filterParams: defaultFilterParams },

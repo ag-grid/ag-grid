@@ -1,8 +1,8 @@
-import { Grid, ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ISetFilter, IDateFilterParams, INumberFilterParams } from '@ag-grid-community/core'
 
 declare var PersonFilter: any;
 
-var dateFilterParams = {
+var dateFilterParams: IDateFilterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var dateAsString = cellValue
     if (dateAsString == null) return -1
@@ -24,6 +24,7 @@ var dateFilterParams = {
     if (cellDate > filterLocalDateAtMidnight) {
       return 1
     }
+    return 0;
   },
   browserDatePicker: true,
 }
@@ -51,7 +52,7 @@ const columnDefs: ColDef[] = [
     filter: 'agNumberColumnFilter',
     filterParams: {
       buttons: ['apply'],
-    },
+    } as INumberFilterParams,
     suppressMenu: true,
   },
   {

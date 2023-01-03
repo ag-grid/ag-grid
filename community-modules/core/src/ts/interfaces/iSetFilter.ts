@@ -3,7 +3,7 @@ import { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/provi
 import { Column } from '../entities/column';
 import { GridApi } from '../gridApi';
 import { ColumnApi } from '../columns/columnApi';
-import { ProvidedFilterModel } from './iFilter';
+import { IFilterParams, ProvidedFilterModel } from './iFilter';
 import { AgPromise } from '../utils/promise';
 
 export type SetFilterModelValue = (string | null)[];
@@ -99,7 +99,14 @@ export type SetFilterValuesFunc<TData = any, V = string> = (params: SetFilterVal
  */
 export type SetFilterValues<TData = any, V = string> = SetFilterValuesFunc<TData, V> | (V | null)[];
 
+/**
+ * Parameters provided by the grid to the `init` method of a `SetFilter`.
+ * Do not use in `colDef.filterParams` - see `ISetFilterParams` instead.
+ */
+export type SetFilterParams<TData = any, V = string> = ISetFilterParams<TData, V> & IFilterParams<TData>;
+
 /** 
+ * Parameters used in `colDef.filterParams` to configure a Set Filter (`agSetColumnFilter`).
  * @param TData type of data row
  * @param V type of value in the Set Filter
  */

@@ -31,7 +31,7 @@ Each provided filter is displayed in a UI with optional buttons at the bottom.
 
 All the provided filters have the following parameters:
 
-<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly"]' config='{"description":""}' overrideSrc="filter-provided/resources/provided-filters.json"></interface-documentation>
+<interface-documentation interfaceName='IProvidedFilterParams' overrideSrc="filter-provided/resources/provided-filters.json"></interface-documentation>
 
 ## Provided Filter API
 

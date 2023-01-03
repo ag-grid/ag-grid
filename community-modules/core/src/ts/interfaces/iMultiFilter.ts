@@ -31,7 +31,16 @@ export interface IMultiFilterDef extends IFilterDef {
     floatingFilterComponentParams?: any;
 }
 
-export interface IMultiFilterParams<TData = any> extends IFilterParams<TData> {
+/**
+ * Parameters provided by the grid to the `init` method of a `MultiFilter`.
+ * Do not use in `colDef.filterParams` - see `IMultiFilterParams` instead.
+ */
+export type MultiFilterParams<TData = any> = IMultiFilterParams & IFilterParams<TData>;
+
+/**
+ * Parameters used in `colDef.filterParams` to configure a Multi Filter (`agMultiColumnFilter`).
+ */
+export interface IMultiFilterParams {
     /** An array of filter definition objects. */
     filters?: IMultiFilterDef[];
     /**

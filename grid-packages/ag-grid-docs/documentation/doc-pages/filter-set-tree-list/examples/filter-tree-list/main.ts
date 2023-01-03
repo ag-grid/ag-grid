@@ -1,4 +1,4 @@
-import { Grid, GridOptions, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ISetFilterParams, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -15,15 +15,15 @@ const gridOptions: GridOptions = {
         treeList: true,
         treeListFormatter: treeListFormatter,
         valueFormatter: dateValueFormatter,
-      }
+      } as ISetFilterParams<any, Date>
     },
     {
       field: 'gold',
       filter: 'agSetColumnFilter',
       filterParams: {
         treeList: true,
-        treeListPathGetter: (gold: number) => gold != null ? [gold > 2 ? '>2' : '<=2', String(gold)] : null
-      },
+        treeListPathGetter: (gold: number) => gold != null ? [gold > 2 ? '>2' : '<=2', String(gold)] : [null]
+      } as ISetFilterParams<any, number>,
     },
   ],
   defaultColDef: {
@@ -38,7 +38,7 @@ const gridOptions: GridOptions = {
     filterParams: {
       treeList: true,
       keyCreator: (params: KeyCreatorParams) => params.value ? params.value.join('#') : null
-    },
+    } as ISetFilterParams,
   },
 }
 

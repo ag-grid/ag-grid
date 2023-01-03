@@ -1,7 +1,7 @@
 import {
   FirstDataRenderedEvent, Grid,
   GridOptions,
-  IFiltersToolPanel,
+  ISetFilterParams,
   ValueFormatterParams,
 } from '@ag-grid-community/core'
 
@@ -23,7 +23,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       filter: 'agSetColumnFilter',
       filterParams: {
         valueFormatter: countryValueFormatter,
-      },
+      } as ISetFilterParams,
     },
   ],
   defaultColDef: {

@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ISetFilter, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ISetFilter, ISetFilterParams, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -12,7 +12,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 return `${params.value.name} (${params.value.code})`
             },
             keyCreator: countryKeyCreator,
-            filterParams: { valueFormatter: (params: ValueFormatterParams) => params.value.name },
+            filterParams: { valueFormatter: (params: ValueFormatterParams) => params.value.name } as ISetFilterParams,
         },
         { field: 'age', maxWidth: 120, filter: 'agNumberColumnFilter' },
         { field: 'year', maxWidth: 120 },

@@ -5,7 +5,7 @@ import {
     Component,
     Events,
     IDoesFilterPassParams,
-    ISetFilterParams,
+    SetFilterParams,
     ProvidedFilter,
     RefSelector,
     ValueFormatterService,
@@ -45,7 +45,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     @Autowired('valueService') private readonly valueService: ValueService;
 
     private valueModel: SetValueModel<V> | null = null;
-    private setFilterParams: ISetFilterParams<any, V> | null = null;
+    private setFilterParams: SetFilterParams<any, V> | null = null;
     private virtualList: VirtualList | null = null;
     private positionableFeature: PositionableFeature;
     private caseSensitive: boolean = false;
@@ -209,7 +209,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return a != null && b != null && _.areEqual(a.values, b.values);
     }
 
-    public setParams(params: ISetFilterParams<any, V>): void {
+    public setParams(params: SetFilterParams<any, V>): void {
         this.applyExcelModeOptions(params);
 
         super.setParams(params);
@@ -296,7 +296,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return (formattedValue == null ? _.toStringOrNull(value) : formattedValue) ?? this.translateForSetFilter('blanks')
     }
 
-    private applyExcelModeOptions(params: ISetFilterParams<any, V>): void {
+    private applyExcelModeOptions(params: SetFilterParams<any, V>): void {
         // apply default options to match Excel behaviour, unless they have already been specified
         if (params.excelMode === 'windows') {
             if (!params.buttons) {
