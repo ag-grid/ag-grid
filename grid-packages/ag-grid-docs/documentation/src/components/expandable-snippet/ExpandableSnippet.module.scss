@@ -97,5 +97,9 @@ $indent: 24px;
         white-space: normal;
         hyphens: initial;
         cursor: text;
+
+        code {
+            line-height: calc(1.275rem - 2px);
+        }
     }
 }
