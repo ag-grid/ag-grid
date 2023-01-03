@@ -90,7 +90,7 @@ Depending on your preference, you may wish to hide parent rows when they are ope
 
 Below shows examples of this. Notice that each group row has [aggregated values](/aggregation/) which are explained in a documentation page of their own. When the group is closed, the group row shows the aggregated result. When the group is open, the group row is removed and in its place the child rows are displayed. To allow closing the group again, the group column knows to display the parent group in the group column only (so you can click on the icon to close the group).
 
-The example below demonstrates hiding open parents using auto group columns. To help demonstrate, the grid is configured to shade the rows different colors for the different group levels, so when you open a group, you can see the background change indicating that the group row is no longer display, instead the children are in it's place.
+The example below demonstrates hiding open parents using auto group columns. To help demonstrate, the grid is configured to shade the rows different colors for the different group levels, so when you open a group, you can see the background change indicating that the group row is no longer displayed, instead the children are in it's place.
 
 Filter is achieved for each column by providing a `filterValueGetter` for the `autoGroupColumnDef`. The filterValueGetter returns the value of the grouped column - eg for Country, it will filter on Country.
 

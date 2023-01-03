@@ -97,7 +97,7 @@ This example shows specifying `field` in the auto group column. Note the followi
 
 ## Removing Single Children
 
-If your data has groups with only one child, then it can make sense to collapse these groups as there is no benefit to the user creating groups with just one child, it's arguably waste of space.
+If your data has groups with only one child, then it can make sense to collapse these groups as there is no benefit to the user creating groups with just one child, it's arguably a waste of space.
 
 To turn this feature on set either `groupRemoveSingleChildren=true` or `groupRemoveLowestSingleChildren=true`.
 
