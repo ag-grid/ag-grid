@@ -47,7 +47,7 @@
                 'prop-types': 'npm:prop-types@15.8.1',
 
                 ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
-                typescript: "npm:typescript@4.0.8/lib/typescript.js",
+                typescript: "npm:typescript@4.0.8/lib/typescript.min.js",
 
                 app: appLocation
             },

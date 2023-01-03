@@ -114,7 +114,7 @@
                 // css: 'npm:systemjs-plugin-css@0.1.37/css.js',
                 ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
                 tslib: "npm:tslib@2.3.1/tslib.js",
-                typescript: "npm:typescript@4.0.8/lib/typescript.js",
+                typescript: "npm:typescript@4.0.8/lib/typescript.min.js",
 
                 // our app is within the app folder, appLocation comes from index.html
                 app: appLocation + "app",
