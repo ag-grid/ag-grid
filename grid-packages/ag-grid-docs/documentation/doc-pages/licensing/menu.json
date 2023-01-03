@@ -1581,6 +1581,12 @@
                 "showInCollapsed": true
               },
               {
+                "title": "Chart Tool Panels",
+                "url": "/integrated-charts-chart-tool-panels/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
                 "title": "Chart Toolbar",
                 "url": "/integrated-charts-toolbar/",
                 "enterprise": true,
@@ -1641,12 +1647,6 @@
           {
             "title": "Customisation",
             "url": "/integrated-charts-customisation/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Chart Tool Panels",
-            "url": "/integrated-charts-chart-tool-panels/",
             "enterprise": true,
             "showInCollapsed": true
           },
