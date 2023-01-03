@@ -17,6 +17,8 @@ import {
 } from "@ag-grid-community/core";
 import { NodeManager } from "../nodeManager";
 
+export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
+
 @Bean('ssrmBlockUtils')
 export class BlockUtils extends BeanStub {
 
@@ -340,10 +342,13 @@ export class BlockUtils extends BeanStub {
     public createNodeIdPrefix(parentRowNode: RowNode): string | undefined {
         const parts: string[] = [];
         let rowNode: RowNode | null = parentRowNode;
-
         // pull keys from all parent nodes, but do not include the root node
         while (rowNode && rowNode.level >= 0) {
-            parts.push(rowNode.key!);
+            if (rowNode.key === '') {
+                parts.push(GROUP_MISSING_KEY_ID);
+            } else {
+                parts.push(rowNode.key!);
+            }
             rowNode = rowNode.parent;
         }
 
