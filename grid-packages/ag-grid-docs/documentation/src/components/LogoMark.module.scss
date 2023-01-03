@@ -1,0 +1,56 @@
+.logo-mark {
+    :global(.aqua) {
+        fill: #55b4c8;
+    }
+
+    :global(.orange) {
+        fill: #ff8c00;
+    }
+
+    :global(.red) {
+        fill: #f00;
+    }
+
+    :global(.grey) {
+        fill: #b4bebe;
+    }
+
+    rect[class*='right'] {
+        animation-name: logo-mark-bounce;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-in-out;
+        animation-duration: 1.15s;
+        animation-play-state: paused;
+        transition: transform 1s ease-in-out;
+    }
+
+    rect:global(.right-2) {
+        animation-delay: calc(1.15s / 6);
+    }
+
+    rect:global(.right-3) {
+        animation-delay: calc(1.15s / 6 * 2);
+    }
+
+    &:not(.bounce) rect[class*="right"] {
+        transform: translateX(0) !important;
+    }
+}
+
+.bounce rect[class*='right'] {
+    animation-play-state: running;
+}
+
+@keyframes logo-mark-bounce {
+    0% {
+        transform: translateX(0%);
+    }
+
+    16.6666% {
+        transform: translateX(3px);
+    }
+
+    33.3333% {
+        transform: translateX(0);
+    }
+}

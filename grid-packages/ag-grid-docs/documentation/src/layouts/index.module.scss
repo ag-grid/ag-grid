@@ -55,14 +55,6 @@ main {
     &:hover {
         background-color: rgba(#002952, 0.6666);
     }
-
-    &:hover :global(.logomark) rect[class*="right"] {
-        animation-play-state: running;
-    }
-
-    &:not(:hover) :global(.logomark) rect[class*="right"] {
-        transform: translateX(0) !important;
-    }
 }
 
 .top-bar {

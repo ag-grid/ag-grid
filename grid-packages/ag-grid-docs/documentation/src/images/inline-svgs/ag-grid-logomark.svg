@@ -4,37 +4,6 @@
     .logomark .orange { fill: #ff8c00; }
     .logomark .red { fill: #f00; }
     .logomark .grey { fill: #b4bebe; }
-
-    .logomark rect[class*="right"] {
-      animation-name: bounce;
-      animation-iteration-count: infinite;
-      animation-timing-function: ease-in-out;
-      animation-duration: 1.15s;
-      animation-play-state: paused;
-      transition: transform 1s ease-in-out;
-    }
-
-    rect.right-2 {
-      animation-delay: calc(1.15s / 6);
-    }
-
-    rect.right-3 {
-      animation-delay: calc(1.15s / 6 * 2);
-    }
-
-    @keyframes bounce {
-      0% {
-        transform: translateX(0%);
-      }
-
-      16.6666% {
-        transform: translateX(3px);
-      }
-
-      33.3333% {
-        transform: translateX(0);
-      }
-    }
   </style>
   
   <rect class="aqua right-1" x="51" y="10" width="7" height="8"/>
