@@ -15,7 +15,7 @@ export interface QuotesDataItem {
 export type QuotesData = Record<string, QuotesDataItem>;
 
 export const quotesData: QuotesData = {
-  angularPerson: {
+  brianLove: {
     name: "Brian Love",
     avatarUrl: "images/developer-quotes/portraits/brian-love-portrait.png",
     orgName: "Google Developers",
