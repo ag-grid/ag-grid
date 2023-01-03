@@ -330,7 +330,6 @@ export class Legend {
     performLayout(width: number, height: number) {
         const {
             paddingX,
-            paddingY,
             label,
             maxWidth,
             marker: { size: markerSize, padding: markerPadding, shape: markerShape },
@@ -418,14 +417,6 @@ export class Legend {
             return false;
         }
 
-        const orientation = this.getOrientation();
-        const verticalOrientation = orientation === 'vertical';
-        this.pagination.orientation = orientation;
-
-        const paginationBBox = this.pagination.computeBBox();
-        width = width - (verticalOrientation ? 0 : paginationBBox.width);
-        height = height - (verticalOrientation ? paginationBBox.height : 0);
-
         const size = this.size;
         const oldSize = this.oldSize;
         size[0] = width;
@@ -436,28 +427,14 @@ export class Legend {
             oldSize[1] = size[1];
         }
 
-        const {
-            pages = [],
-            maxPageWidth = 0,
-            maxPageHeight = 0,
-        } = gridLayout({
-            orientation,
-            bboxes,
-            maxHeight: height,
-            maxWidth: width,
-            itemPaddingY: paddingY,
-            itemPaddingX: paddingX,
-        }) || {};
+        const { pages, startX, startY } = this.updatePagination(bboxes, width, height);
 
         this.pages = pages;
-        const totalPages = pages.length;
-        this.pagination.visible = totalPages > 1;
-        this.pagination.totalPages = totalPages;
 
         const pageNumber = this.pagination.getCurrentPage();
         const page = this.pages[pageNumber];
 
-        if (totalPages < 1 || !page) {
+        if (this.pages.length < 1 || !page) {
             this.visible = false;
             return;
         }
@@ -465,18 +442,77 @@ export class Legend {
         this.visible = true;
 
         // Position legend items
+        this.updatePositions(startX, startY, pageNumber);
+
+        // Update legend item properties that don't affect the layout.
+        this.update();
+    }
+
+    updatePagination(bboxes: BBox[], width: number, height: number): { pages: Page[]; startX: number; startY: number } {
+        const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
+
+        const orientation = this.getOrientation();
+        const verticalOrientation = orientation === 'vertical';
+        this.pagination.orientation = orientation;
+
+        let paginationBBox: BBox = this.pagination.computeBBox();
+        let lastPassPaginationBBox: BBox = new BBox(0, 0, 0, 0);
+        let pages: Page[] = [];
+        let maxPageWidth = 0;
+        let maxPageHeight = 0;
+        let count = 0;
+
+        const stableOutput = (lastPassPaginationBBox: BBox) => {
+            const { width, height } = lastPassPaginationBBox;
+            return width === paginationBBox.width && height === paginationBBox.height;
+        };
+
+        do {
+            if (count++ > 10) {
+                console.warn('AG Charts - unable to find stable legend layout.');
+                break;
+            }
+
+            paginationBBox = lastPassPaginationBBox;
+            const maxWidth = width - (verticalOrientation ? 0 : paginationBBox.width);
+            const maxHeight = height - (verticalOrientation ? paginationBBox.height : 0);
+
+            const layout = gridLayout({
+                orientation,
+                bboxes,
+                maxHeight,
+                maxWidth,
+                itemPaddingY,
+                itemPaddingX,
+            });
+
+            if (layout) {
+                pages = layout.pages;
+                maxPageWidth = layout.maxPageWidth;
+                maxPageHeight = layout.maxPageHeight;
+            }
+
+            const totalPages = pages.length;
+            this.pagination.visible = totalPages > 1;
+            this.pagination.totalPages = totalPages;
+
+            lastPassPaginationBBox = this.pagination.computeBBox();
+        } while (!stableOutput(lastPassPaginationBBox));
+
         // Top-left corner of the first legend item.
         const startX = width / 2;
         const startY = height / 2;
-        this.updatePositions(startX, startY, pageNumber);
 
         this.pagination.translationX = verticalOrientation ? startX : startX + maxPageWidth;
         this.pagination.translationY = verticalOrientation
             ? startY + maxPageHeight
             : startY + maxPageHeight / 2 - paginationBBox.height;
 
-        // Update legend item properties that don't affect the layout.
-        this.update();
+        return {
+            pages,
+            startX,
+            startY,
+        };
     }
 
     updatePositions(startX: number, startY: number, pageNumber: number = 0) {
