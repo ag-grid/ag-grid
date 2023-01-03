@@ -263,12 +263,15 @@ export class SetFilterListItem<V> extends Component {
             formattedValue = (value as () => string)();
             // backwards compatibility for select all in value
             value = formattedValue as any;
+        } else if (this.isTree) {
+            // tree values are already formatted via treeListFormatter
+            formattedValue = _.toStringOrNull(value);
         } else {
             formattedValue = this.getFormattedValue(column, value);
         }
 
         if (this.params.showTooltips) {
-            const tooltipValue = formattedValue != null ? formattedValue : String(value);
+            const tooltipValue = formattedValue != null ? formattedValue : _.toStringOrNull(value);
             this.setTooltip(tooltipValue);
         }
 

@@ -7,13 +7,14 @@ const gridOptions: GridOptions = {
     { field: 'athlete', hide: true },
     {
       field: 'date',
-      valueFormatter: (params) => params.value ? params.value.toLocaleDateString() : '',
+      valueFormatter: dateValueFormatter,
       filter: 'agSetColumnFilter',
       filterParams: {
         comparator: (a: Date, b: Date) => (a > b ? 1 : (a < b ? -1 : 0)),
         keyCreator: (params: KeyCreatorParams) => params.value.toString(),
         treeList: true,
         treeListFormatter: treeListFormatter,
+        valueFormatter: dateValueFormatter,
       }
     },
     {
@@ -40,6 +41,11 @@ const gridOptions: GridOptions = {
     },
   },
 }
+
+function dateValueFormatter(params: ValueFormatterParams) {
+  return params.value ? params.value.toLocaleDateString() : '';
+} 
+
 
 function treeListFormatter(pathKey: string | null, level: number): string {
   if (level === 1) {
