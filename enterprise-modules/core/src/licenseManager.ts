@@ -12,7 +12,9 @@ export class LicenseManager extends BeanStub {
     @PreConstruct
     public validateLicense(): void {
         if (_.missingOrEmpty(LicenseManager.licenseKey)) {
-            this.outputMissingLicenseKey();
+            if (!this.isWebsiteUrl()) {
+                this.outputMissingLicenseKey();
+            }
         } else if (LicenseManager.licenseKey.length > 32) {
             const {md5, license, version, isTrial} = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
 
@@ -69,20 +71,30 @@ export class LicenseManager extends BeanStub {
     }
 
     public isDisplayWatermark(): boolean {
-        return !this.isAllowedUrl() && !_.missingOrEmpty(this.watermarkMessage);
+        return !this.isLocalhost() && !this.isWebsiteUrl() && !_.missingOrEmpty(this.watermarkMessage);
     }
 
     public getWatermarkMessage() : string {
         return this.watermarkMessage || '';
     }
 
-    private isAllowedUrl(): boolean {
+    private getHostname(): string {
         const eDocument = this.gridOptionsService.getDocument();
         const win = (eDocument.defaultView || window);
         const loc = win.location;
         const { hostname = '' } = loc;
 
-        return hostname.match('^(?:127\.0\.0\.1|localhost|(?:\w+\.)?ag-grid\.com)$') != null;
+        return hostname;
+    }
+
+    private isWebsiteUrl(): boolean {
+        const hostname = this.getHostname();
+        return hostname.match('^((?:\w+\.)?ag-grid\.com)$') !== null;
+    }
+
+    private isLocalhost(): boolean {
+        const hostname = this.getHostname();
+        return hostname.match('^(?:127\.0\.0\.1|localhost)$') !== null;
     }
 
     private static formatDate(date: any): string {
@@ -247,8 +259,6 @@ export class LicenseManager extends BeanStub {
     }
 
     private outputMissingLicenseKey() {
-        if (this.isAllowedUrl()) { return; }
-
         console.error('****************************************************************************************************************');
         console.error('***************************************** AG Grid Enterprise License *******************************************');
         console.error('****************************************** License Key Not Found ***********************************************');
