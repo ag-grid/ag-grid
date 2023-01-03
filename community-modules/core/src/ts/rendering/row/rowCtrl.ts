@@ -910,21 +910,22 @@ export class RowCtrl extends BeanStub {
 
         const multiSelectOnClick = this.beans.gridOptionsService.is('rowMultiSelectWithClick');
         const rowDeselectionWithCtrl = !this.beans.gridOptionsService.is('suppressRowDeselection');
+        const source = 'rowClicked';
 
         if (this.rowNode.isSelected()) {
             if (multiSelectOnClick) {
-                this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent });
+                this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
             } else if (multiSelectKeyPressed) {
                 if (rowDeselectionWithCtrl) {
-                    this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent });
+                    this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
                 }
             } else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed, event: mouseEvent });
+                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed, event: mouseEvent, source });
             }
         } else {
             const clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
-            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed, event: mouseEvent });
+            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed, event: mouseEvent, source });
         }
     }
 

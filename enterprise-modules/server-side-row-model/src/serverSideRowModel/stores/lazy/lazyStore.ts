@@ -152,21 +152,22 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         let fireSelectionUpdatedEvent = false;
         updatedNodes?.forEach(node => {
             if (node.isSelected() && !node.selectable) {
-                node.setSelected(false, false, true);
+                node.setSelected(false, false, true, 'rowDataChanged');
                 fireSelectionUpdatedEvent = true;
             }
         });
 
         removedNodes?.forEach(node => {
             if (node.isSelected()) {
-                node.setSelected(false, false, true);
+                node.setSelected(false, false, true, 'rowDataChanged');
                 fireSelectionUpdatedEvent = true;
             }
         });
 
         if (fireSelectionUpdatedEvent) {
             const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED
+                type: Events.EVENT_SELECTION_CHANGED,
+                source: 'rowDataChanged'
             };
             this.eventService.dispatchEvent(event);
         }
