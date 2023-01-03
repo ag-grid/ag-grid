@@ -8,13 +8,13 @@
   "registerSideBarComp": {
     "type": { "arguments": { "sideBarComp": "ISideBar" }, "returnType": "void" }
   },
-  "destroy": {
-    "description": "/** Will destroy the grid and release resources. If you are using a framework you do not need to call this, as the grid links in with the framework lifecycle. However if you are using Web Components or native JavaScript, you do need to call this, to avoid a memory leak in your application. */",
-    "type": { "arguments": {}, "returnType": "void" }
-  },
   "___getAlignedGridService": {
     "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
     "type": { "arguments": {}, "returnType": "AlignedGridsService" }
+  },
+  "___getContext": {
+    "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
+    "type": { "arguments": {}, "returnType": "Context" }
   },
   "setProperty": {
     "type": { "arguments": { "propertyName": "K", "value": "GridOptions[K]" } }
@@ -298,10 +298,6 @@
   "setQuickFilter": {
     "description": "/** Pass a quick filter text into the grid for filtering. */",
     "type": { "arguments": { "newFilter": "string" }, "returnType": "void" }
-  },
-  "resetQuickFilter": {
-    "description": "/** Reset the quick filter cache text on every rowNode. */",
-    "type": { "arguments": {}, "returnType": "void" }
   },
   "selectAll": {
     "description": "/** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded. */",
@@ -985,6 +981,14 @@
   },
   "dispatchEvent": {
     "type": { "arguments": { "event": "AgEvent" }, "returnType": "void" }
+  },
+  "destroy": {
+    "description": "/** Will destroy the grid and release resources. If you are using a framework you do not need to call this, as the grid links in with the framework lifecycle. However if you are using Web Components or native JavaScript, you do need to call this, to avoid a memory leak in your application. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "resetQuickFilter": {
+    "description": "/** Reset the quick filter cache text on every rowNode. */",
+    "type": { "arguments": {}, "returnType": "void" }
   },
   "getCellRanges": {
     "description": "/** Returns the list of selected cell ranges. */",
