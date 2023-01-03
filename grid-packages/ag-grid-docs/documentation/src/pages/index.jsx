@@ -5,8 +5,8 @@ import Footer from '../components/footer/Footer';
 import Seo from "./components/SEO";
 import {agGridVersion} from "../utils/consts";
 
-import { Quotes } from './components/quotes/Quotes';
-import { quotesData } from "./components/quotes/quotesData";
+import { Quotes } from '../components/quotes/Quotes';
+import { quotesData } from "../components/quotes/quotesData";
 
 const IS_SSR = typeof window === "undefined"
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { addNonBreakingSpaceBetweenLastWords } from "../../../utils/add-non-breaking-space-between-last-words";
+import { addNonBreakingSpaceBetweenLastWords } from "../../utils/add-non-breaking-space-between-last-words";
 
 import styles from "./Quotes.module.scss";
 import { QuotesData, QuotesDataItem } from "./QuotesData";
