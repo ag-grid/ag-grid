@@ -405,7 +405,7 @@ export class GridOptionsService {
         const userValue = this.gridOptions.groupAggFiltering;
 
         if (typeof userValue === 'function') {
-            this.getCallback('groupAggFiltering' as any)
+            return this.getCallback('groupAggFiltering' as any) as any;
         }
 
         if (isTrue(userValue)) {
