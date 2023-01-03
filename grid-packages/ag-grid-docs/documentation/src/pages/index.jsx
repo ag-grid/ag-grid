@@ -5,6 +5,9 @@ import Footer from '../components/footer/Footer';
 import Seo from "./components/SEO";
 import {agGridVersion} from "../utils/consts";
 
+import { Quotes } from './components/quotes/Quotes';
+import { quotesData } from "./components/quotes/quotesData";
+
 const IS_SSR = typeof window === "undefined"
 
 const BestHtmlDemo = React.lazy(() => import("./components/home-page-demos/BestHtmlGrid"));
@@ -122,6 +125,14 @@ const Default = () => {
                                 <LiveStreamingDemo />
                             </React.Suspense>}
                         </div>
+                    </section>
+                </div>
+
+                <div className={`${styles['stage-scenarios']} ${styles['stage-quotes']}`}>
+                    <h2 className={styles['heading-scenarios']}>By Developers for Developers</h2>
+
+                    <section>
+                        <Quotes data={quotesData} />
                     </section>
                 </div>
 
