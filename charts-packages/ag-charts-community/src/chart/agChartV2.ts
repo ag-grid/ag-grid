@@ -117,9 +117,9 @@ export abstract class AgChart {
      * Update an existing `AgChartInstance`. Options provided should be complete and not
      * partial.
      *
-     * NOTE: each call could trigger a redraw; multiple calls in quick succession could result in
-     * undesirable flickering, so callers should batch up and/or debounce changes to avoid
-     * unintended partial update renderings.
+     * **NOTE**: As each call could trigger a chart redraw, multiple calls to update options in
+     * quick succession could result in undesirable flickering, so callers should batch up and/or
+     * debounce changes to avoid unintended partial update renderings.
      */
     public static update(chart: AgChartInstance, options: AgChartOptions) {
         if (!AgChartInstanceProxy.isInstance(chart)) {
@@ -131,9 +131,10 @@ export abstract class AgChart {
     /**
      * Update an existing `AgChartInstance` by applying a partial set of option changes.
      *
-     * NOTE: each call could trigger a redraw, each delta should leave the chart in a valid options
-     * state. Multiple calls in quick succession could result in undesirable flickering, so callers
-     * should batch up and/or debounce changes to avoid unintended partial update renderings.
+     * **NOTE**: As each call could trigger a chart redraw, each individual delta options update
+     * should leave the chart in a valid options state. Also, multiple calls to update options in
+     * quick succession could result in undesirable flickering, so callers should batch up and/or
+     * debounce changes to avoid unintended partial update renderings.
      */
     public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) {
         if (!AgChartInstanceProxy.isInstance(chart)) {

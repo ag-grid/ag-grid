@@ -46,7 +46,7 @@ The following example demonstrates both create and update cases:
 | ## Updating Charts Using Partial Options
 |
 | `AgChart` exposes an `updateDelta()` static method to allow partial updates to an existing charts configuration.
-| To assist with state management, the complete applied options state can be retrieve by calling `getOptions()` on the
+| To assist with state management, the complete applied options state can be retrieved by calling `getOptions()` on the
 | chart instance.
 |
 | <chart-example title='Update with Partial AgChartOptions' name='update-partial' type='typescript'></chart-example>
@@ -56,12 +56,13 @@ The following example demonstrates both create and update cases:
 | ## Updating Charts Using Partial Options
 |
 | `AgChart` exposes an `updateDelta()` static method to allow partial updates to an existing charts configuration.
-| To assist with state management, the complete applied options state can be retrieve by calling `getOptions()` on the
+| To assist with state management, the complete applied options state can be retrieved by calling `getOptions()` on the
 | chart instance.
 |
 | [[note]]
-| | These APIs should not be normally used with framework wrappers for Angular, React or Vue, as the framework-specific integrated will perform change detection. However when using Integrated Charts it
-| | maybe necessary to use Javascript APIs to perform chart updates in Grid callbacks.
+| | These APIs should not be normally used with framework wrappers for Angular, React or Vue, as the framework will
+| | perform change detection and update the chart automatically after a partial options update. However when using
+| | Integrated Charts it may be necessary to use Javascript APIs to perform chart updates in Grid callbacks.
 
 ## API
 Static methods available on the `AgChart` factory class:

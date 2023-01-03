@@ -4502,7 +4502,7 @@
       }
     },
     "update": {
-      "description": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     *\n     * NOTE: each call could trigger a redraw; multiple calls in quick succession could result in\n     * undesirable flickering, so callers should batch up and/or debounce changes to avoid\n     * unintended partial update renderings.\n     */",
+      "description": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     *\n     * **NOTE**: As each call could trigger a chart redraw, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
       "type": {
         "arguments": {
           "chart": "AgChartInstance",
@@ -4512,7 +4512,7 @@
       }
     },
     "updateDelta": {
-      "description": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     *\n     * NOTE: each call could trigger a redraw, each delta should leave the chart in a valid options\n     * state. Multiple calls in quick succession could result in undesirable flickering, so callers\n     * should batch up and/or debounce changes to avoid unintended partial update renderings.\n     */",
+      "description": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     *\n     * **NOTE**: As each call could trigger a chart redraw, each individual delta options update\n     * should leave the chart in a valid options state. Also, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
       "type": {
         "arguments": {
           "chart": "AgChartInstance",
