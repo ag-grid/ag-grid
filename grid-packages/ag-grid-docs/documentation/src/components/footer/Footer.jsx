@@ -6,13 +6,18 @@ import styles from './Footer.module.scss';
 
 const MenuColumns = ({ framework }) => footerItems.map(({ title, links }) => (
     <div key={title} className={styles['footer__links']}>
-        <h3>{title}</h3>
+        <h4>{title}</h4>
         <ul className={styles['footer__links__list']}>
-            {links.map(({ name, url, newTab }) => (
+            {links.map(({ name, url, newTab, iconUrl }) => (
                 <li key={`${title}_${name}`}>
                     {url.indexOf('../') === 0 ?
                         <DocumentationLink framework={framework} href={url.replace('../', '/')}>{name}</DocumentationLink> :
-                        <a href={url} {...newTab ? { target: '_blank', rel: 'noreferrer' } : {}}>{name}</a>
+                        <a href={url} {...newTab ? { target: '_blank', rel: 'noreferrer' } : {}}>
+                            { iconUrl &&
+                                <img src={iconUrl} alt={name}/>
+                            }
+                            {name}
+                        </a>
                     }
                 </li>
             ))}
@@ -27,7 +32,7 @@ const Footer = ({ framework }) => (
                 <MenuColumns framework={framework} />
             </div>
             <div className={styles['footer__row']}>
-                <p>AG Grid Ltd registered in the United Kingdom. Company No. 07318192.</p>
+                <p>AG Grid Ltd registered in the United Kingdom. Company&nbsp;No.&nbsp;07318192.</p>
                 <p>&copy; AG Grid Ltd. 2015-{new Date().getFullYear()}</p>
             </div>
         </div>
