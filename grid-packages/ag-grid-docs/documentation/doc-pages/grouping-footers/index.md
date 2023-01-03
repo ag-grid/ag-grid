@@ -72,9 +72,10 @@ non-footer cells differently.
 ## Group Footer Limitations
 
 Group footers are a UI concept only in the grid. It is the grids way of showing aggregated data (which belongs to the group) appearing after the group's children. Because the footer is a UI concept only, the following should be noted:
-    - It is not possible to select footer nodes. Footer rows appear selected when the group is selected.
-    - When exporting custom footers to Excel/CSV, the [processRowGroupCallback](../excel-export-customising-content/) function of the export must be used to export the custom values.
-    - When copying custom footers to the Clipboard, the [processCellForClipboard](../clipboard/#processing-individual-cells) function of the clipboard must be used to export the custom values.
+
+- It is not possible to select footer nodes. Footer rows appear selected when the group is selected.
+- When exporting custom footers to Excel/CSV, the [processRowGroupCallback](../excel-export-customising-content/) function of the export must be used to export the custom values.
+- When copying custom footers to the Clipboard, the [processCellForClipboard](../clipboard/#processing-individual-cells) function of the clipboard must be used to export the custom values.
 
 ## Next Up
 
