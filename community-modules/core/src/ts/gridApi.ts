@@ -1871,6 +1871,7 @@ export class GridApi<TData = any> {
      * @deprecated v29
      */
     public getCacheBlockState(): any {
+        logDeprecation<GridApi>('28.0', 'getCacheBlockState');
         return this.rowNodeBlockLoader.getBlockState();
     }
 
