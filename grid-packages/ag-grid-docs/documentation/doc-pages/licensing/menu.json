@@ -496,6 +496,23 @@
             ]
           },
           {
+            "title": "Upgrading to v28+",
+            "url": "/global-style-upgrading-to-v28/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "CSS",
+                "url": "/global-style-upgrading-to-v28-css/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Sass",
+                "url": "/global-style-upgrading-to-v28-sass/",
+                "showInCollapsed": false
+              }
+            ]
+          },
+          {
             "title": "Styling Rows",
             "url": "/row-styles/",
             "showInCollapsed": true

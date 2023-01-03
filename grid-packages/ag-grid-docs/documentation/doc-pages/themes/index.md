@@ -32,6 +32,13 @@ In order for the above code to work, the correct stylesheets must be loaded in t
 - **`ag-grid.css`** - structural styles containing CSS rules that are essential to the functioning of the grid and must be loaded first.
 - **`ag-theme-{theme-name}.css`** - theme styles that add design look and feel on top of the structural styles.
 
+[[note]]
+| The correct files to load are located in `ag-grid-community/styles` or `@ag-grid-community/styles` if you're using [modules](/modules/).
+|
+| This path has changed in v28, and the old files are still there as part of the [Legacy Styles](/global-style-upgrading-to-v28/) but will be removed in v29.
+|
+| Double-check that you are importing files from the new paths. If you have `/src/` or `/dist/` in your path then you're using the old paths.
+
 There are various ways to load these stylesheets, as described in the sections below:
 
 [[only-javascript]]
