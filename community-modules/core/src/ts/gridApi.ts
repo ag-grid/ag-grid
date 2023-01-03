@@ -231,11 +231,27 @@ export class GridApi<TData = any> {
         return this.context;
     }
 
+    private getSetterMethod(key: keyof GridOptions) {
+        return `set${key.charAt(0).toUpperCase()}${key.substring(1)}`;
+    }
+
     /**
-     * Used internally by grid. Not intended to be used by the client. Interface may change between releases
+     * Updates the GridOption property with the new value provided.
+     * @param propertyName - Name of the GridOption property to be updated.
+     * @param value - The new value for the property.
      */
-    public __setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]) {
+    public setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]) {
+
+        // Ensure the GridOptions property gets updated and fires the change event as we
+        // cannot assume that the dynamic Api call will updated GridOptions.
         this.gridOptionsService.set(propertyName, value);
+        // If the dynamic api does update GridOptions then change detection in the 
+        // GridOptionsService will prevent the event being fired twice.
+        const setterName = this.getSetterMethod(propertyName);
+        const dynamicApi = (this as any);
+        if (dynamicApi[setterName]) {
+            dynamicApi[setterName](value);
+        }
     }
 
     /** Register a detail grid with the master grid when it is created. */

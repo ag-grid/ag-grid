@@ -16,8 +16,8 @@
     "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
     "type": { "arguments": {}, "returnType": "Context" }
   },
-  "___setProperty": {
-    "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases\n     */",
+  "setProperty": {
+    "description": "/** Updates the GridOption property with the new value provided.\n     * @param propertyName - Name of the GridOption property to be updated.\n     * @param value - The new value for the property.\n     */",
     "type": { "arguments": { "propertyName": "K", "value": "GridOptions[K]" } }
   },
   "addDetailGridInfo": {
