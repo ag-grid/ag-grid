@@ -16,7 +16,9 @@ export declare class LicenseManager extends BeanStub {
     };
     isDisplayWatermark(): boolean;
     getWatermarkMessage(): string;
-    private isAllowedUrl;
+    private getHostname;
+    private isWebsiteUrl;
+    private isLocalhost;
     private static formatDate;
     private static getGridReleaseDate;
     private static decode;
