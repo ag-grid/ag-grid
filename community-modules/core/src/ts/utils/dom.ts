@@ -364,10 +364,13 @@ export function addStylesToElement(eElement: any, styles: any) {
     if (!styles) { return; }
 
     Object.keys(styles).forEach((key) => {
-        
-        if (key && key.length) {
-            eElement.style.setProperty(key, styles[key]);
-        }
+        if (!key || !key.length) { return; }
+        // changes the key from camelCase into a hyphenated-string
+        const parsedKey = key.replace(/[A-Z]/g, s => `-${s.toLocaleLowerCase()}`);
+        const value = styles[key].replace(/\s*!important/g, '');
+        const priority = value.length != styles[key].length ? 'important' : undefined;
+
+        eElement.style.setProperty(parsedKey, value, priority);
     });
 }
 
