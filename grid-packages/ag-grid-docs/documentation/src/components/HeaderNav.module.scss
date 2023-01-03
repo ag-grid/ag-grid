@@ -119,4 +119,61 @@ $mobile-header-breakpoint: 768px;
             font-size: 18px;
         }
     }
+
+    :global(.menu-icon) {
+        background-color: red;
+    }
+
+    &__menu-icon {
+        g {
+            transition: transform 0.2s 0.2s;
+        }
+        
+        rect {
+            fill: #fff;
+            transition: transform 0.2s;
+        }
+        
+        :global(.middle) {
+            transition: opacity 0s 0.2s;
+        }
+        
+        :global(.top) rect {
+            transform-origin: center 8px;
+        }
+        
+        :global(.bottom) rect {
+            transform-origin: center 28px;
+        }
+    }
+
+    &__button[aria-expanded="true"] {
+        g {
+            transition: transform 0.2s;
+        }
+    
+        rect {
+            transition: transform 0.2s 0.2s;
+        }
+    
+        :global(.top) {
+            transform: translateY(10px);
+        }
+    
+        :global(.top) rect {
+            transform: rotate(45deg);
+        }
+
+        :global(.middle) {
+            opacity: 0;
+        }
+    
+        :global(.bottom) {
+            transform: translateY(-10px);
+        }
+    
+        :global(.bottom) rect {
+            transform: rotate(-45deg);
+        }
+    }
 }

@@ -66,7 +66,7 @@ const HeaderExpandButton = () => (
         aria-expanded="false"
         aria-label="Toggle navigation">
 
-        <MenuIcon />
+        <MenuIcon className={styles['header-nav__menu-icon']} />
     </button>
 );
 

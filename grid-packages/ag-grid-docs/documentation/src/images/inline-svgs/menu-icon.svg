@@ -1,54 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" class="menu-icon" width="36" height="36" viewBox="0 0 36 36">
   <style>
     .menu-icon rect { fill: #fff; }
-
-    .menu-icon g {
-      transition: transform 0.2s 0.2s;
-    }
-
-    .menu-icon rect {
-      transition: transform 0.2s;
-    }
-
-    .menu-icon g.middle {
-      transition: opacity 0s 0.2s;
-    }
-
-    .menu-icon .top rect {
-      transform-origin: center 8px;
-    }
-
-    .menu-icon .bottom rect {
-      transform-origin: center 28px;
-    }
-
-    button[aria-expanded="true"] .menu-icon g {
-      transition: transform 0.2s;
-    }
-
-    button[aria-expanded="true"] .menu-icon rect {
-      transition: transform 0.2s 0.2s;
-    }
-    
-    button[aria-expanded="true"] .menu-icon .middle {
-      opacity: 0;
-    }
-
-    button[aria-expanded="true"] .menu-icon .top {
-      transform: translateY(10px);
-    }
-
-    button[aria-expanded="true"] .menu-icon .top rect {
-      transform: rotate(45deg);
-    }
-
-    button[aria-expanded="true"] .menu-icon .bottom {
-      transform: translateY(-10px);
-    }
-
-    button[aria-expanded="true"] .menu-icon .bottom rect {
-      transform: rotate(-45deg);
-    }
   </style>
 
   <g class="top"> <rect  x="2" y="7" width="32" height="2"/> </g>
