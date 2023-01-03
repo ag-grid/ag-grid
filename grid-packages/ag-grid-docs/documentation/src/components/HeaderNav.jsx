@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {withPrefix} from 'gatsby';
+import MenuIcon from '../images/inline-svgs/menu-icon.svg';
 import classnames from 'classnames';
 import styles from './HeaderNav.module.scss';
 
@@ -58,26 +59,30 @@ const HeaderLinks = ({path}) => {
 const HeaderExpandButton = () => (
     <button
         className={styles['header-nav__button']}
-        type="button" data-toggle="collapse"
+        type="button"
+        data-toggle="collapse"
         data-target="#main-nav"
         aria-controls="main-nav"
         aria-expanded="false"
         aria-label="Toggle navigation">
-        <span className={styles['header-nav__button-icon']}></span>
+
+        <MenuIcon className={styles['header-nav__menu-icon']} />
     </button>
 );
 
 const HeaderNav = ({path}) => (
-    <nav className={styles['header-nav']}>
-        <div className={styles['header-nav__wrapper']}>
-            <div className={styles['header-nav__navbar-collapse']} id="main-nav">
-                <HeaderLinks path={path}/>
-            </div>
-            <div className={styles['header-nav__widgets']}>
-                <HeaderExpandButton/>
-            </div>
-        </div>
-    </nav>
+    <>
+      <div className={styles['header-nav__widgets']}>
+          <HeaderExpandButton/>
+      </div>
+      <nav className={styles['header-nav']}>
+          <div className={styles['header-nav__wrapper']}>
+              <div className={styles['header-nav__navbar-collapse']} id="main-nav">
+                  <HeaderLinks path={path}/>
+              </div>
+          </div>
+      </nav>
+    </>
 );
 
 export default HeaderNav;

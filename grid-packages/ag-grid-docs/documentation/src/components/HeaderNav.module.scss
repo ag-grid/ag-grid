@@ -1,22 +1,54 @@
+$mobile-header-breakpoint: 768px;
+
 .header-nav {
     composes: navbar navbar-expand-md navbar-dark px-0 py-0 from global;
+    
+    width: 100%;
     margin-left: auto;
+    background-color: #002952;
+
+    @media screen and (min-width: $mobile-header-breakpoint) {
+        width: unset;
+        margin-left: unset;
+        background-color: unset;
+    }
 
     &__wrapper {
         composes: d-flex flex-column-reverse flex-md-row px-md-0 from global;
-        text-align: right;
+
+        width: 100%;
     }
 
     &__widgets {
         composes: d-flex from global;
+
+        margin-left: auto;
     }
 
     &__button {
-        composes: navbar-toggler from global;
+        appearance: none;
+        width: 64px;
+        height: 64px !important; // !important used to overide bootstrap .collapse { height: 0 }
         margin-left: auto;
+        border: none;
+        background-color: transparent;
+        transition: background-color 0.4s ease-in-out;
 
-        &-icon {
-            composes: navbar-toggler-icon from global;
+        &:hover {
+            background-color: rgba(#002952, 0.6666);
+        }
+
+        &[aria-expanded="true"] {
+            background-color: #002952;
+        }
+
+        svg {
+            position: relative;
+            left: 1px;
+        }
+
+        @media screen and (min-width: $mobile-header-breakpoint) {
+            display: none;
         }
     }
 
@@ -27,39 +59,121 @@
 
     &__navbar {
         composes: navbar-nav from global;
+
+        @media screen and (min-width: $mobile-header-breakpoint) {
+            margin-right: -18px;
+        }
     }
 
     &__link {
-        composes: nav-link from global;
-        position: relative;
-
-        a {
-            color: lighten($primary, 30%);
-            &:hover {
-                color: $light;
-                text-decoration: none;
-            }
+        &:not(:last-child) {
+          border-bottom: 1px solid #003264;
         }
 
-        &--active {
-            a {
-                color: $light;
+        @media screen and (min-width: $mobile-header-breakpoint) {
+            &:hover a::after {
+                opacity: 0.33;
+                transform: scaleX(1);
             }
-            @include media-breakpoint-up(md) {
-                &::after {
-                    content: "";
-                    height: 0.2rem;
-                    width: 100%;
-                    background-color: #fff;
-                    position: absolute;
-                    left: 0;
-                    bottom: -0.7rem;
-                }
+    
+            &--active a::after {
+                opacity: 1 !important;
+                transform: scaleX(1);
             }
         }
     }
 
     &__link-anchor {
-        composes: py-2 px-md-4 from global;
+        display: block;
+        position: relative;
+        padding: 10px 14px 11px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        color: white;
+        
+        &:hover {
+            text-decoration: none;
+            color: white;
+        }
+
+        @media screen and (min-width: $mobile-header-breakpoint) {
+            padding-left: 24px;
+            padding-right: 24px;
+
+            &::after {
+              content: '';
+              position: absolute;
+              height: 3px;
+              bottom: 6px;
+              left: 24px;
+              right: 24px;
+              background-color: white;
+              opacity: 0;
+              transform: scaleX(0);
+              transition: transform 0.33s ease-in-out,
+                          opacity 0.33s ease-in-out;
+          }
+        }
+
+        @media screen and (min-width: 860px) {
+            font-size: 18px;
+        }
+    }
+
+    :global(.menu-icon) {
+        background-color: red;
+    }
+
+    &__menu-icon {
+        g {
+            transition: transform 0.2s 0.2s;
+        }
+        
+        rect {
+            fill: #fff;
+            transition: transform 0.2s;
+        }
+        
+        :global(.middle) {
+            transition: opacity 0s 0.2s;
+        }
+        
+        :global(.top) rect {
+            transform-origin: center 8px;
+        }
+        
+        :global(.bottom) rect {
+            transform-origin: center 28px;
+        }
+    }
+
+    &__button[aria-expanded="true"] {
+        g {
+            transition: transform 0.2s;
+        }
+    
+        rect {
+            transition: transform 0.2s 0.2s;
+        }
+    
+        :global(.top) {
+            transform: translateY(10px);
+        }
+    
+        :global(.top) rect {
+            transform: rotate(45deg);
+        }
+
+        :global(.middle) {
+            opacity: 0;
+        }
+    
+        :global(.bottom) {
+            transform: translateY(-10px);
+        }
+    
+        :global(.bottom) rect {
+            transform: rotate(-45deg);
+        }
     }
 }

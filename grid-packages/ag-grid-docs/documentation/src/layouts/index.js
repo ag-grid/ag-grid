@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Helmet} from 'react-helmet';
 import {GlobalContextProvider} from 'components/GlobalContext';
 import HeaderNav from 'components/HeaderNav';
@@ -7,7 +7,8 @@ import Footer from 'components/footer/Footer';
 import Search from 'components/search/Search';
 import FrameworkSelector from 'components/FrameworkSelector';
 import favIcons from '../images/favicons';
-import logo from '../images/ag-grid.svg';
+import LogoType from '../images/inline-svgs/ag-grid-logotype.svg';
+import LogoMark from 'components/LogoMark';
 import styles from './index.module.scss';
 import './mailchimp.css';
 
@@ -37,7 +38,6 @@ const TopBar = ({frameworks, framework, path}) => (
  * This controls the layout template for all pages.
  */
 export const Layout = ({children, pageContext: {frameworks, framework = 'javascript', layout, pageName}, location: {pathname: path}, data}) => {
-
     if (layout === 'bare') { // only for on the fly example runner
         return children;
     }
@@ -55,6 +55,8 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
         processedPath === '/pipeline' || processedPath === '/pipeline/' ||
         processedPath === '/privacy' || processedPath === '/privacy/';
 
+    const [isLogoHover, setIsLogoHover]  = useState(false);
+
     return <GlobalContextProvider>
         <Helmet>
             {getFavicons()}
@@ -64,7 +66,21 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
             <Helmet htmlAttributes={{lang: 'en'}}/>
             <header className={styles.header}>
                 <div className={styles.header__wrapper}>
-                    <a href="/" aria-label="Home" className={styles['header__logo']}><img src={logo} alt="AG Grid" style={{width: 235, height: 40}}/></a>
+                    <a
+                        href="/"
+                        aria-label="Home"
+                        className={styles['header__logo']}
+                        onMouseEnter={() => {
+                            setIsLogoHover(true);
+                        }}
+                        onMouseLeave={() => {
+                            setIsLogoHover(false);
+                        }}
+                    >
+                        <LogoType />
+                        <LogoMark bounce={isLogoHover} />
+                    </a>
+
                     <HeaderNav path={path}/>
                 </div>
             </header>

@@ -227,6 +227,15 @@ const plugins = [
         },
     },
     'gatsby-plugin-remove-generator', // This removes the generator meta tag so people don't know we use Gatsby
+    {
+        // This allows us to inline SVG files in "/images/inline-svgs" into the DOM
+        resolve: "gatsby-plugin-react-svg",
+        options: {
+            rule: {
+                include: /images\/inline-svgs\/.*\.svg/
+            }
+        }
+    }
 ];
 
 module.exports = {

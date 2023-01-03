@@ -1,6 +1,8 @@
 @import "~bootstrap/scss/type";
 @import "~bootstrap/scss/alert";
 
+$mobile-header-breakpoint: 768px;
+
 html {
     @include media-breakpoint-up(lg) {
         scroll-padding-top: 72px;
@@ -24,20 +26,34 @@ main {
 }
 
 .header {
-    composes: d-flex align-items-center px-2 px-md-3 py-1 from global;
+    display: flex;
+    align-items: center;
     position: relative;
-    background-image: linear-gradient(to top left, $primary, darken($primary, 25%));
+    background-color: #003264;
 
     &__wrapper {
-        composes: container-lg my-2 px-0 d-flex from global;
-    }
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
 
-    &__logo {
-        composes: d-block from global;
-
-        img {
-            height: 40px;
+        @media screen and (min-width: $mobile-header-breakpoint) {
+            flex-wrap: unset;
+            max-width: 1400px + 30px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 16px;
+            padding-right: 24px;
         }
+    }
+}
+
+.header__logo {
+    display: block;
+    padding: 8px;
+    transition: background-color 0.4s ease-in-out;
+
+    &:hover {
+        background-color: rgba(#002952, 0.6666);
     }
 }
 
