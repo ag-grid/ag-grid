@@ -60,22 +60,37 @@ The animation above highlights a number of charting features. For more details o
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
     <div style="flex: 1 1 0;">
-        <img src="resources/chart-toolbar.png" alt="Chart Toolbar" />
+        <img src="resources/chart-tool-panels.png" alt="Open Chart Tool Panel" />
     </div>
     <div style="flex: 1 1 0;">
         <ul class="content">
-            <li><a href="../integrated-charts-toolbar/">Chart Toolbar</a>:
-                The chart toolbar is located in the top right area of the chart and allows a user to:
+            <li><a href="../integrated-charts-chart-tool-panels/">Chart Tool Panels</a>:
+                The chart tool panels can be opened by a button located in the middle right part of the chart. The Chart Tool Panels allow a user to:
                 <ul class="content">
                     <li>Change the chart type</li>
                     <li>Change the theme</li>
                     <li>Change which columns are used as categories and series</li>
                     <li>Format different aspects of the chart</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
+    <div style="flex: 1 1 0;">
+        <ul class="content">
+            <li><a href="../integrated-charts-toolbar/">Chart Toolbar</a>:
+                The chart toolbar is located in the top right area of the chart and allows a user to:
+                <ul class="content">
                     <li>Unlink the chart from the grid</li>
                     <li>Download the chart</li>
                 </ul>
             </li>
         </ul>
+    </div>
+    <div style="flex: 1 1 0;">
+        <img src="resources/chart-toolbar.png" alt="Chart Toolbar" />
     </div>
 </div>
 
