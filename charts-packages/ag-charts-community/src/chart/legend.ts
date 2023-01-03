@@ -360,6 +360,7 @@ export class Legend {
 
         const itemMaxWidthPercentage = 0.8;
         const maxItemWidth = maxWidth ?? width * itemMaxWidthPercentage;
+        const paddedMarkerWidth = markerSize + markerPadding + paddingX;
 
         itemSelection.each((markerLabel, datum) => {
             let text = datum.label.text ?? '<unknown>';
@@ -378,20 +379,20 @@ export class Legend {
                 addEllipsis = true;
             }
 
-            const labelWidth = Math.floor(markerSize + markerPadding + HdpiCanvas.getTextSize(text, font).width);
+            const labelWidth = Math.floor(paddedMarkerWidth + HdpiCanvas.getTextSize(text, font).width);
             if (labelWidth > maxItemWidth) {
                 let truncatedText = '';
                 const characterWidths = this.getCharacterWidths(font);
-                let cumCharSize = characterWidths[ellipsis];
+                let cumulativeWidth = paddedMarkerWidth + characterWidths[ellipsis];
 
                 for (const char of textChars) {
                     if (!characterWidths[char]) {
                         characterWidths[char] = HdpiCanvas.getTextSize(char, font).width;
                     }
 
-                    cumCharSize += characterWidths[char];
+                    cumulativeWidth += characterWidths[char];
 
-                    if (cumCharSize > maxItemWidth) {
+                    if (cumulativeWidth > maxItemWidth) {
                         break;
                     }
 
