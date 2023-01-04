@@ -11,6 +11,15 @@ export interface HighlightChangeEvent {
     currentHighlight?: SeriesNodeDatum;
 }
 
+function isEqual(a?: SeriesNodeDatum, b?: SeriesNodeDatum) {
+    if (a === b) return true;
+    if (a?.series !== b?.series) return false;
+    if (a?.itemId !== b?.itemId) return false;
+    if (a?.datum !== b?.datum) return false;
+
+    return true;
+}
+
 /**
  * Manages the actively highlighted series/datum for a chart. Tracks the requested highlights from
  * distinct dependents and handles conflicting highlight requests.
@@ -49,7 +58,7 @@ export class HighlightManager extends BaseManager<'highlight-change', HighlightC
 
         this.activeHighlight = highlightToApply;
 
-        const changed = previousHighlight !== this.activeHighlight;
+        const changed = !isEqual(previousHighlight, this.activeHighlight);
         if (changed) {
             this.registeredListeners['highlight-change']?.forEach((listener) => {
                 listener.handler({

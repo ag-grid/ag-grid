@@ -1,5 +1,5 @@
 import { Group } from '../../scene/group';
-import { Node, RedrawType } from '../../scene/node';
+import { Node } from '../../scene/node';
 import { Marker } from '../marker/marker';
 import { Triangle } from '../marker/triangle';
 import { Text } from '../../scene/shape/text';
@@ -275,8 +275,6 @@ export class Pagination {
         marker.stroke = style.stroke;
         marker.strokeWidth = style.strokeWidth;
         marker.strokeOpacity = style.strokeOpacity;
-
-        marker.markDirty(marker, RedrawType.MINOR);
     }
 
     private enableOrDisableButtons() {
