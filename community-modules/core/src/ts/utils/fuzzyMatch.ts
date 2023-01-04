@@ -100,10 +100,10 @@ export function string_weighted_distances(str1: string, str2: string): number {
     const b = str2.replace(/\s/g, '');
 
     let weight = 0;
-    let lastIndex = 0;
+    let lastIndex = -1;
 
     for (let i = 0; i < a.length; i++) {
-        const idx = b.indexOf(a[i], lastIndex);
+        const idx = b.indexOf(a[i], lastIndex + 1);
         if (idx === -1) { continue; }
 
         lastIndex = idx;
