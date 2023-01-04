@@ -16,3 +16,4 @@ export const rootLocalPrefix = `//${isDevelopment() && window.location ? `${wind
 export const localPrefix = `//${isDevelopment() && window.location ? `${window.location.hostname}:8080` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}/dev`;
 export const hostPrefix = `https://${isDevelopment() && window.location ? `${window.location.hostname}:8000` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}`;
 
+export const isProductionBuild = () => (!isDevelopment() && (process.env.GATSBY_HOST === 'www.ag-grid.com' || process.env.GATSBY_HOST === 'ag-grid.com'));

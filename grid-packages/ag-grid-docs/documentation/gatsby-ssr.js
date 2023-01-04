@@ -5,33 +5,34 @@
  */
 
 import React from 'react';
-import { withPrefix } from 'gatsby';
-import { Helmet } from 'react-helmet';
-import { dependencies } from './package.json';
-import { siteMetadata } from './gatsby-config';
+import {withPrefix} from 'gatsby';
+import {Helmet} from 'react-helmet';
+import {dependencies} from './package.json';
+import {siteMetadata} from './gatsby-config';
 import isDevelopment from './src/utils/is-development';
+import {isProductionBuild} from "./src/utils/consts";
 
 /**
  * This allows to customise the rendering of the body. We insert some scripts at the end of the body. It is better to
  * pull these files directly from a CDN rather than bundling them ourselves. However, the Node packages are still
  * required to be installed as they are used elsewhere, so we import the versions here to ensure we are consistent.
  */
-export const onRenderBody = ({ setPostBodyComponents }) => {
+export const onRenderBody = ({setPostBodyComponents}) => {
     const scrollOffset = 80;
 
     setPostBodyComponents([
         <script
             key="jquery"
             src={`https://cdnjs.cloudflare.com/ajax/libs/jquery/${dependencies['jquery']}/jquery.slim.min.js`}
-            crossOrigin="anonymous" />,
+            crossOrigin="anonymous"/>,
         <script
             key="bootstrap"
             src={`https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/${dependencies['bootstrap']}/js/bootstrap.bundle.min.js`}
-            crossOrigin="anonymous" />,
+            crossOrigin="anonymous"/>,
         <script
             key="smooth-scroll"
             src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scroll/16.1.3/smooth-scroll.polyfills.min.js"
-            crossOrigin="anonymous" />,
+            crossOrigin="anonymous"/>,
 
         // This initialises the smooth scrolling when clicking hash links
         <script key="initialise-smooth-scroll" dangerouslySetInnerHTML={{
@@ -42,14 +43,15 @@ export const onRenderBody = ({ setPostBodyComponents }) => {
                     speed: 200,
                     speedAsDuration: true,
                     offset: function() { return ${scrollOffset}; }
-                });`}} />,
+                });`
+        }}/>,
     ]);
 };
 
 /**
  * This allows us to wrap the page element. We use this to add a canonical URL for each page through React Helmet.
  */
-export const wrapPageElement = ({ element, props: { location: { pathname } } }) => {
+export const wrapPageElement = ({element, props: {location: {pathname}}}) => {
     if (['/example-runner/', '/404/', '/404.html'].some(exclude => withPrefix(exclude) === pathname)) {
         return element;
     }
@@ -58,7 +60,7 @@ export const wrapPageElement = ({ element, props: { location: { pathname } } }) 
 
     return (
         <>
-            <Helmet link={[{ rel: 'canonical', key: canonicalUrl, href: canonicalUrl }]} />
+            <Helmet link={[{rel: 'canonical', key: canonicalUrl, href: canonicalUrl}]}/>
             {element}
         </>
     );
@@ -67,7 +69,7 @@ export const wrapPageElement = ({ element, props: { location: { pathname } } }) 
 /**
  * This allows us to customise the page before it is rendered.
  */
-export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, pathname }) => {
+export const onPreRenderHTML = ({getHeadComponents, replaceHeadComponents, pathname}) => {
     // Remove script that causes issues with scroll position when a page is first loaded
     const headComponents = getHeadComponents().filter(el => el.key !== 'gatsby-remark-autolink-headers-script');
 
@@ -88,12 +90,19 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, path
         });
     }
 
+    // for anything other that www.ag-grid.com
+    if (!isProductionBuild()) {
+        headComponents.unshift(<meta
+            name="robots"
+            content="noindex"/>)
+    }
+
     // Ensure these styles are loaded before ours
     headComponents.unshift(<link
         key="roboto"
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/@fontsource/roboto@4.1.0/index.min.css"
-        crossOrigin="anonymous" />,
+        crossOrigin="anonymous"/>,
     );
 
     // We import the Font Awesome CSS here even though it is also imported by the library to avoid a repaint flash
@@ -102,7 +111,7 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, path
             key="fontawesome"
             rel="stylesheet"
             href={`https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-svg-core@${dependencies['@fortawesome/fontawesome-svg-core']}/styles.min.css`}
-            crossOrigin="anonymous" />);
+            crossOrigin="anonymous"/>);
 
     // Add Plausible.io tracking
     if (!isDevelopment()) {
