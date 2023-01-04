@@ -416,16 +416,19 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/server-side-model-datasource/ /angular-data-grid/server-side-model-datasource/
     Redirect 301 /documentation/angular/server-side-model-filtering/ /angular-data-grid/server-side-model-filtering/
     Redirect 301 /documentation/angular/server-side-model-grouping/ /angular-data-grid/server-side-model-grouping/
-    Redirect 301 /documentation/angular/server-side-model-high-frequency/ /angular-data-grid/server-side-model-high-frequency/
+    Redirect 301 /documentation/angular/server-side-model-high-frequency/ /angular-data-grid/server-side-model-updating-transactions/
+    Redirect 301 /angular-data-grid/server-side-model-high-frequency/ /angular-data-grid/server-side-model-updating-transactions/
     Redirect 301 /documentation/angular/server-side-model-master-detail/ /angular-data-grid/server-side-model-master-detail/
     Redirect 301 /documentation/angular/server-side-model-pagination/ /angular-data-grid/server-side-model-pagination/
     Redirect 301 /documentation/angular/server-side-model-pivoting/ /angular-data-grid/server-side-model-pivoting/
-    Redirect 301 /documentation/angular/server-side-model-refresh/ /angular-data-grid/server-side-model-refresh/
+    Redirect 301 /documentation/angular/server-side-model-refresh/ /angular-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /angular-data-grid/server-side-model-refresh/ /angular-data-grid/server-side-model-updating-refresh/
     Redirect 301 /documentation/angular/server-side-model-retry/ /angular-data-grid/server-side-model-retry/
     Redirect 301 /documentation/angular/server-side-model-row-height/ /angular-data-grid/server-side-model-row-height/
     Redirect 301 /documentation/angular/server-side-model-selection/ /angular-data-grid/server-side-model-selection/
     Redirect 301 /documentation/angular/server-side-model-sorting/ /angular-data-grid/server-side-model-sorting/
-    Redirect 301 /documentation/angular/server-side-model-transactions/ /angular-data-grid/server-side-model-transactions/
+    Redirect 301 /documentation/angular/server-side-model-transactions/ /angular-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /angular-data-grid/server-side-model-transactions/ /angular-data-grid/server-side-model-updating-transactions/
     Redirect 301 /documentation/angular/server-side-model-tree-data/ /angular-data-grid/server-side-model-tree-data/
     Redirect 301 /documentation/angular/server-side-model-updating/ /angular-data-grid/server-side-model-updating/
     Redirect 301 /documentation/angular/server-side-model/ /angular-data-grid/server-side-model/
@@ -670,16 +673,19 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/server-side-model-datasource/ /javascript-data-grid/server-side-model-datasource/
     Redirect 301 /documentation/javascript/server-side-model-filtering/ /javascript-data-grid/server-side-model-filtering/
     Redirect 301 /documentation/javascript/server-side-model-grouping/ /javascript-data-grid/server-side-model-grouping/
-    Redirect 301 /documentation/javascript/server-side-model-high-frequency/ /javascript-data-grid/server-side-model-high-frequency/
+    Redirect 301 /documentation/javascript/server-side-model-high-frequency/ /javascript-data-grid/server-side-model-updating-transactions/
+    Redirect 301 /javascript-data-grid/server-side-model-high-frequency/ /javascript-data-grid/server-side-model-updating-transactions/
     Redirect 301 /documentation/javascript/server-side-model-master-detail/ /javascript-data-grid/server-side-model-master-detail/
     Redirect 301 /documentation/javascript/server-side-model-pagination/ /javascript-data-grid/server-side-model-pagination/
     Redirect 301 /documentation/javascript/server-side-model-pivoting/ /javascript-data-grid/server-side-model-pivoting/
-    Redirect 301 /documentation/javascript/server-side-model-refresh/ /javascript-data-grid/server-side-model-refresh/
+    Redirect 301 /documentation/javascript/server-side-model-refresh/ /javascript-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /javascript-data-grid/server-side-model-refresh/ /javascript-data-grid/server-side-model-updating-refresh/
     Redirect 301 /documentation/javascript/server-side-model-retry/ /javascript-data-grid/server-side-model-retry/
     Redirect 301 /documentation/javascript/server-side-model-row-height/ /javascript-data-grid/server-side-model-row-height/
     Redirect 301 /documentation/javascript/server-side-model-selection/ /javascript-data-grid/server-side-model-selection/
     Redirect 301 /documentation/javascript/server-side-model-sorting/ /javascript-data-grid/server-side-model-sorting/
-    Redirect 301 /documentation/javascript/server-side-model-transactions/ /javascript-data-grid/server-side-model-transactions/
+    Redirect 301 /documentation/javascript/server-side-model-transactions/ /javascript-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /javascript-data-grid/server-side-model-transactions/ /javascript-data-grid/server-side-model-updating-transactions/
     Redirect 301 /documentation/javascript/server-side-model-tree-data/ /javascript-data-grid/server-side-model-tree-data/
     Redirect 301 /documentation/javascript/server-side-model-updating/ /javascript-data-grid/server-side-model-updating/
     Redirect 301 /documentation/javascript/server-side-model/ /javascript-data-grid/server-side-model/
@@ -916,16 +922,19 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/server-side-model-datasource/ /react-data-grid/server-side-model-datasource/
     Redirect 301 /documentation/react/server-side-model-filtering/ /react-data-grid/server-side-model-filtering/
     Redirect 301 /documentation/react/server-side-model-grouping/ /react-data-grid/server-side-model-grouping/
-    Redirect 301 /documentation/react/server-side-model-high-frequency/ /react-data-grid/server-side-model-high-frequency/
+    Redirect 301 /documentation/react/server-side-model-high-frequency/ /react-data-grid/server-side-model-updating-transactions/
+    Redirect 301 /react-data-grid/server-side-model-high-frequency/ /react-data-grid/server-side-model-updating-transactions/
     Redirect 301 /documentation/react/server-side-model-master-detail/ /react-data-grid/server-side-model-master-detail/
     Redirect 301 /documentation/react/server-side-model-pagination/ /react-data-grid/server-side-model-pagination/
     Redirect 301 /documentation/react/server-side-model-pivoting/ /react-data-grid/server-side-model-pivoting/
-    Redirect 301 /documentation/react/server-side-model-refresh/ /react-data-grid/server-side-model-refresh/
+    Redirect 301 /documentation/react/server-side-model-refresh/ /react-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /react-data-grid/server-side-model-refresh/ /react-data-grid/server-side-model-updating-refresh/
     Redirect 301 /documentation/react/server-side-model-retry/ /react-data-grid/server-side-model-retry/
     Redirect 301 /documentation/react/server-side-model-row-height/ /react-data-grid/server-side-model-row-height/
     Redirect 301 /documentation/react/server-side-model-selection/ /react-data-grid/server-side-model-selection/
     Redirect 301 /documentation/react/server-side-model-sorting/ /react-data-grid/server-side-model-sorting/
-    Redirect 301 /documentation/react/server-side-model-transactions/ /react-data-grid/server-side-model-transactions/
+    Redirect 301 /documentation/react/server-side-model-transactions/ /react-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /react-data-grid/server-side-model-transactions/ /react-data-grid/server-side-model-updating-transactions/
     Redirect 301 /documentation/react/server-side-model-tree-data/ /react-data-grid/server-side-model-tree-data/
     Redirect 301 /documentation/react/server-side-model-updating/ /react-data-grid/server-side-model-updating/
     Redirect 301 /documentation/react/server-side-model/ /react-data-grid/server-side-model/
@@ -1158,16 +1167,19 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/server-side-model-datasource/ /vue-data-grid/server-side-model-datasource/
     Redirect 301 /documentation/vue/server-side-model-filtering/ /vue-data-grid/server-side-model-filtering/
     Redirect 301 /documentation/vue/server-side-model-grouping/ /vue-data-grid/server-side-model-grouping/
-    Redirect 301 /documentation/vue/server-side-model-high-frequency/ /vue-data-grid/server-side-model-high-frequency/
+    Redirect 301 /documentation/vue/server-side-model-high-frequency/ /vue-data-grid/server-side-model-updating-transactions/
+    Redirect 301 /vue-data-grid/server-side-model-high-frequency/ /vue-data-grid/server-side-model-updating-transactions/
     Redirect 301 /documentation/vue/server-side-model-master-detail/ /vue-data-grid/server-side-model-master-detail/
     Redirect 301 /documentation/vue/server-side-model-pagination/ /vue-data-grid/server-side-model-pagination/
     Redirect 301 /documentation/vue/server-side-model-pivoting/ /vue-data-grid/server-side-model-pivoting/
-    Redirect 301 /documentation/vue/server-side-model-refresh/ /vue-data-grid/server-side-model-refresh/
+    Redirect 301 /documentation/vue/server-side-model-refresh/ /vue-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /vue-data-grid/server-side-model-refresh/ /vue-data-grid/server-side-model-updating-refresh/
     Redirect 301 /documentation/vue/server-side-model-retry/ /vue-data-grid/server-side-model-retry/
     Redirect 301 /documentation/vue/server-side-model-row-height/ /vue-data-grid/server-side-model-row-height/
     Redirect 301 /documentation/vue/server-side-model-selection/ /vue-data-grid/server-side-model-selection/
     Redirect 301 /documentation/vue/server-side-model-sorting/ /vue-data-grid/server-side-model-sorting/
-    Redirect 301 /documentation/vue/server-side-model-transactions/ /vue-data-grid/server-side-model-transactions/
+    Redirect 301 /documentation/vue/server-side-model-transactions/ /vue-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /vue-data-grid/server-side-model-transactions/ /vue-data-grid/server-side-model-updating-transactions/
     Redirect 301 /documentation/vue/server-side-model-tree-data/ /vue-data-grid/server-side-model-tree-data/
     Redirect 301 /documentation/vue/server-side-model-updating/ /vue-data-grid/server-side-model-updating/
     Redirect 301 /documentation/vue/server-side-model/ /vue-data-grid/server-side-model/
@@ -1593,16 +1605,19 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/server-side-model-datasource/ /javascript-data-grid/server-side-model-datasource/
     Redirect 301 /javascript-grid/server-side-model-filtering/ /javascript-data-grid/server-side-model-filtering/
     Redirect 301 /javascript-grid/server-side-model-grouping/ /javascript-data-grid/server-side-model-grouping/
-    Redirect 301 /javascript-grid/server-side-model-high-frequency/ /javascript-data-grid/server-side-model-high-frequency/
+    Redirect 301 /javascript-grid/server-side-model-high-frequency/ /javascript-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /javascript-data-grid/server-side-model-high-frequency/ /javascript-data-grid/server-side-model-updating-refresh/
     Redirect 301 /javascript-grid/server-side-model-master-detail/ /javascript-data-grid/server-side-model-master-detail/
     Redirect 301 /javascript-grid/server-side-model-pagination/ /javascript-data-grid/server-side-model-pagination/
     Redirect 301 /javascript-grid/server-side-model-pivoting/ /javascript-data-grid/server-side-model-pivoting/
-    Redirect 301 /javascript-grid/server-side-model-refresh/ /javascript-data-grid/server-side-model-refresh/
+    Redirect 301 /javascript-grid/server-side-model-refresh/ /javascript-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /javascript-data-grid/server-side-model-refresh/ /javascript-data-grid/server-side-model-updating-refresh/
     Redirect 301 /javascript-grid/server-side-model-retry/ /javascript-data-grid/server-side-model-retry/
     Redirect 301 /javascript-grid/server-side-model-row-height/ /javascript-data-grid/server-side-model-row-height/
     Redirect 301 /javascript-grid/server-side-model-selection/ /javascript-data-grid/server-side-model-selection/
     Redirect 301 /javascript-grid/server-side-model-sorting/ /javascript-data-grid/server-side-model-sorting/
-    Redirect 301 /javascript-grid/server-side-model-transactions/ /javascript-data-grid/server-side-model-transactions/
+    Redirect 301 /javascript-grid/server-side-model-transactions/ /javascript-data-grid/server-side-model-updating-transactions/
+    Redirect 301 /javascript-data-grid/server-side-model-transactions/ /javascript-data-grid/server-side-model-updating-transactions/
     Redirect 301 /javascript-grid/server-side-model-tree-data/ /javascript-data-grid/server-side-model-tree-data/
     Redirect 301 /javascript-grid/server-side-model-updating/ /javascript-data-grid/server-side-model-updating/
     Redirect 301 /javascript-grid/server-side-operations-graphql/ /javascript-data-grid/server-side-operations-graphql/
@@ -1788,16 +1803,19 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/server-side-model-datasource/ /angular-data-grid/server-side-model-datasource/
     Redirect 301 /angular-grid/server-side-model-filtering/ /angular-data-grid/server-side-model-filtering/
     Redirect 301 /angular-grid/server-side-model-grouping/ /angular-data-grid/server-side-model-grouping/
-    Redirect 301 /angular-grid/server-side-model-high-frequency/ /angular-data-grid/server-side-model-high-frequency/
+    Redirect 301 /angular-grid/server-side-model-high-frequency/ /angular-data-grid/server-side-model-updating-transactions/
+    Redirect 301 /angular-data-grid/server-side-model-high-frequency/ /angular-data-grid/server-side-model-updating-transactions/
     Redirect 301 /angular-grid/server-side-model-master-detail/ /angular-data-grid/server-side-model-master-detail/
     Redirect 301 /angular-grid/server-side-model-pagination/ /angular-data-grid/server-side-model-pagination/
     Redirect 301 /angular-grid/server-side-model-pivoting/ /angular-data-grid/server-side-model-pivoting/
-    Redirect 301 /angular-grid/server-side-model-refresh/ /angular-data-grid/server-side-model-refresh/
+    Redirect 301 /angular-grid/server-side-model-refresh/ /angular-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /angular-data-grid/server-side-model-refresh/ /angular-data-grid/server-side-model-updating-refresh/
     Redirect 301 /angular-grid/server-side-model-retry/ /angular-data-grid/server-side-model-retry/
     Redirect 301 /angular-grid/server-side-model-row-height/ /angular-data-grid/server-side-model-row-height/
     Redirect 301 /angular-grid/server-side-model-selection/ /angular-data-grid/server-side-model-selection/
     Redirect 301 /angular-grid/server-side-model-sorting/ /angular-data-grid/server-side-model-sorting/
-    Redirect 301 /angular-grid/server-side-model-transactions/ /angular-data-grid/server-side-model-transactions/
+    Redirect 301 /angular-grid/server-side-model-transactions/ /angular-data-grid/server-side-model-updating-transactions/
+    Redirect 301 /angular-data-grid/server-side-model-transactions/ /angular-data-grid/server-side-model-updating-transactions/
     Redirect 301 /angular-grid/server-side-model-tree-data/ /angular-data-grid/server-side-model-tree-data/
     Redirect 301 /angular-grid/server-side-model-updating/ /angular-data-grid/server-side-model-updating/
     Redirect 301 /angular-grid/server-side-operations-graphql/ /angular-data-grid/server-side-operations-graphql/
@@ -1989,16 +2007,19 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/server-side-model-datasource/ /react-data-grid/server-side-model-datasource/
     Redirect 301 /react-grid/server-side-model-filtering/ /react-data-grid/server-side-model-filtering/
     Redirect 301 /react-grid/server-side-model-grouping/ /react-data-grid/server-side-model-grouping/
-    Redirect 301 /react-grid/server-side-model-high-frequency/ /react-data-grid/server-side-model-high-frequency/
+    Redirect 301 /react-grid/server-side-model-high-frequency/ /react-data-grid/server-side-model-updating-transactions/
+    Redirect 301 /react-data-grid/server-side-model-high-frequency/ /react-data-grid/server-side-model-updating-transactions/
     Redirect 301 /react-grid/server-side-model-master-detail/ /react-data-grid/server-side-model-master-detail/
     Redirect 301 /react-grid/server-side-model-pagination/ /react-data-grid/server-side-model-pagination/
     Redirect 301 /react-grid/server-side-model-pivoting/ /react-data-grid/server-side-model-pivoting/
-    Redirect 301 /react-grid/server-side-model-refresh/ /react-data-grid/server-side-model-refresh/
+    Redirect 301 /react-grid/server-side-model-refresh/ /react-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /react-data-grid/server-side-model-refresh/ /react-data-grid/server-side-model-updating-refresh/
     Redirect 301 /react-grid/server-side-model-retry/ /react-data-grid/server-side-model-retry/
     Redirect 301 /react-grid/server-side-model-row-height/ /react-data-grid/server-side-model-row-height/
     Redirect 301 /react-grid/server-side-model-selection/ /react-data-grid/server-side-model-selection/
     Redirect 301 /react-grid/server-side-model-sorting/ /react-data-grid/server-side-model-sorting/
-    Redirect 301 /react-grid/server-side-model-transactions/ /react-data-grid/server-side-model-transactions/
+    Redirect 301 /react-grid/server-side-model-transactions/ /react-data-grid/server-side-model-updating-transactions/
+    Redirect 301 /react-data-grid/server-side-model-transactions/ /react-data-grid/server-side-model-updating-transactions/
     Redirect 301 /react-grid/server-side-model-tree-data/ /react-data-grid/server-side-model-tree-data/
     Redirect 301 /react-grid/server-side-model-updating/ /react-data-grid/server-side-model-updating/
     Redirect 301 /react-grid/server-side-operations-graphql/ /react-data-grid/server-side-operations-graphql/
@@ -2184,16 +2205,19 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/server-side-model-datasource/ /vue-data-grid/server-side-model-datasource/
     Redirect 301 /vue-grid/server-side-model-filtering/ /vue-data-grid/server-side-model-filtering/
     Redirect 301 /vue-grid/server-side-model-grouping/ /vue-data-grid/server-side-model-grouping/
-    Redirect 301 /vue-grid/server-side-model-high-frequency/ /vue-data-grid/server-side-model-high-frequency/
+    Redirect 301 /vue-grid/server-side-model-high-frequency/ /vue-data-grid/server-side-model-updating-transactions/
+    Redirect 301 /vue-data-grid/server-side-model-high-frequency/ /vue-data-grid/server-side-model-updating-transactions/
     Redirect 301 /vue-grid/server-side-model-master-detail/ /vue-data-grid/server-side-model-master-detail/
     Redirect 301 /vue-grid/server-side-model-pagination/ /vue-data-grid/server-side-model-pagination/
     Redirect 301 /vue-grid/server-side-model-pivoting/ /vue-data-grid/server-side-model-pivoting/
-    Redirect 301 /vue-grid/server-side-model-refresh/ /vue-data-grid/server-side-model-refresh/
+    Redirect 301 /vue-grid/server-side-model-refresh/ /vue-data-grid/server-side-model-updating-refresh/
+    Redirect 301 /vue-data-grid/server-side-model-refresh/ /vue-data-grid/server-side-model-updating-refresh/
     Redirect 301 /vue-grid/server-side-model-retry/ /vue-data-grid/server-side-model-retry/
     Redirect 301 /vue-grid/server-side-model-row-height/ /vue-data-grid/server-side-model-row-height/
     Redirect 301 /vue-grid/server-side-model-selection/ /vue-data-grid/server-side-model-selection/
     Redirect 301 /vue-grid/server-side-model-sorting/ /vue-data-grid/server-side-model-sorting/
-    Redirect 301 /vue-grid/server-side-model-transactions/ /vue-data-grid/server-side-model-transactions/
+    Redirect 301 /vue-grid/server-side-model-transactions/ /vue-data-grid/server-side-model-updating-transactions/
+    Redirect 301 /vue-data-grid/server-side-model-transactions/ /vue-data-grid/server-side-model-updating-transactions/
     Redirect 301 /vue-grid/server-side-model-tree-data/ /vue-data-grid/server-side-model-tree-data/
     Redirect 301 /vue-grid/server-side-model-updating/ /vue-data-grid/server-side-model-updating/
     Redirect 301 /vue-grid/server-side-operations-graphql/ /vue-data-grid/server-side-operations-graphql/
