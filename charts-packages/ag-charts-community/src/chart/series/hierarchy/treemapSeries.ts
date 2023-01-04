@@ -14,6 +14,8 @@ import { LegendDatum } from '../../legend';
 import { toFixed } from '../../../util/number';
 import { Path2D } from '../../../scene/path2D';
 import { BBox } from '../../../scene/bbox';
+import { Color } from '../../../util/color';
+import { doOnce } from '../../../util/function';
 import {
     BOOLEAN,
     NUMBER,
@@ -368,7 +370,18 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
         const createTreeNodeDatum = (datum: TreeDatum, depth = 0, parent?: TreemapNodeDatum) => {
             const label = (labelKey && (datum[labelKey] as string)) || '';
-            const colorScaleValue = colorKey ? datum[colorKey] ?? depth : depth;
+            let colorScaleValue = colorKey ? datum[colorKey] ?? depth : depth;
+            if (typeof colorScaleValue === 'string' && !Color.validColorString(colorScaleValue)) {
+                const fallbackColor = 'black';
+                doOnce(
+                    () =>
+                        console.warn(
+                            `AG Charts - Invalid Treemap tile colour string "${colorScaleValue}". Affected treemap tiles will be coloured ${fallbackColor}.`
+                        ),
+                    'treemap node color invalid'
+                );
+                colorScaleValue = 'black';
+            }
             const isLeaf = !datum.children;
             const fill =
                 typeof colorScaleValue === 'string'
