@@ -229,10 +229,10 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      */
     setRowHeight(rowHeight: number | undefined | null, estimated?: boolean): void
 
-    /** Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */
+    /** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */
     setData(data: TData): void;
 
-    /** Updates the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */
+    /** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */
     updateData(data: TData): void;
 
     /**

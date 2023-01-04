@@ -14893,7 +14893,7 @@
       }
     },
     "setData": {
-      "description": "/** Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */",
+      "description": "/** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */",
       "type": {
         "arguments": { "data": "TData" },
         "returnType": "void",
@@ -14901,7 +14901,7 @@
       }
     },
     "updateData": {
-      "description": "/** Updates the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */",
+      "description": "/** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */",
       "type": {
         "arguments": { "data": "TData" },
         "returnType": "void",

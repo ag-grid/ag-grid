@@ -236,7 +236,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.beans = beans;
     }
 
-    /** Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */
+    /** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */
     public setData(data: TData): void {
         this.setDataCommon(data, false);
     }
@@ -247,7 +247,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
     // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
 
-    /** Update the data on the `rowNode`. */
+    /** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */
     public updateData(data: TData): void {
         this.setDataCommon(data, true);
     }
