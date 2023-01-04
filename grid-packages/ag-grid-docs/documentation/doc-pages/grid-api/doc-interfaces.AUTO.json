@@ -1027,7 +1027,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoHeaderHeight": {
-      "description": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n    * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n    * Default: `false`\n    */",
+      "description": "/** If enabled then the column header row will automatically adjust height to accommodate the size of the header cell.\n    * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n    * Default: `false`\n    */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerComponent": {
