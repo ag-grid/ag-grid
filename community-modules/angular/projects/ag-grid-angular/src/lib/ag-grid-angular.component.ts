@@ -282,8 +282,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         }
     }
 
-    @Input() public gridOptions: GridOptions<TData>;
-    @Input() public modules: Module[];
+     @Input() public gridOptions: GridOptions<TData> | undefined;
+     @Input() public modules: Module[] | undefined;
 
     // @START@
     /** Specifies the status bar components to use in the status bar.     */
