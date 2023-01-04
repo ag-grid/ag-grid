@@ -205,7 +205,9 @@ To disable series toggling on legend item click, the `legend.seriesToggleEnabled
 
 ```js
 legend: {
-    seriesToggleEnabled: false
+    item: {
+        seriesToggleEnabled: false
+    }
 }
 ```
 

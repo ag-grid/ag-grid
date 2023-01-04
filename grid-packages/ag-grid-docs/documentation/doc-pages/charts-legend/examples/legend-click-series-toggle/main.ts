@@ -155,7 +155,6 @@ const options: AgChartOptions = {
   ],
   legend: {
     position: "left",
-    seriesToggleEnabled: false,
     listeners: {
       legendItemClick: ({
         seriesId,
@@ -168,6 +167,7 @@ const options: AgChartOptions = {
       },
     },
     item: {
+      seriesToggleEnabled: false,
       marker: {
         strokeWidth: 2,
       },
