@@ -32,7 +32,7 @@ When updating grouped data, a transaction needs to be targeted against the group
 
 In the example below, note the following:
  - One transaction has to be applied for each row group that has changes.
- - To move a row between groups, a transaction to remove from the old group, and create in the new group are required.
+ - To move a row between groups, two transactions are required. One to remove the old row, and the other to recreate it in the correct group.
 
 <grid-example title='Transactions With Groups' name='transactions-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
