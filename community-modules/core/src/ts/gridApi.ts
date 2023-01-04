@@ -235,12 +235,8 @@ export class GridApi<TData = any> {
         return `set${key.charAt(0).toUpperCase()}${key.substring(1)}`;
     }
 
-    /**
-     * Updates the GridOption property with the new value provided.
-     * @param propertyName - Name of the GridOption property to be updated.
-     * @param value - The new value for the property.
-     */
-    public setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]) {
+    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
+    public __setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]) {
 
         // Ensure the GridOptions property gets updated and fires the change event as we
         // cannot assume that the dynamic Api call will updated GridOptions.

@@ -164,12 +164,11 @@ export class ComponentUtil {
             delete changesToApply.columnDefs;
         }
 
-        const dynamicApi = (api as any);
         Object.keys(changesToApply).forEach(key => {
             const gridKey = key as keyof GridOptions;
 
             const coercedValue = ComponentUtil.getValue(gridKey, changesToApply[gridKey].currentValue);
-            api.setProperty(gridKey, coercedValue);
+            api.__setProperty(gridKey, coercedValue);
         });
 
         // copy changes into an event for dispatch
