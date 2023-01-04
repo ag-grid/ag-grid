@@ -1272,7 +1272,7 @@
     "type": { "arguments": {}, "returnType": "void" }
   },
   "refreshServerSide": {
-    "description": "/** Refresh a server-side level.\n     * If you pass no parameters, then the top level store is purged.\n     * To purge a child level, pass in the string of keys to get to the desired level.\n     */",
+    "description": "/** Refresh a server-side level.\n     * If you pass no parameters, then the top level store is refreshed.\n     * To refresh a child level, pass in the string of keys to get to the desired level.\n     */",
     "type": {
       "arguments": { "params?": "RefreshServerSideParams" },
       "returnType": "void"
