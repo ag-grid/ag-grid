@@ -27,21 +27,21 @@ const gridOptions: GridOptions = {
 }
 
 function onChartCreated(event: ChartCreated) {
-  console.log('Created chart with ID ' + event.chartId)
-
   updateTitle(gridOptions.api!, event);
+  
+  console.log('Created chart with ID ' + event.chartId)
 }
 
 function onChartRangeSelectionChanged(event: ChartRangeSelectionChanged) {
-  console.log('Changed range selection of chart with ID ' + event.chartId)
-
   updateTitle(gridOptions.api!, event);
+  
+  console.log('Changed range selection of chart with ID ' + event.chartId)
 }
 
 function onChartOptionsChanged(event: ChartOptionsChanged) {
-  console.log('Options change of chart with ID ' + event.chartId)
-
   updateTitle(gridOptions.api!, event);
+  
+  console.log('Options change of chart with ID ' + event.chartId)
 }
 
 function onChartDestroyed(event: ChartDestroyed) {
