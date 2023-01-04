@@ -18,6 +18,7 @@ import { CenterWidthFeature } from "../centerWidthFeature";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { ColumnPinnedType } from "../../entities/column";
+import { isInvisibleScrollbar } from "../../utils/browser";
 
 export enum RowContainerName {
     LEFT = 'left',
@@ -244,8 +245,32 @@ export class RowContainerCtrl extends BeanStub {
             new CenterWidthFeature(width => this.comp.setContainerWidth(`${width}px`))
         ));
 
+        if (isInvisibleScrollbar()) {
+            this.forContainers([RowContainerName.CENTER], () => {
+                const pinnedWidthChangedEvent = this.enableRtl ? Events.EVENT_LEFT_PINNED_WIDTH_CHANGED : Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED;
+                this.addManagedListener(this.eventService, pinnedWidthChangedEvent, () => this.refreshPaddingForFakeScrollbar());
+            });
+
+            this.refreshPaddingForFakeScrollbar();
+        }
+
         this.addListeners();
         this.registerWithCtrlsService();
+    }
+
+    private refreshPaddingForFakeScrollbar(): void {
+        const { enableRtl, columnModel, name, eWrapper, eContainer } = this;
+        const sideToCheck = enableRtl ? RowContainerName.LEFT : RowContainerName.RIGHT;
+        this.forContainers([RowContainerName.CENTER, sideToCheck], () => {
+            const pinnedWidth = columnModel.getContainerWidth(sideToCheck);
+            const marginSide = enableRtl ? 'marginLeft' : 'marginRight';
+
+            if (name === RowContainerName.CENTER) {
+                eWrapper.style[marginSide] = pinnedWidth ? '0px' : '16px';
+            } else {
+                eContainer.style[marginSide] = pinnedWidth ? '16px' : '0px';
+            }
+        });
     }
 
     private addListeners(): void {
@@ -390,6 +415,10 @@ export class RowContainerCtrl extends BeanStub {
         if (this.visible != visible) {
             this.visible = visible;
             this.onDisplayedRowsChanged();
+        }
+
+        if (isInvisibleScrollbar()) {
+            this.refreshPaddingForFakeScrollbar();
         }
     }
 
