@@ -1266,6 +1266,9 @@
     "description": "/** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
+  "setSuppressModelUpdateAfterUpdateTransaction": {
+    "type": { "arguments": { "value": "boolean" } }
+  },
   "refreshInfiniteCache": {
     "description": "/** Marks all the currently loaded blocks in the cache for reload.\n     * If you have 10 blocks in the cache, all 10 will be marked for reload.\n     * The old data will continue to be displayed until the new data is loaded.\n     */",
     "type": { "arguments": {}, "returnType": "void" }

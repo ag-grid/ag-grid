@@ -1788,6 +1788,10 @@ export class GridApi<TData = any> {
         this.clientSideRowModel.flushAsyncTransactions();
     }
 
+    public setSuppressModelUpdateAfterUpdateTransaction(value: boolean) {
+        this.gridOptionsService.set('suppressModelUpdateAfterUpdateTransaction', value);
+    }
+
     /**
      * Marks all the currently loaded blocks in the cache for reload.
      * If you have 10 blocks in the cache, all 10 will be marked for reload.
