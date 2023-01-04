@@ -39,9 +39,9 @@ The set of parameters for the group cell renderer are defined on `GroupCellRende
 
 <interface-documentation interfaceName='GroupCellRendererParams' overrideSrc='group-cell-renderer/group-cell-renderer.json' names='["checkbox","suppressCount","suppressPadding","suppressDoubleClickExpand","suppressEnterExpand","innerRenderer", "innerRendererParams","innerRendererSelector","footerValueGetter"]' ></interface-documentation>
 
-### Example Group cellRenderer
+## Example Group cellRenderer
 
-Below shows an example of configuring a group cell renderer. The example setup is not realistic as it has many columns configured for the showing the groups. The reason for this is to demonstrate different group column configurations side by side. In your application, you will typically have one column for showing the groups.
+Below shows an example of configuring a group cell renderer. The example setup is not realistic as it has many columns configured for showing the groups. The reason for this is to demonstrate different group column configurations side by side. In your application, you will typically have one column for showing the groups.
 
 The example is built up as follows:
 
@@ -66,3 +66,11 @@ The example is built up as follows:
 
 [[note]]
 | If you require functionality that is not provided by the `agGroupCellRenderer`, you can use a [custom cell renderer](/component-cell-renderer/#custom-group-cell-renderer-example) to provide your own extended functionality.
+
+## Removing the expand/collapse button in group rows
+
+The expand/collapse button can be selectively shown/hidden by creating a custom `autoGroupColumnDef.cellRendererSelector` function in the Grid Options. To show the expand/collapse button, use the `agGroupCellRenderer` component renderer and to **not** show it, provide an empty cell renderer or use a [custom component renderer](/component-cell-renderer/).
+
+An example of selectively showing the expand/collapse button group rows is shown below, where `autoGroupColumnDef.cellRendererSelector` is overridden to not show the expand/collapse button for `Australia` and `Norway`, by returning no renderer. The other rows use the `agGroupCellRenderer` cell renderer, which does show the expand/collapse button.
+
+<grid-example title='Custom Expand/Collapse Cell' name='custom-expand-collapse-cell' type='mixed' options='{"enterprise": true, "modules": ["clientside", "rowgrouping"]}'></grid-example>
