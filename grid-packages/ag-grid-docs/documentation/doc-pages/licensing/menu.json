@@ -712,25 +712,6 @@
                 "enterprise": true
               },
               {
-                "title": "Client-Side Operations",
-                "url": "/server-side-model-client-side-operations/",
-                "showInCollapsed": true,
-                "enterprise": true,
-                "matrixExcludeChildren": true,
-                "items": [
-                  {
-                    "title": "Sorting",
-                    "url": "/server-side-model-client-side-sorting/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Filtering",
-                    "url": "/server-side-model-client-side-filtering/",
-                    "enterprise": true
-                  }
-                ]
-              },
-              {
                 "title": "See Also",
                 "url": "",
                 "items": [
