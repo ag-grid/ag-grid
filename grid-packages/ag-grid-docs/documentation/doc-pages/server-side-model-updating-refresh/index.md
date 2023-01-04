@@ -26,8 +26,7 @@ The following example provides a simple demonstration of the different behaviour
 <grid-example title='Simple Example' name='refreshing-the-grid' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Refreshing Groups
-
-When using row grouping with refreshing you are required to provide the grid with a route parameter, this allows the grid to determine the row group to refresh.
+When using row grouping with refreshing you are required to provide a route parameter specifying the row group to refresh.
 
 The following example demonstrates how to refresh specified groups on the server, note the following:
  - Using the <b>Refresh Root Level</b> button, you can force all the rows in the root level group to refresh, this is equivalent to omitting a route parameter from the `refreshServerSide` API call.
