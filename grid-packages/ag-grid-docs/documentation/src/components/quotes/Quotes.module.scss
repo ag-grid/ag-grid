@@ -23,82 +23,82 @@ $breakpoint-large: 1200px;
 
     gap: 40px;
   }
-}
 
-blockquote {
-  $background-color: #d9f0fa;
-  $background-color-rgb: "rgb(217, 240, 250)";
+  blockquote {
+    $background-color: #d9f0fa;
+    $background-color-rgb: "rgb(217, 240, 250)";
 
-  position: relative;
-  margin-bottom: 20px;
-  padding: 12px 20px 14px;
-  background-color: $background-color;
-  border-radius: 4px;
+    position: relative;
+    margin-bottom: 20px;
+    padding: 12px 20px 14px;
+    background-color: $background-color;
+    border-radius: 4px;
 
-  &:before {
-    content: "";
-    position: absolute;
-    width: 18px;
-    height: 22px;
-    bottom: -16px;
-    left: var(--avatar-size);
-    background-image: url(
-      "data:image/svg+xml,\
-      <svg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 22'>\
-        <path style='fill: #{$background-color-rgb};' d='M0 21V0h18L1.8 21.6c-.577.769-1.8.361-1.8-.6Z'/>\
-      </svg>"
-    );
+    &:before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 22px;
+      bottom: -16px;
+      left: var(--avatar-size);
+      background-image: url(
+        "data:image/svg+xml,\
+        <svg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 22'>\
+          <path style='fill: #{$background-color-rgb};' d='M0 21V0h18L1.8 21.6c-.577.769-1.8.361-1.8-.6Z'/>\
+        </svg>"
+      );
 
-    @media screen and (min-width: $breakpoint-large) {
-      bottom: -22px;
+      @media screen and (min-width: $breakpoint-large) {
+        bottom: -22px;
+      }
     }
   }
-}
 
-li:nth-child(odd) {
-  @media screen and (max-width: $breakpoint-medium) {
-    align-self: flex-end;
-  }
-}
-
-figure {
-  max-width: 540px;
-  margin-bottom: 48px;
-
-  li:last-child & {
-    margin-bottom: 0;
-  }
-}
-
-blockquote p {
-  position: relative;
-  font-size: 18px;
-  line-height: 1.4;
-
-  &:last-child {
-    margin-bottom: 0;
+  li:nth-child(odd) {
+    @media screen and (max-width: $breakpoint-medium) {
+      align-self: flex-end;
+    }
   }
 
-  &:before {
-    content: open-quote;
-    position: absolute;
-    left: -0.4em;
+  figure {
+    max-width: 540px;
+    margin-bottom: 48px;
+
+    li:last-child & {
+      margin-bottom: 0;
+    }
   }
 
-  &:after {
-    content: close-quote;
-  }
-}
+  blockquote p {
+    position: relative;
+    font-size: 18px;
+    line-height: 1.4;
 
-figcaption {
-  display: grid;
-  grid-template-columns: var(--avatar-size) auto;
-  column-gap: 8px;
-  grid-template-rows: auto;
-  grid-template-areas: 
-    "avatar name"
-    "avatar orgContainer";
-  line-height: 1;
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &:before {
+      content: open-quote;
+      position: absolute;
+      left: -0.4em;
+    }
+
+    &:after {
+      content: close-quote;
+    }
+  }
+
+  figcaption {
+    display: grid;
+    grid-template-columns: var(--avatar-size) auto;
+    column-gap: 8px;
+    grid-template-rows: auto;
+    grid-template-areas: 
+      "avatar name"
+      "avatar orgContainer";
+    line-height: 1;
+  }
 }
 
 .avatar {
