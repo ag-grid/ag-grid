@@ -1,6 +1,7 @@
 import { Column } from '../entities/column';
+import { SortDirection } from '../main';
 
-export type ColumnSortState = 'ascending' | 'descending' | 'none';
+export type ColumnSortState = 'ascending' | 'descending' | 'other' | 'none';
 
 // ARIA HELPER FUNCTIONS
 function setAriaAttribute(element: HTMLElement, attribute: string, value: number | boolean | string): void {
@@ -23,15 +24,17 @@ export function setAriaRole(element: HTMLElement, role?: string | null) {
     }
 }
 
-export function getAriaSortState(column: Column): ColumnSortState {
+export function getAriaSortState(sortDirection: SortDirection | 'mixed'): ColumnSortState {
     let sort: ColumnSortState;
 
-    if (column.isSortAscending()) {
+    if (sortDirection === 'asc') {
         sort = 'ascending';
-    } else if (column.isSortDescending()) {
+    } else if (sortDirection === 'desc') {
         sort = 'descending';
+    } else if (sortDirection === 'mixed') {
+        sort = 'other';
     } else {
-        sort = 'none';
+        sort = 'none'
     }
 
     return sort;

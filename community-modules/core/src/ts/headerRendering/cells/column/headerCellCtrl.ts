@@ -437,7 +437,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         updateSortableCssClass();
 
         this.addRefreshFunction(updateSortableCssClass);
-        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, this.refreshAriaSort.bind(this));
+        this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, this.refreshAriaSort.bind(this));
     }
 
     private setupWrapTextClass() {
@@ -513,7 +513,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         // And unfortunately we cant _just_ rely on our own events, since custom components can change whenever
         this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, () => isMeasuring && measureHeight(0));
         // Displaying the sort icon changes the available area for text, so sort changes can affect height
-        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, () => {
+        this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, () => {
             // Rendering changes for sort, happen after the event... not ideal
             if (isMeasuring) {
                 this.beans.frameworkOverrides.setTimeout(() => measureHeight(0));
@@ -525,7 +525,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private refreshAriaSort(): void {
         if (this.sortable) {
             const translate = this.localeService.getLocaleTextFunc();
-            this.comp.setAriaSort(getAriaSortState(this.column));
+            const sort = this.sortController.getDisplaySortForColumn(this.column) || null;
+            this.comp.setAriaSort(getAriaSortState(sort));
             this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort.'));
         } else {
             this.comp.setAriaSort();

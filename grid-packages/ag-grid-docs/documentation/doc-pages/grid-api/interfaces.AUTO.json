@@ -10748,7 +10748,7 @@
   },
   "ColumnSortState": {
     "meta": { "isTypeAlias": true },
-    "type": "'ascending' | 'descending' | 'none'"
+    "type": "'ascending' | 'descending' | 'other' | 'none'"
   },
   "PathItem": {
     "meta": {},

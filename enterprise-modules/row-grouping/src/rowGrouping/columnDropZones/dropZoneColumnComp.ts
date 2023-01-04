@@ -89,7 +89,7 @@ export class DropZoneColumnComp extends Component {
 
         this.setupAria();
 
-        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, () => {
+        this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, () => {
             this.setupAria();
         });
 
