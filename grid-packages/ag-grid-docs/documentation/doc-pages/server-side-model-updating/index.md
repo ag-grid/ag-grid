@@ -6,8 +6,8 @@ enterprise: true
 There are various different approaches for having the grid update to changes while using the Server-Side Row Model.
 
 The different options for keeping the grid updated are as follows:
+- [Refresh](/server-side-model-updating-refresh/) - Reload all loaded rows from the server.
 - [Single Row Updates](/server-side-model-updating-single-row/) - Update data directly on the existing rows.
-- [Refreshing](/server-side-model-updating-refresh/) - Reload all loaded rows from the server.
 - [Transactions](/server-side-model-updating-transactions/) - Add, remove and update rows in the grid.
 
 ## Picking Your Strategy
