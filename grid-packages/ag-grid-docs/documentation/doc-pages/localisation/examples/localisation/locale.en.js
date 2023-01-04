@@ -106,6 +106,8 @@ const AG_GRID_LOCALE_EN = {
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
+    first: 'First',
+    last: 'Last',
     min: 'Min',
     max: 'Max',
     none: 'None',
