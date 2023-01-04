@@ -552,6 +552,9 @@
     "type": { "arguments": { "headerHeight?": "number" } }
   },
   "setPivotMode": { "type": { "arguments": { "pivotMode": "boolean" } } },
+  "setAnimateRows": {
+    "type": { "arguments": { "animateRows": "boolean" }, "returnType": "void" }
+  },
   "setIsExternalFilterPresent": {
     "type": {
       "arguments": { "isExternalFilterPresentFunc": "() => boolean" },

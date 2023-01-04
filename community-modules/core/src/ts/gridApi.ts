@@ -1036,6 +1036,10 @@ export class GridApi<TData = any> {
         this.columnModel.setPivotMode(pivotMode);
     }
 
+    public setAnimateRows(animateRows: boolean): void {
+        this.gridOptionsService.set('animateRows', animateRows);
+    }
+
     public setIsExternalFilterPresent(isExternalFilterPresentFunc: () => boolean): void {
         this.gridOptionsService.set('isExternalFilterPresent', isExternalFilterPresentFunc);
     }
