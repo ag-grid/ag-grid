@@ -29,7 +29,7 @@ main {
     display: flex;
     align-items: center;
     position: relative;
-    background-color: #003264;
+    background-color: $ag-site-header-background;
 
     &__wrapper {
         display: flex;
@@ -53,7 +53,7 @@ main {
     transition: background-color 0.4s ease-in-out;
 
     &:hover {
-        background-color: rgba(#002952, 0.6666);
+        background-color: rgba($ag-site-nav-background, 0.5);
     }
 }
 

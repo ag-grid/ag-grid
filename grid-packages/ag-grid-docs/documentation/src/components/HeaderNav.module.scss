@@ -5,7 +5,7 @@ $mobile-header-breakpoint: 768px;
     
     width: 100%;
     margin-left: auto;
-    background-color: #002952;
+    background-color: $ag-site-nav-background;
 
     @media screen and (min-width: $mobile-header-breakpoint) {
         width: unset;
@@ -35,11 +35,11 @@ $mobile-header-breakpoint: 768px;
         transition: background-color 0.4s ease-in-out;
 
         &:hover {
-            background-color: rgba(#002952, 0.6666);
+            background-color: rgba($ag-site-nav-background, 0.6666);
         }
 
         &[aria-expanded="true"] {
-            background-color: #002952;
+            background-color: $ag-site-nav-background;
         }
 
         svg {
@@ -67,7 +67,7 @@ $mobile-header-breakpoint: 768px;
 
     &__link {
         &:not(:last-child) {
-          border-bottom: 1px solid #003264;
+          border-bottom: 1px solid $ag-site-header-background;
         }
 
         @media screen and (min-width: $mobile-header-breakpoint) {
