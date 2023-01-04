@@ -83,7 +83,7 @@ Extra padding can be set using the `padding` config, which defaults to `20` on a
 
 If the legend is enabled, the chart layout will add extra padding to the side of the chart that the legend is positioned. The series are already padded on each side, so there will be some empty space between the series and the legend.
 
-The legend's `spacing` config can be used to apply padding on the outer edge of the legend. It defaults to `20`, but is set explicitly to `40` in our example.
+The legend's `spacing` config can be used to apply padding between the legend and the chart's series area. It defaults to `20`, but is set explicitly to `40` in our example.
 
 The legend `position` is also optional and defaults to `'right'`. In fact, the `legend` config itself is optional; the legend will be shown by default, but can be hidden using `legend: { enabled: false }`.
 
