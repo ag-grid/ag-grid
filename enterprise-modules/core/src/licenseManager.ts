@@ -89,12 +89,12 @@ export class LicenseManager extends BeanStub {
 
     private isWebsiteUrl(): boolean {
         const hostname = this.getHostname();
-        return hostname.match('^((?:\w+\.)?ag-grid\.com)$') !== null;
+        return hostname.match(/^((?:\w+\.)?ag-grid\.com)$/) !== null;
     }
 
     private isLocalhost(): boolean {
         const hostname = this.getHostname();
-        return hostname.match('^(?:127\.0\.0\.1|localhost)$') !== null;
+        return hostname.match(/^(?:127\.0\.0\.1|localhost)$/) !== null;
     }
 
     private static formatDate(date: any): string {
