@@ -204,7 +204,7 @@ abstract class AgChartInternal {
         userOptions: AgChartOptions & { overrideDevicePixelRatio?: number },
         proxy?: AgChartInstanceProxy
     ) {
-        debug('user options', userOptions);
+        debug('>>> createOrUpdate() user options', userOptions);
         const mixinOpts: any = {};
         if (AgChartInternal.DEBUG() === true) {
             mixinOpts['debug'] = true;
@@ -259,7 +259,7 @@ abstract class AgChartInternal {
 
         const lastUpdateOptions = queuedUserOptions[queuedUserOptions.length - 1] ?? chart.userOptions;
         const userOptions = jsonMerge([lastUpdateOptions, deltaOptions]);
-        debug('user delta', deltaOptions);
+        debug('>>> updateUserDelta() user delta', deltaOptions);
         debug('base options', lastUpdateOptions);
         AgChartInternal.createOrUpdate(userOptions as any, proxy);
     }
