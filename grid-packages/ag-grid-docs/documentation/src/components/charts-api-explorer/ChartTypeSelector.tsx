@@ -6,6 +6,7 @@ import styles from './ChartTypeSelector.module.scss';
  */
 export const ChartTypeSelector = ({ type, onChange }) => {
     const options = {
+        column: 'Column',
         bar: 'Bar',
         line: 'Line',
         scatter: 'Scatter',

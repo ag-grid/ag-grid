@@ -38,9 +38,18 @@ const createOptionsJson = (chartType, options) => {
     }
 
     switch (chartType) {
-        case 'bar':
+        case 'column':
             json.series = ['revenue', 'profit'].map(yKey => ({
                 type: 'column',
+                xKey: 'month',
+                yKey,
+                stacked: true,
+                ...options.series,
+            }));
+            break;
+        case 'bar':
+            json.series = ['revenue', 'profit'].map(yKey => ({
+                type: 'bar',
                 xKey: 'month',
                 yKey,
                 stacked: true,
@@ -111,7 +120,7 @@ const createOptionsJson = (chartType, options) => {
  * the framework of their choice.
  */
 export const ChartsApiExplorer = ({ framework }) => {
-    const [chartType, setChartType] = useState('bar');
+    const [chartType, setChartType] = useState('column');
     const [options, setOptions] = useState({});
     const [defaults, setDefaults] = useState({});
     const [fullScreen, setFullScreen] = useState(false);
