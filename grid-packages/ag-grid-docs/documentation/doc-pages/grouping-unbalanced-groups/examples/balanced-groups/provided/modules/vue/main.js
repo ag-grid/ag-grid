@@ -28,15 +28,6 @@ const countryCellRenderer = function countryCellRenderer(params) {
     }
 }
 
-const stateCellRenderer = function stateCellRenderer(params) {
-    if (params.value === undefined || params.value === null) {
-        return '';
-    } else {
-        const flag = '<img border="0" height="10" src="https://www.ag-grid.com/example-assets/gold-star.png" width="15">';
-        return `${flag} ${params.value}`;
-    }
-}
-
 function cityCellRenderer(params) {
     if (params.value === undefined || params.value === null) {
         return ''
@@ -50,7 +41,7 @@ const VueExample = {
     template: `
         <div style="height: 100%">
             <ag-grid-vue
-                    :groupAllowUnbalanced="true"
+
                     style="width: 100%; height: 98%;"
                     class="ag-theme-alpine"
                     :columnDefs="columnDefs"
@@ -82,7 +73,6 @@ const VueExample = {
             }, {
                 field: "state",
                 type: "dimension",
-                cellRenderer: stateCellRenderer,
                 rowGroup: true
             }, {
                 field: "val1",

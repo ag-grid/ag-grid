@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -28,21 +28,12 @@ const countryCellRenderer = function countryCellRenderer(params) {
     }
 }
 
-const stateCellRenderer = function stateCellRenderer(params) {
+const cityCellRenderer = function cityCellRenderer(params) {
     if (params.value === undefined || params.value === null) {
         return '';
     } else {
-        const flag = '<img border="0" height="10" src="https://www.ag-grid.com/example-assets/gold-star.png" width="15">';
+        const flag = "<img border=\"0\" width=\"15\" height=\"10\" src=\"https://www.ag-grid.com/example-assets/weather/sun.png\">";
         return `${flag} ${params.value}`;
-    }
-}
-
-function cityCellRenderer(params) {
-    if (params.value === undefined || params.value === null) {
-        return ''
-    } else {
-        const flag = '<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/weather/sun.png">'
-        return `${flag} ${params.value}`
     }
 }
 
@@ -50,7 +41,7 @@ const VueExample = {
     template: `
         <div style="height: 100%">
             <ag-grid-vue
-                    :groupAllowUnbalanced="true"
+
                     style="width: 100%; height: 98%;"
                     class="ag-theme-alpine"
                     :columnDefs="columnDefs"
@@ -65,8 +56,7 @@ const VueExample = {
         </div>
     `,
     components: {
-        'ag-grid-vue': AgGridVue,
-        countryCellRenderer
+        'ag-grid-vue': AgGridVue
     },
     data: function () {
         return {
@@ -82,7 +72,6 @@ const VueExample = {
             }, {
                 field: "state",
                 type: "dimension",
-                cellRenderer: stateCellRenderer,
                 rowGroup: true
             }, {
                 field: "val1",
@@ -135,9 +124,6 @@ const VueExample = {
     }
 }
 
-new Vue({
-    el: '#app',
-    components: {
-        'my-component': VueExample
-    }
-});
+createApp(VueExample)
+    .mount("#app")
+
