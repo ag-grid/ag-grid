@@ -1461,10 +1461,6 @@ export class GridApi<TData = any> {
         return null;
     }
 
-    public camelCaseToHumanReadable(camelCase: string): string | null {
-        return camelCaseToHumanText(camelCase);
-    }
-
     /** Adds the provided cell range to the selected ranges. */
     public addCellRange(params: CellRangeParams): void {
         if (this.rangeService) {

@@ -1010,12 +1010,6 @@
     "description": "/** Returns the list of selected cell ranges. */",
     "type": { "arguments": {}, "returnType": "CellRange[] | null" }
   },
-  "camelCaseToHumanReadable": {
-    "type": {
-      "arguments": { "camelCase": "string" },
-      "returnType": "string | null"
-    }
-  },
   "addCellRange": {
     "description": "/** Adds the provided cell range to the selected ranges. */",
     "type": {
