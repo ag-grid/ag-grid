@@ -201,11 +201,13 @@ legend: {
 
 By default, when a legend item is clicked, the visibility of the series associated with that legend item will be toggled. This allows the users to control which series are displayed in the chart by clicking on legend items.
 
-To disable series toggling on legend item click, the `legend.seriesToggleEnabled` property can be set to `false`:
+To disable series toggling on legend item click, the `legend.item.seriesToggleEnabled` property can be set to `false`:
 
 ```js
 legend: {
-    seriesToggleEnabled: false
+    item: {
+        seriesToggleEnabled: false
+    }
 }
 ```
 

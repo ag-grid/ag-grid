@@ -1256,6 +1256,10 @@
     "paddingY": {
       "description": "/** The vertical spacing in pixels to use between legend items. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "seriesToggleEnabled": {
+      "description": "/** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "AgChartLegendClickEvent": {
@@ -1313,10 +1317,6 @@
     },
     "reverseOrder": {
       "description": "/** Reverse the display order of legend items if `true`. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "seriesToggleEnabled": {
-      "description": "/** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "listeners": {
@@ -1691,7 +1691,7 @@
       "description": "/** If autoRotate is enabled, specifies the rotation angle to use when autoRotate is activated. Defaults to an angle of 335 degrees if unspecified. */",
       "type": { "returnType": "number", "optional": true }
     },
-    "avoidCollision": {
+    "autoCollisionRemoval": {
       "description": "/** Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide. */",
       "type": { "returnType": "boolean", "optional": true }
     },

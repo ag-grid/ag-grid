@@ -141,6 +141,9 @@ class LegendItem {
      */
     @Validate(NUMBER(0))
     paddingY = 8;
+
+    @Validate(BOOLEAN)
+    seriesToggleEnabled: boolean = true;
 }
 
 const NO_OP_LISTENER = () => {
@@ -236,9 +239,6 @@ export class Legend {
 
     @Validate(OPT_ORIENTATION)
     orientation?: AgChartOrientation;
-
-    @Validate(BOOLEAN)
-    seriesToggleEnabled: boolean = true;
 
     constructor(
         private readonly chart: {
@@ -620,7 +620,7 @@ export class Legend {
             listeners: { legendItemClick },
             chart,
             highlightManager,
-            seriesToggleEnabled,
+            item: { seriesToggleEnabled },
         } = this;
         const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
@@ -656,7 +656,11 @@ export class Legend {
     }
 
     private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
-        const { enabled, seriesToggleEnabled, listeners } = this;
+        const {
+            enabled,
+            item: { seriesToggleEnabled },
+            listeners,
+        } = this;
         if (!enabled) {
             return;
         }

@@ -40,8 +40,10 @@ function reset() {
 
   delete options.axes![0].label!.rotation;
   delete options.axes![0].label!.autoRotate;
+  delete options.axes![0].label!.autoCollisionRemoval;
   delete options.axes![1].label!.rotation;
   delete options.axes![1].label!.autoRotate;
+  delete options.axes![1].label!.autoCollisionRemoval;
 
   options.series![0].xKey = 'year';
   agCharts.AgChart.update(chart, options);
@@ -81,5 +83,19 @@ function uniformLabels() {
 
 function irregularLabels() {
   options.series![0].xKey = 'country';
+  agCharts.AgChart.update(chart, options);
+}
+
+function noCollisionDetection() {
+  options.axes![0].label!.autoCollisionRemoval = false;
+  options.axes![1].label!.autoCollisionRemoval = false;
+
+  agCharts.AgChart.update(chart, options);
+}
+
+function autoCollisionDetection() {
+  options.axes![0].label!.autoCollisionRemoval = true;
+  options.axes![1].label!.autoCollisionRemoval = true;
+
   agCharts.AgChart.update(chart, options);
 }

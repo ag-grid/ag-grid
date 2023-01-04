@@ -173,7 +173,7 @@ export class AxisLabel {
      * Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide.
      */
     @Validate(BOOLEAN)
-    avoidCollision: boolean = true;
+    autoCollisionRemoval: boolean = true;
 
     /**
      * By default labels and ticks are positioned to the left of the axis line.
@@ -493,7 +493,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             scale,
             gridLength,
             tick,
-            label: { parallel: parallelLabels, mirrored, avoidCollision, minGap },
+            label: { parallel: parallelLabels, mirrored, autoCollisionRemoval, minGap },
             requestedRange,
         } = this;
         const requestedRangeMin = Math.min(...requestedRange);
@@ -549,7 +549,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 const prevTicks = ticks;
 
                 const filteredTicks =
-                    !avoidCollision || (continuous && this.tick.count === undefined) || i === 0
+                    !autoCollisionRemoval || (continuous && this.tick.count === undefined) || i === 0
                         ? undefined
                         : ticks.filter((_, i) => i % 2 === 0);
 
@@ -578,7 +578,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     primaryTickCount = ticks.length;
                 }
 
-                unchanged = avoidCollision ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
+                unchanged = autoCollisionRemoval ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
                 i++;
             }
 
@@ -599,8 +599,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
             const labelPadding = minGap ?? (rotated ? 0 : 10);
 
-            // no need for further iterations if `avoidCollision` is false
-            labelOverlap = avoidCollision ? axisLabelsOverlap(labelData, labelPadding) : false;
+            // no need for further iterations if `autoCollisionRemoval` is false
+            labelOverlap = autoCollisionRemoval ? axisLabelsOverlap(labelData, labelPadding) : false;
         }
 
         this.updateGridLines({

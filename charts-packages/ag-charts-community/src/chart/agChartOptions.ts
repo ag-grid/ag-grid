@@ -345,6 +345,8 @@ export interface AgChartLegendItemOptions {
     paddingX?: PixelSize;
     /** The vertical spacing in pixels to use between legend items. */
     paddingY?: PixelSize;
+    /** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */
+    seriesToggleEnabled?: boolean;
 }
 
 export interface AgChartLegendClickEvent {
@@ -378,8 +380,6 @@ export interface AgChartLegendOptions {
     item?: AgChartLegendItemOptions;
     /** Reverse the display order of legend items if `true`. */
     reverseOrder?: boolean;
-    /** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */
-    seriesToggleEnabled?: boolean;
     /** Optional callbacks for specific legend-related events. */
     listeners?: AgChartLegendListeners;
     pagination?: AgChartLegendPaginationOptions;
@@ -590,7 +590,7 @@ export interface AgAxisLabelOptions {
     /** If autoRotate is enabled, specifies the rotation angle to use when autoRotate is activated. Defaults to an angle of 335 degrees if unspecified. */
     autoRotateAngle?: number;
     /** Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide. */
-    avoidCollision?: boolean;
+    autoCollisionRemoval?: boolean;
     /** Minimum gap in pixels between the axis labels before being removed to avoid collisions. */
     minGap?: PixelSize;
     // mirrored?: boolean;
