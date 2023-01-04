@@ -3,7 +3,7 @@ title: "SSRM Transactions"
 enterprise: true
 ---
 
-The SSRM Transaction API allow large numbers of rows in the grid to be added, removed or updated in an efficient manner.
+The SSRM Transaction API allows large numbers of rows in the grid to be added, removed or updated in an efficient manner.
 
 <api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["applyServerSideTransaction"]' ></api-documentation>
 
@@ -26,12 +26,12 @@ In the example below, note the following;
 
 <grid-example title='Simple Example' name='transactions-simple' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
-## Grouping
+## Row Grouping
 
 When updating grouped data, a transaction needs to be targeted against the group. This is done by providing a `route` when applying the transaction.
 
 In the example below, note the following:
- - One transaction has to be applied per group that needs modified.
+ - One transaction has to be applied for each row group that has changes.
  - To move a row between groups, a transaction to remove from the old group, and create in the new group are required.
 
 <grid-example title='Transactions With Groups' name='transactions-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>

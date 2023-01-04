@@ -1226,6 +1226,7 @@
     }
   },
   "applyServerSideTransactionAsync": {
+    "description": "/** Batch apply transactions to the server side row model. */",
     "type": {
       "arguments": {
         "transaction": "ServerSideTransaction",

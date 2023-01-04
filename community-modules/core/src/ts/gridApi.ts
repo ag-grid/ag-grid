@@ -1722,6 +1722,7 @@ export class GridApi<TData = any> {
         return this.serverSideTransactionManager.applyTransaction(transaction);
     }
 
+    /** Batch apply transactions to the server side row model. */
     public applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
         if (!this.serverSideTransactionManager) {
             this.logMissingRowModel('applyServerSideTransactionAsync', 'serverSide');
@@ -1816,8 +1817,8 @@ export class GridApi<TData = any> {
 
     /**
      * Refresh a server-side level.
-     * If you pass no parameters, then the top level store is purged.
-     * To purge a child level, pass in the string of keys to get to the desired level.
+     * If you pass no parameters, then the top level store is refreshed.
+     * To refresh a child level, pass in the string of keys to get to the desired level.
      */
     public refreshServerSide(params?: RefreshServerSideParams): void {
         if (!this.serverSideRowModel) {
