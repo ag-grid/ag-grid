@@ -33,6 +33,9 @@ The following example shows Excel customisations where the exported document has
 [[note]]
 | Row group column cells are also cells. This means that each row group column cell will first have the `processRowGroupCallback` invoked for it, and then the returned value will have `processCellCallback` invoked for it. This is why exported row group cell values will have the `_` surrounding the value, which is applied by the `processCellCallback`.
 
+[[note]]
+| When using row grouping while [hiding open parents](/grouping-multiple-group-columns/#hide-open-parents) (`groupHideOpenParents=true`), export to Excel doesn't export the group rows as collapsible groups in Excel. Instead, all exported rows are on the same level and cannot be expanded/collapsed in Excel.
+
 <grid-example title='Excel Export - Customising Row Groups' name='excel-export-customising-row-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "csv", "excel", "menu", "setfilter"]}'></grid-example>
 
 ## Customising Column Headers and Group Header Values
