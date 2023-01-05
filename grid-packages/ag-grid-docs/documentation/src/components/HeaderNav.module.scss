@@ -72,12 +72,12 @@ $mobile-header-breakpoint: 768px;
 
         @media screen and (min-width: $mobile-header-breakpoint) {
             &:hover a::after {
-                opacity: 0.33;
+                opacity: 0.25;
                 transform: scaleX(1);
             }
     
             &--active a::after {
-                opacity: 1 !important;
+                opacity: 0.5 !important;
                 transform: scaleX(1);
             }
         }
@@ -104,9 +104,10 @@ $mobile-header-breakpoint: 768px;
               content: '';
               position: absolute;
               height: 3px;
-              bottom: 6px;
+              bottom: 4px;
               left: 24px;
               right: 24px;
+              border-radius: 2px;
               background-color: white;
               opacity: 0;
               transform: scaleX(0);
