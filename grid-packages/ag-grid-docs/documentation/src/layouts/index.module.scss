@@ -50,11 +50,6 @@ main {
 .header__logo {
     display: block;
     padding: 8px;
-    transition: background-color 0.4s ease-in-out;
-
-    &:hover {
-        background-color: rgba($ag-site-nav-background, 0.5);
-    }
 }
 
 .top-bar {
