@@ -112,6 +112,7 @@ export class SetValueModel<V> implements IEventEmitter {
             convertValuesToStrings,
             treeList,
             treeListPathGetter,
+            treeListFormatter
         } = filterParams;
 
         this.filterParams = filterParams;
@@ -125,13 +126,20 @@ export class SetValueModel<V> implements IEventEmitter {
         this.suppressSorting = suppressSorting || false;
         this.convertValuesToStrings = !!convertValuesToStrings;
         const keyComparator = comparator ?? colDef.comparator as (a: any, b: any) => number;
-        // if using complex objects and a comparator is provided, sort by values, otherwise need to sort by the string keys
-        this.compareByValue = !!usingComplexObjects && !!keyComparator;
-        this.entryComparator = ([_aKey, aValue]: [string | null, V | null], [_bKey, bValue]: [string | null, V | null]) => keyComparator(aValue, bValue);    
+        const treeDataOrGrouping = !!treeDataTreeList || !!groupingTreeList;
+        // If using complex objects and a comparator is provided, sort by values, otherwise need to sort by the string keys.
+        // Also if tree data, grouping, or date with tree list, then need to do value sort
+        this.compareByValue = !!((usingComplexObjects && keyComparator) || treeDataOrGrouping || (treeList && !treeListPathGetter));
+        if (treeDataOrGrouping && !keyComparator) {
+            this.entryComparator = this.createTreeDataOrGroupingComparator() as any;
+        } else if (treeList && !treeListPathGetter && !keyComparator) {
+            this.entryComparator = ([_aKey, aValue]: [string | null, V | null], [_bKey, bValue]: [string | null, V | null]) => _.defaultComparator(aValue, bValue);
+        } else {
+            this.entryComparator = ([_aKey, aValue]: [string | null, V | null], [_bKey, bValue]: [string | null, V | null]) => keyComparator(aValue, bValue);
+        }
         this.keyComparator = keyComparator as any ?? _.defaultComparator;
         this.caseSensitive = !!caseSensitive
         const getDataPath = gridOptionsService.get('getDataPath');
-        const treeDataOrGrouping = !!treeDataTreeList || !!groupingTreeList;
 
         if (rowModel.getType() === 'clientSide') {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
@@ -160,6 +168,7 @@ export class SetValueModel<V> implements IEventEmitter {
         this.displayValueModel = treeList ? new TreeSetDisplayValueModel(
             this.formatter,
             treeListPathGetter,
+            treeListFormatter,
             treeDataTreeList || groupingTreeList
         ) : new FlatSetDisplayValueModel<V>(
             valueFormatterService,
@@ -383,7 +392,7 @@ export class SetValueModel<V> implements IEventEmitter {
 
         // if no filter, just display all available values
         if (this.miniFilterText == null) {
-            this.displayValueModel.updateDisplayedValuesToAllAvailable((key: string | null) => this.getValue(key)!, allKeys, this.availableKeys, source);
+            this.displayValueModel.updateDisplayedValuesToAllAvailable((key: string | null) => this.getValue(key), allKeys, this.availableKeys, source);
             return;
         }
 
@@ -397,7 +406,7 @@ export class SetValueModel<V> implements IEventEmitter {
         const nullMatchesFilter = !!this.filterParams.excelMode && matchesFilter(this.translate('blanks'));
 
         this.displayValueModel.updateDisplayedValuesToMatchMiniFilter(
-            (key: string | null) => this.getValue(key)!,
+            (key: string | null) => this.getValue(key),
             allKeys,
             this.availableKeys,
             matchesFilter,
@@ -540,5 +549,25 @@ export class SetValueModel<V> implements IEventEmitter {
 
     public hasGroups(): boolean {
         return this.displayValueModel.hasGroups();
+    }
+
+    private createTreeDataOrGroupingComparator(): (a: [string | null, string[] | null], b: [string | null, string[] | null]) => number {
+        return ([_aKey, aValue]: [string | null, string[] | null], [_bKey, bValue]: [string | null, string[] | null]) => {
+            if (aValue == null) {
+                return bValue == null ? 0 : -1;
+            } else if (bValue == null) {
+                return 1;
+            }
+            for (let i = 0; i < aValue.length; i++) {
+                if (i >= bValue.length) {
+                    return 1;
+                }
+                const diff = _.defaultComparator(aValue[i], bValue[i]);
+                if (diff !== 0) {
+                    return diff;
+                }
+            }
+            return 0;
+        };
     }
 }

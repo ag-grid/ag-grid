@@ -647,14 +647,24 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             // only perform checking on leaves. The core filtering logic for tree data won't work properly otherwise
             return false;
         }
-        return this.isInAppliedModel(this.createKey(this.getDataPath!(data) as any) as any);
+        return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(this.getDataPath!(data)) as any) as any);
     }
 
     private doesFilterPassForGrouping(node: IRowNode, data: any): boolean {
         const dataPath = this.columnModel.getRowGroupColumns().map(groupCol => this.valueService.getKeyForNode(groupCol, node));
-        dataPath.push(_.toStringOrNull(_.makeNull(this.getValueFromNode(node, data))));
-        return this.isInAppliedModel(this.createKey(dataPath as any) as any);
+        dataPath.push(this.getValueFromNode(node, data));
+        return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(dataPath) as any) as any);
         
+    }
+
+    private checkMakeNullDataPath(dataPath: string[] | null): string[] | null {
+        if (dataPath) {
+            dataPath = dataPath.map(treeKey => _.toStringOrNull(_.makeNull(treeKey))) as any;
+        }
+        if (dataPath?.some(treeKey => treeKey == null)) {
+            return null;
+        }
+        return dataPath;
     }
 
     private isInAppliedModel(key: string | null): boolean {
@@ -983,13 +993,13 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private areAllChildrenSelected(item: SetFilterModelTreeItem): boolean | undefined {
         const recursiveChildSelectionCheck = (i: SetFilterModelTreeItem): boolean | undefined => {
-            if (!i.filterPasses || !i.available) {
-                return true;
-            }
             if (i.children) {
                 let someTrue = false;
                 let someFalse = false;
                 const mixed = i.children.some(child => {
+                    if (!child.filterPasses || !child.available) {
+                        return false;
+                    }
                     const childSelected = recursiveChildSelectionCheck(child);
                     if (childSelected === undefined) {
                         return true;

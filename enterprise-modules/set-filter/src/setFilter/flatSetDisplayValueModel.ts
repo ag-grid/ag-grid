@@ -13,7 +13,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     ) {}
 
     public updateDisplayedValuesToAllAvailable(
-        _getValue: (key: string | null) => V,
+        _getValue: (key: string | null) => V | null,
         _allKeys: Iterable<string | null> | undefined,
         availableKeys: Set<string | null>
     ): void {
@@ -21,7 +21,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     }
 
     public updateDisplayedValuesToMatchMiniFilter(
-        getValue: (key: string | null) => V,
+        getValue: (key: string | null) => V | null,
         _allKeys: Iterable<string | null> | undefined, 
         availableKeys: Set<string | null>,
         matchesFilter: (valueToCheck: string | null) => boolean,

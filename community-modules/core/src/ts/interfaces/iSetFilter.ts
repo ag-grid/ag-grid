@@ -5,6 +5,7 @@ import { GridApi } from '../gridApi';
 import { ColumnApi } from '../columns/columnApi';
 import { IFilterParams, ProvidedFilterModel } from './iFilter';
 import { AgPromise } from '../utils/promise';
+import { ITooltipParams } from '../rendering/tooltipComponent';
 
 export type SetFilterModelValue = (string | null)[];
 export interface SetFilterModel extends ProvidedFilterModel {
@@ -220,10 +221,18 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     /**
      * Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.
      */
-    treeListPathGetter?: (value: V) => (string | null)[];
+    treeListPathGetter?: (value: V | null) => string[] | null;
     /**
      * Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.
      * `level` refers to the level of the tree (starting at 0).
      */
     treeListFormatter?: (pathKey: string | null, level: number) => string;
+}
+
+/**
+ * Tooltip params used with the Set Filter Tree List.
+ */
+export interface ISetFilterTreeListTooltipParams extends ITooltipParams {
+    /** Level of the tree (starting at 0). */
+    level: number;
 }
