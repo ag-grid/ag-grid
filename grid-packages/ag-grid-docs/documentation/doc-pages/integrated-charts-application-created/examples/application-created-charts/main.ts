@@ -109,11 +109,7 @@ const gridOptions: GridOptions = {
 }
 
 function createChart(type: ChartType) {
-  // destroy existing chart
-  if (chartRef) {
-    chartRef.destroyChart()
-  }
-
+  var oldChartRef = chartRef;
   var params: CreateRangeChartParams = {
     cellRange: {
       columns: [
@@ -133,6 +129,11 @@ function createChart(type: ChartType) {
   }
 
   chartRef = gridOptions.api!.createRangeChart(params)
+
+  // destroy existing chart
+  if (oldChartRef) {
+    oldChartRef.destroyChart()
+  }
 }
 
 function numberCellFormatter(params: ValueFormatterParams) {

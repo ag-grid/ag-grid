@@ -25,6 +25,7 @@ body {
     height: 135px;
     display: inline-block;
     border: 1px solid lightslategrey;
+    background: rgb(34, 38, 41);
 }
 
 ::-webkit-scrollbar {
