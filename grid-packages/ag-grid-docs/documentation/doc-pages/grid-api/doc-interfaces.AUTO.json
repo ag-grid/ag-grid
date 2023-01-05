@@ -11960,7 +11960,9 @@
     },
     "refreshModel": {
       "type": {
-        "arguments": { "params": "RefreshModelParams<TData>" },
+        "arguments": {
+          "paramsOrStep": "RefreshModelParams | ClientSideRowModelStep | undefined"
+        },
         "returnType": "void",
         "optional": false
       }

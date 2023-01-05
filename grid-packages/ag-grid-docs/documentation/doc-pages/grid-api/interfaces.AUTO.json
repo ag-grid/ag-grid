@@ -6926,7 +6926,6 @@
       "updateRowData(rowDataTran: RowDataTransaction<TData>, rowNodeOrder?: { [id: string]: number; } | null)": "RowNodeTransaction<TData> | null",
       "setRowData(rowData: any[])": "void",
       "refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined)": "void",
-      "refreshModel(params: RefreshModelParams<TData>)": "void",
       "expandOrCollapseAll(expand: boolean)": "void",
       "forEachLeafNode(callback: (node: RowNode, index: number) => void)": "void",
       "forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean)": "void",
