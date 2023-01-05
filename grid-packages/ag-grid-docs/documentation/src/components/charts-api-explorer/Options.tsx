@@ -278,10 +278,17 @@ export const Options = ({ chartType, updateOption }) => {
 
     const axesModelDesc = model.properties['axes']?.desc;
     if (axesModelDesc?.type === 'array' && axesModelDesc.elements.type === 'union') {
-        const getAxisModel = (axisType: string) => 
-            (axesModelDesc.elements as any).options.find(
-                (o) => o.type === 'nested-object' && o.model.properties['type'].desc.tsType.includes(axisType)
-            )!;
+        const clone = (x: any) => JSON.parse(JSON.stringify(x));
+        const isAxisOfType = (axis: any, type: string) =>
+            axis.model.properties['type'].desc.tsType.includes(type);
+        const getAxisModel = (axisType: string, direction: 'x' | 'y') => {
+            const axis = clone((axesModelDesc.elements as any).options.find(
+                (o) => o.type === 'nested-object' && isAxisOfType(o, axisType)
+            ));
+            axis.model.properties.position.desc.tsType =
+                direction === 'x' ? `'top' | 'bottom'` : `'left' | 'right'`;
+            return axis;
+        };
         const isXNumeric = ['scatter', 'histogram'].includes(chartType);
 
         // Replace "axes" array model with "axes[0]" and "axes[1]"
@@ -293,13 +300,13 @@ export const Options = ({ chartType, updateOption }) => {
         keys.slice(0, axesKeyIndex).forEach((key) => newProps[key] = oldProps[key]);
         newProps['axes[0]'] = {
             deprecated: false,
-            desc: getAxisModel(isXNumeric ? 'number' : 'category'),
+            desc: getAxisModel(isXNumeric ? 'number' : 'category', 'x'),
             documentation: `/** X-axis (${isXNumeric ? 'numeric' : 'category'}). */`,
             required: false,
         };
         newProps['axes[1]'] = {
             deprecated: false,
-            desc: getAxisModel('number'),
+            desc: getAxisModel('number', 'y'),
             documentation: '/** Y-axis (numeric). */',
             required: false,
         };
