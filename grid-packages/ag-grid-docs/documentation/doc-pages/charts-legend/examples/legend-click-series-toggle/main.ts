@@ -167,7 +167,7 @@ const options: AgChartOptions = {
       },
     },
     item: {
-      seriesToggleEnabled: false,
+      toggleSeriesVisible: false,
       marker: {
         strokeWidth: 2,
       },
