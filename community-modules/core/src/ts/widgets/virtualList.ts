@@ -63,7 +63,7 @@ export class VirtualList extends TabGuardComp {
     }
 
     private addResizeObserver(): void {
-        const listener = this.drawVirtualRows.bind(this);
+        const listener = () => this.drawVirtualRows();
         const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
         this.addDestroyFunc(destroyObserver);
     }
