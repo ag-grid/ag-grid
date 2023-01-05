@@ -9,19 +9,19 @@ import { Launcher } from './Launcher';
 
 const createOptionsJson = (chartType, options) => {
     const optionsHasAxes = (options.axes && Object.keys(options.axes).length > 0);
-    const isTwoNumberAxes = ['scatter', 'histogram'].indexOf(chartType) > -1;
-    const shouldProvideAxisConfig = optionsHasAxes || isTwoNumberAxes;
+    const isTwoNumberAxes = ['scatter', 'histogram'].includes(chartType);
 
     const json = {
         ...options,
-        axes: shouldProvideAxisConfig ? [{
+        axes: optionsHasAxes ? [{
             type: isTwoNumberAxes ? 'number' : 'category',
             position: 'bottom',
+            ...(options.axes[0] || {}),
         },
         {
             type: 'number',
             position: 'left',
-            ...options.axes,
+            ...(options.axes[1] || {}),
         }] : undefined,
     };
 
@@ -152,10 +152,13 @@ export const ChartsApiExplorer = ({ framework }) => {
             const key = keys[i];
             const parent = objectToUpdate;
 
+            const isArray = !isNaN(keys[i + 1]);
             if (parent[key] == null) {
-                objectToUpdate = requiresWholeObject && i === lastKeyIndex - 1 ? defaultParent : {};
+                objectToUpdate = requiresWholeObject && i === lastKeyIndex - 1
+                    ? defaultParent
+                    : (isArray ? [] : {});
             } else {
-                objectToUpdate = { ...parent[key] };
+                objectToUpdate = isArray ? [...parent[key]] : { ...parent[key] };
             }
 
             parent[key] = objectToUpdate;
@@ -192,7 +195,6 @@ export const ChartsApiExplorer = ({ framework }) => {
                     <div className={styles['explorer-container__options']}>
                         <Options
                             chartType={chartType}
-                            axisType={'number'}
                             updateOption={updateOption}
                         />
                     </div>

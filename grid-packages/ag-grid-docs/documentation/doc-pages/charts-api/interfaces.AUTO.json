@@ -357,9 +357,9 @@
   "AgCategoryAxisThemeOptions": {
     "meta": {},
     "type": {
-      "paddingInner?": "number",
-      "paddingOuter?": "number",
-      "groupPaddingInner?": "number",
+      "paddingInner?": "Ratio",
+      "paddingOuter?": "Ratio",
+      "groupPaddingInner?": "Ratio",
       "tick?": "AgAxisNumberTickOptions",
       "top?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "right?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
@@ -1274,9 +1274,9 @@
     "meta": {},
     "type": {
       "type": "'category'",
-      "paddingInner?": "number",
-      "paddingOuter?": "number",
-      "groupPaddingInner?": "number",
+      "paddingInner?": "Ratio",
+      "paddingOuter?": "Ratio",
+      "groupPaddingInner?": "Ratio",
       "tick?": "AgAxisNumberTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",

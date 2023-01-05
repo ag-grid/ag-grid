@@ -6,6 +6,7 @@ import {
     buildModel,
     JsonFunction,
     JsonModel,
+    JsonModelProperty,
     JsonObjectProperty,
     JsonProperty,
     JsonUnionType,
@@ -240,7 +241,7 @@ const Search = ({ value, onChange }) => {
 /**
  * This displays the list of options in the Standalone Charts API Explorer.
  */
-export const Options = ({ chartType, axisType, updateOption }) => {
+export const Options = ({ chartType, updateOption }) => {
     const [searchText, setSearchText] = useState('');
     const getTrimmedSearchText = () => searchText.trim();
     const matchesSearch = (name: string) => name.toLowerCase().indexOf(getTrimmedSearchText().toLowerCase()) >= 0;
@@ -277,9 +278,33 @@ export const Options = ({ chartType, axisType, updateOption }) => {
 
     const axesModelDesc = model.properties['axes']?.desc;
     if (axesModelDesc?.type === 'array' && axesModelDesc.elements.type === 'union') {
-        axesModelDesc.elements.options = axesModelDesc.elements.options.filter(
-            (o) => o.type === 'nested-object' && o.model.properties['type'].desc.tsType.indexOf(axisType) >= 0
-        );
+        const getAxisModel = (axisType: string) => 
+            (axesModelDesc.elements as any).options.find(
+                (o) => o.type === 'nested-object' && o.model.properties['type'].desc.tsType.includes(axisType)
+            )!;
+        const isXNumeric = ['scatter', 'histogram'].includes(chartType);
+
+        // Replace "axes" array model with "axes[0]" and "axes[1]"
+        // object models preserving the properties order
+        const oldProps = model.properties;
+        const keys = Object.keys(model.properties);
+        const axesKeyIndex = keys.indexOf('axes');
+        const newProps: Record<string, JsonModelProperty> = {};
+        keys.slice(0, axesKeyIndex).forEach((key) => newProps[key] = oldProps[key]);
+        newProps['axes[0]'] = {
+            deprecated: false,
+            desc: getAxisModel(isXNumeric ? 'number' : 'category'),
+            documentation: `/** X-axis (${isXNumeric ? 'numeric' : 'category'}). */`,
+            required: false,
+        };
+        newProps['axes[1]'] = {
+            deprecated: false,
+            desc: getAxisModel('number'),
+            documentation: '/** Y-axis (numeric). */',
+            required: false,
+        };
+        keys.slice(axesKeyIndex + 1).forEach((key) => newProps[key] = oldProps[key]);
+        model.properties = newProps;
     }
 
     const context = {
@@ -355,7 +380,10 @@ const generateOptions = ({
     let elements: React.ReactFragment[] = [];
 
     Object.entries(model.properties).forEach(([name, prop]) => {
-        const key = `${prefix}${name}`;
+        // Turn array index like "axes[0]" into "axes.0"
+        const normalizedName = name.replace(/\[(\d+)\]/g, '.$1')
+
+        const key = `${prefix}${normalizedName}`;
         const componentKey = `${chartType}_${key}`;
         const {
             required,
