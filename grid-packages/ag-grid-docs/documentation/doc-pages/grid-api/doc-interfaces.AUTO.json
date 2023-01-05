@@ -11930,6 +11930,7 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
+  "ClientSideRowModelStep": {},
   "ClientSideRowModelSteps": {},
   "IClientSideRowModel": {
     "onRowGroupOpened": {

@@ -61,7 +61,7 @@ import {
     IChartService, OpenChartToolPanelParams,
     CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams,
 } from './interfaces/IChartService';
-import { ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams } from "./interfaces/iClientSideRowModel";
+import { ClientSideRowModelSteps, IClientSideRowModel, ClientSideRowModelStep } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
 import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
@@ -109,7 +109,6 @@ import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { exists, missing } from "./utils/generic";
 import { iterateObject, removeAllReferences } from "./utils/object";
-import { camelCaseToHumanText } from "./utils/string";
 import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 
@@ -588,39 +587,13 @@ export class GridApi<TData = any> {
      * Refresh the Client-Side Row Model, executing the grouping, filtering and sorting again.
      * Optionally provide the step you wish the refresh to apply from. Defaults to `everything`.
      */
-    public refreshClientSideRowModel(step?: 'everything' | 'group' | 'filter' | 'pivot' | 'aggregate' | 'sort' | 'map'): any {
+    public refreshClientSideRowModel(step?: ClientSideRowModelStep): any {
         if (missing(this.clientSideRowModel)) {
             this.logMissingRowModel('refreshClientSideRowModel', 'clientSide');
             return;
         }
 
-        let paramsStep = ClientSideRowModelSteps.EVERYTHING;
-        const stepsMapped: any = {
-            everything: ClientSideRowModelSteps.EVERYTHING,
-            group: ClientSideRowModelSteps.EVERYTHING,
-            filter: ClientSideRowModelSteps.FILTER,
-            map: ClientSideRowModelSteps.MAP,
-            aggregate: ClientSideRowModelSteps.AGGREGATE,
-            sort: ClientSideRowModelSteps.SORT,
-            pivot: ClientSideRowModelSteps.PIVOT
-        };
-
-        if (exists(step)) {
-            paramsStep = stepsMapped[step];
-        }
-        if (missing(paramsStep)) {
-            console.error(`AG Grid: invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
-            return;
-        }
-        const animate = !this.gridOptionsService.is('suppressAnimationFrame');
-        const modelParams: RefreshModelParams<TData> = {
-            step: paramsStep,
-            keepRenderedRows: true,
-            keepEditingRows: true,
-            animate
-        };
-
-        this.clientSideRowModel.refreshModel(modelParams);
+        this.clientSideRowModel.refreshModel(step);
     }
 
     /** Returns `true` when there are no more animation frames left to process. */

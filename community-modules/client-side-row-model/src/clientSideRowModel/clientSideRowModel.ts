@@ -15,6 +15,7 @@ import {
     PostConstruct,
     RefreshModelParams,
     ClientSideRowModelSteps,
+    ClientSideRowModelStep,
     RowBounds,
     RowDataTransaction,
     RowDataUpdatedEvent,
@@ -416,7 +417,42 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return transactionsContainUpdatesOnly;
     }
 
-    public refreshModel(params: RefreshModelParams): void {
+    private buildRefreshModelParams(step: ClientSideRowModelStep | undefined): RefreshModelParams | undefined {
+        let paramsStep = ClientSideRowModelSteps.EVERYTHING;
+        const stepsMapped: any = {
+            everything: ClientSideRowModelSteps.EVERYTHING,
+            group: ClientSideRowModelSteps.EVERYTHING,
+            filter: ClientSideRowModelSteps.FILTER,
+            map: ClientSideRowModelSteps.MAP,
+            aggregate: ClientSideRowModelSteps.AGGREGATE,
+            sort: ClientSideRowModelSteps.SORT,
+            pivot: ClientSideRowModelSteps.PIVOT
+        };
+        if (_.exists(step)) {
+            paramsStep = stepsMapped[step];
+        }
+
+        if (_.missing(paramsStep)) {
+            console.error(`AG Grid: invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
+            return undefined;
+        }
+        const animate = !this.gridOptionsService.is('suppressAnimationFrame');
+        const modelParams: RefreshModelParams = {
+            step: paramsStep,
+            keepRenderedRows: true,
+            keepEditingRows: true,
+            animate
+        };
+        return modelParams;
+    }
+
+    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
+
+        let params = typeof paramsOrStep === 'string' ? this.buildRefreshModelParams(paramsOrStep) : paramsOrStep;
+
+        if (!params) {
+            return;
+        }
 
         if (this.isSuppressModelUpdateAfterUpdateTransaction(params)) { return; }
 

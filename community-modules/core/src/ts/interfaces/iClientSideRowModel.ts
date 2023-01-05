@@ -5,6 +5,7 @@ import { RowNode } from '../entities/rowNode';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
 import { ChangedPath } from '../utils/changedPath';
 
+export type ClientSideRowModelStep = 'everything' | 'group' | 'filter' | 'pivot' | 'aggregate' | 'sort' | 'map';
 export enum ClientSideRowModelSteps {
     EVERYTHING = 'group',
     FILTER = 'filter',
@@ -20,7 +21,7 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     onRowGroupOpened(): void;
     updateRowData(rowDataTran: RowDataTransaction<TData>, rowNodeOrder?: { [id: string]: number; } | null): RowNodeTransaction<TData> | null;
     setRowData(rowData: any[]): void;
-    refreshModel(params: RefreshModelParams<TData>): void;
+    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void 
     expandOrCollapseAll(expand: boolean): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
     forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
