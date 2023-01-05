@@ -3,7 +3,6 @@ declare var FakeServer: any;
 
 let versionCounter: number = 0;
 const columnDefs: ColDef[] = [
-  { field: 'id', hide: true },
   { field: 'athlete' },
   { field: 'country' },
   { field: 'version' },
@@ -24,6 +23,7 @@ const gridOptions: GridOptions = {
   cacheBlockSize: 75,
   animateRows: true,
   enableCellChangeFlash: true,
+  getRowId: (params) => `${params.data.athlete}-${params.data.date}`,
 }
 
 

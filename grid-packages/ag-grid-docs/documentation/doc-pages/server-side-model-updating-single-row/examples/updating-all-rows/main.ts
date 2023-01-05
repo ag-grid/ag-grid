@@ -3,7 +3,6 @@ declare var FakeServer: any;
 
 let versionCounter: number = 0;
 const columnDefs: ColDef[] = [
-  { field: 'id', hide: true },
   { field: 'athlete' },
   { field: 'country' },
   { field: 'version' },
@@ -18,7 +17,6 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   columnDefs: columnDefs,
-  rowSelection: 'multiple',
   // use the enterprise row model
   rowModelType: 'serverSide',
   cacheBlockSize: 75,
