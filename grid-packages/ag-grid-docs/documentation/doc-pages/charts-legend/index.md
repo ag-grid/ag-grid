@@ -103,7 +103,7 @@ Please refer to the example below to get a better idea of how the above configs 
 
 ## Pagination
 
-If the legend items don't fit within the contraints, the items will be paginated and the pagination component will be dislayed.
+If the legend items don't fit within the constraints, the items will be paginated and the pagination component will be displayed.
 
 The pagination component can be customised using `legend.pagination`. For example, the pagination button markers can be made larger with `legend.pagination.marker`:
 
