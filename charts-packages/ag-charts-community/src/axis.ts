@@ -136,7 +136,7 @@ export class AxisLabel {
     /**
      * Minimum gap in pixels between the axis labels before being removed to avoid collisions.
      */
-    @Validate(OPT_NUMBER(0))
+    @Validate(OPT_NUMBER())
     minGap?: number = undefined;
 
     /**
