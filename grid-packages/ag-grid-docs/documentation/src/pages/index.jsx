@@ -50,18 +50,6 @@ const Default = () => {
                             </div>
                             <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
                                 <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
-                                    <a href="/angular-data-grid/" style={{textDecoration: "none"}}>
-                                        <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
-                                            <img src="images/fw-logos/angular.svg" alt="Angular"/>
-                                            <div>
-                                                <h3>Angular</h3>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
-                                <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
                                     <a href="/react-data-grid/" style={{textDecoration: "none"}}>
                                         <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
                                             <img src="images/fw-logos/react.svg" alt="React"/>
@@ -74,11 +62,35 @@ const Default = () => {
                             </div>
                             <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
                                 <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
+                                    <a href="/angular-data-grid/" style={{textDecoration: "none"}}>
+                                        <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
+                                            <img src="images/fw-logos/angular.svg" alt="Angular"/>
+                                            <div>
+                                                <h3>Angular</h3>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
+                                <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
                                     <a href="/vue-data-grid/" style={{textDecoration: "none"}}>
                                         <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
                                             <img src="images/fw-logos/vue.svg" alt="Vue"/>
                                             <div>
                                                 <h3>Vue</h3>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
+                                <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
+                                    <a href="/react-data-grid/solidjs/" style={{textDecoration: "none"}}>
+                                        <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
+                                            <img src="images/fw-logos/solid.svg" alt="SolidJS"/>
+                                            <div>
+                                                <h3>Solid</h3>
                                             </div>
                                         </div>
                                     </a>

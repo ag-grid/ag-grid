@@ -98,12 +98,34 @@ body {
         &__framework-boxes {
             display: grid;
             grid-template-columns: repeat(1, 1fr);
+
             @include media-breakpoint-up(sm) {
                 grid-template-columns: repeat(2, 1fr);
+
+                &__framework-box:last-child {
+                    display: flex;
+                    grid-column: 1 / 3;
+                    justify-content: center;
+
+                    > div {
+                        width: calc(50% - 20px);
+                    }
+                }
             }
-            @include media-breakpoint-up(lg) {
-                grid-template-columns: repeat(4, 1fr);
+
+            @include media-breakpoint-up(xl) {
+                grid-template-columns: repeat(5, 1fr);
+
+                &__framework-box:last-child {
+                    display: unset;
+                    grid-column: unset;
+
+                    > div {
+                        width: unset;
+                    }
+                }
             }
+
             box-sizing: border-box;
 
             &__framework-box {
