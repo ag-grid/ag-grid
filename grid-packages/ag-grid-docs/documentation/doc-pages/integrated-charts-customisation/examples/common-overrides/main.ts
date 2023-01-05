@@ -47,12 +47,6 @@ const gridOptions: GridOptions = {
   onFirstDataRendered: onFirstDataRendered,
   chartThemeOverrides: {
     common: {
-      padding: {
-        top: 20,
-        right: 30,
-        bottom: 10,
-        left: 2,
-      },
       background: {
         fill: '#e5e5e5',
       },
@@ -75,7 +69,7 @@ const gridOptions: GridOptions = {
       legend: {
         enabled: true,
         position: 'left',
-        spacing: 20,
+        spacing: 2,
         item: {
           label: {
             fontStyle: 'italic',
