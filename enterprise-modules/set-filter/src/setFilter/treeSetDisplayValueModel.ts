@@ -2,7 +2,7 @@ import { _, TextFormatter } from '@ag-grid-community/core';
 import { ISetDisplayValueModel, SetFilterDisplayValue, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 
 export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
-    private static readonly DATE_TREE_LIST_PATH_GETTER = (date: Date) => [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())];
+    private static readonly DATE_TREE_LIST_PATH_GETTER = (date: Date | null) => date ? [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())] : null;
 
     /** all displayed items in a tree structure */
     private allDisplayedItemsTree: SetFilterModelTreeItem[] = [];
@@ -23,12 +23,13 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     constructor(
         private readonly formatter: TextFormatter,
-        private readonly treeListPathGetter?: (value: V) => (string | null)[],
+        private readonly treeListPathGetter?: (value: V | null) => string[] | null,
+        private readonly treeListFormatter?: (pathKey: string | null, level: number) => string,
         private readonly treeDataOrGrouping?: boolean
     ) {};
 
     public updateDisplayedValuesToAllAvailable(
-        getValue: (key: string | null) => V,
+        getValue: (key: string | null) => V | null,
         allKeys: Iterable<string | null> | undefined,
         availableKeys: Set<string | null>,
         source: 'reload' | 'otherFilter' | 'miniFilter'
@@ -47,7 +48,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     }
 
     public updateDisplayedValuesToMatchMiniFilter(
-        getValue: (key: string | null) => V,
+        getValue: (key: string | null) => V | null,
         allKeys: Iterable<string | null> | undefined, 
         availableKeys: Set<string | null>,
         matchesFilter: (valueToCheck: string | null) => boolean,
@@ -66,7 +67,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         this.flattenItems();
     }
 
-    private generateItemTree(getValue: (key: string | null) => V, allKeys: Iterable<string | null>, availableKeys: Set<string | null>): void {
+    private generateItemTree(getValue: (key: string | null) => V | null, allKeys: Iterable<string | null>, availableKeys: Set<string | null>): void {
         this.allDisplayedItemsTree = [];
         this.groupsExist = false;
         
@@ -80,7 +81,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
             const available = availableKeys.has(key);
             let children: SetFilterModelTreeItem[] | undefined = this.allDisplayedItemsTree;
             let item: SetFilterModelTreeItem | undefined;
-            dataPath.forEach((treeKey, depth) => {
+            dataPath.forEach((treeKey: string | null, depth: number) => {
                 if (!children) {
                     children = [];
                     item!.children = children;
@@ -103,7 +104,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         this.selectAllItem.expanded = true;
     }
 
-    private getTreeListPathGetter(getValue: (key: string | null) => V, availableKeys: Iterable<string | null>): (value: V) => (string | null)[] {
+    private getTreeListPathGetter(getValue: (key: string | null) => V | null, availableKeys: Set<string | null>): (value: V | null) => string[] | null {
         if (this.treeListPathGetter) {
             return this.treeListPathGetter;
         }
@@ -111,8 +112,18 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
             return value => value as any;
         }
         // infer from data
-        const firstValue = getValue(availableKeys[Symbol.iterator]().next().value);
-        if (firstValue instanceof Date) {
+        let isDate = false;
+        for (const availableKey of availableKeys) {
+            // find the first non-null value
+            const value = getValue(availableKey);
+            if (value instanceof Date) {
+                isDate = true;
+                break;
+            } else if (value != null) {
+                break;
+            }
+        }
+        if (isDate) {
             return TreeSetDisplayValueModel.DATE_TREE_LIST_PATH_GETTER as any;
         }
         _.doOnce(
@@ -159,7 +170,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                 return nullMatchesFilter;
             }
 
-            return matchesFilter(this.formatter(item.treeKey));
+            return matchesFilter(this.formatter(this.treeListFormatter ? this.treeListFormatter(item.treeKey, item.depth) : item.treeKey));
         };
 
         this.allDisplayedItemsTree.forEach(item => this.recursiveItemCheck(item, false, passesFilter, 'filterPasses'));

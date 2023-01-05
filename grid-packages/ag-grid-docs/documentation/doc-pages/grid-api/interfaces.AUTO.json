@@ -8792,7 +8792,7 @@
       "excelMode?": "'mac' | 'windows'",
       "convertValuesToStrings?": "boolean",
       "treeList?": "boolean",
-      "treeListPathGetter?": "(value: V) => (string | null)[]",
+      "treeListPathGetter?": "(value: V | null) => string[] | null",
       "treeListFormatter?": "(pathKey: string | null, level: number) => string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
@@ -8825,6 +8825,39 @@
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n     * or Reset button is clicked if this is set to `true`.\n     * \n     * Default: `false`\n     */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n     * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n     * - `DateFilter` and `SetFilter`: 0ms\n     */",
       "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n     * be used in conjunction with the Filter API.\n     * \n     * Default: `false`\n     */"
+    }
+  },
+  "ISetFilterTreeListTooltipParams": {
+    "meta": {
+      "doc": "/** Tooltip params used with the Set Filter Tree List.\n */"
+    },
+    "type": {
+      "level": "number",
+      "location": "string",
+      "value?": "TValue",
+      "valueFormatted?": "string | null",
+      "colDef?": "ColDef<TData> | ColGroupDef<TData> | null",
+      "column?": "Column | ColumnGroup",
+      "rowIndex?": "number",
+      "node?": "IRowNode<TData>",
+      "data?": "TData",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "level": "/** Level of the tree (starting at 0). */",
+      "location": "/** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */",
+      "value?": "/** The value to be rendered by the tooltip. */",
+      "valueFormatted?": "/** The formatted value to be rendered by the tooltip. */",
+      "colDef?": "/** Column / ColumnGroup definition. */",
+      "column?": "/** Column / ColumnGroup */",
+      "rowIndex?": "/** The index of the row containing the cell rendering the tooltip. */",
+      "node?": "/** The row node. */",
+      "data?": "/** Data for the row node in question. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ISideBar": {
@@ -11099,8 +11132,8 @@
   "ISetDisplayValueModel": {
     "meta": { "typeParams": ["V"] },
     "type": {
-      "updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V, allKeys: Iterable<string | null> | undefined, availableKeys: Set<string | null>, source: 'reload' | 'otherFilter' | 'miniFilter')": "void",
-      "updateDisplayedValuesToMatchMiniFilter(getValue: (key: string | null) => V, allKeys: Iterable<string | null> | undefined, availableKeys: Set<string | null>, matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean, source: 'reload' | 'otherFilter' | 'miniFilter')": "void",
+      "updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V | null, allKeys: Iterable<string | null> | undefined, availableKeys: Set<string | null>, source: 'reload' | 'otherFilter' | 'miniFilter')": "void",
+      "updateDisplayedValuesToMatchMiniFilter(getValue: (key: string | null) => V | null, allKeys: Iterable<string | null> | undefined, availableKeys: Set<string | null>, matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean, source: 'reload' | 'otherFilter' | 'miniFilter')": "void",
       "getDisplayedValueCount()": "number",
       "getDisplayedItem(index: number)": "string | SetFilterModelTreeItem | null",
       "getSelectAllItem()": "string | SetFilterModelTreeItem",

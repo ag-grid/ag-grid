@@ -1,13 +1,13 @@
 export interface ISetDisplayValueModel<V> {
     updateDisplayedValuesToAllAvailable(
-        getValue: (key: string | null) => V,
+        getValue: (key: string | null) => V | null,
         allKeys: Iterable<string | null> | undefined,
         availableKeys: Set<string | null>,
         source: 'reload' | 'otherFilter' | 'miniFilter'
     ): void;
 
     updateDisplayedValuesToMatchMiniFilter(
-        getValue: (key: string | null) => V,
+        getValue: (key: string | null) => V | null,
         allKeys: Iterable<string | null> | undefined, 
         availableKeys: Set<string | null>,
         matchesFilter: (valueToCheck: string | null) => boolean,

@@ -15889,8 +15889,8 @@
     "treeListPathGetter": {
       "description": "/** Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.\n     */",
       "type": {
-        "arguments": { "value": "V" },
-        "returnType": "(string | null)[]",
+        "arguments": { "value": "V | null" },
+        "returnType": "string[] | null",
         "optional": true
       }
     },
@@ -15918,6 +15918,60 @@
     "readOnly": {
       "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n     * be used in conjunction with the Filter API.\n     * \n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "ISetFilterTreeListTooltipParams": {
+    "level": {
+      "description": "/** Level of the tree (starting at 0). */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "location": {
+      "description": "/** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "value": {
+      "description": "/** The value to be rendered by the tooltip. */",
+      "type": { "returnType": "TValue", "optional": true }
+    },
+    "valueFormatted": {
+      "description": "/** The formatted value to be rendered by the tooltip. */",
+      "type": { "returnType": "string | null", "optional": true }
+    },
+    "colDef": {
+      "description": "/** Column / ColumnGroup definition. */",
+      "type": {
+        "returnType": "ColDef<TData> | ColGroupDef<TData> | null",
+        "optional": true
+      }
+    },
+    "column": {
+      "description": "/** Column / ColumnGroup */",
+      "type": { "returnType": "Column | ColumnGroup", "optional": true }
+    },
+    "rowIndex": {
+      "description": "/** The index of the row containing the cell rendering the tooltip. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "IRowNode<TData>", "optional": true }
+    },
+    "data": {
+      "description": "/** Data for the row node in question. */",
+      "type": { "returnType": "TData", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ISideBar": {
@@ -19484,7 +19538,7 @@
     "updateDisplayedValuesToAllAvailable": {
       "type": {
         "arguments": {
-          "getValue": "(key: string | null) => V",
+          "getValue": "(key: string | null) => V | null",
           "allKeys": "Iterable<string | null> | undefined",
           "availableKeys": "Set<string | null>",
           "source": "'reload' | 'otherFilter' | 'miniFilter'"
@@ -19496,7 +19550,7 @@
     "updateDisplayedValuesToMatchMiniFilter": {
       "type": {
         "arguments": {
-          "getValue": "(key: string | null) => V",
+          "getValue": "(key: string | null) => V | null",
           "allKeys": "Iterable<string | null> | undefined",
           "availableKeys": "Set<string | null>",
           "matchesFilter": "(valueToCheck: string | null) => boolean",

@@ -92,7 +92,13 @@ export class ClientSideValuesExtractor<V> {
             dataPath = this.getDataPath!(node.data);
         } else {
             dataPath = groupedCols.map(groupCol => this.valueService.getKeyForNode(groupCol, node));
-            dataPath.push(_.toStringOrNull(_.makeNull(this.getValue(node)))!);
+            dataPath.push(this.getValue(node) as any);
+        }
+        if (dataPath) {
+            dataPath = dataPath.map(treeKey => _.toStringOrNull(_.makeNull(treeKey))) as any;
+        }
+        if (dataPath?.some(treeKey => treeKey == null)) {
+            dataPath = null;
         }
         addValue(this.createKey(dataPath as any), dataPath as any);
     }

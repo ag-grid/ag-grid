@@ -15,7 +15,8 @@ import {
     ValueFormatterService,
     WithoutGridCommon,
     ValueFormatterParams,
-    ICellRendererComp
+    ICellRendererComp,
+    ISetFilterTreeListTooltipParams
 } from '@ag-grid-community/core';
 import { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { ISetFilterLocaleText } from './localeText';
@@ -292,6 +293,9 @@ export class SetFilterListItem<V> extends Component {
         const res = super.getTooltipParams();
         res.location = 'setFilterValue';
         res.colDef = this.getComponentHolder();
+        if (this.isTree) {
+            (res as ISetFilterTreeListTooltipParams).level = this.depth;
+        }
         return res;
     }
 
