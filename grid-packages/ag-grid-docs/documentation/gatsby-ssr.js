@@ -93,6 +93,7 @@ export const onPreRenderHTML = ({getHeadComponents, replaceHeadComponents, pathn
     // for anything other that www.ag-grid.com
     if (!isProductionBuild()) {
         headComponents.unshift(<meta
+            key="robots-noindex"
             name="robots"
             content="noindex"/>)
     }
