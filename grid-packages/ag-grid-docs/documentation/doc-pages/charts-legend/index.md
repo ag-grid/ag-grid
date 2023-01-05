@@ -40,7 +40,7 @@ The legend can have a `vertical` or `horizontal` orientation. The arrangement of
 In the `vertical` orientation, the legend items are arranged using the minimum number of columns possible given the current dimension constraints.
 
 By default, when the legend is positioned to the `'right'` or `'left'` of a chart, it is rendered in a `vertical` orientation.
-The number of columns in a `vertical` legend increases as the height of a chart shrinks, as less legend items can be placed in a given column.
+The number of columns in a `vertical` legend increases as the height of a chart shrinks, as fewer legend items can be placed in a given column.
 
 ### Example: Vertical Legend Layout
 
@@ -50,7 +50,7 @@ The number of columns in a `vertical` legend increases as the height of a chart 
 
 If the legend is `horizontal`, the legend items are arranged using the minimum possible number of rows. If the legend is not wide enough, the items are divided into more rows until everything fits.
 
-By default, when the legend is positioned to the `'bottom'` or `'top'` of a chart, it is rendered in a `horizontal` orientation. The number of rows in a `horizontal` legend increases as the width of a chart shrinks, as less legend items can be placed in a given row.
+By default, when the legend is positioned to the `'bottom'` or `'top'` of a chart, it is rendered in a `horizontal` orientation. The number of rows in a `horizontal` legend increases as the width of a chart shrinks, as fewer legend items can be placed in a given row.
 
 
 ### Example: Horizontal Legend Layout
