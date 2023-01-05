@@ -346,7 +346,7 @@ export interface AgChartLegendItemOptions {
     /** The vertical spacing in pixels to use between legend items. */
     paddingY?: PixelSize;
     /** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */
-    seriesToggleEnabled?: boolean;
+    toggleSeriesVisible?: boolean;
 }
 
 export interface AgChartLegendClickEvent {

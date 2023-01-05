@@ -782,7 +782,7 @@
       "maxWidth?": "PixelSize",
       "paddingX?": "PixelSize",
       "paddingY?": "PixelSize",
-      "seriesToggleEnabled?": "boolean"
+      "toggleSeriesVisible?": "boolean"
     },
     "docs": {
       "marker?": "/** Configuration for the legend markers. */",
@@ -790,7 +790,7 @@
       "maxWidth?": "/** Used to constrain the width of legend items. */",
       "paddingX?": "/** The horizontal spacing in pixels to use between legend items. */",
       "paddingY?": "/** The vertical spacing in pixels to use between legend items. */",
-      "seriesToggleEnabled?": "/** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */"
+      "toggleSeriesVisible?": "/** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */"
     }
   },
   "AgChartLegendClickEvent": {

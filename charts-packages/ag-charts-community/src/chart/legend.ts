@@ -143,7 +143,7 @@ class LegendItem {
     paddingY = 8;
 
     @Validate(BOOLEAN)
-    seriesToggleEnabled: boolean = true;
+    toggleSeriesVisible: boolean = true;
 }
 
 const NO_OP_LISTENER = () => {
@@ -620,7 +620,7 @@ export class Legend {
             listeners: { legendItemClick },
             chart,
             highlightManager,
-            item: { seriesToggleEnabled },
+            item: { toggleSeriesVisible },
         } = this;
         const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
@@ -635,7 +635,7 @@ export class Legend {
         event.consume();
 
         const newEnabled = !enabled;
-        if (seriesToggleEnabled) {
+        if (toggleSeriesVisible) {
             series.toggleSeriesItem(itemId, newEnabled);
         }
 
@@ -658,7 +658,7 @@ export class Legend {
     private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
         const {
             enabled,
-            item: { seriesToggleEnabled },
+            item: { toggleSeriesVisible },
             listeners,
         } = this;
         if (!enabled) {
@@ -687,7 +687,7 @@ export class Legend {
             return;
         }
 
-        if (seriesToggleEnabled || listeners.legendItemClick !== NO_OP_LISTENER) {
+        if (toggleSeriesVisible || listeners.legendItemClick !== NO_OP_LISTENER) {
             this.cursorManager.updateCursor(this.id, 'pointer');
         }
 
