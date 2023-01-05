@@ -108,6 +108,22 @@ function getTextSize(text: string, style: Label) {
     return HdpiCanvas.getTextSize(text, [style.fontWeight, `${style.fontSize}px`, style.fontFamily].join(' '));
 }
 
+function validateColor(color?: string): string | undefined {
+    if (typeof color === 'string' && !Color.validColorString(color)) {
+        const fallbackColor = 'black';
+        doOnce(
+            () =>
+                console.warn(
+                    `AG Charts - Invalid Treemap tile colour string "${color}". Affected treemap tiles will be coloured ${fallbackColor}.`
+                ),
+            'treemap node color invalid'
+        );
+        return 'black';
+    }
+
+    return color;
+}
+
 class TreemapTextHighlightStyle {
     @Validate(OPT_COLOR_STRING)
     color?: string = 'black';
@@ -371,17 +387,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const createTreeNodeDatum = (datum: TreeDatum, depth = 0, parent?: TreemapNodeDatum) => {
             const label = (labelKey && (datum[labelKey] as string)) || '';
             let colorScaleValue = colorKey ? datum[colorKey] ?? depth : depth;
-            if (typeof colorScaleValue === 'string' && !Color.validColorString(colorScaleValue)) {
-                const fallbackColor = 'black';
-                doOnce(
-                    () =>
-                        console.warn(
-                            `AG Charts - Invalid Treemap tile colour string "${colorScaleValue}". Affected treemap tiles will be coloured ${fallbackColor}.`
-                        ),
-                    'treemap node color invalid'
-                );
-                colorScaleValue = 'black';
-            }
+            colorScaleValue = validateColor(colorScaleValue);
             const isLeaf = !datum.children;
             const fill =
                 typeof colorScaleValue === 'string'
@@ -557,9 +563,9 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
             const format = this.getTileFormat(datum, isDatumHighlighted);
 
-            rect.fill = format?.fill ?? fill;
+            rect.fill = validateColor(format?.fill ?? fill);
             rect.fillOpacity = format?.fillOpacity ?? fillOpacity;
-            rect.stroke = format?.stroke ?? stroke;
+            rect.stroke = validateColor(format?.stroke ?? stroke);
             rect.strokeWidth = format?.strokeWidth ?? strokeWidth;
             rect.gradient = format?.gradient ?? gradient;
             rect.fillShadow = tileShadow;
