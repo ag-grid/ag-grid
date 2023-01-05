@@ -88,7 +88,7 @@ To enable cell expressions, set `enableCellExpressions=true` in the gridOptions.
 
 The cell expressions have the same parameters of value getter expressions.
 
-Because you have access to the context (ctx) in your expression, you can add functions to the context to be available in your expressions. This allows you limitless power in what you can calculated for your expression. For example, you could provide a function that takes values from outside of the grid.
+Because you have access to the context (ctx) in your expression, you can add functions to the context to be available in your expressions. This allows you limitless power in what you can calculate for your expression. For example, you could provide a function that takes values from outside of the grid.
 
 ## Example Cell Expressions
 
