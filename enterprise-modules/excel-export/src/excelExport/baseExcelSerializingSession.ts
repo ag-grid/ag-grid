@@ -170,6 +170,9 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         if (value == null) { return false; }
         return this.config.autoConvertFormulas && value.toString().startsWith('=');
     }
+    protected isNumerical(value: any): boolean {
+        return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
+    }
 
     protected getStyleById(styleId?: string | null): ExcelStyle | null {
         if (styleId == null) { return null; }

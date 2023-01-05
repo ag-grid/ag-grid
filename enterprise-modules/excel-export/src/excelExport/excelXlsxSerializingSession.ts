@@ -5,7 +5,6 @@ import {
     ExcelOOXMLDataType,
     ExcelStyle,
     ExcelWorksheet,
-    _
 } from '@ag-grid-community/core';
 
 import { ExcelXlsxFactory } from './excelXlsxFactory';
@@ -28,7 +27,7 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
 
     protected getDataTypeForValue(valueForCell?: string): ExcelOOXMLDataType {
         if (valueForCell === undefined) { return 'empty'; }
-        return _.isNumeric(valueForCell) ? 'n' : 's';
+        return this.isNumerical(valueForCell) ? 'n' : 's';
     }
 
     protected getType(type: ExcelOOXMLDataType, style: ExcelStyle | null, value: string | null): ExcelOOXMLDataType | null {

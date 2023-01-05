@@ -12,16 +12,6 @@ export function createArrayOfNumbers(first: number, last: number): number[] {
     return result;
 }
 
-/**
- * Check if a value is numeric
- * from http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
- * @param {any} value
- * @return {boolean}
- */
-export function isNumeric(value: any): boolean {
-    return value !== '' && !isNaN(parseFloat(value)) && isFinite(value);
-}
-
 export function cleanNumber(value: any): number | null {
     if (typeof value === 'string') {
         value = parseInt(value, 10);
@@ -78,7 +68,7 @@ export function zeroOrGreater(value: any, defaultValue: number): number {
 export function oneOrGreater(value: any, defaultValue?: number): number | undefined {
     const valueNumber = parseInt(value, 10);
 
-    if (isNumeric(valueNumber) && valueNumber > 0) {
+    if (!isNaN(valueNumber) && isFinite(valueNumber) && valueNumber > 0) {
         return valueNumber;
     }
 

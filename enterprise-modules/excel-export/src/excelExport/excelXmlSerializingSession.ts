@@ -17,7 +17,7 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
     }
 
     protected getDataTypeForValue(valueForCell?: string): ExcelDataType {
-        return _.isNumeric(valueForCell) ? 'Number' : 'String';
+        return this..isNumerical(valueForCell) ? 'Number' : 'String';
     }
 
     protected getType(type: ExcelDataType, style: ExcelStyle | null, value: string | null): ExcelDataType | null {

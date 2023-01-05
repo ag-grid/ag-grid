@@ -4,7 +4,6 @@ import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { missing, exists } from "../utils/generic";
-import { isNumeric } from "../utils/number";
 import { RowPosition } from "../entities/rowPosition";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
@@ -83,7 +82,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public goToPage(page: number): void {
-        if (!this.active || this.currentPage === page) { return; }
+        if (!this.active || this.currentPage === page || typeof this.currentPage !== 'number') { return; }
 
         this.currentPage = page;
         const event: WithoutGridCommon<ModelUpdatedEvent> = {
@@ -270,6 +269,17 @@ export class PaginationProxy extends BeanStub {
         this.totalPages = 0;
     }
 
+    private adjustCurrentPageIfInvalid() {
+
+        if (this.currentPage >= this.totalPages) {
+            this.currentPage = this.totalPages - 1;
+        }
+
+        if (!isFinite(this.currentPage) || isNaN(this.currentPage) || this.currentPage < 0) {
+            this.currentPage = 0;
+        }
+    }
+
     private calculatePagesMasterRowsOnly(): void {
 
         // const csrm = <ClientSideRowModel> this.rowModel;
@@ -285,16 +295,9 @@ export class PaginationProxy extends BeanStub {
         }
 
         const masterLastRowIndex = this.masterRowCount - 1;
-
         this.totalPages = Math.floor((masterLastRowIndex) / this.pageSize) + 1;
 
-        if (this.currentPage >= this.totalPages) {
-            this.currentPage = this.totalPages - 1;
-        }
-
-        if (!isNumeric(this.currentPage) || this.currentPage < 0) {
-            this.currentPage = 0;
-        }
+        this.adjustCurrentPageIfInvalid();
 
         const masterPageStartIndex = this.pageSize * this.currentPage;
         let masterPageEndIndex = (this.pageSize * (this.currentPage + 1)) - 1;
@@ -331,16 +334,9 @@ export class PaginationProxy extends BeanStub {
         }
 
         const maxRowIndex = this.masterRowCount - 1;
-
         this.totalPages = Math.floor((maxRowIndex) / this.pageSize) + 1;
 
-        if (this.currentPage >= this.totalPages) {
-            this.currentPage = this.totalPages - 1;
-        }
-
-        if (!isNumeric(this.currentPage) || this.currentPage < 0) {
-            this.currentPage = 0;
-        }
+        this.adjustCurrentPageIfInvalid();
 
         this.topDisplayedRowIndex = this.pageSize * this.currentPage;
         this.bottomDisplayedRowIndex = (this.pageSize * (this.currentPage + 1)) - 1;
