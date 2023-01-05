@@ -144,9 +144,13 @@ export abstract class ChartProxy {
 
     protected getCommonChartOptions() {
         // Only apply active overrides if chart is initialised.
+        const existingOptions: any = this.clearThemeOverrides ? {} : this.chart?.getOptions() ?? {};
         const formattingPanelOverrides = this.chart != null ?
             { overrides: this.getActiveFormattingPanelOverrides() } : {};
+        this.clearThemeOverrides = false;
+
         return {
+            ...existingOptions,
             theme: {
                 ...createAgChartTheme(this.chartProxyParams, this),
                 ...formattingPanelOverrides,
@@ -157,7 +161,6 @@ export abstract class ChartProxy {
 
     private getActiveFormattingPanelOverrides(): AgChartThemeOverrides {
         if (this.clearThemeOverrides) {
-            this.clearThemeOverrides = false;
             return {};
         }
 

@@ -1,7 +1,7 @@
-import * as agCharts from 'ag-charts-community';
+import { AgChartOptions, AgTreemapSeriesOptions, AgChart } from 'ag-charts-community';
 import { getData } from './data';
 
-const options: agCharts.AgChartOptions = {
+const options: AgChartOptions = {
     type: 'hierarchy',
     container: document.getElementById('myChart'),
     data: getData(),
@@ -46,7 +46,7 @@ const options: agCharts.AgChartOptions = {
                 const stroke = highlighted ? 'black' : 'white';
                 return { fill, stroke };
             },
-        } as agCharts.AgTreemapSeriesOptions,
+        } as AgTreemapSeriesOptions,
     ],
     title: {
         text: 'Exports of Krakozhia in 2022',
@@ -56,4 +56,4 @@ const options: agCharts.AgChartOptions = {
     },
 }
 
-agCharts.AgChart.create(options);
+AgChart.create(options);

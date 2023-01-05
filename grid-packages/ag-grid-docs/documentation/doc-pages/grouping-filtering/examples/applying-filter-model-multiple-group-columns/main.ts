@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core';
+import { Grid, GridOptions, ValueGetterParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -31,7 +31,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function applyFilter() {
-  gridOptions.api.setFilterModel({
+  gridOptions.api!.setFilterModel({
     'ag-Grid-AutoColumn-age': {
       filterType: 'number',
         type: 'lessThan',

@@ -348,6 +348,7 @@
         height: 100%;
         &.ag-scrollbar-invisible {
             top: 0;
+            z-index: 10;
             @include ag.unthemed-rtl(( right: 0 ));
         }
     }

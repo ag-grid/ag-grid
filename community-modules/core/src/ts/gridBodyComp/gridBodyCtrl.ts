@@ -13,7 +13,7 @@ import { HeaderNavigationService } from "../headerRendering/common/headerNavigat
 import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { getTabIndex, isIOSUserAgent } from "../utils/browser";
+import { getTabIndex, isInvisibleScrollbar, isIOSUserAgent } from "../utils/browser";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
@@ -172,7 +172,8 @@ export class GridBodyCtrl extends BeanStub {
         this.setStickyTopWidth(visible);
 
         const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
-        const width = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
+        const pad = isInvisibleScrollbar() ? 16 : 0;
+        const width = `calc(100% + ${scrollbarWidth + pad}px)`;
         this.comp.setBodyViewportWidth(width);
     }
 

@@ -223,17 +223,17 @@
     }
 
     .ag-filter-toolpanel-group-container {
-        padding-left: var(--ag-grid-size);
+        @include ag.theme-rtl((padding-left: var(--ag-grid-size)));
     }
 
     .ag-filter-toolpanel-instance-filter {
         border: none;
         background-color: var(--ag-control-panel-background-color);
-        border-left: dashed 1px;
-        border-left-color: var(--ag-border-color);
-        margin-left: calc(var(--ag-icon-size) * 0.5);
-        padding-left: calc(var(--ag-icon-size) * 0.5);
-        margin-right: calc(var(--ag-grid-size) * 2);
+        @include ag.theme-rtl((
+            border-left: dashed 1px,
+            border-left-color: var(--ag-border-color),
+            margin-left: calc(var(--ag-icon-size) * 0.5)
+        ))
     }
 
     .ag-set-filter-list {
