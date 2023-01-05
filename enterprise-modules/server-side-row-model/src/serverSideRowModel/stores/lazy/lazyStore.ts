@@ -434,7 +434,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     refreshAfterSort(params: StoreRefreshAfterParams) {
         const serverSortsAllLevels = this.storeUtils.isServerSideSortAllLevels();
         if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
-            this.refreshStore(true);
+            const oldCount = this.cache.getRowCount();
+            this.destroyBean(this.cache);
+            this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
+            this.fireStoreUpdatedEvent();
             return;
         }
 
@@ -453,9 +456,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     refreshAfterFilter(params: StoreRefreshAfterParams) {
         const serverFiltersAllLevels = this.storeUtils.isServerSideFilterAllLevels();
         if (serverFiltersAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
-            this.destroyBean(this.cache);
-            this.cache = this.createManagedBean(new LazyCache(this, 1, this.storeParams));
-            this.fireStoreUpdatedEvent();
+            this.refreshStore(true);
             return;
         }
 
@@ -471,9 +472,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      */
     refreshStore(purge: boolean) {
         if (purge) {
-            const oldCache = this.cache;
-            this.cache = this.createManagedBean(new LazyCache(this, oldCache.getRowCount(), this.storeParams));
-            this.destroyBean(oldCache);
+            this.destroyBean(this.cache);
+            this.cache = this.createManagedBean(new LazyCache(this, 1, this.storeParams));
             this.fireStoreUpdatedEvent();
             return;
         }
