@@ -5,15 +5,13 @@ let versionCounter: number = 0;
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
   { field: 'country' },
+  { field: 'date' },
   { field: 'version' },
-  { field: 'gold' },
-  { field: 'silver' },
-  { field: 'bronze' },
 ]
 
 const gridOptions: GridOptions = {
   defaultColDef: {
-    width: 250,
+    flex: 1,
     resizable: true,
   },
   columnDefs: columnDefs,
@@ -34,25 +32,10 @@ const getServerSideDatasource = (server: any): IServerSideDatasource => {
 
       const response = server.getData(params.request);
 
-      const dataWithVersionAndGroupProperties = response.rows.map((rowData: any) => {
-        const rowProperties: any = {
+      const dataWithVersion = response.rows.map((rowData: any) => {
+        return {
           ...rowData,
           version: versionCounter + ' - ' + versionCounter + ' - ' + versionCounter,
-        };
-
-        // for unique-id purposes in the client, we also want to attach
-        // the parent group keys
-        const groupProperties = Object.fromEntries(
-          params.request.groupKeys.map((groupKey, index) => {
-            const col = params.request.rowGroupCols[index];
-            const field = col.id;
-            return [field, groupKey];
-          })
-        );
-
-        return {
-          ...rowProperties,
-          ...groupProperties,
         };
       });
 
@@ -60,7 +43,7 @@ const getServerSideDatasource = (server: any): IServerSideDatasource => {
       setTimeout(() => {
         if (response.success) {
           // call the success callback
-          params.success({ rowData: dataWithVersionAndGroupProperties, rowCount: response.lastRow });
+          params.success({ rowData: dataWithVersion, rowCount: response.lastRow });
         } else {
           // inform the grid request failed
           params.fail();

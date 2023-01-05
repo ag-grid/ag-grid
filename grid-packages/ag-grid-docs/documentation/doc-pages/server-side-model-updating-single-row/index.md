@@ -1,10 +1,17 @@
 ---
 title: "SSRM - Single Row Updates"
 ---
+It is possible to directly update row data using the Row Node API. This can be used to update the UI to reflect changes in row data.
+
+## Updating Rows API
 
 You can update a single row by using the row node `updateData` or `setData` functions.
 
 <api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["updateData", "setData"]'></api-documentation>
+
+[[note]]
+| Setting row data will NOT change the row node ID, so if you are using `getRowId()`
+| and the data changes such that the ID will be different, the `rowNode` will not have its ID updated.
 
 ## Updating Rows Example
 
@@ -16,9 +23,9 @@ The example below demonstrates a basic example, using the API's `forEachNode` fu
 
 <grid-example title='Updating All Rows' name='updating-all-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-## Single Row Updates
+## Specific Row Updates
 
-The following code snippet outlines the general approach, to iterate through all loaded row nodes and then update them directly using `rowNode.updateData(data)`:
+The following code snippet outlines the general approach of iterating through all loaded row nodes and then updating target rows with `rowNode.updateData(data)`:
 
 <snippet>
 |gridOptions.api.forEachNode(rowNode => {
@@ -33,12 +40,15 @@ The following code snippet outlines the general approach, to iterate through all
 |});
 </snippet>
 
-[[note]]
-| Setting row data will NOT change the row node ID, so if you are using `getRowId()`
-| and the data changes such that the ID will be different, the `rowNode` will not have its ID updated.
+The example below demonstrates this snippet in action;
 
-The example below shows this in action, note the following:
+<grid-example title='Updating Specific Rows' name='updating-specific-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+
+## Selected Row Updates
+
+The example below demonstrates how to update all of the rows which the user has selected, note the following:
 
 - The **Update Selected Rows** button will update the row version directly on the selected row nodes.
+- The selected nodes are obtained using the `api.getSelectedNodes()` api, and are then individually updated.
 
 <grid-example title='Updating Selected Rows' name='updating-selected-row' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>

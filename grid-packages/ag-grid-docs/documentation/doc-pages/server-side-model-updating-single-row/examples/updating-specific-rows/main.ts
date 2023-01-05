@@ -15,29 +15,34 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   columnDefs: columnDefs,
+  rowSelection: 'multiple',
   // use the enterprise row model
   rowModelType: 'serverSide',
   cacheBlockSize: 75,
   animateRows: true,
   enableCellChangeFlash: true,
+  getRowId: (params) => `${params.data.athlete}-${params.data.date}`,
 }
 
-function setRows() {
+function updateRows (athlete?: string, date?: string) {
   versionCounter += 1;
-  const version = versionCounter + ' - ' + versionCounter + ' - ' + versionCounter;
-  gridOptions.api!.forEachNode(node => {
-    node.setData({ ...node.data, version })
-  });
-}
+  gridOptions.api!.forEachNode(rowNode => {
+    if (athlete != null && rowNode.data.athlete !== athlete) {
+      return;
+    }
 
-function updateRows() {
-  versionCounter += 1;
-  const version = versionCounter + ' - ' + versionCounter + ' - ' + versionCounter;
-  gridOptions.api!.forEachNode(node => {
-    node.updateData({ ...node.data, version })
-  });
-}
+    if (date != null && rowNode.data.date !== date) {
+      return;
+    }
 
+    // arbitrarily update some data
+    const updated = rowNode.data;
+    updated.version = versionCounter + ' - ' + versionCounter + ' - ' + versionCounter;
+
+    // directly update data in rowNode
+    rowNode.updateData(updated);
+});
+}
 
 const getServerSideDatasource = (server: any): IServerSideDatasource => {
   return {
