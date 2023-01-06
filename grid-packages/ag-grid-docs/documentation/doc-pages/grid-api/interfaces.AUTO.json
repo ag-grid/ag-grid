@@ -2765,7 +2765,7 @@
   },
   "SelectionEventSourceType": {
     "meta": { "isTypeAlias": true },
-    "type": "'api' | 'apiSelectAll' | 'apiSelectAllFiltered' | 'checkboxSelected' | 'parentSelected' | 'rowClicked' | 'rowDataChanged' | 'rowGroupChanged' | 'spacePressed' | 'uiSelectAll'"
+    "type": "'api' | 'apiSelectAll' | 'apiSelectAllFiltered' | 'checkboxSelected' | 'rowClicked' | 'rowDataChanged' | 'rowGroupChanged' | 'selectableChanged' | 'spacePressed' | 'uiSelectAll' | 'uiSelectAllFiltered'"
   },
   "SelectionChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },

@@ -86,24 +86,26 @@ export interface PinnedRowDataChangedEvent<TData = any> extends AgGridEvent<TDat
  * - `apiSelectAll` - from API methods `selectAll`/`deselectAll`
  * - `apiSelectAllFiltered` - from API methods `selectAllFiltered`/`deselectAllFiltered`
  * - `checkboxSelected` - row selection checkbox clicked
- * - `parentSelected`- parent selected when `groupSelectsChildren` enabled
  * - `rowClicked` - row clicked when row selection enabled
  * - `rowDataChanged` - row data updated which triggered selection updates
  * - `rowGroupChanged` - grouping changed which updated the selection
+ * - `selectableChanged`- selectable status of row has changed when `groupSelectsChildren = true`
  * - `spacePressed` - space key pressed on row
  * - `uiSelectAll` - select all in header clicked
+ * - `uiSelectAllFiltered` - select all in header clicked when `headerCheckboxSelectionFilteredOnly = true`
  */
 export type SelectionEventSourceType =
     'api' |
     'apiSelectAll' |
     'apiSelectAllFiltered' |
     'checkboxSelected' |
-    'parentSelected' |
     'rowClicked' |
     'rowDataChanged' |
     'rowGroupChanged' |
+    'selectableChanged' |
     'spacePressed' |
-    'uiSelectAll';
+    'uiSelectAll' |
+    'uiSelectAllFiltered';
 
 export interface SelectionChangedEvent<TData = any> extends AgGridEvent<TData> { 
     source: SelectionEventSourceType;
