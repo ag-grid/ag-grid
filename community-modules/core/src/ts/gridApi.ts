@@ -1869,6 +1869,10 @@ export class GridApi<TData = any> {
         return this.rowModel.getRowCount();
     }
 
+    /** Set to `true` to enable pagination or `false` to disable pagination. */
+    public setPagination(value: boolean) {
+        this.gridOptionsService.set('pagination', value);
+    }
     /**
      * Returns `true` when the last page is known.
      * This will always be `true` if you are using the Client-Side Row Model for pagination.

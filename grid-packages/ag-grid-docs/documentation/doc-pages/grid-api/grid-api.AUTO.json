@@ -1322,6 +1322,10 @@
     "description": "/** Returns the total number of displayed rows. */",
     "type": { "arguments": {}, "returnType": "number" }
   },
+  "setPagination": {
+    "description": "/** Set to `true` to enable pagination or `false` to disable pagination. */",
+    "type": { "arguments": { "value": "boolean" } }
+  },
   "paginationIsLastPageFound": {
     "description": "/** Returns `true` when the last page is known.\n     * This will always be `true` if you are using the Client-Side Row Model for pagination.\n     * Returns `false` when the last page is not known; this only happens when using Infinite Row Model.\n     */",
     "type": { "arguments": {}, "returnType": "boolean" }
