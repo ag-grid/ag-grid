@@ -6,13 +6,12 @@ const gridOptions: GridOptions = {
       { field: 'athlete' },
     ],
     autoGroupColumnDef: {
-      cellRendererSelector: (params) => {
-        if (params.node.key === 'Australia' || params.node.key === 'Norway') {
-            return;
-        } else {
+        cellRendererSelector: (params) => {
+            if (['Australia', 'Norway'].includes(params.node.key!)) {
+                return; // use Default Cell Renderer
+            }
             return { component: 'agGroupCellRenderer' };
-        }
-      },
+        },
     },
 };
 

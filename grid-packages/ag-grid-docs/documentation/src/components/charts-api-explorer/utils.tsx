@@ -38,3 +38,7 @@ export const getUrlParameters = () => {
 
     return parameters;
 };
+
+export function isXAxisNumeric(chartType: string) {
+    return ['scatter', 'histogram'].includes(chartType);
+}

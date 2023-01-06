@@ -77,9 +77,10 @@ class GridExample extends Component {
                     return {
                         fontWeight: 'bold',
                     };
-                } else {
-                    return undefined;
                 }
+                return {
+                    fontWeight: 'normal'
+                };
             }
         };
 
