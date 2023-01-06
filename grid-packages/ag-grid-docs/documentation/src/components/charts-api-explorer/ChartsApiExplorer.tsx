@@ -14,7 +14,7 @@ const createOptionsJson = (chartType, options) => {
     const json = {
         ...options,
         axes: optionsHasAxes ? [{
-            type: isXAxisNumeric(chartType),
+            type: isXAxisNumeric(chartType) ? 'number' : 'category',
             position: 'bottom',
             ...(options.axes[0] || {}),
         },
