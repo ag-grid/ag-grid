@@ -94,8 +94,6 @@ export class Pagination {
     readonly highlightStyle = new PaginationMarkerStyle();
     readonly label = new PaginationLabel();
 
-    private currentPage: number = 0;
-
     constructor(
         private readonly chartUpdateCallback: (type: ChartUpdateType) => void,
         private readonly pageUpdateCallback: (newPage: number) => void,
@@ -126,12 +124,22 @@ export class Pagination {
     set totalPages(value: number) {
         if (this._totalPages !== value) {
             this._totalPages = value;
-            this.setCurrentPage(0);
             this.update();
         }
     }
     get totalPages() {
         return this._totalPages;
+    }
+
+    private _currentPage: number = 0;
+    set currentPage(value: number) {
+        if (this._currentPage !== value) {
+            this._currentPage = value;
+            this.update();
+        }
+    }
+    get currentPage() {
+        return this._currentPage;
     }
 
     private _visible: boolean = true;
@@ -339,18 +347,6 @@ export class Pagination {
 
     private decrementPage() {
         this.currentPage = Math.max(this.currentPage - 1, 0);
-    }
-
-    getCurrentPage() {
-        return this.currentPage;
-    }
-
-    setCurrentPage(page: number) {
-        if (this.currentPage === page) {
-            return;
-        }
-
-        this.currentPage = page;
     }
 
     onMarkerShapeChange() {
