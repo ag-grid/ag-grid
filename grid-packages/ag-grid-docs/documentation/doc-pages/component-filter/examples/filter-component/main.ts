@@ -8,7 +8,6 @@ const columnDefs: ColDef[] = [
     {
         field: 'name',
         filter: PartialMatchFilter,
-        menuTabs: ['filterMenuTab'],
     },
 ]
 
