@@ -1323,7 +1323,7 @@
     "type": { "arguments": {}, "returnType": "number" }
   },
   "setPagination": {
-    "description": "/** Set to `true` to enable pagination or `false` to disable pagination. */",
+    "description": "/** Enable / disable pagination.\n     *  - `true` to enable pagination\n     *  - `false` to disable pagination\n     */",
     "type": { "arguments": { "value": "boolean" } }
   },
   "paginationIsLastPageFound": {

@@ -1869,7 +1869,11 @@ export class GridApi<TData = any> {
         return this.rowModel.getRowCount();
     }
 
-    /** Set to `true` to enable pagination or `false` to disable pagination. */
+    /**
+     * Enable / disable pagination.
+     *  - `true` to enable pagination
+     *  - `false` to disable pagination
+     */
     public setPagination(value: boolean) {
         this.gridOptionsService.set('pagination', value);
     }
