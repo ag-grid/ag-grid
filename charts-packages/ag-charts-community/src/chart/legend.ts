@@ -171,6 +171,8 @@ export class Legend {
     private oldSize: [number, number] = [0, 0];
     private pages: Page[] = [];
     private pagination: Pagination;
+    /** Item index to track on re-pagination, so current page updates appropriately. */
+    private paginationTrackingIndex: number = 0;
 
     readonly item = new LegendItem();
     readonly listeners = new LegendListeners();
@@ -431,7 +433,7 @@ export class Legend {
 
         this.pages = pages;
 
-        const pageNumber = this.pagination.getCurrentPage();
+        const pageNumber = this.pagination.currentPage;
         const page = this.pages[pageNumber];
 
         if (this.pages.length < 1 || !page) {
@@ -461,6 +463,8 @@ export class Legend {
         let maxPageWidth = 0;
         let maxPageHeight = 0;
         let count = 0;
+
+        const trackingIndex = Math.min(this.paginationTrackingIndex, bboxes.length);
 
         const stableOutput = (lastPassPaginationBBox: BBox) => {
             const { width, height } = lastPassPaginationBBox;
@@ -498,6 +502,9 @@ export class Legend {
 
             lastPassPaginationBBox = this.pagination.computeBBox();
         } while (!stableOutput(lastPassPaginationBBox));
+
+        const newCurrentPage = pages.findIndex((p) => p.endIndex >= trackingIndex);
+        this.pagination.currentPage = Math.min(Math.max(newCurrentPage, 0), pages.length - 1);
 
         // Top-left corner of the first legend item.
         const startX = width / 2;
@@ -576,8 +583,23 @@ export class Legend {
     }
 
     updatePageNumber(pageNumber: number) {
-        const startX = this.size[0] / 2;
-        const startY = this.size[1] / 2;
+        const { pages, size } = this;
+
+        // Track an item on the page in re-pagination cases (e.g. resize).
+        const { startIndex, endIndex } = pages[pageNumber];
+        if (startIndex === 0) {
+            // Stay on first page on pagination update.
+            this.paginationTrackingIndex = 0;
+        } else if (pageNumber === pages.length - 1) {
+            // Stay on last page on pagination update.
+            this.paginationTrackingIndex = endIndex;
+        } else {
+            // Track the middle item on the page).
+            this.paginationTrackingIndex = Math.floor((startIndex + endIndex) / 2);
+        }
+
+        const startX = size[0] / 2;
+        const startY = size[1] / 2;
         this.updatePositions(startX, startY, pageNumber);
         this.chart.update(ChartUpdateType.SCENE_RENDER);
     }
