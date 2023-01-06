@@ -5,7 +5,7 @@ enterprise: true
 
 The Chart Tool Panels provide an interactive way to configure the chart. They are available for all chart types and allow an easy way to make changes to the chart data, format and settings.
 
-To open and close the panels, there is a button on the middle right side of the chart (or left side if [Right to Left is enabled](/rtl/)). To open and close the panels programatically using the Grid API, see [Open/Close Chart Tool Panel](/integrated-charts-api-chart-tool-panel/).
+To open and close the panels, there is Chart Tool Panels Button on the middle right side of the chart (or left side if [Right to Left is enabled](/rtl/)). To open and close the panels programatically using the Grid API, see [Open / Close Chart Tool Panel](/integrated-charts-api-chart-tool-panel/).
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px; gap: 40px">
     <figure style="flex: 2; margin: 0;">

@@ -41,7 +41,7 @@ The following example demonstrates when the described events occur by writing to
 
 - Shrink or expand the selection by a few cells to see the "Changed range selection of chart with ID id-xxxxxxxxxxxx" logged.
 
-- Click the hamburger icon inside the chart dialog to show chart settings and switch to a column chart. Notice that a "Changed options of chart with ID id-xxxxxxxxxxxxx" message has been logged to the console.
+- Click the [Chart Tool Panels Button](/integrated-charts-chart-tool-panels) inside the chart dialog to show chart settings and switch to a column chart. Notice that a "Changed options of chart with ID id-xxxxxxxxxxxxx" message has been logged to the console.
 
 - Close the chart dialog to see the "Destroyed chart with ID id-xxxxxxxxxxx" message logged.
 
