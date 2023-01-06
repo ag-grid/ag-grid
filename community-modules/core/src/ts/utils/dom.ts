@@ -426,37 +426,8 @@ export function formatSize(size: number | string) {
     return size;
 }
 
-/**
- * Returns true if it is a DOM node
- * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
- * @param {any} o
- * @return {boolean}
- */
-export function isNode(o: any): boolean {
-    return (
-        typeof Node === 'function'
-            ? o instanceof Node
-            : o && typeof o === 'object' && typeof o.nodeType === 'number' && typeof o.nodeName === 'string'
-    );
-}
-
-//
-/**
- * Returns true if it is a DOM element
- * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
- * @param {any} o
- * @returns {boolean}
- */
-export function isElement(o: any): boolean {
-    return (
-        typeof HTMLElement === 'function'
-            ? o instanceof HTMLElement //DOM2
-            : o && isNonNullObject(o) && o.nodeType === 1 && typeof o.nodeName === 'string'
-    );
-}
-
 export function isNodeOrElement(o: any) {
-    return isNode(o) || isElement(o);
+    return o instanceof Node || o instanceof HTMLElement;
 }
 
 /**
