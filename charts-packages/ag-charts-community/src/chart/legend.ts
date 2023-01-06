@@ -467,6 +467,8 @@ export class Legend {
             return width === paginationBBox.width && height === paginationBBox.height;
         };
 
+        const forceResult = this.maxWidth !== undefined || this.maxHeight !== undefined;
+
         do {
             if (count++ > 10) {
                 console.warn('AG Charts - unable to find stable legend layout.');
@@ -484,6 +486,7 @@ export class Legend {
                 maxWidth,
                 itemPaddingY,
                 itemPaddingX,
+                forceResult,
             });
 
             if (layout) {

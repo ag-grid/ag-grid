@@ -17,6 +17,7 @@ export function gridLayout({
     maxWidth,
     itemPaddingY = 0,
     itemPaddingX = 0,
+    forceResult = false,
 }: {
     orientation: AgChartOrientation;
     bboxes: BBox[];
@@ -24,6 +25,7 @@ export function gridLayout({
     maxWidth: number;
     itemPaddingY?: number;
     itemPaddingX?: number;
+    forceResult?: boolean;
 }): { pages: Page[]; maxPageWidth: number; maxPageHeight: number } | undefined {
     const horizontal = orientation === 'horizontal';
     const primary: DimensionProps = {
@@ -42,7 +44,7 @@ export function gridLayout({
     while (processedBBoxCount < bboxes.length) {
         const unprocessedBBoxes = bboxes.slice(processedBBoxCount);
 
-        const result = processBBoxes(unprocessedBBoxes, processedBBoxCount, primary, secondary);
+        const result = processBBoxes(unprocessedBBoxes, processedBBoxCount, primary, secondary, forceResult);
 
         if (!result) {
             return;
@@ -65,20 +67,24 @@ function processBBoxes(
     bboxes: BBox[],
     indexOffset: number,
     primary: DimensionProps,
-    secondary: DimensionProps
+    secondary: DimensionProps,
+    forceResult: boolean
 ): { processedBBoxCount: number; pageIndices: number[][] } | undefined {
     // If calculatePage() fails on the first guess, we could use the number of items that fit
     // as a good guess for the next iteration.
     const minGuess = 1;
-    const startingGuess = estimateStartingGuess(bboxes, primary);
+    let startingGuess = estimateStartingGuess(bboxes, primary);
 
     if (startingGuess < minGuess) {
-        // Can't layout!
-        return undefined;
+        if (!forceResult) {
+            return undefined;
+        }
+        // Legend constraints too small! Display at least one row/column if forceResult is true
+        startingGuess = minGuess;
     }
 
     for (let guess = startingGuess; guess >= minGuess; guess--) {
-        const pageIndices = calculatePage(bboxes, indexOffset, guess, primary, secondary);
+        const pageIndices = calculatePage(bboxes, indexOffset, guess, primary, secondary, forceResult);
 
         if (pageIndices == null && guess <= minGuess) {
             // Can't layout!
@@ -110,7 +116,8 @@ function calculatePage(
     indexOffset: number,
     primaryCount: number,
     primary: DimensionProps,
-    secondary: DimensionProps
+    secondary: DimensionProps,
+    forceResult: boolean
 ): number[][] | undefined | number {
     const result: number[][] = [];
 
@@ -136,14 +143,15 @@ function calculatePage(
         currentMaxSecondary = Math.max(currentMaxSecondary, secondary.fn(bboxes[bboxIndex]) + secondary.padding);
 
         const currentSecondaryDimension = sumSecondary + currentMaxSecondary;
-        if (currentSecondaryDimension > secondary.max) {
+        const returnResult = !forceResult || result.length > 0;
+        if (currentSecondaryDimension > secondary.max && returnResult) {
             // Breached max secondary dimension size, return indices accumlated so far (but not in-progress row/column).
             currentPrimaryIndices = [];
             break;
         }
 
         const sumPrimary = maxPrimaryValues.reduce((sum, next) => sum + next, 0);
-        if (sumPrimary > primary.max) {
+        if (sumPrimary > primary.max && returnResult) {
             // Breached max main dimension size.
             if (maxPrimaryValues.length < primaryCount) {
                 // Feedback as guess for next iteration if we're on the first round still.
