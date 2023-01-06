@@ -85,7 +85,7 @@ The example below shows panels being reorganised with the `format` tool panel op
 
 <grid-example title='Customising chart tool panels' name='customise-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
-### Customising Settings Panel chart groups
+### Customising Settings Panel Chart Groups
 
 The list of chart groups shown on the Settings Panel can be customised using the `chartToolPanelsDef.settingsPanel.chartGroupsDef` grid option. The full list of chart groups are as follows:
 
@@ -142,7 +142,7 @@ The example below shows a reordering of chart groups with some chart groups and 
 
 <grid-example title='Customising settings panel chart groups' name='customise-chart-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
-### Customising Data Panel groups
+### Customising Data Panel Groups
 
 The groups shown on the Data Panel can be customised using the `chartToolPanelsDef.dataPanel.groups` grid option. The list specified also indicates the order the groups are shown and whether they are open by default. If `chartToolPanelsDef.dataPanel.groups` is not specified, all groups are shown and are open by default.
 
@@ -173,7 +173,7 @@ The following example shows the data panel with:
 
 <grid-example title='Customising data panel groups' name='customise-data-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
-### Customising Format Panel groups
+### Customising Format Panel Groups
 
 The groups shown on the Format Panel can be customised using the `chartToolPanelsDef.formatPanel.groups` grid option. The list specified also indicates the order the groups are shown and whether they are open by default. If `chartToolPanelsDef.formatPanel.groups` is not specified, all groups are shown and are closed by default.
 
@@ -210,7 +210,7 @@ The following example shows the format panel with:
 
 <grid-example title='Customising format panel groups' name='customise-format-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
-## Showing legacy chart toolbar
+## Showing Legacy Chart Toolbar
 
 Since v29 of AG Grid, the Chart Tool Panels Button is the default way to open the Chart Tool Panels. To use the legacy 'hamburger' menu option from the Chart Toolbar, set the grid option `suppressChartToolPanelsButton=true`.
 
