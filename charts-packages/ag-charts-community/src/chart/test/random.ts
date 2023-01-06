@@ -1,4 +1,3 @@
-// From https://stackoverflow.com/a/47593316:
 function sfc32(a: number, b: number, c: number, d: number) {
     return function () {
         a >>>= 0;
