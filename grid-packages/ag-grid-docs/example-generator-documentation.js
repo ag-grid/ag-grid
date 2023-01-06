@@ -519,9 +519,6 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     // replace Typescript AgChart. with Javascript agCharts.AgChart.
                     jsFile = jsFile.replace(/(?<!\.)AgChart\./g, 'agCharts.AgChart.');
 
-                    jsFile = jsFile.replace(`const columnDefs = [`, `/** @type {(import('ag-grid-community').ColDef | import('ag-grid-community').ColGroupDef )[]} */\nconst columnDefs = [`);
-                    jsFile = jsFile.replace(`const gridOptions = {`, `/** @type {import('ag-grid-community').GridOptions} */\nconst gridOptions = {`);
-
                     const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');
                     jsFiles[jsFileName] = jsFile;
                 });

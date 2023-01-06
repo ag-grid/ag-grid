@@ -140,7 +140,7 @@ const getFrameworkFiles = (framework, internalFramework) => {
     return files;
 };
 
-export const getExampleFiles = (exampleInfo, includePackageFile = false) => {
+export const getExampleFiles = (exampleInfo, forPlunker = false) => {
     const { sourcePath, framework, internalFramework, boilerplatePath } = exampleInfo;
 
     const filesForExample = exampleInfo
@@ -164,7 +164,7 @@ export const getExampleFiles = (exampleInfo, includePackageFile = false) => {
     filesForExample.filter(f => {
 
         const isIndexFile = f.path === 'index.html';
-        if (includePackageFile) {
+        if (forPlunker) {
             return !isIndexFile;
         } else {
             const isPackageFile = f.path === 'package.json';
@@ -177,6 +177,12 @@ export const getExampleFiles = (exampleInfo, includePackageFile = false) => {
         const sourcePromise = (f.content ?? fetch(f.publicURL).then(response => response.text()));
         const promise = sourcePromise
             .then(source => {
+
+                if (forPlunker && f.path === 'main.js') {
+                    source = source.replace(`const columnDefs = [`, `/** @type {(import('ag-grid-community').ColDef | import('ag-grid-community').ColGroupDef )[]} */\nconst columnDefs = [`);
+                    source = source.replace(`const gridOptions = {`, `/** @type {import('ag-grid-community').GridOptions} */\nconst gridOptions = {`);
+                }
+
                 files[f.path] = { source, isFramework: f.isFramework }
             });
 
