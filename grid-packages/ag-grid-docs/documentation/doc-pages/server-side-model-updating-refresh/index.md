@@ -2,9 +2,7 @@
 title: "SSRM Refresh"
 enterprise: true
 ---
-
-It is possible to get the grid to refresh all of the loaded rows.
-This is used to update the UI when the data has changed at the source.
+This section demonstrates refreshing rows in order to reflect changes at the source while using the Server-Side Row Model (SSRM).
 
 ## Refresh API
 

@@ -44,8 +44,6 @@ var data = [];
 // IIFE to create initial data
 (function () {   
 
-  const lastUpdated = new Date();  
-
   for (let i = 0; i < products.length; i++) {
         let product = products[i];
         for (let j = 0; j < portfolios.length; j++) {
@@ -61,63 +59,53 @@ var data = [];
                 );
                 for (let l = 0; l < tradeCount; l++) {
                     let trade = createTradeRecord(product, portfolio, book);
-             
-                    trade.updateCount = 0;
-                    trade.lastUpdated = lastUpdated;
                         
                     data.push(trade);
                 }
             }
         }
     }
-    console.log('initial data: ', data);
 })();
 
 var dataObservers = [];
 
-setInterval(() => randomUpdates(), 1000);
-let numRemove = 500;
-let numAdd = 500;
-let numUpdate = 500;
-
-function randomUpdates() {   
-    // removes
-    const remove = [];
-    for(let i=0; i<(Math.ceil(numRemove)); i++) {      
-        const idx = randomBetween(0, data.length-1);
-        const d = data[idx];
-        data.splice(idx, 1);
-        remove.push(d);
-    }  
-
-    // updates
-    const update = [];
-    for(let i=0; i< numUpdate; i++) {            
-        const idx = randomBetween(0, data.length-1);
-        const d = data[idx];
-        d.previous = d.current;
-        d.current = d.previous + 13;
-        d.lastUpdated = new Date();
-        d.updateCount = ++d.updateCount;
-        update.push(d);
-    } 
-
-    // adds
-    const add = [];    
-    const lastUpdate = new Date();
-    for(let i=0; i<(Math.ceil(numAdd)); i++) {       
-        const product = products[randomBetween(0, products.length-1)];
-        const portfolio = portfolios[randomBetween(0, portfolios.length-1)];
-        const book = createBookName();        
-        const newRecord = createTradeRecord(product, portfolio, book);
-        newRecord.lastUpdated = lastUpdate;
-        newRecord.updateCount = 0;
-        add.push(newRecord);
+function removeRow(idToRemove) {
+    const idxToRemove = data.findIndex(item => String(item.tradeId) === idToRemove);
+    if (idxToRemove < 0) {
+        return;
     }
-    data.push(...add);
+
+    const removedRow = data[idxToRemove];
+    data.splice(idxToRemove, 1);
 
     // notify observers
-    dataObservers.forEach(obs => obs({update, add, remove})); 
+    dataObservers.forEach(obs => obs({ remove: [removedRow] })); 
+}
+
+function updateRow(idToUpdate) {
+    const idxToUpdate = data.findIndex(item => String(item.tradeId) === idToUpdate);
+    if (idxToUpdate < 0) {
+        return;
+    }
+
+    const updatedRow = data[idxToUpdate];
+    updatedRow.previous = updatedRow.current;
+    updatedRow.current = updatedRow.previous + 13;
+
+    // notify observers
+    dataObservers.forEach(obs => obs({ update: [updatedRow] })); 
+}
+
+function addRow(addIndex) {
+    const product = products[randomBetween(0, products.length-1)];
+    const portfolio = portfolios[randomBetween(0, portfolios.length-1)];
+    const book = createBookName();        
+    const newRecord = createTradeRecord(product, portfolio, book);
+
+    data.splice(addIndex, 0, newRecord);
+
+    // notify observers
+    dataObservers.forEach(obs => obs({ addIndex, add: [newRecord] }));
 }
 
 function randomBetween(min, max) {

@@ -44,8 +44,6 @@ var data = [];
 // IIFE to create initial data
 (function () {   
 
-  const lastUpdated = new Date();  
-
   for (let i = 0; i < products.length; i++) {
         let product = products[i];
         for (let j = 0; j < portfolios.length; j++) {
@@ -61,16 +59,12 @@ var data = [];
                 );
                 for (let l = 0; l < tradeCount; l++) {
                     let trade = createTradeRecord(product, portfolio, book);
-             
-                    trade.updateCount = 0;
-                    trade.lastUpdated = lastUpdated;
                         
                     data.push(trade);
                 }
             }
         }
     }
-    console.log('initial data: ', data);
 })();
 
 var dataObservers = [];
@@ -97,21 +91,16 @@ function randomUpdates() {
         const d = data[idx];
         d.previous = d.current;
         d.current = d.previous + 13;
-        d.lastUpdated = new Date();
-        d.updateCount = ++d.updateCount;
         update.push(d);
     } 
 
     // adds
-    const add = [];    
-    const lastUpdate = new Date();
+    const add = [];
     for(let i=0; i<(Math.ceil(numAdd)); i++) {       
         const product = products[randomBetween(0, products.length-1)];
         const portfolio = portfolios[randomBetween(0, portfolios.length-1)];
         const book = createBookName();        
         const newRecord = createTradeRecord(product, portfolio, book);
-        newRecord.lastUpdated = lastUpdate;
-        newRecord.updateCount = 0;
         add.push(newRecord);
     }
     data.push(...add);

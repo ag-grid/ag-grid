@@ -2,6 +2,9 @@ import { Grid, ColDef, GridOptions, IServerSideGetRowsParams, ServerSideTransact
 
 declare var FakeServer: any;
 declare var dataObservers: any;
+declare var removeRow: any;
+declare var addRow: any;
+declare var updateRow: any;
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
@@ -9,21 +12,6 @@ const columnDefs: ColDef[] = [
     { field: 'book' },    
     { field: 'previous' },
     { field: 'current' },
-    {
-      field: 'lastUpdated',
-      wrapHeaderText: true,
-      autoHeaderHeight: true,
-      valueFormatter: (params) => {
-        const ts = params.data!.lastUpdated;
-        if (ts) {
-          const hh_mm_ss = ts.toLocaleString().split(' ')[1];   
-          const SSS = ts.getMilliseconds();       
-          return `${hh_mm_ss}:${SSS}`;
-        }
-        return '';
-      },
-    },
-    { field: 'updateCount' },
 ];
 
 const gridOptions: GridOptions = {
@@ -37,21 +25,7 @@ const gridOptions: GridOptions = {
     minWidth: 220,
   },
   enableCellChangeFlash: true,
-  getRowId: (params) => {  
-    var rowId = '';
-    if (params.parentKeys && params.parentKeys.length) {
-      rowId += params.parentKeys.join('-') + '-';
-    }
-    const groupCols = params.columnApi.getRowGroupColumns();
-    if (groupCols.length > params.level) {
-      const thisGroupCol = groupCols[params.level];
-      rowId += params.data[thisGroupCol.getColDef().field!] + '-';
-    }
-    if (params.data.tradeId != null) {
-      rowId += params.data.tradeId;
-    }
-    return rowId;
-  },
+  getRowId: (params) => String(params.data.tradeId),
   onGridReady: (params) => {
     // setup the fake server
     const server = new FakeServer();
@@ -64,10 +38,12 @@ const gridOptions: GridOptions = {
 
     // register interest in data changes
     dataObservers.push((t: ServerSideTransaction) => {
-      params.api.applyServerSideTransactionAsync(t);
+      const result = params.api.applyServerSideTransaction(t);
+      console.log('[Example] - Applied transaction:', t, 'Result:', result);
     });
   },
 
+  rowSelection: 'single',
   rowModelType: 'serverSide',
   cacheBlockSize: 100,
   maxBlocksInCache: 2,
@@ -75,11 +51,42 @@ const gridOptions: GridOptions = {
   maxConcurrentDatasourceRequests: 3,
 };
 
+function addAboveSelectedRow() {
+  const selectedRows = gridOptions.api!.getSelectedNodes();
+  if (selectedRows.length === 0) {
+    console.warn('[Example] No row selected.');
+    return;
+  }
+
+  const rowIndex = selectedRows[0].rowIndex;
+  addRow(rowIndex);
+}
+
+function updateSelectedRow() {
+  const selectedRows = gridOptions.api!.getSelectedNodes();
+  if (selectedRows.length === 0) {
+    console.warn('[Example] No row selected.');
+    return;
+  }
+
+  const rowId = selectedRows[0].id;
+  updateRow(rowId);
+}
+
+function removeSelectedRow() {
+  const selectedRows = gridOptions.api!.getSelectedNodes();
+  if (selectedRows.length === 0) {
+    console.warn('[Example] No row selected.');
+    return;
+  }
+
+  const rowId = selectedRows[0].id;
+  removeRow(rowId);
+}
+
 const getServerSideDatasource = (server: any) => {
   return {
     getRows: (params: IServerSideGetRowsParams) => {
-      // console.log('[Datasource] - rows requested by grid: ', params.request);
-
       const response = server.getData(params.request);
 
       // adding delay to simulate real server call

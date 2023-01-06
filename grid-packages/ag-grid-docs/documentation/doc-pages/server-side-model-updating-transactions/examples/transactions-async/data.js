@@ -70,14 +70,13 @@ var data = [];
             }
         }
     }
-    console.log('initial data: ', data);
 })();
 
 var dataObservers = [];
 
 setInterval(() => randomUpdates(), 10);
-let numRemove = 10;
-let numAdd = 10;
+let numRemove = 1;
+let numAdd = 1;
 let numUpdate = 10;
 
 function randomUpdates() {   

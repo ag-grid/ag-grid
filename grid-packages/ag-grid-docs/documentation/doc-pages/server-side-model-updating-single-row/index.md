@@ -1,7 +1,7 @@
 ---
 title: "SSRM - Single Row Updates"
 ---
-It is possible to directly update row data using the Row Node API. This can be used to update the UI to reflect changes in row data.
+This section demonstrates updating rows directly while using the Server-Side Row Model (SSRM).
 
 ## Updating Rows API
 

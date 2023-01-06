@@ -78,8 +78,6 @@ const gridOptions: GridOptions = {
 function getServerSideDatasource(server: any) {
   return {
     getRows: (params: IServerSideGetRowsParams) => {
-      // console.log('[Datasource] - rows requested by grid: ', params.request);
-
       const response = server.getData(params.request);
 
       // adding delay to simulate real server call

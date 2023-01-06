@@ -9,21 +9,6 @@ const columnDefs: ColDef[] = [
     { field: 'book' },    
     { field: 'previous' },
     { field: 'current' },
-    {
-      field: 'lastUpdated',
-      wrapHeaderText: true,
-      autoHeaderHeight: true,
-      valueFormatter: (params) => {
-        const ts = params.data!.lastUpdated;
-        if (ts) {
-          const hh_mm_ss = ts.toLocaleString().split(' ')[1];   
-          const SSS = ts.getMilliseconds();       
-          return `${hh_mm_ss}:${SSS}`;
-        }
-        return '';
-      },
-    },
-    { field: 'updateCount' },
 ];
 
 const gridOptions: GridOptions = {
@@ -38,7 +23,7 @@ const gridOptions: GridOptions = {
   },
   rowGroupPanelShow: 'always',
   enableCellChangeFlash: true,
-  getRowId: (params) => {  
+  getRowId: (params) => {
     var rowId = '';
     if (params.parentKeys && params.parentKeys.length) {
       rowId += params.parentKeys.join('-') + '-';
@@ -52,6 +37,9 @@ const gridOptions: GridOptions = {
       rowId += params.data.tradeId;
     }
     return rowId;
+  },
+  isServerSideGroupOpenByDefault: (params) => {
+    return params.rowNode.level === 0 && params.rowNode.data.portfolio === 'Income';
   },
   onGridReady: (params) => {
     // setup the fake server
@@ -110,8 +98,6 @@ const gridOptions: GridOptions = {
 function getServerSideDatasource(server: any) {
   return {
     getRows: (params: IServerSideGetRowsParams) => {
-      // console.log('[Datasource] - rows requested by grid: ', params.request);
-
       const response = server.getData(params.request);
 
       // adding delay to simulate real server call
