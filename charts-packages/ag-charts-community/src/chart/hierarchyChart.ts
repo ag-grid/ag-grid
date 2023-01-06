@@ -17,46 +17,21 @@ export class HierarchyChart extends Chart {
     async performLayout() {
         this.scene.root!!.visible = true;
 
-        const { width, height, legend } = this;
+        const { width, height, legend, padding } = this;
 
-        const shrinkRect = new BBox(0, 0, width, height);
+        let shrinkRect = new BBox(0, 0, width, height);
+        shrinkRect.shrink(padding.left, 'left');
+        shrinkRect.shrink(padding.top, 'top');
+        shrinkRect.shrink(padding.right, 'right');
+        shrinkRect.shrink(padding.bottom, 'bottom');
 
-        const { captionAutoPadding = 0 } = this.positionCaptions();
-        this.positionLegend(captionAutoPadding);
+        shrinkRect = this.positionCaptions(shrinkRect);
+        shrinkRect = this.positionLegend(shrinkRect);
 
-        if (legend.enabled && legend.data.length) {
-            const { legendAutoPadding } = this;
-            const legendPadding = this.legend.spacing;
-
-            shrinkRect.x += legendAutoPadding.left;
-            shrinkRect.y += legendAutoPadding.top;
-            shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
-            shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
-
-            switch (this.legend.position) {
-                case 'right':
-                    shrinkRect.width -= legendPadding;
-                    break;
-                case 'bottom':
-                    shrinkRect.height -= legendPadding;
-                    break;
-                case 'left':
-                    shrinkRect.x += legendPadding;
-                    shrinkRect.width -= legendPadding;
-                    break;
-                case 'top':
-                    shrinkRect.y += legendPadding;
-                    shrinkRect.height -= legendPadding;
-                    break;
-            }
+        if (legend.visible && legend.enabled && legend.data.length) {
+            const legendPadding = legend.spacing;
+            shrinkRect.shrink(legendPadding, legend.position);
         }
-
-        const { padding } = this;
-        shrinkRect.x += padding.left;
-        shrinkRect.width -= padding.left + padding.right;
-
-        shrinkRect.y += padding.top + captionAutoPadding;
-        shrinkRect.height -= padding.top + captionAutoPadding + padding.bottom;
 
         this.seriesRect = shrinkRect;
         this.series.forEach((series) => {
