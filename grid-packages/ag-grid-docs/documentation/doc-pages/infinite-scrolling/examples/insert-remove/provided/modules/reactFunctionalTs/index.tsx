@@ -119,8 +119,9 @@ const GridExample = () => {
             return {
                 fontWeight: 'bold',
             };
-        } else {
-            return undefined;
+        }
+        return {
+            fontWeight: 'normal'
         }
     }, []);
 
