@@ -1,4 +1,4 @@
-import { _, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
+import { _, Autowired, Component, PostConstruct, AgSlider, AgGroupComponent, RefSelector, AgGroupComponentParams } from "@ag-grid-community/core";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
@@ -19,6 +19,7 @@ export default class TitlePanel extends Component {
     @PostConstruct
     private init() {
         this.initFontPanel();
+        this.initSpacing();
         this.titlePlaceholder = this.chartTranslationService.translate('titlePlaceholder');
     }
 
@@ -75,6 +76,19 @@ export default class TitlePanel extends Component {
         this.addManagedListener(this.eventService, 'chartTitleEdit', () => {
             fontPanelComp.setEnabled(this.hasTitle());
         });
+    }
+
+    private initSpacing() {
+        const spacingSlider = this.createBean(new AgSlider());
+        const currentValue = this.chartOptionsService.getChartOption<number>('title.spacing');
+        spacingSlider.setLabel(this.chartTranslationService.translate('spacing'))
+            .setMaxValue(Math.max(currentValue, 50))
+            .setValue(`${currentValue}`)
+            .setTextFieldWidth(45)
+            .onValueChange(newValue => this.chartOptionsService.setChartOption('title.spacing', newValue));
+
+        this.activePanels[0].getGui().appendChild(spacingSlider.getGui());
+        this.activePanels.push(spacingSlider);
     }
 
     private getOption<T = string>(expression: string): T {
