@@ -89,7 +89,7 @@ The following example demonstrates filtering with multiple group columns. Note t
 
 <grid-example title='Filtering with Multiple Group Columns' name='filtering-multiple-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 
-## Applying filter model to grouped columns
+## Applying Filter Model to Grouped Columns
 
 When a column is grouped, and the group column can be filtered, in order to set the filter via the Grid API on the group column (`setFilterModel`), it needs to be referenced with a particular name that’s different from the group column name itself. The reference depends on the `groupDisplayType` used:
 
