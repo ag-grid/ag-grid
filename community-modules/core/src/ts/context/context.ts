@@ -101,7 +101,7 @@ export class Context {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
             }
             const constructorParams = this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
-            const newInstance = applyToConstructor(beanEntry.bean, constructorParams);
+            const newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, [null, ...constructorParams]));
             beanEntry.beanInstance = newInstance;
         });
 
@@ -288,14 +288,6 @@ export class Context {
 
         return [];
     }
-}
-
-// taken from: http://stackoverflow.com/questions/3362471/how-can-i-call-a-javascript-constructor-using-call-or-apply
-// allows calling 'apply' on a constructor
-function applyToConstructor(constructor: Function, argArray: any[]) {
-    const args = [null].concat(argArray);
-    const factoryFunction = constructor.bind.apply(constructor, args);
-    return new factoryFunction();
 }
 
 export function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
