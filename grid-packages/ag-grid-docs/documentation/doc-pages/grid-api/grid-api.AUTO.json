@@ -1323,7 +1323,7 @@
     "type": { "arguments": {}, "returnType": "number" }
   },
   "setPagination": {
-    "description": "/** Enable / disable pagination.\n     *  - `true` to enable pagination\n     *  - `false` to disable pagination\n     */",
+    "description": "/** Set whether the grid paginates the data or not.\n     *  - `true` to enable pagination\n     *  - `false` to disable pagination\n     */",
     "type": { "arguments": { "value": "boolean" } }
   },
   "paginationIsLastPageFound": {

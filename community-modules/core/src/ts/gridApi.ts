@@ -1870,7 +1870,7 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Enable / disable pagination.
+     * Set whether the grid paginates the data or not.
      *  - `true` to enable pagination
      *  - `false` to disable pagination
      */
