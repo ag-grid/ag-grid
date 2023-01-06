@@ -348,7 +348,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
             const isGroupSelectsChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
             if (isGroupSelectsChildren) {
                 const selected = this.calculateSelectedFromChildren();
-                this.setSelectedParams({ newValue: selected ?? false, source: 'parentSelected' });
+                this.setSelectedParams({ newValue: selected ?? false, source: 'selectableChanged' });
             }
         }
     }
