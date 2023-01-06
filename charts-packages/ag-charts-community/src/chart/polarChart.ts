@@ -20,54 +20,28 @@ export class PolarChart extends Chart {
     async performLayout() {
         this.scene.root!.visible = true;
 
-        const { captionAutoPadding = 0 } = this.positionCaptions();
-        this.positionLegend(captionAutoPadding);
-        this.computeSeriesRect(captionAutoPadding);
+        const { width, height, padding } = this;
+
+        let shrinkRect = new BBox(0, 0, width, height);
+        shrinkRect.shrink(padding.left, 'left');
+        shrinkRect.shrink(padding.top, 'top');
+        shrinkRect.shrink(padding.right, 'right');
+        shrinkRect.shrink(padding.bottom, 'bottom');
+
+        shrinkRect = this.positionCaptions(shrinkRect);
+        shrinkRect = this.positionLegend(shrinkRect);
+        this.computeSeriesRect(shrinkRect);
         this.computeCircle();
     }
 
-    private computeSeriesRect(captionAutoPadding: number) {
-        const { legend, padding } = this;
+    private computeSeriesRect(shrinkRect: BBox) {
+        const { legend } = this;
 
-        const shrinkRect = new BBox(0, 0, this.width, this.height);
-
-        shrinkRect.y += captionAutoPadding;
-        shrinkRect.height -= captionAutoPadding;
-
-        if (this.legend.enabled && this.legend.data.length) {
-            const legendAutoPadding = this.legendAutoPadding;
-            shrinkRect.x += legendAutoPadding.left;
-            shrinkRect.y += legendAutoPadding.top;
-            shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
-            shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
-
-            const legendPadding = this.legend.spacing;
-            switch (this.legend.position) {
-                case 'right':
-                    shrinkRect.width -= legendPadding;
-                    legend.translationX -= padding.right;
-                    break;
-                case 'bottom':
-                    shrinkRect.height -= legendPadding;
-                    legend.translationY -= padding.bottom;
-                    break;
-                case 'left':
-                    shrinkRect.x += legendPadding;
-                    shrinkRect.width -= legendPadding;
-                    legend.translationX += padding.left;
-                    break;
-                case 'top':
-                    shrinkRect.y += legendPadding;
-                    shrinkRect.height -= legendPadding;
-                    legend.translationY += padding.top;
-                    break;
-            }
+        if (legend.visible && legend.enabled && legend.data.length) {
+            const legendPadding = legend.spacing;
+            shrinkRect.shrink(legendPadding, legend.position);
         }
 
-        shrinkRect.x += padding.left;
-        shrinkRect.y += padding.top;
-        shrinkRect.width -= padding.left + padding.right;
-        shrinkRect.height -= padding.top + padding.bottom;
         this.seriesRect = shrinkRect;
     }
 

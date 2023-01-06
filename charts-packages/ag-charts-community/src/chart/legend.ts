@@ -429,7 +429,7 @@ export class Legend {
             oldSize[1] = size[1];
         }
 
-        const { pages, startX, startY } = this.updatePagination(bboxes, width, height);
+        const { pages } = this.updatePagination(bboxes, width, height);
 
         this.pages = pages;
 
@@ -444,13 +444,13 @@ export class Legend {
         this.visible = true;
 
         // Position legend items
-        this.updatePositions(startX, startY, pageNumber);
+        this.updatePositions(pageNumber);
 
         // Update legend item properties that don't affect the layout.
         this.update();
     }
 
-    updatePagination(bboxes: BBox[], width: number, height: number): { pages: Page[]; startX: number; startY: number } {
+    updatePagination(bboxes: BBox[], width: number, height: number): { pages: Page[] } {
         const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
 
         const orientation = this.getOrientation();
@@ -509,23 +509,15 @@ export class Legend {
         const newCurrentPage = pages.findIndex((p) => p.endIndex >= trackingIndex);
         this.pagination.currentPage = Math.min(Math.max(newCurrentPage, 0), pages.length - 1);
 
-        // Top-left corner of the first legend item.
-        const startX = width / 2;
-        const startY = height / 2;
-
-        this.pagination.translationX = verticalOrientation ? startX : startX + maxPageWidth;
-        this.pagination.translationY = verticalOrientation
-            ? startY + maxPageHeight
-            : startY + maxPageHeight / 2 - paginationBBox.height;
+        this.pagination.translationX = verticalOrientation ? 0 : maxPageWidth;
+        this.pagination.translationY = verticalOrientation ? maxPageHeight : maxPageHeight / 2 - paginationBBox.height;
 
         return {
             pages,
-            startX,
-            startY,
         };
     }
 
-    updatePositions(startX: number, startY: number, pageNumber: number = 0) {
+    updatePositions(pageNumber: number = 0) {
         const {
             item: { paddingY },
             itemSelection,
@@ -580,13 +572,13 @@ export class Legend {
             rowSumColumnWidths[rowIndex] = (rowSumColumnWidths[rowIndex] ?? 0) + column.columnWidth;
 
             // Round off for pixel grid alignment to work properly.
-            markerLabel.translationX = Math.floor(startX + x);
-            markerLabel.translationY = Math.floor(startY + y);
+            markerLabel.translationX = Math.floor(x);
+            markerLabel.translationY = Math.floor(y);
         });
     }
 
     updatePageNumber(pageNumber: number) {
-        const { pages, size } = this;
+        const { pages } = this;
 
         // Track an item on the page in re-pagination cases (e.g. resize).
         const { startIndex, endIndex } = pages[pageNumber];
@@ -601,9 +593,7 @@ export class Legend {
             this.paginationTrackingIndex = Math.floor((startIndex + endIndex) / 2);
         }
 
-        const startX = size[0] / 2;
-        const startY = size[1] / 2;
-        this.updatePositions(startX, startY, pageNumber);
+        this.updatePositions(pageNumber);
         this.chart.update(ChartUpdateType.SCENE_RENDER);
     }
 

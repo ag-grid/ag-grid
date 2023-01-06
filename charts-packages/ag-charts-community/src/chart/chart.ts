@@ -59,8 +59,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly legend: Legend;
     readonly tooltip: Tooltip;
 
-    protected legendAutoPadding = new Padding();
-
     private _debug = false;
     set debug(value: boolean) {
         this._debug = value;
@@ -679,153 +677,131 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     abstract performLayout(): Promise<void>;
 
-    protected positionCaptions(): { captionAutoPadding?: number } {
+    protected positionCaptions(shrinkRect: BBox): BBox {
         const { _title: title, _subtitle: subtitle } = this;
-
-        const spacing = 10;
-        let paddingTop = spacing;
+        const newShrinkRect = shrinkRect.clone();
 
         if (!title) {
-            return {};
+            return newShrinkRect;
         }
         title.node.visible = title.enabled;
 
         if (title.enabled) {
-            title.node.x = this.width / 2;
-            title.node.y = paddingTop;
+            title.node.x = newShrinkRect.x + newShrinkRect.width / 2;
+            title.node.y = newShrinkRect.y;
             const titleBBox = title.node.computeBBox(); // make sure to set node's x/y, then computeBBox
-            if (titleBBox) {
-                paddingTop = titleBBox.y + titleBBox.height;
-            }
+            newShrinkRect.shrink(titleBBox.height + (title.spacing ?? 0), 'top');
         }
 
         if (!subtitle) {
-            return {};
+            return newShrinkRect;
         }
         subtitle.node.visible = title.enabled && subtitle.enabled;
 
         if (title.enabled && subtitle.enabled) {
-            subtitle.node.x = this.width / 2;
-            subtitle.node.y = paddingTop + spacing;
+            subtitle.node.x = newShrinkRect.x + newShrinkRect.width / 2;
+            subtitle.node.y = newShrinkRect.y;
             const subtitleBBox = subtitle.node.computeBBox();
-            if (subtitleBBox) {
-                paddingTop = subtitleBBox.y + subtitleBBox.height;
-            }
+            newShrinkRect.shrink(subtitleBBox.height + (subtitle.spacing ?? 0), 'top');
         }
 
-        return { captionAutoPadding: Math.floor(paddingTop) };
+        return newShrinkRect;
     }
 
-    protected legendBBox: BBox = new BBox(0, 0, 0, 0);
-
-    protected positionLegend(captionAutoPadding: number) {
-        const { legend, legendAutoPadding } = this;
-        legendAutoPadding.clear();
+    protected positionLegend(shrinkRect: BBox): BBox {
+        const { legend } = this;
+        const newShrinkRect = shrinkRect.clone();
 
         if (!legend.enabled || !legend.data.length) {
-            return;
+            return newShrinkRect;
         }
 
+        const [legendWidth, legendHeight] = this.calculateLegendDimensions(shrinkRect);
+
+        let translationX = 0;
+        let translationY = 0;
+
+        legend.performLayout(legendWidth, legendHeight);
+        const legendBBox = legend.computeBBox();
+
+        const calculateTranslationPerpendicularDimension = () => {
+            switch (legend.position) {
+                case 'top':
+                    return 0;
+                case 'bottom':
+                    return shrinkRect.height - legendBBox.height;
+                case 'left':
+                    return 0;
+                case 'right':
+                default:
+                    return shrinkRect.width - legendBBox.width;
+            }
+        };
+        if (legend.visible) {
+            switch (legend.position) {
+                case 'top':
+                case 'bottom':
+                    translationX = (shrinkRect.width - legendBBox.width) / 2;
+                    translationY = calculateTranslationPerpendicularDimension();
+                    newShrinkRect.shrink(legendBBox.height, legend.position);
+                    break;
+
+                case 'left':
+                case 'right':
+                default:
+                    translationX = calculateTranslationPerpendicularDimension();
+                    translationY = (shrinkRect.height - legendBBox.height) / 2;
+                    newShrinkRect.shrink(legendBBox.width, legend.position);
+            }
+
+            // Round off for pixel grid alignment to work properly.
+            legend.translationX = Math.floor(shrinkRect.x + translationX);
+            legend.translationY = Math.floor(shrinkRect.y + translationY);
+        }
+
+        return newShrinkRect;
+    }
+
+    private calculateLegendDimensions(shrinkRect: BBox): [number, number] {
+        const { legend } = this;
+        const { width, height } = shrinkRect;
         const legendSpacing = legend.spacing;
-        const width = this.width;
-        const height = this.height - captionAutoPadding;
 
         const aspectRatio = width / height;
         const maxCoefficient = 0.5;
         const minHeightCoefficient = 0.2;
         const minWidthCoefficient = 0.25;
 
-        // A horizontal legend should take maximum between 20 to 50 percent of the chart height if height is larger than width
-        // and maximum 20 percent of the chart height if height is smaller than width.
-        const heightCoefficient =
-            aspectRatio < 1 ? Math.min(maxCoefficient, minHeightCoefficient * (1 / aspectRatio)) : minHeightCoefficient;
-        const horizontalLegendWidth = legend.maxWidth ? Math.min(legend.maxWidth, width) : width - legendSpacing * 2;
-        const horizontalLegendHeight = legend.maxHeight
-            ? Math.min(legend.maxHeight, height)
-            : Math.round(height * heightCoefficient);
+        let legendWidth = 0;
+        let legendHeight = 0;
 
-        // A vertical legend should take maximum between 25 to 50 percent of the chart width if width is larger than height
-        // and maximum 25 percent of the chart width if width is smaller than height.
-        const widthCoefficient =
-            aspectRatio > 1 ? Math.min(maxCoefficient, minWidthCoefficient * aspectRatio) : minWidthCoefficient;
-        const verticalLegendWidth = legend.maxWidth
-            ? Math.min(legend.maxWidth, width)
-            : Math.round(width * widthCoefficient);
-        const verticalLegendHeight = legend.maxHeight ? Math.min(legend.maxHeight, height) : height - legendSpacing * 2;
-
-        let translationX = 0;
-        let translationY = 0;
-
-        let legendBBox: BBox;
         switch (legend.position) {
-            case 'bottom':
-                legend.performLayout(horizontalLegendWidth, horizontalLegendHeight);
-                legendBBox = legend.computeBBox();
-
-                if (legend.visible) {
-                    translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                    translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y;
-
-                    legendAutoPadding.bottom = legendBBox.height;
-                } else {
-                    legendAutoPadding.bottom = 0;
-                }
-
-                break;
-
             case 'top':
-                legend.performLayout(horizontalLegendWidth, horizontalLegendHeight);
-                legendBBox = legend.computeBBox();
-
-                if (legend.visible) {
-                    translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                    translationY = captionAutoPadding - legendBBox.y;
-
-                    legendAutoPadding.top = legendBBox.height;
-                } else {
-                    legendAutoPadding.top = 0;
-                }
-
+            case 'bottom':
+                // A horizontal legend should take maximum between 20 to 50 percent of the chart height if height is larger than width
+                // and maximum 20 percent of the chart height if height is smaller than width.
+                const heightCoefficient =
+                    aspectRatio < 1
+                        ? Math.min(maxCoefficient, minHeightCoefficient * (1 / aspectRatio))
+                        : minHeightCoefficient;
+                legendWidth = legend.maxWidth ? Math.min(legend.maxWidth, width) : width - legendSpacing * 2;
+                legendHeight = legend.maxHeight
+                    ? Math.min(legend.maxHeight, height)
+                    : Math.round(height * heightCoefficient);
                 break;
 
             case 'left':
-                legend.performLayout(verticalLegendWidth, verticalLegendHeight);
-                legendBBox = legend.computeBBox();
-
-                if (legend.visible) {
-                    translationX = -legendBBox.x;
-                    translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
-
-                    legendAutoPadding.left = legendBBox.width;
-                } else {
-                    legendAutoPadding.left = 0;
-                }
-
-                break;
-
-            default: // case 'right':
-                legend.performLayout(verticalLegendWidth, verticalLegendHeight);
-                legendBBox = legend.computeBBox();
-
-                if (legend.visible) {
-                    translationX = width - legendBBox.width - legendBBox.x;
-                    translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
-
-                    legendAutoPadding.right = legendBBox.width;
-                } else {
-                    legendAutoPadding.right = 0;
-                }
-
-                break;
+            case 'right':
+            default:
+                // A vertical legend should take maximum between 25 to 50 percent of the chart width if width is larger than height
+                // and maximum 25 percent of the chart width if width is smaller than height.
+                const widthCoefficient =
+                    aspectRatio > 1 ? Math.min(maxCoefficient, minWidthCoefficient * aspectRatio) : minWidthCoefficient;
+                legendWidth = legend.maxWidth ? Math.min(legend.maxWidth, width) : Math.round(width * widthCoefficient);
+                legendHeight = legend.maxHeight ? Math.min(legend.maxHeight, height) : height - legendSpacing * 2;
         }
 
-        if (legend.visible) {
-            // Round off for pixel grid alignment to work properly.
-            legend.translationX = Math.floor(translationX + legend.translationX);
-            legend.translationY = Math.floor(translationY + legend.translationY);
-
-            this.legendBBox = legend.computeBBox();
-        }
+        return [legendWidth, legendHeight];
     }
 
     // Should be available after the first layout.

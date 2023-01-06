@@ -6,6 +6,7 @@ import {
     OPT_COLOR_STRING,
     OPT_FONT_STYLE,
     OPT_FONT_WEIGHT,
+    OPT_NUMBER,
     STRING,
     Validate,
 } from './util/validation';
@@ -78,6 +79,9 @@ export class Caption {
     get color(): string | undefined {
         return this._color;
     }
+
+    @Validate(OPT_NUMBER(0))
+    public spacing?: number = Caption.PADDING;
 
     constructor() {
         const node = this.node;

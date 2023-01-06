@@ -42,6 +42,23 @@ export class BBox {
         );
     }
 
+    shrink(amount: number, position: 'top' | 'left' | 'bottom' | 'right') {
+        switch (position) {
+            case 'top':
+                this.y += amount;
+            // Deliberate fall-through.
+            case 'bottom':
+                this.height -= amount;
+                break;
+            case 'left':
+                this.x += amount;
+            // Deliberate fall-through.
+            case 'right':
+                this.width -= amount;
+                break;
+        }
+    }
+
     static merge(boxes: BBox[]) {
         let left = Infinity;
         let top = Infinity;
