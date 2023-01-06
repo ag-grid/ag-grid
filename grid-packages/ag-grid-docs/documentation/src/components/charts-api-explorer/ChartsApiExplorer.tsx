@@ -6,15 +6,15 @@ import { ChartTypeSelector } from './ChartTypeSelector';
 import { CodeView } from './CodeView';
 import styles from './ChartsApiExplorer.module.scss';
 import { Launcher } from './Launcher';
+import { isXAxisNumeric } from './utils';
 
 const createOptionsJson = (chartType, options) => {
-    const optionsHasAxes = (options.axes && Object.keys(options.axes).length > 0);
-    const isTwoNumberAxes = ['scatter', 'histogram'].includes(chartType);
+    const optionsHasAxes = Array.isArray(options.axes) && options.axes.length > 0;
 
     const json = {
         ...options,
         axes: optionsHasAxes ? [{
-            type: isTwoNumberAxes ? 'number' : 'category',
+            type: isXAxisNumeric(chartType),
             position: 'bottom',
             ...(options.axes[0] || {}),
         },

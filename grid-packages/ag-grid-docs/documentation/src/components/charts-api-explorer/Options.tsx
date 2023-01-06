@@ -15,7 +15,7 @@ import {
 import { doOnEnter } from '../key-handlers';
 import { PresetEditor, getPrimitivePropertyEditor, getPrimitiveEditor } from './Editors';
 import styles from './Options.module.scss';
-import { formatJson } from './utils';
+import { formatJson, deepClone, isXAxisNumeric } from './utils';
 
 const FunctionDefinition = ({ definition }: { definition: JsonFunction }) => {
     const lines = [`function ${definition.tsType};`];
@@ -278,18 +278,17 @@ export const Options = ({ chartType, updateOption }) => {
 
     const axesModelDesc = model.properties['axes']?.desc;
     if (axesModelDesc?.type === 'array' && axesModelDesc.elements.type === 'union') {
-        const clone = (x: any) => JSON.parse(JSON.stringify(x));
         const isAxisOfType = (axis: any, type: string) =>
             axis.model.properties['type'].desc.tsType.includes(type);
         const getAxisModel = (axisType: string, direction: 'x' | 'y') => {
-            const axis = clone((axesModelDesc.elements as any).options.find(
+            const axis = deepClone((axesModelDesc.elements as any).options.find(
                 (o) => o.type === 'nested-object' && isAxisOfType(o, axisType)
             ));
             axis.model.properties.position.desc.tsType =
                 direction === 'x' ? `'top' | 'bottom'` : `'left' | 'right'`;
             return axis;
         };
-        const isXNumeric = ['scatter', 'histogram'].includes(chartType);
+        const isXNumeric = isXAxisNumeric(chartType);
 
         // Replace "axes" array model with "axes[0]" and "axes[1]"
         // object models preserving the properties order
