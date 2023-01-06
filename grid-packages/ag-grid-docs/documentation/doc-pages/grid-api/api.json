@@ -459,6 +459,7 @@
                 "url": "/row-pagination"
             }
         },
+        "setPagination": {},
         "paginationIsLastPageFound": {
             "description": "Returns `true` when the last page is known; this will always be the case if you are using the [Client-Side Row Model](/client-side-model/) for pagination. Returns `false` when the last page is not known; this only happens when using [Infinite Row Model](/infinite-scrolling/)."
         },
