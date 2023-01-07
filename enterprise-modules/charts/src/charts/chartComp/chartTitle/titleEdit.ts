@@ -27,8 +27,8 @@ export class TitleEdit extends Component {
     @PostConstruct
     public init(): void {
         this.addManagedListener(this.getGui(), 'keypress', (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
-                this.endEditing();
+            if (this.editing && e.key === 'Enter') {
+                this.handleEndEditing();
             }
         });
         this.addManagedListener(this.getGui(), 'blur', () => this.endEditing());
@@ -124,7 +124,26 @@ export class TitleEdit extends Component {
         inputElement.focus();
     }
 
-    private async endEditing() {
+    private handleEndEditing() {
+        // special handling to avoid flicker caused by delay when swapping old and new titles
+
+        // 1 - store current title color
+        const titleColor = this.chartOptionsService.getChartOption('title.color');
+
+        // 2 - hide title by making it transparent
+        const transparentColor = 'rgba(0, 0, 0, 0)';
+        this.chartOptionsService.setChartOption('title.color', transparentColor);
+
+        // 3 - trigger 'end editing' - this will update the chart with the new title
+        this.chartOptionsService.awaitChartOptionUpdate(() => this.endEditing());
+
+        // 4 - restore title color to its original value
+        this.chartOptionsService.awaitChartOptionUpdate(() => {
+            this.chartOptionsService.setChartOption('title.color', titleColor)
+        });
+    }
+
+    private endEditing() {
         if (!this.editing) {
             return;
         }
@@ -140,10 +159,10 @@ export class TitleEdit extends Component {
         }
         this.getGui().classList.remove('currently-editing');
 
-        // Wait for above updates to be applied, so chartTitleEdit event consumers can read the
-        // new state correctly.
-        await this.chartOptionsService.waitForUpdate();
-
-        this.eventService.dispatchEvent({type: 'chartTitleEdit'});
+        // await chart updates so `chartTitleEdit` event consumers can read the new state correctly
+        this.chartOptionsService.awaitChartOptionUpdate(() => {
+            this.eventService.dispatchEvent({type: 'chartTitleEdit'});
+        });
     }
+
 }
