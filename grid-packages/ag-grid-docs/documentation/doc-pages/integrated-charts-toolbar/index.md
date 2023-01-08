@@ -3,17 +3,15 @@ title: "Chart Toolbar"
 enterprise: true
 ---
 
-The chart toolbar is situated on the top right area of the chart, and provides access to additional functionality.
+The chart toolbar allows users to unlink charts from the grid and download the current chart.   
 
 <figure>
     <img src="resources/chart-toolbar.png" alt="Chart Toolbar" />
     <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Toolbar</figcaption>
 </figure>
 
-From the toolbar, users can:
-
-* [Unlink the chart from the grid](#unlinking-charts)
-* [Download the chart](#downloading-charts)
+[[note]]
+| To use the legacy 'hamburger' Chart Toolbar, enable the `suppressChartToolPanelsButton` grid option.
 
 ## Unlinking Charts
 
@@ -31,7 +29,6 @@ Unlinking a chart is achieved through the 'Unlink Chart' toolbar item highlighte
         <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Toolbar Link button with unlinked data</figcaption>
     </figure>
 </div>
-
 
 Notice that the chart range disappears from the grid when the chart has been unlinked. Subsequent changes to the grid sorting also do not impact the chart.
 

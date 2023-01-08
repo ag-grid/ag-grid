@@ -6,49 +6,25 @@ const columnDefs: ColDef[] = [
   { field: 'gold', chartDataType: 'series' },
   { field: 'silver', chartDataType: 'series' },
   { field: 'bronze', chartDataType: 'series' },
-  {
-    headerName: 'A',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
-  {
-    headerName: 'B',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
-  {
-    headerName: 'C',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
-  {
-    headerName: 'D',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
 ]
 
 const gridOptions: GridOptions = {
   defaultColDef: {
-    editable: true,
-    sortable: true,
     flex: 1,
-    minWidth: 100,
-    filter: true,
-    resizable: true,
   },
   columnDefs: columnDefs,
   rowData: getData(),
-  popupParent: document.body,
-  enableRangeSelection: true,
   onFirstDataRendered: onFirstDataRendered,
+  enableRangeSelection: true,
   enableCharts: true,
   chartToolPanelsDef: {
-    defaultToolPanel: 'data',
-    dataPanel: {
+    defaultToolPanel: 'format',
+    formatPanel: {
       groups: [
-        { type: 'seriesChartType', isOpen: true },
-        { type: 'series', isOpen: false }
+        { type: 'series' },
+        { type: 'chart' },
+        { type: 'legend' },
+        { type: 'axis', isOpen: true }
       ]
     }
   }
