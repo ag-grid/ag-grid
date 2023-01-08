@@ -193,7 +193,7 @@ export class GridChartComp extends Component {
             getChartThemes: this.getChartThemes.bind(this),
             customChartThemes: this.gridOptionsService.get('customChartThemes'),
             getGridOptionsChartThemeOverrides: () => this.getGridOptionsChartThemeOverrides(),
-            getExtraPaddingRequired: () => this.chartMenu?.getExtraPaddingRequired() ?? {},
+            getExtraPaddingDirections: () => this.chartMenu?.getExtraPaddingDirections() ?? [],
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             crossFiltering: this.params.crossFiltering,
             crossFilterCallback,

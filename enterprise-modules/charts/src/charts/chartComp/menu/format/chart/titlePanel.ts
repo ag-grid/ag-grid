@@ -1,4 +1,4 @@
-import { _, Autowired, Component, PostConstruct, AgSlider, AgGroupComponent, RefSelector, AgGroupComponentParams } from "@ag-grid-community/core";
+import { _, Autowired, Component, PostConstruct, ChartMenuOptions,GetChartToolbarItemsParams, WithoutGridCommon, AgSlider, AgGroupComponent, RefSelector, AgGroupComponentParams } from "@ag-grid-community/core";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
@@ -58,6 +58,12 @@ export default class TitlePanel extends Component {
             initialFont,
             setFont,
             setEnabled: (enabled) => {
+                if (this.toolbarExists()) {
+                    // extra padding is only included when the toolbar is present
+                    const topPadding: number = this.getOption('padding.top');
+                    this.setOption('padding.top', enabled ? topPadding - 20 : topPadding + 20);
+                }
+
                 this.setOption('title.enabled', enabled);
                 const currentTitleText = this.getOption('title.text');
                 const replaceableTitleText = currentTitleText === 'Title' || currentTitleText?.trim().length === 0;
@@ -91,6 +97,17 @@ export default class TitlePanel extends Component {
             .onValueChange(newValue => this.chartOptionsService.setChartOption('title.spacing', newValue));
 
         return spacingSlider;
+    }
+
+    private toolbarExists() {
+        const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
+        if (!toolbarItemsFunc) { return true; }
+
+        const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
+            defaultItems: ['chartUnlink', 'chartDownload']
+        };
+        const topItems: ChartMenuOptions[] = ['chartLink', 'chartUnlink', 'chartDownload'];
+        return topItems.some(v => (toolbarItemsFunc && toolbarItemsFunc(params))?.includes(v));
     }
 
     private getOption<T = string>(expression: string): T {

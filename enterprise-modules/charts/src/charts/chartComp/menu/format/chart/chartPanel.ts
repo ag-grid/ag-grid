@@ -13,6 +13,7 @@ import { BackgroundPanel } from "./backgroundPanel";
 import TitlePanel from "./titlePanel";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { FormatPanelOptions } from "../formatPanel";
+import { ChartController } from "../../../chartController";
 
 export class ChartPanel extends Component {
 
@@ -26,16 +27,19 @@ export class ChartPanel extends Component {
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private readonly chartOptionsService: ChartOptionsService;
+    private readonly chartController: ChartController;
     private readonly isExpandedOnInit: boolean;
 
     private activePanels: Component[] = [];
 
     constructor({
+        chartController,
         chartOptionsService,
         isExpandedOnInit = false
     }: FormatPanelOptions) {
         super();
 
+        this.chartController = chartController;
         this.chartOptionsService = chartOptionsService;
         this.isExpandedOnInit = isExpandedOnInit;
     }
@@ -69,7 +73,7 @@ export class ChartPanel extends Component {
     }
 
     private initPaddingPanel(): void {
-        const paddingPanelComp = this.createBean(new PaddingPanel(this.chartOptionsService));
+        const paddingPanelComp = this.createBean(new PaddingPanel(this.chartOptionsService, this.chartController));
         this.chartGroup.addItem(paddingPanelComp);
         this.activePanels.push(paddingPanelComp);
     }

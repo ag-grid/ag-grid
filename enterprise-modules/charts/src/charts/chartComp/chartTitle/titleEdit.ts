@@ -1,4 +1,4 @@
-import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
+import { _, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartMenu } from "../menu/chartMenu";
 import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartController } from "../chartController";
@@ -40,7 +40,6 @@ export class TitleEdit extends Component {
         this.chartOptionsService = chartOptionsService;
 
         const chartProxy = this.chartController.getChartProxy();
-
         if (chartProxy) {
             for (let i = 0; i++; i < this.destroyableChartListeners.length) {
                 this.destroyableChartListeners[i]();
@@ -67,7 +66,6 @@ export class TitleEdit extends Component {
             const { title } = chart;
 
             const inTitle = !!(title && title.enabled && title.node.containsPoint(event.offsetX, event.offsetY));
-
             if (wasInTitle !== inTitle) {
                 canvas.style.cursor = inTitle ? 'pointer' : '';
             }
@@ -164,5 +162,4 @@ export class TitleEdit extends Component {
             this.eventService.dispatchEvent({type: 'chartTitleEdit'});
         });
     }
-
 }

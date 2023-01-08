@@ -34,9 +34,17 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
         ...(chartOptionsToRestore ?? {}),
     };
 
+    const isTitleEnabled = () => {
+        const isTitleEnabled = (obj: any) => {
+            if (!obj) { return false; }
+            return Object.keys(obj).some(key => _.get(obj[key], 'title.enabled', false));
+        }
+        return isTitleEnabled(gridOptionsThemeOverrides) || isTitleEnabled(apiThemeOverrides);
+    }
+
     // Overrides in ascending precedence ordering.
     const overrides: (AgChartThemeOverrides | undefined)[] = [
-        stockTheme ? inbuiltStockThemeOverrides(chartProxyParams) : undefined,
+        stockTheme ? inbuiltStockThemeOverrides(chartProxyParams, isTitleEnabled()) : undefined,
         crossFilteringOverrides,
         gridOptionsThemeOverrides,
         apiThemeOverrides,
@@ -141,16 +149,17 @@ const STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES = ALL_AXIS_TYPES.reduce(
     {}
 );
 
-function inbuiltStockThemeOverrides(params: ChartProxyParams) {
-    const extraPadding = params.getExtraPaddingRequired();
+function inbuiltStockThemeOverrides(params: ChartProxyParams, titleEnabled: boolean) {
+    const extraPadding = params.getExtraPaddingDirections();
     return {
         common: {
             axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
             padding: {
-                top: 20 + (extraPadding.top ?? 0),
-                right: 20 + (extraPadding.right ?? 0),
-                bottom: 20 + (extraPadding.bottom ?? 0),
-                left: 20 + (extraPadding.left ?? 0),
+                // don't add extra padding when a title is present!
+                top: !titleEnabled && extraPadding.includes('top') ? 40 : 20,
+                right: extraPadding.includes('right') ? 30 : 20,
+                bottom: extraPadding.includes('bottom') ? 40 : 20,
+                left: extraPadding.includes('left') ? 30 : 20,
             },
         },
         pie: {

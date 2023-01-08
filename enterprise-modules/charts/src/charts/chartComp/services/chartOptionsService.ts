@@ -144,7 +144,7 @@ export class ChartOptionsService extends BeanStub {
 
     private updateChart(chartOptions: AgChartOptions) {
         const chartRef = this.chartController.getChartProxy().getChartRef();
-        AgChart.updateDelta(chartRef, chartOptions)
+        AgChart.updateDelta(chartRef, chartOptions);
     }
 
     private createChartOptions<T>({ seriesType, expression, value }: {
