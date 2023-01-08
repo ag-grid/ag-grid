@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IServerSideGetRowsParams, ServerSideTransaction, IsServerSideGroupOpenByDefaultParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GetRowIdParams, IServerSideGetRowsParams, ServerSideTransaction, IsServerSideGroupOpenByDefaultParams, ColumnRowGroupChangedEvent } from '@ag-grid-community/core'
 
 declare var registerObserver: any;
 declare var FakeServer: any;
@@ -41,45 +41,22 @@ const gridOptions: GridOptions = {
   rowGroupPanelShow: 'always',
   enableCellChangeFlash: true,
   purgeClosedRowNodes: true,
-  getRowId: (params) => {
-    var rowId = '';
-    if (params.parentKeys && params.parentKeys.length) {
-      rowId += params.parentKeys.join('-') + '-';
-    }
-    const groupCols = params.columnApi.getRowGroupColumns();
-    if (groupCols.length > params.level) {
-      const thisGroupCol = groupCols[params.level];
-      rowId += params.data[thisGroupCol.getColDef().field!] + '-';
-    }
-    if (params.data.tradeId != null) {
-      rowId += params.data.tradeId;
-    }
-    return rowId;
-  },
 
   rowModelType: 'serverSide',
   cacheBlockSize: 100,
   maxBlocksInCache: 2,
   maxConcurrentDatasourceRequests: 3,
+  getRowId: getRowId,
   isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
-  onColumnRowGroupChanged: (event) => {
-    const colState = event.columnApi.getColumnState();
-  
-    const groupedColumns = colState.filter((state) => state.rowGroup);
-    groupedColumns.sort((a, b) => a.rowGroupIndex! - b.rowGroupIndex!);
-    const groupedFields = groupedColumns.map((col) => col.colId);
-  
-    registerObserver({
-      transactionFunc: (t: ServerSideTransaction) => gridOptions.api!.applyServerSideTransactionAsync(t),
-      groupedFields: groupedFields.length === 0 ? undefined : groupedFields,
-    });
-  },
+  onColumnRowGroupChanged: onColumnRowGroupChanged,
 
   // fetch group child count from 'childCount' returned by the server
   getChildCount: (data) => {
     return data ? data.childCount : undefined;
   },
   onGridReady: (params) => {
+    disable('#csrmStopUpdates', true);
+  
     // setup the fake server
     fakeServerInstance = new FakeServer();
   
@@ -136,6 +113,35 @@ function getServerSideDatasource(server: any) {
     },
   };
 }
+
+function getRowId(params: GetRowIdParams) {
+  var rowId = '';
+  if (params.parentKeys && params.parentKeys.length) {
+    rowId += params.parentKeys.join('-') + '-';
+  }
+  const groupCols = params.columnApi.getRowGroupColumns();
+  if (groupCols.length > params.level) {
+    const thisGroupCol = groupCols[params.level];
+    rowId += params.data[thisGroupCol.getColDef().field!] + '-';
+  }
+  if (params.data.tradeId != null) {
+    rowId += params.data.tradeId;
+  }
+  return rowId;
+};
+
+function onColumnRowGroupChanged(event: ColumnRowGroupChangedEvent) {
+  const colState = event.columnApi.getColumnState();
+
+  const groupedColumns = colState.filter((state) => state.rowGroup);
+  groupedColumns.sort((a, b) => a.rowGroupIndex! - b.rowGroupIndex!);
+  const groupedFields = groupedColumns.map((col) => col.colId);
+
+  registerObserver({
+    transactionFunc: (t: ServerSideTransaction) => gridOptions.api!.applyServerSideTransactionAsync(t),
+    groupedFields: groupedFields.length === 0 ? undefined : groupedFields,
+  });
+};
 
 function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultParams) {
   let route = params.rowNode.getRoute()
