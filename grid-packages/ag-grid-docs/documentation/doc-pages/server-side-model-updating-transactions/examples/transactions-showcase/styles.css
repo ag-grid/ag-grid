@@ -1,0 +1,44 @@
+.grid-container {
+    height: 100%;
+}
+
+#serverSideContainer {
+    border-style: solid;
+    border-color: #dc8a8a;
+    padding: 5px;
+    height: 100%;
+}
+
+#myGrid {
+     height: calc(100% - 35px);
+}
+
+.number {
+    text-align: right;
+}
+.ag-row-level-0 {
+    font-weight: bold;
+}
+.ag-row-level-1 {
+    color: darkblue;
+}
+.ag-row-level-2 {
+    color: darkgreen;
+}
+
+/* fixes scrolling 'whiteouts' in chrome (mac os) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
