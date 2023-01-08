@@ -132,7 +132,9 @@ export class BlockUtils extends BeanStub {
 
         if (this.usingTreeData) {
             this.setTreeGroupInfo(rowNode);
+            this.setChildCountIntoRowNode(rowNode);
         } else if (rowNode.group) {
+            this.setChildCountIntoRowNode(rowNode);
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
@@ -177,7 +179,7 @@ export class BlockUtils extends BeanStub {
     private setChildCountIntoRowNode(rowNode: RowNode): void {
         const getChildCount = this.gridOptionsService.get('getChildCount');
         if (getChildCount) {
-            rowNode.allChildrenCount = getChildCount(rowNode.data);
+            rowNode.setAllChildrenCount(getChildCount(rowNode.data));
         }
     }
 
