@@ -2,17 +2,6 @@
     height: 100%;
 }
 
-#serverSideContainer {
-    border-style: solid;
-    border-color: #dc8a8a;
-    padding: 5px;
-    height: 100%;
-}
-
 #myGrid {
      height: calc(100% - 35px);
-}
-
-.number {
-    text-align: right;
 }
