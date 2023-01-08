@@ -894,6 +894,12 @@
                 "url": "/grouping-multiple-group-columns/#hide-open-parents"
             }
         },
+        "groupAllowUnbalanced": {
+            "more": {
+                "name": "Enabling Unbalanced Groups",
+                "url": "/grouping-unbalanced-groups/"
+            }
+        },
         "rowGroupPanelShow": {
             "more": {
                 "name": "Enabling Row Group Panel",

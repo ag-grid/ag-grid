@@ -296,7 +296,16 @@ export class GroupCellRendererCtrl extends BeanStub {
         const innerCompDetails = this.getInnerCompDetails(paramsAdjusted);
 
         const { valueFormatted, value } = paramsAdjusted;
-        const valueWhenNoRenderer = valueFormatted != null ? valueFormatted : value;
+
+        let valueWhenNoRenderer = valueFormatted;
+        if (valueWhenNoRenderer == null) {
+            if (value === '') {
+                const localeTextFunc = this.localeService.getLocaleTextFunc();
+                valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
+            } else {
+                valueWhenNoRenderer = value;
+            }
+        }
 
         this.comp.setInnerRenderer(innerCompDetails, valueWhenNoRenderer);
     }

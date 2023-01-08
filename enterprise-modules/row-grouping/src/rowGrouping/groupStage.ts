@@ -721,8 +721,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
             // mathematical sense as you are building up a cube. so if pivot mode, we put in a blank key where missing.
             // this keeps the tree balanced and hence can be represented as a group.
-            if (details.pivotMode && !keyExists) {
-                key = ' ';
+            const createGroupForEmpty = details.pivotMode || !this.gridOptionsService.is('groupAllowUnbalanced');
+            if (createGroupForEmpty && !keyExists) {
+                key = '';
                 keyExists = true;
             }
 

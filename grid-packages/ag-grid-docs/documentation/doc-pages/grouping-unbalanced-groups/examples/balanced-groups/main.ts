@@ -15,7 +15,6 @@ const gridOptions: GridOptions = {
     {
       field: 'state',
       type: 'dimension',
-      cellRenderer: stateCellRenderer,
       rowGroup: true,
     },
     { field: 'val1', type: 'numberValue' },
@@ -46,7 +45,6 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: -1,
   rowGroupPanelShow: 'always',
   animateRows: true,
-  groupAllowUnbalanced: true,
 }
 
 const COUNTRY_CODES: Record<string, string> = {
@@ -67,16 +65,6 @@ function countryCellRenderer(params: ICellRendererParams) {
       '<img border="0" width="15" height="10" src="https://flagcdn.com/h20/' +
       COUNTRY_CODES[params.value] +
       '.png">'
-    return flag + ' ' + params.value
-  }
-}
-
-function stateCellRenderer(params: ICellRendererParams) {
-  if (params.value === undefined || params.value === null) {
-    return ''
-  } else {
-    const flag =
-      '<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/gold-star.png">'
     return flag + ' ' + params.value
   }
 }

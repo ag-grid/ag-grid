@@ -35,19 +35,6 @@ function countryCellRenderer(params: ICellRendererParams) {
     }
 }
 
-function stateCellRenderer(params: ICellRendererParams) {
-    if (params.value === undefined || params.value === null) {
-        return null;
-    } else {
-        return (
-            <React.Fragment>
-                <img width="15" height="10" src="https://www.ag-grid.com/example-assets/gold-star.png" />
-                {params.value}
-            </React.Fragment>
-        )
-    }
-}
-
 function cityCellRenderer(params: ICellRendererParams) {
     if (params.value === undefined || params.value === null) {
         return null;
@@ -77,7 +64,6 @@ const GridExample = () => {
         {
             field: 'state',
             type: 'dimension',
-            cellRenderer: stateCellRenderer,
             rowGroup: true,
         },
         { field: 'val1', type: 'numberValue' },
@@ -118,7 +104,7 @@ const GridExample = () => {
 
             <div style={gridStyle} className="ag-theme-alpine">
                 <AgGridReact
-                    groupAllowUnbalanced
+
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}

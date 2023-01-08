@@ -670,6 +670,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public groupRemoveLowestSingleChildren: boolean | undefined = undefined;
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false`     */
     @Input() public groupHideOpenParents: boolean | undefined = undefined;
+    /** Set to `true` to prevent the grid from creating a '(blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false`     */
+    @Input() public groupAllowUnbalanced: boolean | undefined = undefined;
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never`     */
     @Input() public rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never' | undefined = undefined;
     /** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
@@ -1187,6 +1189,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_embedFullWidthRows: boolean | null | '';
     static ngAcceptInputType_suppressPaginationPanel: boolean | null | '';
     static ngAcceptInputType_groupHideOpenParents: boolean | null | '';
+    static ngAcceptInputType_groupAllowUnbalanced: boolean | null | '';
     static ngAcceptInputType_pagination: boolean | null | '';
     static ngAcceptInputType_paginationAutoPageSize: boolean | null | '';
     static ngAcceptInputType_suppressScrollOnNewData: boolean | null | '';
