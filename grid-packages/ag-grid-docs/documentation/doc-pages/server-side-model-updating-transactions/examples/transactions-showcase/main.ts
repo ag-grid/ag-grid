@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IServerSideGetRowsParams, ServerSideTransaction } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IServerSideGetRowsParams, ServerSideTransaction, IsServerSideGroupOpenByDefaultParams } from '@ag-grid-community/core'
 
 declare var registerObserver: any;
 declare var FakeServer: any;
@@ -43,7 +43,7 @@ const gridOptions: GridOptions = {
   purgeClosedRowNodes: true,
   getRowId: (params) => {
     var rowId = '';
-    if (params.parentKeys?.length) {
+    if (params.parentKeys && params.parentKeys.length) {
       rowId += params.parentKeys.join('-') + '-';
     }
     const groupCols = params.columnApi.getRowGroupColumns();
@@ -61,6 +61,7 @@ const gridOptions: GridOptions = {
   cacheBlockSize: 100,
   maxBlocksInCache: 2,
   maxConcurrentDatasourceRequests: 3,
+  isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
   onColumnRowGroupChanged: (event) => {
     const colState = event.columnApi.getColumnState();
   
@@ -134,6 +135,19 @@ function getServerSideDatasource(server: any) {
       }, 300);
     },
   };
+}
+
+function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultParams) {
+  let route = params.rowNode.getRoute()
+  if (!route) {
+    return false
+  }
+  const routeAsString = route.join(',')
+  return [
+    'Wool',
+    'Wool,Aggressive',
+    'Wool,Aggressive,GL-62502',
+  ].indexOf(routeAsString) >= 0
 }
 
 // setup the grid after the page has finished loading
