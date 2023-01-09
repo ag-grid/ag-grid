@@ -67,6 +67,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    let gridDiv = document.querySelector<HTMLElement>('#myGrid')!
     new Grid(gridDiv, gridOptions)
 })

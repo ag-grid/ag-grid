@@ -10,9 +10,6 @@ The chart toolbar allows users to unlink charts from the grid and download the c
     <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Toolbar</figcaption>
 </figure>
 
-[[note]]
-| To use the legacy 'hamburger' Chart Toolbar, enable the `suppressChartToolPanelsButton` grid option.
-
 ## Unlinking Charts
 
 Charts are linked to the data in the grid by default, so that if the data changes, the chart will also update. However, it is sometimes desirable to unlink a chart from the grid data. For instance, users may want to prevent a chart from being updated when subsequent sorts and filters are applied in the grid.
@@ -45,20 +42,18 @@ The chart can also be [downloaded using the Grid API](/integrated-charts-api-dow
 
 ## Toolbar Customisation
 
-The chart tool bar can be customised using the `gridOptions.getChartToolbarItems(params)` callback function.
+The Chart Toolbar items can be omitted and ordered using the `getChartToolbarItems()` grid callback which can return 
+which toolbar items should be shown and the order in which they appear: 
 
-<api-documentation source='grid-options/properties.json' section='charts' names='["getChartToolbarItems"]'  ></api-documentation>
-
-This function receives the `GetChartToolbarItemsParams` object which contains the list of elements that are included by default in `defaultItems`, along with the grid APIs.
-
-The list returned by the `gridOptions.getChartToolbarItems(params)` callback can be modified to reorder and omit items from the toolbar. For instance, returning an empty array will hide all toolbar items.
+<snippet>
+const gridOptions = { 
+    getChartToolbarItems: () => ['chartUnlink', 'chartDownload'] // default items and order
+}
+</snippet>
 
 The example below shows how the toolbar can be customised to only show the 'Download Chart' toolbar item.
 
-<grid-example title='Toolbar Customisation' name='custom-toolbar' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
-
-[[note]]
-| If the legacy 'hamburger' Chart Toolbar is used with the `suppressChartToolPanelsButton` grid option, then `gridOptions.getChartToolbarItems(params)` will also determine the Chart Tool Panels shown. Otherwise, the [Chart Tool Panels configuration](/integrated-charts-chart-tool-panels/#omitting--ordering-tool-panels) determines which Chart Tool Panels are shown.
+<grid-example title='Toolbar Customisation' name='toolbar-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Next Up
 

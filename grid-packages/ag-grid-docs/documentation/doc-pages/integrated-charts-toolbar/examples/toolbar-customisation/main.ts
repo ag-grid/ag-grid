@@ -25,42 +25,6 @@ const gridOptions: GridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     getChartToolbarItems: getChartToolbarItems,
-    chartThemeOverrides: {
-        pie: {
-            title: {
-                enabled: true,
-                text: 'Precious Metals Production',
-                fontWeight: 'bold',
-                fontSize: 20,
-                color: 'rgb(100, 100, 100)',
-            },
-            subtitle: {
-                enabled: true,
-                text: 'by country',
-                fontStyle: 'italic',
-                fontWeight: 'bold',
-                fontSize: 14,
-                color: 'rgb(100, 100, 100)',
-            },
-            padding: {
-                top: 25,
-                right: 20,
-                bottom: 55,
-                left: 20,
-            },
-            legend: {
-                enabled: false,
-            },
-            series: {
-                calloutLabel: {
-                    enabled: true,
-                },
-                calloutLine: {
-                    length: 20,
-                },
-            },
-        },
-    },
 }
 
 function getChartToolbarItems(): ChartMenuOptions[] {
@@ -68,13 +32,20 @@ function getChartToolbarItems(): ChartMenuOptions[] {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-    var createRangeChartParams: CreateRangeChartParams = {
+    const createRangeChartParams: CreateRangeChartParams = {
         cellRange: {
             rowStartIndex: 0,
-            rowEndIndex: 5,
-            columns: ['country', 'gold'],
+            rowEndIndex: 4,
+            columns: ['country', 'gold', 'silver', 'bronze'],
         },
-        chartType: 'pie',
+        chartType: 'groupedColumn',
+        chartThemeOverrides: {
+            column: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
     }
 
     params.api.createRangeChart(createRangeChartParams)

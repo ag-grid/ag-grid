@@ -31,7 +31,7 @@ const gridOptions: GridOptions = {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  var createRangeChartParams: CreateRangeChartParams = {
+  const createRangeChartParams: CreateRangeChartParams = {
     cellRange: {
       rowStartIndex: 0,
       rowEndIndex: 4,
