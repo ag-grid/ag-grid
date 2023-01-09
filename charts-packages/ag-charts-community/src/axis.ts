@@ -599,7 +599,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
             const labelPadding = minSpacing ?? (rotated ? 0 : 10);
 
-            // no need for further iterations if `autoCollisionRemoval` is false
+            // no need for further iterations if `avoidCollisions` is false
             labelOverlap = avoidCollisions ? axisLabelsOverlap(labelData, labelPadding) : false;
         }
 
