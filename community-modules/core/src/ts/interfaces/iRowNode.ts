@@ -85,7 +85,7 @@ interface BaseRowNode<TData = any> {
     rowTop: number | null;
 
 
-    /** `true` if this node is a group node (ie has children). */
+    /** `true` if this node is a group node (i.e. it has children) */
     group: boolean | undefined;
 
     /** `true` if this is the first child in this group. Changes when data is sorted. */

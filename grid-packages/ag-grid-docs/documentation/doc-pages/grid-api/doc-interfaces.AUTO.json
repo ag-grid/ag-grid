@@ -14690,7 +14690,7 @@
       "type": { "returnType": "number | null", "optional": false }
     },
     "group": {
-      "description": "/** `true` if this node is a group node (ie has children). */",
+      "description": "/** `true` if this node is a group node (i.e. it has children) */",
       "type": { "returnType": "boolean | undefined", "optional": false }
     },
     "firstChild": {
@@ -14965,7 +14965,7 @@
       "type": { "returnType": "number | null", "optional": false }
     },
     "group": {
-      "description": "/** `true` if this node is a group node (ie has children). */",
+      "description": "/** `true` if this node is a group node (i.e. it has children) */",
       "type": { "returnType": "boolean | undefined", "optional": false }
     },
     "firstChild": {
