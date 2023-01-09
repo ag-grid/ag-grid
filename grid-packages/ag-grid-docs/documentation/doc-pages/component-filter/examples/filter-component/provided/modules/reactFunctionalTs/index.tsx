@@ -23,8 +23,7 @@ const GridExample = () => {
         { field: 'row' },
         {
             field: 'name',
-            filter: PartialMatchFilter,
-            menuTabs: ['filterMenuTab'],
+            filter: PartialMatchFilter
         },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
