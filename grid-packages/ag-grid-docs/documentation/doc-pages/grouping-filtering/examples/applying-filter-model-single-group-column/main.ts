@@ -5,6 +5,7 @@ import { getData } from "./data";
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'age', rowGroup: true, hide: true },
+    { field: 'country', rowGroup: true, hide: true },
     { field: 'gold', aggFunc: 'sum' },
     { field: 'silver', aggFunc: 'sum' },
     { field: 'bronze', aggFunc: 'sum' },

@@ -93,8 +93,26 @@ The following example demonstrates filtering with multiple group columns. Note t
 
 When a column is grouped, and the group column can be filtered, in order to set the filter via the Grid API on the group column (`setFilterModel`), it needs to be referenced with a particular name that’s different from the group column name itself. The reference depends on the `groupDisplayType` used:
 
+* For [Single group column](/grouping-single-group-column/#enabling-single-group-column) (the default if nothing is set), `ag-Grid-AutoColumn` is used
 * For [Multiple group columns](/grouping-multiple-group-columns/#enabling-multiple-group-columns), `ag-Grid-AutoColumn-[colId]` is used, where `[colId]` is the column id
-* For [Single group columns](/grouping-single-group-column/#enabling-single-group-column) (the default if nothing is set), `ag-Grid-AutoColumn` is used
+
+### Single Group Column
+
+In the following example, it is displaying the default single group column and when you click on the button at the top, it will set the filter using the Grid API `setFilterModel`. Note that the reference name `ag-Grid-AutoColumn` is used since it is using single group column.
+
+<snippet>
+gridOptions.api.setFilterModel({
+    'ag-Grid-AutoColumn': {
+        filterType: 'number',
+        type: 'lessThan',
+        filter: 20
+    },
+});
+</snippet>
+
+<grid-example title='Applying Filter Model With Single Group Column' name='applying-filter-model-single-group-column' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+
+### Multiple Group Columns
 
 In the following example, multiple group columns are set up and when you click on the button at the top, it will set the filter using the Grid API `setFilterModel`. Note that the reference name `ag-Grid-AutoColumn-age` is used, as `age` is the column id for the column where the filter is changing.
 
@@ -109,20 +127,6 @@ gridOptions.api.setFilterModel({
 </snippet>
 
 <grid-example title='Applying Filter Model With Multiple Group Columns' name='applying-filter-model-multiple-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
-
-In the following example, it is displaying the default single group columns and when you click on the button at the top, it will set the filter using the Grid API `setFilterModel`. Note that the reference name `ag-Grid-AutoColumn` is used since it is using single group columns.
-
-<snippet>
-gridOptions.api.setFilterModel({
-    'ag-Grid-AutoColumn': {
-        filterType: 'number',
-        type: 'lessThan',
-        filter: 20
-    },
-});
-</snippet>
-
-<grid-example title='Applying Filter Model With Single Group Columns' name='applying-filter-model-single-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 
 ## Next Up
 
