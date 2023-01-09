@@ -99,14 +99,6 @@ export class SelectionService extends BeanStub {
                 rowNode.selectThisNode(selected === null ? false : selected, undefined, source);
             }
         });
-
-        // clientSideRowModel.getTopLevelNodes()!.forEach((rowNode: RowNode) => {
-        //     rowNode.depthFirstSearch((node) => {
-        //         if (node.group) {
-        //         }
-        //     });
-        // });
-
     }
 
     public getNodeForIdIfSelected(id: number): RowNode | undefined {
