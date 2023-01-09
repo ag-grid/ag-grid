@@ -177,6 +177,8 @@ export class Legend {
     readonly item = new LegendItem();
     readonly listeners = new LegendListeners();
 
+    private readonly truncatedItems: Set<string> = new Set();
+
     set translationX(value: number) {
         this.group.translationX = value;
     }
@@ -245,6 +247,7 @@ export class Legend {
     constructor(
         private readonly chart: {
             readonly series: Series<any>[];
+            readonly element: HTMLElement;
             togglePointer(visible: boolean): void;
             update(
                 type: ChartUpdateType,
@@ -404,8 +407,12 @@ export class Legend {
                 addEllipsis = true;
             }
 
+            const id = datum.itemId || datum.id;
             if (addEllipsis) {
                 text += ellipsis;
+                this.truncatedItems.add(id);
+            } else {
+                this.truncatedItems.delete(id);
             }
 
             markerLabel.text = text;
@@ -700,6 +707,12 @@ export class Legend {
             this.cursorManager.updateCursor(this.id);
             this.highlightManager.updateHighlight(this.id);
             return;
+        }
+
+        if (datum && this.truncatedItems.has(datum.itemId || datum.id)) {
+            this.chart.element.title = datum.label.text;
+        } else {
+            this.chart.element.title = '';
         }
 
         if (toggleSeriesVisible || listeners.legendItemClick !== NO_OP_LISTENER) {
