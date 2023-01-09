@@ -1,8 +1,8 @@
-import { Grid, GridOptions, ISetFilterParams, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ISetFilterParams, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'athlete' },
+    { field: 'country', rowGroup: true, hide: true },
     { field: 'sport' },
     {
       field: 'date',
@@ -23,18 +23,34 @@ const gridOptions: GridOptions = {
     resizable: true,
     floatingFilter: true,
   },
+  autoGroupColumnDef: {
+    field: 'athlete',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+      treeList: true,
+      keyCreator: (params: KeyCreatorParams) => params.value ? params.value.join('#') : null,
+      treeListFormatter: groupTreeListFormatter,
+    } as ISetFilterParams,
+    minWidth: 200,
+  },
 }
 
 function dateValueFormatter(params: ValueFormatterParams) {
   return params.value ? params.value.toLocaleDateString() : '';
 } 
 
-
 function treeListFormatter(pathKey: string | null, level: number): string {
   if (level === 1) {
     const date = new Date();
     date.setMonth(Number(pathKey) -1);
     return date.toLocaleDateString(undefined, {month: 'long'});
+  }
+  return pathKey || '(Blanks)';
+}
+
+function groupTreeListFormatter(pathKey: string | null, level: number): string {
+  if (level === 0 && pathKey) {
+    return pathKey + ' (' + pathKey.substring(0, 2).toUpperCase() + ')';
   }
   return pathKey || '(Blanks)';
 }

@@ -99,6 +99,8 @@ If a formatter is provided, it will also need to handle [Missing Values](/filter
 
 The following example demonstrates formatting the Tree List. Note the following:
 
+1. The **Group** column has `filterParams.treeList = true`.
+2. The **Group** column has a `filterParams.treeListFormatter` provided which formats the country values in the Filter List to add a two letter country code. Missing values are formatted as `(Blanks)`.
 1. The **Date** column has `filterParams.treeList = true`.
 2. The **Date** column has a `filterParams.treeListFormatter` provided which formats the numerical month value to display as the name of the month. Missing values are formatted as `(Blanks)`.
 3. When a date is filtered in the **Date** column , `filterParams.valueFormatter` is used to format the value displayed in the Floating Filter.
