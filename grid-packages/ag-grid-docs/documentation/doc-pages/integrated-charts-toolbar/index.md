@@ -45,7 +45,7 @@ The chart can also be [downloaded using the Grid API](/integrated-charts-api-dow
 
 ## Toolbar Customisation
 
-By default, all available toolbar items and menu panels can be accessed. However, items can be removed and reordered via the `gridOptions.getChartToolbarItems(params)` callback function.
+The chart tool bar can be customised using the `gridOptions.getChartToolbarItems(params)` callback function.
 
 <api-documentation source='grid-options/properties.json' section='charts' names='["getChartToolbarItems"]'  ></api-documentation>
 
@@ -53,14 +53,12 @@ This function receives the `GetChartToolbarItemsParams` object which contains th
 
 The list returned by the `gridOptions.getChartToolbarItems(params)` callback can be modified to reorder and omit items from the toolbar. For instance, returning an empty array will hide all toolbar items.
 
-The example below shows how the toolbar can be customised. Notice the following:
-
-- **Download Chart** - has been positioned as the first toolbar item.
-- **Chart Data Panel** - appears first in the tabbed menu.
-- **Chart Format Panel** - has been removed from the tabbed menu.
-- **Unlink Toolbar Item** - has been removed from the toolbar.
+The example below shows how the toolbar can be customised to only show the 'Download Chart' toolbar item.
 
 <grid-example title='Toolbar Customisation' name='custom-toolbar' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
+[[note]]
+| If the legacy 'hamburger' Chart Toolbar is used with the `suppressChartToolPanelsButton` grid option, then `gridOptions.getChartToolbarItems(params)` will also determine the Chart Tool Panels shown. Otherwise, the [Chart Tool Panels configuration](/integrated-charts-chart-tool-panels/#omitting--ordering-tool-panels) determines which Chart Tool Panels are shown.
 
 ## Next Up
 
