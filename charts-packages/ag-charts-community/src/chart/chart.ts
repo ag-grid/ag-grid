@@ -681,28 +681,36 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const { _title: title, _subtitle: subtitle } = this;
         const newShrinkRect = shrinkRect.clone();
 
+        const positionAndShrinkBBox = (caption: Caption) => {
+            const baseY = newShrinkRect.y;
+            caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
+            caption.node.y = baseY;
+            const bbox = caption.node.computeBBox();
+
+            // As the bbox (x,y) ends up at a different location than specified above, we need to
+            // take it into consideration when calculating how much space needs to be reserved to
+            // accommodate the caption.
+            const bboxHeight = Math.ceil(bbox.y - baseY + bbox.height + (caption.spacing ?? 0));
+
+            newShrinkRect.shrink(bboxHeight, 'top');
+        };
+
         if (!title) {
             return newShrinkRect;
         }
-        title.node.visible = title.enabled;
 
+        title.node.visible = title.enabled;
         if (title.enabled) {
-            title.node.x = newShrinkRect.x + newShrinkRect.width / 2;
-            title.node.y = newShrinkRect.y;
-            const titleBBox = title.node.computeBBox(); // make sure to set node's x/y, then computeBBox
-            newShrinkRect.shrink(titleBBox.height + (title.spacing ?? 0), 'top');
+            positionAndShrinkBBox(title);
         }
 
         if (!subtitle) {
             return newShrinkRect;
         }
-        subtitle.node.visible = title.enabled && subtitle.enabled;
 
+        subtitle.node.visible = title.enabled && subtitle.enabled;
         if (title.enabled && subtitle.enabled) {
-            subtitle.node.x = newShrinkRect.x + newShrinkRect.width / 2;
-            subtitle.node.y = newShrinkRect.y;
-            const subtitleBBox = subtitle.node.computeBBox();
-            newShrinkRect.shrink(subtitleBBox.height + (subtitle.spacing ?? 0), 'top');
+            positionAndShrinkBBox(subtitle);
         }
 
         return newShrinkRect;
