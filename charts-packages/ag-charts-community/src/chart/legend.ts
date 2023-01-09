@@ -674,8 +674,9 @@ export class Legend {
         }
         event.consume();
 
-        const newEnabled = !enabled;
+        let newEnabled = enabled;
         if (toggleSeriesVisible) {
+            newEnabled = !enabled;
             series.toggleSeriesItem(itemId, newEnabled);
         }
 
