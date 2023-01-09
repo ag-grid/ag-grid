@@ -63,6 +63,8 @@ The legend width and height can be constrained using the `legend.maxWidth` and `
 
 By default, the legend width and height will be a percentage of the chart width and height depending on the legend's orientation.
 
+If the legend `maxWidth` or `maxHeight` is set to a value which is larger than the chart `width` or `height`, the legend may overflow the chart and become clipped. Likewise, if the `maxWidth` or `maxHeight` is too small, the legend layout will contain at least one row or column of items depending on the `orientation`.
+
 In addition to `maxWidth` and `maxHeight`, the legend's layout is also affected by the amount of padding between the legend items. For example, `legend.item.paddingX` controls the amount of padding between adjacent horizontal legend items:
 
 ```js
