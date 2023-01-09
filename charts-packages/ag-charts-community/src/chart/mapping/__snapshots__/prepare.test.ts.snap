@@ -23,7 +23,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "#3f7cbf",
         "fontFamily": "Impact, Charcoal, Sans-Serif",
         "fontSize": 14,
@@ -72,7 +72,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "#3f7cbf",
         "fontFamily": "Impact, Charcoal, Sans-Serif",
         "fontSize": 14,
@@ -142,6 +142,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -424,7 +427,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -472,7 +475,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -519,7 +522,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -587,6 +590,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -836,7 +842,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -880,7 +886,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -948,6 +954,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -1473,7 +1482,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1517,7 +1526,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1585,6 +1594,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -1787,7 +1799,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1831,7 +1843,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1899,6 +1911,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -2039,7 +2054,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2084,7 +2099,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2151,6 +2166,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -2495,7 +2513,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2539,7 +2557,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2607,6 +2625,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -3093,7 +3114,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3137,7 +3158,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3205,6 +3226,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -3368,7 +3392,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3412,7 +3436,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3480,6 +3504,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -3635,7 +3662,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3674,7 +3701,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3744,6 +3771,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -3884,7 +3914,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3931,7 +3961,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4002,6 +4032,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -4143,7 +4176,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4187,7 +4220,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4255,6 +4288,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -4442,7 +4478,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4486,7 +4522,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4554,6 +4590,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -4744,7 +4783,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4788,7 +4827,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4856,6 +4895,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -5060,7 +5102,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5104,7 +5146,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5172,6 +5214,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -5329,7 +5374,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5373,7 +5418,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5444,6 +5489,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -6502,7 +6550,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 10,
@@ -6547,7 +6595,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 10,
@@ -6615,6 +6663,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -6782,6 +6833,9 @@ Object {
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
+      },
       "marker": Object {
         "size": 12,
       },
@@ -6873,7 +6927,7 @@ Object {
       },
       "nodePadding": 2,
       "showInLegend": false,
-      "sizeKey": "size",
+      "sizeKey": "valuation",
       "subtitle": Object {
         "color": "white",
         "enabled": true,
@@ -6954,7 +7008,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -6998,7 +7052,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7067,6 +7121,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -7274,7 +7331,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7318,7 +7375,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7387,6 +7444,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -7581,7 +7641,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7625,7 +7685,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7694,6 +7754,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -7906,7 +7969,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7950,7 +8013,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8018,6 +8081,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -8393,7 +8459,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8437,7 +8503,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8505,6 +8571,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -8680,6 +8749,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -8865,7 +8937,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8909,7 +8981,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8977,6 +9049,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -9120,7 +9195,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9168,7 +9243,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9236,6 +9311,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -9475,6 +9553,9 @@ Object {
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
       },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
+      },
       "marker": Object {
         "size": 12,
       },
@@ -9638,7 +9719,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9682,7 +9763,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9750,6 +9831,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -9890,7 +9974,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9935,7 +10019,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10003,6 +10087,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -10216,7 +10303,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10260,7 +10347,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10328,6 +10415,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -10515,7 +10605,7 @@ Object {
       "groupPaddingInner": 0.1,
       "label": Object {
         "autoRotate": true,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10559,7 +10649,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10627,6 +10717,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,
@@ -10834,7 +10927,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10878,7 +10971,7 @@ Object {
       ],
       "label": Object {
         "autoRotate": false,
-        "avoidLabelCollisions": true,
+        "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10946,6 +11039,9 @@ Object {
       },
       "inactiveStyle": Object {
         "fill": "rgb(219, 219, 219)",
+      },
+      "label": Object {
+        "color": "rgb(70, 70, 70)",
       },
       "marker": Object {
         "size": 12,

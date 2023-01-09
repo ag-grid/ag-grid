@@ -137,7 +137,7 @@ export class AxisLabel {
      * Minimum gap in pixels between the axis labels before being removed to avoid collisions.
      */
     @Validate(OPT_NUMBER())
-    minLabelSpacing?: number = undefined;
+    minSpacing?: number = undefined;
 
     /**
      * The color of the labels.
@@ -173,7 +173,7 @@ export class AxisLabel {
      * Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide.
      */
     @Validate(BOOLEAN)
-    avoidLabelCollisions: boolean = true;
+    avoidCollisions: boolean = true;
 
     /**
      * By default labels and ticks are positioned to the left of the axis line.
@@ -493,7 +493,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             scale,
             gridLength,
             tick,
-            label: { parallel: parallelLabels, mirrored, avoidLabelCollisions, minLabelSpacing },
+            label: { parallel: parallelLabels, mirrored, avoidCollisions, minSpacing },
             requestedRange,
         } = this;
         const requestedRangeMin = Math.min(...requestedRange);
@@ -549,7 +549,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 const prevTicks = ticks;
 
                 const filteredTicks =
-                    !avoidLabelCollisions || (continuous && this.tick.count === undefined) || i === 0
+                    !avoidCollisions || (continuous && this.tick.count === undefined) || i === 0
                         ? undefined
                         : ticks.filter((_, i) => i % 2 === 0);
 
@@ -578,7 +578,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     primaryTickCount = ticks.length;
                 }
 
-                unchanged = avoidLabelCollisions ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
+                unchanged = avoidCollisions ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
                 i++;
             }
 
@@ -597,10 +597,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 ticks,
             });
 
-            const labelPadding = minLabelSpacing ?? (rotated ? 0 : 10);
+            const labelPadding = minSpacing ?? (rotated ? 0 : 10);
 
             // no need for further iterations if `autoCollisionRemoval` is false
-            labelOverlap = avoidLabelCollisions ? axisLabelsOverlap(labelData, labelPadding) : false;
+            labelOverlap = avoidCollisions ? axisLabelsOverlap(labelData, labelPadding) : false;
         }
 
         this.updateGridLines({
@@ -826,7 +826,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }) {
         const {
             label,
-            label: { parallel: parallelLabels, minLabelSpacing },
+            label: { parallel: parallelLabels, minSpacing },
             tick,
         } = this;
         let labelAutoRotation = 0;
@@ -893,7 +893,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             });
         });
 
-        const labelPadding = minLabelSpacing ?? 10;
+        const labelPadding = minSpacing ?? 10;
         const rotate = axisLabelsOverlap(labelData, labelPadding);
 
         if (label.rotation === undefined && label.autoRotate === true && rotate) {
