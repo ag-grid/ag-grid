@@ -1,5 +1,6 @@
 ---
 title: "Group Cell Renderer"
+enterprise: true
 ---
 
 If you are grouping in the grid, then you will need to provide a group cell renderer as the group cell renderer is what provides the user with the expand and collapse functionality.

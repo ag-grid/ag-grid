@@ -936,7 +936,8 @@
             "items": [
               {
                 "title": "Group Cell Renderer",
-                "url": "/group-cell-renderer/"
+                "url": "/group-cell-renderer/",
+                "enterprise": true
               },
               {
                 "title": "Change Cell Renderers",
