@@ -37,6 +37,9 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     if (config.hideHeader !== undefined) {
         hideHeader = config.hideHeader;
     }
+    if (config.sortAlphabetically !== undefined) {
+        config.sortAlphabetically = String(config.sortAlphabetically).toLowerCase() == 'true';
+    }
     config = { ...config, lookups, codeSrcProvided, hideHeader };
 
     const li = interfaceLookup[interfacename];
@@ -239,7 +242,9 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
 
     let leftColumnWidth = 25;
     let processed = new Set();
-    Object.entries(properties).forEach(([name, definition]) => {
+    Object.entries(properties).sort((a, b) => {
+        return config.sortAlphabetically ? (a[0] < b[0] ? -1 : 1) : 0
+    }).forEach(([name, definition]) => {
         if (name === 'meta' || (names.length > 0 && !names.includes(name))) {
             return;
         }

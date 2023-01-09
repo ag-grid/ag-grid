@@ -156,6 +156,8 @@ export interface Config {
     defaultExpand?: boolean;
     /** Do not sort the sections, list as provided in JSON */
     suppressSort?: boolean;
+    /** Sore the properties alphabetically*/
+    sortAlphabetically?: boolean;
     /**
      * By default we do not include the "See More" links when api-documentation is used with specific names selected.
      * This is because it is likely the link will be pointing to the same place it is currently being used.
