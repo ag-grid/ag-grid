@@ -4,7 +4,7 @@ import DocumentationLink from 'components/DocumentationLink';
 import styles from './Footer.module.scss';
 
 
-const MenuColumns = ({ framework }) => footerItems.map(({ title, links }) => (
+const MenuColumns = ({ framework = 'javascript' }) => footerItems.map(({ title, links }) => (
     <div key={title} className={styles['footer__links']}>
         <h4>{title}</h4>
         <ul className={styles['footer__links__list']}>
