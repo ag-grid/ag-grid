@@ -199,8 +199,6 @@ legend: {
 
 ## Legend Events
 
-### legendItemClick
-
 The `legendItemClick` event can be used to listen to legend item clicks. A listener can be configured via `legend.listeners.legendItemClick`.
 
 The event object passed to the listener includes:
