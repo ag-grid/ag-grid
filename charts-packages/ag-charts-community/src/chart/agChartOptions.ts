@@ -246,6 +246,25 @@ export interface AgChartCaptionOptions {
     fontFamily?: FontFamily;
     /** The colour to use for the title. */
     color?: CssColor;
+    /** Spacing added to help position the caption. Default: 20 */
+    spacing?: number;
+}
+
+export interface AgAxisCaptionOptions {
+    /** Whether or not the title should be shown. */
+    enabled?: boolean;
+    /** The text to show in the title. */
+    text?: string;
+    /** The font style to use for the title. */
+    fontStyle?: FontStyle;
+    /** The font weight to use for the title. */
+    fontWeight?: FontWeight;
+    /** The font size in pixels to use for the title. */
+    fontSize?: FontSize;
+    /** The font family to use for the title. */
+    fontFamily?: FontFamily;
+    /** The colour to use for the title. */
+    color?: CssColor;
 }
 
 export interface AgNavigatorMaskOptions {
@@ -590,9 +609,9 @@ export interface AgAxisLabelOptions {
     /** If autoRotate is enabled, specifies the rotation angle to use when autoRotate is activated. Defaults to an angle of 335 degrees if unspecified. */
     autoRotateAngle?: number;
     /** Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide. */
-    autoCollisionRemoval?: boolean;
+    avoidLabelCollisions?: boolean;
     /** Minimum gap in pixels between the axis labels before being removed to avoid collisions. */
-    minGap?: PixelSize;
+    minLabelSpacing?: PixelSize;
     // mirrored?: boolean;
     // parallel?: boolean;
     /** Format string used when rendering labels for time axes. */
@@ -615,7 +634,7 @@ export interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
     /** The position on the chart where the axis should be rendered. */
     position?: AgCartesianAxisPosition;
     /** Configuration for the title shown next to the axis. */
-    title?: AgChartCaptionOptions;
+    title?: AgAxisCaptionOptions;
     /** Configuration for the axis line. */
     line?: AgAxisLineOptions;
     /** Configuration for the axis labels, shown next to the ticks. */

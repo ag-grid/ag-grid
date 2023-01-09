@@ -8,7 +8,7 @@ Date filters allow you to filter date data. The [Provided Filters](/filter-provi
 
 Date Filters are configured though the `filterParams` attribute of the column definition:
 
-<interface-documentation interfaceName='IDateFilterParams' config='{"description":""}'  overrideSrc="filter-date/resources/date-filter-params.json"></interface-documentation>
+<interface-documentation interfaceName='IDateFilterParams' config='{"description":"", "sortAlphabetically":"true"}'  overrideSrc="filter-date/resources/date-filter-params.json"></interface-documentation>
 
 ## Date Selection Component
 

@@ -456,7 +456,7 @@
     },
     "title": {
       "description": "/** Configuration for the title shown next to the axis. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgAxisCaptionOptions", "optional": true }
     },
     "line": {
       "description": "/** Configuration for the axis line. */",
@@ -534,7 +534,7 @@
     },
     "title": {
       "description": "/** Configuration for the title shown next to the axis. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgAxisCaptionOptions", "optional": true }
     },
     "line": {
       "description": "/** Configuration for the axis line. */",
@@ -608,7 +608,7 @@
     },
     "title": {
       "description": "/** Configuration for the title shown next to the axis. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgAxisCaptionOptions", "optional": true }
     },
     "line": {
       "description": "/** Configuration for the axis line. */",
@@ -670,7 +670,7 @@
     },
     "title": {
       "description": "/** Configuration for the title shown next to the axis. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgAxisCaptionOptions", "optional": true }
     },
     "line": {
       "description": "/** Configuration for the axis line. */",
@@ -744,7 +744,7 @@
     },
     "title": {
       "description": "/** Configuration for the title shown next to the axis. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgAxisCaptionOptions", "optional": true }
     },
     "line": {
       "description": "/** Configuration for the axis line. */",
@@ -1062,6 +1062,40 @@
     }
   },
   "AgChartCaptionOptions": {
+    "enabled": {
+      "description": "/** Whether or not the title should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "text": {
+      "description": "/** The text to show in the title. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the title. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the title. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the title. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the title. */",
+      "type": { "returnType": "FontFamily", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the title. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "spacing": {
+      "description": "/** Spacing added to help position the caption. Default: 20 */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "AgAxisCaptionOptions": {
     "enabled": {
       "description": "/** Whether or not the title should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -1691,11 +1725,11 @@
       "description": "/** If autoRotate is enabled, specifies the rotation angle to use when autoRotate is activated. Defaults to an angle of 335 degrees if unspecified. */",
       "type": { "returnType": "number", "optional": true }
     },
-    "autoCollisionRemoval": {
+    "avoidLabelCollisions": {
       "description": "/** Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "minGap": {
+    "minLabelSpacing": {
       "description": "/** Minimum gap in pixels between the axis labels before being removed to avoid collisions. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
@@ -1730,7 +1764,7 @@
     },
     "title": {
       "description": "/** Configuration for the title shown next to the axis. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgAxisCaptionOptions", "optional": true }
     },
     "line": {
       "description": "/** Configuration for the axis line. */",
@@ -1867,7 +1901,7 @@
     },
     "title": {
       "description": "/** Configuration for the title shown next to the axis. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgAxisCaptionOptions", "optional": true }
     },
     "line": {
       "description": "/** Configuration for the axis line. */",
@@ -1919,7 +1953,7 @@
     },
     "title": {
       "description": "/** Configuration for the title shown next to the axis. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgAxisCaptionOptions", "optional": true }
     },
     "line": {
       "description": "/** Configuration for the axis line. */",
@@ -1967,7 +2001,7 @@
     },
     "title": {
       "description": "/** Configuration for the title shown next to the axis. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgAxisCaptionOptions", "optional": true }
     },
     "line": {
       "description": "/** Configuration for the axis line. */",
@@ -2005,7 +2039,7 @@
     },
     "title": {
       "description": "/** Configuration for the title shown next to the axis. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgAxisCaptionOptions", "optional": true }
     },
     "line": {
       "description": "/** Configuration for the axis line. */",
@@ -2053,7 +2087,7 @@
     },
     "title": {
       "description": "/** Configuration for the title shown next to the axis. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgAxisCaptionOptions", "optional": true }
     },
     "line": {
       "description": "/** Configuration for the axis line. */",
@@ -3529,6 +3563,10 @@
     "color": {
       "description": "/** The colour to use for the title. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "spacing": {
+      "description": "/** Spacing added to help position the caption. Default: 20 */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgPieSeriesCalloutOptions": {

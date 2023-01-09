@@ -75,14 +75,14 @@ export class SelectionService extends BeanStub {
     }
 
     // should only be called if groupSelectsChildren=true
-    public updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath): void {
+    public updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean {
         // we only do this when group selection state depends on selected children
         if (!this.gridOptionsService.is('groupSelectsChildren')) {
-            return;
+            return false;
         }
         // also only do it if CSRM (code should never allow this anyway)
         if (this.rowModel.getType() !== 'clientSide') {
-            return;
+            return false;
         }
 
         const clientSideRowModel = this.rowModel as IClientSideRowModel;
@@ -93,20 +93,16 @@ export class SelectionService extends BeanStub {
             changedPath.setInactive();
         }
 
+        let selectionChanged = false;
+
         changedPath.forEachChangedNodeDepthFirst(rowNode => {
             if (rowNode !== rootNode) {
                 const selected = rowNode.calculateSelectedFromChildren();
-                rowNode.selectThisNode(selected === null ? false : selected, undefined, source);
+                selectionChanged = rowNode.selectThisNode(selected === null ? false : selected, undefined, source) || selectionChanged;
             }
         });
 
-        // clientSideRowModel.getTopLevelNodes()!.forEach((rowNode: RowNode) => {
-        //     rowNode.depthFirstSearch((node) => {
-        //         if (node.group) {
-        //         }
-        //     });
-        // });
-
+        return selectionChanged;
     }
 
     public getNodeForIdIfSelected(id: number): RowNode | undefined {

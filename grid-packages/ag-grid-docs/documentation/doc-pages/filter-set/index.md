@@ -45,7 +45,7 @@ The following example demonstrates how the Set Filter can be enabled. Note the f
 
 Set Filters are configured though the `filterParams` attribute of the column definition:
 
-<interface-documentation interfaceName='ISetFilterParams' overrideSrc='filter-set/resources/set-filter-params.json' config='{"description":""}'></interface-documentation>
+<interface-documentation interfaceName='ISetFilterParams' overrideSrc='filter-set/resources/set-filter-params.json' config='{"description":"", "sortAlphabetically":"true"}'></interface-documentation>
 
 ## Next Up
 
