@@ -143,7 +143,7 @@ The example below demonstrates how the `count` property of the number axis can b
 
 <chart-example title='Axis Tick Styling' name='axis-tick-count' type='generated'></chart-example>
 
-Please see the documentation for the numeric axis ticks in the [API reference](#reference-AgNumberAxisOptions) to learn about other available properties.
+Please see the documentation for the numeric axis ticks in the [API reference](#number-axis-1) to learn about other available properties.
 
 The example below demonstrates the usage of time intervals:
 - `agCharts.time.month` will produce monthly ticks.
