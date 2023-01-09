@@ -13,7 +13,7 @@ The Chart Tool Panels allow users to change the selected chart type and customis
 </div>
 
 The Chart Tool Panels are accessed by clicking on the button highlighted above. Note they can also be opened 
-via configuration (see examples in this section) or programmatically through the Grid API, see [Open / Close Chart Tool Panels](/integrated-charts-api-chart-tool-panel/).
+via configuration (see examples in this section) or programmatically through the Grid API, see [Open / Close Chart Tool Panels](/integrated-charts-api-chart-tool-panel/#opening-and-closing-the-chart-tool-panel-via-grid-api/).
 
 ## Settings Tool Panel
 
