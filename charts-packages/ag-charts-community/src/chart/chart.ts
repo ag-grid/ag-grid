@@ -721,6 +721,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         let translationX = 0;
         let translationY = 0;
 
+        legend.translationX = 0;
+        legend.translationY = 0;
         legend.performLayout(legendWidth, legendHeight);
         const legendBBox = legend.computeBBox();
 
@@ -755,8 +757,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             }
 
             // Round off for pixel grid alignment to work properly.
-            legend.translationX = Math.floor(shrinkRect.x + translationX);
-            legend.translationY = Math.floor(shrinkRect.y + translationY);
+            legend.translationX = Math.floor(-legendBBox.x + shrinkRect.x + translationX);
+            legend.translationY = Math.floor(-legendBBox.y + shrinkRect.y + translationY);
         }
 
         return newShrinkRect;
@@ -765,7 +767,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
     private calculateLegendDimensions(shrinkRect: BBox): [number, number] {
         const { legend } = this;
         const { width, height } = shrinkRect;
-        const legendSpacing = legend.spacing;
 
         const aspectRatio = width / height;
         const maxCoefficient = 0.5;
@@ -784,7 +785,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                     aspectRatio < 1
                         ? Math.min(maxCoefficient, minHeightCoefficient * (1 / aspectRatio))
                         : minHeightCoefficient;
-                legendWidth = legend.maxWidth ? Math.min(legend.maxWidth, width) : width - legendSpacing * 2;
+                legendWidth = legend.maxWidth ? Math.min(legend.maxWidth, width) : width;
                 legendHeight = legend.maxHeight
                     ? Math.min(legend.maxHeight, height)
                     : Math.round(height * heightCoefficient);
@@ -798,7 +799,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 const widthCoefficient =
                     aspectRatio > 1 ? Math.min(maxCoefficient, minWidthCoefficient * aspectRatio) : minWidthCoefficient;
                 legendWidth = legend.maxWidth ? Math.min(legend.maxWidth, width) : Math.round(width * widthCoefficient);
-                legendHeight = legend.maxHeight ? Math.min(legend.maxHeight, height) : height - legendSpacing * 2;
+                legendHeight = legend.maxHeight ? Math.min(legend.maxHeight, height) : height;
         }
 
         return [legendWidth, legendHeight];
