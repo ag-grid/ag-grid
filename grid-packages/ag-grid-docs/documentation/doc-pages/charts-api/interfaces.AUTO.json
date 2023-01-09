@@ -1114,8 +1114,8 @@
       "rotation?": "number",
       "autoRotate?": "boolean",
       "autoRotateAngle?": "number",
-      "autoCollisionRemoval?": "boolean",
-      "minGap?": "PixelSize",
+      "avoidLabelCollisions?": "boolean",
+      "minLabelSpacing?": "PixelSize",
       "format?": "string",
       "formatter?": "(params: AgAxisLabelFormatterParams) => string | undefined"
     },
@@ -1129,8 +1129,8 @@
       "rotation?": "/** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */",
       "autoRotate?": "/** If specified and axis labels may collide, they are rotated so that they are positioned at the supplied angle. This is enabled by default for category. If the `rotation` property is specified, it takes precedence. */",
       "autoRotateAngle?": "/** If autoRotate is enabled, specifies the rotation angle to use when autoRotate is activated. Defaults to an angle of 335 degrees if unspecified. */",
-      "autoCollisionRemoval?": "/** Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide. */",
-      "minGap?": "/** Minimum gap in pixels between the axis labels before being removed to avoid collisions. */",
+      "avoidLabelCollisions?": "/** Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide. */",
+      "minLabelSpacing?": "/** Minimum gap in pixels between the axis labels before being removed to avoid collisions. */",
       "format?": "/** Format string used when rendering labels for time axes. */",
       "formatter?": "/** Function used to render axis labels. If `value` is a number, `fractionDigits` will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of `0.0005` would have `fractionDigits` set to `4` */"
     }
