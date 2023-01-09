@@ -143,6 +143,25 @@ The example below demonstrates how the `count` property of the number axis can b
 
 <chart-example title='Axis Tick Styling' name='axis-tick-count' type='generated'></chart-example>
 
+Please see the documentation for the numeric axis ticks in the [API reference](#reference-AgNumberAxisOptions) to learn about other available properties.
+
+The example below demonstrates the usage of time intervals:
+- `agCharts.time.month` will produce monthly ticks.
+- `agCharts.time.month.every(2)` will generate ticks for every second month.
+
+```js
+{
+    type: 'time',
+    tick: {
+        count: agCharts.time.month.every(2)
+    }
+}
+```
+
+<chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
+
+Other available time intervals are: `year`, `month`, `day`, `hour`, `minute`, `second`, `millisecond`. There are some UTC time intervals: `utcYear`, `utcMonth`, `utcDay`, `utcYear`, `utcMinute`.
+
 ## Axis Labels
 
 The axis renders a label next to every tick to show the tick's value. Chart axis labels support the same font and colour options as the axis title. Additionally, the distance of the labels from the ticks and their rotation can be configured via the `padding`, `rotation` and `autoRotate` properties respectively.
@@ -345,13 +364,7 @@ The `label` config of the bottom axis in the example below uses the `'%b&nbsp;%Y
 
 Notice that the `label.format` property only affects label formatting but not segmentation. The fact that axis labels were configured to show the name of the month and the year doesn't mean that the axis will show a tick every month. To ensure that it does, we also set the `tick.count` config to use the `agCharts.time.month` interval.
 
-Please see the documentation for the `count` property of the axis tick in the [API reference](#reference-AgTimeAxisOptions-tick) to learn about all the available intervals.
-
-The example below also allows you to switch to a derived interval `agCharts.time.month.every(2)` produced
-from the default `agCharts.time.month` interval by using its `every` method. Switching to this interval
-will make the time axis place ticks every other month.
-
-<chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
+Please see the [Axis Ticks](#axis-ticks) section to learn more about tick count and tick intervals.
 
 ## Axis Grid Lines
 
