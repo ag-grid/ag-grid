@@ -370,7 +370,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     }
     if (config.lookups.htmlLookup) {
         // Force open if we have custom html content to display for the property
-        showAdditionalDetails = !!config.lookups.htmlLookup[name]
+        showAdditionalDetails = showAdditionalDetails || !!config.lookups.htmlLookup[name]
     }
 
     let propertyType = getPropertyType(type, config);
