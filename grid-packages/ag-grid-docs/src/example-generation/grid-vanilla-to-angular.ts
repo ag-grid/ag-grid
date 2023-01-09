@@ -225,7 +225,9 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             .replace(/gridColumnApi!\./g, 'gridColumnApi.');
 
         let generatedOutput = `
-${imports.join('\n')}${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
+${imports.join('\n')}
+${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
+${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
 
 @Component({
     selector: 'my-app',

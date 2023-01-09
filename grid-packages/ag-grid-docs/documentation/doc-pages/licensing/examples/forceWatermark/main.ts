@@ -1,4 +1,8 @@
 import { Grid, GridOptions } from '@ag-grid-community/core'
+import { LicenseManager } from "@ag-grid-enterprise/core";
+
+// enter your license key here to suppress license message in the console and watermark
+LicenseManager.setLicenseKey("")
 
 const gridOptions: GridOptions<IOlympicData> = {
   // define grid columns

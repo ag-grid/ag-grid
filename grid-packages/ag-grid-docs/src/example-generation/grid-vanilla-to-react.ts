@@ -16,6 +16,10 @@ function getModuleImports(bindings: any, componentFilenames: string[], allStyles
         imports.push("import { AgChart } from 'ag-charts-community'");
     }
 
+    if(bindings.gridSettings.licenseKey) {
+        imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
+    }
+
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to alpine if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
@@ -50,6 +54,9 @@ function getPackageImports(bindings: any, componentFilenames: string[], allStyle
     }
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
+    }
+    if(bindings.gridSettings.licenseKey) {
+        imports.push("import { LicenseManager } from 'ag-grid-enterprise';");
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
@@ -171,7 +178,9 @@ export function vanillaToReact(bindings: any, componentFilenames: string[], allS
 
 ${imports.join('\n')}${bindings.classes.length > 0 ? `\n\n${bindings.classes.join('\n')}` : ''}
 
-class GridExample extends Component {
+${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
+
+        class GridExample extends Component {
     constructor(props) {
         super(props);
 

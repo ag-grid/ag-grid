@@ -14,6 +14,9 @@ function getModuleImports(bindings: any, componentFileNames: string[], allStyles
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
     }
+    if(bindings.gridSettings.licenseKey) {
+        imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
+    }
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to alpine if it does
@@ -48,6 +51,9 @@ function getPackageImports(bindings: any, componentFileNames: string[], allStyle
     }
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
+    }
+    if(bindings.gridSettings.licenseKey) {
+        imports.push("import { LicenseManager } from 'ag-grid-enterprise';");
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
@@ -93,7 +99,7 @@ export function vanillaToVue3(bindings: any, componentFileNames: string[], allSt
 
         return `
 ${imports.join('\n')}
-
+${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
 ${bindings.classes.join('\n')}
 
 const VueExample = {

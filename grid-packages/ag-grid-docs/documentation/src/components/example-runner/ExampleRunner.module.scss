@@ -7,6 +7,7 @@
 
     &__header {
         background-image: linear-gradient(to bottom right, $primary, darken($primary, 10%));
+        background-color: blue;
         padding: 10px;
         border-radius: 5px 5px 0 0;
         min-height: 3.2rem;

@@ -13,6 +13,9 @@ function getModuleImports(bindings: any, componentFilenames: string[], allStyles
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
     }
+    if(bindings.gridSettings.licenseKey) {
+        imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
+    }
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to alpine if it does
@@ -48,6 +51,9 @@ function getPackageImports(bindings: any, componentFilenames: string[], allStyle
     }
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
+    }
+    if(bindings.gridSettings.licenseKey) {
+        imports.push("import { LicenseManager } from 'ag-grid-enterprise';");
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
@@ -279,6 +285,8 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 'use strict';
 
 ${imports.join('\n')}
+
+${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
 
 ${bindings.utils.map(convertFunctionToConstProperty).join('\n\n')}
 
