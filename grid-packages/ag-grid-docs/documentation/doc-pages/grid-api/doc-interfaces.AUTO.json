@@ -14674,7 +14674,7 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "rowPinned": {
-      "description": "/** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */",
+      "description": "/** Either `'top'` or `'bottom'` if row pinned, otherwise `undefined` or `null`. */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "selectable": {
@@ -14682,7 +14682,7 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "rowHeight": {
-      "description": "/** The height, in pixels, of this row */",
+      "description": "/** The height, in pixels, of this row. */",
       "type": { "returnType": "number | null | undefined", "optional": false }
     },
     "rowTop": {
@@ -14690,7 +14690,7 @@
       "type": { "returnType": "number | null", "optional": false }
     },
     "group": {
-      "description": "/** `true` if this node is a group node (ie has children) */",
+      "description": "/** `true` if this node is a group node (ie has children). */",
       "type": { "returnType": "boolean | undefined", "optional": false }
     },
     "firstChild": {
@@ -14710,11 +14710,11 @@
       "type": { "returnType": "number", "optional": false }
     },
     "uiLevel": {
-      "description": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`)*/",
+      "description": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`).*/",
       "type": { "returnType": "number", "optional": false }
     },
     "parent": {
-      "description": "/** The parent node to this node, or empty if top level */",
+      "description": "/** The parent node to this node, or empty if top level. */",
       "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "stub": {
@@ -14722,7 +14722,7 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "failedLoad": {
-      "description": "/** Used by server side row model, true if this row node failed a load */",
+      "description": "/** Used by server side row model, `true` if this row node failed a load. */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "rowIndex": {
@@ -14734,11 +14734,11 @@
       "type": { "returnType": "string | null", "optional": false }
     },
     "master": {
-      "description": "/** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */",
+      "description": "/** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail). */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "detail": {
-      "description": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/",
+      "description": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row). */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] }
@@ -14764,7 +14764,7 @@
       "type": { "returnType": "any", "optional": false }
     },
     "rowGroupColumn": {
-      "description": "/** The row group column used for this group */",
+      "description": "/** The row group column used for this group. */",
       "type": { "returnType": "Column | null", "optional": false }
     },
     "rowGroupIndex": {
@@ -14824,7 +14824,7 @@
       }
     },
     "isSelected": {
-      "description": "/** Returns:\n     * - `true` if node is selected,\n     * - `false` if the node isn't selected\n     * - `undefined` if it's partially selected (group where not all children are selected). \n     */",
+      "description": "/** Returns:\n     * - `true` if node is selected.\n     * - `false` if the node isn't selected.\n     * - `undefined` if it's partially selected (group where not all children are selected). \n     */",
       "type": {
         "arguments": {},
         "returnType": "boolean | undefined",
@@ -14832,11 +14832,11 @@
       }
     },
     "isRowPinned": {
-      "description": "/** Returns:\n     * - `true` if node is either pinned to the `top` or `bottom`\n     * - `false` if the node isn't pinned\n     */",
+      "description": "/** Returns:\n     * - `true` if node is either pinned to the `top` or `bottom`.\n     * - `false` if the node isn't pinned.\n     */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "isExpandable": {
-      "description": "/** Returns:\n    * - `true` if the node can be expanded, i.e it is a group or master row.\n    * - `false` if the node cannot be expanded\n    */",
+      "description": "/** Returns:\n    * - `true` if the node can be expanded, i.e it is a group or master row.\n    * - `false` if the node cannot be expanded.\n    */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "setExpanded": {
@@ -14851,7 +14851,7 @@
       }
     },
     "isFullWidthCell": {
-      "description": "/** Returns:\n     * - `true` if the node is a full width cell\n     * - `false` if the node is not a full width cell\n     */",
+      "description": "/** Returns:\n     * - `true` if the node is a full width cell.\n     * - `false` if the node is not a full width cell.\n     */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "addEventListener": {
@@ -14916,7 +14916,7 @@
       }
     },
     "setDataValue": {
-      "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     *\n     * @param colKey The column where the value should be updated\n     * @param newValue The new value\n     * @param eventSource The source of the event, optional.\n     * @returns `true` if the value was changed, otherwise `false`.\n     */",
+      "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     *\n     * @param colKey The column where the value should be updated.\n     * @param newValue The new value.\n     * @param eventSource The source of the event, optional.\n     * @returns `true` if the value was changed, otherwise `false`.\n     */",
       "type": {
         "arguments": {
           "colKey": "string | Column",
@@ -14949,7 +14949,7 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "rowPinned": {
-      "description": "/** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */",
+      "description": "/** Either `'top'` or `'bottom'` if row pinned, otherwise `undefined` or `null`. */",
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "selectable": {
@@ -14957,7 +14957,7 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "rowHeight": {
-      "description": "/** The height, in pixels, of this row */",
+      "description": "/** The height, in pixels, of this row. */",
       "type": { "returnType": "number | null | undefined", "optional": false }
     },
     "rowTop": {
@@ -14965,7 +14965,7 @@
       "type": { "returnType": "number | null", "optional": false }
     },
     "group": {
-      "description": "/** `true` if this node is a group node (ie has children) */",
+      "description": "/** `true` if this node is a group node (ie has children). */",
       "type": { "returnType": "boolean | undefined", "optional": false }
     },
     "firstChild": {
@@ -14985,11 +14985,11 @@
       "type": { "returnType": "number", "optional": false }
     },
     "uiLevel": {
-      "description": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`)*/",
+      "description": "/** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`).*/",
       "type": { "returnType": "number", "optional": false }
     },
     "parent": {
-      "description": "/** The parent node to this node, or empty if top level */",
+      "description": "/** The parent node to this node, or empty if top level. */",
       "type": { "returnType": "IRowNode<TData> | null", "optional": false }
     },
     "stub": {
@@ -14997,7 +14997,7 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "failedLoad": {
-      "description": "/** Used by server side row model, true if this row node failed a load */",
+      "description": "/** Used by server side row model, `true` if this row node failed a load. */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "rowIndex": {
@@ -15009,11 +15009,11 @@
       "type": { "returnType": "string | null", "optional": false }
     },
     "master": {
-      "description": "/** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */",
+      "description": "/** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail). */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "detail": {
-      "description": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/",
+      "description": "/** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row). */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "field": {
@@ -15036,7 +15036,7 @@
       "type": { "returnType": "any", "optional": false }
     },
     "rowGroupColumn": {
-      "description": "/** The row group column used for this group */",
+      "description": "/** The row group column used for this group. */",
       "type": { "returnType": "Column | null", "optional": false }
     },
     "rowGroupIndex": {

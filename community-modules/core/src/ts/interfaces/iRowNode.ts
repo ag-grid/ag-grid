@@ -75,17 +75,17 @@ interface BaseRowNode<TData = any> {
      * This will be `true` if it has a rowIndex assigned, otherwise `false`.
      */
     displayed: boolean
-    /** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */
+    /** Either `'top'` or `'bottom'` if row pinned, otherwise `undefined` or `null`. */
     rowPinned: RowPinnedType;
     /** Is this row selectable. */
     selectable: boolean;
-    /** The height, in pixels, of this row */
+    /** The height, in pixels, of this row. */
     rowHeight: number | null | undefined;
     /** The row top position in pixels. */
     rowTop: number | null;
 
 
-    /** `true` if this node is a group node (ie has children) */
+    /** `true` if this node is a group node (ie has children). */
     group: boolean | undefined;
 
     /** `true` if this is the first child in this group. Changes when data is sorted. */
@@ -97,14 +97,14 @@ interface BaseRowNode<TData = any> {
 
     /** How many levels this node is from the top when grouping. */
     level: number;
-    /** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`)*/
+    /** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`).*/
     uiLevel: number;
-    /** The parent node to this node, or empty if top level */
+    /** The parent node to this node, or empty if top level. */
     parent: IRowNode<TData> | null;
 
     /** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */
     stub: boolean;
-    /** Used by server side row model, true if this row node failed a load */
+    /** Used by server side row model, `true` if this row node failed a load. */
     failedLoad: boolean;
 
     /** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */
@@ -113,9 +113,9 @@ interface BaseRowNode<TData = any> {
     /** If using quick filter, stores a string representation of the row for searching against. */
     quickFilterAggregateText: string | null;
 
-    /** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
+    /** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail). */
     master: boolean;
-    /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
+    /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row). */
     detail: boolean;
 }
 
@@ -131,7 +131,7 @@ interface GroupRowNode<TData = any> {
     aggData: any;
 
 
-    /** The row group column used for this group */
+    /** The row group column used for this group. */
     rowGroupColumn: Column | null;
     /**
      * If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.
@@ -173,22 +173,22 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType): void;
 
     /** Returns:
-     * - `true` if node is selected,
-     * - `false` if the node isn't selected
+     * - `true` if node is selected.
+     * - `false` if the node isn't selected.
      * - `undefined` if it's partially selected (group where not all children are selected). 
      */
     isSelected(): boolean | undefined;
 
     /**
      * Returns:
-     * - `true` if node is either pinned to the `top` or `bottom`
-     * - `false` if the node isn't pinned
+     * - `true` if node is either pinned to the `top` or `bottom`.
+     * - `false` if the node isn't pinned.
      */
     isRowPinned(): boolean;
 
     /** Returns:
     * - `true` if the node can be expanded, i.e it is a group or master row.
-    * - `false` if the node cannot be expanded
+    * - `false` if the node cannot be expanded.
     */
     isExpandable(): boolean;
     /**
@@ -198,8 +198,8 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
 
     /**
      * Returns:
-     * - `true` if the node is a full width cell
-     * - `false` if the node is not a full width cell
+     * - `true` if the node is a full width cell.
+     * - `false` if the node is not a full width cell.
      */
     isFullWidthCell(): boolean
 
@@ -239,8 +239,8 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
      *
-     * @param colKey The column where the value should be updated
-     * @param newValue The new value
+     * @param colKey The column where the value should be updated.
+     * @param newValue The new value.
      * @param eventSource The source of the event, optional.
      * @returns `true` if the value was changed, otherwise `false`.
      */
