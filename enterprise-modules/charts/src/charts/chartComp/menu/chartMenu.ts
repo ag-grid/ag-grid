@@ -173,11 +173,11 @@ export class ChartMenu extends Component {
             const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
     
             if (toolbarItemsFunc) {
+                const isLegacyToolbar = this.gridOptionsService.is('suppressChartToolPanelsButton');
                 const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
-                    defaultItems: tabOptions
+                    defaultItems: isLegacyToolbar ? tabOptions : CHART_TOOLBAR_ALLOW_LIST
                 };
     
-                const isLegacyToolbar = this.gridOptionsService.is('suppressChartToolPanelsButton');
                 tabOptions = toolbarItemsFunc(params).filter(option => {
                     if (!this.buttons[option]) {
                         console.warn(`AG Grid: '${option}' is not a valid Chart Toolbar Option`);
