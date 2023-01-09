@@ -260,6 +260,9 @@ export class ChartTheme {
                     highlightStyle: {
                         fill: 'rgb(70, 70, 70)',
                     },
+                    label: {
+                        color: 'rgb(70, 70, 70)',
+                    },
                 },
             },
             tooltip: {
