@@ -14678,7 +14678,7 @@
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "selectable": {
-      "description": "/** `Is this row selectable. */",
+      "description": "/** Is this row selectable. */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "rowHeight": {
@@ -14953,7 +14953,7 @@
       "type": { "returnType": "RowPinnedType", "optional": false }
     },
     "selectable": {
-      "description": "/** `Is this row selectable. */",
+      "description": "/** Is this row selectable. */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "rowHeight": {

@@ -16,7 +16,7 @@
     "type": { "returnType": "RowPinnedType" }
   },
   "selectable": {
-    "description": "/** `Is this row selectable. */",
+    "description": "/** Is this row selectable. */",
     "type": { "returnType": "boolean" }
   },
   "rowHeight": {

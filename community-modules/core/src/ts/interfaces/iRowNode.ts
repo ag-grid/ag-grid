@@ -77,7 +77,7 @@ interface BaseRowNode<TData = any> {
     displayed: boolean
     /** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */
     rowPinned: RowPinnedType;
-    /** `Is this row selectable. */
+    /** Is this row selectable. */
     selectable: boolean;
     /** The height, in pixels, of this row */
     rowHeight: number | null | undefined;
