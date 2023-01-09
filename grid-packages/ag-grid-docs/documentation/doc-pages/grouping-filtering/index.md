@@ -66,11 +66,10 @@ const gridOptions = {
         filter: true,
         // supplies filter values to the column filters based on the colId
         filterValueGetter: params => {      
-            const colId = params.column.colId;        
+            const colId = params.column.getColId();        
             if (colId.includes('country')) {
                 return params.data.country;      
-            }
-            if (colId.includes('year') > -1) {
+            } else if (colId.includes('year')) {
                 return params.data.year;      
             }            
         },                        
@@ -79,7 +78,7 @@ const gridOptions = {
 }
 </snippet>
 
-Note in the snippet above that the `filterValueGetter` uses the `colId` to determine which filter value to return, 
+Note in the snippet above that the `filterValueGetter` uses the `colId` value to determine which filter value to return, 
 although different strategies may be required for different column configurations.
 
 The following example demonstrates filtering with multiple group columns. Note the following:
