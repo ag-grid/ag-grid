@@ -59,16 +59,17 @@ export function executeAfter(funcs: Function[], milliseconds = 0): void {
  * @param {number} delay The time in ms to debounce
  * @return {Function} The debounced function
  */
-export function debounce(func: () => void, delay: number): () => void {
+export function debounce(func: (...args: any[]) => void, delay: number): (...args: any[]) => void {
     let timeout: any;
 
     // Calling debounce returns a new anonymous function
-    return function () {
-        // reference the context the setTimeout function
+    return function (...args: any[]) {
         const context = this;
         window.clearTimeout(timeout);
+
+        // Set the new timeout
         timeout = window.setTimeout(function() {
-            func.apply(context);
+            func.apply(context, args);
         }, delay);
     };
 }
