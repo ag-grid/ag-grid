@@ -10,7 +10,7 @@ The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-
 
 Number Filters are configured though the `filterParams` attribute of the column definition:
 
-<interface-documentation interfaceName='INumberFilterParams' config='{"description":""}' overrideSrc="filter-number/resources/number-filter-params.json"></interface-documentation>
+<interface-documentation interfaceName='INumberFilterParams' config='{"description":"", "sortAlphabetically":"true"}' overrideSrc="filter-number/resources/number-filter-params.json"></interface-documentation>
 
 ## Custom Number Support
 

@@ -10,7 +10,7 @@ The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-
 
 Text Filters are configured though the `filterParams` attribute of the column definition:
 
-<interface-documentation interfaceName='ITextFilterParams' config='{"description":""}' overrideSrc="filter-text/resources/text-filter-params.json"></interface-documentation>
+<interface-documentation interfaceName='ITextFilterParams' config='{"description":"", "sortAlphabetically":"true"}' overrideSrc="filter-text/resources/text-filter-params.json"></interface-documentation>
 
 ## Text Custom Matcher
 
