@@ -22,7 +22,6 @@ import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
 import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartOptionsService } from "../services/chartOptionsService";
-import { AgChartPaddingOptions } from "ag-charts-community";
 import { ExtraPaddingDirection } from "../chartProxies/chartProxy";
 
 type ChartToolbarButtons = {
