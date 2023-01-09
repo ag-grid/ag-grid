@@ -106,18 +106,27 @@ export class PolarChart extends Chart {
         const availCircleHeight = seriesBox.height - padTop - padBottom;
 
         let newRadius = Math.min(availCircleWidth, availCircleHeight) / 2;
-        const minRadius = (minCircleRatio * Math.min(seriesBox.width, seriesBox.height)) / 2;
+        const minHorizontalRadius = (minCircleRatio * seriesBox.width) / 2;
+        const minVerticalRadius = (minCircleRatio * seriesBox.height) / 2;
+        const minRadius = Math.min(minHorizontalRadius, minVerticalRadius);
         if (newRadius < minRadius) {
             // If the radius is too small, reduce the label padding
             newRadius = minRadius;
-            const padWidth = seriesBox.width - 2 * newRadius;
-            if (Math.min(padLeft, padRight) * 2 > padWidth) {
-                padLeft = padWidth / 2;
-                padRight = padWidth / 2;
-            } else if (padLeft > padRight) {
-                padLeft = padWidth - padRight;
-            } else {
-                padRight = padWidth - padLeft;
+            if (newRadius === minVerticalRadius) {
+                const t = seriesBox.height / (newRadius * 2 + padTop + padBottom);
+                padTop *= t;
+                padBottom *= t;
+            }
+            if (newRadius === minHorizontalRadius) {
+                const padWidth = seriesBox.width - 2 * newRadius;
+                if (Math.min(padLeft, padRight) * 2 > padWidth) {
+                    padLeft = padWidth / 2;
+                    padRight = padWidth / 2;
+                } else if (padLeft > padRight) {
+                    padLeft = padWidth - padRight;
+                } else {
+                    padRight = padWidth - padLeft;
+                }
             }
         }
 
