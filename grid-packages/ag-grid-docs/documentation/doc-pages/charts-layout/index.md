@@ -2,7 +2,7 @@
 title: "Layout"
 ---
 
-This section explains the different components that a chart is made up of and how they are laid out inside a chart.
+This section explains the components of a chart and how they are laid out inside a chart.
 
 ## How is the chart layout calculated?
 
