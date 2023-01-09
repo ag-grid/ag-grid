@@ -28,7 +28,8 @@ import {
     Beans,
     FilterManager,
     WithoutGridCommon,
-    RowModelType
+    RowModelType,
+    SelectionChangedEvent
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -840,7 +841,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
 
             if (this.gridOptionsService.is('groupSelectsChildren')) {
-                this.selectionService.updateGroupsFromChildrenSelections('rowGroupChanged', changedPath);
+                const selectionChanged = this.selectionService.updateGroupsFromChildrenSelections('rowGroupChanged', changedPath);
+
+                if (selectionChanged) {
+                    const event: WithoutGridCommon<SelectionChangedEvent> = {
+                        type: Events.EVENT_SELECTION_CHANGED,
+                        source: 'rowGroupChanged'
+                    };
+                    this.eventService.dispatchEvent(event);
+                }
             }
 
         } else {
