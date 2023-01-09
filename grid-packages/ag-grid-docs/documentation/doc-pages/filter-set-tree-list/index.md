@@ -63,6 +63,7 @@ The following example demonstrates changing the sorting of the Tree List. Note t
 1. Tree Data is turned on via `treeData = true`.
 2. The **Employee** column has `filterParams.treeList = true` and the Filter List matches the format of the Tree Data. A Key Creator is specified to convert the path into a string.
 3. The **Employee** column has a `filterParams.comparator` supplied which displays the Filter List in reverse alphabetical order.
+4. The **Date** column has `filterParams.treeList = true`. It also has a `filterParams.comparator` supplied which displays the Filter List in reverse date order.
 
 <grid-example title='Sorting Tree Lists' name='sorting-tree-lists' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
@@ -92,12 +93,14 @@ const gridOptions = {
 }
 </snippet>
 
-`filterParams.valueFormatter` is not used in the Filter List when Tree List is turned on. However, it is still used to format the values displayed in the Floating Filter. The value provided to the Value Formatter is the original value, e.g. a `Date` object for dates, the child value for Tree Data or Grouping, or the column value for a custom tree path.
+If a formatter is provided, it will also need to handle [missing values](/filter-set-filter-list/#missing-values), which will have a `pathKey` of `null`. Without a formatter, these are displayed as `(Blanks)`.
+
+`filterParams.valueFormatter` is not used in the Filter List when `filterParams.treeList = true`. However, it is still used to format the values displayed in the Floating Filter. The value provided to the Value Formatter is the original value, e.g. a `Date` object for dates, the child value for Tree Data or Grouping, or the column value for a custom tree path.
 
 The following example demonstrates formatting the Tree List. Note the following:
 
 1. The **Date** column has `filterParams.treeList = true`.
-2. The **Date** column has a `filterParams.treeListFormatter` provided which formats the numerical month value to display as the name of the month.
+2. The **Date** column has a `filterParams.treeListFormatter` provided which formats the numerical month value to display as the name of the month. Missing values are formatted as `(Blanks)`.
 3. When a date is filtered in the **Date** column , `filterParams.valueFormatter` is used to format the value displayed in the Floating Filter.
 
 <grid-example title='Formatting Tree List Values' name='formatting-tree-list-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
@@ -108,7 +111,7 @@ The following example demonstrates formatting the Tree List. Note the following:
 
 ## Filter Value Tooltips
 
-When using Tree List with a [Custom Tooltip Component](/component-tooltip/), the tooltip params will be of type `ISetFilterTreeListTooltipParams` which additionally contains the level of the item within the tree. Set Filter tooltips are described in more detail [here](/filter-set-filter-list/#filter-value-tooltips).
+When using Tree List with a [Custom Tooltip Component](/component-tooltip/), the tooltip params will be of type `ISetFilterTreeListTooltipParams` which extends the Custom Tooltip params to include the level of the item within the tree.
 
 Additional property available on `ISetFilterTreeListTooltipParams`:
 

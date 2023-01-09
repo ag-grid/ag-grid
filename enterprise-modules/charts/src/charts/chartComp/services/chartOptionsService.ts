@@ -50,8 +50,9 @@ export class ChartOptionsService extends BeanStub {
         }
     }
 
-    public waitForUpdate() {
-        return this.chartController.getChartProxy().getChart().waitForUpdate();
+    public awaitChartOptionUpdate(func: () => void) {
+        const chart = this.chartController.getChartProxy().getChart();
+        chart.waitForUpdate().then(() => func());
     }
 
     public getAxisProperty<T = string>(expression: string): T {

@@ -32,50 +32,22 @@ export class CartesianChart extends Chart {
         const { width, height, legend, navigator, padding } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
+        shrinkRect.x += padding.left;
+        shrinkRect.y += padding.top;
+        shrinkRect.width -= padding.left + padding.right;
+        shrinkRect.height -= padding.top + padding.bottom;
 
-        const { captionAutoPadding = 0 } = this.positionCaptions();
-        this.positionLegend(captionAutoPadding);
+        shrinkRect = this.positionCaptions(shrinkRect);
+        shrinkRect = this.positionLegend(shrinkRect);
 
         if (legend.visible && legend.enabled && legend.data.length) {
-            const { legendAutoPadding } = this;
-            const legendPadding = this.legend.spacing;
-
-            shrinkRect.x += legendAutoPadding.left;
-            shrinkRect.y += legendAutoPadding.top;
-            shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
-            shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
-
-            switch (this.legend.position) {
-                case 'right':
-                    shrinkRect.width -= legendPadding;
-                    legend.translationX -= padding.right;
-                    break;
-                case 'bottom':
-                    shrinkRect.height -= legendPadding;
-                    legend.translationY -= padding.bottom;
-                    break;
-                case 'left':
-                    shrinkRect.x += legendPadding;
-                    shrinkRect.width -= legendPadding;
-                    legend.translationX += padding.left;
-                    break;
-                case 'top':
-                    shrinkRect.y += legendPadding;
-                    shrinkRect.height -= legendPadding;
-                    legend.translationY += padding.top;
-                    break;
-            }
+            const legendPadding = legend.spacing;
+            shrinkRect.shrink(legendPadding, legend.position);
         }
-
-        shrinkRect.x += padding.left;
-        shrinkRect.width -= padding.left + padding.right;
-
-        shrinkRect.y += padding.top + captionAutoPadding;
-        shrinkRect.height -= padding.top + captionAutoPadding + padding.bottom;
 
         if (navigator.enabled) {
             const navigatorTotalHeight = navigator.height + navigator.margin;
-            shrinkRect.height -= navigatorTotalHeight;
+            shrinkRect.shrink(navigatorTotalHeight, 'bottom');
             navigator.y = shrinkRect.y + shrinkRect.height + navigator.margin;
         }
 

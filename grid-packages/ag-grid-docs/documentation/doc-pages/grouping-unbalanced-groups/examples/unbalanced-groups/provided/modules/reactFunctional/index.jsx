@@ -117,7 +117,7 @@ const GridExample = () => {
 
             <div style={gridStyle} className="ag-theme-alpine">
                 <AgGridReact
-
+                    groupAllowUnbalanced
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}

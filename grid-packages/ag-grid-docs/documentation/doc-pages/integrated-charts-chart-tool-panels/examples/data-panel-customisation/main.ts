@@ -1,4 +1,4 @@
-import { ChartCreated, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
+import { ColDef, CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 const columnDefs: ColDef[] = [
@@ -6,62 +6,26 @@ const columnDefs: ColDef[] = [
   { field: 'gold', chartDataType: 'series' },
   { field: 'silver', chartDataType: 'series' },
   { field: 'bronze', chartDataType: 'series' },
-  {
-    headerName: 'A',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
-  {
-    headerName: 'B',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
-  {
-    headerName: 'C',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
-  {
-    headerName: 'D',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
 ]
 
 const gridOptions: GridOptions = {
   defaultColDef: {
-    editable: true,
-    sortable: true,
     flex: 1,
-    minWidth: 100,
-    filter: true,
-    resizable: true,
   },
   columnDefs: columnDefs,
   rowData: getData(),
-  popupParent: document.body,
-  enableRangeSelection: true,
   onFirstDataRendered: onFirstDataRendered,
+  enableRangeSelection: true,
   enableCharts: true,
   chartToolPanelsDef: {
-    defaultToolPanel: 'settings',
-    settingsPanel: {        
-      chartGroupsDef: {
-        pieGroup: [
-            'pie',
-            'doughnut'
-        ],
-        columnGroup: [
-            'stackedColumn',
-            'column',
-            'normalizedColumn'
-        ],
-        barGroup: [
-            'bar'
-        ],
-      }
-    },
-  },
+    defaultToolPanel: 'data',
+    dataPanel: {
+      groups: [
+        { type: 'seriesChartType', isOpen: true },
+        { type: 'series', isOpen: false }
+      ]
+    }
+  }
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

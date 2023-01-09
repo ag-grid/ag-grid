@@ -3020,6 +3020,10 @@
       "description": "/** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "groupAllowUnbalanced": {
+      "description": "/** Set to `true` to prevent the grid from creating a '(blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "rowGroupPanelShow": {
       "description": "/** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */",
       "type": {
@@ -20948,6 +20952,10 @@
       "description": "/** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "groupAllowUnbalanced": {
+      "description": "/** Set to `true` to prevent the grid from creating a '(blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "rowGroupPanelShow": {
       "description": "/** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */",
       "type": {
@@ -23664,6 +23672,10 @@
     },
     "groupHideOpenParents": {
       "description": "/** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "groupAllowUnbalanced": {
+      "description": "/** Set to `true` to prevent the grid from creating a '(blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelShow": {
@@ -26388,6 +26400,10 @@
     },
     "groupHideOpenParents": {
       "description": "/** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "groupAllowUnbalanced": {
+      "description": "/** Set to `true` to prevent the grid from creating a '(blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelShow": {

@@ -43,19 +43,23 @@ function treeListFormatter(pathKey: string | null, level: number): string {
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
-
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then((data: any[]) => gridOptions.api!.setRowData([
-      {},
-      ...data.map(row => {
-        const dateParts = row.date.split('/');
-        const newDate = new Date(
-          parseInt(dateParts[2]),
-          dateParts[1] - Math.floor(Math.random() * 3),
-          Math.ceil(Math.random() * 28)
-        );
-        return {...row, date: newDate};
-      })
-    ]))
+  .then(response => response.json())
+  .then((data: any[]) => {
+      const randomDays = [1, 4, 10, 15, 18];
+      gridOptions.api!.setRowData([
+        {},
+        ...data.map(row => {
+          // generate pseudo-random dates
+          const dateParts = row.date.split('/');
+          const randomMonth = parseInt(dateParts[1]) - Math.floor(Math.random() * 3);
+          const newDate = new Date(
+            parseInt(dateParts[2]),
+            randomMonth,
+            randomMonth + randomDays[Math.floor(Math.random() * 5)]
+          );
+          return {...row, date: newDate};
+        })
+      ]);
+  })
 })

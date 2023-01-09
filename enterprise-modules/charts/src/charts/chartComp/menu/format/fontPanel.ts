@@ -206,6 +206,11 @@ export class FontPanel extends Component {
             .onValueChange(newColor => this.params.setFont({ color: newColor! }));
     }
 
+    public addItemToPanel(item: Component) {
+        this.fontGroup.addItem(item);
+        this.activeComps.push(item);
+    }
+
     private destroyActiveComps(): void {
         this.activeComps.forEach(comp => {
             _.removeFromParent(comp.getGui());

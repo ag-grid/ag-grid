@@ -131,6 +131,7 @@ class GridExample extends Component {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
+                        groupAllowUnbalanced
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
                         autoGroupColumnDef={this.state.autoGroupColumnDef}

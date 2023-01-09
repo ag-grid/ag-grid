@@ -23,6 +23,7 @@ import { ChartController } from "../chartController";
 import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartOptionsService } from "../services/chartOptionsService";
 import { AgChartPaddingOptions } from "ag-charts-community";
+import { ExtraPaddingDirection } from "../chartProxies/chartProxy";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]
@@ -93,22 +94,17 @@ export class ChartMenu extends Component {
         return this.menuVisible;
     }
 
-    public getExtraPaddingRequired(): AgChartPaddingOptions {
+    public getExtraPaddingDirections(): ExtraPaddingDirection[]  {
         const topItems: ChartMenuOptions[] = ['chartLink', 'chartUnlink', 'chartDownload'];
         const rightItems: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat'];
 
-        const result: AgChartPaddingOptions = {};
+        const result: ExtraPaddingDirection[] = [];
         if (topItems.some(v => this.chartToolbarOptions.includes(v))) {
-            result.top = 20;
+            result.push('top');
         }
+
         if (rightItems.some(v => this.chartToolbarOptions.includes(v))) {
-            const extraPadding = 10;
-            const isRtl = this.gridOptionsService.is('enableRtl');
-            if (isRtl) {
-                result.left = extraPadding;
-            } else {
-                result.right = extraPadding;
-            }
+            result.push(this.gridOptionsService.is('enableRtl') ? 'left' : 'right');
         }
 
         return result;

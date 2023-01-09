@@ -4,13 +4,17 @@ import {
     AgSlider,
     Autowired,
     Component,
+    Events,
     PostConstruct,
-    RefSelector
+    RefSelector,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 import { AgChartPaddingOptions } from "ag-charts-community";
+import { getSeriesType } from "../../../utils/seriesTypeMapper";
+import { ChartController } from "../../../chartController";
+import { AgChartOptions } from "ag-charts-community/typings/chart/agChartOptions";
 
 export class PaddingPanel extends Component {
 
@@ -32,7 +36,7 @@ export class PaddingPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    constructor(private readonly chartOptionsService: ChartOptionsService, private readonly chartController: ChartController) {
         super();
     }
 
@@ -44,6 +48,10 @@ export class PaddingPanel extends Component {
             suppressOpenCloseIcons: true
         };
         this.setTemplate(PaddingPanel.TEMPLATE, { chartPaddingGroup: groupParams });
+
+        this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e) => {
+            this.updateTopPadding(e.chartOptions);
+        });
 
         this.initGroup();
         this.initChartPaddingItems();
@@ -57,7 +65,6 @@ export class PaddingPanel extends Component {
     }
 
     private initChartPaddingItems(): void {
-
         const initInput = (property: keyof AgChartPaddingOptions, input: AgSlider) => {
             const currentValue = this.chartOptionsService.getChartOption<number>('padding.' + property);
             input.setLabel(this.chartTranslationService.translate(property))
@@ -73,5 +80,12 @@ export class PaddingPanel extends Component {
         initInput('left', this.paddingLeftSlider);
     }
 
-
+    private updateTopPadding(chartOptions: any) {
+        // keep 'top' padding in sync with chart as toggling chart title on / off change the 'top' padding
+        const seriesType = this.chartController.getChartSeriesTypes()[0];
+        const topPadding = chartOptions[seriesType]?.padding?.top;
+        if (topPadding != null) {
+            this.paddingTopSlider.setValue(topPadding);
+        }
+    }
 }

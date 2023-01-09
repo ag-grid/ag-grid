@@ -1,7 +1,8 @@
-import { _, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
+import { _, Autowired, Component, PostConstruct, ChartMenuOptions,GetChartToolbarItemsParams, WithoutGridCommon, AgSlider, AgGroupComponent, RefSelector, AgGroupComponentParams } from "@ag-grid-community/core";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { PaddingPanel } from "./paddingPanel";
 
 export default class TitlePanel extends Component {
 
@@ -24,8 +25,7 @@ export default class TitlePanel extends Component {
 
     private hasTitle(): boolean {
         const title: any = this.getOption('title');
-        const hasTitle = title && title.enabled && title.text && title.text.length > 0;
-        return hasTitle ? true : false;
+        return title && title.enabled && title.text && title.text.length > 0;
     }
 
     private initFontPanel(): void {
@@ -58,6 +58,12 @@ export default class TitlePanel extends Component {
             initialFont,
             setFont,
             setEnabled: (enabled) => {
+                if (this.toolbarExists()) {
+                    // extra padding is only included when the toolbar is present
+                    const topPadding: number = this.getOption('padding.top');
+                    this.setOption('padding.top', enabled ? topPadding - 20 : topPadding + 20);
+                }
+
                 this.setOption('title.enabled', enabled);
                 const currentTitleText = this.getOption('title.text');
                 const replaceableTitleText = currentTitleText === 'Title' || currentTitleText?.trim().length === 0;
@@ -68,6 +74,10 @@ export default class TitlePanel extends Component {
         };
 
         const fontPanelComp = this.createBean(new FontPanel(fontPanelParams));
+
+        // add the title spacing slider to font panel
+        fontPanelComp.addItemToPanel(this.createSpacingSlicer());
+
         this.getGui().appendChild(fontPanelComp.getGui());
         this.activePanels.push(fontPanelComp);
 
@@ -75,6 +85,29 @@ export default class TitlePanel extends Component {
         this.addManagedListener(this.eventService, 'chartTitleEdit', () => {
             fontPanelComp.setEnabled(this.hasTitle());
         });
+    }
+
+    private createSpacingSlicer() {
+        const spacingSlider = this.createBean(new AgSlider());
+        const currentValue = this.chartOptionsService.getChartOption<number>('title.spacing');
+        spacingSlider.setLabel(this.chartTranslationService.translate('spacing'))
+            .setMaxValue(Math.max(currentValue, 100))
+            .setValue(`${currentValue}`)
+            .setTextFieldWidth(45)
+            .onValueChange(newValue => this.chartOptionsService.setChartOption('title.spacing', newValue));
+
+        return spacingSlider;
+    }
+
+    private toolbarExists() {
+        const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
+        if (!toolbarItemsFunc) { return true; }
+
+        const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
+            defaultItems: ['chartUnlink', 'chartDownload']
+        };
+        const topItems: ChartMenuOptions[] = ['chartLink', 'chartUnlink', 'chartDownload'];
+        return topItems.some(v => (toolbarItemsFunc && toolbarItemsFunc(params))?.includes(v));
     }
 
     private getOption<T = string>(expression: string): T {

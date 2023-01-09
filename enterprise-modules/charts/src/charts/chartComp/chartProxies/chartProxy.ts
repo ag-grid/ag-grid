@@ -14,7 +14,7 @@ export interface ChartProxyParams {
     getChartThemeName: () => string;
     getChartThemes: () => string[];
     getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
-    getExtraPaddingRequired: () => AgChartPaddingOptions;
+    getExtraPaddingDirections: () => ExtraPaddingDirection[];
     apiChartThemeOverrides?: AgChartThemeOverrides;
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
@@ -24,6 +24,8 @@ export interface ChartProxyParams {
     seriesChartTypes: SeriesChartType[];
     translate: (toTranslate: string, defaultText?: string) => string;
 }
+
+export type ExtraPaddingDirection = 'top' | 'right' | 'bottom' | 'left';
 
 export interface FieldDefinition {
     colId: string;

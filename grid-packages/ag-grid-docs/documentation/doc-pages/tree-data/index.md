@@ -162,7 +162,7 @@ const gridOptions = {
 
 Please note that Tree Data filtering will override some of the functionality of [Filtering Group Aggregations](/aggregation-filtering/#filtering-group-aggregations). Specifically, passing `true` or `false` to `groupAggFiltering` will not change which rows are displayed (with one exception described below). However, it will affect the aggregated values displayed in the parent rows. When `true`, the aggregated totals will be based on the unfiltered rows. When `false`, the aggregated totals will be based on the filtered rows only. The one exception to the above is that the Set Filter will not match a value in a parent row when `groupAggFiltering` is `false`. [Passing a function to the property](/aggregation-filtering/#custom-group-aggregation-filtering) will work the same as without Tree Data filtering. If Tree Data filtering is disabled by setting `excludeChildrenWhenTreeDataFiltering = true`, then `groupAggFiltering` will work as normal.
 
-Also note the [Set Filter](/filter-set/) will contain a list of all unique values across each level of the group hierarchy. The [File Browser](#example-file-browser) example below demonstrates how the Set Filter works with Tree Data.
+Also note the [Set Filter](/filter-set/) will contain a list of all unique values across each level of the group hierarchy. The [File Browser](#example-file-browser) example below demonstrates how the Set Filter works with Tree Data. It is also possible to display the Set Filter List as a [Tree List](/filter-set-tree-list/), which replicates the Tree Data structure. This can be seen in the [Tree List](#tree-list-example) example below.
 
 ## File Browser Example
 
@@ -175,6 +175,15 @@ The following example presents a more complex example which includes Aggregation
 - **'Size' Aggregation** - as you move selected items into 'stuff' you'll notice updated folder sizes.
 
 <grid-example title='File Browser' name='file-browser' type='generated' options='{ "enterprise": true, "exampleHeight": 570, "extras": ["fontawesome"], "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Tree List Example
+
+The following example demonstrates using the Set Filter Tree List with Tree Data:
+
+1. The **Employee** group column has Tree List enabled via `filterParams.treeList = true`. A Key Creator is specified to convert the path into a string.
+2. The Filter List for the **Employee** column matches the format of the Tree Data structure.
+
+<grid-example title='Tree List' name='tree-list-filtering' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Pivot and Row Grouping with Tree Data
 

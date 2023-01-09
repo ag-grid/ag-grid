@@ -46,6 +46,7 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: -1,
   rowGroupPanelShow: 'always',
   animateRows: true,
+  groupAllowUnbalanced: true,
 }
 
 const COUNTRY_CODES: Record<string, string> = {

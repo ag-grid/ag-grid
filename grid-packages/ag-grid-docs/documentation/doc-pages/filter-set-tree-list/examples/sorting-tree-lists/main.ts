@@ -7,7 +7,8 @@ const gridOptions: GridOptions = {
       field: 'startDate',
       valueFormatter: params => params.value ? params.value.toLocaleDateString() : params.value,
       filterParams: {
-        treeList: true
+        treeList: true,
+        comparator: reverseOrderComparator,
       } as ISetFilterParams<any, Date>,
     },
   ],
@@ -61,7 +62,7 @@ function arrayComparator(a: string[] | null, b: string[] | null): number {
   return 0;
 }
 
-function reverseOrderComparator(a: string, b: string): number {
+function reverseOrderComparator(a: any, b: any): number {
   return a < b ? 1 : (a > b ? -1 : 0);
 }
 
