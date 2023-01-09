@@ -177,6 +177,8 @@ export class Legend {
     readonly item = new LegendItem();
     readonly listeners = new LegendListeners();
 
+    private readonly truncatedItems: Set<string> = new Set();
+
     set translationX(value: number) {
         this.group.translationX = value;
     }
@@ -404,8 +406,12 @@ export class Legend {
                 addEllipsis = true;
             }
 
+            const id = datum.itemId || datum.id;
             if (addEllipsis) {
                 text += ellipsis;
+                this.truncatedItems.add(id);
+            } else {
+                this.truncatedItems.delete(id);
             }
 
             markerLabel.text = text;
