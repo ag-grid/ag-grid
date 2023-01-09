@@ -289,7 +289,7 @@
       "left?": "Omit<AgNumberAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "crossLines?": "AgCrossLineThemeOptions",
       "position?": "AgCartesianAxisPosition",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
@@ -328,7 +328,7 @@
       "left?": "Omit<AgLogAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "crossLines?": "AgCrossLineThemeOptions",
       "position?": "AgCartesianAxisPosition",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
@@ -367,7 +367,7 @@
       "left?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "crossLines?": "AgCrossLineThemeOptions",
       "position?": "AgCartesianAxisPosition",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
@@ -402,7 +402,7 @@
       "left?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "crossLines?": "AgCrossLineThemeOptions",
       "position?": "AgCartesianAxisPosition",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
@@ -437,7 +437,7 @@
       "left?": "Omit<AgTimeAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "crossLines?": "AgCrossLineThemeOptions",
       "position?": "AgCartesianAxisPosition",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
@@ -639,6 +639,29 @@
     }
   },
   "AgChartCaptionOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "text?": "string",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor",
+      "spacing?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the title should be shown. */",
+      "text?": "/** The text to show in the title. */",
+      "fontStyle?": "/** The font style to use for the title. */",
+      "fontWeight?": "/** The font weight to use for the title. */",
+      "fontSize?": "/** The font size in pixels to use for the title. */",
+      "fontFamily?": "/** The font family to use for the title. */",
+      "color?": "/** The colour to use for the title. */",
+      "spacing?": "/** Spacing added to help position the caption. Default: 20 */"
+    }
+  },
+  "AgAxisCaptionOptions": {
     "meta": {},
     "type": {
       "enabled?": "boolean",
@@ -1128,7 +1151,7 @@
     "meta": { "doc": "/** Configuration for axes in cartesian charts. */" },
     "type": {
       "position?": "AgCartesianAxisPosition",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
@@ -1215,7 +1238,7 @@
       "max?": "number",
       "tick?": "AgAxisNumberTickOptions",
       "position?": "AgCartesianAxisPosition",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
@@ -1247,7 +1270,7 @@
       "base?": "number",
       "tick?": "AgAxisNumberTickOptions",
       "position?": "AgCartesianAxisPosition",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
@@ -1279,7 +1302,7 @@
       "groupPaddingInner?": "Ratio",
       "tick?": "AgAxisNumberTickOptions",
       "position?": "AgCartesianAxisPosition",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
@@ -1307,7 +1330,7 @@
       "type": "'groupedCategory'",
       "tick?": "AgAxisNumberTickOptions",
       "position?": "AgCartesianAxisPosition",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
@@ -1335,7 +1358,7 @@
       "min?": "Date | number",
       "max?": "Date | number",
       "position?": "AgCartesianAxisPosition",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
@@ -2318,7 +2341,8 @@
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "spacing?": "number"
     },
     "docs": {
       "enabled?": "/** Whether or not the title should be shown. */",
@@ -2327,7 +2351,8 @@
       "fontWeight?": "/** The font weight to use for the title. */",
       "fontSize?": "/** The font size in pixels to use for the title. */",
       "fontFamily?": "/** The font family to use for the title. */",
-      "color?": "/** The colour to use for the title. */"
+      "color?": "/** The colour to use for the title. */",
+      "spacing?": "/** Spacing added to help position the caption. Default: 20 */"
     }
   },
   "AgPieSeriesCalloutOptions": {
