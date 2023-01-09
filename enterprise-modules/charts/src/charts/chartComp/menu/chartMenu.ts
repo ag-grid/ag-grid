@@ -177,14 +177,28 @@ export class ChartMenu extends Component {
                     defaultItems: tabOptions
                 };
     
+                const isLegacyToolbar = this.gridOptionsService.is('suppressChartToolPanelsButton');
                 tabOptions = toolbarItemsFunc(params).filter(option => {
                     if (!this.buttons[option]) {
                         console.warn(`AG Grid: '${option}' is not a valid Chart Toolbar Option`);
+                        return false;
+                    } 
+                    // If not legacy, remove chart tool panel options here,
+                    // and add them all in one go below
+                    else if (!isLegacyToolbar && CHART_TOOL_PANEL_ALLOW_LIST.includes(option as any)) {
+                        const msg = `AG Grid: '${option}' is a Chart Tool Panel option and will be ignored. Please use 'chartToolPanelsDef.panels' grid option instead`;
+                        console.warn(msg);
                         return false;
                     }
     
                     return true;
                 });
+
+                if (!isLegacyToolbar) {
+                    // Add all the chart tool panels, as `chartToolPanelsDef.panels`
+                    // should be used for configuration
+                    tabOptions = tabOptions.concat(CHART_TOOL_PANEL_ALLOW_LIST);
+                }
             }
     
             // pivot charts use the column tool panel instead of the data panel
