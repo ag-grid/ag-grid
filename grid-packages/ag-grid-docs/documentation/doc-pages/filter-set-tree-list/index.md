@@ -52,9 +52,9 @@ The following example demonstrates enabling different types of Tree List in the 
 
 ## Sorting Tree Lists
 
-Values inside a Tree List will be sorted similar to [normal Set Filter Lists](/filter-set-filter-list/#sorting-filter-lists), with the exception that if the column values are of type `Date`, they will instead be sorted based on the raw date values.
+Sorting values for Tree Lists is similar to [Sorting Filter Lists](/filter-set-filter-list/#sorting-filter-lists), with the exception that if the column values are of type `Date`, they will instead be sorted based on the raw date values.
 
-A Comparator can be used to change the sort order of Tree Lists just like with normal Set Filter Lists, with [the same conditions applying](/filter-set-filter-list/#sorting-filter-lists). For Tree Lists, the Comparator is applied to the child values, sorting the entire tree in one pass rather than for each level. The Comparator will be provided the following:
+A Comparator can be used to change the sort order of Tree Lists just like with [Sorting Filter Lists](/filter-set-filter-list/#sorting-filter-lists), with the same conditions applying. For Tree Lists, the Comparator is applied to the child values, sorting the entire tree in one pass rather than for each level. The Comparator will be provided the following:
 - The column value for `Date` objects and custom tree paths.
 - The tree path (`string[]` or `null`) for Tree Data and Grouping.
 
@@ -93,7 +93,7 @@ const gridOptions = {
 }
 </snippet>
 
-If a formatter is provided, it will also need to handle [missing values](/filter-set-filter-list/#missing-values), which will have a `pathKey` of `null`. Without a formatter, these are displayed as `(Blanks)`.
+If a formatter is provided, it will also need to handle [Missing Values](/filter-set-filter-list/#missing-values), which will have a `pathKey` of `null`. Without a formatter, these are displayed as `(Blanks)`.
 
 `filterParams.valueFormatter` is not used in the Filter List when `filterParams.treeList = true`. However, it is still used to format the values displayed in the Floating Filter. The value provided to the Value Formatter is the original value, e.g. a `Date` object for dates, the child value for Tree Data or Grouping, or the column value for a custom tree path.
 

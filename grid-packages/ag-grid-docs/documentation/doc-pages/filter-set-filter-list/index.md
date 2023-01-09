@@ -291,7 +291,7 @@ If case differences need to be normalised to remove redundant values from the da
 
 If there are missing / empty values in the row data of the grid, or missing values in the list of [Supplied Values](#supplying-filter-values), the Filter List will contain an entry called `(Blanks)` which can be used to select / deselect all of these values. If this not the desired behaviour, provide a [Formatter](#value-formatter) to present blank values in a different way.
 
-`undefined`, `null` and `''`, as well as an empty array if using [multiple values](#multiple-values-per-cell), are all treated as missing values. These will appear within the [Set Filter model](/filter-set-api/#set-filter-model) as a single entry of `null`. This also applies to supplied Filter List values (e.g. if you supply `''` it will appear in the filter model as `null`).
+`undefined`, `null` and `''`, as well as an empty array if using [Multiple Values Per Cell](#multiple-values-per-cell), are all treated as missing values. These will appear within the [Set Filter Model](/filter-set-api/#set-filter-model) as a single entry of `null`. This also applies to supplied Filter List values (e.g. if you supply `''` it will appear in the filter model as `null`).
 
 ## Filter Value Types
 
@@ -301,7 +301,7 @@ The Set Filter internally maintains the original type of the cell values, but al
 
 If you are providing complex objects as values, then you need to provide both a Key Creator function and a Value Formatter function when using the Set Filter.
 
-The Key Creator generates a unique string key from the complex object (note that if the key is `null`, `undefined` or `''` it will be converted to `null`, the same as for [missing values](#missing-values)). This key is used within the Filter Model, and to compare objects. You can either provide a Key Creator within the filter params, which will be specific to the Set Filter, or you can provide one in the Column Definition that is shared with other features such as grouping.
+The Key Creator generates a unique string key from the complex object (note that if the key is `null`, `undefined` or `''` it will be converted to `null`, the same as for [Missing Values](#missing-values)). This key is used within the Filter Model, and to compare objects. You can either provide a Key Creator within the filter params, which will be specific to the Set Filter, or you can provide one in the Column Definition that is shared with other features such as grouping.
 
 The Value Formatter is used to generate the label that is displayed to the user within the Filter List. You can provide the Value Formatter in the filter params.
 
