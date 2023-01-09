@@ -74,7 +74,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      */
     public rowGroupIndex: number | null;
 
-    /** `true` if this node is a group node (ie has children) */
+    /** `true` if this node is a group node (i.e. it has children) */
     public group: boolean | undefined;
 
     /** `true` if this row is getting dragged */
