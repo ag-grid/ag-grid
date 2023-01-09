@@ -40,10 +40,10 @@ function reset() {
 
   delete options.axes![0].label!.rotation;
   delete options.axes![0].label!.autoRotate;
-  delete options.axes![0].label!.autoCollisionRemoval;
+  delete options.axes![0].label!.avoidCollisions;
   delete options.axes![1].label!.rotation;
   delete options.axes![1].label!.autoRotate;
-  delete options.axes![1].label!.autoCollisionRemoval;
+  delete options.axes![1].label!.avoidCollisions;
 
   options.series![0].xKey = 'year';
   agCharts.AgChart.update(chart, options);
@@ -87,15 +87,15 @@ function irregularLabels() {
 }
 
 function noCollisionDetection() {
-  options.axes![0].label!.autoCollisionRemoval = false;
-  options.axes![1].label!.autoCollisionRemoval = false;
+  options.axes![0].label!.avoidCollisions = false;
+  options.axes![1].label!.avoidCollisions = false;
 
   agCharts.AgChart.update(chart, options);
 }
 
 function autoCollisionDetection() {
-  options.axes![0].label!.autoCollisionRemoval = true;
-  options.axes![1].label!.autoCollisionRemoval = true;
+  options.axes![0].label!.avoidCollisions = true;
+  options.axes![1].label!.avoidCollisions = true;
 
   agCharts.AgChart.update(chart, options);
 }
