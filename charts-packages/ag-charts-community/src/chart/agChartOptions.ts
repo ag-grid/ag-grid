@@ -590,9 +590,9 @@ export interface AgAxisLabelOptions {
     /** If autoRotate is enabled, specifies the rotation angle to use when autoRotate is activated. Defaults to an angle of 335 degrees if unspecified. */
     autoRotateAngle?: number;
     /** Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide. */
-    autoCollisionRemoval?: boolean;
+    avoidLabelCollisions?: boolean;
     /** Minimum gap in pixels between the axis labels before being removed to avoid collisions. */
-    minGap?: PixelSize;
+    minLabelSpacing?: PixelSize;
     // mirrored?: boolean;
     // parallel?: boolean;
     /** Format string used when rendering labels for time axes. */

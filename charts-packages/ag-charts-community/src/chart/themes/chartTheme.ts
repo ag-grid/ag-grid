@@ -80,7 +80,7 @@ export class ChartTheme {
                 color: 'rgb(87, 87, 87)',
                 formatter: undefined,
                 autoRotate: false,
-                autoCollisionRemoval: true,
+                avoidLabelCollisions: true,
             },
             line: {
                 width: 1,
