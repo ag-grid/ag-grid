@@ -247,6 +247,7 @@ export class Legend {
     constructor(
         private readonly chart: {
             readonly series: Series<any>[];
+            readonly element: HTMLElement;
             togglePointer(visible: boolean): void;
             update(
                 type: ChartUpdateType,
@@ -706,6 +707,12 @@ export class Legend {
             this.cursorManager.updateCursor(this.id);
             this.highlightManager.updateHighlight(this.id);
             return;
+        }
+
+        if (datum && this.truncatedItems.has(datum.itemId || datum.id)) {
+            this.chart.element.title = datum.label.text;
+        } else {
+            this.chart.element.title = '';
         }
 
         if (toggleSeriesVisible || listeners.legendItemClick !== NO_OP_LISTENER) {
