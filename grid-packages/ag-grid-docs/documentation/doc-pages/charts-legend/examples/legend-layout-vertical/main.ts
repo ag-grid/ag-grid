@@ -28,7 +28,7 @@ const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: false,
   width: 750,
-  height: 430,
+  height: 450,
   theme: {
     palette: {
       fills: colors,
