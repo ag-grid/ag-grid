@@ -10,11 +10,12 @@ export const data = {
                         {
                             "name": "AWK",
                             "description": "American Water Works Company, Inc.",
-                            "size": 252,
-                            "color": -4.91
+                            "color": "#ca4c3f",
+                            "valuation": 252,
+                            "change": -4.91
                         }
                     ],
-                    "color": 2.23
+                    "change": 2.23
                 },
                 {
                     "name": "Gas Utilities",
@@ -22,17 +23,19 @@ export const data = {
                         {
                             "name": "CNP",
                             "description": "CenterPoint Energy, Inc.",
-                            "size": 280,
-                            "color": 3.74
+                            "color": "#76bb5f",
+                            "valuation": 280,
+                            "change": 3.74
                         },
                         {
                             "name": "OKE",
                             "description": "ONEOK, Inc.",
-                            "size": 644,
-                            "color": 4.9
+                            "color": "#6bca64",
+                            "valuation": 644,
+                            "change": 4.9
                         }
                     ],
-                    "color": -4.67
+                    "change": -4.67
                 },
                 {
                     "name": "Diversified Utilities",
@@ -40,41 +43,47 @@ export const data = {
                         {
                             "name": "NI",
                             "description": "NiSource Inc.",
-                            "size": 171,
-                            "color": -1.36
+                            "color": "#a87a4c",
+                            "valuation": 171,
+                            "change": -1.36
                         },
                         {
                             "name": "NRG",
                             "description": "NRG Energy, Inc.",
-                            "size": 209,
-                            "color": -1.51
+                            "color": "#a9784c",
+                            "valuation": 209,
+                            "change": -1.51
                         },
                         {
                             "name": "ES",
                             "description": "Eversource Energy",
-                            "size": 400,
-                            "color": -4.9
+                            "color": "#ca4c3f",
+                            "valuation": 400,
+                            "change": -4.9
                         },
                         {
                             "name": "PEG",
                             "description": "Public Service Enterprise Group Incorporated",
-                            "size": 540,
-                            "color": -3.27
+                            "color": "#ba6145",
+                            "valuation": 540,
+                            "change": -3.27
                         },
                         {
                             "name": "SRE",
                             "description": "Sempra Energy",
-                            "size": 630,
-                            "color": -3.71
+                            "color": "#be5c44",
+                            "valuation": 630,
+                            "change": -3.71
                         },
                         {
                             "name": "EXC",
                             "description": "Exelon Corporation",
-                            "size": 858,
-                            "color": 3.82
+                            "color": "#75bc60",
+                            "valuation": 858,
+                            "change": 3.82
                         }
                     ],
-                    "color": -2.85
+                    "change": -2.85
                 },
                 {
                     "name": "Electric Utilities",
@@ -82,128 +91,148 @@ export const data = {
                         {
                             "name": "SCG",
                             "description": "SCANA Corporation",
-                            "size": 110,
-                            "color": 1.56
+                            "color": "#8b9f57",
+                            "valuation": 110,
+                            "change": 1.56
                         },
                         {
                             "name": "PNW",
                             "description": "Pinnacle West Capital Corporation",
-                            "size": 231,
-                            "color": 3.08
+                            "color": "#7db25d",
+                            "valuation": 231,
+                            "change": 3.08
                         },
                         {
                             "name": "AES",
                             "description": "The AES Corporation",
-                            "size": 231,
-                            "color": 3.26
+                            "color": "#7bb55e",
+                            "valuation": 231,
+                            "change": 3.26
                         },
                         {
                             "name": "LNT",
                             "description": "Alliant Energy Corporation",
-                            "size": 242,
-                            "color": -1.92
+                            "color": "#ad724a",
+                            "valuation": 242,
+                            "change": -1.92
                         },
                         {
                             "name": "CMS",
                             "description": "CMS Energy Corporation",
-                            "size": 360,
-                            "color": 3.61
+                            "color": "#77b95f",
+                            "valuation": 360,
+                            "change": 3.61
                         },
                         {
                             "name": "AEE",
                             "description": "Ameren Corporation",
-                            "size": 380,
-                            "color": 4.6
+                            "color": "#6ec663",
+                            "valuation": 380,
+                            "change": 4.6
                         },
                         {
                             "name": "ETR",
                             "description": "Entergy Corporation",
-                            "size": 400,
-                            "color": 3.48
+                            "color": "#79b85e",
+                            "valuation": 400,
+                            "change": 3.48
                         },
                         {
                             "name": "FE",
                             "description": "FirstEnergy Corp.",
-                            "size": 440,
-                            "color": 3.66
+                            "color": "#77ba5f",
+                            "valuation": 440,
+                            "change": 3.66
                         },
                         {
                             "name": "DTE",
                             "description": "DTE Energy Company",
-                            "size": 486,
-                            "color": 3.7
+                            "color": "#77ba5f",
+                            "valuation": 486,
+                            "change": 3.7
                         },
                         {
                             "name": "PPL",
                             "description": "PPL Corporation",
-                            "size": 513,
-                            "color": -2
+                            "color": "#ae714a",
+                            "valuation": 513,
+                            "change": -2
                         },
                         {
                             "name": "WEC",
                             "description": "WEC Energy Group, Inc.",
-                            "size": 540,
-                            "color": 1.65
+                            "color": "#8aa058",
+                            "valuation": 540,
+                            "change": 1.65
                         },
                         {
                             "name": "EIX",
                             "description": "Edison International",
-                            "size": 575,
-                            "color": 4.01
+                            "color": "#74be60",
+                            "valuation": 575,
+                            "change": 4.01
                         },
                         {
                             "name": "PCG",
                             "description": "PG&E Corporation",
-                            "size": 550,
-                            "color": -1.68
+                            "color": "#ab754b",
+                            "valuation": 550,
+                            "change": -1.68
                         },
                         {
                             "name": "XEL",
                             "description": "Xcel Energy Inc.",
-                            "size": 600,
-                            "color": 1.72
+                            "color": "#8aa158",
+                            "valuation": 600,
+                            "change": 1.72
                         },
                         {
                             "name": "ED",
                             "description": "Consolidated Edison, Inc.",
-                            "size": 660,
-                            "color": -3.9
+                            "color": "#c05943",
+                            "valuation": 660,
+                            "change": -3.9
                         },
                         {
                             "name": "AEP",
                             "description": "American Electric Power Company, Inc.",
-                            "size": 891,
-                            "color": 3.64
+                            "color": "#77ba5f",
+                            "valuation": 891,
+                            "change": 3.64
                         },
                         {
                             "name": "D",
                             "description": "Dominion Energy, Inc.",
-                            "size": 1155,
-                            "color": -1.52
+                            "color": "#a9784c",
+                            "valuation": 1155,
+                            "change": -1.52
                         },
                         {
                             "name": "SO",
                             "description": "The Southern Company",
-                            "size": 1196,
-                            "color": 2.18
+                            "color": "#85a75a",
+                            "valuation": 1196,
+                            "change": 2.18
                         },
                         {
                             "name": "DUK",
                             "description": "Duke Energy Corporation",
-                            "size": 1472,
-                            "color": -4.18
+                            "color": "#c35542",
+                            "valuation": 1472,
+                            "change": -4.18
                         },
                         {
                             "name": "NEE",
                             "description": "NextEra Energy, Inc.",
-                            "size": 2024,
-                            "color": 4.51
+                            "color": "#6fc562",
+                            "valuation": 2024,
+                            "change": 4.51
                         }
                     ],
-                    "color": 3.83
+                    "change": 3.83
                 }
             ],
-            "color": 1.82
+            "change": 1.82
         },
         {
             "name": "Industrial Goods",
@@ -214,11 +243,12 @@ export const data = {
                         {
                             "name": "PWR",
                             "description": "Quanta Services, Inc.",
-                            "size": 176,
-                            "color": -1.99
+                            "color": "#ae724a",
+                            "valuation": 176,
+                            "change": -1.99
                         }
                     ],
-                    "color": 0.45
+                    "change": 0.45
                 },
                 {
                     "name": "Heavy Construction",
@@ -226,11 +256,12 @@ export const data = {
                         {
                             "name": "FLR",
                             "description": "Fluor Corporation",
-                            "size": 112,
-                            "color": -0.13
+                            "color": "#9c8951",
+                            "valuation": 112,
+                            "change": -0.13
                         }
                     ],
-                    "color": -4.35
+                    "change": -4.35
                 },
                 {
                     "name": "Small Tools & Accessories",
@@ -238,11 +269,12 @@ export const data = {
                         {
                             "name": "SNA",
                             "description": "Snap-on Incorporated",
-                            "size": 160,
-                            "color": 0.75
+                            "color": "#939554",
+                            "valuation": 160,
+                            "change": 0.75
                         }
                     ],
-                    "color": -0.59
+                    "change": -0.59
                 },
                 {
                     "name": "Machine Tools & Accessories",
@@ -250,11 +282,12 @@ export const data = {
                         {
                             "name": "SWK",
                             "description": "Stanley Black & Decker, Inc.",
-                            "size": 442,
-                            "color": 2.29
+                            "color": "#84a85a",
+                            "valuation": 442,
+                            "change": 2.29
                         }
                     ],
-                    "color": -4.27
+                    "change": -4.27
                 },
                 {
                     "name": "Lumber, Wood Production",
@@ -262,11 +295,12 @@ export const data = {
                         {
                             "name": "WY",
                             "description": "Weyerhaeuser Company",
-                            "size": 558,
-                            "color": 2.33
+                            "color": "#84a95a",
+                            "valuation": 558,
+                            "change": 2.33
                         }
                     ],
-                    "color": 2.45
+                    "change": 2.45
                 },
                 {
                     "name": "Industrial Equipment & Components",
@@ -274,17 +308,19 @@ export const data = {
                         {
                             "name": "PNR",
                             "description": "Pentair plc",
-                            "size": 168,
-                            "color": -4.85
+                            "color": "#ca4d40",
+                            "valuation": 168,
+                            "change": -4.85
                         },
                         {
                             "name": "PH",
                             "description": "Parker-Hannifin Corporation",
-                            "size": 483,
-                            "color": -1.19
+                            "color": "#a67c4d",
+                            "valuation": 483,
+                            "change": -1.19
                         }
                     ],
-                    "color": 2.63
+                    "change": 2.63
                 },
                 {
                     "name": "General Building Materials",
@@ -292,23 +328,26 @@ export const data = {
                         {
                             "name": "MAS",
                             "description": "Masco Corporation",
-                            "size": 290,
-                            "color": -0.67
+                            "color": "#a1824f",
+                            "valuation": 290,
+                            "change": -0.67
                         },
                         {
                             "name": "MLM",
                             "description": "Martin Marietta Materials, Inc.",
-                            "size": 350,
-                            "color": -1.75
+                            "color": "#ab754b",
+                            "valuation": 350,
+                            "change": -1.75
                         },
                         {
                             "name": "VMC",
                             "description": "Vulcan Materials Company",
-                            "size": 375,
-                            "color": 4.35
+                            "color": "#70c362",
+                            "valuation": 375,
+                            "change": 4.35
                         }
                     ],
-                    "color": -4.61
+                    "change": -4.61
                 },
                 {
                     "name": "Residential Construction",
@@ -316,23 +355,26 @@ export const data = {
                         {
                             "name": "PHM",
                             "description": "PulteGroup, Inc.",
-                            "size": 196,
-                            "color": -0.07
+                            "color": "#9b8a51",
+                            "valuation": 196,
+                            "change": -0.07
                         },
                         {
                             "name": "LEN",
                             "description": "Lennar Corporation",
-                            "size": 392,
-                            "color": -3.71
+                            "color": "#be5c44",
+                            "valuation": 392,
+                            "change": -3.71
                         },
                         {
                             "name": "DHI",
                             "description": "D.R. Horton, Inc.",
-                            "size": 392,
-                            "color": -0.08
+                            "color": "#9b8a51",
+                            "valuation": 392,
+                            "change": -0.08
                         }
                     ],
-                    "color": -2.84
+                    "change": -2.84
                 },
                 {
                     "name": "Industrial Electrical Equipment",
@@ -340,17 +382,19 @@ export const data = {
                         {
                             "name": "AOS",
                             "description": "A. O. Smith Corporation",
-                            "size": 238,
-                            "color": -3.02
+                            "color": "#b86446",
+                            "valuation": 238,
+                            "change": -3.02
                         },
                         {
                             "name": "EMR",
                             "description": "Emerson Electric Co.",
-                            "size": 1054,
-                            "color": -2.67
+                            "color": "#b46948",
+                            "valuation": 1054,
+                            "change": -2.67
                         }
                     ],
-                    "color": -0.23
+                    "change": -0.23
                 },
                 {
                     "name": "Waste Management",
@@ -358,23 +402,26 @@ export const data = {
                         {
                             "name": "SRCL",
                             "description": "Stericycle, Inc.",
-                            "size": 160,
-                            "color": 0.98
+                            "color": "#919855",
+                            "valuation": 160,
+                            "change": 0.98
                         },
                         {
                             "name": "RSG",
                             "description": "Republic Services, Inc.",
-                            "size": 600,
-                            "color": 1.57
+                            "color": "#8b9f57",
+                            "valuation": 600,
+                            "change": 1.57
                         },
                         {
                             "name": "WM",
                             "description": "Waste Management, Inc.",
-                            "size": 950,
-                            "color": 3.7
+                            "color": "#77ba5f",
+                            "valuation": 950,
+                            "change": 3.7
                         }
                     ],
-                    "color": 1.29
+                    "change": 1.29
                 },
                 {
                     "name": "Aerospace/Defense - Major Diversified",
@@ -382,17 +429,19 @@ export const data = {
                         {
                             "name": "TXT",
                             "description": "Textron Inc.",
-                            "size": 288,
-                            "color": -3.45
+                            "color": "#bc5f45",
+                            "valuation": 288,
+                            "change": -3.45
                         },
                         {
                             "name": "NOC",
                             "description": "Northrop Grumman Corporation",
-                            "size": 846,
-                            "color": -2.24
+                            "color": "#b06e49",
+                            "valuation": 846,
+                            "change": -2.24
                         }
                     ],
-                    "color": 1.94
+                    "change": 1.94
                 },
                 {
                     "name": "Farm & Construction Machinery",
@@ -400,17 +449,19 @@ export const data = {
                         {
                             "name": "DE",
                             "description": "Deere & Company",
-                            "size": 1035,
-                            "color": 0.38
+                            "color": "#979053",
+                            "valuation": 1035,
+                            "change": 0.38
                         },
                         {
                             "name": "CAT",
                             "description": "Caterpillar Inc.",
-                            "size": 1800,
-                            "color": -4.97
+                            "color": "#cb4b3f",
+                            "valuation": 1800,
+                            "change": -4.97
                         }
                     ],
-                    "color": 3.33
+                    "change": 3.33
                 },
                 {
                     "name": "Aerospace/Defense Products & Services",
@@ -418,59 +469,68 @@ export const data = {
                         {
                             "name": "HII",
                             "description": "Huntington Ingalls Industries, Inc.",
-                            "size": 294,
-                            "color": -4.16
+                            "color": "#c35642",
+                            "valuation": 294,
+                            "change": -4.16
                         },
                         {
                             "name": "LLL",
                             "description": "L3 Technologies, Inc.",
-                            "size": 420,
-                            "color": -2.6
+                            "color": "#b46a48",
+                            "valuation": 420,
+                            "change": -2.6
                         },
                         {
                             "name": "TDG",
                             "description": "Transdigm Group Incorporated Tr",
-                            "size": 496,
-                            "color": 3.93
+                            "color": "#74bd60",
+                            "valuation": 496,
+                            "change": 3.93
                         },
                         {
                             "name": "COL",
                             "description": "Rockwell Collins, Inc.",
-                            "size": 558,
-                            "color": 1.84
+                            "color": "#89a358",
+                            "valuation": 558,
+                            "change": 1.84
                         },
                         {
                             "name": "RTN",
                             "description": "Raytheon Company",
-                            "size": 1456,
-                            "color": 4.8
+                            "color": "#6cc863",
+                            "valuation": 1456,
+                            "change": 4.8
                         },
                         {
                             "name": "GD",
                             "description": "General Dynamics Corporation",
-                            "size": 1508,
-                            "color": 4.93
+                            "color": "#6bca64",
+                            "valuation": 1508,
+                            "change": 4.93
                         },
                         {
                             "name": "LMT",
                             "description": "Lockheed Martin Corporation",
-                            "size": 2310,
-                            "color": -4.17
+                            "color": "#c35642",
+                            "valuation": 2310,
+                            "change": -4.17
                         },
                         {
                             "name": "UTX",
                             "description": "United Technologies Corporation",
-                            "size": 2695,
-                            "color": -4.81
+                            "color": "#c94d40",
+                            "valuation": 2695,
+                            "change": -4.81
                         },
                         {
                             "name": "BA",
                             "description": "The Boeing Company",
-                            "size": 5187,
-                            "color": 0.18
+                            "color": "#998d52",
+                            "valuation": 5187,
+                            "change": 0.18
                         }
                     ],
-                    "color": 3.25
+                    "change": 3.25
                 },
                 {
                     "name": "Diversified Machinery",
@@ -478,92 +538,106 @@ export const data = {
                         {
                             "name": "FLS",
                             "description": "Flowserve Corporation",
-                            "size": 192,
-                            "color": 1.27
+                            "color": "#8e9b56",
+                            "valuation": 192,
+                            "change": 1.27
                         },
                         {
                             "name": "DOV",
                             "description": "Dover Corporation",
-                            "size": 336,
-                            "color": -2.39
+                            "color": "#b26c49",
+                            "valuation": 336,
+                            "change": -2.39
                         },
                         {
                             "name": "XYL",
                             "description": "Xylem Inc.",
-                            "size": 350,
-                            "color": 4.52
+                            "color": "#6fc562",
+                            "valuation": 350,
+                            "change": 4.52
                         },
                         {
                             "name": "AME",
                             "description": "AMETEK, Inc.",
-                            "size": 475,
-                            "color": -2.78
+                            "color": "#b56747",
+                            "valuation": 475,
+                            "change": -2.78
                         },
                         {
                             "name": "CMI",
                             "description": "Cummins Inc.",
-                            "size": 600,
-                            "color": 0.84
+                            "color": "#929655",
+                            "valuation": 600,
+                            "change": 0.84
                         },
                         {
                             "name": "ROK",
                             "description": "Rockwell Automation Inc.",
-                            "size": 630,
-                            "color": -2.42
+                            "color": "#b26c49",
+                            "valuation": 630,
+                            "change": -2.42
                         },
                         {
                             "name": "IR",
                             "description": "Ingersoll-Rand Plc",
-                            "size": 621,
-                            "color": -2.92
+                            "color": "#b76647",
+                            "valuation": 621,
+                            "change": -2.92
                         },
                         {
                             "name": "ROP",
                             "description": "Roper Technologies, Inc.",
-                            "size": 828,
-                            "color": -1.47
+                            "color": "#a9784c",
+                            "valuation": 828,
+                            "change": -1.47
                         },
                         {
                             "name": "ETN",
                             "description": "Eaton Corporation plc",
-                            "size": 980,
-                            "color": -1.11
+                            "color": "#a57d4d",
+                            "valuation": 980,
+                            "change": -1.11
                         },
                         {
                             "name": "ITW",
                             "description": "Illinois Tool Works Inc.",
-                            "size": 1260,
-                            "color": 2.11
+                            "color": "#86a659",
+                            "valuation": 1260,
+                            "change": 2.11
                         },
                         {
                             "name": "DHR",
                             "description": "Danaher Corporation",
-                            "size": 1938,
-                            "color": 1.72
+                            "color": "#8aa158",
+                            "valuation": 1938,
+                            "change": 1.72
                         },
                         {
                             "name": "GE",
                             "description": "General Electric Company",
-                            "size": 3060,
-                            "color": 3.62
+                            "color": "#77b95f",
+                            "valuation": 3060,
+                            "change": 3.62
                         },
                         {
                             "name": "HON",
                             "description": "Honeywell International Inc.",
-                            "size": 3120,
-                            "color": 2.7
+                            "color": "#80ae5b",
+                            "valuation": 3120,
+                            "change": 2.7
                         },
                         {
                             "name": "MMM",
                             "description": "3M Company",
-                            "size": 3250,
-                            "color": -1.51
+                            "color": "#a9784c",
+                            "valuation": 3250,
+                            "change": -1.51
                         }
                     ],
-                    "color": -1.48
+                    "change": -1.48
                 }
             ],
-            "color": -4.71
+            "change": -4.71
         },
         {
             "name": "Healthcare",
@@ -574,11 +648,12 @@ export const data = {
                         {
                             "name": "PRGO",
                             "description": "Perrigo Company plc",
-                            "size": 72,
-                            "color": 0
+                            "color": "#9b8b52",
+                            "valuation": 72,
+                            "change": 0
                         }
                     ],
-                    "color": 1.08
+                    "change": 1.08
                 },
                 {
                     "name": "Specialized Health Services",
@@ -586,11 +661,12 @@ export const data = {
                         {
                             "name": "DVA",
                             "description": "DaVita Inc.",
-                            "size": 234,
-                            "color": 2.14
+                            "color": "#86a659",
+                            "valuation": 234,
+                            "change": 2.14
                         }
                     ],
-                    "color": 4.59
+                    "change": 4.59
                 },
                 {
                     "name": "Diagnostic Substances",
@@ -598,11 +674,12 @@ export const data = {
                         {
                             "name": "IDXX",
                             "description": "IDEXX Laboratories, Inc.",
-                            "size": 484,
-                            "color": -1.5
+                            "color": "#a9784c",
+                            "valuation": 484,
+                            "change": -1.5
                         }
                     ],
-                    "color": -1.18
+                    "change": -1.18
                 },
                 {
                     "name": "Hospitals",
@@ -610,17 +687,19 @@ export const data = {
                         {
                             "name": "UHS",
                             "description": "Universal Health Services, Inc.",
-                            "size": 207,
-                            "color": 2.67
+                            "color": "#81ad5b",
+                            "valuation": 207,
+                            "change": 2.67
                         },
                         {
                             "name": "HCA",
                             "description": "HCA Healthcare, Inc.",
-                            "size": 759,
-                            "color": 2.08
+                            "color": "#86a659",
+                            "valuation": 759,
+                            "change": 2.08
                         }
                     ],
-                    "color": -1.96
+                    "change": -1.96
                 },
                 {
                     "name": "Drugs - Generic",
@@ -628,23 +707,26 @@ export const data = {
                         {
                             "name": "MYL",
                             "description": "Mylan N.V.",
-                            "size": 420,
-                            "color": -0.07
+                            "color": "#9b8a51",
+                            "valuation": 420,
+                            "change": -0.07
                         },
                         {
                             "name": "ZTS",
                             "description": "Zoetis Inc.",
-                            "size": 980,
-                            "color": -4.12
+                            "color": "#c25642",
+                            "valuation": 980,
+                            "change": -4.12
                         },
                         {
                             "name": "AGN",
                             "description": "Allergan plc",
-                            "size": 1450,
-                            "color": 2.4
+                            "color": "#83aa5a",
+                            "valuation": 1450,
+                            "change": 2.4
                         }
                     ],
-                    "color": -0.8
+                    "change": -0.8
                 },
                 {
                     "name": "Medical Laboratories & Research",
@@ -652,41 +734,47 @@ export const data = {
                         {
                             "name": "PKI",
                             "description": "PerkinElmer, Inc.",
-                            "size": 176,
-                            "color": -4.3
+                            "color": "#c45442",
+                            "valuation": 176,
+                            "change": -4.3
                         },
                         {
                             "name": "DGX",
                             "description": "Quest Diagnostics Incorporated",
-                            "size": 330,
-                            "color": 1.75
+                            "color": "#8aa158",
+                            "valuation": 330,
+                            "change": 1.75
                         },
                         {
                             "name": "LH",
                             "description": "Laboratory Corporation of America Holdings",
-                            "size": 414,
-                            "color": 1.08
+                            "color": "#909955",
+                            "valuation": 414,
+                            "change": 1.08
                         },
                         {
                             "name": "A",
                             "description": "Agilent Technologies, Inc.",
-                            "size": 468,
-                            "color": 1.42
+                            "color": "#8d9d57",
+                            "valuation": 468,
+                            "change": 1.42
                         },
                         {
                             "name": "IQV",
                             "description": "IQVIA Holdings Inc.",
-                            "size": 572,
-                            "color": -4.79
+                            "color": "#c94e40",
+                            "valuation": 572,
+                            "change": -4.79
                         },
                         {
                             "name": "TMO",
                             "description": "Thermo Fisher Scientific Inc.",
-                            "size": 2080,
-                            "color": -0.96
+                            "color": "#a47f4e",
+                            "valuation": 2080,
+                            "change": -0.96
                         }
                     ],
-                    "color": 3.04
+                    "change": 3.04
                 },
                 {
                     "name": "Medical Instruments & Supplies",
@@ -694,71 +782,82 @@ export const data = {
                         {
                             "name": "XRAY",
                             "description": "DENTSPLY SIRONA Inc.",
-                            "size": 345,
-                            "color": 2.44
+                            "color": "#83aa5b",
+                            "valuation": 345,
+                            "change": 2.44
                         },
                         {
                             "name": "VAR",
                             "description": "Varian Medical Systems, Inc.",
-                            "size": 276,
-                            "color": 0.93
+                            "color": "#919755",
+                            "valuation": 276,
+                            "change": 0.93
                         },
                         {
                             "name": "HOLX",
                             "description": "Hologic, Inc.",
-                            "size": 299,
-                            "color": -3.49
+                            "color": "#bc5e45",
+                            "valuation": 299,
+                            "change": -3.49
                         },
                         {
                             "name": "COO",
                             "description": "The Cooper Companies, Inc.",
-                            "size": 324,
-                            "color": -0.77
+                            "color": "#a2814f",
+                            "valuation": 324,
+                            "change": -0.77
                         },
                         {
                             "name": "WAT",
                             "description": "Waters Corporation",
-                            "size": 396,
-                            "color": 4
+                            "color": "#74be60",
+                            "valuation": 396,
+                            "change": 4
                         },
                         {
                             "name": "MTD",
                             "description": "Mettler-Toledo International Inc.",
-                            "size": 400,
-                            "color": -0.33
+                            "color": "#9e8750",
+                            "valuation": 400,
+                            "change": -0.33
                         },
                         {
                             "name": "RMD",
                             "description": "ResMed Inc.",
-                            "size": 400,
-                            "color": -3.15
+                            "color": "#b96346",
+                            "valuation": 400,
+                            "change": -3.15
                         },
                         {
                             "name": "BAX",
                             "description": "Baxter International Inc.",
-                            "size": 1092,
-                            "color": -0.52
+                            "color": "#a08450",
+                            "valuation": 1092,
+                            "change": -0.52
                         },
                         {
                             "name": "ILMN",
                             "description": "Illumina, Inc.",
-                            "size": 1287,
-                            "color": 0.58
+                            "color": "#959254",
+                            "valuation": 1287,
+                            "change": 0.58
                         },
                         {
                             "name": "ISRG",
                             "description": "Intuitive Surgical, Inc.",
-                            "size": 1554,
-                            "color": 1.84
+                            "color": "#89a358",
+                            "valuation": 1554,
+                            "change": 1.84
                         },
                         {
                             "name": "BDX",
                             "description": "Becton, Dickinson and Company",
-                            "size": 1764,
-                            "color": 0
+                            "color": "#9b8b52",
+                            "valuation": 1764,
+                            "change": 0
                         }
                     ],
-                    "color": 2.23
+                    "change": 2.23
                 },
                 {
                     "name": "Medical Appliances & Equipment",
@@ -766,53 +865,61 @@ export const data = {
                         {
                             "name": "ABMD",
                             "description": "ABIOMED, Inc.",
-                            "size": 492,
-                            "color": 4.41
+                            "color": "#70c362",
+                            "valuation": 492,
+                            "change": 4.41
                         },
                         {
                             "name": "ZBH",
                             "description": "Zimmer Biomet Holdings, Inc.",
-                            "size": 703,
-                            "color": -2.5
+                            "color": "#b36b48",
+                            "valuation": 703,
+                            "change": -2.5
                         },
                         {
                             "name": "ALGN",
                             "description": "Align Technology, Inc.",
-                            "size": 814,
-                            "color": -2.42
+                            "color": "#b26c49",
+                            "valuation": 814,
+                            "change": -2.42
                         },
                         {
                             "name": "EW",
                             "description": "Edwards Lifesciences Corporation",
-                            "size": 861,
-                            "color": -1.49
+                            "color": "#a9784c",
+                            "valuation": 861,
+                            "change": -1.49
                         },
                         {
                             "name": "BSX",
                             "description": "Boston Scientific Corporation",
-                            "size": 1302,
-                            "color": 2.54
+                            "color": "#82ac5b",
+                            "valuation": 1302,
+                            "change": 2.54
                         },
                         {
                             "name": "SYK",
                             "description": "Stryker Corporation",
-                            "size": 1638,
-                            "color": 3.67
+                            "color": "#77ba5f",
+                            "valuation": 1638,
+                            "change": 3.67
                         },
                         {
                             "name": "ABT",
                             "description": "Abbott Laboratories",
-                            "size": 3040,
-                            "color": -3.98
+                            "color": "#c15843",
+                            "valuation": 3040,
+                            "change": -3.98
                         },
                         {
                             "name": "MDT",
                             "description": "Medtronic plc",
-                            "size": 3268,
-                            "color": 4.86
+                            "color": "#6bc963",
+                            "valuation": 3268,
+                            "change": 4.86
                         }
                     ],
-                    "color": -4.57
+                    "change": -4.57
                 },
                 {
                     "name": "Biotechnology",
@@ -820,59 +927,68 @@ export const data = {
                         {
                             "name": "NKTR",
                             "description": "Nektar Therapeutics",
-                            "size": 221,
-                            "color": -1.93
+                            "color": "#ad724a",
+                            "valuation": 221,
+                            "change": -1.93
                         },
                         {
                             "name": "INCY",
                             "description": "Incyte Corporation",
-                            "size": 390,
-                            "color": 2.51
+                            "color": "#82ab5b",
+                            "valuation": 390,
+                            "change": 2.51
                         },
                         {
                             "name": "ALXN",
                             "description": "Alexion Pharmaceuticals, Inc.",
-                            "size": 861,
-                            "color": 0.48
+                            "color": "#969153",
+                            "valuation": 861,
+                            "change": 0.48
                         },
                         {
                             "name": "REGN",
                             "description": "Regeneron Pharmaceuticals, Inc.",
-                            "size": 1066,
-                            "color": -3
+                            "color": "#b86546",
+                            "valuation": 1066,
+                            "change": -3
                         },
                         {
                             "name": "VRTX",
                             "description": "Vertex Pharmaceuticals Incorporated",
-                            "size": 1269,
-                            "color": -4.27
+                            "color": "#c45442",
+                            "valuation": 1269,
+                            "change": -4.27
                         },
                         {
                             "name": "CELG",
                             "description": "Celgene Corporation",
-                            "size": 1850,
-                            "color": -0.52
+                            "color": "#a08450",
+                            "valuation": 1850,
+                            "change": -0.52
                         },
                         {
                             "name": "BIIB",
                             "description": "Biogen Inc.",
-                            "size": 2200,
-                            "color": 2.8
+                            "color": "#7faf5c",
+                            "valuation": 2200,
+                            "change": 2.8
                         },
                         {
                             "name": "GILD",
                             "description": "Gilead Sciences, Inc.",
-                            "size": 2795,
-                            "color": -3.1
+                            "color": "#b96346",
+                            "valuation": 2795,
+                            "change": -3.1
                         },
                         {
                             "name": "AMGN",
                             "description": "Amgen Inc.",
-                            "size": 3510,
-                            "color": 0.58
+                            "color": "#959254",
+                            "valuation": 3510,
+                            "change": 0.58
                         }
                     ],
-                    "color": -2.18
+                    "change": -2.18
                 },
                 {
                     "name": "Health Care Plans",
@@ -880,53 +996,61 @@ export const data = {
                         {
                             "name": "CNC",
                             "description": "Centene Corporation",
-                            "size": 560,
-                            "color": -2.84
+                            "color": "#b66747",
+                            "valuation": 560,
+                            "change": -2.84
                         },
                         {
                             "name": "ESRX",
                             "description": "Express Scripts Holding Company",
-                            "size": 1080,
-                            "color": -2.26
+                            "color": "#b06e49",
+                            "valuation": 1080,
+                            "change": -2.26
                         },
                         {
                             "name": "HUM",
                             "description": "Humana Inc.",
-                            "size": 1148,
-                            "color": 3.81
+                            "color": "#76bc60",
+                            "valuation": 1148,
+                            "change": 3.81
                         },
                         {
                             "name": "CI",
                             "description": "Cigna Corporation",
-                            "size": 1160,
-                            "color": 3.44
+                            "color": "#79b75e",
+                            "valuation": 1160,
+                            "change": 3.44
                         },
                         {
                             "name": "AET",
                             "description": "Aetna Inc.",
-                            "size": 1560,
-                            "color": -1.8
+                            "color": "#ac744b",
+                            "valuation": 1560,
+                            "change": -1.8
                         },
                         {
                             "name": "ANTM",
                             "description": "Anthem, Inc.",
-                            "size": 1640,
-                            "color": 0.43
+                            "color": "#969153",
+                            "valuation": 1640,
+                            "change": 0.43
                         },
                         {
                             "name": "CVS",
                             "description": "CVS Health Corporation",
-                            "size": 1681,
-                            "color": -1.68
+                            "color": "#ab754b",
+                            "valuation": 1681,
+                            "change": -1.68
                         },
                         {
                             "name": "UNH",
                             "description": "UnitedHealth Group Incorporated",
-                            "size": 6237,
-                            "color": -0.57
+                            "color": "#a0844f",
+                            "valuation": 6237,
+                            "change": -0.57
                         }
                     ],
-                    "color": 3.21
+                    "change": 3.21
                 },
                 {
                     "name": "Drug Manufacturers - Major",
@@ -934,44 +1058,50 @@ export const data = {
                         {
                             "name": "BMY",
                             "description": "Bristol-Myers Squibb Company",
-                            "size": 2688,
-                            "color": -4.06
+                            "color": "#c25742",
+                            "valuation": 2688,
+                            "change": -4.06
                         },
                         {
                             "name": "LLY",
                             "description": "Eli Lilly and Company",
-                            "size": 2944,
-                            "color": 4.87
+                            "color": "#6bc964",
+                            "valuation": 2944,
+                            "change": 4.87
                         },
                         {
                             "name": "ABBV",
                             "description": "AbbVie Inc.",
-                            "size": 4224,
-                            "color": 0.13
+                            "color": "#998d52",
+                            "valuation": 4224,
+                            "change": 0.13
                         },
                         {
                             "name": "MRK",
                             "description": "Merck & Co., Inc.",
-                            "size": 4928,
-                            "color": 2.05
+                            "color": "#87a559",
+                            "valuation": 4928,
+                            "change": 2.05
                         },
                         {
                             "name": "PFE",
                             "description": "Pfizer Inc.",
-                            "size": 6664,
-                            "color": -0.76
+                            "color": "#a2814f",
+                            "valuation": 6664,
+                            "change": -0.76
                         },
                         {
                             "name": "JNJ",
                             "description": "Johnson & Johnson",
-                            "size": 9800,
-                            "color": 1.68
+                            "color": "#8aa158",
+                            "valuation": 9800,
+                            "change": 1.68
                         }
                     ],
-                    "color": 4.39
+                    "change": 4.39
                 }
             ],
-            "color": 3.56
+            "change": 3.56
         },
         {
             "name": "Basic Materials",
@@ -982,11 +1112,12 @@ export const data = {
                         {
                             "name": "AA",
                             "description": "Alcoa Corporation",
-                            "size": 114,
-                            "color": 3.43
+                            "color": "#79b75e",
+                            "valuation": 114,
+                            "change": 3.43
                         }
                     ],
-                    "color": -4.23
+                    "change": -4.23
                 },
                 {
                     "name": "Gold",
@@ -994,11 +1125,12 @@ export const data = {
                         {
                             "name": "NEM",
                             "description": "Newmont Mining Corporation",
-                            "size": 418,
-                            "color": -0.12
+                            "color": "#9c8951",
+                            "valuation": 418,
+                            "change": -0.12
                         }
                     ],
-                    "color": 4.87
+                    "change": 4.87
                 },
                 {
                     "name": "Steel & Iron",
@@ -1006,11 +1138,12 @@ export const data = {
                         {
                             "name": "NUE",
                             "description": "Nucor Corporation",
-                            "size": 420,
-                            "color": -2.69
+                            "color": "#b56948",
+                            "valuation": 420,
+                            "change": -2.69
                         }
                     ],
-                    "color": -4.82
+                    "change": -4.82
                 },
                 {
                     "name": "Agricultural Chemicals",
@@ -1018,17 +1151,19 @@ export const data = {
                         {
                             "name": "CF",
                             "description": "CF Industries Holdings, Inc.",
-                            "size": 196,
-                            "color": -0.46
+                            "color": "#9f8550",
+                            "valuation": 196,
+                            "change": -0.46
                         },
                         {
                             "name": "MOS",
                             "description": "The Mosaic Company",
-                            "size": 224,
-                            "color": -1.05
+                            "color": "#a57e4e",
+                            "valuation": 224,
+                            "change": -1.05
                         }
                     ],
-                    "color": 1.51
+                    "change": 1.51
                 },
                 {
                     "name": "Copper",
@@ -1036,11 +1171,12 @@ export const data = {
                         {
                             "name": "FCX",
                             "description": "Freeport-McMoRan Inc.",
-                            "size": 504,
-                            "color": 4.06
+                            "color": "#73bf61",
+                            "valuation": 504,
+                            "change": 4.06
                         }
                     ],
-                    "color": -3.71
+                    "change": -3.71
                 },
                 {
                     "name": "Oil & Gas Drilling & Exploration",
@@ -1048,23 +1184,26 @@ export const data = {
                         {
                             "name": "DO",
                             "description": "Diamond Offshore Drilling, Inc.",
-                            "size": 48,
-                            "color": 0.61
+                            "color": "#959354",
+                            "valuation": 48,
+                            "change": 0.61
                         },
                         {
                             "name": "HP",
                             "description": "Helmerich & Payne, Inc.",
-                            "size": 144,
-                            "color": 0.15
+                            "color": "#998d52",
+                            "valuation": 144,
+                            "change": 0.15
                         },
                         {
                             "name": "CXO",
                             "description": "Concho Resources Inc.",
-                            "size": 480,
-                            "color": 3.21
+                            "color": "#7bb45d",
+                            "valuation": 480,
+                            "change": 3.21
                         }
                     ],
-                    "color": 4.12
+                    "change": 4.12
                 },
                 {
                     "name": "Oil & Gas Pipelines",
@@ -1072,17 +1211,19 @@ export const data = {
                         {
                             "name": "WMB",
                             "description": "The Williams Companies, Inc.",
-                            "size": 440,
-                            "color": 2.14
+                            "color": "#86a659",
+                            "valuation": 440,
+                            "change": 2.14
                         },
                         {
                             "name": "KMI",
                             "description": "Kinder Morgan, Inc.",
-                            "size": 682,
-                            "color": -1.48
+                            "color": "#a9784c",
+                            "valuation": 682,
+                            "change": -1.48
                         }
                     ],
-                    "color": -4.27
+                    "change": -4.27
                 },
                 {
                     "name": "Oil & Gas Refining & Marketing",
@@ -1090,35 +1231,40 @@ export const data = {
                         {
                             "name": "HFC",
                             "description": "HollyFrontier Corporation",
-                            "size": 276,
-                            "color": -4.45
+                            "color": "#c65241",
+                            "valuation": 276,
+                            "change": -4.45
                         },
                         {
                             "name": "ANDV",
                             "description": "Andeavor",
-                            "size": 552,
-                            "color": 0.46
+                            "color": "#969153",
+                            "valuation": 552,
+                            "change": 0.46
                         },
                         {
                             "name": "MPC",
                             "description": "Marathon Petroleum Corporation",
-                            "size": 936,
-                            "color": -2.27
+                            "color": "#b16e49",
+                            "valuation": 936,
+                            "change": -2.27
                         },
                         {
                             "name": "VLO",
                             "description": "Valero Energy Corporation",
-                            "size": 1225,
-                            "color": 3.88
+                            "color": "#75bd60",
+                            "valuation": 1225,
+                            "change": 3.88
                         },
                         {
                             "name": "PSX",
                             "description": "Phillips 66",
-                            "size": 1372,
-                            "color": 1
+                            "color": "#919855",
+                            "valuation": 1372,
+                            "change": 1
                         }
                     ],
-                    "color": 4.38
+                    "change": 4.38
                 },
                 {
                     "name": "Oil & Gas Equipment & Services",
@@ -1126,35 +1272,40 @@ export const data = {
                         {
                             "name": "FTI",
                             "description": "TechnipFMC plc",
-                            "size": 340,
-                            "color": -1.16
+                            "color": "#a67c4d",
+                            "valuation": 340,
+                            "change": -1.16
                         },
                         {
                             "name": "NOV",
                             "description": "National Oilwell Varco, Inc.",
-                            "size": 357,
-                            "color": 2.44
+                            "color": "#83aa5b",
+                            "valuation": 357,
+                            "change": 2.44
                         },
                         {
                             "name": "BHGE",
                             "description": "Baker Hughes, a GE company",
-                            "size": 760,
-                            "color": 2.65
+                            "color": "#81ad5b",
+                            "valuation": 760,
+                            "change": 2.65
                         },
                         {
                             "name": "HAL",
                             "description": "Halliburton Company",
-                            "size": 798,
-                            "color": -2.87
+                            "color": "#b66647",
+                            "valuation": 798,
+                            "change": -2.87
                         },
                         {
                             "name": "SLB",
                             "description": "Schlumberger Limited",
-                            "size": 1927,
-                            "color": 3.14
+                            "color": "#7cb35d",
+                            "valuation": 1927,
+                            "change": 3.14
                         }
                     ],
-                    "color": -1.38
+                    "change": -1.38
                 },
                 {
                     "name": "Chemicals - Major Diversified",
@@ -1162,29 +1313,33 @@ export const data = {
                         {
                             "name": "FMC",
                             "description": "FMC Corporation",
-                            "size": 242,
-                            "color": -3.93
+                            "color": "#c15943",
+                            "valuation": 242,
+                            "change": -3.93
                         },
                         {
                             "name": "EMN",
                             "description": "Eastman Chemical Company",
-                            "size": 352,
-                            "color": -2.48
+                            "color": "#b36b48",
+                            "valuation": 352,
+                            "change": -2.48
                         },
                         {
                             "name": "APD",
                             "description": "Air Products and Chemicals, Inc.",
-                            "size": 836,
-                            "color": 1.68
+                            "color": "#8aa158",
+                            "valuation": 836,
+                            "change": 1.68
                         },
                         {
                             "name": "DWDP",
                             "description": "DowDuPont Inc.",
-                            "size": 3705,
-                            "color": 1.83
+                            "color": "#89a258",
+                            "valuation": 3705,
+                            "change": 1.83
                         }
                     ],
-                    "color": -0.94
+                    "change": -0.94
                 },
                 {
                     "name": "Specialty Chemicals",
@@ -1192,47 +1347,54 @@ export const data = {
                         {
                             "name": "ALB",
                             "description": "Albemarle Corporation",
-                            "size": 190,
-                            "color": -0.94
+                            "color": "#a47f4e",
+                            "valuation": 190,
+                            "change": -0.94
                         },
                         {
                             "name": "IFF",
                             "description": "International Flavors & Fragrances Inc.",
-                            "size": 247,
-                            "color": 2.25
+                            "color": "#85a85a",
+                            "valuation": 247,
+                            "change": 2.25
                         },
                         {
                             "name": "PPG",
                             "description": "PPG Industries, Inc.",
-                            "size": 621,
-                            "color": -3
+                            "color": "#b86546",
+                            "valuation": 621,
+                            "change": -3
                         },
                         {
                             "name": "SHW",
                             "description": "The Sherwin-Williams Company",
-                            "size": 966,
-                            "color": 2.46
+                            "color": "#83aa5b",
+                            "valuation": 966,
+                            "change": 2.46
                         },
                         {
                             "name": "ECL",
                             "description": "Ecolab Inc.",
-                            "size": 966,
-                            "color": -0.15
+                            "color": "#9c8951",
+                            "valuation": 966,
+                            "change": -0.15
                         },
                         {
                             "name": "LYB",
                             "description": "LyondellBasell Industries N.V.",
-                            "size": 1023,
-                            "color": -1.91
+                            "color": "#ad734a",
+                            "valuation": 1023,
+                            "change": -1.91
                         },
                         {
                             "name": "PX",
                             "description": "Praxair, Inc.",
-                            "size": 1122,
-                            "color": -1.28
+                            "color": "#a77b4d",
+                            "valuation": 1122,
+                            "change": -1.28
                         }
                     ],
-                    "color": 2.91
+                    "change": 2.91
                 },
                 {
                     "name": "Independent Oil & Gas",
@@ -1240,95 +1402,110 @@ export const data = {
                         {
                             "name": "SWN",
                             "description": "Southwestern Energy Company",
-                            "size": 70,
-                            "color": -1.55
+                            "color": "#aa774c",
+                            "valuation": 70,
+                            "change": -1.55
                         },
                         {
                             "name": "NFX",
                             "description": "Newfield Exploration Company",
-                            "size": 154,
-                            "color": -0.75
+                            "color": "#a2814f",
+                            "valuation": 154,
+                            "change": -0.75
                         },
                         {
                             "name": "XEC",
                             "description": "Cimarex Energy Co.",
-                            "size": 240,
-                            "color": -3.92
+                            "color": "#c15943",
+                            "valuation": 240,
+                            "change": -3.92
                         },
                         {
                             "name": "COG",
                             "description": "Cabot Oil & Gas Corporation",
-                            "size": 299,
-                            "color": 1.15
+                            "color": "#8f9a56",
+                            "valuation": 299,
+                            "change": 1.15
                         },
                         {
                             "name": "EQT",
                             "description": "EQT Corporation",
-                            "size": 368,
-                            "color": 1.05
+                            "color": "#909855",
+                            "valuation": 368,
+                            "change": 1.05
                         },
                         {
                             "name": "NBL",
                             "description": "Noble Energy, Inc.",
-                            "size": 460,
-                            "color": 2.55
+                            "color": "#82ac5b",
+                            "valuation": 460,
+                            "change": 2.55
                         },
                         {
                             "name": "APA",
                             "description": "Apache Corporation",
-                            "size": 437,
-                            "color": 1.85
+                            "color": "#89a358",
+                            "valuation": 437,
+                            "change": 1.85
                         },
                         {
                             "name": "MRO",
                             "description": "Marathon Oil Corporation",
-                            "size": 475,
-                            "color": 2.13
+                            "color": "#86a659",
+                            "valuation": 475,
+                            "change": 2.13
                         },
                         {
                             "name": "HES",
                             "description": "Hess Corporation",
-                            "size": 513,
-                            "color": -1.87
+                            "color": "#ad734b",
+                            "valuation": 513,
+                            "change": -1.87
                         },
                         {
                             "name": "DVN",
                             "description": "Devon Energy Corporation",
-                            "size": 625,
-                            "color": 2.57
+                            "color": "#82ac5b",
+                            "valuation": 625,
+                            "change": 2.57
                         },
                         {
                             "name": "PXD",
                             "description": "Pioneer Natural Resources Company",
-                            "size": 825,
-                            "color": -2.38
+                            "color": "#b26d49",
+                            "valuation": 825,
+                            "change": -2.38
                         },
                         {
                             "name": "APC",
                             "description": "Anadarko Petroleum Corporation",
-                            "size": 891,
-                            "color": 0.03
+                            "color": "#9a8b52",
+                            "valuation": 891,
+                            "change": 0.03
                         },
                         {
                             "name": "OXY",
                             "description": "Occidental Petroleum Corporation",
-                            "size": 1650,
-                            "color": -3.46
+                            "color": "#bc5f45",
+                            "valuation": 1650,
+                            "change": -3.46
                         },
                         {
                             "name": "EOG",
                             "description": "EOG Resources, Inc.",
-                            "size": 1820,
-                            "color": -0.55
+                            "color": "#a0844f",
+                            "valuation": 1820,
+                            "change": -0.55
                         },
                         {
                             "name": "COP",
                             "description": "ConocoPhillips",
-                            "size": 2184,
-                            "color": -2.11
+                            "color": "#af704a",
+                            "valuation": 2184,
+                            "change": -2.11
                         }
                     ],
-                    "color": -0.57
+                    "change": -0.57
                 },
                 {
                     "name": "Major Integrated Oil & Gas",
@@ -1336,20 +1513,22 @@ export const data = {
                         {
                             "name": "CVX",
                             "description": "Chevron Corporation",
-                            "size": 6148,
-                            "color": 4.4
+                            "color": "#70c362",
+                            "valuation": 6148,
+                            "change": 4.4
                         },
                         {
                             "name": "XOM",
                             "description": "Exxon Mobil Corporation",
-                            "size": 9010,
-                            "color": 3.03
+                            "color": "#7db25d",
+                            "valuation": 9010,
+                            "change": 3.03
                         }
                     ],
-                    "color": 3.87
+                    "change": 3.87
                 }
             ],
-            "color": -1.47
+            "change": -1.47
         },
         {
             "name": "Consumer Goods",
@@ -1360,11 +1539,12 @@ export const data = {
                         {
                             "name": "GT",
                             "description": "The Goodyear Tire & Rubber Company",
-                            "size": 48,
-                            "color": -1.85
+                            "color": "#ac734b",
+                            "valuation": 48,
+                            "change": -1.85
                         }
                     ],
-                    "color": -3.67
+                    "change": -3.67
                 },
                 {
                     "name": "Recreational Vehicles",
@@ -1372,11 +1552,12 @@ export const data = {
                         {
                             "name": "HOG",
                             "description": "Harley-Davidson, Inc.",
-                            "size": 112,
-                            "color": -4.24
+                            "color": "#c45542",
+                            "valuation": 112,
+                            "change": -4.24
                         }
                     ],
-                    "color": 3.39
+                    "change": 3.39
                 },
                 {
                     "name": "Appliances",
@@ -1384,11 +1565,12 @@ export const data = {
                         {
                             "name": "WHR",
                             "description": "Whirlpool Corporation",
-                            "size": 165,
-                            "color": -3.28
+                            "color": "#ba6145",
+                            "valuation": 165,
+                            "change": -3.28
                         }
                     ],
-                    "color": 4.11
+                    "change": 4.11
                 },
                 {
                     "name": "Business Equipment",
@@ -1396,11 +1578,12 @@ export const data = {
                         {
                             "name": "AVY",
                             "description": "Avery Dennison Corporation",
-                            "size": 216,
-                            "color": -1.97
+                            "color": "#ae724a",
+                            "valuation": 216,
+                            "change": -1.97
                         }
                     ],
-                    "color": -1.94
+                    "change": -1.94
                 },
                 {
                     "name": "Cleaning Products",
@@ -1408,11 +1591,12 @@ export const data = {
                         {
                             "name": "CHD",
                             "description": "Church & Dwight Co., Inc.",
-                            "size": 270,
-                            "color": -1.82
+                            "color": "#ac744b",
+                            "valuation": 270,
+                            "change": -1.82
                         }
                     ],
-                    "color": 3.97
+                    "change": 3.97
                 },
                 {
                     "name": "Beverages - Brewers",
@@ -1420,11 +1604,12 @@ export const data = {
                         {
                             "name": "TAP",
                             "description": "Molson Coors Brewing Company",
-                            "size": 294,
-                            "color": 0.83
+                            "color": "#929655",
+                            "valuation": 294,
+                            "change": 0.83
                         }
                     ],
-                    "color": 4.68
+                    "change": 4.68
                 },
                 {
                     "name": "Toys & Games",
@@ -1432,17 +1617,19 @@ export const data = {
                         {
                             "name": "MAT",
                             "description": "Mattel, Inc.",
-                            "size": 114,
-                            "color": 4.01
+                            "color": "#74be60",
+                            "valuation": 114,
+                            "change": 4.01
                         },
                         {
                             "name": "HAS",
                             "description": "Hasbro, Inc.",
-                            "size": 285,
-                            "color": -2.91
+                            "color": "#b76647",
+                            "valuation": 285,
+                            "change": -2.91
                         }
                     ],
-                    "color": -4.97
+                    "change": -4.97
                 },
                 {
                     "name": "Trucks & Other Vehicles",
@@ -1450,11 +1637,12 @@ export const data = {
                         {
                             "name": "PCAR",
                             "description": "PACCAR Inc",
-                            "size": 484,
-                            "color": 3.27
+                            "color": "#7bb55e",
+                            "valuation": 484,
+                            "change": 3.27
                         }
                     ],
-                    "color": -2.49
+                    "change": -2.49
                 },
                 {
                     "name": "Farm Products",
@@ -1462,11 +1650,12 @@ export const data = {
                         {
                             "name": "ADM",
                             "description": "Archer-Daniels-Midland Company",
-                            "size": 616,
-                            "color": 2.23
+                            "color": "#85a85a",
+                            "valuation": 616,
+                            "change": 2.23
                         }
                     ],
-                    "color": 5
+                    "change": 5
                 },
                 {
                     "name": "Housewares & Accessories",
@@ -1474,17 +1663,19 @@ export const data = {
                         {
                             "name": "NWL",
                             "description": "Newell Brands Inc.",
-                            "size": 312,
-                            "color": 1.7
+                            "color": "#8aa158",
+                            "valuation": 312,
+                            "change": 1.7
                         },
                         {
                             "name": "CLX",
                             "description": "The Clorox Company",
-                            "size": 408,
-                            "color": 1.19
+                            "color": "#8f9a56",
+                            "valuation": 408,
+                            "change": 1.19
                         }
                     ],
-                    "color": 3.17
+                    "change": 3.17
                 },
                 {
                     "name": "Home Furnishings & Fixtures",
@@ -1492,23 +1683,26 @@ export const data = {
                         {
                             "name": "LEG",
                             "description": "Leggett & Platt, Incorporated",
-                            "size": 130,
-                            "color": -3.96
+                            "color": "#c15843",
+                            "valuation": 130,
+                            "change": -3.96
                         },
                         {
                             "name": "FBHS",
                             "description": "Fortune Brands Home & Security, Inc.",
-                            "size": 182,
-                            "color": -1.47
+                            "color": "#a9784c",
+                            "valuation": 182,
+                            "change": -1.47
                         },
                         {
                             "name": "MHK",
                             "description": "Mohawk Industries, Inc.",
-                            "size": 408,
-                            "color": 1.18
+                            "color": "#8f9a56",
+                            "valuation": 408,
+                            "change": 1.18
                         }
                     ],
-                    "color": -1.59
+                    "change": -1.59
                 },
                 {
                     "name": "Meat Products",
@@ -1516,17 +1710,19 @@ export const data = {
                         {
                             "name": "HRL",
                             "description": "Hormel Foods Corporation",
-                            "size": 270,
-                            "color": 0.14
+                            "color": "#998d52",
+                            "valuation": 270,
+                            "change": 0.14
                         },
                         {
                             "name": "TSN",
                             "description": "Tyson Foods, Inc.",
-                            "size": 315,
-                            "color": 3.09
+                            "color": "#7db35d",
+                            "valuation": 315,
+                            "change": 3.09
                         }
                     ],
-                    "color": -3.27
+                    "change": -3.27
                 },
                 {
                     "name": "Auto Parts",
@@ -1534,29 +1730,33 @@ export const data = {
                         {
                             "name": "DLPH",
                             "description": "Delphi Technologies PLC",
-                            "size": 96,
-                            "color": -4.08
+                            "color": "#c25742",
+                            "valuation": 96,
+                            "change": -4.08
                         },
                         {
                             "name": "BWA",
                             "description": "BorgWarner Inc.",
-                            "size": 176,
-                            "color": -2.17
+                            "color": "#b06f49",
+                            "valuation": 176,
+                            "change": -2.17
                         },
                         {
                             "name": "LKQ",
                             "description": "LKQ Corporation",
-                            "size": 192,
-                            "color": -2.68
+                            "color": "#b46948",
+                            "valuation": 192,
+                            "change": -2.68
                         },
                         {
                             "name": "JCI",
                             "description": "Johnson Controls International plc",
-                            "size": 667,
-                            "color": -4.55
+                            "color": "#c75141",
+                            "valuation": 667,
+                            "change": -4.55
                         }
                     ],
-                    "color": 0.06
+                    "change": 0.06
                 },
                 {
                     "name": "Beverages - Wineries & Distillers",
@@ -1564,17 +1764,19 @@ export const data = {
                         {
                             "name": "BF-B",
                             "description": "Brown-Forman Corporation",
-                            "size": 666,
-                            "color": -2.39
+                            "color": "#b26c49",
+                            "valuation": 666,
+                            "change": -2.39
                         },
                         {
                             "name": "STZ",
                             "description": "Constellation Brands, Inc.",
-                            "size": 1073,
-                            "color": -2.9
+                            "color": "#b76647",
+                            "valuation": 1073,
+                            "change": -2.9
                         }
                     ],
-                    "color": 2.83
+                    "change": 2.83
                 },
                 {
                     "name": "Food - Major Diversified",
@@ -1582,11 +1784,12 @@ export const data = {
                         {
                             "name": "KHC",
                             "description": "The Kraft Heinz Company",
-                            "size": 1521,
-                            "color": 0.41
+                            "color": "#979053",
+                            "valuation": 1521,
+                            "change": 0.41
                         }
                     ],
-                    "color": 1.95
+                    "change": 1.95
                 },
                 {
                     "name": "Packaging & Containers",
@@ -1594,41 +1797,47 @@ export const data = {
                         {
                             "name": "OI",
                             "description": "Owens-Illinois, Inc.",
-                            "size": 72,
-                            "color": -2.73
+                            "color": "#b56847",
+                            "valuation": 72,
+                            "change": -2.73
                         },
                         {
                             "name": "SEE",
                             "description": "Sealed Air Corporation",
-                            "size": 156,
-                            "color": 2.41
+                            "color": "#83aa5a",
+                            "valuation": 156,
+                            "change": 2.41
                         },
                         {
                             "name": "PKG",
                             "description": "Packaging Corporation of America",
-                            "size": 228,
-                            "color": -1.73
+                            "color": "#ab754b",
+                            "valuation": 228,
+                            "change": -1.73
                         },
                         {
                             "name": "BLL",
                             "description": "Ball Corporation",
-                            "size": 285,
-                            "color": -2.33
+                            "color": "#b16d49",
+                            "valuation": 285,
+                            "change": -2.33
                         },
                         {
                             "name": "WRK",
                             "description": "WestRock Company",
-                            "size": 320,
-                            "color": 3.38
+                            "color": "#7ab65e",
+                            "valuation": 320,
+                            "change": 3.38
                         },
                         {
                             "name": "IP",
                             "description": "International Paper Company",
-                            "size": 460,
-                            "color": 2.33
+                            "color": "#84a95a",
+                            "valuation": 460,
+                            "change": 2.33
                         }
                     ],
-                    "color": -0.29
+                    "change": -0.29
                 },
                 {
                     "name": "Confectioners",
@@ -1636,17 +1845,19 @@ export const data = {
                         {
                             "name": "HSY",
                             "description": "The Hershey Company",
-                            "size": 392,
-                            "color": 2.11
+                            "color": "#86a659",
+                            "valuation": 392,
+                            "change": 2.11
                         },
                         {
                             "name": "MDLZ",
                             "description": "Mondelez International, Inc.",
-                            "size": 1232,
-                            "color": 0.4
+                            "color": "#979053",
+                            "valuation": 1232,
+                            "change": 0.4
                         }
                     ],
-                    "color": -2.78
+                    "change": -2.78
                 },
                 {
                     "name": "Textile - Apparel Clothing",
@@ -1654,41 +1865,47 @@ export const data = {
                         {
                             "name": "HBI",
                             "description": "Hanesbrands Inc.",
-                            "size": 112,
-                            "color": 0.52
+                            "color": "#959253",
+                            "valuation": 112,
+                            "change": 0.52
                         },
                         {
                             "name": "UAA",
                             "description": "Under Armour, Inc.",
-                            "size": 160,
-                            "color": -4.4
+                            "color": "#c55341",
+                            "valuation": 160,
+                            "change": -4.4
                         },
                         {
                             "name": "KORS",
                             "description": "Michael Kors Holdings Limited",
-                            "size": 204,
-                            "color": 0.19
+                            "color": "#998d52",
+                            "valuation": 204,
+                            "change": 0.19
                         },
                         {
                             "name": "RL",
                             "description": "Ralph Lauren Corporation",
-                            "size": 208,
-                            "color": -1.35
+                            "color": "#a87a4d",
+                            "valuation": 208,
+                            "change": -1.35
                         },
                         {
                             "name": "PVH",
                             "description": "PVH Corp.",
-                            "size": 240,
-                            "color": 2.77
+                            "color": "#80ae5c",
+                            "valuation": 240,
+                            "change": 2.77
                         },
                         {
                             "name": "VFC",
                             "description": "V.F. Corporation",
-                            "size": 728,
-                            "color": 2.91
+                            "color": "#7eb05c",
+                            "valuation": 728,
+                            "change": 2.91
                         }
                     ],
-                    "color": 0.05
+                    "change": 0.05
                 },
                 {
                     "name": "Auto Manufacturers - Major",
@@ -1696,17 +1913,19 @@ export const data = {
                         {
                             "name": "F",
                             "description": "Ford Motor Company",
-                            "size": 864,
-                            "color": -2.07
+                            "color": "#af714a",
+                            "valuation": 864,
+                            "change": -2.07
                         },
                         {
                             "name": "GM",
                             "description": "General Motors Company",
-                            "size": 1088,
-                            "color": -1.44
+                            "color": "#a8794c",
+                            "valuation": 1088,
+                            "change": -1.44
                         }
                     ],
-                    "color": 4.83
+                    "change": 4.83
                 },
                 {
                     "name": "Processed & Packaged Goods",
@@ -1714,41 +1933,47 @@ export const data = {
                         {
                             "name": "CPB",
                             "description": "Campbell Soup Company",
-                            "size": 256,
-                            "color": 4.93
+                            "color": "#6bca64",
+                            "valuation": 256,
+                            "change": 4.93
                         },
                         {
                             "name": "SJM",
                             "description": "The J. M. Smucker Company",
-                            "size": 256,
-                            "color": -4.01
+                            "color": "#c15843",
+                            "valuation": 256,
+                            "change": -4.01
                         },
                         {
                             "name": "CAG",
                             "description": "Conagra Brands, Inc.",
-                            "size": 320,
-                            "color": 1.46
+                            "color": "#8c9e57",
+                            "valuation": 320,
+                            "change": 1.46
                         },
                         {
                             "name": "MKC",
                             "description": "McCormick & Company, Incorporated",
-                            "size": 320,
-                            "color": 1.07
+                            "color": "#909955",
+                            "valuation": 320,
+                            "change": 1.07
                         },
                         {
                             "name": "K",
                             "description": "Kellogg Company",
-                            "size": 493,
-                            "color": -1.06
+                            "color": "#a57d4e",
+                            "valuation": 493,
+                            "change": -1.06
                         },
                         {
                             "name": "GIS",
                             "description": "General Mills, Inc.",
-                            "size": 551,
-                            "color": 3.56
+                            "color": "#78b95f",
+                            "valuation": 551,
+                            "change": 3.56
                         }
                     ],
-                    "color": -0.71
+                    "change": -0.71
                 },
                 {
                     "name": "Textile - Apparel Footwear & Accessories",
@@ -1756,29 +1981,33 @@ export const data = {
                         {
                             "name": "FOSL",
                             "description": "Fossil Group, Inc.",
-                            "size": 54,
-                            "color": -1.12
+                            "color": "#a57d4d",
+                            "valuation": 54,
+                            "change": -1.12
                         },
                         {
                             "name": "FL",
                             "description": "Foot Locker, Inc.",
-                            "size": 135,
-                            "color": 2.86
+                            "color": "#7fb05c",
+                            "valuation": 135,
+                            "change": 2.86
                         },
                         {
                             "name": "TPR",
                             "description": "Tapestry, Inc.",
-                            "size": 315,
-                            "color": 4.77
+                            "color": "#6cc863",
+                            "valuation": 315,
+                            "change": 4.77
                         },
                         {
                             "name": "NKE",
                             "description": "NIKE, Inc.",
-                            "size": 2912,
-                            "color": 3.25
+                            "color": "#7bb55e",
+                            "valuation": 2912,
+                            "change": 3.25
                         }
                     ],
-                    "color": -0.97
+                    "change": -0.97
                 },
                 {
                     "name": "Cigarettes",
@@ -1786,17 +2015,19 @@ export const data = {
                         {
                             "name": "MO",
                             "description": "Altria Group, Inc.",
-                            "size": 2774,
-                            "color": 4.84
+                            "color": "#6cc963",
+                            "valuation": 2774,
+                            "change": 4.84
                         },
                         {
                             "name": "PM",
                             "description": "Philip Morris International Inc.",
-                            "size": 3285,
-                            "color": 4.3
+                            "color": "#71c261",
+                            "valuation": 3285,
+                            "change": 4.3
                         }
                     ],
-                    "color": -1.96
+                    "change": -1.96
                 },
                 {
                     "name": "Personal Products",
@@ -1804,29 +2035,33 @@ export const data = {
                         {
                             "name": "KMB",
                             "description": "Kimberly-Clark Corporation",
-                            "size": 990,
-                            "color": -2.56
+                            "color": "#b36a48",
+                            "valuation": 990,
+                            "change": -2.56
                         },
                         {
                             "name": "EL",
                             "description": "The Estee Lauder Companies Inc.",
-                            "size": 1305,
-                            "color": 2.19
+                            "color": "#85a75a",
+                            "valuation": 1305,
+                            "change": 2.19
                         },
                         {
                             "name": "CL",
                             "description": "Colgate-Palmolive Company",
-                            "size": 1440,
-                            "color": -1.51
+                            "color": "#a9784c",
+                            "valuation": 1440,
+                            "change": -1.51
                         },
                         {
                             "name": "PG",
                             "description": "The Procter & Gamble Company",
-                            "size": 5146,
-                            "color": 3.43
+                            "color": "#79b75e",
+                            "valuation": 5146,
+                            "change": 3.43
                         }
                     ],
-                    "color": -2.74
+                    "change": -2.74
                 },
                 {
                     "name": "Beverages - Soft Drinks",
@@ -1834,29 +2069,33 @@ export const data = {
                         {
                             "name": "CCE",
                             "description": "Coca-Cola European Partners plc",
-                            "size": 483,
-                            "color": 4.99
+                            "color": "#6acb64",
+                            "valuation": 483,
+                            "change": 4.99
                         },
                         {
                             "name": "MNST",
                             "description": "Monster Beverage Corporation",
-                            "size": 819,
-                            "color": 3.78
+                            "color": "#76bb5f",
+                            "valuation": 819,
+                            "change": 3.78
                         },
                         {
                             "name": "PEP",
                             "description": "PepsiCo, Inc.",
-                            "size": 3906,
-                            "color": -0.23
+                            "color": "#9d8851",
+                            "valuation": 3906,
+                            "change": -0.23
                         },
                         {
                             "name": "KO",
                             "description": "The Coca-Cola Company",
-                            "size": 4774,
-                            "color": 0.23
+                            "color": "#988e52",
+                            "valuation": 4774,
+                            "change": 0.23
                         }
                     ],
-                    "color": 0.5
+                    "change": 0.5
                 },
                 {
                     "name": "Electronic Equipment",
@@ -1864,14 +2103,15 @@ export const data = {
                         {
                             "name": "AAPL",
                             "description": "Apple Inc.",
-                            "size": 27531,
-                            "color": -1.18
+                            "color": "#a67c4d",
+                            "valuation": 27531,
+                            "change": -1.18
                         }
                     ],
-                    "color": -3.14
+                    "change": -3.14
                 }
             ],
-            "color": -0.2
+            "change": -0.2
         },
         {
             "name": "Services",
@@ -1882,11 +2122,12 @@ export const data = {
                         {
                             "name": "HRB",
                             "description": "H&R Block, Inc.",
-                            "size": 30,
-                            "color": 2.35
+                            "color": "#84a95a",
+                            "valuation": 30,
+                            "change": 2.35
                         }
                     ],
-                    "color": 1.61
+                    "change": 1.61
                 },
                 {
                     "name": "Security & Protection Services",
@@ -1894,11 +2135,12 @@ export const data = {
                         {
                             "name": "ALLE",
                             "description": "Allegion plc",
-                            "size": 140,
-                            "color": -3.9
+                            "color": "#c05943",
+                            "valuation": 140,
+                            "change": -3.9
                         }
                     ],
-                    "color": -4.63
+                    "change": -4.63
                 },
                 {
                     "name": "Broadcasting - TV",
@@ -1906,11 +2148,12 @@ export const data = {
                         {
                             "name": "NWSA",
                             "description": "News Corporation",
-                            "size": 152,
-                            "color": 0.95
+                            "color": "#919755",
+                            "valuation": 152,
+                            "change": 0.95
                         }
                     ],
-                    "color": -0.33
+                    "change": -0.33
                 },
                 {
                     "name": "Technical Services",
@@ -1918,11 +2161,12 @@ export const data = {
                         {
                             "name": "JEC",
                             "description": "Jacobs Engineering Group Inc.",
-                            "size": 171,
-                            "color": -3.85
+                            "color": "#c05a43",
+                            "valuation": 171,
+                            "change": -3.85
                         }
                     ],
-                    "color": 2.88
+                    "change": 2.88
                 },
                 {
                     "name": "Medical Equipment Wholesale",
@@ -1930,11 +2174,12 @@ export const data = {
                         {
                             "name": "HSIC",
                             "description": "Henry Schein, Inc.",
-                            "size": 238,
-                            "color": -2.64
+                            "color": "#b46948",
+                            "valuation": 238,
+                            "change": -2.64
                         }
                     ],
-                    "color": -2.29
+                    "change": -2.29
                 },
                 {
                     "name": "Rental & Leasing Services",
@@ -1942,11 +2187,12 @@ export const data = {
                         {
                             "name": "URI",
                             "description": "United Rentals, Inc.",
-                            "size": 255,
-                            "color": 0.67
+                            "color": "#949454",
+                            "valuation": 255,
+                            "change": 0.67
                         }
                     ],
-                    "color": 4.43
+                    "change": 4.43
                 },
                 {
                     "name": "Trucking",
@@ -1954,11 +2200,12 @@ export const data = {
                         {
                             "name": "JBHT",
                             "description": "J.B. Hunt Transport Services, Inc.",
-                            "size": 272,
-                            "color": 2.99
+                            "color": "#7db15d",
+                            "valuation": 272,
+                            "change": 2.99
                         }
                     ],
-                    "color": -2.41
+                    "change": -2.41
                 },
                 {
                     "name": "Jewelry Stores",
@@ -1966,11 +2213,12 @@ export const data = {
                         {
                             "name": "TIF",
                             "description": "Tiffany & Co.",
-                            "size": 391,
-                            "color": 0.35
+                            "color": "#978f53",
+                            "valuation": 391,
+                            "change": 0.35
                         }
                     ],
-                    "color": 4.98
+                    "change": 4.98
                 },
                 {
                     "name": "Electronics Stores",
@@ -1978,11 +2226,12 @@ export const data = {
                         {
                             "name": "BBY",
                             "description": "Best Buy Co., Inc.",
-                            "size": 468,
-                            "color": -3.68
+                            "color": "#be5c44",
+                            "valuation": 468,
+                            "change": -3.68
                         }
                     ],
-                    "color": 2.47
+                    "change": 2.47
                 },
                 {
                     "name": "Advertising Agencies",
@@ -1990,17 +2239,19 @@ export const data = {
                         {
                             "name": "IPG",
                             "description": "The Interpublic Group of Companies, Inc.",
-                            "size": 189,
-                            "color": 2.17
+                            "color": "#85a75a",
+                            "valuation": 189,
+                            "change": 2.17
                         },
                         {
                             "name": "OMC",
                             "description": "Omnicom Group Inc.",
-                            "size": 357,
-                            "color": 1.6
+                            "color": "#8b9f57",
+                            "valuation": 357,
+                            "change": 1.6
                         }
                     ],
-                    "color": 0.68
+                    "change": 0.68
                 },
                 {
                     "name": "Grocery Stores",
@@ -2008,11 +2259,12 @@ export const data = {
                         {
                             "name": "KR",
                             "description": "The Kroger Co.",
-                            "size": 540,
-                            "color": -4.17
+                            "color": "#c35642",
+                            "valuation": 540,
+                            "change": -4.17
                         }
                     ],
-                    "color": -4.94
+                    "change": -4.94
                 },
                 {
                     "name": "Auto Dealerships",
@@ -2020,17 +2272,19 @@ export const data = {
                         {
                             "name": "KMX",
                             "description": "CarMax, Inc.",
-                            "size": 299,
-                            "color": 4.14
+                            "color": "#72c061",
+                            "valuation": 299,
+                            "change": 4.14
                         },
                         {
                             "name": "CPRT",
                             "description": "Copart, Inc.",
-                            "size": 322,
-                            "color": -4.37
+                            "color": "#c55341",
+                            "valuation": 322,
+                            "change": -4.37
                         }
                     ],
-                    "color": 4.52
+                    "change": 4.52
                 },
                 {
                     "name": "Staffing & Outsourcing Services",
@@ -2038,17 +2292,19 @@ export const data = {
                         {
                             "name": "RHI",
                             "description": "Robert Half International Inc.",
-                            "size": 216,
-                            "color": -4.19
+                            "color": "#c35542",
+                            "valuation": 216,
+                            "change": -4.19
                         },
                         {
                             "name": "PAYX",
                             "description": "Paychex, Inc.",
-                            "size": 621,
-                            "color": 2.07
+                            "color": "#86a559",
+                            "valuation": 621,
+                            "change": 2.07
                         }
                     ],
-                    "color": 0.95
+                    "change": 0.95
                 },
                 {
                     "name": "Food Wholesale",
@@ -2056,11 +2312,12 @@ export const data = {
                         {
                             "name": "SYY",
                             "description": "Sysco Corporation",
-                            "size": 836,
-                            "color": -2.59
+                            "color": "#b46a48",
+                            "valuation": 836,
+                            "change": -2.59
                         }
                     ],
-                    "color": 2.7
+                    "change": 2.7
                 },
                 {
                     "name": "Industrial Equipment Wholesale",
@@ -2068,17 +2325,19 @@ export const data = {
                         {
                             "name": "FAST",
                             "description": "Fastenal Company",
-                            "size": 374,
-                            "color": 2.02
+                            "color": "#87a559",
+                            "valuation": 374,
+                            "change": 2.02
                         },
                         {
                             "name": "GWW",
                             "description": "W.W. Grainger, Inc.",
-                            "size": 462,
-                            "color": -3.33
+                            "color": "#bb6045",
+                            "valuation": 462,
+                            "change": -3.33
                         }
                     ],
-                    "color": -3.68
+                    "change": -3.68
                 },
                 {
                     "name": "Regional Airlines",
@@ -2086,17 +2345,19 @@ export const data = {
                         {
                             "name": "ALK",
                             "description": "Alaska Air Group, Inc.",
-                            "size": 120,
-                            "color": -1.17
+                            "color": "#a67c4d",
+                            "valuation": 120,
+                            "change": -1.17
                         },
                         {
                             "name": "LUV",
                             "description": "Southwest Airlines Co.",
-                            "size": 510,
-                            "color": 3.76
+                            "color": "#76bb5f",
+                            "valuation": 510,
+                            "change": 3.76
                         }
                     ],
-                    "color": -3.88
+                    "change": -3.88
                 },
                 {
                     "name": "Auto Parts Stores",
@@ -2104,23 +2365,26 @@ export const data = {
                         {
                             "name": "AAP",
                             "description": "Advance Auto Parts, Inc.",
-                            "size": 198,
-                            "color": -2.72
+                            "color": "#b56847",
+                            "valuation": 198,
+                            "change": -2.72
                         },
                         {
                             "name": "AZO",
                             "description": "AutoZone, Inc.",
-                            "size": 352,
-                            "color": -3.52
+                            "color": "#bd5e44",
+                            "valuation": 352,
+                            "change": -3.52
                         },
                         {
                             "name": "ORLY",
                             "description": "O'Reilly Automotive, Inc.",
-                            "size": 500,
-                            "color": -4
+                            "color": "#c15843",
+                            "valuation": 500,
+                            "change": -4
                         }
                     ],
-                    "color": -3.54
+                    "change": -3.54
                 },
                 {
                     "name": "Drugs Wholesale",
@@ -2128,23 +2392,26 @@ export const data = {
                         {
                             "name": "CAH",
                             "description": "Cardinal Health, Inc.",
-                            "size": 299,
-                            "color": -4.68
+                            "color": "#c84f40",
+                            "valuation": 299,
+                            "change": -4.68
                         },
                         {
                             "name": "ABC",
                             "description": "AmerisourceBergen Corporation",
-                            "size": 368,
-                            "color": 1.03
+                            "color": "#919855",
+                            "valuation": 368,
+                            "change": 1.03
                         },
                         {
                             "name": "MCK",
                             "description": "McKesson Corporation",
-                            "size": 551,
-                            "color": 4.37
+                            "color": "#70c362",
+                            "valuation": 551,
+                            "change": 4.37
                         }
                     ],
-                    "color": 0.3
+                    "change": 0.3
                 },
                 {
                     "name": "Drug Stores",
@@ -2152,11 +2419,12 @@ export const data = {
                         {
                             "name": "WBA",
                             "description": "Walgreens Boots Alliance, Inc.",
-                            "size": 1710,
-                            "color": -3.56
+                            "color": "#bd5d44",
+                            "valuation": 1710,
+                            "change": -3.56
                         }
                     ],
-                    "color": -4.34
+                    "change": -4.34
                 },
                 {
                     "name": "Apparel Stores",
@@ -2164,35 +2432,40 @@ export const data = {
                         {
                             "name": "URBN",
                             "description": "Urban Outfitters, Inc.",
-                            "size": 120,
-                            "color": -4.02
+                            "color": "#c15843",
+                            "valuation": 120,
+                            "change": -4.02
                         },
                         {
                             "name": "JWN",
                             "description": "Nordstrom, Inc.",
-                            "size": 190,
-                            "color": -0.59
+                            "color": "#a0834f",
+                            "valuation": 190,
+                            "change": -0.59
                         },
                         {
                             "name": "LB",
                             "description": "L Brands, Inc.",
-                            "size": 190,
-                            "color": -0.81
+                            "color": "#a2814f",
+                            "valuation": 190,
+                            "change": -0.81
                         },
                         {
                             "name": "GPS",
                             "description": "The Gap, Inc.",
-                            "size": 240,
-                            "color": 3.42
+                            "color": "#79b75e",
+                            "valuation": 240,
+                            "change": 3.42
                         },
                         {
                             "name": "ROST",
                             "description": "Ross Stores, Inc.",
-                            "size": 703,
-                            "color": 0.64
+                            "color": "#949354",
+                            "valuation": 703,
+                            "change": 0.64
                         }
                     ],
-                    "color": 2.13
+                    "change": 2.13
                 },
                 {
                     "name": "Specialty Eateries",
@@ -2200,11 +2473,12 @@ export const data = {
                         {
                             "name": "SBUX",
                             "description": "Starbucks Corporation",
-                            "size": 1517,
-                            "color": -3.16
+                            "color": "#b96346",
+                            "valuation": 1517,
+                            "change": -3.16
                         }
                     ],
-                    "color": -3.79
+                    "change": -3.79
                 },
                 {
                     "name": "Specialty Retail, Other",
@@ -2212,29 +2486,33 @@ export const data = {
                         {
                             "name": "TSCO",
                             "description": "Tractor Supply Company",
-                            "size": 198,
-                            "color": 2.38
+                            "color": "#83a95a",
+                            "valuation": 198,
+                            "change": 2.38
                         },
                         {
                             "name": "GPC",
                             "description": "Genuine Parts Company",
-                            "size": 308,
-                            "color": -1.67
+                            "color": "#ab764b",
+                            "valuation": 308,
+                            "change": -1.67
                         },
                         {
                             "name": "ULTA",
                             "description": "Ulta Beauty, Inc.",
-                            "size": 322,
-                            "color": -1.29
+                            "color": "#a77a4d",
+                            "valuation": 322,
+                            "change": -1.29
                         },
                         {
                             "name": "EBAY",
                             "description": "eBay Inc.",
-                            "size": 720,
-                            "color": 2.06
+                            "color": "#87a559",
+                            "valuation": 720,
+                            "change": 2.06
                         }
                     ],
-                    "color": -2.65
+                    "change": -2.65
                 },
                 {
                     "name": "Major Airlines",
@@ -2242,23 +2520,26 @@ export const data = {
                         {
                             "name": "AAL",
                             "description": "American Airlines Group Inc.",
-                            "size": 374,
-                            "color": 2.88
+                            "color": "#7fb05c",
+                            "valuation": 374,
+                            "change": 2.88
                         },
                         {
                             "name": "UAL",
                             "description": "United Continental Holdings, Inc.",
-                            "size": 484,
-                            "color": -4.04
+                            "color": "#c25743",
+                            "valuation": 484,
+                            "change": -4.04
                         },
                         {
                             "name": "DAL",
                             "description": "Delta Air Lines, Inc.",
-                            "size": 819,
-                            "color": -1.2
+                            "color": "#a67c4d",
+                            "valuation": 819,
+                            "change": -1.2
                         }
                     ],
-                    "color": 2.16
+                    "change": 2.16
                 },
                 {
                     "name": "Department Stores",
@@ -2266,23 +2547,26 @@ export const data = {
                         {
                             "name": "M",
                             "description": "Macy's, Inc.",
-                            "size": 252,
-                            "color": 0.62
+                            "color": "#949354",
+                            "valuation": 252,
+                            "change": 0.62
                         },
                         {
                             "name": "KSS",
                             "description": "Kohl's Corporation",
-                            "size": 264,
-                            "color": -1.84
+                            "color": "#ac734b",
+                            "valuation": 264,
+                            "change": -1.84
                         },
                         {
                             "name": "TJX",
                             "description": "The TJX Companies, Inc.",
-                            "size": 1376,
-                            "color": 3.17
+                            "color": "#7cb45d",
+                            "valuation": 1376,
+                            "change": 3.17
                         }
                     ],
-                    "color": -3.72
+                    "change": -3.72
                 },
                 {
                     "name": "Lodging",
@@ -2290,23 +2574,26 @@ export const data = {
                         {
                             "name": "EXPE",
                             "description": "Expedia Group, Inc.",
-                            "size": 510,
-                            "color": 2.63
+                            "color": "#81ad5b",
+                            "valuation": 510,
+                            "change": 2.63
                         },
                         {
                             "name": "HLT",
                             "description": "Hilton Worldwide Holdings Inc.",
-                            "size": 630,
-                            "color": 3.02
+                            "color": "#7db25d",
+                            "valuation": 630,
+                            "change": 3.02
                         },
                         {
                             "name": "MAR",
                             "description": "Marriott International, Inc.",
-                            "size": 1216,
-                            "color": -4.93
+                            "color": "#ca4c3f",
+                            "valuation": 1216,
+                            "change": -4.93
                         }
                     ],
-                    "color": -3.92
+                    "change": -3.92
                 },
                 {
                     "name": "Resorts & Casinos",
@@ -2314,35 +2601,40 @@ export const data = {
                         {
                             "name": "NCLH",
                             "description": "Norwegian Cruise Line Holdings Ltd.",
-                            "size": 242,
-                            "color": 0.11
+                            "color": "#998c52",
+                            "valuation": 242,
+                            "change": 0.11
                         },
                         {
                             "name": "MGM",
                             "description": "MGM Resorts International",
-                            "size": 374,
-                            "color": 3.05
+                            "color": "#7db25d",
+                            "valuation": 374,
+                            "change": 3.05
                         },
                         {
                             "name": "WYNN",
                             "description": "Wynn Resorts, Limited",
-                            "size": 418,
-                            "color": -3.51
+                            "color": "#bd5e45",
+                            "valuation": 418,
+                            "change": -3.51
                         },
                         {
                             "name": "RCL",
                             "description": "Royal Caribbean Cruises Ltd.",
-                            "size": 544,
-                            "color": 0.17
+                            "color": "#998d52",
+                            "valuation": 544,
+                            "change": 0.17
                         },
                         {
                             "name": "CCL",
                             "description": "Carnival Corporation",
-                            "size": 960,
-                            "color": -3.06
+                            "color": "#b86446",
+                            "valuation": 960,
+                            "change": -3.06
                         }
                     ],
-                    "color": -2.77
+                    "change": -2.77
                 },
                 {
                     "name": "Restaurants",
@@ -2350,29 +2642,33 @@ export const data = {
                         {
                             "name": "CMG",
                             "description": "Chipotle Mexican Grill, Inc.",
-                            "size": 299,
-                            "color": -2.24
+                            "color": "#b06e49",
+                            "valuation": 299,
+                            "change": -2.24
                         },
                         {
                             "name": "DRI",
                             "description": "Darden Restaurants, Inc.",
-                            "size": 322,
-                            "color": 2.16
+                            "color": "#86a759",
+                            "valuation": 322,
+                            "change": 2.16
                         },
                         {
                             "name": "YUM",
                             "description": "YUM! Brands, Inc.",
-                            "size": 621,
-                            "color": 1.58
+                            "color": "#8b9f57",
+                            "valuation": 621,
+                            "change": 1.58
                         },
                         {
                             "name": "MCD",
                             "description": "McDonald's Corporation",
-                            "size": 2970,
-                            "color": 3.97
+                            "color": "#74be60",
+                            "valuation": 2970,
+                            "change": 3.97
                         }
                     ],
-                    "color": 2.11
+                    "change": 2.11
                 },
                 {
                     "name": "Air Delivery & Freight Services",
@@ -2380,29 +2676,33 @@ export const data = {
                         {
                             "name": "CHRW",
                             "description": "C.H. Robinson Worldwide, Inc.",
-                            "size": 300,
-                            "color": -1.39
+                            "color": "#a8794c",
+                            "valuation": 300,
+                            "change": -1.39
                         },
                         {
                             "name": "EXPD",
                             "description": "Expeditors International of Washington, Inc.",
-                            "size": 315,
-                            "color": -0.36
+                            "color": "#9e8650",
+                            "valuation": 315,
+                            "change": -0.36
                         },
                         {
                             "name": "FDX",
                             "description": "FedEx Corporation",
-                            "size": 1517,
-                            "color": -0.47
+                            "color": "#9f8550",
+                            "valuation": 1517,
+                            "change": -0.47
                         },
                         {
                             "name": "UPS",
                             "description": "United Parcel Service, Inc.",
-                            "size": 2496,
-                            "color": 3.53
+                            "color": "#78b85f",
+                            "valuation": 2496,
+                            "change": 3.53
                         }
                     ],
-                    "color": -0.48
+                    "change": -0.48
                 },
                 {
                     "name": "Railroads",
@@ -2410,29 +2710,33 @@ export const data = {
                         {
                             "name": "KSU",
                             "description": "Kansas City Southern",
-                            "size": 288,
-                            "color": 3.81
+                            "color": "#76bc60",
+                            "valuation": 288,
+                            "change": 3.81
                         },
                         {
                             "name": "NSC",
                             "description": "Norfolk Southern Corporation",
-                            "size": 1184,
-                            "color": -2.29
+                            "color": "#b16e49",
+                            "valuation": 1184,
+                            "change": -2.29
                         },
                         {
                             "name": "CSX",
                             "description": "CSX Corporation",
-                            "size": 1518,
-                            "color": 4.36
+                            "color": "#70c362",
+                            "valuation": 1518,
+                            "change": 4.36
                         },
                         {
                             "name": "UNP",
                             "description": "Union Pacific Corporation",
-                            "size": 2795,
-                            "color": -4.31
+                            "color": "#c45442",
+                            "valuation": 2795,
+                            "change": -4.31
                         }
                     ],
-                    "color": -2.67
+                    "change": -2.67
                 },
                 {
                     "name": "CATV Systems",
@@ -2440,29 +2744,33 @@ export const data = {
                         {
                             "name": "DISCA",
                             "description": "Discovery, Inc.",
-                            "size": 340,
-                            "color": 1.96
+                            "color": "#87a459",
+                            "valuation": 340,
+                            "change": 1.96
                         },
                         {
                             "name": "DISH",
                             "description": "DISH Network Corporation",
-                            "size": 360,
-                            "color": 4.94
+                            "color": "#6bca64",
+                            "valuation": 360,
+                            "change": 4.94
                         },
                         {
                             "name": "CHTR",
                             "description": "Charter Communications, Inc.",
-                            "size": 1715,
-                            "color": -1.1
+                            "color": "#a57d4d",
+                            "valuation": 1715,
+                            "change": -1.1
                         },
                         {
                             "name": "NFLX",
                             "description": "Netflix, Inc.",
-                            "size": 3726,
-                            "color": 0.3
+                            "color": "#988f53",
+                            "valuation": 3726,
+                            "change": 0.3
                         }
                     ],
-                    "color": 4.12
+                    "change": 4.12
                 },
                 {
                     "name": "Home Improvement Stores",
@@ -2470,17 +2778,19 @@ export const data = {
                         {
                             "name": "LOW",
                             "description": "Lowe's Companies, Inc.",
-                            "size": 2125,
-                            "color": -1.17
+                            "color": "#a67c4d",
+                            "valuation": 2125,
+                            "change": -1.17
                         },
                         {
                             "name": "HD",
                             "description": "The Home Depot, Inc.",
-                            "size": 6120,
-                            "color": -3.93
+                            "color": "#c15943",
+                            "valuation": 6120,
+                            "change": -3.93
                         }
                     ],
-                    "color": -3.66
+                    "change": -3.66
                 },
                 {
                     "name": "Business Services",
@@ -2488,65 +2798,75 @@ export const data = {
                         {
                             "name": "ADS",
                             "description": "Alliance Data Systems Corporation",
-                            "size": 360,
-                            "color": 4.55
+                            "color": "#6ec562",
+                            "valuation": 360,
+                            "change": 4.55
                         },
                         {
                             "name": "GPN",
                             "description": "Global Payments Inc.",
-                            "size": 480,
-                            "color": -1.4
+                            "color": "#a8794c",
+                            "valuation": 480,
+                            "change": -1.4
                         },
                         {
                             "name": "VRSK",
                             "description": "Verisk Analytics, Inc.",
-                            "size": 540,
-                            "color": 2.43
+                            "color": "#83aa5a",
+                            "valuation": 540,
+                            "change": 2.43
                         },
                         {
                             "name": "FLT",
                             "description": "FleetCor Technologies, Inc.",
-                            "size": 510,
-                            "color": 2.53
+                            "color": "#82ab5b",
+                            "valuation": 510,
+                            "change": 2.53
                         },
                         {
                             "name": "INFO",
                             "description": "IHS Markit Ltd.",
-                            "size": 546,
-                            "color": 1.52
+                            "color": "#8c9e57",
+                            "valuation": 546,
+                            "change": 1.52
                         },
                         {
                             "name": "CTAS",
                             "description": "Cintas Corporation",
-                            "size": 588,
-                            "color": 4.89
+                            "color": "#6bca64",
+                            "valuation": 588,
+                            "change": 4.89
                         },
                         {
                             "name": "FISV",
                             "description": "Fiserv, Inc.",
-                            "size": 837,
-                            "color": -1.57
+                            "color": "#aa774c",
+                            "valuation": 837,
+                            "change": -1.57
                         },
                         {
                             "name": "MCO",
                             "description": "Moody's Corporation",
-                            "size": 899,
-                            "color": 2.56
+                            "color": "#82ac5b",
+                            "valuation": 899,
+                            "change": 2.56
                         },
                         {
                             "name": "SPGI",
                             "description": "S&P Global Inc.",
-                            "size": 1334,
-                            "color": -3.99
+                            "color": "#c15843",
+                            "valuation": 1334,
+                            "change": -3.99
                         },
                         {
                             "name": "BKNG",
                             "description": "Booking Holdings Inc.",
-                            "size": 2576,
-                            "color": -1.82
+                            "color": "#ac744b",
+                            "valuation": 2576,
+                            "change": -1.82
                         }
                     ],
-                    "color": -1.8
+                    "change": -1.8
                 },
                 {
                     "name": "Entertainment - Diversified",
@@ -2554,35 +2874,40 @@ export const data = {
                         {
                             "name": "VIAB",
                             "description": "Viacom, Inc.",
-                            "size": 375,
-                            "color": -0.84
+                            "color": "#a3804e",
+                            "valuation": 375,
+                            "change": -0.84
                         },
                         {
                             "name": "CBS",
                             "description": "CBS Corporation",
-                            "size": 575,
-                            "color": 2.7
+                            "color": "#80ae5b",
+                            "valuation": 575,
+                            "change": 2.7
                         },
                         {
                             "name": "FOXA",
                             "description": "Twenty-First Century Fox, Inc.",
-                            "size": 2242,
-                            "color": -0.43
+                            "color": "#9f8550",
+                            "valuation": 2242,
+                            "change": -0.43
                         },
                         {
                             "name": "CMCSA",
                             "description": "Comcast Corporation",
-                            "size": 4368,
-                            "color": 0.31
+                            "color": "#978f53",
+                            "valuation": 4368,
+                            "change": 0.31
                         },
                         {
                             "name": "DIS",
                             "description": "The Walt Disney Company",
-                            "size": 4452,
-                            "color": -3.96
+                            "color": "#c15843",
+                            "valuation": 4452,
+                            "change": -3.96
                         }
                     ],
-                    "color": 4.62
+                    "change": 4.62
                 },
                 {
                     "name": "Discount, Variety Stores",
@@ -2590,35 +2915,40 @@ export const data = {
                         {
                             "name": "DLTR",
                             "description": "Dollar Tree, Inc.",
-                            "size": 640,
-                            "color": -4.54
+                            "color": "#c75141",
+                            "valuation": 640,
+                            "change": -4.54
                         },
                         {
                             "name": "DG",
                             "description": "Dollar General Corporation",
-                            "size": 704,
-                            "color": -1.13
+                            "color": "#a57d4d",
+                            "valuation": 704,
+                            "change": -1.13
                         },
                         {
                             "name": "TGT",
                             "description": "Target Corporation",
-                            "size": 1176,
-                            "color": 1.49
+                            "color": "#8c9e57",
+                            "valuation": 1176,
+                            "change": 1.49
                         },
                         {
                             "name": "COST",
                             "description": "Costco Wholesale Corporation",
-                            "size": 2580,
-                            "color": 0.12
+                            "color": "#998d52",
+                            "valuation": 2580,
+                            "change": 0.12
                         },
                         {
                             "name": "WMT",
                             "description": "Walmart Inc.",
-                            "size": 7055,
-                            "color": 2.4
+                            "color": "#83aa5a",
+                            "valuation": 7055,
+                            "change": 2.4
                         }
                     ],
-                    "color": 0.3
+                    "change": 0.3
                 },
                 {
                     "name": "Catalog & Mail Order Houses",
@@ -2626,14 +2956,15 @@ export const data = {
                         {
                             "name": "AMZN",
                             "description": "Amazon.com, Inc.",
-                            "size": 24596,
-                            "color": 4.82
+                            "color": "#6cc963",
+                            "valuation": 24596,
+                            "change": 4.82
                         }
                     ],
-                    "color": -1.92
+                    "change": -1.92
                 }
             ],
-            "color": -1.91
+            "change": -1.91
         },
         {
             "name": "Financial",
@@ -2644,11 +2975,12 @@ export const data = {
                         {
                             "name": "PBCT",
                             "description": "People's United Financial, Inc.",
-                            "size": 162,
-                            "color": 3.56
+                            "color": "#78b95f",
+                            "valuation": 162,
+                            "change": 3.56
                         }
                     ],
-                    "color": 4.33
+                    "change": 4.33
                 },
                 {
                     "name": "REIT - Hotel/Motel",
@@ -2656,11 +2988,12 @@ export const data = {
                         {
                             "name": "HST",
                             "description": "Host Hotels & Resorts, Inc.",
-                            "size": 342,
-                            "color": 0.83
+                            "color": "#929655",
+                            "valuation": 342,
+                            "change": 0.83
                         }
                     ],
-                    "color": -3.2
+                    "change": -3.2
                 },
                 {
                     "name": "Property Management",
@@ -2668,11 +3001,12 @@ export const data = {
                         {
                             "name": "CBRE",
                             "description": "CBRE Group, Inc.",
-                            "size": 351,
-                            "color": -4.04
+                            "color": "#c25743",
+                            "valuation": 351,
+                            "change": -4.04
                         }
                     ],
-                    "color": 4.45
+                    "change": 4.45
                 },
                 {
                     "name": "Regional - Mid-Atlantic Banks",
@@ -2680,11 +3014,12 @@ export const data = {
                         {
                             "name": "CFG",
                             "description": "Citizens Financial Group, Inc.",
-                            "size": 405,
-                            "color": -2.01
+                            "color": "#ae714a",
+                            "valuation": 405,
+                            "change": -2.01
                         }
                     ],
-                    "color": 2.72
+                    "change": 2.72
                 },
                 {
                     "name": "Regional - Northeast Banks",
@@ -2692,11 +3027,12 @@ export const data = {
                         {
                             "name": "MTB",
                             "description": "M&T Bank Corporation",
-                            "size": 594,
-                            "color": 3.09
+                            "color": "#7db35d",
+                            "valuation": 594,
+                            "change": 3.09
                         }
                     ],
-                    "color": 0.56
+                    "change": 0.56
                 },
                 {
                     "name": "Regional - Pacific Banks",
@@ -2704,17 +3040,19 @@ export const data = {
                         {
                             "name": "ZION",
                             "description": "Zions Bancorporation",
-                            "size": 240,
-                            "color": -2.55
+                            "color": "#b36a48",
+                            "valuation": 240,
+                            "change": -2.55
                         },
                         {
                             "name": "SIVB",
                             "description": "SVB Financial Group",
-                            "size": 384,
-                            "color": -2.08
+                            "color": "#af704a",
+                            "valuation": 384,
+                            "change": -2.08
                         }
                     ],
-                    "color": -3.02
+                    "change": -3.02
                 },
                 {
                     "name": "REIT - Office",
@@ -2722,17 +3060,19 @@ export const data = {
                         {
                             "name": "BXP",
                             "description": "Boston Properties, Inc.",
-                            "size": 342,
-                            "color": -4.74
+                            "color": "#c84e40",
+                            "valuation": 342,
+                            "change": -4.74
                         },
                         {
                             "name": "DLR",
                             "description": "Digital Realty Trust, Inc.",
-                            "size": 396,
-                            "color": 1.21
+                            "color": "#8f9a56",
+                            "valuation": 396,
+                            "change": 1.21
                         }
                     ],
-                    "color": 1.42
+                    "change": 1.42
                 },
                 {
                     "name": "Accident & Health Insurance",
@@ -2740,23 +3080,26 @@ export const data = {
                         {
                             "name": "AIZ",
                             "description": "Assurant, Inc.",
-                            "size": 126,
-                            "color": 1.47
+                            "color": "#8c9e57",
+                            "valuation": 126,
+                            "change": 1.47
                         },
                         {
                             "name": "UNM",
                             "description": "Unum Group",
-                            "size": 154,
-                            "color": 1.64
+                            "color": "#8ba058",
+                            "valuation": 154,
+                            "change": 1.64
                         },
                         {
                             "name": "AFL",
                             "description": "Aflac Incorporated",
-                            "size": 640,
-                            "color": 3.52
+                            "color": "#78b85f",
+                            "valuation": 640,
+                            "change": 3.52
                         }
                     ],
-                    "color": 3.91
+                    "change": 3.91
                 },
                 {
                     "name": "REIT - Healthcare Facilities",
@@ -2764,23 +3107,26 @@ export const data = {
                         {
                             "name": "HCP",
                             "description": "HCP, Inc.",
-                            "size": 230,
-                            "color": -4.72
+                            "color": "#c84f40",
+                            "valuation": 230,
+                            "change": -4.72
                         },
                         {
                             "name": "VTR",
                             "description": "Ventas, Inc.",
-                            "size": 391,
-                            "color": -4.93
+                            "color": "#ca4c3f",
+                            "valuation": 391,
+                            "change": -4.93
                         },
                         {
                             "name": "WELL",
                             "description": "Welltower Inc.",
-                            "size": 437,
-                            "color": 4.14
+                            "color": "#72c061",
+                            "valuation": 437,
+                            "change": 4.14
                         }
                     ],
-                    "color": 1.09
+                    "change": 1.09
                 },
                 {
                     "name": "Regional - Southeast Banks",
@@ -2788,17 +3134,19 @@ export const data = {
                         {
                             "name": "RF",
                             "description": "Regions Financial Corporation",
-                            "size": 544,
-                            "color": 4.79
+                            "color": "#6cc863",
+                            "valuation": 544,
+                            "change": 4.79
                         },
                         {
                             "name": "BBT",
                             "description": "BB&T Corporation",
-                            "size": 1024,
-                            "color": -0.39
+                            "color": "#9e8650",
+                            "valuation": 1024,
+                            "change": -0.39
                         }
                     ],
-                    "color": 3.21
+                    "change": 3.21
                 },
                 {
                     "name": "Diversified Investments",
@@ -2806,23 +3154,26 @@ export const data = {
                         {
                             "name": "CBOE",
                             "description": "Cboe Global Markets, Inc.",
-                            "size": 304,
-                            "color": 1.73
+                            "color": "#8aa158",
+                            "valuation": 304,
+                            "change": 1.73
                         },
                         {
                             "name": "NDAQ",
                             "description": "Nasdaq, Inc.",
-                            "size": 399,
-                            "color": 1.36
+                            "color": "#8d9c57",
+                            "valuation": 399,
+                            "change": 1.36
                         },
                         {
                             "name": "ICE",
                             "description": "Intercontinental Exchange, Inc.",
-                            "size": 1110,
-                            "color": 2.07
+                            "color": "#86a559",
+                            "valuation": 1110,
+                            "change": 2.07
                         }
                     ],
-                    "color": -3.72
+                    "change": -3.72
                 },
                 {
                     "name": "REIT - Diversified",
@@ -2830,17 +3181,19 @@ export const data = {
                         {
                             "name": "VNO",
                             "description": "Vornado Realty Trust",
-                            "size": 287,
-                            "color": 4.14
+                            "color": "#72c061",
+                            "valuation": 287,
+                            "change": 4.14
                         },
                         {
                             "name": "AMT",
                             "description": "American Tower Corporation (REIT)",
-                            "size": 1435,
-                            "color": 3.4
+                            "color": "#7ab75e",
+                            "valuation": 1435,
+                            "change": 3.4
                         }
                     ],
-                    "color": 3.22
+                    "change": 3.22
                 },
                 {
                     "name": "REIT - Residential",
@@ -2848,35 +3201,40 @@ export const data = {
                         {
                             "name": "AIV",
                             "description": "Apartment Investment and Management Company",
-                            "size": 136,
-                            "color": 1.06
+                            "color": "#909955",
+                            "valuation": 136,
+                            "change": 1.06
                         },
                         {
                             "name": "UDR",
                             "description": "UDR, Inc.",
-                            "size": 221,
-                            "color": -3.72
+                            "color": "#bf5b44",
+                            "valuation": 221,
+                            "change": -3.72
                         },
                         {
                             "name": "ESS",
                             "description": "Essex Property Trust, Inc.",
-                            "size": 336,
-                            "color": 3.83
+                            "color": "#75bc60",
+                            "valuation": 336,
+                            "change": 3.83
                         },
                         {
                             "name": "AVB",
                             "description": "AvalonBay Communities, Inc.",
-                            "size": 496,
-                            "color": -0.29
+                            "color": "#9d8750",
+                            "valuation": 496,
+                            "change": -0.29
                         },
                         {
                             "name": "EQR",
                             "description": "Equity Residential",
-                            "size": 527,
-                            "color": -2.33
+                            "color": "#b16d49",
+                            "valuation": 527,
+                            "change": -2.33
                         }
                     ],
-                    "color": 1.86
+                    "change": 1.86
                 },
                 {
                     "name": "REIT - Industrial",
@@ -2884,29 +3242,33 @@ export const data = {
                         {
                             "name": "DRE",
                             "description": "Duke Realty Corporation",
-                            "size": 210,
-                            "color": -3.67
+                            "color": "#be5c44",
+                            "valuation": 210,
+                            "change": -3.67
                         },
                         {
                             "name": "EXR",
                             "description": "Extra Space Storage Inc.",
-                            "size": 252,
-                            "color": 4.35
+                            "color": "#70c362",
+                            "valuation": 252,
+                            "change": 4.35
                         },
                         {
                             "name": "PLD",
                             "description": "Prologis, Inc.",
-                            "size": 726,
-                            "color": 4.81
+                            "color": "#6cc963",
+                            "valuation": 726,
+                            "change": 4.81
                         },
                         {
                             "name": "PSA",
                             "description": "Public Storage",
-                            "size": 825,
-                            "color": -3.37
+                            "color": "#bb6045",
+                            "valuation": 825,
+                            "change": -3.37
                         }
                     ],
-                    "color": 1.95
+                    "change": 1.95
                 },
                 {
                     "name": "Insurance Brokers",
@@ -2914,23 +3276,26 @@ export const data = {
                         {
                             "name": "WLTW",
                             "description": "Willis Towers Watson Public Limited Company",
-                            "size": 416,
-                            "color": -3.93
+                            "color": "#c15943",
+                            "valuation": 416,
+                            "change": -3.93
                         },
                         {
                             "name": "AON",
                             "description": "Aon plc",
-                            "size": 736,
-                            "color": 4.95
+                            "color": "#6aca64",
+                            "valuation": 736,
+                            "change": 4.95
                         },
                         {
                             "name": "MMC",
                             "description": "Marsh & McLennan Companies, Inc.",
-                            "size": 896,
-                            "color": 0.09
+                            "color": "#9a8c52",
+                            "valuation": 896,
+                            "change": 0.09
                         }
                     ],
-                    "color": 2.51
+                    "change": 2.51
                 },
                 {
                     "name": "Life Insurance",
@@ -2938,41 +3303,47 @@ export const data = {
                         {
                             "name": "BHF",
                             "description": "Brighthouse Financial, Inc.",
-                            "size": 128,
-                            "color": 1.54
+                            "color": "#8c9f57",
+                            "valuation": 128,
+                            "change": 1.54
                         },
                         {
                             "name": "TMK",
                             "description": "Torchmark Corporation",
-                            "size": 224,
-                            "color": -3.84
+                            "color": "#c05a43",
+                            "valuation": 224,
+                            "change": -3.84
                         },
                         {
                             "name": "LNC",
                             "description": "Lincoln National Corporation",
-                            "size": 330,
-                            "color": -0.33
+                            "color": "#9e8750",
+                            "valuation": 330,
+                            "change": -0.33
                         },
                         {
                             "name": "PFG",
                             "description": "Principal Financial Group, Inc.",
-                            "size": 374,
-                            "color": -0.29
+                            "color": "#9d8750",
+                            "valuation": 374,
+                            "change": -0.29
                         },
                         {
                             "name": "PRU",
                             "description": "Prudential Financial, Inc.",
-                            "size": 966,
-                            "color": -4.31
+                            "color": "#c45442",
+                            "valuation": 966,
+                            "change": -4.31
                         },
                         {
                             "name": "MET",
                             "description": "MetLife, Inc.",
-                            "size": 1050,
-                            "color": -1.43
+                            "color": "#a8794c",
+                            "valuation": 1050,
+                            "change": -1.43
                         }
                     ],
-                    "color": -4.96
+                    "change": -4.96
                 },
                 {
                     "name": "REIT - Retail",
@@ -2980,53 +3351,61 @@ export const data = {
                         {
                             "name": "KIM",
                             "description": "Kimco Realty Corporation",
-                            "size": 168,
-                            "color": -4.6
+                            "color": "#c75040",
+                            "valuation": 168,
+                            "change": -4.6
                         },
                         {
                             "name": "MAC",
                             "description": "Macerich Company",
-                            "size": 200,
-                            "color": -4.62
+                            "color": "#c75040",
+                            "valuation": 200,
+                            "change": -4.62
                         },
                         {
                             "name": "SLG",
                             "description": "SL Green Realty Corp.",
-                            "size": 220,
-                            "color": 3.98
+                            "color": "#74be60",
+                            "valuation": 220,
+                            "change": 3.98
                         },
                         {
                             "name": "FRT",
                             "description": "Federal Realty Investment Trust",
-                            "size": 221,
-                            "color": -0.74
+                            "color": "#a2824f",
+                            "valuation": 221,
+                            "change": -0.74
                         },
                         {
                             "name": "REG",
                             "description": "Regency Centers Corporation",
-                            "size": 255,
-                            "color": -3.98
+                            "color": "#c15843",
+                            "valuation": 255,
+                            "change": -3.98
                         },
                         {
                             "name": "O",
                             "description": "Realty Income Corporation",
-                            "size": 374,
-                            "color": 3.24
+                            "color": "#7bb45d",
+                            "valuation": 374,
+                            "change": 3.24
                         },
                         {
                             "name": "GGP",
                             "description": "GGP Inc.",
-                            "size": 462,
-                            "color": 1.9
+                            "color": "#88a359",
+                            "valuation": 462,
+                            "change": 1.9
                         },
                         {
                             "name": "SPG",
                             "description": "Simon Property Group, Inc.",
-                            "size": 1300,
-                            "color": -4.64
+                            "color": "#c85040",
+                            "valuation": 1300,
+                            "change": -4.64
                         }
                     ],
-                    "color": -4.68
+                    "change": -4.68
                 },
                 {
                     "name": "Regional - Midwest Banks",
@@ -3034,29 +3413,33 @@ export const data = {
                         {
                             "name": "HBAN",
                             "description": "Huntington Bancshares Incorporated",
-                            "size": 351,
-                            "color": -2.01
+                            "color": "#ae714a",
+                            "valuation": 351,
+                            "change": -2.01
                         },
                         {
                             "name": "FITB",
                             "description": "Fifth Third Bancorp",
-                            "size": 459,
-                            "color": -4.13
+                            "color": "#c35642",
+                            "valuation": 459,
+                            "change": -4.13
                         },
                         {
                             "name": "KEY",
                             "description": "KeyCorp",
-                            "size": 510,
-                            "color": -2.2
+                            "color": "#b06f49",
+                            "valuation": 510,
+                            "change": -2.2
                         },
                         {
                             "name": "USB",
                             "description": "U.S. Bancorp",
-                            "size": 1980,
-                            "color": 2.01
+                            "color": "#87a559",
+                            "valuation": 1980,
+                            "change": 2.01
                         }
                     ],
-                    "color": 2.75
+                    "change": 2.75
                 },
                 {
                     "name": "Asset Management",
@@ -3064,71 +3447,82 @@ export const data = {
                         {
                             "name": "LM",
                             "description": "Legg Mason, Inc.",
-                            "size": 70,
-                            "color": 0.96
+                            "color": "#919755",
+                            "valuation": 70,
+                            "change": 0.96
                         },
                         {
                             "name": "JEF",
                             "description": "Jefferies Financial Group Inc.",
-                            "size": 200,
-                            "color": 1.53
+                            "color": "#8c9f57",
+                            "valuation": 200,
+                            "change": 1.53
                         },
                         {
                             "name": "AMG",
                             "description": "Affiliated Managers Group, Inc.",
-                            "size": 216,
-                            "color": -2.46
+                            "color": "#b26c48",
+                            "valuation": 216,
+                            "change": -2.46
                         },
                         {
                             "name": "IVZ",
                             "description": "Invesco Ltd.",
-                            "size": 270,
-                            "color": -0.04
+                            "color": "#9b8a51",
+                            "valuation": 270,
+                            "change": -0.04
                         },
                         {
                             "name": "BEN",
                             "description": "Franklin Resources, Inc.",
-                            "size": 459,
-                            "color": -0.46
+                            "color": "#9f8550",
+                            "valuation": 459,
+                            "change": -0.46
                         },
                         {
                             "name": "AMP",
                             "description": "Ameriprise Financial, Inc.",
-                            "size": 520,
-                            "color": -3.53
+                            "color": "#bd5e44",
+                            "valuation": 520,
+                            "change": -3.53
                         },
                         {
                             "name": "NTRS",
                             "description": "Northern Trust Corporation",
-                            "size": 650,
-                            "color": 3.22
+                            "color": "#7bb45d",
+                            "valuation": 650,
+                            "change": 3.22
                         },
                         {
                             "name": "TROW",
                             "description": "T. Rowe Price Group, Inc.",
-                            "size": 750,
-                            "color": -4.96
+                            "color": "#cb4c3f",
+                            "valuation": 750,
+                            "change": -4.96
                         },
                         {
                             "name": "STT",
                             "description": "State Street Corporation",
-                            "size": 840,
-                            "color": -4.11
+                            "color": "#c25642",
+                            "valuation": 840,
+                            "change": -4.11
                         },
                         {
                             "name": "BK",
                             "description": "The Bank of New York Mellon Corporation",
-                            "size": 1426,
-                            "color": 4.86
+                            "color": "#6bc963",
+                            "valuation": 1426,
+                            "change": 4.86
                         },
                         {
                             "name": "BLK",
                             "description": "BlackRock, Inc.",
-                            "size": 2024,
-                            "color": -4.64
+                            "color": "#c85040",
+                            "valuation": 2024,
+                            "change": -4.64
                         }
                     ],
-                    "color": 2.89
+                    "change": 2.89
                 },
                 {
                     "name": "Investment Brokerage - National",
@@ -3136,35 +3530,40 @@ export const data = {
                         {
                             "name": "ETFC",
                             "description": "E*TRADE Financial Corporation",
-                            "size": 440,
-                            "color": 2.78
+                            "color": "#80af5c",
+                            "valuation": 440,
+                            "change": 2.78
                         },
                         {
                             "name": "CME",
                             "description": "CME Group Inc.",
-                            "size": 1440,
-                            "color": 3.37
+                            "color": "#7ab65e",
+                            "valuation": 1440,
+                            "change": 3.37
                         },
                         {
                             "name": "SCHW",
                             "description": "The Charles Schwab Corporation",
-                            "size": 1786,
-                            "color": 4.73
+                            "color": "#6dc863",
+                            "valuation": 1786,
+                            "change": 4.73
                         },
                         {
                             "name": "GS",
                             "description": "The Goldman Sachs Group, Inc.",
-                            "size": 2301,
-                            "color": 3.92
+                            "color": "#74bd60",
+                            "valuation": 2301,
+                            "change": 3.92
                         },
                         {
                             "name": "MS",
                             "description": "Morgan Stanley",
-                            "size": 2301,
-                            "color": 3.89
+                            "color": "#75bd60",
+                            "valuation": 2301,
+                            "change": 3.89
                         }
                     ],
-                    "color": -3.7
+                    "change": -3.7
                 },
                 {
                     "name": "Property & Casualty Insurance",
@@ -3172,65 +3571,75 @@ export const data = {
                         {
                             "name": "RE",
                             "description": "Everest Re Group, Ltd.",
-                            "size": 252,
-                            "color": -0.81
+                            "color": "#a2814f",
+                            "valuation": 252,
+                            "change": -0.81
                         },
                         {
                             "name": "CINF",
                             "description": "Cincinnati Financial Corporation",
-                            "size": 325,
-                            "color": -1.42
+                            "color": "#a8794c",
+                            "valuation": 325,
+                            "change": -1.42
                         },
                         {
                             "name": "XL",
                             "description": "XL Group Ltd",
-                            "size": 375,
-                            "color": 3.91
+                            "color": "#75bd60",
+                            "valuation": 375,
+                            "change": 3.91
                         },
                         {
                             "name": "L",
                             "description": "Loews Corporation",
-                            "size": 448,
-                            "color": 4.76
+                            "color": "#6cc863",
+                            "valuation": 448,
+                            "change": 4.76
                         },
                         {
                             "name": "HIG",
                             "description": "The Hartford Financial Services Group, Inc.",
-                            "size": 504,
-                            "color": 2.67
+                            "color": "#81ad5b",
+                            "valuation": 504,
+                            "change": 2.67
                         },
                         {
                             "name": "ALL",
                             "description": "The Allstate Corporation",
-                            "size": 864,
-                            "color": 2.13
+                            "color": "#86a659",
+                            "valuation": 864,
+                            "change": 2.13
                         },
                         {
                             "name": "TRV",
                             "description": "The Travelers Companies, Inc.",
-                            "size": 928,
-                            "color": -0.53
+                            "color": "#a08450",
+                            "valuation": 928,
+                            "change": -0.53
                         },
                         {
                             "name": "PGR",
                             "description": "The Progressive Corporation",
-                            "size": 920,
-                            "color": 1.34
+                            "color": "#8e9c56",
+                            "valuation": 920,
+                            "change": 1.34
                         },
                         {
                             "name": "AIG",
                             "description": "American International Group, Inc.",
-                            "size": 1320,
-                            "color": 3.93
+                            "color": "#74bd60",
+                            "valuation": 1320,
+                            "change": 3.93
                         },
                         {
                             "name": "BRK-B",
                             "description": "Berkshire Hathaway Inc.",
-                            "size": 12932,
-                            "color": -3.14
+                            "color": "#b96346",
+                            "valuation": 12932,
+                            "change": -3.14
                         }
                     ],
-                    "color": 1.77
+                    "change": 1.77
                 },
                 {
                     "name": "Credit Services",
@@ -3238,71 +3647,82 @@ export const data = {
                         {
                             "name": "NAVI",
                             "description": "Navient Corporation",
-                            "size": 72,
-                            "color": 1
+                            "color": "#919855",
+                            "valuation": 72,
+                            "change": 1
                         },
                         {
                             "name": "WU",
                             "description": "The Western Union Company",
-                            "size": 252,
-                            "color": -1.26
+                            "color": "#a77b4d",
+                            "valuation": 252,
+                            "change": -1.26
                         },
                         {
                             "name": "EFX",
                             "description": "Equifax Inc.",
-                            "size": 405,
-                            "color": 1.39
+                            "color": "#8d9d57",
+                            "valuation": 405,
+                            "change": 1.39
                         },
                         {
                             "name": "TSS",
                             "description": "Total System Services, Inc.",
-                            "size": 459,
-                            "color": -2.04
+                            "color": "#ae714a",
+                            "valuation": 459,
+                            "change": -2.04
                         },
                         {
                             "name": "SYF",
                             "description": "Synchrony Financial",
-                            "size": 660,
-                            "color": -0.56
+                            "color": "#a0844f",
+                            "valuation": 660,
+                            "change": -0.56
                         },
                         {
                             "name": "DFS",
                             "description": "Discover Financial Services",
-                            "size": 660,
-                            "color": 2.22
+                            "color": "#85a75a",
+                            "valuation": 660,
+                            "change": 2.22
                         },
                         {
                             "name": "COF",
                             "description": "Capital One Financial Corporation",
-                            "size": 1276,
-                            "color": -0.4
+                            "color": "#9e8650",
+                            "valuation": 1276,
+                            "change": -0.4
                         },
                         {
                             "name": "AXP",
                             "description": "American Express Company",
-                            "size": 2242,
-                            "color": 4.27
+                            "color": "#71c261",
+                            "valuation": 2242,
+                            "change": 4.27
                         },
                         {
                             "name": "PYPL",
                             "description": "PayPal Holdings, Inc.",
-                            "size": 2832,
-                            "color": 2.35
+                            "color": "#84a95a",
+                            "valuation": 2832,
+                            "change": 2.35
                         },
                         {
                             "name": "MA",
                             "description": "Mastercard Incorporated",
-                            "size": 5871,
-                            "color": 2.42
+                            "color": "#83aa5a",
+                            "valuation": 5871,
+                            "change": 2.42
                         },
                         {
                             "name": "V",
                             "description": "Visa Inc.",
-                            "size": 8343,
-                            "color": 0.46
+                            "color": "#969153",
+                            "valuation": 8343,
+                            "change": 0.46
                         }
                     ],
-                    "color": 0.98
+                    "change": 0.98
                 },
                 {
                     "name": "Money Center Banks",
@@ -3310,50 +3730,57 @@ export const data = {
                         {
                             "name": "CMA",
                             "description": "Comerica Incorporated",
-                            "size": 408,
-                            "color": 0.12
+                            "color": "#998d52",
+                            "valuation": 408,
+                            "change": 0.12
                         },
                         {
                             "name": "STI",
                             "description": "SunTrust Banks, Inc.",
-                            "size": 918,
-                            "color": -4.83
+                            "color": "#c94d40",
+                            "valuation": 918,
+                            "change": -4.83
                         },
                         {
                             "name": "PNC",
                             "description": "The PNC Financial Services Group, Inc.",
-                            "size": 1872,
-                            "color": -1.98
+                            "color": "#ae724a",
+                            "valuation": 1872,
+                            "change": -1.98
                         },
                         {
                             "name": "C",
                             "description": "Citigroup Inc.",
-                            "size": 5084,
-                            "color": -4.99
+                            "color": "#cb4b3f",
+                            "valuation": 5084,
+                            "change": -4.99
                         },
                         {
                             "name": "WFC",
                             "description": "Wells Fargo & Company",
-                            "size": 7777,
-                            "color": 4.45
+                            "color": "#6fc462",
+                            "valuation": 7777,
+                            "change": 4.45
                         },
                         {
                             "name": "BAC",
                             "description": "Bank of America Corporation",
-                            "size": 8733,
-                            "color": 1.3
+                            "color": "#8e9c56",
+                            "valuation": 8733,
+                            "change": 1.3
                         },
                         {
                             "name": "JPM",
                             "description": "JPMorgan Chase & Co.",
-                            "size": 10824,
-                            "color": 1.85
+                            "color": "#89a358",
+                            "valuation": 10824,
+                            "change": 1.85
                         }
                     ],
-                    "color": 2.77
+                    "change": 2.77
                 }
             ],
-            "color": 3.93
+            "change": 3.93
         },
         {
             "name": "Technology",
@@ -3364,11 +3791,12 @@ export const data = {
                         {
                             "name": "SYMC",
                             "description": "Symantec Corporation",
-                            "size": 320,
-                            "color": 4.51
+                            "color": "#6fc562",
+                            "valuation": 320,
+                            "change": 4.51
                         }
                     ],
-                    "color": -0.99
+                    "change": -0.99
                 },
                 {
                     "name": "Processing Systems & Products",
@@ -3376,11 +3804,12 @@ export const data = {
                         {
                             "name": "MSCI",
                             "description": "MSCI Inc.",
-                            "size": 297,
-                            "color": -0.38
+                            "color": "#9e8650",
+                            "valuation": 297,
+                            "change": -0.38
                         }
                     ],
-                    "color": -2.27
+                    "change": -2.27
                 },
                 {
                     "name": "Healthcare Information Services",
@@ -3388,11 +3817,12 @@ export const data = {
                         {
                             "name": "CERN",
                             "description": "Cerner Corporation",
-                            "size": 432,
-                            "color": -3.98
+                            "color": "#c15843",
+                            "valuation": 432,
+                            "change": -3.98
                         }
                     ],
-                    "color": -3.67
+                    "change": -3.67
                 },
                 {
                     "name": "Technical & System Software",
@@ -3400,11 +3830,12 @@ export const data = {
                         {
                             "name": "ADSK",
                             "description": "Autodesk, Inc.",
-                            "size": 704,
-                            "color": -3.47
+                            "color": "#bc5f45",
+                            "valuation": 704,
+                            "change": -3.47
                         }
                     ],
-                    "color": -1.06
+                    "change": -1.06
                 },
                 {
                     "name": "Information & Delivery Services",
@@ -3412,23 +3843,26 @@ export const data = {
                         {
                             "name": "DNB",
                             "description": "The Dun & Bradstreet Corporation",
-                            "size": 120,
-                            "color": -3.77
+                            "color": "#bf5b44",
+                            "valuation": 120,
+                            "change": -3.77
                         },
                         {
                             "name": "NLSN",
                             "description": "Nielsen Holdings plc",
-                            "size": 255,
-                            "color": 4.94
+                            "color": "#6bca64",
+                            "valuation": 255,
+                            "change": 4.94
                         },
                         {
                             "name": "BR",
                             "description": "Broadridge Financial Solutions, Inc.",
-                            "size": 300,
-                            "color": 4.71
+                            "color": "#6dc763",
+                            "valuation": 300,
+                            "change": 4.71
                         }
                     ],
-                    "color": 0.14
+                    "change": 0.14
                 },
                 {
                     "name": "Internet Software & Services",
@@ -3436,11 +3870,12 @@ export const data = {
                         {
                             "name": "EQIX",
                             "description": "Equinix, Inc. (REIT)",
-                            "size": 850,
-                            "color": 3.13
+                            "color": "#7cb35d",
+                            "valuation": 850,
+                            "change": 3.13
                         }
                     ],
-                    "color": -1.18
+                    "change": -1.18
                 },
                 {
                     "name": "Diversified Computer Systems",
@@ -3448,11 +3883,12 @@ export const data = {
                         {
                             "name": "HPQ",
                             "description": "HP Inc.",
-                            "size": 910,
-                            "color": 3.86
+                            "color": "#75bc60",
+                            "valuation": 910,
+                            "change": 3.86
                         }
                     ],
-                    "color": 1.65
+                    "change": 1.65
                 },
                 {
                     "name": "Scientific & Technical Instruments",
@@ -3460,23 +3896,26 @@ export const data = {
                         {
                             "name": "FLIR",
                             "description": "FLIR Systems, Inc.",
-                            "size": 210,
-                            "color": -3.69
+                            "color": "#be5c44",
+                            "valuation": 210,
+                            "change": -3.69
                         },
                         {
                             "name": "GRMN",
                             "description": "Garmin Ltd.",
-                            "size": 315,
-                            "color": -1.79
+                            "color": "#ac744b",
+                            "valuation": 315,
+                            "change": -1.79
                         },
                         {
                             "name": "FTV",
                             "description": "Fortive Corporation",
-                            "size": 700,
-                            "color": -1.01
+                            "color": "#a47e4e",
+                            "valuation": 700,
+                            "change": -1.01
                         }
                     ],
-                    "color": -0.01
+                    "change": -0.01
                 },
                 {
                     "name": "Data Storage Devices",
@@ -3484,23 +3923,26 @@ export const data = {
                         {
                             "name": "STX",
                             "description": "Seagate Technology plc",
-                            "size": 273,
-                            "color": -2.23
+                            "color": "#b06e49",
+                            "valuation": 273,
+                            "change": -2.23
                         },
                         {
                             "name": "NTAP",
                             "description": "NetApp, Inc.",
-                            "size": 378,
-                            "color": -2.74
+                            "color": "#b56847",
+                            "valuation": 378,
+                            "change": -2.74
                         },
                         {
                             "name": "WDC",
                             "description": "Western Digital Corporation",
-                            "size": 399,
-                            "color": -0.35
+                            "color": "#9e8750",
+                            "valuation": 399,
+                            "change": -0.35
                         }
                     ],
-                    "color": 1.59
+                    "change": 1.59
                 },
                 {
                     "name": "Semiconductor- Memory Chips",
@@ -3508,11 +3950,12 @@ export const data = {
                         {
                             "name": "MU",
                             "description": "Micron Technology, Inc.",
-                            "size": 1100,
-                            "color": 4.82
+                            "color": "#6cc963",
+                            "valuation": 1100,
+                            "change": 4.82
                         }
                     ],
-                    "color": 4.72
+                    "change": 4.72
                 },
                 {
                     "name": "Diversified Communication Services",
@@ -3520,17 +3963,19 @@ export const data = {
                         {
                             "name": "SBAC",
                             "description": "SBA Communications Corporation",
-                            "size": 350,
-                            "color": -3.57
+                            "color": "#bd5d44",
+                            "valuation": 350,
+                            "change": -3.57
                         },
                         {
                             "name": "CCI",
                             "description": "Crown Castle International Corp. (REIT)",
-                            "size": 900,
-                            "color": -4.18
+                            "color": "#c35542",
+                            "valuation": 900,
+                            "change": -4.18
                         }
                     ],
-                    "color": -4.35
+                    "change": -4.35
                 },
                 {
                     "name": "Semiconductor - Integrated Circuits",
@@ -3538,23 +3983,26 @@ export const data = {
                         {
                             "name": "SWKS",
                             "description": "Skyworks Solutions, Inc.",
-                            "size": 350,
-                            "color": -0.7
+                            "color": "#a1824f",
+                            "valuation": 350,
+                            "change": -0.7
                         },
                         {
                             "name": "XLNX",
                             "description": "Xilinx, Inc.",
-                            "size": 350,
-                            "color": -4.47
+                            "color": "#c65241",
+                            "valuation": 350,
+                            "change": -4.47
                         },
                         {
                             "name": "ADI",
                             "description": "Analog Devices, Inc.",
-                            "size": 700,
-                            "color": -4.56
+                            "color": "#c75141",
+                            "valuation": 700,
+                            "change": -4.56
                         }
                     ],
-                    "color": -3.56
+                    "change": -3.56
                 },
                 {
                     "name": "Diversified Electronics",
@@ -3562,23 +4010,26 @@ export const data = {
                         {
                             "name": "GLW",
                             "description": "Corning Incorporated",
-                            "size": 560,
-                            "color": 1.79
+                            "color": "#89a258",
+                            "valuation": 560,
+                            "change": 1.79
                         },
                         {
                             "name": "APH",
                             "description": "Amphenol Corporation",
-                            "size": 560,
-                            "color": -1.96
+                            "color": "#ae724a",
+                            "valuation": 560,
+                            "change": -1.96
                         },
                         {
                             "name": "TEL",
                             "description": "TE Connectivity Ltd.",
-                            "size": 644,
-                            "color": -4.6
+                            "color": "#c75040",
+                            "valuation": 644,
+                            "change": -4.6
                         }
                     ],
-                    "color": -1.87
+                    "change": -1.87
                 },
                 {
                     "name": "Multimedia & Graphics Software",
@@ -3586,23 +4037,26 @@ export const data = {
                         {
                             "name": "TTWO",
                             "description": "Take-Two Interactive Software, Inc.",
-                            "size": 330,
-                            "color": 0.95
+                            "color": "#919755",
+                            "valuation": 330,
+                            "change": 0.95
                         },
                         {
                             "name": "EA",
                             "description": "Electronic Arts Inc.",
-                            "size": 1050,
-                            "color": 3.37
+                            "color": "#7ab65e",
+                            "valuation": 1050,
+                            "change": 3.37
                         },
                         {
                             "name": "ATVI",
                             "description": "Activision Blizzard, Inc.",
-                            "size": 1426,
-                            "color": 0.24
+                            "color": "#988e52",
+                            "valuation": 1426,
+                            "change": 0.24
                         }
                     ],
-                    "color": 2.28
+                    "change": 2.28
                 },
                 {
                     "name": "Semiconductor Equipment & Materials",
@@ -3610,35 +4064,40 @@ export const data = {
                         {
                             "name": "IPGP",
                             "description": "IPG Photonics Corporation",
-                            "size": 190,
-                            "color": 4.26
+                            "color": "#71c261",
+                            "valuation": 190,
+                            "change": 4.26
                         },
                         {
                             "name": "SNPS",
                             "description": "Synopsys, Inc.",
-                            "size": 323,
-                            "color": 2.25
+                            "color": "#85a85a",
+                            "valuation": 323,
+                            "change": 2.25
                         },
                         {
                             "name": "KLAC",
                             "description": "KLA-Tencor Corporation",
-                            "size": 432,
-                            "color": 1.44
+                            "color": "#8d9d57",
+                            "valuation": 432,
+                            "change": 1.44
                         },
                         {
                             "name": "LRCX",
                             "description": "Lam Research Corporation",
-                            "size": 665,
-                            "color": 0.44
+                            "color": "#969153",
+                            "valuation": 665,
+                            "change": 0.44
                         },
                         {
                             "name": "AMAT",
                             "description": "Applied Materials, Inc.",
-                            "size": 1196,
-                            "color": -3.65
+                            "color": "#be5c44",
+                            "valuation": 1196,
+                            "change": -3.65
                         }
                     ],
-                    "color": -4.39
+                    "change": -4.39
                 },
                 {
                     "name": "Semiconductor - Specialized",
@@ -3646,17 +4105,19 @@ export const data = {
                         {
                             "name": "FSLR",
                             "description": "First Solar, Inc.",
-                            "size": 150,
-                            "color": -2.42
+                            "color": "#b26c49",
+                            "valuation": 150,
+                            "change": -2.42
                         },
                         {
                             "name": "NVDA",
                             "description": "NVIDIA Corporation",
-                            "size": 3700,
-                            "color": 2.99
+                            "color": "#7db15d",
+                            "valuation": 3700,
+                            "change": 2.99
                         }
                     ],
-                    "color": -0.49
+                    "change": -0.49
                 },
                 {
                     "name": "Information Technology Services",
@@ -3664,35 +4125,40 @@ export const data = {
                         {
                             "name": "XRX",
                             "description": "Xerox Corporation",
-                            "size": 186,
-                            "color": 0.21
+                            "color": "#988e52",
+                            "valuation": 186,
+                            "change": 0.21
                         },
                         {
                             "name": "FIS",
                             "description": "Fidelity National Information Services, Inc.",
-                            "size": 899,
-                            "color": -4.82
+                            "color": "#c94d40",
+                            "valuation": 899,
+                            "change": -4.82
                         },
                         {
                             "name": "CTSH",
                             "description": "Cognizant Technology Solutions Corporation",
-                            "size": 1260,
-                            "color": 0.59
+                            "color": "#959354",
+                            "valuation": 1260,
+                            "change": 0.59
                         },
                         {
                             "name": "ACN",
                             "description": "Accenture plc",
-                            "size": 2814,
-                            "color": 2.65
+                            "color": "#81ad5b",
+                            "valuation": 2814,
+                            "change": 2.65
                         },
                         {
                             "name": "IBM",
                             "description": "International Business Machines Corporation",
-                            "size": 3388,
-                            "color": 3.13
+                            "color": "#7cb35d",
+                            "valuation": 3388,
+                            "change": 3.13
                         }
                     ],
-                    "color": -3.48
+                    "change": -3.48
                 },
                 {
                     "name": "Communication Equipment",
@@ -3700,41 +4166,47 @@ export const data = {
                         {
                             "name": "JNPR",
                             "description": "Juniper Networks, Inc.",
-                            "size": 266,
-                            "color": -2.35
+                            "color": "#b16d49",
+                            "valuation": 266,
+                            "change": -2.35
                         },
                         {
                             "name": "HRS",
                             "description": "Harris Corporation",
-                            "size": 494,
-                            "color": 1.92
+                            "color": "#88a459",
+                            "valuation": 494,
+                            "change": 1.92
                         },
                         {
                             "name": "MSI",
                             "description": "Motorola Solutions, Inc.",
-                            "size": 504,
-                            "color": 4.99
+                            "color": "#6acb64",
+                            "valuation": 504,
+                            "change": 4.99
                         },
                         {
                             "name": "HPE",
                             "description": "Hewlett Packard Enterprise Company",
-                            "size": 616,
-                            "color": -4.46
+                            "color": "#c65241",
+                            "valuation": 616,
+                            "change": -4.46
                         },
                         {
                             "name": "QCOM",
                             "description": "QUALCOMM Incorporated",
-                            "size": 2491,
-                            "color": -1.39
+                            "color": "#a8794c",
+                            "valuation": 2491,
+                            "change": -1.39
                         },
                         {
                             "name": "CSCO",
                             "description": "Cisco Systems, Inc.",
-                            "size": 5208,
-                            "color": -1.47
+                            "color": "#a9784c",
+                            "valuation": 5208,
+                            "change": -1.47
                         }
                     ],
-                    "color": -2.82
+                    "change": -2.82
                 },
                 {
                     "name": "Telecom Services - Domestic",
@@ -3742,29 +4214,33 @@ export const data = {
                         {
                             "name": "FTR",
                             "description": "Frontier Communications Corporation",
-                            "size": 9,
-                            "color": 2.7
+                            "color": "#80ae5b",
+                            "valuation": 9,
+                            "change": 2.7
                         },
                         {
                             "name": "CTL",
                             "description": "CenturyLink, Inc.",
-                            "size": 531,
-                            "color": 0.2
+                            "color": "#998e52",
+                            "valuation": 531,
+                            "change": 0.2
                         },
                         {
                             "name": "VZ",
                             "description": "Verizon Communications Inc.",
-                            "size": 5640,
-                            "color": -3.49
+                            "color": "#bc5e45",
+                            "valuation": 5640,
+                            "change": -3.49
                         },
                         {
                             "name": "T",
                             "description": "AT&T Inc.",
-                            "size": 6077,
-                            "color": 3.74
+                            "color": "#76bb5f",
+                            "valuation": 6077,
+                            "change": 3.74
                         }
                     ],
-                    "color": -4.69
+                    "change": -4.69
                 },
                 {
                     "name": "Semiconductor - Broad Line",
@@ -3772,35 +4248,40 @@ export const data = {
                         {
                             "name": "QRVO",
                             "description": "Qorvo, Inc.",
-                            "size": 225,
-                            "color": -1.93
+                            "color": "#ad724a",
+                            "valuation": 225,
+                            "change": -1.93
                         },
                         {
                             "name": "MCHP",
                             "description": "Microchip Technology Incorporated",
-                            "size": 585,
-                            "color": -0.81
+                            "color": "#a2814f",
+                            "valuation": 585,
+                            "change": -0.81
                         },
                         {
                             "name": "AVGO",
                             "description": "Broadcom Inc.",
-                            "size": 2538,
-                            "color": 3.22
+                            "color": "#7bb45d",
+                            "valuation": 2538,
+                            "change": 3.22
                         },
                         {
                             "name": "TXN",
                             "description": "Texas Instruments Incorporated",
-                            "size": 2914,
-                            "color": 3.33
+                            "color": "#7ab65e",
+                            "valuation": 2914,
+                            "change": 3.33
                         },
                         {
                             "name": "INTC",
                             "description": "Intel Corporation",
-                            "size": 6666,
-                            "color": 1.07
+                            "color": "#909955",
+                            "valuation": 6666,
+                            "change": 1.07
                         }
                     ],
-                    "color": -3.37
+                    "change": -3.37
                 },
                 {
                     "name": "Application Software",
@@ -3808,47 +4289,54 @@ export const data = {
                         {
                             "name": "CDNS",
                             "description": "Cadence Design Systems, Inc.",
-                            "size": 345,
-                            "color": -1.02
+                            "color": "#a47e4e",
+                            "valuation": 345,
+                            "change": -1.02
                         },
                         {
                             "name": "ANSS",
                             "description": "ANSYS, Inc.",
-                            "size": 391,
-                            "color": -3.05
+                            "color": "#b86446",
+                            "valuation": 391,
+                            "change": -3.05
                         },
                         {
                             "name": "RHT",
                             "description": "Red Hat, Inc.",
-                            "size": 672,
-                            "color": -4.61
+                            "color": "#c75040",
+                            "valuation": 672,
+                            "change": -4.61
                         },
                         {
                             "name": "INTU",
                             "description": "Intuit Inc.",
-                            "size": 1408,
-                            "color": 3.81
+                            "color": "#76bc60",
+                            "valuation": 1408,
+                            "change": 3.81
                         },
                         {
                             "name": "CRM",
                             "description": "salesforce.com, inc.",
-                            "size": 2760,
-                            "color": -1.61
+                            "color": "#aa764c",
+                            "valuation": 2760,
+                            "change": -1.61
                         },
                         {
                             "name": "ADBE",
                             "description": "Adobe Systems Incorporated",
-                            "size": 3312,
-                            "color": 4.27
+                            "color": "#71c261",
+                            "valuation": 3312,
+                            "change": 4.27
                         },
                         {
                             "name": "ORCL",
                             "description": "Oracle Corporation",
-                            "size": 5050,
-                            "color": 2.13
+                            "color": "#86a659",
+                            "valuation": 5050,
+                            "change": 2.13
                         }
                     ],
-                    "color": 0.98
+                    "change": 0.98
                 },
                 {
                     "name": "Business Software & Services",
@@ -3856,41 +4344,47 @@ export const data = {
                         {
                             "name": "IRM",
                             "description": "Iron Mountain Incorporated",
-                            "size": 338,
-                            "color": -3.07
+                            "color": "#b86446",
+                            "valuation": 338,
+                            "change": -3.07
                         },
                         {
                             "name": "FFIV",
                             "description": "F5 Networks, Inc.",
-                            "size": 286,
-                            "color": -2.67
+                            "color": "#b46948",
+                            "valuation": 286,
+                            "change": -2.67
                         },
                         {
                             "name": "CTXS",
                             "description": "Citrix Systems, Inc.",
-                            "size": 416,
-                            "color": 3.47
+                            "color": "#79b75e",
+                            "valuation": 416,
+                            "change": 3.47
                         },
                         {
                             "name": "CA",
                             "description": "CA, Inc.",
-                            "size": 494,
-                            "color": -0.38
+                            "color": "#9e8650",
+                            "valuation": 494,
+                            "change": -0.38
                         },
                         {
                             "name": "ADP",
                             "description": "Automatic Data Processing, Inc.",
-                            "size": 1612,
-                            "color": 2.68
+                            "color": "#81ad5b",
+                            "valuation": 1612,
+                            "change": 2.68
                         },
                         {
                             "name": "MSFT",
                             "description": "Microsoft Corporation",
-                            "size": 22748,
-                            "color": 2.7
+                            "color": "#80ae5b",
+                            "valuation": 22748,
+                            "change": 2.7
                         }
                     ],
-                    "color": -4.96
+                    "change": -4.96
                 },
                 {
                     "name": "Internet Information Providers",
@@ -3898,45 +4392,51 @@ export const data = {
                         {
                             "name": "TRIP",
                             "description": "TripAdvisor, Inc.",
-                            "size": 330,
-                            "color": 2.56
+                            "color": "#82ac5b",
+                            "valuation": 330,
+                            "change": 2.56
                         },
                         {
                             "name": "AKAM",
                             "description": "Akamai Technologies, Inc.",
-                            "size": 352,
-                            "color": -4.42
+                            "color": "#c55241",
+                            "valuation": 352,
+                            "change": -4.42
                         },
                         {
                             "name": "VRSN",
                             "description": "VeriSign, Inc.",
-                            "size": 528,
-                            "color": 3.36
+                            "color": "#7ab65e",
+                            "valuation": 528,
+                            "change": 3.36
                         },
                         {
                             "name": "TWTR",
                             "description": "Twitter, Inc.",
-                            "size": 880,
-                            "color": -1.59
+                            "color": "#aa774c",
+                            "valuation": 880,
+                            "change": -1.59
                         },
                         {
                             "name": "FB",
                             "description": "Facebook, Inc.",
-                            "size": 17385,
-                            "color": -1.61
+                            "color": "#aa764c",
+                            "valuation": 17385,
+                            "change": -1.61
                         },
                         {
                             "name": "GOOGL",
                             "description": "Alphabet Inc.",
-                            "size": 24395,
-                            "color": -3.32
+                            "color": "#bb6145",
+                            "valuation": 24395,
+                            "change": -3.32
                         }
                     ],
-                    "color": 1.76
+                    "change": 1.76
                 }
             ],
-            "color": -2.24
+            "change": -2.24
         }
     ],
-    "color": 0.5
+    "change": 0.5
 };
