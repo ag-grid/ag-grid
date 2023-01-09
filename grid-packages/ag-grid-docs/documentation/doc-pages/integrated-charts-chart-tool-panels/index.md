@@ -86,7 +86,7 @@ const gridOptions = {
 </snippet>
 
 [[note]]
-| The `seriesChartType` group is only shown in [Combination Charts](/charts-combination-series/).
+| The `seriesChartType` group is only shown in [Combination Charts](/integrated-charts-api-range-chart/#combination-charts/).
 
 The following example shows some Data Panel customisations. Note the following:
 
