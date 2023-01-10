@@ -1,4 +1,5 @@
-import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, ServerSideTransaction } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, IsServerSideGroupOpenByDefaultParams, ServerSideTransaction } from '@ag-grid-community/core'
+import {  } from 'ag-grid-community';
 
 declare var FakeServer: any;
 declare var dataObservers: any;
@@ -25,7 +26,9 @@ const gridOptions: GridOptions = {
     minWidth: 220,
   },
   enableCellChangeFlash: true,
-  isServerSideGroupOpenByDefault: (params) => params.rowNode.key === 'Aggressive' || params.rowNode.key === 'Hybrid',
+  isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
+    return params.rowNode.key === 'Aggressive' || params.rowNode.key === 'Hybrid';
+  },
   getRowId: (params: GetRowIdParams) => {
     var rowId = '';
     if (params.parentKeys && params.parentKeys.length) {
