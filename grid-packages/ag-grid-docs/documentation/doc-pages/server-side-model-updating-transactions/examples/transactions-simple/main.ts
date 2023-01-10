@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, GetRowIdParams, IServerSideGetRowsParams, ServerSideTransaction, ServerSideTransactionResult } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, ServerSideTransaction, ServerSideTransactionResult } from '@ag-grid-community/core'
 declare var FakeServer: any;
 declare var createTradeId: any;
 
@@ -20,10 +20,34 @@ const gridOptions: GridOptions = {
     minWidth: 220,
   },
   getRowId: (params: GetRowIdParams) => `${params.data.tradeId}`,
+  onGridReady: onGridReady,
   enableCellChangeFlash: true,
   rowSelection: 'single',
   rowModelType: 'serverSide',
 };
+
+function getServerSideDatasource(server: any) {
+  return {
+    getRows: (params: IServerSideGetRowsParams) => {
+      const response = server.getData(params.request);
+
+      // adding delay to simulate real server call
+      setTimeout(function () {
+        if (response.success) {
+          // call the success callback
+          params.success({
+            rowData: response.rows,
+            rowCount: response.lastRow,
+          });
+        } else {
+          // inform the grid request failed
+          params.fail();
+        }
+      }, 300);
+    },
+  };
+}
+
 
 function addRow() {
   const selectedRows = gridOptions.api!.getSelectedNodes();
@@ -87,32 +111,7 @@ function createRow() {
   };
 }
 
-const getServerSideDatasource = (server: any) => {
-  return {
-    getRows: (params: IServerSideGetRowsParams) => {
-      const response = server.getData(params.request);
-
-      // adding delay to simulate real server call
-      setTimeout(function () {
-        if (response.success) {
-          // call the success callback
-          params.success({
-            rowData: response.rows,
-            rowCount: response.lastRow,
-          });
-        } else {
-          // inform the grid request failed
-          params.fail();
-        }
-      }, 300);
-    },
-  };
-}
-
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions);
+function onGridReady(event: GridReadyEvent) {
 
   // setup the fake server
   const server = new FakeServer();
@@ -121,5 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const datasource = getServerSideDatasource(server);
 
   // register the datasource with the grid
-  gridOptions.api!.setServerSideDatasource(datasource);
+  event.api.setServerSideDatasource(datasource);
+}
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', () => {
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  new Grid(gridDiv, gridOptions);
 });
