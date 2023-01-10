@@ -2,24 +2,34 @@
 title: "SSRM Transactions"
 enterprise: true
 ---
-This section demonstrates adding, removing and updating rows via the API while using the Server-Side Row Model (SSRM).
+This section show how rows can be added, removed and updated using the Server-Side Transaction API.
 
-## Transaction API
-The SSRM Transaction API allows large numbers of rows in the grid to be added, removed or updated in an efficient manner.
+[[note]]
+| Server-Side Transactions require row ID's to be supplied to grid via [getRowId()](/row-ids/#application-assigned-ids/).
+
+##Server-Side Transaction API
+
+The SSRM Transaction API allows rows to be added, removed or updated in the grid:
 
 <api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["applyServerSideTransaction"]' ></api-documentation>
 
-The grid API `applyServerSideTransaction(transaction)` function accepts an object containing lists of rows to be added, updated and removed which it applies to the grid's rows. It then returns a similar object, containing lists of rows which have been successfully added, updated and removed.
+The following snippet shows how to add / update and remove rows from the grid:
 
-For each transaction item in the request, there will typically be a Row Node returned in the transaction response. The only exception is, for example, that you tried to delete or update a row that didn't currently exist in the store.
+<snippet>
+gridOptions.api.applyServerSideTransaction({ 
+    add: [ 
+        { tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }
+    ],
+    update: [
+        { tradeId: 102,  portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-624723', current: 58927 }
+    ],
+    remove: [
+        { tradeId: 103 }
+    ]
+});
+</snippet>
 
-[[note]]
-| In order for the grid to find rows to update and remove, it needs a way to identify these rows.
-| As such, to use transactions it is required that an implementation for `getRowId` grid callback has been provided.
-
-## Simple Example
-
-In the example below, note the following;
+The following example demonstrates add / update and remove operations via the transaction API. Note the following;
  - Opening the console and interacting with one of the provided buttons shows the parameter passed to `api.applyServerSideTransaction()` and returned result.
  - The add transaction also provides an `addIndex`. If this was omitted, the row would instead be added at the end.
  - A successful transaction also returns a similar response, with one RowNode being returned per successful operation.
