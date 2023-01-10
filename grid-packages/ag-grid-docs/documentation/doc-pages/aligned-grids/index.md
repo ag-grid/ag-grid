@@ -78,14 +78,6 @@ This example is a bit more useful. In the bottom grid, we show a summary row. Al
 
 <grid-example title='Aligned Grid as Footer' name='aligned-floating-footer' type='mixed'></grid-example>
 
-[[note]]
-| * The property `suppressHorizontalScroll` does not work with the browser Edge.
-| If you are targeting Edge there is currently no way to hide the scrollbar.
-| The technique AG Grid uses is to set the CSS overflow
-| property to 'hidden' (rather than 'auto'). In all other browsers, this technique works, however
-| in Edge it does not. The problem with Edge is demonstrated in the following
-| [Plunker](https://plnkr.co/edit/MHgT6Rrp9LpOu7jddzVr?p=preview).
-
 ## Example: Align Column Groups
 
 It is possible that you have column groups that are split because of pinning or the order of the columns. The grid below has only two groups that are split, displayed as many split groups. The column aligning also works here in that a change to a split group will open / close all the instances of that group in both tables.

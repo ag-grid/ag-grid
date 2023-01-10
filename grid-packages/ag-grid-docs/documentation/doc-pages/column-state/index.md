@@ -32,7 +32,7 @@ There are two API methods provided for getting and setting Column State. `column
 column state and `columnApi.applyColumnState(params)` sets the column state.
 
 <snippet>
-// save the columns state
+// save the column's state
 const savedState = gridOptions.columnApi.getColumnState();
 // restore the column state
 gridOptions.columnApi.applyColumnState({ state: savedState });
@@ -42,7 +42,7 @@ The example below demonstrates saving and restoring column state. Try the follow
 
 1. Click 'Save State' to save the Column State.
 1. Change some column state e.g. resize columns, move columns around, apply column sorting or row grouping etc.
-1. Click 'Restore State' and the columns state is set back to where it was when you clicked 'Save State'.
+1. Click 'Restore State' and the column's state is set back to where it was when you clicked 'Save State'.
 1. Click 'Reset State' and the state will go back to what was defined in the Column Definitions.
 
 <grid-example title='Save and Apply State' name='save-apply-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "columnpanel"] }'></grid-example>
@@ -61,7 +61,7 @@ any other state attribute.
 
 ### Applying Partial State
 
-When applying column state, in cases where some state attributes or columns are missing from the Column State,
+When applying a column state, in cases where some state attributes or columns are missing from the Column State,
 the following rules apply:
 
 - If a Column State is missing attributes, or attributes are provided as `undefined`, then those missing / undefined
@@ -155,13 +155,13 @@ For all state attributes, `undefined` means _"do not apply this attribute"_ and 
 For example setting `sort=null` will clear sort on a column whereas setting
 `sort=undefined` will leave whatever sort, if any, that is currently present.
 
-The only exception is with regards to Column width. For width, both `undefined`
+The only exception is with regards to Column Width. For width, both `undefined`
 and `null` will skip the attribute. This is because Width is mandatory - there
 is no such things as a Column with no width.
 
 ### Width and Flex
 
-When Flex is active on a Column, the grid ignores the `width` attribute when setting the Width.
+When Flex is active on a Column, the grid ignores the `width` attribute when setting the width.
 
 When `getColumnState()` is called, both `width` and `flex` are returned.
 When `applyColumnState()` is called, if `flex` is present then `width` is

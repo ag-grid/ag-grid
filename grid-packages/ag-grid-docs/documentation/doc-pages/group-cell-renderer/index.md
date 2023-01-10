@@ -9,7 +9,7 @@ If you are grouping in the grid, then you will need to provide a group cell rend
 
 The key for the group cell renderer is `agGroupCellRenderer`.
 
-The grid's group cell renderer takes many parameters to configure it. Here is an example of a column and it's configuration:
+The grid's group cell renderer takes many parameters to configure it. Here is an example of a column and its configuration:
 
 <snippet>
 const gridOptions = {

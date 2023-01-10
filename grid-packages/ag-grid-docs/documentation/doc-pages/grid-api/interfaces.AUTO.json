@@ -9556,7 +9556,7 @@
       "context": "any"
     },
     "docs": {
-      "suppressColumnMove": "/** Suppress Column Move section */",
+      "suppressColumnMove": "/** Suppress Column Move */",
       "suppressRowGroups": "/** Suppress Row Groups section */",
       "suppressValues": "/** Suppress Values section */",
       "suppressPivots": "/** Suppress Column Labels (Pivot) section */",

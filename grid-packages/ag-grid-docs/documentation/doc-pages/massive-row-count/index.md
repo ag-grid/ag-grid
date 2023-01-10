@@ -31,7 +31,7 @@ Although the grid uses [Row Virtualisation](/dom-virtualisation/#row-virtualisat
 a subset of rows, it depends on setting the container height correctly to fit all rows such that the
 vertical scroll bar is able to scroll over the entire dataset.
 
-If the grid needs to present more rows than is possible, then the grid does this using a techniuq
+If the grid needs to present more rows than is possible, then the grid does this using a technique
 we call Stretching.
 
 ## Stretching the Div
@@ -93,4 +93,4 @@ The faster scrolling is a side effect of the implementation to display massive a
 There is no way around this, as the grid is working within the constraints of the browser and the
 browser has a maximum height that a div can have.
 If this makes your application not usable, then consider not displaying so many rows (question why
-display millions of rows in the first place) or use (Pagination)[/row-pagination/].
+display millions of rows in the first place) or use [Pagination](/row-pagination/).

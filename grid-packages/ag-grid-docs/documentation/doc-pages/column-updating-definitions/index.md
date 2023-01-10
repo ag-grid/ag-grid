@@ -87,7 +87,7 @@ const gridOptions = {
 
 The example below shows Column Definitions using **initial attributes**. Note the following:
 
-- The `initialWidth`, `initialSort` and `initialPinned` is applied only when the columns are created.
+- The `initialWidth`, `initialSort` and `initialPinned` are applied only when the columns are created.
 - If you update the width, sort or pinned of a column by interacting with the grid's UI and then hit 'Set Columns with
 Initials', the columns state will not change.
 - Removing the columns first and then setting them again will use the initial values again.
@@ -156,7 +156,7 @@ is guaranteed to match the order of the definitions. This is usually the desired
 
 You may wish for the order of the Columns to not match the Column Definitions. For example suppose the user
 has rearranged Columns to their desired order, and then the application updates the Column Definitions (e.g.
-changes the Cell Renderer used), then it would be undesirable to reset the Column order, as the users
+changes the Cell Renderer used), then it would be undesirable to reset the Column order, as the user's
 arranged order would be lost.
 
 If the desired behaviour is that Column's order should be maintained, set the grid
