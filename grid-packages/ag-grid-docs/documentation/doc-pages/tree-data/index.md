@@ -190,8 +190,8 @@ This behaviour can also be achieved in the Tree Data filter by setting `groupAgg
 As mentioned, if Tree Data filtering is disabled by setting `excludeChildrenWhenTreeDataFiltering = true`, then `groupAggFiltering` will work as normal.
 
 The following example demonstrates aggregated values based on pre-filtered data by setting `groupAggFiltering = true`.
-- Using the **Size** column apply a filter for the value **24.6**. Note that all results will be displayed.
-- Using the **Size** column apply a filter for the value **2.4**. Note that the 'cv.pdf' row and its parents will be displayed. The value in the **Size** column for the 'Documents' parent row will be **24.6 MB** (the pre-filtered value).
+- Using the **Size** column apply a filter for the value **24.6**. Note that all results are displayed.
+- Using the **Size** column apply a filter for the value **2.4**. Note that the 'cv.pdf' row and its parents are displayed. The value in the **Size** column for the 'Documents' parent row is **24.6 MB** (the pre-filtered value).
 
 <grid-example title='Aggregated Values Based on Pre-Filtered Data' name='group-agg-filtering' type='generated' options='{ "enterprise": true, "exampleHeight": 570, "extras": ["fontawesome"], "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
@@ -207,6 +207,7 @@ The following example demonstrates using the Set Filter Tree List with Tree Data
 
 1. The **Employee** group column has the Set Filter Tree List enabled via `filterParams.treeList = true`. A Key Creator is specified to convert the path into a string.
 2. The Filter List displayed for the **Employee** column matches the format of the Tree Data structure.
+3. The **Date** column has `filterParams.treeList = true` and is grouped by year -> month -> day.
 
 <grid-example title='Tree List' name='tree-list-filtering' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 

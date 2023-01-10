@@ -7,7 +7,8 @@ const gridOptions: GridOptions = {
       field: 'startDate',
       valueFormatter: (params: ValueFormatterParams) => params.value ? params.value.toLocaleDateString() : params.value,
       filterParams: {
-        treeList: true
+        treeList: true,
+        valueFormatter: (params: ValueFormatterParams) => params.value ? params.value.toLocaleDateString() : '(Blanks)',
       } as ISetFilterParams<any, Date>,
     },
   ],
