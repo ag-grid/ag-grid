@@ -23,7 +23,7 @@ const gridOptions = {
 In the snippet above, rows are grouped by **country** and **athlete**. The [Built-In Function](/aggregation/#enabling-aggregation) `sum` is used to aggregate the **total** values.
 
 The example below demonstrates how aggregated values update to reflect the applied filters.
-- Apply a filter for the **total** column with the value **4**
+- Apply a filter for the **total** column with the value **4**.
 - Note how the value in the **total** column for the United States is now **12** instead of **38**, reflecting the now filtered leaf rows.
 
 <grid-example title='Aggregation and Filters' name='filters' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter"] }'></grid-example>
@@ -39,7 +39,7 @@ const gridOptions = {
 </snippet>
 
 The example below demonstrates this behaviour - when a filter is applied, group row aggregated values remain unchanged and show their original values representing the original unfiltered data.
-- Apply a filter for the **year** column with the value **2008**
+- Apply a filter for the **year** column with the value **2008**.
 - Note how the values in the **total** column *do not* update to reflect the filtered data.
 
 <grid-example title='Suppress Filtered Only' name='suppress-filtered-only' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter"] }'></grid-example>
@@ -99,7 +99,7 @@ The snippet above demonstrates how the callback can be used to selectively apply
 The example below demonstrates this specific scenario.
 - Using the **total** column apply a filter for the value **6**.
 - Note that no rows are displayed despite some leaf rows containing the value **6** - the row for Natalie Coughlin, for example. This is because the filter is applied to group rows only and there are no group rows with value **6**.
-- Using the **total** column now apply a filter for the value **38**
+- Using the **total** column now apply a filter for the value **38**.
 - Note that the group row **United States** matches this filter due to its aggregated value, and also displays all of its child and leaf rows.
 
 <grid-example title='Group-only Aggregate filtering' name='agg-filtering-group' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter"] }'></grid-example>

@@ -147,8 +147,8 @@ See [Aggregation](/aggregation/) for more details about group aggregation.
 The following example is a more complex example that includes Aggregation:
 
 - **'Add New Group' Button** - will add a new item in a new group under Music.
-- **'Move Selected to stuff' Button** - will move any selected parent groups that are not at the top level into the 'stuff' folder.
-- **'Remove Selected' Button** - will remove selected group along with children.
+- **'Move Selected to stuff' Button** - will move any selected item and its children into the 'stuff' folder.
+- **'Remove Selected' Button** - will remove selected item along with its children.
 - **'Size' Aggregation** - as you move selected items into 'stuff' you'll notice updated folder sizes.
 
 <grid-example title='File Browser' name='file-browser' type='generated' options='{ "enterprise": true, "exampleHeight": 570, "extras": ["fontawesome"], "modules": ["clientside", "rowgrouping"] }'></grid-example>
