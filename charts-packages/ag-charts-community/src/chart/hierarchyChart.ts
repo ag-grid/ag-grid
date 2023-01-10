@@ -17,7 +17,7 @@ export class HierarchyChart extends Chart {
     async performLayout() {
         this.scene.root!!.visible = true;
 
-        const { width, height, legend, padding } = this;
+        const { width, height, padding } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
         shrinkRect.shrink(padding.left, 'left');
@@ -25,13 +25,8 @@ export class HierarchyChart extends Chart {
         shrinkRect.shrink(padding.right, 'right');
         shrinkRect.shrink(padding.bottom, 'bottom');
 
-        shrinkRect = this.positionCaptions(shrinkRect);
         shrinkRect = this.positionLegend(shrinkRect);
-
-        if (legend.visible && legend.enabled && legend.data.length) {
-            const legendPadding = legend.spacing;
-            shrinkRect.shrink(legendPadding, legend.position);
-        }
+        shrinkRect = this.positionCaptions(shrinkRect);
 
         this.seriesRect = shrinkRect;
         this.series.forEach((series) => {

@@ -769,6 +769,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             legend.translationY = Math.floor(-legendBBox.y + shrinkRect.y + translationY);
         }
 
+        newShrinkRect.shrink(legend.spacing, legend.position);
+
         return newShrinkRect;
     }
 

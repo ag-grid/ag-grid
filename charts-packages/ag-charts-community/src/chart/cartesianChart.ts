@@ -29,7 +29,7 @@ export class CartesianChart extends Chart {
     async performLayout() {
         this.scene.root!.visible = true;
 
-        const { width, height, legend, navigator, padding } = this;
+        const { width, height, navigator, padding } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
         shrinkRect.x += padding.left;
@@ -37,13 +37,8 @@ export class CartesianChart extends Chart {
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
 
-        shrinkRect = this.positionCaptions(shrinkRect);
         shrinkRect = this.positionLegend(shrinkRect);
-
-        if (legend.visible && legend.enabled && legend.data.length) {
-            const legendPadding = legend.spacing;
-            shrinkRect.shrink(legendPadding, legend.position);
-        }
+        shrinkRect = this.positionCaptions(shrinkRect);
 
         if (navigator.enabled) {
             const navigatorTotalHeight = navigator.height + navigator.margin;

@@ -28,21 +28,11 @@ export class PolarChart extends Chart {
         shrinkRect.shrink(padding.right, 'right');
         shrinkRect.shrink(padding.bottom, 'bottom');
 
-        shrinkRect = this.positionCaptions(shrinkRect);
         shrinkRect = this.positionLegend(shrinkRect);
-        this.computeSeriesRect(shrinkRect);
-        this.computeCircle();
-    }
-
-    private computeSeriesRect(shrinkRect: BBox) {
-        const { legend } = this;
-
-        if (legend.visible && legend.enabled && legend.data.length) {
-            const legendPadding = legend.spacing;
-            shrinkRect.shrink(legendPadding, legend.position);
-        }
+        shrinkRect = this.positionCaptions(shrinkRect);
 
         this.seriesRect = shrinkRect;
+        this.computeCircle();
     }
 
     private computeCircle() {
