@@ -732,7 +732,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         legend.translationX = 0;
         legend.translationY = 0;
         legend.performLayout(legendWidth, legendHeight);
-        const legendBBox = legend.computeBBox();
+        const legendBBox = legend.computePagedBBox();
 
         const calculateTranslationPerpendicularDimension = () => {
             switch (legend.position) {

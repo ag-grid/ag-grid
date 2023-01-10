@@ -170,6 +170,7 @@ export class Legend {
 
     private oldSize: [number, number] = [0, 0];
     private pages: Page[] = [];
+    private maxPageSize: [number, number] = [0, 0];
     private pagination: Pagination;
     /** Item index to track on re-pagination, so current page updates appropriately. */
     private paginationTrackingIndex: number = 0;
@@ -436,9 +437,10 @@ export class Legend {
             oldSize[1] = size[1];
         }
 
-        const { pages } = this.updatePagination(bboxes, width, height);
+        const { pages, maxPageHeight, maxPageWidth } = this.updatePagination(bboxes, width, height);
 
         this.pages = pages;
+        this.maxPageSize = [maxPageWidth, maxPageHeight];
 
         const pageNumber = this.pagination.currentPage;
         const page = this.pages[pageNumber];
@@ -457,7 +459,15 @@ export class Legend {
         this.update();
     }
 
-    updatePagination(bboxes: BBox[], width: number, height: number): { pages: Page[] } {
+    updatePagination(
+        bboxes: BBox[],
+        width: number,
+        height: number
+    ): {
+        maxPageHeight: number;
+        maxPageWidth: number;
+        pages: Page[];
+    } {
         const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
 
         const orientation = this.getOrientation();
@@ -538,6 +548,8 @@ export class Legend {
                 : (legendItemsHeight - paginationBBox.height) / 2);
 
         return {
+            maxPageHeight,
+            maxPageWidth,
             pages,
         };
     }
@@ -653,6 +665,19 @@ export class Legend {
 
     computeBBox(): BBox {
         return this.group.computeBBox();
+    }
+
+    computePagedBBox(): BBox {
+        const actualBBox = this.group.computeBBox();
+        if (this.pages.length <= 1) {
+            return actualBBox;
+        }
+
+        const [maxPageWidth, maxPageHeight] = this.maxPageSize;
+        actualBBox.height = Math.max(maxPageHeight, actualBBox.height);
+        actualBBox.width = Math.max(maxPageWidth, actualBBox.width);
+
+        return actualBBox;
     }
 
     private checkLegendClick(event: InteractionEvent<'click'>) {
