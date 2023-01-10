@@ -67,46 +67,6 @@ var data = [];
     }
 })();
 
-var dataObservers = [];
-
-function removeRow(idToRemove) {
-    const idxToRemove = data.findIndex(item => String(item.tradeId) === idToRemove);
-    if (idxToRemove < 0) {
-        return;
-    }
-
-    const removedRow = data[idxToRemove];
-    data.splice(idxToRemove, 1);
-
-    // notify observers
-    dataObservers.forEach(obs => obs({ remove: [removedRow] })); 
-}
-
-function updateRow(idToUpdate) {
-    const idxToUpdate = data.findIndex(item => String(item.tradeId) === idToUpdate);
-    if (idxToUpdate < 0) {
-        return;
-    }
-
-    const updatedRow = data[idxToUpdate];
-    updatedRow.previous = updatedRow.current;
-    updatedRow.current = updatedRow.previous + 13;
-
-    // notify observers
-    dataObservers.forEach(obs => obs({ update: [updatedRow] })); 
-}
-
-function addRow(addIndex) {
-    const product = products[randomBetween(0, products.length-1)];
-    const portfolio = portfolios[randomBetween(0, portfolios.length-1)];
-    const book = createBookName();        
-    const newRecord = createTradeRecord(product, portfolio, book);
-
-    data.splice(addIndex, 0, newRecord);
-
-    // notify observers
-    dataObservers.forEach(obs => obs({ addIndex, add: [newRecord] }));
-}
 
 function randomBetween(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
