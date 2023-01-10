@@ -20,7 +20,16 @@ const gridOptions: GridOptions = {
     minWidth: 220,
   },
   getRowId: (params: GetRowIdParams) => `${params.data.tradeId}`,
-  onGridReady: onGridReady,
+  onGridReady: (params: GridReadyEvent) => {
+    // setup the fake server
+    const server = new FakeServer();
+  
+    // create datasource with a reference to the fake server
+    const datasource = getServerSideDatasource(server);
+  
+    // register the datasource with the grid
+    params.api.setServerSideDatasource(datasource);
+  },
   enableCellChangeFlash: true,
   rowSelection: 'single',
   rowModelType: 'serverSide',
@@ -109,18 +118,6 @@ function createRow() {
     tradeId: createTradeId(),
     current: getNewValue(),
   };
-}
-
-function onGridReady(event: GridReadyEvent) {
-
-  // setup the fake server
-  const server = new FakeServer();
-
-  // create datasource with a reference to the fake server
-  const datasource = getServerSideDatasource(server);
-
-  // register the datasource with the grid
-  event.api.setServerSideDatasource(datasource);
 }
 
 // setup the grid after the page has finished loading
