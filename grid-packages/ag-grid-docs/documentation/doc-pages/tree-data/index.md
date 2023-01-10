@@ -173,7 +173,7 @@ const gridOptions = {
 }
 </snippet>
 
-Please note that Tree Data filtering will behaves slightly differently to [Filtering Group Aggregations](/aggregation-filtering/#filtering-group-aggregations).
+Please note that Tree Data filtering behaves slightly differently to [Filtering Group Aggregations](/aggregation-filtering/#filtering-group-aggregations).
 
 ### Filtering Aggregated Parent Rows
 
