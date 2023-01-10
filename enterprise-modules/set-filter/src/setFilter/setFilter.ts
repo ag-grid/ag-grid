@@ -52,6 +52,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private treeDataTreeList = false;
     private getDataPath?: GetDataPath<any>;
     private groupingTreeList = false;
+    private hardRefreshVirtualList = false;
 
     // To make the filtering super fast, we store the keys in an Set rather than using the default array
     private appliedModelKeys: Set<string | null> | null = null;
@@ -226,7 +227,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         this.valueModel = new SetValueModel({
             filterParams: params,
-            setIsLoading: loading => this.showOrHideLoadingScreen(loading),
+            setIsLoading: loading => this.setIsLoading(loading),
             valueFormatterService: this.valueFormatterService,
             translate: key => this.translateForSetFilter(key),
             caseFormat: v => this.caseFormat(v),
@@ -345,8 +346,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         });
     }
 
-    private showOrHideLoadingScreen(isLoading: boolean): void {
+    private setIsLoading(isLoading: boolean): void {
         _.setDisplayed(this.eFilterLoading, isLoading);
+        if (!isLoading) {
+            // hard refresh when async data received
+            this.hardRefreshVirtualList = true;
+        }
     }
 
     private initialiseFilterBodyUi(): void {
@@ -938,7 +943,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private refresh() {
         if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
 
-        this.virtualList.refresh(true);
+        this.virtualList.refresh(!this.hardRefreshVirtualList);
+
+        if (this.hardRefreshVirtualList) {
+            this.hardRefreshVirtualList = false;
+        }
     }
 
     public getFilterKeys(): SetFilterModelValue {
