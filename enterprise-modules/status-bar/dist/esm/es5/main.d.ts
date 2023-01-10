@@ -1,0 +1,1 @@
+export { StatusBarModule } from "./statusBarModule";

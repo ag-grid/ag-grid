@@ -1,0 +1,123 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FlattenStage = void 0;
+const core_1 = require("@ag-grid-community/core");
+let FlattenStage = class FlattenStage extends core_1.BeanStub {
+    execute(params) {
+        const rootNode = params.rowNode;
+        // even if not doing grouping, we do the mapping, as the client might
+        // of passed in data that already has a grouping in it somewhere
+        const result = [];
+        // putting value into a wrapper so it's passed by reference
+        const nextRowTop = { value: 0 };
+        const skipLeafNodes = this.columnModel.isPivotMode();
+        // if we are reducing, and not grouping, then we want to show the root node, as that
+        // is where the pivot values are
+        const showRootNode = skipLeafNodes && rootNode.leafGroup;
+        const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
+        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, skipLeafNodes, 0);
+        // we do not want the footer total if the gris is empty
+        const atLeastOneRowPresent = result.length > 0;
+        const includeGroupTotalFooter = !showRootNode
+            // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
+            && atLeastOneRowPresent
+            && this.gridOptionsService.is('groupIncludeTotalFooter');
+        if (includeGroupTotalFooter) {
+            rootNode.createFooter();
+            this.addRowNodeToRowsToDisplay(rootNode.sibling, result, nextRowTop, 0);
+        }
+        return result;
+    }
+    recursivelyAddToRowsToDisplay(rowsToFlatten, result, nextRowTop, skipLeafNodes, uiLevel) {
+        if (core_1._.missingOrEmpty(rowsToFlatten)) {
+            return;
+        }
+        const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        // these two are mutually exclusive, so if first set, we don't set the second
+        const groupRemoveSingleChildren = this.gridOptionsService.is('groupRemoveSingleChildren');
+        const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gridOptionsService.is('groupRemoveLowestSingleChildren');
+        for (let i = 0; i < rowsToFlatten.length; i++) {
+            const rowNode = rowsToFlatten[i];
+            // check all these cases, for working out if this row should be included in the final mapped list
+            const isParent = rowNode.hasChildren();
+            const isSkippedLeafNode = skipLeafNodes && !isParent;
+            const isRemovedSingleChildrenGroup = groupRemoveSingleChildren &&
+                isParent &&
+                rowNode.childrenAfterGroup.length === 1;
+            const isRemovedLowestSingleChildrenGroup = groupRemoveLowestSingleChildren &&
+                isParent &&
+                rowNode.leafGroup &&
+                rowNode.childrenAfterGroup.length === 1;
+            // hide open parents means when group is open, we don't show it. we also need to make sure the
+            // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
+            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
+            const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
+            const isHiddenOpenParent = hideOpenParents && rowNode.expanded && !rowNode.master && (!neverAllowToExpand);
+            const thisRowShouldBeRendered = !isSkippedLeafNode && !isHiddenOpenParent &&
+                !isRemovedSingleChildrenGroup && !isRemovedLowestSingleChildrenGroup;
+            if (thisRowShouldBeRendered) {
+                this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
+            }
+            // if we are pivoting, we never map below the leaf group
+            if (skipLeafNodes && rowNode.leafGroup) {
+                continue;
+            }
+            if (isParent) {
+                const excludedParent = isRemovedSingleChildrenGroup || isRemovedLowestSingleChildrenGroup;
+                // we traverse the group if it is expended, however we always traverse if the parent node
+                // was removed (as the group will never be opened if it is not displayed, we show the children instead)
+                if (rowNode.expanded || excludedParent) {
+                    // if the parent was excluded, then ui level is that of the parent
+                    const uiLevelForChildren = excludedParent ? uiLevel : uiLevel + 1;
+                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, skipLeafNodes, uiLevelForChildren);
+                    // put a footer in if user is looking for it
+                    if (this.gridOptionsService.is('groupIncludeFooter')) {
+                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevel);
+                    }
+                }
+            }
+            else if (rowNode.master && rowNode.expanded) {
+                const detailNode = this.createDetailNode(rowNode);
+                this.addRowNodeToRowsToDisplay(detailNode, result, nextRowTop, uiLevel);
+            }
+        }
+    }
+    // duplicated method, it's also in floatingRowModel
+    addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel) {
+        const isGroupMultiAutoColumn = this.gridOptionsService.isGroupMultiAutoColumn();
+        result.push(rowNode);
+        rowNode.setUiLevel(isGroupMultiAutoColumn ? 0 : uiLevel);
+    }
+    createDetailNode(masterNode) {
+        if (core_1._.exists(masterNode.detailNode)) {
+            return masterNode.detailNode;
+        }
+        const detailNode = new core_1.RowNode(this.beans);
+        detailNode.detail = true;
+        detailNode.selectable = false;
+        detailNode.parent = masterNode;
+        if (core_1._.exists(masterNode.id)) {
+            detailNode.id = 'detail_' + masterNode.id;
+        }
+        detailNode.data = masterNode.data;
+        detailNode.level = masterNode.level + 1;
+        masterNode.detailNode = detailNode;
+        return detailNode;
+    }
+};
+__decorate([
+    core_1.Autowired('columnModel')
+], FlattenStage.prototype, "columnModel", void 0);
+__decorate([
+    core_1.Autowired('beans')
+], FlattenStage.prototype, "beans", void 0);
+FlattenStage = __decorate([
+    core_1.Bean('flattenStage')
+], FlattenStage);
+exports.FlattenStage = FlattenStage;

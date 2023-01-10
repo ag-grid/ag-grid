@@ -1,0 +1,51 @@
+import { NavigatorMask } from './navigatorMask';
+import { NavigatorHandle } from './navigatorHandle';
+import { ChartUpdateType } from '../chart';
+import { InteractionManager } from '../interaction/interactionManager';
+import { CursorManager } from '../interaction/cursorManager';
+import { Scene } from '../../scene/scene';
+import { Series } from '../series/series';
+export declare class Navigator {
+    private readonly chart;
+    private readonly cursorManager;
+    private readonly rs;
+    readonly mask: NavigatorMask;
+    readonly minHandle: NavigatorHandle;
+    readonly maxHandle: NavigatorHandle;
+    private minHandleDragging;
+    private maxHandleDragging;
+    private panHandleOffset;
+    private _enabled;
+    set enabled(value: boolean);
+    get enabled(): boolean;
+    set x(value: number);
+    get x(): number;
+    set y(value: number);
+    get y(): number;
+    set width(value: number);
+    get width(): number;
+    set height(value: number);
+    get height(): number;
+    private _margin;
+    set margin(value: number);
+    get margin(): number;
+    set min(value: number);
+    get min(): number;
+    set max(value: number);
+    get max(): number;
+    private _visible;
+    set visible(value: boolean);
+    get visible(): boolean;
+    private updateGroupVisibility;
+    constructor(chart: {
+        scene: Scene;
+        update(type: ChartUpdateType, opts?: {
+            forceNodeDataRefresh?: boolean;
+            seriesToUpdate?: Iterable<Series>;
+        }): void;
+    }, interactionManager: InteractionManager, cursorManager: CursorManager);
+    private onDragStart;
+    private onDrag;
+    private onDragStop;
+    private stopHandleDragging;
+}
