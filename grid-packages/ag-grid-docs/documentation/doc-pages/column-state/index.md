@@ -55,13 +55,13 @@ The Column State method interfaces are as follows:
 
 ## Partial State
 
-It is possible to focus on particular columns and / or particular attributes when getting and / or applying Column
+It is possible to focus on particular columns and / or particular attributes when getting and / or applying a Column
 State. This allows fine grained control over the Column State, e.g. setting what Columns are Pinned, without impacting
 any other state attribute.
 
 ### Applying Partial State
 
-When applying a column state, in cases where some state attributes or columns are missing from the Column State,
+When applying a Column State, in cases where some state attributes or columns are missing from the Column State,
 the following rules apply:
 
 - If a Column State is missing attributes, or attributes are provided as `undefined`, then those missing / undefined
@@ -156,7 +156,7 @@ For example setting `sort=null` will clear sort on a column whereas setting
 `sort=undefined` will leave whatever sort, if any, that is currently present.
 
 The only exception is with regards to Column Width. For width, both `undefined`
-and `null` will skip the attribute. This is because Width is mandatory - there
+and `null` will skip the attribute. This is because width is mandatory - there
 is no such things as a Column with no width.
 
 ### Width and Flex
@@ -184,7 +184,7 @@ is applied.
 
 ## Column Events
 
-Column Events will get raised when applying Column State as these events would
+Column Events will get raised when applying a Column State as these events would
 normally get raised. For example `columnPinned` event will get raised if applying
 the state results in a column getting pinned or unpinned.
 
