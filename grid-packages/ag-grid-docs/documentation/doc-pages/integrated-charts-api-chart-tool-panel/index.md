@@ -5,11 +5,13 @@ enterprise: true
 
 This section shows how to open and close the Chart Tool Panel via the Grid API.
 
-## Opening and closing the Chart Tool Panel via Grid API
+## Opening / Closing Chart Tool Panels via Grid API
+
+The Chart Tool Panels can be opened and closed programmatically using the following grid APIs:
 
 <api-documentation source='grid-api/api.json' section='charts' names='["openChartToolPanel", "closeChartToolPanel"]'></api-documentation>
 
-The example below demonstrates how you can open and close the Chart Tool Panel.
+The example below demonstrates how you can open and close Chart Tool Panels.
 
 - Click **Open Chart Tool Panel** to open the default `Settings` tab via `openChartToolPanel()`
 - Click **Open Chart Tool Panel Format tab** to open the `Format` tab via `openChartToolPanel()`
