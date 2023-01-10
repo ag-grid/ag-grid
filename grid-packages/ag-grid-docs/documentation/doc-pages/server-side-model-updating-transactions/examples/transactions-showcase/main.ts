@@ -43,9 +43,6 @@ const gridOptions: GridOptions = {
   purgeClosedRowNodes: true,
 
   rowModelType: 'serverSide',
-  cacheBlockSize: 100,
-  maxBlocksInCache: 2,
-  maxConcurrentDatasourceRequests: 3,
   getRowId: getRowId,
   isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
   onColumnRowGroupChanged: onColumnRowGroupChanged,

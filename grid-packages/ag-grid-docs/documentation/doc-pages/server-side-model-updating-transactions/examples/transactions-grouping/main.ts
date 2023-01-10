@@ -58,10 +58,6 @@ const gridOptions: GridOptions = {
   },
 
   rowModelType: 'serverSide',
-  cacheBlockSize: 100,
-  maxBlocksInCache: 2,
-  blockLoadDebounceMillis: 1500,
-  maxConcurrentDatasourceRequests: 3,
 };
 
 function getServerSideDatasource(server: any) {
