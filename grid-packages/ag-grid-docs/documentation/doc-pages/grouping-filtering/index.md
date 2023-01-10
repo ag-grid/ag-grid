@@ -102,30 +102,30 @@ In the following example, it is displaying the default single group column and w
 <snippet>
 gridOptions.api.setFilterModel({
     'ag-Grid-AutoColumn': {
-        filterType: 'number',
-        type: 'lessThan',
-        filter: 20
+        filterType: 'text',
+        type: 'contains',
+        filter: 'Skiing'
     },
 });
 </snippet>
 
-<grid-example title='Applying Filter Model With Single Group Column' name='applying-filter-model-single-group-column' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+<grid-example title='Applying Filter Model with Single Group Column' name='applying-filter-model-single-group-column' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 
 ### Multiple Group Columns
 
-In the following example, multiple group columns are set up and when you click on the button at the top, it will set the filter using the Grid API `setFilterModel`. Note that the reference name `ag-Grid-AutoColumn-age` is used, as `age` is the column id for the column where the filter is changing.
+In the following example, multiple group columns are set up and when you click on the button at the top, it will set the filter using the Grid API `setFilterModel`. Note that the reference name `ag-Grid-AutoColumn-sport` is used, as `sport` is the column id for the column where the filter is changing.
 
 <snippet>
 gridOptions.api.setFilterModel({
-    'ag-Grid-AutoColumn-age': {
-        filterType: 'number',
-        type: 'lessThan',
-        filter: 20
+    'ag-Grid-AutoColumn-sport': {
+        filterType: 'text',
+        type: 'contains',
+        filter: 'Skiing'
     },
 });
 </snippet>
 
-<grid-example title='Applying Filter Model With Multiple Group Columns' name='applying-filter-model-multiple-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+<grid-example title='Applying Filter Model with Multiple Group Columns' name='applying-filter-model-multiple-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 
 ## Next Up
 

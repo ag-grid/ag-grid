@@ -4,7 +4,7 @@ import { getData } from "./data";
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    { field: 'age', rowGroup: true, hide: true },
+    { field: 'sport', rowGroup: true, hide: true },
     { field: 'country', rowGroup: true, hide: true },
     { field: 'gold', aggFunc: 'sum' },
     { field: 'silver', aggFunc: 'sum' },
@@ -18,11 +18,12 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   autoGroupColumnDef: {
-    filter: 'agNumberColumnFilter',
+    minWidth: 260,
+    filter: 'agTextColumnFilter',
     filterValueGetter: (params: ValueGetterParams) => {
       const colId = params.column.getColId();
-      console.log('auto-group column name:',colId);
-      return params.data.age;
+      console.log('auto-group column name:', colId);
+      return params.data.sport;
     },
   },
   animateRows: true,
@@ -32,9 +33,9 @@ const gridOptions: GridOptions<IOlympicData> = {
 function applyFilter() {
   gridOptions.api!.setFilterModel({
     'ag-Grid-AutoColumn': {
-      filterType: 'number',
-        type: 'lessThan',
-        filter: 20
+      filterType: 'text',
+      type: 'contains',
+      filter: 'Skiing'
     },
   });
 }
