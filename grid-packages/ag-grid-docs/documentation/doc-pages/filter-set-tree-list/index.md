@@ -45,7 +45,7 @@ The following example demonstrates enabling different types of Tree List in the 
 
 1. The **Group**, **Date** and **Gold** columns all have `filterParams.treeList = true`.
 2. The **Group** column Filter List matches the format of the Row Grouping. A Key Creator is specified to convert the path into a string.
-3. The **Date** column is grouped by year -> month -> date.
+3. The **Date** column is grouped by year -> month -> day.
 4. The **Gold** column has `filterParams.treeListPathGetter` provided which groups the values into a tree of >2 and <=2.
 
 <grid-example title='Filter Tree List' name='filter-tree-list' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>

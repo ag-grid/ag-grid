@@ -6,12 +6,12 @@ const gridOptions: GridOptions = {
     { field: 'sport' },
     {
       field: 'date',
-      valueFormatter: dateValueFormatter,
+      valueFormatter: dateCellValueFormatter,
       filter: 'agSetColumnFilter',
       filterParams: {
         treeList: true,
         treeListFormatter: treeListFormatter,
-        valueFormatter: dateValueFormatter,
+        valueFormatter: dateFloatingFilterValueFormatter,
       } as ISetFilterParams<any, Date>
     },
     {
@@ -35,8 +35,12 @@ const gridOptions: GridOptions = {
   },
 }
 
-function dateValueFormatter(params: ValueFormatterParams) {
+function dateCellValueFormatter(params: ValueFormatterParams) {
   return params.value ? params.value.toLocaleDateString() : '';
+} 
+
+function dateFloatingFilterValueFormatter(params: ValueFormatterParams) {
+  return params.value ? params.value.toLocaleDateString() : '(Blanks)';
 } 
 
 function treeListFormatter(pathKey: string | null, level: number): string {

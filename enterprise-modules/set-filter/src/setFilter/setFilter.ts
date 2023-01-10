@@ -2,7 +2,6 @@ import {
     AgInputTextField,
     Autowired,
     CellValueChangedEvent,
-    Component,
     Events,
     IDoesFilterPassParams,
     SetFilterParams,
@@ -536,6 +535,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             this.showOrHideResults();
         }
 
+        // collapse all tree list items (if tree list)
+        this.resetExpansion();
+
         this.refreshVirtualList();
 
         const { eMiniFilter } = this;
@@ -1042,6 +1044,25 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             return valueToFormat;
         }
         return this.caseSensitive ? valueToFormat : valueToFormat.toUpperCase() as T;
+    }
+
+    private resetExpansion(): void {
+        if (!this.setFilterParams?.treeList) {
+            return;
+        }
+
+        const selectAllItem = this.valueModel?.getSelectAllItem();
+
+        if (this.isSetFilterModelTreeItem(selectAllItem)) {
+            const recursiveCollapse = (i: SetFilterModelTreeItem) => {
+                if (i.children) {
+                    i.children.forEach(childItem => recursiveCollapse(childItem));
+                    i.expanded = false;
+                }
+            };
+            recursiveCollapse(selectAllItem);
+            this.valueModel!.updateDisplayedValues('expansion');
+        }
     }
 }
 

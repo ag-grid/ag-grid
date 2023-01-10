@@ -88,7 +88,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                 }
                 item = children.find(child => child.treeKey?.toUpperCase() === treeKey?.toUpperCase());
                 if (!item) {
-                    item = { treeKey, depth, filterPasses: true, expanded: true, available };
+                    item = { treeKey, depth, filterPasses: true, expanded: false, available };
                     if (depth === dataPath.length - 1) {
                         item.key = key;
                     }
@@ -101,7 +101,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         this.updateAvailable(availableKeys);
 
         this.selectAllItem.children = this.allDisplayedItemsTree;
-        this.selectAllItem.expanded = true;
+        this.selectAllItem.expanded = false;
     }
 
     private getTreeListPathGetter(getValue: (key: string | null) => V | null, availableKeys: Set<string | null>): (value: V | null) => string[] | null {
