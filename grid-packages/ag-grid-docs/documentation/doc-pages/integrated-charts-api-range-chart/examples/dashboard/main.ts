@@ -62,6 +62,9 @@ const gridOptions: GridOptions = {
   enableCharts: true,
   onFirstDataRendered: onFirstDataRendered,
   getChartToolbarItems: getChartToolbarItems,
+  chartToolPanelsDef: {
+    panels: []
+  },
   popupParent: document.body,
 }
 
