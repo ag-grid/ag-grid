@@ -58,12 +58,11 @@ const gridOptions: GridOptions = {
   chartToolPanelsDef: {
     panels: ['data', 'format']
   },
-  getChartToolbarItems,
   onFirstDataRendered: onFirstDataRendered,
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  var createRangeChartParams: CreateRangeChartParams = {
+  const createRangeChartParams: CreateRangeChartParams = {
     chartContainer: document.querySelector('#myChart') as HTMLElement,
     suppressChartRanges: true,
     cellRange: {
@@ -75,13 +74,9 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart(createRangeChartParams)
 }
 
-function getChartToolbarItems(): ChartMenuOptions[] {
-  return []
-}
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  let gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
 })
 

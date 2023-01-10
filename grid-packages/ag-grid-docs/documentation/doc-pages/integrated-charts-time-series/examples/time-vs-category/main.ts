@@ -15,7 +15,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     resizable: true,
   },
-  popupParent: document.body,
   rowData: getRowData(),
   enableRangeSelection: true,
   enableCharts: true,
@@ -71,7 +70,6 @@ const gridOptions: GridOptions = {
   chartToolPanelsDef: {
     panels: ['data', 'format']
   },
-  getChartToolbarItems,
   onFirstDataRendered: onFirstDataRendered,
 }
 
@@ -97,10 +95,6 @@ function dateFormatter(params: ValueFormatterParams) {
   return params.value
     ? params.value.toISOString().substring(0, 10)
     : params.value
-}
-
-function getChartToolbarItems(): ChartMenuOptions[] {
-  return []
 }
 
 function toggleAxis() {

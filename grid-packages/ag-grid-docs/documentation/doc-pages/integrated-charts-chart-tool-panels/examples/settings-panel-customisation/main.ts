@@ -22,6 +22,7 @@ const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     rowData: getData(),
     onFirstDataRendered: onFirstDataRendered,
+    popupParent: document.body,
     enableRangeSelection: true,
     enableCharts: true,
     chartToolPanelsDef: {

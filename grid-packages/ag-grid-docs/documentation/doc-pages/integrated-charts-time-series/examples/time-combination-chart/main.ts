@@ -31,6 +31,9 @@ const gridOptions: GridOptions = {
   popupParent: document.body,
   chartThemeOverrides: {
     common: {
+      padding: {
+        top: 45,
+      },
       legend: {
         position: 'bottom',
       },
