@@ -31,12 +31,12 @@ Space is consumed on all sides of the available area based upon the `padding` co
 ### Title
 
 `title` configuration applies next, horizontally centring on the remaining space and consuming the
-height of the title and it's additional `title.spacing`.
+height of the title and its additional `title.spacing`.
 
 ### Sub-Title
 
 `subtitle` configuration applies next, horizontally centring on the remaining space and consuming the
-height of the title and it's additional `subtitle.spacing`.
+height of the title and its additional `subtitle.spacing`.
 
 ### Legend
 
