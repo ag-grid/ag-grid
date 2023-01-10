@@ -17,7 +17,10 @@ The following example demonstrates:
 
 <grid-example title='Unbalanced Groups' name='unbalanced-groups' type='mixed' options='{ "enterprise": true, "exampleHeight": 570, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-## Balanced Groups
+[[note]]
+| The unbalanced group feature is not supported when using the Server SideRow Model (SSRM)
+
+## Balanced Groups
 
 When not using unbalanced groups, the grid will, by default, create a (Blanks) group and populate it with any rows without a valid group value. The following example demonstrates this default behaviour:
 
