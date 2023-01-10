@@ -716,7 +716,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         const res: GroupInfo[] = [];
         details.groupedCols.forEach(groupCol => {
             let key: string = this.valueService.getKeyForNode(groupCol, rowNode);
-            let keyExists = key !== null && key !== undefined;
+            let keyExists = key !== null && key !== undefined && key !== '';
 
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
             // mathematical sense as you are building up a cube. so if pivot mode, we put in a blank key where missing.
