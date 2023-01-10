@@ -299,7 +299,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         let valueWhenNoRenderer = valueFormatted;
         if (valueWhenNoRenderer == null) {
-            if (value === '') {
+            if (value === '' && this.params.node.group) {
                 const localeTextFunc = this.localeService.getLocaleTextFunc();
                 valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
             } else {

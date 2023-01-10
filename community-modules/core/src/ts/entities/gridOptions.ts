@@ -560,7 +560,7 @@ export interface GridOptions<TData = any> {
     groupRemoveLowestSingleChildren?: boolean;
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false` */
     groupHideOpenParents?: boolean;
-    /** Set to `true` to prevent the grid from creating a '(blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */
+    /** Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */
     groupAllowUnbalanced?: boolean;
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */
     rowGroupPanelShow?: 'always' | 'onlyWhenGrouping' | 'never';

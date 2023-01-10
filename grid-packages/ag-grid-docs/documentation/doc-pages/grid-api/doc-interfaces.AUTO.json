@@ -3021,7 +3021,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupAllowUnbalanced": {
-      "description": "/** Set to `true` to prevent the grid from creating a '(blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
+      "description": "/** Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelShow": {
@@ -20953,7 +20953,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupAllowUnbalanced": {
-      "description": "/** Set to `true` to prevent the grid from creating a '(blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
+      "description": "/** Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelShow": {
@@ -23675,7 +23675,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupAllowUnbalanced": {
-      "description": "/** Set to `true` to prevent the grid from creating a '(blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
+      "description": "/** Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelShow": {
@@ -26403,7 +26403,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupAllowUnbalanced": {
-      "description": "/** Set to `true` to prevent the grid from creating a '(blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
+      "description": "/** Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and displays the unbalanced nodes alongside group nodes. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelShow": {

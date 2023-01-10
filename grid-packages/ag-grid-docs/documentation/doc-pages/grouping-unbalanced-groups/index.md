@@ -7,7 +7,7 @@ This section covers Unbalanced Groups - when grouping by rows that can contain `
 
 ## Handling Unbalanced Groups
 
-By default, unbalanced rows (rows containing `null`, `undefined` or empty values for the column that is being grouped) get grouped together as `(blanks)`. To instead have the nodes remain ungrouped, you can enable the `groupAllowUnbalanced` grid option. We refer to this scenario as **Unbalanced Groups** in that there is a mix of groups and rows as siblings.
+By default, unbalanced rows (rows containing `null`, `undefined` or empty values for the column that is being grouped) get grouped together as `(Blanks)`. To instead have the nodes remain ungrouped, you can enable the `groupAllowUnbalanced` grid option. We refer to this scenario as **Unbalanced Groups** in that there is a mix of groups and rows as siblings.
 
 The following example demonstrates:
 
@@ -19,6 +19,6 @@ The following example demonstrates:
 
 ## Balanced Groups
 
-When not using unbalanced groups, the grid will, by default, create a (blanks) group and populate it with any rows without a valid group value. The following example demonstrates this default behaviour:
+When not using unbalanced groups, the grid will, by default, create a (Blanks) group and populate it with any rows without a valid group value. The following example demonstrates this default behaviour:
 
 <grid-example title='Balanced Groups' name='balanced-groups' type='mixed' options='{ "enterprise": true, "exampleHeight": 570, "modules": ["clientside", "rowgrouping"] }'></grid-example>
