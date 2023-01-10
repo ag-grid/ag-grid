@@ -18,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   autoGroupColumnDef: {
-    // supplies filter values to the column filters based on the colId
     filter: 'agNumberColumnFilter',
     filterValueGetter: (params: ValueGetterParams) => {
       const colId = params.column.getColId();
