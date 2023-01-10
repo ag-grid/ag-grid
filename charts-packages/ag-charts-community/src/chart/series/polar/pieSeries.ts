@@ -79,6 +79,7 @@ interface PieNodeDatum extends SeriesNodeDatum {
         readonly text: string;
         readonly textAlign: CanvasTextAlign;
         readonly textBaseline: CanvasTextBaseline;
+        hidden: boolean;
     };
 
     readonly sectorLabel?: {
@@ -589,6 +590,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                           text: labelData[datumIndex],
                           textAlign,
                           textBaseline,
+                          hidden: false,
                       }
                     : undefined,
                 sectorLabel: sectorLabelKey
@@ -823,15 +825,16 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
-            if (datum.calloutLabel && outerRadius !== 0) {
+            if (datum.calloutLabel && outerRadius !== 0 && !datum.calloutLabel.hidden) {
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
                 line.x1 = datum.midCos * outerRadius;
                 line.y1 = datum.midSin * outerRadius;
                 line.x2 = datum.midCos * (outerRadius + calloutLength);
                 line.y2 = datum.midSin * (outerRadius + calloutLength);
+                line.visible = true;
             } else {
-                line.stroke = undefined;
+                line.visible = false;
             }
         });
     }
@@ -843,6 +846,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const seriesBox = this.chart!.getSeriesRect()!;
         const seriesLeft = seriesBox.x - this.centerX;
         const seriesRight = seriesBox.x + seriesBox.width - this.centerX;
+        const seriesTop = seriesBox.y - this.centerY;
+        const seriesBottom = seriesBox.y + seriesBox.height - this.centerY;
 
         const tempTextNode = new Text();
 
@@ -851,7 +856,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
-            if (!label || outerRadius === 0) {
+            if (!label || outerRadius === 0 || label.hidden) {
                 text.visible = false;
                 return;
             }
@@ -871,16 +876,18 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 visibleTextPart = (seriesRight - box.x) / box.width;
             }
 
+            const hasVerticalOverflow = box.y + errPx < seriesTop || box.y + box.height - errPx > seriesBottom;
+
             const textLength = Math.floor(label.text.length * visibleTextPart) - 1;
             const displayText = visibleTextPart === 1 ? label.text : `${label.text.substring(0, textLength)}…`;
 
             this.setTextDimensionalProps(text, x, y, { ...label, text: displayText });
             text.fill = color;
-            text.visible = true;
+            text.visible = !hasVerticalOverflow;
         });
     }
 
-    computeLabelsBBox(): BBox | null {
+    computeLabelsBBox(options: { hideWhenNecessary: boolean }): BBox | null {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const { offset } = calloutLabel;
@@ -899,7 +906,32 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 const x = datum.midCos * labelRadius;
                 const y = datum.midSin * labelRadius;
                 this.setTextDimensionalProps(text, x, y, label);
-                return text.computeBBox();
+                const box = text.computeBBox();
+                if (options.hideWhenNecessary) {
+                    const seriesBox = this.chart!.getSeriesRect()!;
+                    const seriesLeft = seriesBox.x - this.centerX;
+                    const seriesRight = seriesBox.x + seriesBox.width - this.centerX;
+                    const seriesTop = seriesBox.y - this.centerY;
+                    const seriesBottom = seriesBox.y + seriesBox.height - this.centerY;
+                    const errPx = 1; // Prevents errors related to floating point calculations
+                    let visibleTextPart = 1;
+                    if (box.x + errPx < seriesLeft) {
+                        visibleTextPart = (box.x + box.width - seriesLeft) / box.width;
+                    } else if (box.x + box.width - errPx > seriesRight) {
+                        visibleTextPart = (seriesRight - box.x) / box.width;
+                    }
+
+                    const hasVerticalOverflow = box.y + errPx < seriesTop || box.y + box.height - errPx > seriesBottom;
+                    const textLength = Math.floor(label.text.length * visibleTextPart) - 1;
+                    const isTooShort = textLength < 2;
+
+                    if (hasVerticalOverflow || isTooShort) {
+                        label.hidden = true;
+                        return null;
+                    }
+                }
+                label.hidden = false;
+                return box;
             })
             .filter((box) => box != null) as BBox[];
         if (textBoxes.length === 0) {

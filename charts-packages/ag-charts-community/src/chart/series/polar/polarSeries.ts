@@ -33,7 +33,7 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
         return [];
     }
 
-    computeLabelsBBox(): BBox | null {
+    computeLabelsBBox(_options: { hideWhenNecessary: boolean }): BBox | null {
         return null;
     }
 }

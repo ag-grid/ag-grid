@@ -51,39 +51,44 @@ export class PolarChart extends Chart {
             return series instanceof PolarSeries;
         }) as PolarSeries<SeriesNodeDatum>[];
 
+        const setSeriesCircle = (cx: number, cy: number, r: number) => {
+            polarSeries.forEach((series) => {
+                series.centerX = cx;
+                series.centerY = cy;
+                series.radius = r;
+            });
+        };
+
         const centerX = seriesBox.x + seriesBox.width / 2;
         const centerY = seriesBox.y + seriesBox.height / 2;
-        let radius = Math.max(0, Math.min(seriesBox.width, seriesBox.height) / 2);
-        polarSeries.forEach((series) => {
-            series.centerX = centerX;
-            series.centerY = centerY;
-            series.radius = radius;
-        });
+        const initialRadius = Math.max(0, Math.min(seriesBox.width, seriesBox.height) / 2);
+        let radius = initialRadius;
+        setSeriesCircle(centerX, centerY, radius);
 
-        const labelRepositionAttempts = 2;
-        for (let i = 0; i < labelRepositionAttempts; i++) {
+        const shake = ({ hideWhenNecessary = false } = {}) => {
             const labelBoxes = polarSeries
-                .map((series) => series.computeLabelsBBox())
+                .map((series) => series.computeLabelsBBox({ hideWhenNecessary }))
                 .filter((box) => box != null) as BBox[];
             if (labelBoxes.length === 0) {
-                break;
+                setSeriesCircle(centerX, centerY, initialRadius);
+                return;
             }
 
             const labelBox = BBox.merge(labelBoxes);
             const refined = this.refineCircle(labelBox, radius);
-
-            polarSeries.forEach((series) => {
-                series.centerX = refined.centerX;
-                series.centerY = refined.centerY;
-                series.radius = refined.radius;
-            });
+            setSeriesCircle(refined.centerX, refined.centerY, refined.radius);
 
             if (refined.radius === radius) {
-                break;
+                return;
             }
 
             radius = refined.radius;
-        }
+        };
+
+        shake(); // Initial attempt
+        shake(); // Precise attempt
+        shake({ hideWhenNecessary: true }); // Hide unnecessary labels
+        shake({ hideWhenNecessary: true }); // Final result
     }
 
     private refineCircle(labelsBox: BBox, radius: number) {
