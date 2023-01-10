@@ -81,7 +81,7 @@ server-side row model:
 [[note]]
 | Be careful not to get mixed up with the [Client-Side Tree Data](/tree-data/) configurations by mistake.
 
-The example below shows this in action where the following can be noted: 333
+The example below shows this in action where the following can be noted:
 
 - Tree Data is enabled with the Server-Side Row Model using `gridOptions.treeData = true`.
 - Group nodes are determined using the callback `gridOptions.isServerSideGroup(dataItem)`.
