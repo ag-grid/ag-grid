@@ -28,8 +28,8 @@ When using row grouping with refreshing you are required to provide a route para
 
 The following example demonstrates how to refresh specified groups on the server, note the following:
  - Using the <b>Refresh Root Level</b> button, you can force all the rows in the root level group to refresh, this is equivalent to omitting a route parameter from the `refreshServerSide` API call.
- - The <b>Refresh ['Canada']</b> button only refreshes the children of the `Canada` row group.
- - The <b>Refresh ['Canada', '2002']</b> button only refreshes the `2002` row group that belongs to the `Canada` row group.
+ - The <b>Refresh ['Canada']</b> button only refreshes the direct children of the `Canada` row group.
+ - The <b>Refresh ['Canada', '2002']</b> button only refreshes the direct children of the `2002` row group that belongs to the `Canada` row group.
  - Because `getRowId` has been implemented the grid is able to retain the state for reloaded rows, such as whether a group row was expanded. 
 
 <grid-example title='Refreshing Groups' name='refreshing-the-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
