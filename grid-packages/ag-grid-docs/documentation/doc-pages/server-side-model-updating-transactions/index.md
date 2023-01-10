@@ -28,11 +28,14 @@ In the example below, note the following;
 
 ## Row Grouping
 
-When updating grouped data, a transaction needs to be targeted against the group. This is done by providing a `route` when applying the transaction.
+To use transactions while using row grouping, transactions need to be applied to the specific row group. This is done by providing a `route` when applying the transaction. It is also necessary to inform the grid when group rows are updated, added or removed.
+
 
 In the example below, note the following:
- - One transaction has to be applied for each row group that has changes.
- - To move a row between groups, two transactions are required. One to remove the old row, and the other to recreate it in the correct group.
+ - When clicking any of the buttons, the console logs each transaction as it is applied to the grid.
+ - To add a new row, if the group didn't previously exist, then the route is omitted and the group row is added. If it did previously exist, then the group route is provided and the leaf node is added.
+ - To delete a row, if the group row would be deleted then a transaction needs to be applied to remove this group row instead of the leaf row.
+ - To move a row between groups, the row needs to be deleted from the old group with one transaction, and added to the new group with another.
 
 <grid-example title='Transactions With Groups' name='transactions-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 

@@ -69,11 +69,76 @@ var data = [];
 
 var dataObservers = [];
 
-setInterval(() => randomUpdates(), 1000);
+function updatePortfolio(oldPortfolio, newPortfolio) {
+    const createGroup = !data.some(record => record.portfolio === newPortfolio);
+
+    const moved = [];
+    data.forEach(record => {
+        if (record.portfolio === oldPortfolio) {
+            record.portfolio = newPortfolio;
+            moved.push(record);
+        }
+    });
+
+    if (!moved.length) {
+        return;
+    }
+
+    dataObservers.forEach(obs => obs({
+        add: createGroup ? [{ portfolio: newPortfolio }] : [],
+        remove: [{ portfolio: oldPortfolio }],
+    }));
+
+    if (!createGroup) {
+        dataObservers.forEach(obs => obs({
+            route: [newPortfolio],
+            add: moved,
+        }));
+    }
+}
+
+function deleteWhere(predicate) {
+    // removes
+    const remove = {};
+    data = data.filter(record => {
+        if (predicate(record)) {
+            if (!remove[record.portfolio]) {
+                remove[record.portfolio] = [];
+            }
+            remove[record.portfolio].push(record);
+            return false;
+        }
+        return true;
+    });
+
+    const removedGroups = [];
+    Object.entries(remove).forEach(([portfolio, removedRecords]) => {
+        if (!data.some(record => record.portfolio === portfolio)) {
+            removedGroups.push({ portfolio: portfolio });
+        } else {
+            dataObservers.forEach(obs => obs({route:[portfolio], remove: removedRecords})); 
+        }
+    });
+
+    dataObservers.forEach(obs => obs({ remove: removedGroups }));
+}
+
+function createRecord(product, portfolio, book) {
+    const createGroup = !data.some(record => record.portfolio === portfolio);
+
+    const newRecord = createTradeRecord(product, portfolio, book);
+    data.push(newRecord);
+
+    if (createGroup) {
+        dataObservers.forEach(obs => obs({ add: [{ portfolio: portfolio }]}));
+    } else {
+        dataObservers.forEach(obs => obs({ route: [portfolio], add: [newRecord]}));
+    }
+}
+
 let numRemove = 500;
 let numAdd = 500;
 let numUpdate = 500;
-
 function randomUpdates() {   
     // removes
     const remove = [];

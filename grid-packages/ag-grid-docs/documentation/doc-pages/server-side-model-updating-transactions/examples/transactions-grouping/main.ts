@@ -1,11 +1,14 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, ServerSideTransaction } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, ServerSideTransaction } from '@ag-grid-community/core'
 
 declare var FakeServer: any;
 declare var dataObservers: any;
+declare var deleteWhere: any;
+declare var createRecord: any;
+declare var updatePortfolio: any;
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
-    { field: 'portfolio', hide: true, rowGroup: true, enableRowGroup: true },
+    { field: 'portfolio', hide: true, rowGroup: true },
     { field: 'book' },    
     { field: 'previous' },
     { field: 'current' },
@@ -21,9 +24,8 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     minWidth: 220,
   },
-  rowGroupPanelShow: 'always',
   enableCellChangeFlash: true,
-  getRowId: (params) => {
+  getRowId: (params: GetRowIdParams) => {
     var rowId = '';
     if (params.parentKeys && params.parentKeys.length) {
       rowId += params.parentKeys.join('-') + '-';
@@ -38,10 +40,7 @@ const gridOptions: GridOptions = {
     }
     return rowId;
   },
-  isServerSideGroupOpenByDefault: (params) => {
-    return params.rowNode.level === 0 && params.rowNode.data.portfolio === 'Income';
-  },
-  onGridReady: (params) => {
+  onGridReady: (params: GridReadyEvent) => {
     // setup the fake server
     const server = new FakeServer();
 
@@ -51,40 +50,10 @@ const gridOptions: GridOptions = {
     // register the datasource with the grid
     params.api.setServerSideDatasource(datasource);
 
-    const getGroupRouteForData = (data: any) => {
-      const rowGroupColumns = gridOptions.columnApi!.getRowGroupColumns();
-      return rowGroupColumns.map(col => data[col.getColDef().field!]);
-    }
-
     // register interest in data changes
-    dataObservers.push((t: { add?: any[], remove?: any[], update?: any[] }) => {
-      if (t.add) {
-        t.add.forEach(item => {
-          const route = getGroupRouteForData(item);
-          params.api.applyServerSideTransactionAsync({
-            route,
-            add: [item],
-          });
-        });
-      }
-      if (t.update) {
-        t.update.forEach(item => {
-          const route = getGroupRouteForData(item);
-          params.api.applyServerSideTransactionAsync({
-            route,
-            update: [item],
-          });
-        });
-      }
-      if (t.remove) {
-        t.remove.forEach(item => {
-          const route = getGroupRouteForData(item);
-          params.api.applyServerSideTransactionAsync({
-            route,
-            remove: [item],
-          });
-        });
-      }
+    dataObservers.push((t: ServerSideTransaction) => {
+      const response = params.api.applyServerSideTransaction(t);
+      console.log('[Example] Applied transaction:', t, 'Result:', response);
     });
   },
 
@@ -115,6 +84,22 @@ function getServerSideDatasource(server: any) {
       }, 300);
     },
   };
+}
+
+function deleteAllAggressive() {
+  deleteWhere((record: any) => record.portfolio === 'Aggressive');
+}
+
+function deleteAllHybrid() {
+  deleteWhere((record: any) => record.portfolio === 'Hybrid');
+}
+
+function createOneAggressive() {
+  createRecord('Aluminium', 'Aggressive', 'GL-1');
+}
+
+function updateAggressiveToHybrid() {
+  updatePortfolio('Aggressive', 'Hybrid')
 }
 
 // setup the grid after the page has finished loading
