@@ -336,6 +336,7 @@ export class Legend {
     performLayout(width: number, height: number) {
         const {
             paddingX,
+            paddingY,
             label,
             maxWidth,
             marker: { size: markerSize, padding: markerPadding, shape: markerShape },
@@ -440,7 +441,7 @@ export class Legend {
         const { pages, maxPageHeight, maxPageWidth } = this.updatePagination(bboxes, width, height);
 
         this.pages = pages;
-        this.maxPageSize = [maxPageWidth, maxPageHeight];
+        this.maxPageSize = [maxPageWidth - paddingX, maxPageHeight - paddingY];
 
         const pageNumber = this.pagination.currentPage;
         const page = this.pages[pageNumber];
