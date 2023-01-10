@@ -68,7 +68,10 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  getChartToolbarItems: getChartToolbarItems,
+  chartToolPanelsDef: {
+    panels: ['data', 'format']
+  },
+  getChartToolbarItems,
   onFirstDataRendered: onFirstDataRendered,
 }
 
@@ -97,7 +100,7 @@ function dateFormatter(params: ValueFormatterParams) {
 }
 
 function getChartToolbarItems(): ChartMenuOptions[] {
-  return ['chartData', 'chartFormat']
+  return []
 }
 
 function toggleAxis() {

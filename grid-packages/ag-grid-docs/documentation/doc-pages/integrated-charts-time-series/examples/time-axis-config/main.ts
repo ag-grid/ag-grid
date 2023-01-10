@@ -55,7 +55,10 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  getChartToolbarItems: getChartToolbarItems,
+  chartToolPanelsDef: {
+    panels: ['data', 'format']
+  },
+  getChartToolbarItems,
   onFirstDataRendered: onFirstDataRendered,
 }
 
@@ -73,7 +76,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 }
 
 function getChartToolbarItems(): ChartMenuOptions[] {
-  return ['chartData', 'chartFormat']
+  return []
 }
 
 // setup the grid after the page has finished loading
