@@ -58,12 +58,18 @@ When processing many updates rapidly, the grid will perform more smoothly if the
 When using asynchronous transactions, the grid delays any transactions received within a time window (specified using `asyncTransactionWaitMillis`) and executes them together when the window has passed.
 
 In the example below, note the following:
- - 1 row is created, 10 rows are updated, and 1 rows is deleted every 10 milliseconds.
+ - After starting the updates, 1 row is created, 10 rows are updated, and 1 rows is deleted every 10 milliseconds.
  - The transactions are batched, and only executed once every second.
 
 <grid-example title='Asynchronous Example' name='transactions-async' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Showcase Example
+
+In the example below, note the following:
+ - After starting the updates, 2 rows are created, 5 rows are updated, and 2 rows are deleted once every second.
+ - Groups are created or destroyed when necessary by using transactions.
+ - The group panel has been enabled, allowing a dynamic configuration of groups.
+ - The group child counts and aggregations update in sync with changes to the leaf rows.
 
 <grid-example title='Showcase Example' name='transactions-showcase' type='generated' options='{ "enterprise": true, "exampleHeight": 670, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
