@@ -1,21 +1,18 @@
-export function extent<T>(values: T[], predicate: (value: T) => boolean): [T, T] | undefined;
-export function extent<T, K>(values: T[], predicate: (value: T) => boolean, map: (value: T) => K): [K, K] | undefined;
-export function extent<T, K>(
-    values: T[],
-    predicate: (value: T) => boolean,
-    map?: (value: T) => K
-): [T | K, T | K] | undefined {
+export function extent(values: number[]): [number, number] | undefined {
     const { length } = values;
     if (length === 0) {
         return undefined;
     }
 
-    let min = Infinity as any;
-    let max = -Infinity as any;
+    let min = Infinity;
+    let max = -Infinity;
 
     for (let i = 0; i < length; i++) {
-        const v = values[i];
-        if (!predicate(v)) {
+        let v = values[i];
+        if ((v as any) instanceof Date) {
+            v = (v as any).getTime();
+        }
+        if (typeof v !== 'number') {
             continue;
         }
         if (v < min) {
@@ -25,14 +22,11 @@ export function extent<T, K>(
             max = v;
         }
     }
-    const extent = [min, max];
+    const extent = [min, max] as [number, number];
     if (extent.some((v) => !isFinite(v))) {
         return undefined;
     }
-    if (map) {
-        return extent.map(map) as [K, K];
-    }
-    return extent as [T, T];
+    return extent;
 }
 
 /**

@@ -13,7 +13,6 @@ import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import ticks, { tickStep } from '../../../util/ticks';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { isContinuous } from '../../../util/value';
 import {
     BOOLEAN,
     NUMBER,
@@ -231,7 +230,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         }
 
         const xData = this.data.map((datum) => datum[this.xKey]);
-        const xDomain = this.fixNumericExtent(extent(xData, isContinuous));
+        const xDomain = this.fixNumericExtent(extent(xData));
 
         if (this.binCount === undefined) {
             if (bins) {
@@ -342,7 +341,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         this.binnedData = this.placeDataInBins(xKey && data ? data : []);
 
         const yData = this.binnedData.map((b) => b.getY(this.areaPlot));
-        const yMinMax = extent(yData, isContinuous);
+        const yMinMax = extent(yData);
 
         this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1]);
 

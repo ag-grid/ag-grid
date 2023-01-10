@@ -308,7 +308,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         this.yData = yData;
         this.xData = xData;
 
-        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xValues, isContinuous), xAxis) : xValues;
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xValues), xAxis) : xValues;
 
         // xData: ['Jan', 'Feb', undefined]
         //

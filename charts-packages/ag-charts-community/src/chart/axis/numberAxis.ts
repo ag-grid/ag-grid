@@ -1,7 +1,6 @@
 import { LinearScale } from '../../scale/linearScale';
 import { LogScale } from '../../scale/logScale';
 import { extent } from '../../util/array';
-import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 import { doOnce } from '../../util/function';
 import { predicateWithMessage, Validate, GREATER_THAN, AND, LESS_THAN } from '../../util/validation';
@@ -37,7 +36,7 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
         const { min, max } = this;
 
         if (d.length > 2) {
-            d = extent(d, isContinuous, Number) || [NaN, NaN];
+            d = extent(d) || [NaN, NaN];
         }
         if (!isNaN(min)) {
             d = [min, d[1]];
