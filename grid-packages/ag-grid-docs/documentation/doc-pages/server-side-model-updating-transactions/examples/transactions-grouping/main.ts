@@ -25,6 +25,7 @@ const gridOptions: GridOptions = {
     minWidth: 220,
   },
   enableCellChangeFlash: true,
+  isServerSideGroupOpenByDefault: (params) => params.rowNode.key === 'Aggressive' || params.rowNode.key === 'Hybrid',
   getRowId: (params: GetRowIdParams) => {
     var rowId = '';
     if (params.parentKeys && params.parentKeys.length) {

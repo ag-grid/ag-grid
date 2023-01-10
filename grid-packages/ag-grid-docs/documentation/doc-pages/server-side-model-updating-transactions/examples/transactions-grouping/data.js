@@ -1,40 +1,13 @@
 const MIN_BOOK_COUNT = 1;
-const MAX_BOOK_COUNT = 5;
-const MIN_TRADE_COUNT = 1;
-const MAX_TRADE_COUNT = 5;
+const MAX_BOOK_COUNT = 1;
+const MIN_TRADE_COUNT = 2;
+const MAX_TRADE_COUNT = 2;
 
 const products = [
     'Palm Oil',
-    'Rubber',
-    'Wool',
-    'Amber',
-    'Copper',
-    'Lead',
-    'Zinc',
-    'Tin',
-    'Aluminium',
-    'Aluminium Alloy',
-    'Nickel',
-    'Cobalt',
-    'Molybdenum',
-    'Recycled Steel',
-    'Corn',
-    'Oats',
-    'Rough Rice',
-    'Soybeans',
-    'Rapeseed',
-    'Soybean Meal',
-    'Soybean Oil',
-    'Wheat',
-    'Milk',
-    'Coca',
-    'Coffee C',
-    'Cotton No.2',
-    'Sugar No.11',
-    'Sugar No.14',
 ];
 
-const portfolios = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid'];
+const portfolios = ['Aggressive', 'Hybrid', 'Defensive', 'Income', 'Speculative'];
 
 let nextTradeId = 0;
 let nextBookId = 62472;
@@ -49,13 +22,13 @@ var data = [];
         for (let j = 0; j < portfolios.length; j++) {
             let portfolio = portfolios[j];
 
-            let bookCount = randomBetween(MAX_BOOK_COUNT, MIN_BOOK_COUNT);
+            let bookCount = randomBetween(MIN_BOOK_COUNT, MAX_BOOK_COUNT);
 
             for (let k = 0; k < bookCount; k++) {
                 let book = createBookName();
                 let tradeCount = randomBetween(
+                    MIN_TRADE_COUNT,
                     MAX_TRADE_COUNT,
-                    MIN_TRADE_COUNT
                 );
                 for (let l = 0; l < tradeCount; l++) {
                     let trade = createTradeRecord(product, portfolio, book);
