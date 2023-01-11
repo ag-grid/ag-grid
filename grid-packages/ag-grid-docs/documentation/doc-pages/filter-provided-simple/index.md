@@ -51,7 +51,7 @@ The Join Operator decides how Condition 1 and Condition 2 are joined, using eith
 
 Simple Filters are configured though the `filterParams` attribute of the column definition:
 
-<interface-documentation interfaceName='ISimpleFilterParams' overrideSrc="filter-provided-simple/resources/simple-filters.json"></interface-documentation>
+<interface-documentation interfaceName='ISimpleFilterParams' config='{"description":""}' overrideSrc="filter-provided-simple/resources/simple-filters.json"></interface-documentation>
 
 Additional parameters are also available depending on the type of filter being used. See each type for the full list of parameters available: [Text](/filter-text/), [Number](/filter-number/), [Date](/filter-date/).
 
