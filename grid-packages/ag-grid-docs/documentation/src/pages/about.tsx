@@ -140,11 +140,20 @@ const AboutPage = () => {
                                 </div>
                                 <div className="col-md-4">
                                     <div>
+                                        <img src='../images/team/peter.jpg' alt="Peter Reynolds, Developer"/>
+                                    </div>
+                                    <h3>Peter Reynolds</h3>
+                                    <h4>Developer, Grid Core</h4>
+                                </div>
+                                <div className="col-md-4">
+                                    <div>
                                         <img src='../images/team/alanT.jpg' alt="Alan Treadway, Developer"/>
                                     </div>
                                     <h3>Alan Treadway</h3>
                                     <h4>Lead Developer, Data Visualisation</h4>
                                 </div>
+                            </div>
+                            <div className="row">
                                 <div className="col-md-4">
                                     <div>
                                         <img src='../images/team/mana.jpeg' alt="Mana Peirov, Developer"/>
@@ -152,9 +161,6 @@ const AboutPage = () => {
                                     <h3>Mana Peirov</h3>
                                     <h4>Developer, Data Visualisation</h4>
                                 </div>
-
-                            </div>
-                            <div className="row">
                                 <div className="col-md-4">
                                     <div>
                                         <img src='../images/team/alex.png' alt="Alex (Sasha) Shutau, Developer"/>
@@ -170,21 +176,37 @@ const AboutPage = () => {
                                     <h3>Alberto Gutierrez</h3>
                                     <h4>Head of Customer Services</h4>
                                 </div>
+                            </div>
+                            <div className="row">
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='../images/team/kiril.png' alt="Kiril Matev, Developer"/>
+                                        <img src='../images/team/kiril.png' alt="Kiril Matev, Technical Product Manager"/>
                                     </div>
                                     <h3>Kiril Matev</h3>
                                     <h4>Technical Product Manager</h4>
                                 </div>
-                            </div>
-                            <div className="row">
+                                <div className="col-md-4">
+                                    <div>
+                                        <img src='../images/team/david.jpg' alt="David Glickman, Technical Product Analyst"/>
+                                    </div>
+                                    <h3>David Glickman</h3>
+                                    <h4>Technical Product Analyst</h4>
+                                </div>
                                 <div className="col-md-4">
                                     <div>
                                         <img src='../images/team/viqas.jpg' alt="Viqas Hussain, Lead Developer"/>
                                     </div>
                                     <h3>Viqas Hussain</h3>
                                     <h4>Lead Developer, E-commerce</h4>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-4">
+                                    <div>
+                                        <img src='../images/team/mark.jpg' alt="Mark Durrant, Lead UX designer"/>
+                                    </div>
+                                    <h3>Mark Durrant</h3>
+                                    <h4>Lead UX Designer</h4>
                                 </div>
                             </div>
                         </article>
@@ -296,6 +318,14 @@ const AboutPage = () => {
                                 </div>
                             </div>
                             <div className="row">
+                                <div className="col-md-4">
+                                    <div>
+                                        <img src='../images/team/tobi.jpg'
+                                             alt="Tobi Aguda, Customer Experience Manager"/>
+                                    </div>
+                                    <h3>Tobi Aguda</h3>
+                                    <h4>Customer Experience Manager</h4>
+                                </div>
                                 <div className="col-md-4">
                                     <div>
                                         <img src='../images/team/kathryn.png'
