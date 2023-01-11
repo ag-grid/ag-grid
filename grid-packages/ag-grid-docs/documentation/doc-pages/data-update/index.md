@@ -51,7 +51,7 @@ Updating data in the grid can be done in the following ways:
 
     Use transactions for doing add, remove or update operations on a large number of rows that are infrequent.
 
-    If you are frequently updating rows (e.g. 5 or more updates a second), consider moving to High Frequency instead (achieved with Async Transactions).
+    If you are frequently updating rows (e.g. 5 or more updates a second), consider moving to [High Frequency](#high-frequency) instead (achieved with Async Transactions).
 
     See [Transaction Updates](/data-update-transactions/) for more details.
 
