@@ -182,15 +182,24 @@ const columnDefs: ColDef[] = [
   },
 
   // some string values, that do not get aggregated
-  { field: 'dealType', enableRowGroup: true, enablePivot: true },
+  {
+    field: 'dealType',
+    enableRowGroup: true,
+    enablePivot: true,
+    filter: 'agTextColumnFilter',
+  },
   {
     headerName: 'Bid',
     field: 'bidFlag',
     enableRowGroup: true,
     enablePivot: true,
     width: 100,
+    filter: 'agTextColumnFilter',
   },
-  { field: 'comment', editable: true },
+  { field: 'comment',
+    editable: true,
+    filter: 'agTextColumnFilter',
+  },
 ]
 
 // simple value getter, however we can see how many times it gets called. this
@@ -279,6 +288,7 @@ const gridOptions: GridOptions = {
     width: 120,
     sortable: true,
     resizable: true,
+    filter: 'agNumberColumnFilter',
   },
   autoGroupColumnDef: {
     width: 250,
