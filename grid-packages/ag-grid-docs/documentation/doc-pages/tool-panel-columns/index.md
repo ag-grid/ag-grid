@@ -96,8 +96,7 @@ The example below demonstrates the suppress options / methods described above. N
 
 ## Suppress Column Reordering
 
-By default, reordering columns in the grid will also reorder the columns shown in the Columns Section of the Columns Tool Panel. 
-this default behaviour can be disabled via `toolPanelParams.suppressSyncLayoutWithGrid`. 
+By default, reordering columns in the grid will also reorder the columns shown in the Columns Section of the Columns Tool Panel. This default behaviour can be disabled via `toolPanelParams.suppressSyncLayoutWithGrid`. 
 
 Similarly, the reordering of columns from inside the Columns Section of the Columns Tool Panel is also enabled by default, and can be disabled via 
 `toolPanelParams.suppressColumnMove`. 
@@ -139,7 +138,7 @@ The following example demonstrates the results of enabling both of these propert
 
 ## Styling Columns
 
-You can add a CSS class to the columns in the tool panel by specifying `toolPanelHeaderClass` in the column definition as follows:
+You can add a CSS class to the columns in the tool panel by specifying `toolPanelClass` in the column definition as follows:
 
 <snippet spaceBetweenProperties="true">
 |const gridOptions = {

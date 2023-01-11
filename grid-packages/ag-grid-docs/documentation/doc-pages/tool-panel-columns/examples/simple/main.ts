@@ -30,6 +30,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
+    resizable: true,
     // allow every column to be aggregated
     enableValue: true,
     // allow every column to be grouped
