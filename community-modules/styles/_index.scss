@@ -356,7 +356,7 @@ $-theme-fonts: (
 
 $-param-type-descriptions: (
     "color": "a CSS color (e.g. `red` or `#fff`)",
-    "size": "a CSS size (e.g. `0`, `4px` or `50%`)",
+    "length": "a CSS length (e.g. `0`, `4px` or `50%`)",
     "border-style": "a CSS border style (e.g. `dotted` or `solid`)",
     "duration": "a number with time duration units (e.g. `3s` or `250ms`)",
     "border-style-and-size": "either `none`, or a CSS border-style and size (e.g. `solid 1px`), or a boolean (true -> `solid 1px` and false -> `none`)",

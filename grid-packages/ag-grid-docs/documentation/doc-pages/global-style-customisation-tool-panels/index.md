@@ -2,7 +2,7 @@
 title: "Customising Tool Panels"
 ---
 
-Style the Filters Tool Panel and Columns Tool Panel.
+Style the Filters [Tool Panel](/component-tool-panel/) and [Columns Tool Panel](/tool-panel-columns/).
 
 ## Styling the Tool Panel Area
 

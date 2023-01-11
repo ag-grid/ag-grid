@@ -26,7 +26,7 @@ You can consult the [full list of CSS variables](/global-style-customisation-var
 
 To create a reusable set of design customisations that can be shared between projects you can use a CSS class that is applied in addition to the theme you're modifying. The name of this class must begin with `ag-theme-`.
 
-The grid wrapper element should specify both the class name of the theme you're modifying, and the name of the custom theme.
+The grid wrapper element should specify both the class name of the theme you're modifying, and the name of the custom theme. Any styles for your custom theme should be loaded after the base theme. 
 
 ```html
 <!-- grid div applies your class after the theme class -->

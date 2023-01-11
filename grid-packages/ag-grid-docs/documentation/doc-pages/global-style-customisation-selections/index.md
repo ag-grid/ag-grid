@@ -6,7 +6,7 @@ Control how selected rows and cells appear.
 
 ## Row Selections
 
-When row selection is enabled, you can set the color of selected rows using `--ag-selected-row-background-color`. If your grid uses alternating row colours we recommend setting this to a semi-transparent colour so that the alternating row colours are visible below it.
+When [row selection](/row-selection/) is enabled, you can set the color of selected rows using `--ag-selected-row-background-color`. If your grid uses alternating row colours we recommend setting this to a semi-transparent colour so that the alternating row colours are visible below it.
 
 ```css
 .ag-theme-alpine {
@@ -19,7 +19,7 @@ When row selection is enabled, you can set the color of selected rows using `--a
 
 ## Range Selections
 
-Range selections can be created by clicking and dragging on the grid. Multiple overlapping range selections can be made by holding <kbd>Ctrl</kbd> while creating a new range outside the existing range. Copying from a selection will briefly highlight the range of cells (<kbd>Ctrl + C</kbd>). There are several variables to control the selection and highlight style:
+[Range selections](/range-selection/) can be created by clicking and dragging on the grid. Multiple overlapping range selections can be made by holding <kbd>Ctrl</kbd> while creating a new range outside the existing range. Copying from a selection will briefly highlight the range of cells (<kbd>Ctrl + C</kbd>). There are several variables to control the selection and highlight style:
 
 ```css
 .ag-theme-alpine {
