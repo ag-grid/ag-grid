@@ -22,6 +22,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('26.2.0', model, migrateV26_2);
     model = migrateIfBefore('28.0.0', model, migrateV28);
     model = migrateIfBefore('28.2.0', model, migrateV28_2);
+    model = migrateIfBefore('29.0.0', model, migrateV29);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -183,6 +184,17 @@ function migrateV28_2(model: ChartModel) {
     return model;
 }
 
+function migrateV29(model: ChartModel) {
+    model = jsonMoveIfMissing('chartOptions.scatter.series.fill', 'chartOptions.scatter.series.marker.fill', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.fillOpacity', 'chartOptions.scatter.series.marker.fillOpacity', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.stroke', 'chartOptions.scatter.series.marker.stroke', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.strokeOpacity', 'chartOptions.scatter.series.marker.strokeOpacity', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.strokeWidth', 'chartOptions.scatter.series.marker.strokeWidth', model);
+    model = jsonMove('chartOptions.scatter.series.paired', 'chartOptions.scatter.paired', model);
+
+    return model;
+}
+
 function cleanup(model: ChartModel) {
     // Remove fixed width/height - this has never been supported via UI configuration.
     model = jsonDelete('chartOptions.*.width', model);
@@ -240,6 +252,8 @@ function migrateIfBefore(maxVersion: string, model: ChartModel, migration: (m: C
 
         const result = migration(model);
         result.version = maxVersion;
+
+        if (DEBUG) console.log('AG Grid: ChartModel migration', { migratedTo: maxVersion, result });
         return result;
     }
 
@@ -298,6 +312,26 @@ function jsonMove(from: string, to: string, json: any): any {
 
     return jsonMutateProperty(to, false, json, (parent, prop) => {
         parent[prop] = valueToMove;
+    });
+}
+
+function jsonMoveIfMissing(from: string, to: string, json: any): any {
+    let valueToMove: any = undefined;
+    let valueFound = false;
+    json = jsonMutateProperty(from, true, json, (parent, prop) => {
+        valueFound = true;
+        valueToMove = parent[prop];
+        delete parent[prop];
+    });
+
+    if (!valueFound) {
+        return json;
+    }
+
+    return jsonMutateProperty(to, false, json, (parent, prop) => {
+        if (parent[prop] === undefined) {
+            parent[prop] = valueToMove;
+        }
     });
 }
 

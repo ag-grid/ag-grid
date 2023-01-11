@@ -195,7 +195,7 @@ Object {
   },
   "chartThemeName": "ag-default",
   "chartType": "groupedColumn",
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -396,7 +396,7 @@ Object {
   },
   "chartThemeName": "ag-default",
   "chartType": "groupedColumn",
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -509,7 +509,7 @@ Object {
   },
   "chartThemeName": "ag-vivid",
   "chartType": "doughnut",
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -622,7 +622,163 @@ Object {
   },
   "chartThemeName": "ag-default",
   "chartType": "pie",
-  "version": "28.2.1",
+  "version": "29.0.0",
+}
+`;
+
+exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-scatter successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 17,
+    "rowStartIndex": 0,
+  },
+  "chartId": "id-231v1fkl9zn",
+  "chartOptions": Object {
+    "scatter": Object {
+      "axes": Object {
+        "category": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+        "groupedCategory": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+        "log": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+        "number": Object {
+          "bottom": Object {},
+          "gridStyle": Array [
+            Object {
+              "lineDash": Array [
+                4,
+                2,
+              ],
+              "stroke": "rgb(219, 219, 219)",
+            },
+          ],
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+            "padding": 5,
+          },
+          "left": Object {},
+          "line": Object {
+            "color": "rgba(195, 195, 195, 1)",
+            "width": 1,
+          },
+          "right": Object {},
+          "tick": Object {
+            "color": "rgba(195, 195, 195, 1)",
+            "size": 6,
+            "width": 1,
+          },
+          "title": Object {
+            "color": "rgb(87, 87, 87)",
+            "enabled": false,
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 14,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          "top": Object {},
+        },
+        "time": Object {
+          "bottom": Object {},
+          "left": Object {},
+          "right": Object {},
+          "top": Object {},
+        },
+      },
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 12,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          "marker": Object {
+            "padding": 8,
+            "shape": "square",
+            "size": 15,
+            "strokeWidth": 1,
+          },
+          "paddingX": 16,
+          "paddingY": 8,
+        },
+        "position": "right",
+        "spacing": 20,
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "paired": false,
+      "series": Object {
+        "highlightStyle": Object {
+          "item": Object {
+            "fill": "yellow",
+          },
+        },
+        "marker": Object {
+          "enabled": true,
+          "fillOpacity": 1,
+          "shape": "circle",
+          "size": 37,
+          "strokeOpacity": 1,
+          "strokeWidth": 5,
+        },
+        "tooltip": Object {
+          "enabled": true,
+        },
+      },
+      "subtitle": Object {
+        "color": "rgb(87, 87, 87)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+      },
+      "title": Object {
+        "color": "rgb(87, 87, 87)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontStyle": "normal",
+        "fontWeight": "bold",
+      },
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "scatter",
+  "version": "29.0.0",
 }
 `;
 
@@ -821,7 +977,7 @@ Object {
   },
   "chartThemeName": "ag-default",
   "chartType": "groupedColumn",
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -1047,7 +1203,7 @@ Object {
   },
   "chartThemeName": "ag-default",
   "chartType": "groupedColumn",
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -1286,7 +1442,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -1533,7 +1689,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -1775,7 +1931,7 @@ Object {
   "modelType": "line",
   "suppressChartRanges": true,
   "unlinkChart": false,
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -2023,7 +2179,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -2172,8 +2328,8 @@ Object {
         "right": 20,
         "top": 20,
       },
+      "paired": true,
       "series": Object {
-        "fillOpacity": 1,
         "highlightStyle": Object {
           "item": Object {
             "fill": "yellow",
@@ -2191,13 +2347,12 @@ Object {
         },
         "marker": Object {
           "enabled": true,
+          "fillOpacity": 1,
           "shape": "circle",
           "size": 6,
+          "strokeOpacity": 1,
           "strokeWidth": 1,
         },
-        "paired": true,
-        "strokeOpacity": 1,
-        "strokeWidth": 2,
         "tooltip": Object {
           "enabled": true,
         },
@@ -2230,7 +2385,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -2477,7 +2632,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -2840,7 +2995,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -3197,7 +3352,7 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
 
@@ -3569,6 +3724,6 @@ Object {
   "modelType": "range",
   "suppressChartRanges": false,
   "unlinkChart": false,
-  "version": "28.2.1",
+  "version": "29.0.0",
 }
 `;
