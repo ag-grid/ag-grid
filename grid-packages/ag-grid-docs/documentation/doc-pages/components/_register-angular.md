@@ -21,7 +21,8 @@
 |@Component({
 |selector: 'app-root',
 |template: `
-|   <ag-grid-angular ...other properties>
+|   <ag-grid-angular [columnDefs]="columnDefs"
+|                    ...other properties>
 |   </ag-grid-angular>
 |`
 |})
@@ -55,7 +56,8 @@
 |@Component({
 |selector: 'app-root',
 |template: `
-|   <ag-grid-angular [components]="components" ...other properties>
+|   <ag-grid-angular [columnDefs]="columnDefs" [components]="components"
+|                    ...other properties>
 |   </ag-grid-angular>
 |`
 |})
