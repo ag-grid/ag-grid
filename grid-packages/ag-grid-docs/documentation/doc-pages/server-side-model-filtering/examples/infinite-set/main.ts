@@ -50,7 +50,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   maxBlocksInCache: 10,
 
   animateRows: true,
-  // debug: true
 
   onFilterChanged: onFilterChanged,
 }

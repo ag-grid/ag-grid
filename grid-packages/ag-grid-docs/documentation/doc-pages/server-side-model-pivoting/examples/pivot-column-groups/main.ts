@@ -26,7 +26,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   pivotMode: true,
 
   animateRows: true,
-  // debug: true
 }
 
 // setup the grid after the page has finished loading
