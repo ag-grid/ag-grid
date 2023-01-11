@@ -4,11 +4,16 @@ title: "Options Reference"
 
 The `AgChartOptions` interface is the gateway to creating charts.
 
-To initialise a chart, an instance of the `AgChartOptions` is passed to the `AgChart.create()` factory method. Once the chart is initialised, it can be modified using the `AgChart.update()` method.
+An instance of `AgChartOptions` is an essential configuration object required to create a chart with the desired data and attributes.
+
+[[only-javascript]]
+| To initialise a chart, an instance of the `AgChartOptions` is passed to the `AgChart.create()` factory method. Once the chart is initialised, it can be modified using the `AgChart.update()` method.
+
+[[only-frameworks]]
+| Our framework specific tags accept JS objects following the interface contract of `AgChartOptions` as their
+| means of configuration. Changes to the options object are tracked and applied automatically.
 
 ## Options by Chart Type
-
-An instance of `AgChartOptions` is an essential configuration object required to create a chart with the desired data and attributes.
 
 Properties, formatters and event handlers are all available through the `AgChartOptions` interface. Specifying these on the `options` object will enable fine grained control of charts including registering event listeners and applying styles to individual data points.
 
