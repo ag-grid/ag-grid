@@ -8,7 +8,7 @@ The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-
 
 ## Number Filter Parameters
 
-Number Filters are configured though the `filterParams` attribute of the column definition:
+Number Filters are configured though the `filterParams` attribute of the column definition (`INumberFilterParams` interface):
 
 <interface-documentation interfaceName='INumberFilterParams' config='{"description":"", "sortAlphabetically":"true"}' overrideSrc="filter-number/resources/number-filter-params.json"></interface-documentation>
 

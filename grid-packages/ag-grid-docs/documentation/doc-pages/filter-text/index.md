@@ -8,7 +8,7 @@ The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-
 
 ## Text Filter Parameters
 
-Text Filters are configured though the `filterParams` attribute of the column definition:
+Text Filters are configured though the `filterParams` attribute of the column definition (`ITextFilterParams` interface):
 
 <interface-documentation interfaceName='ITextFilterParams' config='{"description":"", "sortAlphabetically":"true"}' overrideSrc="filter-text/resources/text-filter-params.json"></interface-documentation>
 
