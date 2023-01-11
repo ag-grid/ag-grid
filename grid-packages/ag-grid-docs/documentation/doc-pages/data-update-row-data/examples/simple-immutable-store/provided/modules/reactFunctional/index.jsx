@@ -4,13 +4,15 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, StatusBarModule, RangeSelectionModule]);
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'
 function createUniqueRandomSymbol(data) {
@@ -98,6 +100,11 @@ const GridExample = () => {
             headerName: 'Symbol',
             cellRenderer: 'agGroupCellRenderer',
             field: 'symbol',
+        }
+    }, []);
+    const statusBar = useMemo(() => {
+        return {
+            statusPanels: [{ statusPanel: 'agAggregationComponent', align: 'right' }],
         }
     }, []);
     const getRowId = useCallback(function (params) {
@@ -214,7 +221,9 @@ const GridExample = () => {
                             defaultColDef={defaultColDef}
                             animateRows={true}
                             rowSelection={'multiple'}
+                            enableRangeSelection={true}
                             autoGroupColumnDef={autoGroupColumnDef}
+                            statusBar={statusBar}
                             groupDefaultExpanded={1}
                             getRowId={getRowId}
                             onGridReady={onGridReady}

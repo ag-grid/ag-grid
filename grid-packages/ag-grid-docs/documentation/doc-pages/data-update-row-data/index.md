@@ -34,7 +34,7 @@ The example below shows controlling the grid rows, including its order, by updat
 
 The example keeps a list of records to mimic data in a "store". Each time the user does an update, the data in the store is copied, so that when Row Data is given to the grid, the grid is presented with different Row Data. This is equivalent to refreshing data from a server, or using an Immutable Data store on the client. 
 
-Note the following.
+Note the following:
 
 - **Reverse**: Reverses the order of the items. The rows are moved rather than recreated. No flicker.
 
@@ -52,7 +52,9 @@ Note the following.
 
 - **Group Selected A / B / C**: With grouping on, hit the buttons A, B and C to move selected items to that group. Notice how the rows animate to the new position.
  
-<grid-example title='Simple Immutable Store' name='simple-immutable-store' type='mixed' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+(Note: the example uses the Enterprise-only features [Row Grouping](/grouping/), [Range Selection](/range-selection/) and [Status Bar](/status-bar/).)
+
+<grid-example title='Simple Immutable Store' name='simple-immutable-store' type='mixed' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping", "statusbar", "range"] }'></grid-example>
 
 
 
