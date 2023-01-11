@@ -733,7 +733,7 @@ export class LazyCache extends BeanStub {
             delete this.nodeIndexMap[numericStoreIndex];
         }
 
-        this.numberOfRows -= this.numberOfRows -= this.isLastRowIndexKnown() ? idsToRemove.length : deletedNodeCount;
+        this.numberOfRows -= this.isLastRowIndexKnown() ? idsToRemove.length : deletedNodeCount;
 
         if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
             nodesToVerify.forEach(node => node.__needsRefreshWhenVisible = true);
