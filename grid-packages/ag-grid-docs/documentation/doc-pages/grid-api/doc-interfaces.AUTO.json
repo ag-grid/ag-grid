@@ -16996,7 +16996,7 @@
   },
   "ToolPanelColumnCompParams": {
     "suppressColumnMove": {
-      "description": "/** Suppress Column Move section */",
+      "description": "/** Suppress Column Move */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressRowGroups": {

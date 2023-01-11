@@ -43,9 +43,6 @@ const gridOptions: GridOptions = {
   purgeClosedRowNodes: true,
 
   rowModelType: 'serverSide',
-  cacheBlockSize: 100,
-  maxBlocksInCache: 2,
-  maxConcurrentDatasourceRequests: 3,
   getRowId: getRowId,
   isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
   onColumnRowGroupChanged: onColumnRowGroupChanged,
@@ -55,7 +52,7 @@ const gridOptions: GridOptions = {
     return data ? data.childCount : undefined;
   },
   onGridReady: (params) => {
-    disable('#csrmStopUpdates', true);
+    disable('#stopUpdates', true);
   
     // setup the fake server
     fakeServerInstance = new FakeServer();
@@ -77,13 +74,13 @@ const gridOptions: GridOptions = {
 
 function startUpdates() {
   fakeServerInstance.randomUpdates();
-  disable('#csrmStartUpdates', true);
-  disable('#csrmStopUpdates', false);
+  disable('#startUpdates', true);
+  disable('#stopUpdates', false);
 }
 function stopUpdates() {
   fakeServerInstance.stopUpdates();
-  disable('#csrmStopUpdates', true);
-  disable('#csrmStartUpdates', false);
+  disable('#stopUpdates', true);
+  disable('#startUpdates', false);
 }
 
 function disable(id: string, disabled: boolean) {

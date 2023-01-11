@@ -1,7 +1,8 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, ServerSideTransaction } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, ServerSideTransaction } from '@ag-grid-community/core'
 
 declare var FakeServer: any;
 declare var dataObservers: any;
+declare var randomUpdates: any;
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
@@ -37,7 +38,7 @@ const gridOptions: GridOptions = {
     minWidth: 220,
   },
   enableCellChangeFlash: true,
-  getRowId: (params) => {  
+  getRowId: (params: GetRowIdParams) => {  
     var rowId = '';
     if (params.parentKeys && params.parentKeys.length) {
       rowId += params.parentKeys.join('-') + '-';
@@ -52,16 +53,18 @@ const gridOptions: GridOptions = {
     }
     return rowId;
   },
-  onGridReady: (params) => {
+  onGridReady: (params: GridReadyEvent) => {
+    disable('#stopUpdates', true);
+  
     // setup the fake server
     const server = new FakeServer();
-
+  
     // create datasource with a reference to the fake server
     const datasource = getServerSideDatasource(server);
-
+  
     // register the datasource with the grid
     params.api.setServerSideDatasource(datasource);
-
+  
     // register interest in data changes
     dataObservers.push((t: ServerSideTransaction) => {
       params.api.applyServerSideTransactionAsync(t);
@@ -69,10 +72,6 @@ const gridOptions: GridOptions = {
   },
   asyncTransactionWaitMillis: 1000,
   rowModelType: 'serverSide',
-  cacheBlockSize: 100,
-  maxBlocksInCache: 2,
-  blockLoadDebounceMillis: 1500,
-  maxConcurrentDatasourceRequests: 3,
 };
 
 function getServerSideDatasource(server: any) {
@@ -95,6 +94,26 @@ function getServerSideDatasource(server: any) {
       }, 300);
     },
   };
+}
+
+let interval: number;
+
+function startUpdates() {
+  interval = setInterval(() => randomUpdates({ numUpdate: 10, numAdd: 1, numRemove: 1 }), 10);
+  disable('#stopUpdates', false);
+  disable('#startUpdates', true);
+}
+
+function stopUpdates() {
+  if (interval !== undefined) {
+    clearInterval(interval);
+  }
+  disable('#stopUpdates', true);
+  disable('#startUpdates', false);
+}
+
+function disable(id: string, disabled: boolean) {
+  document.querySelector<HTMLInputElement>(id)!.disabled = disabled;
 }
 
 // setup the grid after the page has finished loading

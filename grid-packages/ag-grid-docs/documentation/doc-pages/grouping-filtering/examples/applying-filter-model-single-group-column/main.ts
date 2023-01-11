@@ -22,7 +22,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     filter: 'agTextColumnFilter',
     filterValueGetter: (params: ValueGetterParams) => {
       const colId = params.column.getColId();
-      console.log('auto-group column name:', colId);
       return params.data.sport;
     },
   },

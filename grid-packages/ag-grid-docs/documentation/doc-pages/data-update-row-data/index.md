@@ -19,13 +19,13 @@ The example below is identical to the above except [Row IDs](/row-ids/) are prov
 Providing [Row IDs](/row-ids/) allows the grid to work optimally in a few areas which are outlined as follows:
 
 
-| Function | Row IDs Provided | Row IDs Missing | 
+| Function | Row IDs Missing | Row IDs Provided | 
 | ----------------------------- | ------------------------- | ------------------------ | 
-| Row Selection | Row Selection maintained | Row Selection lost |
-| Row Grouping | Groups kept / updated, open groups stay open | Row Groups re-created, all open groups closed |
-| Row Refresh | Only changed rows are updated in the DOM | All rows destroyed from the DOM and recreated, flicker may occur |
-| Row Animation | Moved rows animate to new position | No row animation |
-| Flashing Cells | Changed values can be flashed to show change | No flashing available, all cells are created from scratch |
+| Row Selection | Row Selection lost | Row Selection maintained |
+| Row Grouping | Row Groups re-created, all open groups closed | Groups kept / updated, open groups stay open |
+| Row Refresh | All rows destroyed from the DOM and recreated, flicker may occur | Only changed rows are updated in the DOM |
+| Row Animation | No row animation | Moved rows animate to new position |
+| Flashing Cells | No flashing available, all cells are created from scratch | Changed values can be flashed to show change |
 
 
 ## Controlling Row Position

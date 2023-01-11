@@ -4,7 +4,7 @@ title: "View Refresh"
 
 The grid has change detection. So as long as you are updating the data via the grid's API, the values displayed should be the most recent up to date values.
 
-However sometimes you may be updating the data outside of the grids control. When you give data to the grid, the grid will not make a copy. Thus if you change the value of the data outside of the grid, the grid will also be impacted by that data change.
+However sometimes you may be updating the data outside of the grids control. When you give data to the grid, the grid will not make a copy. Thus if you change the value of the data outside of the grid, the grid will not be impacted by that data change.
 
 To deal with the scenario where the row data is changed without the grid being aware, the grid provides the following methods:
 

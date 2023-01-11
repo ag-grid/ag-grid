@@ -60,7 +60,7 @@ If you are only manipulating the value rather than creating complex DOM, would a
 
 [Auto Height Rows](../row-height/#auto-row-height) is a great feature that we love. However it also creates more complex DOM inside each Cell.
 
-If you are looking for ways to squeeze performance, consider turing this feature off. As with all suggestions here, it is paramount you profile your own application with this suggestion to see how much of a difference it makes and if the trade off is work it for your application.
+If you are looking for ways to squeeze performance, consider turning this feature off. As with all suggestions here, it is paramount you profile your own application with this suggestion to see how much of a difference it makes and if the trade off is worth it for your application.
 
 ## Turn Off Animations
 

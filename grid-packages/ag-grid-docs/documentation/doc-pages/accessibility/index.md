@@ -166,7 +166,7 @@ Using advanced functionality in AG Grid makes the DOM structure incompatible wit
     Screen readers assume that the visual and DOM element order are identical. Specifically, when you pin a row/column, it  causes elements to be rendered in different containers. This is why you cannot use screen readers to navigate into a  pinned row/column cells, as in fact, this means they're rendered in a different element from the rest of the columns/rows which are scrollable.
 
 - ### Limitations announcing the correct column name in grouped columns
-    Even though all aria tags have been applied to th necessary elements, some screen readers have trouble navigating the tags when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing the correct column names.
+    Even though all aria tags have been applied to the necessary elements, some screen readers have trouble navigating the tags when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing the correct column names.
 
 - ### No announcements of state change of a gridcell or gridheader
     Some screen readers will not recognise changes that happen to an element that is currently focused (including children of this element). So in order to detect changes (eg. sorted state, updated labels, etc...) you will need to move focus to another element and back.

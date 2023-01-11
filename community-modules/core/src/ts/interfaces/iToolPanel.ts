@@ -12,7 +12,7 @@ export interface IToolPanel {
 export interface IToolPanelComp extends IToolPanel, IComponent<IToolPanelParams> { }
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
-    /** Suppress Column Move section */
+    /** Suppress Column Move */
     suppressColumnMove: boolean;
     /** Suppress Row Groups section */
     suppressRowGroups: boolean;
