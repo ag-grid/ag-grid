@@ -741,7 +741,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Default: `2`
          */
     @Input() public maxConcurrentDatasourceRequests: number | undefined = undefined;
-    /** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled.     */
+    /** How many milliseconds to wait before loading a block. Useful when scrolling over many blocks, as it prevents blocks loading until scrolling has settled.     */
     @Input() public blockLoadDebounceMillis: number | undefined = undefined;
     /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false`      */
     @Input() public purgeClosedRowNodes: boolean | undefined = undefined;
@@ -751,13 +751,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
-    /** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,
-         * as Sorting is always server side when Infinite Scroll is active.
+    /** 
+         * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
          * Default: `false`
          */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
-    /** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,
-          * as Filtering is always server side when Infinite Scroll is active.
+    /** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
           * Default: `false`
           */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;

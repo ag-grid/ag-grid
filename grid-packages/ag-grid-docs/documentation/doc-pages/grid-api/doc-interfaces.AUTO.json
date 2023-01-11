@@ -3129,7 +3129,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "blockLoadDebounceMillis": {
-      "description": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
+      "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many blocks, as it prevents blocks loading until scrolling has settled. */",
       "type": { "returnType": "number", "optional": true }
     },
     "purgeClosedRowNodes": {
@@ -3149,11 +3149,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -21061,7 +21061,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "blockLoadDebounceMillis": {
-      "description": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
+      "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many blocks, as it prevents blocks loading until scrolling has settled. */",
       "type": { "returnType": "number", "optional": true }
     },
     "purgeClosedRowNodes": {
@@ -21081,11 +21081,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -23783,7 +23783,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "blockLoadDebounceMillis": {
-      "description": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
+      "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many blocks, as it prevents blocks loading until scrolling has settled. */",
       "type": { "returnType": "number", "optional": true }
     },
     "purgeClosedRowNodes": {
@@ -23803,11 +23803,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -26511,7 +26511,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "blockLoadDebounceMillis": {
-      "description": "/** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */",
+      "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many blocks, as it prevents blocks loading until scrolling has settled. */",
       "type": { "returnType": "number", "optional": true }
     },
     "purgeClosedRowNodes": {
@@ -26531,11 +26531,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n     * as Sorting is always server side when Infinite Scroll is active.\n     * Default: `false`\n     */",
+      "description": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,\n      * as Filtering is always server side when Infinite Scroll is active.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
