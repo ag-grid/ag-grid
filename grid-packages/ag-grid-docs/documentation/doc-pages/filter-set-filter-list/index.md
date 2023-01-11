@@ -193,7 +193,7 @@ Note in the snippet above the values callback receives a parameter object which 
 
 The interface for this parameter object is `SetFilterValuesFuncParams`:
 
-<interface-documentation interfaceName='SetFilterValuesFuncParams' ></interface-documentation>
+<interface-documentation interfaceName='SetFilterValuesFuncParams' config='{"description":""}'></interface-documentation>
 
 [[note]]
 | If you are providing values to the Set Filter asynchronously, when setting the model using `setModel` you need to wait for changes to be applied before performing any further actions by waiting on the returned grid promise, e.g.:
