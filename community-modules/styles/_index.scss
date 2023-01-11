@@ -392,7 +392,7 @@ $-variable-param-types: (
     --ag-range-selection-background-color-4: "color",
     --ag-range-selection-highlight-color: "color",
     --ag-selected-tab-underline-color: "color",
-    --ag-selected-tab-underline-width: "size",
+    --ag-selected-tab-underline-width: "length",
     --ag-selected-tab-underline-transition-speed: "duration",
     --ag-range-selection-chart-category-background-color: "color",
     --ag-range-selection-chart-background-color: "color",
@@ -409,7 +409,7 @@ $-variable-param-types: (
     --ag-secondary-border-color: "color",
 
     --ag-row-border-style: "border-style",
-    --ag-row-border-width: "size",
+    --ag-row-border-width: "length",
     --ag-row-border-color: "color",
 
     --ag-cell-horizontal-border: "border-style-and-color",
@@ -418,20 +418,20 @@ $-variable-param-types: (
     --ag-borders-input-invalid: "border-style-and-size",
     --ag-input-border-color-invalid: "color",
     --ag-borders-side-button: "border-style-and-size",
-    --ag-border-radius: "size",
+    --ag-border-radius: "length",
     --ag-header-column-separator-display: "display",
-    --ag-header-column-separator-height: "size",
-    --ag-header-column-separator-width: "size",
+    --ag-header-column-separator-height: "length",
+    --ag-header-column-separator-width: "length",
     --ag-header-column-separator-color: "color",
     --ag-header-column-resize-handle-display: "display",
-    --ag-header-column-resize-handle-height: "size",
-    --ag-header-column-resize-handle-width: "size",
+    --ag-header-column-resize-handle-height: "length",
+    --ag-header-column-resize-handle-width: "length",
     --ag-header-column-resize-handle-color: "color",
     --ag-invalid-color: "color",
     --ag-input-disabled-border-color: "color",
     --ag-input-disabled-background-color: "color",
     --ag-checkbox-background-color: "color",
-    --ag-checkbox-border-radius: "size",
+    --ag-checkbox-border-radius: "length",
     --ag-checkbox-checked-color: "color",
     --ag-checkbox-unchecked-color: "color",
     --ag-checkbox-indeterminate-color: "color",
@@ -441,34 +441,34 @@ $-variable-param-types: (
     --ag-toggle-button-on-background-color: "color",
     --ag-toggle-button-switch-background-color: "color",
     --ag-toggle-button-switch-border-color: "color",
-    --ag-toggle-button-border-width: "size",
-    --ag-toggle-button-height: "size",
-    --ag-toggle-button-width: "size",
+    --ag-toggle-button-border-width: "length",
+    --ag-toggle-button-height: "length",
+    --ag-toggle-button-width: "length",
     --ag-input-focus-box-shadow: "any",
     --ag-input-focus-border-color: "color",
     --ag-minichart-selected-chart-color: "color",
     --ag-minichart-selected-page-color: "color",
-    --ag-grid-size: "size",
-    --ag-icon-size: "size",
-    --ag-widget-container-horizontal-padding: "size",
-    --ag-widget-container-vertical-padding: "size",
-    --ag-widget-horizontal-spacing: "size",
-    --ag-widget-vertical-spacing: "size",
-    --ag-cell-horizontal-padding: "size",
-    --ag-cell-widget-spacing: "size",
-    --ag-row-height: "size",
-    --ag-header-height: "size",
-    --ag-list-item-height: "size",
-    --ag-column-select-indent-size: "size",
-    --ag-set-filter-indent-size: "size",
-    --ag-row-group-indent-size: "size",
-    --ag-filter-tool-panel-group-indent: "size",
-    --ag-tab-min-width: "size",
-    --ag-menu-min-width: "size",
-    --ag-side-bar-panel-width: "size",
+    --ag-grid-size: "length",
+    --ag-icon-size: "length",
+    --ag-widget-container-horizontal-padding: "length",
+    --ag-widget-container-vertical-padding: "length",
+    --ag-widget-horizontal-spacing: "length",
+    --ag-widget-vertical-spacing: "length",
+    --ag-cell-horizontal-padding: "length",
+    --ag-cell-widget-spacing: "length",
+    --ag-row-height: "length",
+    --ag-header-height: "length",
+    --ag-list-item-height: "length",
+    --ag-column-select-indent-size: "length",
+    --ag-set-filter-indent-size: "length",
+    --ag-row-group-indent-size: "length",
+    --ag-filter-tool-panel-group-indent: "length",
+    --ag-tab-min-width: "length",
+    --ag-menu-min-width: "length",
+    --ag-side-bar-panel-width: "length",
     --ag-font-family: "any",
-    --ag-font-size: "size",
-    --ag-card-radius: "size",
+    --ag-font-size: "length",
+    --ag-card-radius: "length",
     --ag-card-shadow: "any",
     --ag-popup-shadow: "any",
     --ag-alpine-active-color: "color",
@@ -594,7 +594,7 @@ $-non-variable-param-types: (
     @return meta.type-of($value) == "color";
 }
 
-@function -validate-size($value) {
+@function -validate-length($value) {
     @return meta.type-of($value) == "number" and (unit($value) != "" or $value == 0);
 }
 
@@ -613,7 +613,7 @@ $border-styles: (none, hidden, dotted, dashed, solid, double, groove, ridge, ins
 }
 
 @function -validate-border-style-and-size($value) {
-    @return -validate-two-in-any-order($value, "border-style", "size");
+    @return -validate-two-in-any-order($value, "border-style", "length");
 }
 
 @function -validate-border-style-and-color($value) {
