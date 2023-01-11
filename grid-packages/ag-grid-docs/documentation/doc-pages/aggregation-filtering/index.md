@@ -108,4 +108,6 @@ The properties of the [Row Node](/row-object/) provided by the `groupAggFilterin
 
 <api-documentation source='resources/reference.json' section="rowNodeAttributes"></api-documentation>
 
-Continue to the next section to learn about [Other Aggregation Topics](/aggregation-filtering/).
+## Next Up
+
+Continue to the next section to learn about [Other Aggregation Topics](/aggregation-other/).
