@@ -20,7 +20,7 @@ The snippet above creates a Pivot Chart with the `groupedColumn` chart type. For
 
 The following example demonstrates how Pivot Charts can be created programmatically via `gridApi.createPivotChart()`:  
 
-<grid-example title='Pivot Chart' name='pivot-chart-api' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "rowgrouping", "charts"], "exampleHeight": 900 }'></grid-example>
+<grid-example title='Pivot Chart' name='pivot-chart-api' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "rowgrouping", "charts"], "exampleHeight": 900, "myGridReference": 1 }'></grid-example>
 
 ## Pivot Chart API
 
