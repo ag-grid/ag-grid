@@ -77,7 +77,7 @@ The below example has range selection, row selection and `suppressCopySingleCell
 
 ## Custom clipboard interaction
 
-If you want to do the copy to clipboard yourself (ie not use the grids clipboard interaction) then implement the callback `sendToClipboard(params)`. Use this if you are in a non-standard web container that has a bespoke API for interacting with the clipboard. The callback gets the data to go into the clipboard, it's your job to call the bespoke API.
+If you want to do the copy to clipboard yourself (i.e. not use the grid's clipboard interaction) then implement the callback `sendToClipboard(params)`. Use this if you are in a non-standard web container that has a bespoke API for interacting with the clipboard. The callback gets the data to go into the clipboard, it's your job to call the bespoke API.
 
 The example below shows using `sendToClipboard(params)`, but rather than using the clipboard, demonstrates the callback by just printing the data to the console.
 
@@ -193,6 +193,6 @@ For a paste operation the events will be fired as:
 
 If the application is doing work each time it receives a `cellValueChanged`, you can use the `pasteStart` and `pasteEnd` events to suspend the applications work and then do the work for all cells impacted by the paste operation after the paste operation.
 
-There are no events triggered by copy to clipboard as this does not change the grids data.
+There are no events triggered by copy to clipboard as this does not change the grid's data.
 
 <grid-example title='Clipboard Events' name='clipboard-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>

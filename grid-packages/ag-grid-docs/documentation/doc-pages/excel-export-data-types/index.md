@@ -73,7 +73,7 @@ The following example demonstrates how to use other data types for your export.
 
 Note that:
 
-- Boolean works off using `1` for `true`, `0` for `false`. All other values produce an error when exported to boolean.
+- Boolean works by using `1` for `true`, `0` for `false`. All other values produce an error when exported to boolean.
 - When you provide a `numberFormat`, the value gets exported as a number using the format provided. You can set the decimal places, format negative values differently and change the exported value color based on the value.
 - When using dataType: 'DateTime', the date time format for Excel is `yyyy-mm-ddThh:MM:ss.mmm:`
 - If you try to export a value that is not compatible with the underlying data type Excel will display an error when opening the file.

@@ -4,19 +4,19 @@ title: "Drag & Drop"
 
 Drag & Drop is concerned with moving data around an application, or between applications, using the operating system drag and drop support. When using drag and drop, data is moved or copied around using MIME types in a way similar to using the clipboard.
 
-Native drag and drop is typically used for moving data between applications, eg moving a URL from an email into a web browser to open the URL, or moving a file from a file explorer application to a text editor application. Native drag and drop is not typically used for operating on data inside and application. Native drag and drop is similar to clipboard functionality, eg data must be represented as MIME types and objects cannot be passed by reference (the data must be converted to a MIME type and copied).
+Native drag and drop is typically used for moving data between applications, eg moving a URL from an email into a web browser to open the URL, or moving a file from a file explorer application to a text editor application. Native drag and drop is not typically used for operating on data inside an application. Native drag and drop is similar to clipboard functionality, e.g. data must be represented as MIME types and objects cannot be passed by reference (the data must be converted to a MIME type and copied).
 
 This section outlines how the grid fits in with native operating system drag and drop. It is assumed the reader is familiar with how drag and drop works. If not, refer to one of the following introductions:
 
 - [W3C Schools](https://www.w3schools.com/html/html5_draganddrop.asp)
-- [MDN Wed Docs](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
+- [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
 
 [[note]]
-| The grid implements it's own drag and drop separate to the operating system drag and drop.
+| The grid implements its own drag and drop separate to the operating system drag and drop.
 | It is used internally by the grid for
 | [Row Dragging](/row-dragging/) (for reordering rows) and for column dragging
 | (e.g. re-ordering columns or moving columns in the [Column Tool Panel](/tool-panel-columns/)).
-| The grid uses it's own implementation in these instances as it needs finer control over the data
+| The grid uses its own implementation in these instances as it needs finer control over the data
 | than native browser drag & drop supports. For example, the native d&d does not provide
 | access to the dragged item until after the drag operation is complete.
 
@@ -41,7 +41,7 @@ In the example below, note the following:
 
 ## Dragging Between Grids
 
-It is possible to drag rows between two instances of AG Grid. The drag is done exactly like the simple case described above. The drop is done by the example.
+It is possible to drag rows between two instances of AG Grid. The drag is done exactly like the simple case described above. The drop is done as demonstrated in the example below.
 
 In the example below, note the following:
 
@@ -57,9 +57,9 @@ In the example below, note the following:
 
 Note that there is no specific drop zone logic in the grid. This was done on purpose after analysis.
 
-On initial analysis consideration was given to exposing callbacks or firing events in the grid for the drop zone relevant events e.g. ondragenter, on dragexit etc. However this did not add any additional value given that the developer can easily add such event listeners to the grid div directly, and that the grid would be simply exposing the underlying events / callbacks rather than doing any processing itself.
+On initial analysis, consideration was given to exposing callbacks or firing events in the grid for the drop zone relevant events e.g. `onDragEnter`, `onDragExit` etc. However this did not add any additional value given that the developer can easily add such event listeners to the grid div directly.
 
-Given the grid was not adding any value, providing such callbacks would just be adding a layer of useless logic.
+**Given that the grid would be simply exposing the underlying events / callbacks rather than doing any processing itself, it would not be adding any value and so providing such callbacks would just be adding a layer of useless logic.**
 
 ## Custom Drag Data
 
