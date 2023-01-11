@@ -30,9 +30,9 @@ Providing [Row IDs](/row-ids/) allows the grid to work optimally in a few areas 
 
 ## Controlling Row Position
 
-The example below shows controlling the grid rows, including it's order, by updating the Row Data.
+The example below shows controlling the grid rows, including its order, by updating the Row Data.
 
-The example keeps a list of records to mimic data in "a store". Each time the user does an update, the data in the store is copied, so that when Row Data is given to the grid, the grid is presented with different Row Data. This is equivalent to refreshing data from a server, or using an Immutable Data store on the client. 
+The example keeps a list of records to mimic data in a "store". Each time the user does an update, the data in the store is copied, so that when Row Data is given to the grid, the grid is presented with different Row Data. This is equivalent to refreshing data from a server, or using an Immutable Data store on the client. 
 
 Note the following.
 
