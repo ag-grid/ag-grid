@@ -57,7 +57,6 @@ function getServerSideDatasource(server: any) {
   };
 }
 
-
 function addRow() {
   const selectedRows = gridOptions.api!.getSelectedNodes();
   if (selectedRows.length === 0) {
