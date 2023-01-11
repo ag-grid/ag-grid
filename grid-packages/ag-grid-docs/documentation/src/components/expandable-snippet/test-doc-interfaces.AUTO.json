@@ -1,4 +1,5 @@
 {
+    "_config_": {},
     "TypeAliasExample": {},
     "TestFnBaseArgs": {
         "param1": { "type": { "returnType": "number", "optional": false } },

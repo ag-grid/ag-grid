@@ -1,4 +1,5 @@
 {
+  "_config_": {},
   "ColumnResizeSet": {
     "columns": { "type": { "returnType": "Column[]", "optional": false } },
     "ratios": { "type": { "returnType": "number[]", "optional": false } },
