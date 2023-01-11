@@ -52,3 +52,7 @@ The example below demonstrates how to update all of the rows which the user has 
 - The selected nodes are obtained using the `api.getSelectedNodes()` api, and are then individually updated.
 
 <grid-example title='Updating Selected Rows' name='updating-selected-row' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+
+## Next Up
+
+Continue to the next section to learn how to use [Transactions](/server-side-model-updating-transactions/) with the SSRM.

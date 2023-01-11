@@ -51,7 +51,7 @@ You may benefit from the combination of all these features or just be interested
 
 - **Lazy-Loading of Groups:** The grid will load the top level rows only. Children of groups are only loaded when the user expands the group.
 
-- **Infinite Scrolling:** When active, rows are read back from the server in blocks to provide the experience of infinite scrolling. This allows viewing very large datasets in the browser by only bringing back data one block at a time. Using Infinite Scrolling is an optional feature. It is possible to bring back all the data for a particular group level and then allow the grid to do Sorting and Filtering of the data in the browsers memory.
+- **Infinite Scrolling:** Rows are read back from the server in blocks to provide the experience of infinite scrolling. This allows viewing very large datasets in the browser by only bringing back data one block of data at a time.
 
 - **Server-Side Grouping, Pivot and Aggregation:** Because the data is coming back from the server one group level at
 a time, this allows you to do aggregation on the server, returning the aggregated results for the top level parent
