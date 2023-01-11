@@ -15,7 +15,7 @@ The example below demonstrates how you can save and then later restore a chart. 
 - Click "Clear chart" to destroy the existing chart.
 - Click "Restore chart" to restore the previously saved chart.
 
-<grid-example title='Saving and Restoring Charts' name='saving-and-restoring-charts' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Saving and Restoring Charts' name='saving-and-restoring-charts' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"], "myGridReference": 1 }'></grid-example>
 
 ## API Reference
 

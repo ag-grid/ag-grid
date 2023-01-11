@@ -1,3 +1,4 @@
+import { isNumber } from '../../util/value';
 import { BaseManager, Listener } from './baseManager';
 
 type InteractionTypes = 'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left';
@@ -271,12 +272,12 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
     }) {
         let { type, event, clientX, clientY, offsetX, offsetY, pageX, pageY } = opts;
 
-        if (offsetX == null || offsetY == null) {
+        if (!isNumber(offsetX) || isNumber(offsetY)) {
             const rect = this.element.getBoundingClientRect();
             offsetX = clientX - rect.left;
             offsetY = clientY - rect.top;
         }
-        if (pageX == null || pageY == null) {
+        if (!isNumber(pageX) || !isNumber(pageY)) {
             const pageRect = this.rootElement.getBoundingClientRect();
             pageX = clientX - pageRect.left;
             pageY = clientY - pageRect.top;

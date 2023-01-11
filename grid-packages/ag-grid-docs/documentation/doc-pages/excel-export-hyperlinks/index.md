@@ -7,8 +7,7 @@ This section describes how to insert hyperlinks in the cells of the exported Exc
 
 ## Exporting Formulas
 
-You can insert `hyperlinks` in the cells of the exported Excel file by outputting an Excel **HYPERLINK formula** with a URL value you provide. The code below inserts hyperlinks in the Excel export file for all values in the URL column.
-
+You can insert `hyperlinks` in the cells of the exported Excel file by outputting an Excel formula containing a <a href="https://support.microsoft.com/en-us/office/hyperlink-function-333c7ce6-c5ae-4164-9c47-7de9b76f577f" target="_blank">Hyperlink function</a> with a URL value you provide. The code below inserts hyperlinks in the Excel export file for all values in the URL column.
 
 <snippet>
 const gridOptions = {
