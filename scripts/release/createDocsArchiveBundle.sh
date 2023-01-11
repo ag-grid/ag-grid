@@ -30,7 +30,9 @@ rm $ARCHIVE_FILENAME
 echo "Adding robots.txt and github version info"
 node scripts/release/patchDocs.js
 
-tar -cvf $ARCHIVE_FILENAME "grid-packages/ag-grid-docs/dist"
+cd grid-packages/ag-grid-docs/dist
+tar -cvf ../../../$ARCHIVE_FILENAME .
+cd ../../../
 
 echo "Gzipping $ARCHIVE_FILENAME"
 gzip --force $ARCHIVE_FILENAME
