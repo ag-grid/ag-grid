@@ -15,7 +15,7 @@ Failed loads can be retried by using the grid API `retryServerSideLoads()`. This
 
 ### Examples
 
-The following example demonstrates to retry loading rows. Note the following:
+The following example demonstrates load retrying. Note the following:
 
 - When the checkbox 'Make Loads Fail' is checked, all subsequent loads will fail, i.e. the Datasource will call `fail()` instead of `success()`. Try checking the checkbox and expand a few groups to observe failed loading.
 
