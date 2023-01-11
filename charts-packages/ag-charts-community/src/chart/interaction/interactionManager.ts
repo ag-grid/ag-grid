@@ -272,7 +272,7 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
     }) {
         let { type, event, clientX, clientY, offsetX, offsetY, pageX, pageY } = opts;
 
-        if (!isNumber(offsetX) || isNumber(offsetY)) {
+        if (!isNumber(offsetX) || !isNumber(offsetY)) {
             const rect = this.element.getBoundingClientRect();
             offsetX = clientX - rect.left;
             offsetY = clientY - rect.top;
