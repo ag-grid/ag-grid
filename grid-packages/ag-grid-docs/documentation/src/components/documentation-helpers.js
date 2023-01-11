@@ -1,6 +1,6 @@
 import { withPrefix } from 'gatsby';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
-import { TYPE_LINKS } from './type-links';
+import { getTypeLink } from './type-links';
 
 export const inferType = value => {
     if (value == null) {
@@ -72,7 +72,7 @@ export function getTypeUrl(type, framework) {
         return getTypeUrl(type.returnType, framework);
     }
 
-    return convertUrl(TYPE_LINKS[type], framework);
+    return convertUrl(getTypeLink(type), framework);
 };
 
 
@@ -362,7 +362,7 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
                 return undefined;
             }
 
-            const isLinkedType = !!TYPE_LINKS[type];
+            const isLinkedType = !!getTypeLink(type);
             const numMembers = typeof (interfaceType.type) == 'string'
                 ? interfaceType.type.split('|').length
                 : Object.entries((interfaceType.type) || {}).length;
@@ -401,7 +401,7 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
                             .map(([k, i]) => {
                                 // Extract all the words from the type to handle unions and functions and params cleanly.
                                 const words = [...k.matchAll(typeRegex), ...i.matchAll(typeRegex)].map(ws => ws[0]);
-                                return words.filter(w => !TYPE_LINKS[w] && interfaceLookup[w]);
+                                return words.filter(w => !getTypeLink(w) && interfaceLookup[w]);
 
                             }).forEach((s) => {
                                 s.forEach(v => { interfacesToInclude[v] = true; })
