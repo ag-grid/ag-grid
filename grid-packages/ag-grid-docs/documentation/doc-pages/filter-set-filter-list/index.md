@@ -338,7 +338,7 @@ The following example shows the Key Creator handling complex objects for the Set
 - Click **Print Filter Model** with a filter active on **Country (Complex Object as Value)** and note the logged Filter Model (dev console) uses the `code` property from the complex object.
 - Click **Print Filter Model** with a filter active on **Country (Complex Object as String)** and note the logged Filter Model (dev console) uses the `name` property from the complex object.
 
-<grid-example title='Complex Objects' name='complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 505, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+<grid-example title='Complex Objects' name='complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Multiple Values Per Cell
 
