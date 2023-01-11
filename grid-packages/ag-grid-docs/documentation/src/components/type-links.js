@@ -76,7 +76,10 @@ const TYPE_LINKS = {
 };
 
 export function getTypeLink(type) {
-    // handle removal of generics.
-    const cleanType = type?.split('<')[0];
-    return TYPE_LINKS[cleanType];
+    if (typeof (type) === 'string') {
+        // handle removal of generics.
+        const cleanType = type?.split('<')[0];
+        return TYPE_LINKS[cleanType];
+    }
+    return undefined;
 }
