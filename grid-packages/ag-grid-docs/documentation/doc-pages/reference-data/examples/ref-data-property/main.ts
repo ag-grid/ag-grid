@@ -27,6 +27,7 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: 'make',
+            minWidth: 100,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
                 values: carBrands,
@@ -63,7 +64,7 @@ const gridOptions: GridOptions = {
         {
             headerName: 'Retail Price',
             field: 'price',
-            minWidth: 140,
+            minWidth: 120,
             colId: 'retailPrice',
             valueGetter: (params) => {
                 return params.data.price
@@ -73,7 +74,7 @@ const gridOptions: GridOptions = {
         },
         {
             headerName: 'Retail Price (incl Taxes)',
-            minWidth: 205,
+            minWidth: 120,
             editable: false,
             valueGetter: (params) => {
                 // example of chaining value getters
@@ -93,7 +94,7 @@ const gridOptions: GridOptions = {
 
 function onCellValueChanged(params: CellValueChangedEvent) {
     // notice that the data always contains the keys rather than values after editing
-    console.log('onCellValueChanged: ', params)
+    console.log('onCellValueChanged Data: ', params.data)
 }
 
 function currencyFormatter(params: ValueFormatterParams) {
