@@ -131,42 +131,42 @@ export const columnDefs: ColDef[] = [
         },
         valueFormatter: toCurrency,
     },
-    {
-        headerName: 'Change (area)',
-        valueGetter: changeValueGetter,
-        cellRenderer: 'agSparklineCellRenderer',
-        cellRendererParams: {
-            sparklineOptions: {
-                type: 'area',
-                axis: {
-                    type: 'category',
-                },
-                tooltip: {
-                    renderer: changesTooltipRenderer,
-                },
-                marker: {
-                    formatter: positiveNegativeAreaFormatter,
-                },
-            } as AreaSparklineOptions,
-        },
-    },
-    {
-        headerName: 'Change (column)',
-        valueGetter: changeValueGetter,
-        cellRenderer: 'agSparklineCellRenderer',
-        cellRendererParams: {
-            sparklineOptions: {
-                type: 'column',
-                axis: {
-                    type: 'category',
-                },
-                tooltip: {
-                    renderer: changesTooltipRenderer,
-                },
-                formatter: positiveNegativeColumnFormatter,
-            } as ColumnSparklineOptions,
-        },
-    },
+    // {
+    //     headerName: 'Change (area)',
+    //     valueGetter: changeValueGetter,
+    //     cellRenderer: 'agSparklineCellRenderer',
+    //     cellRendererParams: {
+    //         sparklineOptions: {
+    //             type: 'area',
+    //             axis: {
+    //                 type: 'category',
+    //             },
+    //             tooltip: {
+    //                 renderer: changesTooltipRenderer,
+    //             },
+    //             marker: {
+    //                 formatter: positiveNegativeAreaFormatter,
+    //             },
+    //         } as AreaSparklineOptions,
+    //     },
+    // },
+    // {
+    //     headerName: 'Change (column)',
+    //     valueGetter: changeValueGetter,
+    //     cellRenderer: 'agSparklineCellRenderer',
+    //     cellRendererParams: {
+    //         sparklineOptions: {
+    //             type: 'column',
+    //             axis: {
+    //                 type: 'category',
+    //             },
+    //             tooltip: {
+    //                 renderer: changesTooltipRenderer,
+    //             },
+    //             formatter: positiveNegativeColumnFormatter,
+    //         } as ColumnSparklineOptions,
+    //     },
+    // },
     {
         headerName: '% Change',
         type: 'numericColumn',
@@ -178,6 +178,7 @@ export const columnDefs: ColDef[] = [
     },
     {
         field: 'time',
+        type: 'rightAligned',
         filter: 'agDateColumnFilter',
         valueFormatter: ({ value }) => toTime({ value, showMs: true }),
     },
