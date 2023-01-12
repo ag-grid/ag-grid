@@ -129,11 +129,6 @@ The example below demonstrates providing parameters to the status bar components
 
 <grid-example title='Status Bar Params' name='status-bar-params' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 
-## Initialisation of Status Bar Components
-
-The status bar components will be instantiated before the grid is fully initialised - specifically they will be initialised
-before any row data has been rendered. See [here](/status-bar/#initialisation-of-status-bar-components) for more information.
-
 ## Status Bar Height
 
 The status bar sizes its height to fit content. That means when no components are visible, the status bar will have zero height - it will not be shown.
