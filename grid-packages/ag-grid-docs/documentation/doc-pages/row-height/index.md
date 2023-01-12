@@ -84,7 +84,7 @@ The example below changes the row height in the different ways described above.
 
 - **Top Level Groups:** The row height for the groups is changed by calling `api.resetRowHeights()`. This gets the grid to call `gridOptions.getRowHeight(params)` again for each row.
 - **Swimming Leaf Rows:** Same technique is used here as above. You will need to expand a group with swimming (e.g. United States) and the grid works out all row heights again.
-- **Russia Leaf Rows:** The row height is set directly on the `rowNode`, and then the grid is told to reposition all rows again by calling `api.onRowHeightChanged()`.
+- **United States Leaf Rows:** The row height is set directly on the `rowNode`, and then the grid is told to reposition all rows again by calling `api.onRowHeightChanged()`.
 
 Note that this example uses AG Grid Enterprise as it uses grouping. Setting the row
 height is an AG Grid Community feature, we just demonstrate it against groups and normal
