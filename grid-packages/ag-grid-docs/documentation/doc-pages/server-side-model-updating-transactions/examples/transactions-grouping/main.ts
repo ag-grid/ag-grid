@@ -2,10 +2,9 @@ import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideG
 import {  } from 'ag-grid-community';
 
 declare var FakeServer: any;
-declare var dataObservers: any;
-declare var deleteWhere: any;
-declare var createRecord: any;
-declare var updatePortfolio: any;
+declare var deletePortfolioOnServer: any;
+declare var changePortfolioOnServer: any;
+declare var createRowOnServer: any;
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
@@ -30,19 +29,10 @@ const gridOptions: GridOptions = {
     return params.rowNode.key === 'Aggressive' || params.rowNode.key === 'Hybrid';
   },
   getRowId: (params: GetRowIdParams) => {
-    var rowId = '';
-    if (params.parentKeys && params.parentKeys.length) {
-      rowId += params.parentKeys.join('-') + '-';
+    if (params.level === 0) {
+      return params.data.portfolio;
     }
-    const groupCols = params.columnApi.getRowGroupColumns();
-    if (groupCols.length > params.level) {
-      const thisGroupCol = groupCols[params.level];
-      rowId += params.data[thisGroupCol.getColDef().field!] + '-';
-    }
-    if (params.data.tradeId != null) {
-      rowId += params.data.tradeId;
-    }
-    return rowId;
+    return params.data.tradeId;
   },
   onGridReady: (params: GridReadyEvent) => {
     // setup the fake server
@@ -53,12 +43,6 @@ const gridOptions: GridOptions = {
 
     // register the datasource with the grid
     params.api.setServerSideDatasource(datasource);
-
-    // register interest in data changes
-    dataObservers.push((t: ServerSideTransaction) => {
-      const response = params.api.applyServerSideTransaction(t);
-      console.log('[Example] Applied transaction:', t, 'Result:', response);
-    });
   },
 
   rowModelType: 'serverSide',
@@ -86,20 +70,71 @@ function getServerSideDatasource(server: any) {
   };
 }
 
-function deleteAllAggressive() {
-  deleteWhere((record: any) => record.portfolio === 'Aggressive');
-}
-
 function deleteAllHybrid() {
-  deleteWhere((record: any) => record.portfolio === 'Hybrid');
+  // NOTE: real applications would be better served listening to a stream of changes from the server instead
+  const serverResponse: any = deletePortfolioOnServer('Hybrid');
+  if (!serverResponse.success) {
+    console.warn('Nothing has changed on the server');
+    return;
+  }
+
+  if (serverResponse) {
+    // apply tranaction to keep grid in sync
+    gridOptions.api!.applyServerSideTransaction({
+      remove: [{ portfolio: 'Hybrid' }],
+    });
+  }
 }
 
 function createOneAggressive() {
-  createRecord('Aluminium', 'Aggressive', 'GL-1');
+  // NOTE: real applications would be better served listening to a stream of changes from the server instead
+  const serverResponse: any = createRowOnServer('Aggressive', 'Aluminium', 'GL-1');
+  if (!serverResponse.success) {
+    console.warn('Nothing has changed on the server');
+    return;
+  }
+
+  if (serverResponse.newGroupCreated) {
+    // if a new group had to be created, reflect in the grid
+    gridOptions.api!.applyServerSideTransaction({
+      route: [],
+      add: [{ portfolio: 'Aggressive' }],
+    });
+  } else {
+    // if the group already existed, add rows to it
+    gridOptions.api!.applyServerSideTransaction({
+      route: ['Aggressive'],
+      add: [serverResponse.newRecord],
+    });
+  }
 }
 
 function updateAggressiveToHybrid() {
-  updatePortfolio('Aggressive', 'Hybrid')
+  // NOTE: real applications would be better served listening to a stream of changes from the server instead
+  const serverResponse: any = changePortfolioOnServer('Aggressive', 'Hybrid');
+  if (!serverResponse.success) {
+    console.warn('Nothing has changed on the server');
+    return;
+  }
+
+  // aggressive group no longer exists, so delete the group
+  gridOptions.api!.applyServerSideTransaction({
+    remove: [{ portfolio: 'Aggressive' }],
+  });
+
+  if (serverResponse.newGroupCreated) {
+    // hybrid group didn't exist, so just create the new group
+    gridOptions.api!.applyServerSideTransaction({
+      route: [],
+      add: [{ portfolio: 'Hybrid' }],
+    });
+  } else {
+    // hybrid group already existed, add rows to it
+    gridOptions.api!.applyServerSideTransaction({
+      route: ['Hybrid'],
+      add: serverResponse.updatedRecords,
+    });
+  }
 }
 
 // setup the grid after the page has finished loading

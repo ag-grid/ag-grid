@@ -1,6 +1,6 @@
 import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, ServerSideTransaction, ServerSideTransactionResult } from '@ag-grid-community/core'
 declare var FakeServer: any;
-declare var createTradeId: any;
+declare var data: any;
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
@@ -109,12 +109,13 @@ function getNewValue() {
   return  Math.floor(Math.random() * 100000) + 100;
 }
 
+let serverCurrentTradeId = data.length;
 function createRow() {
   return {
     portfolio: 'Aggressive',
     product: 'Aluminium',
     book: 'GL-62472',
-    tradeId: createTradeId(),
+    tradeId: ++serverCurrentTradeId,
     current: getNewValue(),
   };
 }
