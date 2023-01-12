@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import styles from "./HeroGrid.module.scss";
-import {rootLocalPrefix, localPrefix} from '../../../utils/consts';
+import { localPrefix } from '../../../utils/consts';
 import isDevelopment from '../../../utils/is-development';
+
+import { initGrid } from '../../../components/hero-grid';
 
 const helmet = [];
 if (isDevelopment()) {
@@ -15,10 +17,12 @@ if (isDevelopment()) {
 const HeroGrid = () => {
     const className = `${styles['heroGrid']} ag-theme-alpine-dark`;
 
+    useEffect(() => {
+        initGrid('#heroGrid');
+    }, []);
+
     return <>
         <Helmet>
-            <script defer={true} src={`${rootLocalPrefix}/hero-grid/main.js`} type="text/javascript"/>
-            {/* <script defer={true} src={`${rootLocalPrefix}/example-rich-grid/example.js`} type="text/javascript"/> */}
             {helmet.map(entry => entry)}
         </Helmet>
         <div id='heroGrid' style={{ height: "400px", width: "860px" }} className={className}></div>
