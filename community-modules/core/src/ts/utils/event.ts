@@ -69,7 +69,41 @@ export function isElementInEventPath(element: HTMLElement, event: Event): boolea
         return false;
     }
 
-    return event.composedPath().indexOf(element) >= 0;
+    return getEventPath(event).indexOf(element) >= 0;
+}
+
+export function createEventPath(event: { target: EventTarget }): EventTarget[] {
+    const res: EventTarget[] = [];
+    let pointer: any = event.target;
+
+    while (pointer) {
+        res.push(pointer);
+        pointer = pointer.parentElement;
+    }
+
+    return res;
+}
+
+/**
+ * Gets the path for a browser Event or from the target on an AG Grid Event
+ * https://developer.mozilla.org/en-US/docs/Web/API/Event
+ * @param {Event| { target: EventTarget }} event
+ * @returns {EventTarget[]}
+ */
+export function getEventPath(event: Event | { target: EventTarget }): EventTarget[] {
+    // This can be called with either a browser event or an AG Grid Event that has a target property.
+    const eventNoType = event as any;
+
+    if (eventNoType.path) {
+        return eventNoType.path;
+    }
+
+    if (eventNoType.composedPath) {
+        return eventNoType.composedPath();
+    }
+
+    // If this is an AG Grid event build the path ourselves
+    return createEventPath(eventNoType);
 }
 
 export function addSafePassiveEventListener(
