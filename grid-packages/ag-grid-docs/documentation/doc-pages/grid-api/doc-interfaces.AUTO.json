@@ -19680,7 +19680,7 @@
       "type": {
         "arguments": { "params": "ValueFormatterParams" },
         "returnType": "string",
-        "optional": false
+        "optional": true
       }
     },
     "item": {
@@ -19751,7 +19751,7 @@
       "type": {
         "arguments": { "params": "ValueFormatterParams" },
         "returnType": "string",
-        "optional": false
+        "optional": true
       }
     },
     "usingComplexObjects": {

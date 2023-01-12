@@ -7,7 +7,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     constructor(
         private readonly valueFormatterService: ValueFormatterService,
-        private readonly valueFormatter: (params: ValueFormatterParams) => string,
+        private readonly valueFormatter: ((params: ValueFormatterParams) => string) | undefined,
         private readonly formatter: TextFormatter,
         private readonly column: Column
     ) {}

@@ -60,7 +60,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private createKey: (value: V | null, node?: IRowNode | null) => string | null;
 
-    private valueFormatter: (params: ValueFormatterParams) => string;
+    private valueFormatter?: (params: ValueFormatterParams) => string;
 
     constructor() {
         super('setFilter');
@@ -218,7 +218,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.convertValuesToStrings = !!params.convertValuesToStrings;
         this.caseSensitive = !!params.caseSensitive;
         let keyCreator = params.keyCreator ?? params.colDef.keyCreator;
-        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList);
+        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList, !!params.colDef.refData);
         const isGroupCol = params.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList && isGroupCol;
         this.getDataPath = this.gridOptionsService.get('getDataPath');
@@ -250,14 +250,18 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         providedValueFormatter: ((params: ValueFormatterParams) => string) | undefined,
         keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined,
         convertValuesToStrings: boolean,
-        treeList: boolean
+        treeList: boolean,
+        isRefData: boolean
     ) {
         let valueFormatter = providedValueFormatter;
         if (!valueFormatter) {
             if (keyCreator && !convertValuesToStrings && !treeList) {
                 throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
             }
-            valueFormatter = params => _.toStringOrNull(params.value)!;
+            // ref data is handled by ValueFormatterService
+            if (!isRefData) {
+                valueFormatter = params => _.toStringOrNull(params.value)!;
+            }
         }
         this.valueFormatter = valueFormatter;
     }
