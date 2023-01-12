@@ -50,7 +50,7 @@ In the example below, note the following:
 
 <grid-example title='Transactions With Groups' name='transactions-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-## High Frequency Updates
+## Asynchronous Updates
 
 When processing many updates rapidly, the grid will perform more smoothly if the changes are batched (as this can prevent excessive rendering). The grid can batch these changes for you without negatively impacting the user experience, and in most cases improving it.
 
@@ -65,6 +65,8 @@ In the example below, note the following:
 <grid-example title='Asynchronous Example' name='transactions-async' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Showcase Example
+
+The following demonstrates a more complex example of transactions, it shows subscribing to a source of updates to provide the changes, while using dynamic row grouping, aggregation, and child counts. All of which react to the changes caused by the transactions.
 
 In the example below, note the following:
  - After starting the updates, 2 rows are created, 5 rows are updated, and 2 rows are deleted once every second.
