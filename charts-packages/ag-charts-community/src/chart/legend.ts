@@ -754,6 +754,11 @@ export class Legend {
     }
 
     private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
+        if (event.sourceEvent.type.startsWith('touch')) {
+            // Explicitly ignore touch events for this case.
+            return;
+        }
+
         const {
             enabled,
             item: { toggleSeriesVisible },
