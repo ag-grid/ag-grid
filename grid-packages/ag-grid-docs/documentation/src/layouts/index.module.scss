@@ -55,11 +55,11 @@ main {
 .top-bar {
     composes: px-2 px-md-3 from global;
     position: relative;
-    background-color: transparentize($light, 0.05);
+    background-color: $ag-site-fw-background;
     border-bottom: 1px solid $ag-light-grey;
 
     @supports (backdrop-filter: none) {
-        background-color: transparentize($light, 0.30);
+        background-color: $ag-site-fw-background;
         backdrop-filter: blur(20px);
     }
 

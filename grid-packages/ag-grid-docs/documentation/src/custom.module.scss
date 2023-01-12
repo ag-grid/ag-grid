@@ -12,6 +12,7 @@ $container-max-widths: (
 
 $ag-dark-blue: #00407f;
 $ag-blue: #0084e7;
+
 $ag-light-blue: #55b2c6;
 $ag-grey: #b4bbbf;
 $ag-light-grey: lighten($ag-grey, 10%);
@@ -21,3 +22,5 @@ $primary: $ag-blue;
 
 $ag-site-header-background: #044c93;
 $ag-site-nav-background: darken(#044c93, 10%);
+
+$ag-site-fw-background: #eaf0f6;

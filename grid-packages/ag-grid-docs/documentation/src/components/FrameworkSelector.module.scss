@@ -1,24 +1,71 @@
 .framework-selector {
-    composes: d-flex from global;
-    line-height: 3rem;
+    $selected-color: #3798f9;
 
-    &__icon {
-        height: 30px;
-        cursor: pointer;
+    --height: 44px;
+    --icon-size: 26px;
+    --border-width: 2px;
+
+    display: flex;
+
+    a {
+        position: relative;
+        padding: calc((var(--height) - var(--icon-size)) / 2);
+        text-decoration: none;
+        background-color: white;
+
+        &::after {
+            content: "";
+            position: absolute;
+            height: 100%;
+            top: 0;
+            left: -2px;
+            right: -2px;
+            border: var(--border-width) solid transparent;
+            transition: border-color .25s ease-in-out;
+        }
+
+        &:not(:first-child) {
+            margin-left: var(--border-width);
+        }
+
+        &:first-child,
+        &:first-child::after {
+            padding-left: calc(var(--height) / 2.25);
+            border-top-left-radius: calc(var(--height) / 2);
+            border-bottom-left-radius: calc(var(--height) / 2);
+        }
+
+        &:first-child::after {
+            left: 0;
+        }
+
+        &:last-child,
+        &:last-child::after {
+            padding-right: calc(var(--height) / 2.5);
+            border-top-right-radius: calc(var(--height) / 2);
+            border-bottom-right-radius: calc(var(--height) / 2);
+        }
+
+        &:last-child::after {
+            right: 0;
+        }
+
+        &:hover::after {
+            border-color: rgba($selected-color, 0.5);
+        }
+
+        &.is-selected::after {
+            border-color: $selected-color;
+        }
     }
 
-    &__option {
-        composes: p-2 flex-grow-1 ml-2 from global;
+    img {
+        width: var(--icon-size);
+        height: var(--icon-size);
+    }
 
-        position: relative;
-        border: 1px solid $ag-light-grey;
-        border-radius: 5px;
-        height: 3rem;
-        line-height: 1rem;
-
-        &--selected {
-            background-color: $primary;
-            box-shadow: inset 0 0 5px $ag-blue;
-        }
+    span {
+        display: none;
+        text-transform: capitalize;
     }
 }
