@@ -4,27 +4,31 @@ function FakeServer() {
     return {
       getData: function (request) {
         var results = executeQuery(request);
+        var resultSize = executeQuery({ ...request, endRow: undefined }, true).length;
   
         return {
           success: true,
           rows: results,
+          lastRow: resultSize,
         };
       },
     };
   
-    function executeQuery(request) {
-      var groupByResult = executeRowGroupQuery(request);
+    function executeQuery(request, suppressLogging) {
+      var groupByResult = executeRowGroupQuery(request, suppressLogging);
 
       return groupByResult;
     }
   
-    function executeRowGroupQuery(request) {
+    function executeRowGroupQuery(request, suppressLogging) {
       var groupByQuery = buildGroupBySql(request);
   
-      console.log(
-        '[FakeServer] - about to execute row group query:',
-        groupByQuery
-      );
+      if (!suppressLogging) {
+        console.log(
+          '[FakeServer] - about to execute row group query:',
+          groupByQuery
+        );
+      }
   
       return alasql(groupByQuery, [data]);
     }

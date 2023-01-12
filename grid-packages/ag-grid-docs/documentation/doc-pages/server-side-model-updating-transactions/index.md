@@ -41,9 +41,23 @@ The following example demonstrates add / update and remove operations via the tr
 
 To use transactions while using row grouping, transactions need to be applied to the specific row group. This is done by providing a `route` when applying the transaction. It is also necessary to inform the grid when group rows are updated, added or removed.
 
+The snippet below demonstrates creating a group row transaction for rows which are the first of their group, as the leaf rows will be requested via `getRows` when the group is expanded.
+
+<snippet>
+| // create the group row at the root level (only if it's the first row for this group)
+| gridOptions.api.applyServerSideTransaction({
+| 	route: [],
+| 	add: [{ portfolio: 'Aggressive' }]
+| });
+| 
+| // otherwise, create the leaf node inside of the 'Aggressive' group
+| gridOptions.api.applyServerSideTransaction({
+| 	route: ['Aggressive'],
+| 	add: [row]
+| });
+</snippet>
 
 In the example below, note the following:
- - When clicking any of the buttons, the console logs each transaction as it is applied to the grid.
  - To add a new row, if the group didn't previously exist, then the route is omitted and the group row is added. If it did previously exist, then the group route is provided and the leaf node is added.
  - To delete a row, if the group row would be deleted then a transaction needs to be applied to remove this group row instead of the leaf row.
  - To move a row between groups, the row needs to be deleted from the old group with one transaction, and added to the new group with another.
@@ -57,6 +71,21 @@ When processing many updates rapidly, the grid will perform more smoothly if the
 <api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["applyServerSideTransactionAsync"]' ></api-documentation>
 
 When using asynchronous transactions, the grid delays any transactions received within a time window (specified using `asyncTransactionWaitMillis`) and executes them together when the window has passed.
+
+The snippet below demonstrates three asynchronous transactions applied sequentially, however because these transactions are asynchronously batched, the grid would only update the DOM once.
+
+<snippet>
+// due to asynchronous batching, the following transactions are applied together preventing unnecessary DOM updates
+gridOptions.api.applyServerSideTransactionAsync({ 
+    add: [{ tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }],
+});
+gridOptions.api.applyServerSideTransactionAsync({ 
+    update: [{ tradeId: 102,  portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-624723', current: 58927 }],
+});
+gridOptions.api.applyServerSideTransactionAsync({ 
+    remove: [{ tradeId: 103 }],
+});
+</snippet>
 
 In the example below, note the following:
  - After starting the updates, 1 row is created, 10 rows are updated, and 1 rows is deleted every 10 milliseconds.

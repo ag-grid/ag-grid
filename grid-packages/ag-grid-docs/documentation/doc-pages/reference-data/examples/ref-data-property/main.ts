@@ -58,12 +58,6 @@ const gridOptions: GridOptions = {
             filterParams: {
                 cellRenderer: ColourCellRenderer,
             },
-            cellEditor: 'agTextCellEditor',
-            valueParser: (params) => {
-                return Object.entries(colourMappings).find(
-                    ([key, color]) => color == params.newValue
-                )?.[0];
-            },
             refData: colourMappings,
             cellRenderer: ColourCellRenderer,
         },

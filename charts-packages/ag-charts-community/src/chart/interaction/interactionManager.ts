@@ -178,7 +178,7 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
                 }
                 this.touchDown = false;
                 this.dragStartElement = undefined;
-                return ['drag-end', 'click'];
+                return ['drag-end'];
 
             case 'mouseout':
             case 'touchcancel':
