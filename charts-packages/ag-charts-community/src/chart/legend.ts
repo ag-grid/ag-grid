@@ -635,6 +635,9 @@ export class Legend {
             this.paginationTrackingIndex = Math.floor((startIndex + endIndex) / 2);
         }
 
+        this.pagination.update();
+        this.pagination.updateMarkers();
+
         this.updatePositions(pageNumber);
         this.chart.update(ChartUpdateType.SCENE_RENDER);
     }
