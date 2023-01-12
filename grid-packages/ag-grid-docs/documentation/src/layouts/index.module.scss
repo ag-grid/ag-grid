@@ -95,6 +95,14 @@ main {
 
     &__framework-selector {
         composes: p-2 from global;
+
+        display: flex;
+        align-items: center;
+
+        span {
+            margin-right: 8px;
+            color: $secondary;
+        }
     }
 }
 

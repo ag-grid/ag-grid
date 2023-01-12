@@ -28,6 +28,7 @@ const TopBar = ({frameworks, framework, path}) => (
                 <Search currentFramework={framework}/>
             </div>
             <div className={styles['top-bar__framework-selector']}>
+                <span>Framework:</span>
                 <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework}/>
             </div>
         </div>

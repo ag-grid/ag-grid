@@ -3,7 +3,8 @@
 
     --height: 44px;
     --icon-size: 26px;
-    --border-width: 2px;
+    
+    $border-width: 2px;
 
     display: flex;
 
@@ -20,12 +21,12 @@
             top: 0;
             left: -2px;
             right: -2px;
-            border: var(--border-width) solid transparent;
+            border: $border-width solid transparent;
             transition: border-color .25s ease-in-out;
         }
 
         &:not(:first-child) {
-            margin-left: var(--border-width);
+            margin-left: $border-width;
         }
 
         &:first-child,
