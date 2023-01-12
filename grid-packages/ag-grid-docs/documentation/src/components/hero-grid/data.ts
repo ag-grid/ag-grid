@@ -175,6 +175,7 @@ export const columnDefs: ColDef[] = [
             return Boolean(data.current) ? ((data.current - last) / data.current) * 100 : 0;
         },
         valueFormatter: ({ value }) => toPercentage({ value, decimalPlaces: 2 }),
+        cellRenderer: 'agAnimateShowChangeCellRenderer',
     },
     {
         field: 'time',
