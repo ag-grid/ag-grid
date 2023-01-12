@@ -25,7 +25,7 @@ export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp
     }
 
     onInputBoxChanged() {
-        if (!this.currentValue) {
+        if (this.currentValue == null) {
             // Remove the filter
             this.params.parentFilterInstance((instance: any) => {
                 instance.myMethodForTakingValueFromFloatingFilter(null);
