@@ -2,7 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/community-modules/solid-lib-starter" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/examples-charts/ag-charts-angular-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/examples-charts/ag-charts-angular-legacy-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/examples-charts/ag-charts-react-example" vcs="Git" />
