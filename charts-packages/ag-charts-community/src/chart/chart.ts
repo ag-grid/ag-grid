@@ -896,10 +896,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.lastInteractionEvent = undefined;
     });
     protected handlePointer(event: InteractionEvent<'hover'>) {
-        if (!event) {
-            return;
-        }
-
         const { lastPick } = this;
         const { pageX, pageY, offsetX, offsetY } = event;
 
@@ -1019,8 +1015,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     changeHighlightDatum(event: HighlightChangeEvent) {
         const seriesToUpdate: Set<Series> = new Set<Series>();
-        const { datum: { series: newSeries = undefined } = {}, datum: newDatum } = event.currentHighlight || {};
-        const { datum: { series: lastSeries = undefined } = {}, datum: lastDatum } = event.previousHighlight || {};
+        const { series: newSeries = undefined, datum: newDatum } = event.currentHighlight || {};
+        const { series: lastSeries = undefined, datum: lastDatum } = event.previousHighlight || {};
 
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);
@@ -1031,10 +1027,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         // Adjust cursor if a specific datum is highlighted, rather than just a series.
-        if (lastSeries?.cursor && lastDatum?.datum) {
+        if (lastSeries?.cursor && lastDatum) {
             this.cursorManager.updateCursor(lastSeries.id);
         }
-        if (newSeries?.cursor && newDatum?.datum) {
+        if (newSeries?.cursor && newDatum) {
             this.cursorManager.updateCursor(newSeries.id, newSeries.cursor);
         }
 
