@@ -513,6 +513,14 @@ export class PieSeries extends PolarSeries {
         const outerRadius = this.getOuterRadius();
         this.radiusScale.range = [innerRadius, outerRadius];
     }
+    getTitleTranslationY() {
+        const outerRadius = Math.max(0, this.radiusScale.range[1]);
+        if (outerRadius === 0) {
+            return NaN;
+        }
+        const titleOffset = 2;
+        return -outerRadius - titleOffset;
+    }
     update() {
         return __awaiter(this, void 0, void 0, function* () {
             const { title } = this;
@@ -520,14 +528,13 @@ export class PieSeries extends PolarSeries {
             this.rootGroup.translationX = this.centerX;
             this.rootGroup.translationY = this.centerY;
             if (title) {
-                const outerRadius = Math.max(0, this.radiusScale.range[1]);
-                if (outerRadius === 0) {
-                    title.node.visible = false;
+                const dy = this.getTitleTranslationY();
+                if (isFinite(dy)) {
+                    title.node.visible = title.enabled;
+                    title.node.translationY = dy;
                 }
                 else {
-                    const titleOffset = 2;
-                    title.node.translationY = -outerRadius - titleOffset;
-                    title.node.visible = title.enabled;
+                    title.node.visible = false;
                 }
             }
             yield this.updateSelections();
@@ -691,11 +698,11 @@ export class PieSeries extends PolarSeries {
             const x = datum.midCos * labelRadius;
             const y = datum.midSin * labelRadius;
             // Detect text overflow
-            this.setTextDimensionalProps(tempTextNode, x, y, label);
+            this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
             const box = tempTextNode.computeBBox();
             const { visibleTextPart, textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box);
             const displayText = visibleTextPart === 1 ? label.text : `${label.text.substring(0, textLength)}…`;
-            this.setTextDimensionalProps(text, x, y, Object.assign(Object.assign({}, label), { text: displayText }));
+            this.setTextDimensionalProps(text, x, y, this.calloutLabel, Object.assign(Object.assign({}, label), { text: displayText }));
             text.fill = color;
             text.visible = !hasVerticalOverflow;
         });
@@ -717,7 +724,7 @@ export class PieSeries extends PolarSeries {
             const labelRadius = outerRadius + calloutLength + offset;
             const x = datum.midCos * labelRadius;
             const y = datum.midSin * labelRadius;
-            this.setTextDimensionalProps(text, x, y, label);
+            this.setTextDimensionalProps(text, x, y, this.calloutLabel, label);
             const box = text.computeBBox();
             if (options.hideWhenNecessary) {
                 const { textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box);
@@ -731,14 +738,26 @@ export class PieSeries extends PolarSeries {
             return box;
         })
             .filter((box) => box != null);
+        if (this.title && this.title.text) {
+            const dy = this.getTitleTranslationY();
+            if (isFinite(dy)) {
+                this.setTextDimensionalProps(text, 0, dy, this.title, {
+                    text: this.title.text,
+                    textBaseline: 'bottom',
+                    textAlign: 'center',
+                    hidden: false,
+                });
+                const box = text.computeBBox();
+                textBoxes.push(box);
+            }
+        }
         if (textBoxes.length === 0) {
             return null;
         }
         return BBox.merge(textBoxes);
     }
-    setTextDimensionalProps(textNode, x, y, label) {
-        const { calloutLabel } = this;
-        const { fontStyle, fontWeight, fontSize, fontFamily } = calloutLabel;
+    setTextDimensionalProps(textNode, x, y, style, label) {
+        const { fontStyle, fontWeight, fontSize, fontFamily } = style;
         textNode.fontStyle = fontStyle;
         textNode.fontWeight = fontWeight;
         textNode.fontSize = fontSize;

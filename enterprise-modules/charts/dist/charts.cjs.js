@@ -12958,7 +12958,12 @@ var InteractionManager = /** @class */ (function (_super) {
         try {
             for (var EVENT_HANDLERS_1 = __values$c(EVENT_HANDLERS), EVENT_HANDLERS_1_1 = EVENT_HANDLERS_1.next(); !EVENT_HANDLERS_1_1.done; EVENT_HANDLERS_1_1 = EVENT_HANDLERS_1.next()) {
                 var type = EVENT_HANDLERS_1_1.value;
-                element.addEventListener(type, _this.eventHandler);
+                if (type.startsWith('touch')) {
+                    element.addEventListener(type, _this.eventHandler, { passive: true });
+                }
+                else {
+                    element.addEventListener(type, _this.eventHandler);
+                }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -21316,9 +21321,17 @@ var PieSeries = /** @class */ (function (_super) {
         var outerRadius = this.getOuterRadius();
         this.radiusScale.range = [innerRadius, outerRadius];
     };
+    PieSeries.prototype.getTitleTranslationY = function () {
+        var outerRadius = Math.max(0, this.radiusScale.range[1]);
+        if (outerRadius === 0) {
+            return NaN;
+        }
+        var titleOffset = 2;
+        return -outerRadius - titleOffset;
+    };
     PieSeries.prototype.update = function () {
         return __awaiter$2(this, void 0, void 0, function () {
-            var title, outerRadius, titleOffset;
+            var title, dy;
             return __generator$2(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -21327,14 +21340,13 @@ var PieSeries = /** @class */ (function (_super) {
                         this.rootGroup.translationX = this.centerX;
                         this.rootGroup.translationY = this.centerY;
                         if (title) {
-                            outerRadius = Math.max(0, this.radiusScale.range[1]);
-                            if (outerRadius === 0) {
-                                title.node.visible = false;
+                            dy = this.getTitleTranslationY();
+                            if (isFinite(dy)) {
+                                title.node.visible = title.enabled;
+                                title.node.translationY = dy;
                             }
                             else {
-                                titleOffset = 2;
-                                title.node.translationY = -outerRadius - titleOffset;
-                                title.node.visible = title.enabled;
+                                title.node.visible = false;
                             }
                         }
                         return [4 /*yield*/, this.updateSelections()];
@@ -21523,11 +21535,11 @@ var PieSeries = /** @class */ (function (_super) {
             var x = datum.midCos * labelRadius;
             var y = datum.midSin * labelRadius;
             // Detect text overflow
-            _this.setTextDimensionalProps(tempTextNode, x, y, label);
+            _this.setTextDimensionalProps(tempTextNode, x, y, _this.calloutLabel, label);
             var box = tempTextNode.computeBBox();
             var _a = _this.getLabelOverflow(label.text, box), visibleTextPart = _a.visibleTextPart, textLength = _a.textLength, hasVerticalOverflow = _a.hasVerticalOverflow;
             var displayText = visibleTextPart === 1 ? label.text : label.text.substring(0, textLength) + "\u2026";
-            _this.setTextDimensionalProps(text, x, y, __assign$k(__assign$k({}, label), { text: displayText }));
+            _this.setTextDimensionalProps(text, x, y, _this.calloutLabel, __assign$k(__assign$k({}, label), { text: displayText }));
             text.fill = color;
             text.visible = !hasVerticalOverflow;
         });
@@ -21550,7 +21562,7 @@ var PieSeries = /** @class */ (function (_super) {
             var labelRadius = outerRadius + calloutLength + offset;
             var x = datum.midCos * labelRadius;
             var y = datum.midSin * labelRadius;
-            _this.setTextDimensionalProps(text, x, y, label);
+            _this.setTextDimensionalProps(text, x, y, _this.calloutLabel, label);
             var box = text.computeBBox();
             if (options.hideWhenNecessary) {
                 var _a = _this.getLabelOverflow(label.text, box), textLength = _a.textLength, hasVerticalOverflow = _a.hasVerticalOverflow;
@@ -21564,14 +21576,26 @@ var PieSeries = /** @class */ (function (_super) {
             return box;
         })
             .filter(function (box) { return box != null; });
+        if (this.title && this.title.text) {
+            var dy = this.getTitleTranslationY();
+            if (isFinite(dy)) {
+                this.setTextDimensionalProps(text, 0, dy, this.title, {
+                    text: this.title.text,
+                    textBaseline: 'bottom',
+                    textAlign: 'center',
+                    hidden: false,
+                });
+                var box = text.computeBBox();
+                textBoxes.push(box);
+            }
+        }
         if (textBoxes.length === 0) {
             return null;
         }
         return BBox.merge(textBoxes);
     };
-    PieSeries.prototype.setTextDimensionalProps = function (textNode, x, y, label) {
-        var calloutLabel = this.calloutLabel;
-        var fontStyle = calloutLabel.fontStyle, fontWeight = calloutLabel.fontWeight, fontSize = calloutLabel.fontSize, fontFamily = calloutLabel.fontFamily;
+    PieSeries.prototype.setTextDimensionalProps = function (textNode, x, y, style, label) {
+        var fontStyle = style.fontStyle, fontWeight = style.fontWeight, fontSize = style.fontSize, fontFamily = style.fontFamily;
         textNode.fontStyle = fontStyle;
         textNode.fontWeight = fontWeight;
         textNode.fontSize = fontSize;
@@ -33887,6 +33911,7 @@ function upgradeChartModel(model) {
     model = migrateIfBefore('26.2.0', model, migrateV26_2);
     model = migrateIfBefore('28.0.0', model, migrateV28);
     model = migrateIfBefore('28.2.0', model, migrateV28_2);
+    model = migrateIfBefore('29.0.0', model, migrateV29);
     model = cleanup(model);
     // Bump version to latest.
     model = migrateIfBefore(VERSION, model, function (m) { return m; });
@@ -34000,6 +34025,15 @@ function migrateV28_2(model) {
     // series.yNames => yName ?
     return model;
 }
+function migrateV29(model) {
+    model = jsonMoveIfMissing('chartOptions.scatter.series.fill', 'chartOptions.scatter.series.marker.fill', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.fillOpacity', 'chartOptions.scatter.series.marker.fillOpacity', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.stroke', 'chartOptions.scatter.series.marker.stroke', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.strokeOpacity', 'chartOptions.scatter.series.marker.strokeOpacity', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.strokeWidth', 'chartOptions.scatter.series.marker.strokeWidth', model);
+    model = jsonMove('chartOptions.scatter.series.paired', 'chartOptions.scatter.paired', model);
+    return model;
+}
 function cleanup(model) {
     // Remove fixed width/height - this has never been supported via UI configuration.
     model = jsonDelete('chartOptions.*.width', model);
@@ -34097,6 +34131,23 @@ function jsonMove(from, to, json) {
     }
     return jsonMutateProperty(to, false, json, function (parent, prop) {
         parent[prop] = valueToMove;
+    });
+}
+function jsonMoveIfMissing(from, to, json) {
+    var valueToMove = undefined;
+    var valueFound = false;
+    json = jsonMutateProperty(from, true, json, function (parent, prop) {
+        valueFound = true;
+        valueToMove = parent[prop];
+        delete parent[prop];
+    });
+    if (!valueFound) {
+        return json;
+    }
+    return jsonMutateProperty(to, false, json, function (parent, prop) {
+        if (parent[prop] === undefined) {
+            parent[prop] = valueToMove;
+        }
     });
 }
 function jsonRename(path, renameTo, json) {

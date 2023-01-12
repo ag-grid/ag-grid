@@ -100,7 +100,12 @@ var InteractionManager = /** @class */ (function (_super) {
         try {
             for (var EVENT_HANDLERS_1 = __values(EVENT_HANDLERS), EVENT_HANDLERS_1_1 = EVENT_HANDLERS_1.next(); !EVENT_HANDLERS_1_1.done; EVENT_HANDLERS_1_1 = EVENT_HANDLERS_1.next()) {
                 var type = EVENT_HANDLERS_1_1.value;
-                element.addEventListener(type, _this.eventHandler);
+                if (type.startsWith('touch')) {
+                    element.addEventListener(type, _this.eventHandler, { passive: true });
+                }
+                else {
+                    element.addEventListener(type, _this.eventHandler);
+                }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }

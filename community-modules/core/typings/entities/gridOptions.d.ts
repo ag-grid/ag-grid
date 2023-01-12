@@ -536,7 +536,7 @@ export interface GridOptions<TData = any> {
      * Default: `2`
      */
     maxConcurrentDatasourceRequests?: number;
-    /** How many milliseconds to wait before loading a block. Useful when infinite scrolling and scrolling over many infinite blocks, as it prevents blocks loading until scrolling has settled. */
+    /** How many milliseconds to wait before loading a block. Useful when scrolling over many blocks, as it prevents blocks loading until scrolling has settled. */
     blockLoadDebounceMillis?: number;
     /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false`  */
     purgeClosedRowNodes?: boolean;
@@ -547,14 +547,13 @@ export interface GridOptions<TData = any> {
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
     serverSideFilterAllLevels?: boolean;
     /**
-     * When enabled, Sorting will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,
-     * as Sorting is always server side when Infinite Scroll is active.
+     *
+     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * Default: `false`
      */
     serverSideSortOnServer?: boolean;
     /**
-     * When enabled, Filtering will be done on the server side. When suppressServerSideInfiniteScroll=false, does nothing,
-     * as Filtering is always server side when Infinite Scroll is active.
+    * When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * Default: `false`
      */
     serverSideFilterOnServer?: boolean;

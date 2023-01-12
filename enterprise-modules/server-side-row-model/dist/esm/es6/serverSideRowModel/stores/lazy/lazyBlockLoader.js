@@ -101,11 +101,13 @@ export class LazyBlockLoader extends BeanStub {
             this.rowNodeBlockLoader.loadComplete();
             this.cache.onLoadSuccess(startRow, endRow - startRow, params);
             removeNodesFromLoadingMap();
+            this.queueLoadAction();
         };
         const fail = () => {
             this.rowNodeBlockLoader.loadComplete();
             this.cache.onLoadFailed(startRow, endRow - startRow);
             removeNodesFromLoadingMap();
+            this.queueLoadAction();
         };
         const params = {
             request,

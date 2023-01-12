@@ -59,7 +59,15 @@ var Sparkline = /** @class */ (function () {
         this._height = 100;
         this.smallestInterval = undefined;
         this.layoutId = 0;
-        this.defaultDateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'short', timeStyle: 'medium', hour12: false });
+        this.defaultDateFormatter = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+        });
         this._onMouseMove = this.onMouseMove.bind(this);
         this._onMouseOut = this.onMouseOut.bind(this);
         var root = new ag_charts_community_1._Scene.Group();

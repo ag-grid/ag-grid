@@ -45670,7 +45670,7 @@ var __decorate$A = (undefined && undefined.__decorate) || function (decorators, 
         var invisibleScrollbar = this.invisibleScrollbar;
         var isSuppressHorizontalScroll = this.gridOptionsService.is('suppressHorizontalScroll');
         var scrollbarWidth = hScrollShowing ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
-        var adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 15 : scrollbarWidth;
+        var adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 16 : scrollbarWidth;
         var scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
         this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
         setFixedHeight(this.getGui(), scrollContainerSize);

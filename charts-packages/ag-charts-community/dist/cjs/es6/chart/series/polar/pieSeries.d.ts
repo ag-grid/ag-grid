@@ -146,6 +146,7 @@ export declare class PieSeries extends PolarSeries<PieNodeDatum> {
     private getInnerRadius;
     private getOuterRadius;
     updateRadiusScale(): void;
+    private getTitleTranslationY;
     update(): Promise<void>;
     private updateSelections;
     private updateGroupSelection;

@@ -134,6 +134,7 @@ var LazyCache = /** @class */ (function (_super) {
             node.setRowIndex(displayIndex);
             node.setRowTop(rowBounds.rowTop);
         });
+        this.rowLoader.queueLoadAction();
         return newNode;
     };
     LazyCache.prototype.getRowByStoreIndex = function (index) {
@@ -372,7 +373,7 @@ var LazyCache = /** @class */ (function (_super) {
             // may not have an end node if the block came back small 
             if (_this.nodeIndexMap[blockEnd - 1])
                 distEnd = Math.abs(_this.nodeIndexMap[blockEnd - 1].rowIndex - otherDisplayIndex);
-            var farthest = distEnd == null || distStart > distEnd ? distStart : distEnd;
+            var farthest = distEnd == null || distStart < distEnd ? distStart : distEnd;
             blockDistanceToMiddle[blockStart] = farthest;
         });
         return Object.entries(blockDistanceToMiddle);
@@ -669,7 +670,7 @@ var LazyCache = /** @class */ (function (_super) {
         for (var i = 0; i < allNodes.length; i++) {
             _loop_1(i);
         }
-        this.numberOfRows -= deletedNodeCount;
+        this.numberOfRows -= this.isLastRowIndexKnown() ? idsToRemove.length : deletedNodeCount;
         if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
             nodesToVerify.forEach(function (node) { return node.__needsRefreshWhenVisible = true; });
             this.rowLoader.queueLoadAction();

@@ -12802,7 +12802,12 @@ var InteractionManager = /** @class */ (function (_super) {
         try {
             for (var EVENT_HANDLERS_1 = __values$7(EVENT_HANDLERS), EVENT_HANDLERS_1_1 = EVENT_HANDLERS_1.next(); !EVENT_HANDLERS_1_1.done; EVENT_HANDLERS_1_1 = EVENT_HANDLERS_1.next()) {
                 var type = EVENT_HANDLERS_1_1.value;
-                element.addEventListener(type, _this.eventHandler);
+                if (type.startsWith('touch')) {
+                    element.addEventListener(type, _this.eventHandler, { passive: true });
+                }
+                else {
+                    element.addEventListener(type, _this.eventHandler);
+                }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -21160,9 +21165,17 @@ function isPointInArc(x, y, sector) {
         var outerRadius = this.getOuterRadius();
         this.radiusScale.range = [innerRadius, outerRadius];
     };
+    PieSeries.prototype.getTitleTranslationY = function () {
+        var outerRadius = Math.max(0, this.radiusScale.range[1]);
+        if (outerRadius === 0) {
+            return NaN;
+        }
+        var titleOffset = 2;
+        return -outerRadius - titleOffset;
+    };
     PieSeries.prototype.update = function () {
         return __awaiter$1(this, void 0, void 0, function () {
-            var title, outerRadius, titleOffset;
+            var title, dy;
             return __generator$1(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -21171,14 +21184,13 @@ function isPointInArc(x, y, sector) {
                         this.rootGroup.translationX = this.centerX;
                         this.rootGroup.translationY = this.centerY;
                         if (title) {
-                            outerRadius = Math.max(0, this.radiusScale.range[1]);
-                            if (outerRadius === 0) {
-                                title.node.visible = false;
+                            dy = this.getTitleTranslationY();
+                            if (isFinite(dy)) {
+                                title.node.visible = title.enabled;
+                                title.node.translationY = dy;
                             }
                             else {
-                                titleOffset = 2;
-                                title.node.translationY = -outerRadius - titleOffset;
-                                title.node.visible = title.enabled;
+                                title.node.visible = false;
                             }
                         }
                         return [4 /*yield*/, this.updateSelections()];
@@ -21367,11 +21379,11 @@ function isPointInArc(x, y, sector) {
             var x = datum.midCos * labelRadius;
             var y = datum.midSin * labelRadius;
             // Detect text overflow
-            _this.setTextDimensionalProps(tempTextNode, x, y, label);
+            _this.setTextDimensionalProps(tempTextNode, x, y, _this.calloutLabel, label);
             var box = tempTextNode.computeBBox();
             var _a = _this.getLabelOverflow(label.text, box), visibleTextPart = _a.visibleTextPart, textLength = _a.textLength, hasVerticalOverflow = _a.hasVerticalOverflow;
             var displayText = visibleTextPart === 1 ? label.text : label.text.substring(0, textLength) + "\u2026";
-            _this.setTextDimensionalProps(text, x, y, __assign$a(__assign$a({}, label), { text: displayText }));
+            _this.setTextDimensionalProps(text, x, y, _this.calloutLabel, __assign$a(__assign$a({}, label), { text: displayText }));
             text.fill = color;
             text.visible = !hasVerticalOverflow;
         });
@@ -21394,7 +21406,7 @@ function isPointInArc(x, y, sector) {
             var labelRadius = outerRadius + calloutLength + offset;
             var x = datum.midCos * labelRadius;
             var y = datum.midSin * labelRadius;
-            _this.setTextDimensionalProps(text, x, y, label);
+            _this.setTextDimensionalProps(text, x, y, _this.calloutLabel, label);
             var box = text.computeBBox();
             if (options.hideWhenNecessary) {
                 var _a = _this.getLabelOverflow(label.text, box), textLength = _a.textLength, hasVerticalOverflow = _a.hasVerticalOverflow;
@@ -21408,14 +21420,26 @@ function isPointInArc(x, y, sector) {
             return box;
         })
             .filter(function (box) { return box != null; });
+        if (this.title && this.title.text) {
+            var dy = this.getTitleTranslationY();
+            if (isFinite(dy)) {
+                this.setTextDimensionalProps(text, 0, dy, this.title, {
+                    text: this.title.text,
+                    textBaseline: 'bottom',
+                    textAlign: 'center',
+                    hidden: false,
+                });
+                var box = text.computeBBox();
+                textBoxes.push(box);
+            }
+        }
         if (textBoxes.length === 0) {
             return null;
         }
         return BBox.merge(textBoxes);
     };
-    PieSeries.prototype.setTextDimensionalProps = function (textNode, x, y, label) {
-        var calloutLabel = this.calloutLabel;
-        var fontStyle = calloutLabel.fontStyle, fontWeight = calloutLabel.fontWeight, fontSize = calloutLabel.fontSize, fontFamily = calloutLabel.fontFamily;
+    PieSeries.prototype.setTextDimensionalProps = function (textNode, x, y, style, label) {
+        var fontStyle = style.fontStyle, fontWeight = style.fontWeight, fontSize = style.fontSize, fontFamily = style.fontFamily;
         textNode.fontStyle = fontStyle;
         textNode.fontWeight = fontWeight;
         textNode.fontSize = fontSize;
@@ -25001,7 +25025,15 @@ var Sparkline = /** @class */ (function () {
         this._height = 100;
         this.smallestInterval = undefined;
         this.layoutId = 0;
-        this.defaultDateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'short', timeStyle: 'medium', hour12: false });
+        this.defaultDateFormatter = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+        });
         this._onMouseMove = this.onMouseMove.bind(this);
         this._onMouseOut = this.onMouseOut.bind(this);
         var root = new Group();

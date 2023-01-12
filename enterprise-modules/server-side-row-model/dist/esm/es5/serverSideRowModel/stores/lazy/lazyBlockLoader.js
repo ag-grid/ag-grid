@@ -141,11 +141,13 @@ var LazyBlockLoader = /** @class */ (function (_super) {
             _this.rowNodeBlockLoader.loadComplete();
             _this.cache.onLoadSuccess(startRow, endRow - startRow, params);
             removeNodesFromLoadingMap();
+            _this.queueLoadAction();
         };
         var fail = function () {
             _this.rowNodeBlockLoader.loadComplete();
             _this.cache.onLoadFailed(startRow, endRow - startRow);
             removeNodesFromLoadingMap();
+            _this.queueLoadAction();
         };
         var params = {
             request: request,

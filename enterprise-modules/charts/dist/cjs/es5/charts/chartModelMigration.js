@@ -69,6 +69,7 @@ function upgradeChartModel(model) {
     model = migrateIfBefore('26.2.0', model, migrateV26_2);
     model = migrateIfBefore('28.0.0', model, migrateV28);
     model = migrateIfBefore('28.2.0', model, migrateV28_2);
+    model = migrateIfBefore('29.0.0', model, migrateV29);
     model = cleanup(model);
     // Bump version to latest.
     model = migrateIfBefore(version_1.VERSION, model, function (m) { return m; });
@@ -186,6 +187,15 @@ function migrateV28_2(model) {
     // series.yNames => yName ?
     return model;
 }
+function migrateV29(model) {
+    model = jsonMoveIfMissing('chartOptions.scatter.series.fill', 'chartOptions.scatter.series.marker.fill', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.fillOpacity', 'chartOptions.scatter.series.marker.fillOpacity', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.stroke', 'chartOptions.scatter.series.marker.stroke', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.strokeOpacity', 'chartOptions.scatter.series.marker.strokeOpacity', model);
+    model = jsonMoveIfMissing('chartOptions.scatter.series.strokeWidth', 'chartOptions.scatter.series.marker.strokeWidth', model);
+    model = jsonMove('chartOptions.scatter.series.paired', 'chartOptions.scatter.paired', model);
+    return model;
+}
 function cleanup(model) {
     // Remove fixed width/height - this has never been supported via UI configuration.
     model = jsonDelete('chartOptions.*.width', model);
@@ -243,6 +253,8 @@ function migrateIfBefore(maxVersion, model, migration) {
             console.log('AG Grid: ChartModel migration', { migratingTo: maxVersion });
         var result = migration(model);
         result.version = maxVersion;
+        if (DEBUG)
+            console.log('AG Grid: ChartModel migration', { migratedTo: maxVersion, result: result });
         return result;
     }
     return model;
@@ -290,6 +302,23 @@ function jsonMove(from, to, json) {
     }
     return jsonMutateProperty(to, false, json, function (parent, prop) {
         parent[prop] = valueToMove;
+    });
+}
+function jsonMoveIfMissing(from, to, json) {
+    var valueToMove = undefined;
+    var valueFound = false;
+    json = jsonMutateProperty(from, true, json, function (parent, prop) {
+        valueFound = true;
+        valueToMove = parent[prop];
+        delete parent[prop];
+    });
+    if (!valueFound) {
+        return json;
+    }
+    return jsonMutateProperty(to, false, json, function (parent, prop) {
+        if (parent[prop] === undefined) {
+            parent[prop] = valueToMove;
+        }
     });
 }
 function jsonRename(path, renameTo, json) {
