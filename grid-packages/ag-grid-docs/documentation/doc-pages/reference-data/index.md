@@ -82,7 +82,7 @@ The following example demonstrates how `Value Handlers` can be combined to work 
 
 - **'Exterior Colour' Column:** uses the built-in `'richSelect'` Cell Editor. Mapped names are displayed in the dropdown list and selections are saved as `'colour'` codes in the underlying data.
 
-- **'Interior Colour' Column:** uses a Text Cell Editor with `useFormatter=true`. Mapped names are displayed in the cells and edited values are saved as `'colour'` codes in the underlying data. (Note: a valid name must be entered.)
+- **'Interior Colour' Column:** uses a Text Cell Editor with `useFormatter=true`. Mapped names are displayed in the cells and edited values are saved as `'colour'` codes in the underlying data. (Note: a valid name must be entered or the value will be saved as undefined.)
 
 - **Set Filters:** display a list of names rather than codes.
 
@@ -124,7 +124,7 @@ The following example demonstrates how the `refData` property simplifies working
 
 - **'Exterior Colour' Column:** uses the built-in `'richSelect'` Cell Editor with the `refData` property specified. Mapped names are displayed in the dropdown list and selections are saved as `'colour'` codes in the underlying data.
 
-- **'Interior Colour' Column:** uses a Text Cell Editor with the `refData` property specified. Mapped names are displayed in the cells and edited values are saved as `'colour'` codes in the underlying data. (Note: a valid name must be entered.)
+- **'Interior Colour' Column:** uses a Text Cell Editor (not recommended) with `refData`. Mapped names are displayed in the cells but when editing, colour codes (`cb`,`bw`,`fg`) must be entered directly. As users should not know codes, the Text Cell Editor is not recommended for use with `refData` in real world applications.
 
 - **Set Filters:** display a list of names rather than codes.
 
