@@ -1,9 +1,16 @@
 .framework-selector {
     --height: 44px;
     --icon-size: 26px;
+    --font-size: 16px;
 
     display: flex;
     font-weight: 500;
+
+    @media screen and (min-width: 960px) {
+        --height: 62px;
+        --icon-size: 36px;
+        --font-size: 22px;
+    }
 }
 
 .framework-selector__option {
@@ -11,6 +18,8 @@
     $selected-color: #3798f9;
 
     position: relative;
+    display: flex;
+    align-items: center;
     padding: calc((var(--height) - var(--icon-size)) / 2);
     text-decoration: none;
     background-color: white;
@@ -65,12 +74,16 @@
     span {
         display: none;
         margin-left: 4px;
+        font-size: var(--font-size);
         color: #212529;
-        opacity: .6666;
         transition: opacity .25s ease-in-out;
 
-        @media screen and ( min-width: 860px ) {
+        @media screen and ( min-width: 680px ) {
             display: inline;
+        }
+
+        @media screen and ( min-width: 960px ) {
+            margin-left: 8px;
         }
     }
 

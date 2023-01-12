@@ -32,9 +32,8 @@ const Default = () => {
                     </section>
                 </div>
                 <div className={styles['stage-frameworks']}>
-                    <section className={styles['stage-frameworks__section-frameworks']}>
-                        <HomepageFrameWorkSelector frameworks={['javascript', 'react', 'angular', 'vue', 'solid']} />
-                    </section>
+                    <span className={styles['stage-frameworks__label']}>Get started</span>
+                    <HomepageFrameWorkSelector frameworks={['javascript', 'react', 'angular', 'vue', 'solid']} />
                 </div>
 
                 <div className={styles['stage-description']}>

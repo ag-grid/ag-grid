@@ -80,157 +80,33 @@ body {
 }
 
 .stage-frameworks {
-    @extend %stage;
-    background-color: $offwhite;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 24px;
+    padding-bottom: 48px;
+    background-color: $ag-site-fw-background;
 
-    &__section-frameworks {
-        @extend .align-items-center;
+    @media screen and ( min-width: 460px ) {
+        padding-top: 48px;
+        flex-direction: row;
+    }
+}
 
-        & > div {
-            width: 100%;
-            margin: 0 auto;
-        }
+.stage-frameworks__label {
+    opacity: .6666;
+    margin-bottom: 8px;
 
-        h2 {
-            @extend .display-4, .text-center, .mb-3;
-        }
-
-        &__framework-boxes {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-
-            @include media-breakpoint-up(sm) {
-                grid-template-columns: repeat(2, 1fr);
-
-                &__framework-box:last-child {
-                    display: flex;
-                    grid-column: 1 / 3;
-                    justify-content: center;
-
-                    > div {
-                        width: calc(50% - 20px);
-                    }
-                }
-            }
-
-            @include media-breakpoint-up(xl) {
-                grid-template-columns: repeat(5, 1fr);
-
-                &__framework-box:last-child {
-                    display: unset;
-                    grid-column: unset;
-
-                    > div {
-                        width: unset;
-                    }
-                }
-            }
-
-            box-sizing: border-box;
-
-            &__framework-box {
-                padding: 20px;
-            }
-        }
-
-        &__box-shadow {
-            box-shadow: 0 1px 5px 0 lightgray, 0 2px 2px 0 lightgray, 0 3px 1px -2px lightgray;
-            border-radius: 3px;
-        }
-
-        &__box-contents {
-            display: flex;
-            height: 80px;
-            padding: 25px;
-            align-items: center;
-            justify-content: center;
-        }
-
-        &__box-contents img {
-            width: 40px;
-            height: 40px;
-            margin-right: 14px;
-        }
+    @media screen and ( min-width: 460px ) {
+        margin-bottom: 0;
+        margin-right: 8px;
     }
 
-    &__frameworks {
-        @extend .row, .no-gutters, .list-unstyled;
-
-        li {
-            @extend .col-md-3, .text-center, .px-0;
-            min-width: 11em;
-
-            a {
-                @extend .d-block;
-
-                animation-duration: 1s;
-                animation-iteration-count: 1;
-                animation-name: fadein;
-
-                display: block;
-                background-size: 6em;
-                background-repeat: no-repeat;
-                background-position-x: center;
-                background-position-y: calc(50% - 1em);
-                padding-top: 8em;
-                padding-bottom: 1em;
-                color: $blue-2;
-                height: 100%;
-                transition: all 0.5s ease-out;
-                will-change: color, background-color, box-shadow;
-
-                &:hover {
-                    @extend %card;
-                    color: $white;
-                    background-color: $blue-2;
-                    text-decoration: none;
-                }
-            }
-        }
-
-        $frameworks: javascript angular react vue angularjs aurelia webcomponents;
-
-        @each $framework in $frameworks {
-            $i: index($frameworks, $framework);
-
-            &__fw-#{$framework} a {
-                background-image: url("../fw-logos/#{$framework}.svg");
-
-                @media (max-width: 767px) {
-                    border-bottom: 1px solid $gray-300;
-                }
-
-                @media (min-width: 768px) and (max-width: 968px) {
-                    @if $i < 7 {
-                        border-bottom: 1px solid $gray-300;
-                    }
-
-                    @if $i % 2 != 0 {
-                        border-right: 1px solid $gray-300;
-                    }
-                }
-
-                @media (min-width: 969px) and (max-width: 1256px) {
-                    @if $i < 7 {
-                        border-bottom: 1px solid $gray-300;
-                    }
-
-                    @if $i % 3 != 0 {
-                        border-right: 1px solid $gray-300;
-                    }
-                }
-
-                @media (min-width: 1257px) {
-                    @if $i < 5 {
-                        border-bottom: 1px solid $gray-300;
-                    }
-
-                    @if $i % 4 != 0 {
-                        border-right: 1px solid $gray-300;
-                    }
-                }
-            }
-        }
+    @media screen and ( min-width: 960px ) {
+        font-size: 22px;
+        margin-right: 16px;
     }
 }
 
