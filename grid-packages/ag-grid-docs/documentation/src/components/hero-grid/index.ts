@@ -16,6 +16,8 @@ const rowData = generateStocks();
 const gridOptions: GridOptions = {
     columnDefs,
     rowData,
+    rowHeight: 40,
+    headerHeight: 30,
     defaultColDef: {
         resizable: true,
         sortable: true,
