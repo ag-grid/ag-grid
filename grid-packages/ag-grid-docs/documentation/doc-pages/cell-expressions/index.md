@@ -33,7 +33,7 @@ const gridOptions = {
 
 ## Example Column Definition Expressions
 
-Below is a very similar example to ["Example: Getters, Setters, Formatters, Parsers"](/value-getters/#example-value-getters). The difference is that expressions are used instead of functions. For example, where a `valueGetter` is used, a string is provided instead of a function.
+In this example string expressions are used instead of functions for `valueGetter`, `valueSetter`, `valueFormatter` and `valueParser`.
 
 <grid-example title='Column Definition Expressions' name='column-definition-expressions' type='mixed' options='{ "exampleHeight": 560 }'></grid-example>
 
