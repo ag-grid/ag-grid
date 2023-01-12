@@ -1,0 +1,84 @@
+.framework-selector {
+    --height: 44px;
+    --icon-size: 26px;
+
+    display: flex;
+    font-weight: 500;
+}
+
+.framework-selector__option {
+    $border-width: 2px;
+    $selected-color: #3798f9;
+
+    position: relative;
+    padding: calc((var(--height) - var(--icon-size)) / 2);
+    text-decoration: none;
+    background-color: white;
+
+    &:not(:first-child) {
+        margin-left: $border-width;
+    }
+
+    // Using ::after to create borders to create pleasant overlap
+    &::after {
+        content: "";
+        position: absolute;
+        height: 100%;
+        top: 0;
+        left: -$border-width;
+        right: -$border-width;
+        border: $border-width solid transparent;
+        transition: border-color .25s ease-in-out;
+    }
+
+    &:first-child::after {
+        left: 0;
+    }
+
+    &:last-child::after {
+        right: 0;
+    }
+
+    &:first-child,
+    &:first-child::after {
+        padding-left: calc(var(--height) / 2.25);
+        border-top-left-radius: calc(var(--height) / 2);
+        border-bottom-left-radius: calc(var(--height) / 2);
+    }
+
+    &:last-child,
+    &:last-child::after {
+        padding-right: calc(var(--height) / 2.5);
+        border-top-right-radius: calc(var(--height) / 2);
+        border-bottom-right-radius: calc(var(--height) / 2);
+    }
+
+    &:hover::after {
+        border-color: rgba($selected-color, 0.5);
+    }
+
+    img {
+        width: var(--icon-size);
+        height: var(--icon-size);
+    }
+
+    span {
+        display: none;
+        margin-left: 4px;
+        color: #212529;
+        opacity: .6666;
+        transition: opacity .25s ease-in-out;
+
+        @media screen and ( min-width: 860px ) {
+            display: inline;
+        }
+    }
+
+    &:hover {
+        text-decoration: none;
+
+        span {
+            opacity: .85;
+        }
+    }
+}

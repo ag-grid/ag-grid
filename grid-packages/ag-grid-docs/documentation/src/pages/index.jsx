@@ -1,6 +1,7 @@
 import React from 'react';
 // @ts-ignore
 import styles from './components/assets/homepage/homepage.module.scss';
+import HomepageFrameWorkSelector from '../components/HomepageFrameWorkSelector';
 import Footer from '../components/footer/Footer';
 import Seo from "./components/SEO";
 import {agGridVersion} from "../utils/consts";
@@ -32,71 +33,7 @@ const Default = () => {
                 </div>
                 <div className={styles['stage-frameworks']}>
                     <section className={styles['stage-frameworks__section-frameworks']}>
-                        <div>
-                            <h2>Get Started</h2>
-                        </div>
-                        <div className={styles['stage-frameworks__section-frameworks__framework-boxes']}>
-                            <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
-                                <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
-                                    <a href="/javascript-data-grid/" style={{textDecoration: "none"}}>
-                                        <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
-                                            <img src="images/fw-logos/javascript.svg" alt="JavaScript"/>
-                                            <div>
-                                                <h3>JavaScript</h3>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
-                                <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
-                                    <a href="/react-data-grid/" style={{textDecoration: "none"}}>
-                                        <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
-                                            <img src="images/fw-logos/react.svg" alt="React"/>
-                                            <div>
-                                                <h3>React</h3>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
-                                <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
-                                    <a href="/angular-data-grid/" style={{textDecoration: "none"}}>
-                                        <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
-                                            <img src="images/fw-logos/angular.svg" alt="Angular"/>
-                                            <div>
-                                                <h3>Angular</h3>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
-                                <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
-                                    <a href="/vue-data-grid/" style={{textDecoration: "none"}}>
-                                        <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
-                                            <img src="images/fw-logos/vue.svg" alt="Vue"/>
-                                            <div>
-                                                <h3>Vue</h3>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
-                                <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
-                                    <a href="/react-data-grid/solidjs/" style={{textDecoration: "none"}}>
-                                        <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
-                                            <img src="images/fw-logos/solid.svg" alt="SolidJS"/>
-                                            <div>
-                                                <h3>Solid</h3>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                        <HomepageFrameWorkSelector frameworks={['javascript', 'react', 'angular', 'vue', 'solid']} />
                     </section>
                 </div>
 
