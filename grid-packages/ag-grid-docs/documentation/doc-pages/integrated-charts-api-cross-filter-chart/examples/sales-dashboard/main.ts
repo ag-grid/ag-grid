@@ -34,14 +34,6 @@ const gridOptions: GridOptions = {
   enableCharts: true,
   chartThemes: ['ag-default-dark'],
   chartThemeOverrides: {
-    common: {
-      padding: {
-        top: 20,
-        right: 40,
-        bottom: 20,
-        left: 30,
-      },
-    },
     cartesian: {
       axes: {
         category: {

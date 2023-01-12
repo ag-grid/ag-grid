@@ -34,14 +34,6 @@ const gridOptions: GridOptions = {
   enableCharts: true,
   chartThemes: ['ag-default-dark'],
   chartThemeOverrides: {
-    common: {
-      padding: {
-        top: 20,
-        right: 40,
-        bottom: 20,
-        left: 30,
-      },
-    },
     cartesian: {
       axes: {
         category: {
@@ -141,12 +133,6 @@ function createHandsetSalesChart(gridApi: GridApi) {
         },
         legend: {
           enabled: false,
-        },
-        padding: {
-          top: 20,
-          right: 60,
-          bottom: 20,
-          left: 50,
         },
       }
     },
