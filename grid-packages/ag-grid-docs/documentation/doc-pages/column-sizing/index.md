@@ -49,7 +49,7 @@ if Column A has a default size twice as wide as Column B, then after calling `ap
 will still be twice the size of Column B, assuming no Column min-width or max-width constraints are violated.
 
 Column default widths, rather than current widths, are used while calculating the new widths. This ensures
-the result is deterministic and not depend on any Column resizing the user may have manually done.
+the result is deterministic and does not depend on any Column resizing the user may have manually done.
 
 The function can receive a parameters object with minimum and maximum widths, either for all columns or for specific columns, to further restrain the column's resulting width from that function call. These widths will not exceed the column's defined minimum and maximum widths.
 

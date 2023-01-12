@@ -161,8 +161,12 @@ export function addDocLines(docs, lines) {
     if (!docs || docs.length === 0) {
         return;
     }
-    docs.replace('/**', '//').replace('\n */', '').split(/\n/g).forEach(s => {
-        lines.push(`  ${s.replace('*/', '').replace(' *', '//')}`);
+
+    const indentReg = /\s+\*(?!\*)/g;
+    const lastNewLine = /\n\s+\*\//g;
+
+    docs.replace('/**', '//').replace(lastNewLine, '').split(/\n/g).forEach(s => {
+        lines.push(`  ${s.replace('*/', '').replace(indentReg, '//')}`);
     });
 }
 

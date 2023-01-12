@@ -40,7 +40,16 @@ Order is important here - the order of the components provided will determine th
 
 ## Initialisation of Status Bar Components
 
-Please refer to the documentation [here.](/status-bar/#initialisation-of-status-bar-components)
+The status bar components will be instantiated before the grid is fully initialised - specifically they will be initialised
+before any row data has been rendered.
+
+If you have a component that you wish to work on data once it's ready (calculate the sum of a column for example) then you'll
+need to hook into the `modelUpdated` event. Remember to remove the event listener when the component is destroyed. 
+
+md-include:init-javascript.md
+md-include:init-angular.md
+md-include:init-react.md
+md-include:init-vue.md
 
 ## Accessing Status Bar Panel Instances
 

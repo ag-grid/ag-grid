@@ -7,7 +7,7 @@ The status bar appears below the grid and holds components that typically displa
 
 Within the Status Bar you can specify which Status Bar Panels you want to display.
 
-Status Bar Panels allow you to add your own components to the grid's Status Bar. Use this when the provided status bar panels do not meet your requirements.
+Status Bar Panels allow you to add your own [custom components](/component-status-bar/) to the grid's Status Bar. Use this when the provided status bar panels do not meet your requirements.
 
 ## Grid Provided Status Bar Components
 
@@ -132,27 +132,7 @@ The example below demonstrates providing parameters to the status bar components
 ## Initialisation of Status Bar Components
 
 The status bar components will be instantiated before the grid is fully initialised - specifically they will be initialised
-before any row data has been rendered.
-
-If you have a component that you wish to work on data once it's ready (calculate the sum of a column for example) then you'll
-need to hook into either the `gridReady` or the `firstDataRendered` events.
-
-```js
-class ClickableStatusBarComponent() {
-  init(params) {
-    this.params = params;
-    
-    // No rows will be available yet
-    console.log(params.api.getModel().rowsToDisplay);
-
-    params.api.addEventListener('firstDataRendered', () => {
-        // On the firstDataRendered event rows will now be available
-        console.log(params.api.getModel().rowsToDisplay);
-    });
-
-  }
-}
-```
+before any row data has been rendered. See [here](/status-bar/#initialisation-of-status-bar-components) for more information.
 
 ## Status Bar Height
 
