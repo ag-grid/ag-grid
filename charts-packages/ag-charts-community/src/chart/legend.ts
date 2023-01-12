@@ -653,15 +653,39 @@ export class Legend {
     }
 
     getDatumForPoint(x: number, y: number): LegendDatum | undefined {
+        const visibleChildBBoxes: BBox[] = [];
+        const closestLeftTop = { dist: Infinity, datum: undefined as any };
         for (const child of this.group.children) {
+            if (!child.visible) continue;
             if (!(child instanceof MarkerLabel)) continue;
 
-            if (child.visible && child.computeBBox().containsPoint(x, y)) {
+            const childBBox = child.computeBBox();
+            childBBox.grow(this.item.paddingX / 2, 'horizontal');
+            childBBox.grow(this.item.paddingY / 2, 'vertical');
+            if (childBBox.containsPoint(x, y)) {
                 return child.datum;
             }
+
+            const distX = x - childBBox.x - this.item.paddingX / 2;
+            const distY = y - childBBox.y - this.item.paddingY / 2;
+            const dist = distX ** 2 + distY ** 2;
+            const toTheLeftTop = distX >= 0 && distY >= 0;
+            if (toTheLeftTop && dist < closestLeftTop.dist) {
+                closestLeftTop.dist = dist;
+                closestLeftTop.datum = child.datum;
+            }
+
+            visibleChildBBoxes.push(childBBox);
         }
 
-        return undefined;
+        const pageBBox = BBox.merge(visibleChildBBoxes);
+        if (!pageBBox.containsPoint(x, y)) {
+            // We're not in-between legend items.
+            return undefined;
+        }
+
+        // Fallback to returning closest match to the left/up.
+        return closestLeftTop.datum;
     }
 
     computeBBox(): BBox {
