@@ -9,7 +9,8 @@ class DatePicker implements ICellEditorComp {
         this.eInput = document.createElement('input')
         this.eInput.value = params.value
         this.eInput.classList.add('ag-input')
-        this.eInput.style.height = '100%'
+        this.eInput.style.height = 'var(--ag-row-height)'
+        this.eInput.style.fontSize = 'calc(var(--ag-font-size) + 1px)'
 
         // https://jqueryui.com/datepicker/
         $(this.eInput).datepicker({
