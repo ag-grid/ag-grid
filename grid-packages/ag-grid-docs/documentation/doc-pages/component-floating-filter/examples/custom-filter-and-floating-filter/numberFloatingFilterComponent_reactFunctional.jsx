@@ -8,7 +8,7 @@ export default forwardRef((props, ref) => {
         return {
             onParentModelChanged(parentModel) {
                 // When the filter is empty we will receive a null value here
-                if (!parentModel) {
+                if (parentModel == null) {
                     inputRef.current.value;
                 } else {
                     inputRef.current.value = parentModel;
