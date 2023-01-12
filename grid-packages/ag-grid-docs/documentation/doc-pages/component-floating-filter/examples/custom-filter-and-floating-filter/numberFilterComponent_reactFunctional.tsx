@@ -70,7 +70,7 @@ export default forwardRef((props: IFilterParams, ref) => {
         <div style={{ padding: "4px" }}>
             <div style={{ fontWeight: "bold" }}>Greater than:</div>
             <div>
-                <input ref={inputRef} style={{ margin: "4px 0 4px 0" }} type="number" onInput={onInputBoxChanged} placeholder="Number of medals..." />
+                <input ref={inputRef} style={{ margin: "4px 0 4px 0" }} type="number" min="0" onInput={onInputBoxChanged} placeholder="Number of medals..." />
             </div>
         </div>
     );

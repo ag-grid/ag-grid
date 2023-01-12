@@ -92,7 +92,10 @@ function restoreFromHardCoded() {
 }
 
 function destroyFilter() {
-  gridOptions.api!.destroyFilter('athlete')
+  gridOptions.api!.destroyFilter('athlete');
+  const filtersToolPanel = gridOptions.api!.getToolPanelInstance('filters');
+  filtersToolPanel!.collapseFilters(['athlete']);
+  filtersToolPanel!.expandFilters(['athlete']);
 }
 
 // setup the grid after the page has finished loading

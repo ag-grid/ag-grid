@@ -67,7 +67,7 @@ export default class NumberFilterComponent extends Component {
             <div style={{padding: "4px"}}>
                 <div style={{fontWeight: "bold"}}>Greater than:</div>
                 <div>
-                    <input ref={this.inputRef} style={{margin: "4px 0 4px 0"}} type="number" onInput={this.onInputBoxChanged} placeholder="Number of medals..."/>
+                    <input ref={this.inputRef} style={{margin: "4px 0 4px 0"}} type="number" min="0" onInput={this.onInputBoxChanged} placeholder="Number of medals..."/>
                 </div>
             </div>
         );

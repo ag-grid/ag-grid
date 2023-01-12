@@ -26,7 +26,7 @@ export default {
 
         onParentModelChanged(parentModel) {
             // When the filter is empty we will receive a null value here
-            if (!parentModel) {
+            if (parentModel == null) {
                 this.currentValue = '';
             } else {
                 this.currentValue = parentModel;

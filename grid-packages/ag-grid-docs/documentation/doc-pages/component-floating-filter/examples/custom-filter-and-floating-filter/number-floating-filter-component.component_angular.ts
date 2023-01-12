@@ -17,7 +17,7 @@ export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp
 
     onParentModelChanged(parentModel: any) {
         // When the filter is empty we will receive a null value here
-        if (!parentModel) {
+        if (parentModel == null) {
             this.currentValue = null;
         } else {
             this.currentValue = parentModel;

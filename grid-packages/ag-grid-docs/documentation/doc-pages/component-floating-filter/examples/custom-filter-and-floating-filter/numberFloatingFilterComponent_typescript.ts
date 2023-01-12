@@ -33,7 +33,7 @@ export class NumberFloatingFilterComponent implements IFloatingFilterComp {
 
     onParentModelChanged(parentModel: any) {
         // When the filter is empty we will receive a null message her
-        if (!parentModel) {
+        if (parentModel == null) {
             this.eFilterInput.value = '';
             this.currentValue = null;
         } else {
