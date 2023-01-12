@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import supportedFrameworks from 'utils/supported-frameworks';
 import styles from './FrameworkSelector.module.scss';
 import fwLogos from 'images/fw-logos';
@@ -23,9 +24,9 @@ export default function FrameworkSelector({ frameworks, path, currentFramework }
                     const alt = `${frameworkCapitalised} Data Grid`;
 
                     return (
-                        <a href={path.replace(`/${currentFramework}-`, `/${framework}-`)} key={framework} className={ isSelected ? styles['is-selected'] : '' }>
+                        <a href={path.replace(`/${currentFramework}-`, `/${framework}-`)} key={framework} className={classnames(styles['framework-selector__option'], { [styles['framework-selector__option--selected']]: isSelected })}>
                             <img src={fwLogos[framework]} alt={alt} />
-                            <span>{framework}</span>
+                            <span>{frameworkCapitalised}</span>
                         </a>
                     );
                 })}

@@ -98,11 +98,11 @@ main {
 
         display: flex;
         align-items: center;
+    }
 
-        span {
-            margin-right: 8px;
-            color: $secondary;
-        }
+    &__framework-label {
+        margin-right: 8px;
+        color: $secondary;
     }
 }
 
