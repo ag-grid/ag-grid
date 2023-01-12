@@ -190,8 +190,8 @@ body {
     }
 
     .hero-grid {
-        height: 400px;
-        width: 800px;
+        display: flex;
+        flex-direction: row-reverse;
     }
 }
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import styles from "../assets/homepage/homepage.module.scss";
+import styles from "./HeroGrid.module.scss";
 import {rootLocalPrefix, localPrefix} from '../../../utils/consts';
 import isDevelopment from '../../../utils/is-development';
 
@@ -12,15 +12,17 @@ if (isDevelopment()) {
     helmet.push(<script key="enterprise-lib" src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js" type="text/javascript" />);
 }
 
-const HeroGrid = () => (
-    <>
+const HeroGrid = () => {
+    const className = `${styles['heroGrid']} ag-theme-alpine-dark`;
+
+    return <>
         <Helmet>
             <script defer={true} src={`${rootLocalPrefix}/hero-grid/main.js`} type="text/javascript"/>
             {/* <script defer={true} src={`${rootLocalPrefix}/example-rich-grid/example.js`} type="text/javascript"/> */}
             {helmet.map(entry => entry)}
         </Helmet>
-        <div id='heroGrid' style={{ height: "400px", width: "800px" }} className={'ag-theme-alpine-dark'}></div>
+        <div id='heroGrid' style={{ height: "400px", width: "860px" }} className={className}></div>
     </>
-);
+};
 
 export default HeroGrid;
