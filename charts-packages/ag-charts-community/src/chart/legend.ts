@@ -767,6 +767,9 @@ export class Legend {
         if (!pointerInsideLegend) {
             this.cursorManager.updateCursor(this.id);
             this.highlightManager.updateHighlight(this.id);
+            if (this.chart.element.title) {
+                this.chart.element.title = '';
+            }
             return;
         }
 
