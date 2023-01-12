@@ -10,7 +10,7 @@ export default forwardRef((props: IFloatingFilterParams<any>, ref) => {
             onParentModelChanged(parentModel: number | null) {
                 // When the filter is empty we will receive a null value here
                 if (parentModel == null) {
-                    inputRef.current!.value;
+                    inputRef.current!.value = '';
                 } else {
                     inputRef.current!.value = parentModel + '';
                 }
