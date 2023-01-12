@@ -813,6 +813,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, done)
             // todo - iterate everything under src and serve it
             // ...or use app.get('/' and handle it that way
             app.use(`/example-rich-grid`, express.static(`./src/example-rich-grid`));
+            app.use(`/hero-grid`, express.static(`./src/hero-grid`));
             app.use(`/live-stream-updates`, express.static(`./src/live-stream-updates`));
             app.use(`/integrated-charting`, express.static(`./src/integrated-charting`));
             app.use(`/example.js`, express.static(`./src/example.js`));

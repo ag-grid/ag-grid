@@ -11,9 +11,9 @@ import { quotesData } from "../components/quotes/quotesData";
 
 const IS_SSR = typeof window === "undefined"
 
-const BestHtmlDemo = React.lazy(() => import("./components/home-page-demos/BestHtmlGrid"));
 const LiveStreamingDemo = React.lazy(() => import("./components/home-page-demos/LiveStreaming"));
 const ChartingDashboardDemo = React.lazy(() => import("./components/home-page-demos/ChartingDashboard"));
+const HeroGrid = React.lazy(() => import("./components/home-page-demos/HeroGrid"));
 
 const Default = () => {
     const frameworksData = [
@@ -44,14 +44,18 @@ const Default = () => {
             <Seo title="AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid"
                  description={`AG Grid is a feature rich datagrid designed for the major JavaScript Frameworks. Version ${agGridVersion} is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source, or take a 2 month trial of AG Grid Enterprise.`}/>
             <div className={styles['root-page-content']}>
-                <div className={`${styles['stage-scenarios']} ${styles['main']}`}>
-                    <h1 className={styles['heading-scenarios']}>The Best JavaScript Grid in the World</h1>
-                    <section>
-                        <div className={styles['demo']}>
+                <div className={styles['homepage-hero']}>
+                    <section className={styles['contents']}>
+                        <section className={styles['headings']}>
+                            <h1>The Best JavaScript Grid in the World</h1>
+                            <h2>The professional choice for developers building enterprise data applications</h2>
+                        </section>
+                        
+                        <section className={styles['hero-grid']}>
                             {!IS_SSR && <React.Suspense fallback={<div>Loading...</div>}>
-                                <BestHtmlDemo/>
+                                <HeroGrid />
                             </React.Suspense>}
-                        </div>
+                        </section>
                     </section>
                 </div>
                 <div className={styles['stage-frameworks']}>

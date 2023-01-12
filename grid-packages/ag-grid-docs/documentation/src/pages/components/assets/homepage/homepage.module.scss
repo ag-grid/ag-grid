@@ -157,6 +157,44 @@ body {
     }
 }
 
+.homepage-hero {
+    background-color: $blue-1;
+    padding-top: 100px;
+
+    font-family: 'Roboto', sans-serif;
+    color: $white;
+
+    .contents {
+        display: flex;
+        gap: 40px;
+        max-width: 1400px;
+        width: 100%;
+        margin: 0 auto;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .headings {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding-bottom: 40px;
+    }
+
+    h1 {
+        font-size: 68px;
+    }
+
+    h2 {
+        font-size: 28px;
+    }
+
+    .hero-grid {
+        height: 400px;
+        width: 800px;
+    }
+}
+
 .stage-scenarios {
     @extend %stage;
 
