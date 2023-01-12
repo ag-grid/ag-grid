@@ -8,7 +8,9 @@ Row customisation can be achieved in the following ways:
 - **Row Class:** Providing a CSS class for the rows.
 - **Row Class Rules:** Providing rules for applying CSS classes.
 
-Each of these approaches are presented in the following sections.
+Each of these approaches are presented in the following sections. 
+
+Some row styles may also be overridden with CSS variables. See the [full variable reference](/global-style-customisation-variables/).
 
 ## Row Style
 

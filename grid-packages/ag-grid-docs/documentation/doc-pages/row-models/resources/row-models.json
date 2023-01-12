@@ -85,6 +85,13 @@
             "viewport": true
         },
         {
+            "feature": "[Specify Selectable Rows](/row-selection/#specify-selectable-rows)",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": false
+        },
+        {
             "feature": "[Header Checkbox Selection](/row-selection/#header-checkbox-selection)",
             "clientSide": true,
             "infinite": false,
@@ -221,13 +228,6 @@
             "feature": "[Update via Async Transactions](/data-update-high-frequency/)",
             "clientSide": true,
             "infinite": false,
-            "serverSide": true,
-            "viewport": false
-        },
-        {
-            "feature": "[Specify Selectable Rows](/row-selection/#specify-selectable-rows)",
-            "clientSide": true,
-            "infinite": true,
             "serverSide": true,
             "viewport": false
         }

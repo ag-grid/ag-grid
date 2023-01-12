@@ -54,7 +54,6 @@ const gridOptions: GridOptions = {
     gridOptions.api!.setServerSideDatasource(datasource)
   },
 
-  // debug: true,
 }
 
 // setup the grid after the page has finished loading

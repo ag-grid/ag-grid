@@ -333,26 +333,37 @@ const GridExample = () => {
             cellRenderer: 'agAnimateShowChangeCellRenderer',
         },
         // some string values, that do not get aggregated
-        { field: 'dealType', enableRowGroup: true, enablePivot: true },
         {
+            field: 'dealType',
+            enableRowGroup: true,
+            enablePivot: true,
+            filter: 'agTextColumnFilter',
+          },
+          {
             headerName: 'Bid',
             field: 'bidFlag',
             enableRowGroup: true,
             enablePivot: true,
             width: 100,
-        },
-        { field: 'comment', editable: true },
+            filter: 'agTextColumnFilter',
+          },
+          { field: 'comment',
+            editable: true,
+            filter: 'agTextColumnFilter',
+          },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
         return {
             width: 120,
             sortable: true,
             resizable: true,
+            filter: 'agNumberColumnFilter',
         }
     }, []);
     const autoGroupColumnDef = useMemo(() => {
         return {
             width: 250,
+            field: 'trade',
             cellRendererParams: {
                 checkbox: true,
             },

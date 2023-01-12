@@ -1015,13 +1015,11 @@
                 "url": "/server-side-model-datasource/#registering-the-datasource"
             }
         },
-        "suppressServerSideInfiniteScroll": {
-        },
         "cacheBlockSize": {
-            "description": "(Infinite Scroll only) How many rows for each block in the cache, i.e. how many rows returned from the server at a time. Default: `100`"
+            "description": "How many rows for each block in the cache, i.e. how many rows returned from the server at a time. Default: `100`"
         },
         "maxBlocksInCache": {
-            "description": "(Infinite Scroll only) How many blocks to keep in the cache. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value."
+            "description": "How many blocks to keep in the cache. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value."
         },
         "maxConcurrentDatasourceRequests": {},
         "blockLoadDebounceMillis": {
@@ -1035,14 +1033,15 @@
         },
         "serverSideSortAllLevels": {},
         "serverSideFilterAllLevels": {},
-        "serverSideSortOnServer": {},
-        "serverSideFilterOnServer": {},
         "serverSideInitialRowCount": {
             "more": {
                 "name": "Initial Scroll Position",
                 "url": "/server-side-model-configuration/#initial-scroll-position"
             }
         },
+        "suppressServerSideInfiniteScroll": {},
+        "serverSideSortOnServer": {},
+        "serverSideFilterOnServer": {},
         "getChildCount": {},
         "getServerSideGroupLevelParams": {},
         "isServerSideGroupOpenByDefault": {},

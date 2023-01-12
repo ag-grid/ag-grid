@@ -1,4 +1,5 @@
 {
+  "_config_": {},
   "Tags": {},
   "AxisNodeDatum": {
     "tick": { "type": { "returnType": "any", "optional": false } },

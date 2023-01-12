@@ -63,7 +63,11 @@ function updateTitle(api: GridApi, event: { chartId: string }) {
     rowCount +
     ' row(s)'
 
-  AgChart.updateDelta(chart, { title: { text: 'Monthly Weather' }, subtitle: { text: subtitle }});
+  AgChart.updateDelta(chart, {
+    title: { text: 'Monthly Weather' },
+    subtitle: { text: subtitle },
+    padding: { top: 20 }
+  });
 }
 
 // setup the grid after the page has finished loading

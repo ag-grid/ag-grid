@@ -381,7 +381,9 @@ function getClassProperties(filePath, className) {
 /** Build the interface file in the format that can be used by <interface-documentation> */
 function buildInterfaceProps(globs) {
 
-    let interfaces = {};
+    let interfaces = {
+        _config_: {},
+    };
     let extensions = {};
     globs.forEach(file => {
         const parsedFile = parseFile(file);

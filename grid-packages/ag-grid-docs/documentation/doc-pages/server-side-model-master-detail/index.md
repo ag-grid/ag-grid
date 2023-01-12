@@ -54,7 +54,7 @@ These grid options are illustrated below:
 
 ## Example: Infinite Scrolling with Master / Detail
 
-This example shows a simple Master / Detail setup which includes the infinite scrolling capabilities provided with the Server-Side Row Model. From this example notice the following:
+This example shows a simple Master / Detail with the Server-Side Row Model. From this example notice the following:
 
 - **masterDetail** - is set to `true` in the master grid options.
 - **detailCellRendererParams** - specifies the `detailGridOptions` to use and `getDetailRowData` extracts the data for the detail row.

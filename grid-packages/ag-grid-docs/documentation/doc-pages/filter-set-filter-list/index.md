@@ -193,7 +193,7 @@ Note in the snippet above the values callback receives a parameter object which 
 
 The interface for this parameter object is `SetFilterValuesFuncParams`:
 
-<interface-documentation interfaceName='SetFilterValuesFuncParams' ></interface-documentation>
+<interface-documentation interfaceName='SetFilterValuesFuncParams' config='{"description":""}'></interface-documentation>
 
 [[note]]
 | If you are providing values to the Set Filter asynchronously, when setting the model using `setModel` you need to wait for changes to be applied before performing any further actions by waiting on the returned grid promise, e.g.:
@@ -338,7 +338,7 @@ The following example shows the Key Creator handling complex objects for the Set
 - Click **Print Filter Model** with a filter active on **Country (Complex Object as Value)** and note the logged Filter Model (dev console) uses the `code` property from the complex object.
 - Click **Print Filter Model** with a filter active on **Country (Complex Object as String)** and note the logged Filter Model (dev console) uses the `name` property from the complex object.
 
-<grid-example title='Complex Objects' name='complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 505, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+<grid-example title='Complex Objects' name='complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Multiple Values Per Cell
 

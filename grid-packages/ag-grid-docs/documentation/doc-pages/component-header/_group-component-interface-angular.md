@@ -10,4 +10,4 @@
 |}
 |```
 |
-| The params passed to `agInit()` are as follows:
+| The params passed to `agInit(params)` are as follows:

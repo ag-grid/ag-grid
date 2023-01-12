@@ -2,7 +2,7 @@
 title: "Customising the Header"
 ---
 
-Style grid header cells and column groups.
+Style grid [header](/component-header/) cells and column groups.
 
 The grid exposes many CSS variables starting `--ag-header-*` for customising header appearance, and when these are not enough you can use CSS classes, in particular `ag-header`, `ag-header-cell`, and `ag-header-group-cell`:
 

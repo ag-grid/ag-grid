@@ -258,3 +258,7 @@ In the example below, note the following:
 - Selecting a parent will also select all of its children
 
 <grid-example title='Group Selects Children' name='group-selects-children' type='generated' options='{ "enterprise": true, "exampleHeight": 525, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Next Up
+
+Continue to the next section to learn about [Pivoting](/pivoting/).

@@ -47,6 +47,7 @@ var defaultCsvExportParams: CsvExportParams = {
 var defaultExcelExportParams: ExcelExportParams = {
   getCustomContentBelowRow: (params) => getRows(params) as ExcelRow[],
   columnWidth: 120,
+  fileName: 'ag-grid.xlsx'
 }
 
 const gridOptions: GridOptions<IAccount> = {

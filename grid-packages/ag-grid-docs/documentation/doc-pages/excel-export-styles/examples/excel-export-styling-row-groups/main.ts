@@ -23,6 +23,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
   },
 
+  groupDefaultExpanded: -1,
+
   autoGroupColumnDef: {
     cellClass: getIndentClass,
     minWidth: 250,
@@ -85,9 +87,5 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(response => response.json())
     .then(function (data) {
       gridOptions.api!.setRowData(data)
-      gridOptions.api!.forEachNode(function (node) {
-        node.expanded = true
-      })
-      gridOptions.api!.onGroupExpandedOrCollapsed()
     })
 })

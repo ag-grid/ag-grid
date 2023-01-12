@@ -165,7 +165,7 @@ Note the following:
 
 <grid-example title='Suppress Update Model' name='suppress-update-model' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-## Delta sorting
+## Delta Sorting
 
 While using transactions to modify the grids data model, the default behaviour when a row is modified is for the grid to sort the modified row as well as every sibling into a new ordered list.
 
@@ -184,4 +184,4 @@ Some caveats also exist which may make delta sorting slower in your application 
 
 In the below example two buttons have been provided, one using delta sort and one without. When clicked they will use a transaction to insert one row and update one existing row on the initial dataset of 100,000 rows.
 
-<grid-example title='Delta sorting' name='delta-sorting' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Delta Sorting' name='delta-sorting' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>

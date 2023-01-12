@@ -10,8 +10,8 @@ const gridOptions = {
 }
 </snippet>
 
-There are four Row Models in the grid, of which the Client-side Row Model is one. The Client-side Row Model is the one that uses the `rowData` attribute.
+There are four Row Models in the grid, of which the Client-Side Row Model is one. The Client-Side Row Model is the one that uses the `rowData` attribute.
 
 The remaining three Row Models are [Server-Side Row Models](/row-models/) that can be used where data is mostly kept on the server and loaded into the grid in parts.
 
-This section of the documentation describes how to work with data when using the Client-side Row Model.
+This section of the documentation describes how to work with data when using the Client-Side Row Model.

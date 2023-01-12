@@ -162,7 +162,7 @@ const gridOptions = {
         { field: 'sport' },
         { field: 'total' }
     ],
-    // allows rows to dragged without the need for drag handles
+    // allows rows to be dragged without the need for drag handles
     rowDragEntireRow: true
 }
 </snippet>

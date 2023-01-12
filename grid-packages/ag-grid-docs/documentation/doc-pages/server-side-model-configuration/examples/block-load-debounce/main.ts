@@ -23,8 +23,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   // adding a debounce to allow skipping over blocks while scrolling
   blockLoadDebounceMillis: 1000,
-
-  debug: true
 }
 
 // setup the grid after the page has finished loading

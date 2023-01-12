@@ -24,7 +24,7 @@ The following example provides a simple demonstration of the different behaviour
 <grid-example title='Simple Example' name='refreshing-the-grid' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Refreshing Groups
-When using row grouping with refreshing you are required to provide a route parameter specifying the row group to refresh.
+
 
 The following example demonstrates how to refresh specified groups on the server, note the following:
  - Using the <b>Refresh Root Level</b> button, you can force all the rows in the root level group to refresh, this is equivalent to omitting a route parameter from the `refreshServerSide` API call.
@@ -36,5 +36,5 @@ The following example demonstrates how to refresh specified groups on the server
 
 ## Next Up
 
-Continue to the next section to learn how to perform [Pivoting](/server-side-model-pivoting/).
+Continue to the next section to learn how to use [Single Row Updates](/server-side-model-updating-single-row/) with the SSRM.
 

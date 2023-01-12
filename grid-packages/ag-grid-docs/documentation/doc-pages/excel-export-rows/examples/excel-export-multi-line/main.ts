@@ -17,7 +17,6 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         sortable: true,
         cellClass: 'multiline',
-        filter: true,
         resizable: true,
         minWidth: 100,
         flex: 1,

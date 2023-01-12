@@ -78,7 +78,7 @@ Note the following:
 
 - As you can see in the column **Group**, the Excel styles can be combined into cellClassRules and cellClass
 
-- Note that there are specific to Excel styles applied - the age column has a conditional number formatting styling applied: age values less than `23` have a green background applied, and age values less than `20` are using red italic underlined font. Also, the group column header cells use bold font.
+- Note that there are specific to Excel styles applied - the age column has a conditional number formatting styling applied: age values less than `23` have a green background applied, and age values less than `20` are using red italic underlined font.
 
 <grid-example title='Excel Export - Styles' name='excel-export-with-styles' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"] }'></grid-example>
 

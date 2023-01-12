@@ -20,7 +20,7 @@
 |@Component({
 |selector: 'app-root',
 |template: `
-|   <ag-grid-angular [components]="components"
+|   <ag-grid-angular [columnDefs]="columnDefs" [components]="components"
 |                    ...other properties>
 |   </ag-grid-angular>
 |`

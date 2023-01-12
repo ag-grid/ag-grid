@@ -7,13 +7,13 @@ This section show how rows can be added, removed and updated using the Server-Si
 [[note]]
 | Server-Side Transactions require row ID's to be supplied to grid via [getRowId()](/row-ids/#application-assigned-ids/).
 
-##Server-Side Transaction API
+##Transaction API
 
 The SSRM Transaction API allows rows to be added, removed or updated in the grid:
 
 <api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["applyServerSideTransaction"]' ></api-documentation>
 
-The following snippet shows how to add / update and remove rows from the grid:
+These operations are shown in the snippet below:
 
 <snippet>
 gridOptions.api.applyServerSideTransaction({ 
@@ -29,12 +29,13 @@ gridOptions.api.applyServerSideTransaction({
 });
 </snippet>
 
-The following example demonstrates add / update and remove operations via the transaction API. Note the following;
- - Opening the console and interacting with one of the provided buttons shows the parameter passed to `api.applyServerSideTransaction()` and returned result.
- - The add transaction also provides an `addIndex`. If this was omitted, the row would instead be added at the end.
- - A successful transaction also returns a similar response, with one RowNode being returned per successful operation.
+The following example demonstrates add / update and remove operations via the transaction API. Note the following:
 
-<grid-example title='Simple Example' name='transactions-simple' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+- **Add Above Selected** - adds a row above the selected row using the`addIndex` property as rows are added at the end by default.
+- **Updated Selected** - updates the 'current' value on the selected row.
+- **Removed Selected** - removes the selected row.
+
+<grid-example title='Server-Side Transaction API' name='transactions-simple' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Row Grouping
 
@@ -73,3 +74,6 @@ In the example below, note the following:
 
 <grid-example title='Showcase Example' name='transactions-showcase' type='generated' options='{ "enterprise": true, "exampleHeight": 670, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
+## Next Up
+
+Continue to the next section to learn about [Load Retry](/server-side-model-retry/) with the SSRM.

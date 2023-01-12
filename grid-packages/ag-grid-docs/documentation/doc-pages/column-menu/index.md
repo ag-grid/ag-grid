@@ -29,7 +29,7 @@ The result of `getMainMenuItems()` should be a list with each item either a) a s
 
 <api-documentation source='grid-options/properties.json' section='accessories' names='["getMainMenuItems"]'  ></api-documentation>
 
-## Built In Menu Items
+### Built In Menu Items
 
 The following is a list of all the default built in menu items with the rules about when they are shown.
 
@@ -47,7 +47,7 @@ Reading the list above it can be understood that the list `defaultItems` changes
 
 If you do not provide a `getMainMenuItems()` callback, then the rules alone decides what gets shown. If you do provide a `getMainMenuItems()`, then the `defaultItems` will be filled using the rules above and you return from the callback whatever you want, using the `defaultItems` only if you want to.
 
-## Menu Item Separators
+### Menu Item Separators
 
 You can add menu item separators as follows:
 

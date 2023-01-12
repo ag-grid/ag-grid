@@ -624,8 +624,16 @@ export abstract class Sparkline {
         return String(Math.round(datum * 10) / 10);
     }
 
-    private defaultDateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'short', timeStyle: 'medium', hour12: false } as any);
-    
+    private defaultDateFormatter = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    } as any);
+
     // locale.format('%m/%d/%y, %H:%M:%S');
 
     protected formatDatum(datum: any): string {

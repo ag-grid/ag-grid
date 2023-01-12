@@ -34,7 +34,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowModelType: 'serverSide',
 
   animateRows: true,
-  // debug: true
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {

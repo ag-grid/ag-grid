@@ -53,13 +53,25 @@ const gridOptions: GridOptions = {
     }
     return rowId;
   },
-  onGridReady: onGridReady,
+  onGridReady: (params: GridReadyEvent) => {
+    disable('#stopUpdates', true);
+  
+    // setup the fake server
+    const server = new FakeServer();
+  
+    // create datasource with a reference to the fake server
+    const datasource = getServerSideDatasource(server);
+  
+    // register the datasource with the grid
+    params.api.setServerSideDatasource(datasource);
+  
+    // register interest in data changes
+    dataObservers.push((t: ServerSideTransaction) => {
+      params.api.applyServerSideTransactionAsync(t);
+    });
+  },
   asyncTransactionWaitMillis: 1000,
   rowModelType: 'serverSide',
-  cacheBlockSize: 100,
-  maxBlocksInCache: 2,
-  blockLoadDebounceMillis: 1500,
-  maxConcurrentDatasourceRequests: 3,
 };
 
 function getServerSideDatasource(server: any) {
@@ -102,24 +114,6 @@ function stopUpdates() {
 
 function disable(id: string, disabled: boolean) {
   document.querySelector<HTMLInputElement>(id)!.disabled = disabled;
-}
-
-function onGridReady(event: GridReadyEvent) {
-  disable('#stopUpdates', true);
-
-  // setup the fake server
-  const server = new FakeServer();
-
-  // create datasource with a reference to the fake server
-  const datasource = getServerSideDatasource(server);
-
-  // register the datasource with the grid
-  event.api.setServerSideDatasource(datasource);
-
-  // register interest in data changes
-  dataObservers.push((t: ServerSideTransaction) => {
-    event.api.applyServerSideTransactionAsync(t);
-  });
 }
 
 // setup the grid after the page has finished loading

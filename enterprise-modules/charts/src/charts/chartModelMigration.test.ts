@@ -19,11 +19,37 @@ function snapshotVersion(name: string): string {
     return name;
 }
 
+function nextVersions(): string[] {
+    const versionParts = VERSION.split('.').map(Number);
+    const result: string[] = [];
+
+    for (let i = 0 ; i < 3 ; i++) {
+        const newVersionParts: number[] = [];
+
+        for (let v = 0 ; v < 3 ; v++) {
+            if (v < i) {
+                newVersionParts[v] = versionParts[v];
+            } else if (v === i) {
+                newVersionParts[v] = versionParts[v] + 1;
+            } else {
+                newVersionParts[v] = 0;
+            }
+        }
+
+        result.push(newVersionParts.join('.'));
+    }
+
+    return result;
+}
+
+const NEXT_VERSIONS = nextVersions();
+
 describe('chartModelMigration', () => {
     const SNAPSHOT_CASES = {
         '22.1.0': {},
         '22.1.0-bar': {},
         '22.1.0-pie': {},
+        '22.1.0-scatter': {},
         '22.1.0-doughnut': {},
         '23.0.0': {},
         '24.0.0': {},
@@ -58,7 +84,9 @@ describe('chartModelMigration', () => {
             const chartModel = loadChartModel(name);
 
             const upgradedChartModel = upgradeChartModel(chartModel);
-            expect(upgradedChartModel.version).toEqual(VERSION);
+            const isCurrentOrNextVersion = [VERSION, ...NEXT_VERSIONS]
+                .includes(upgradedChartModel.version ?? '');
+            expect(isCurrentOrNextVersion).toEqual(true);
         });
     });
 

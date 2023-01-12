@@ -100,11 +100,3 @@ The example below shows this in action where the following can be noted:
 - Click **Refresh ['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `gridOptions.api.refreshServerSide({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
 
 <grid-example title='Purging Tree Data' name='purging-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
-
-## Sorting and Filtering
-
-Sorting and Filtering work the same while using Tree Data as it does without with a few exceptions.
-
-- Sorting with Infinite Scroll will always behave as if [serverSideSortAllLevels](/grid-options/#reference-serverSideRowModel-serverSideSortAllLevels) is enabled.
-- Filtering with Infinite Scroll will always behave as if [serverSideFilterAllLevels](/grid-options/#reference-serverSideRowModel-serverSideFilterAllLevels) is enabled.
-- It is not possible to enable [serverSideSortOnServer](/grid-options/#reference-serverSideRowModel-serverSideSortOnServer) or [serverSideFilterOnServer](/grid-options/#reference-serverSideRowModel-serverSideFilterOnServer) while using Tree Data without Infinite Scrolling enabled.

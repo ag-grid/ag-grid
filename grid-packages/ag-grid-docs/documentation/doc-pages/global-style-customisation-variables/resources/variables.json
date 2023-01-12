@@ -119,7 +119,7 @@
     },
     "--ag-selected-tab-underline-width": {
       "description": "Thickness of the border drawn under selected tabs",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-selected-tab-underline-transition-speed": {
       "description": "Duration of animation used to show and hide the border drawn under selected tabs",
@@ -215,7 +215,7 @@
     },
     "--ag-border-radius": {
       "description": "Border radius applied to many elements such as dialogs and form widgets",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-invalid-color": {
       "description": "The color applied to form elements in an invalid state",
@@ -235,7 +235,7 @@
     },
     "--ag-checkbox-border-radius": {
       "description": "edge rounding a checkboxes",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-checkbox-checked-color": {
       "description": "color of the `checkbox-checked` icon that is shown in a checked checkbox",
@@ -251,7 +251,7 @@
     },
     "--ag-toggle-button-border-width": {
       "description": "size of the toggle button outer border",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-toggle-button-on-border-color": {
       "description": "colour of the toggle button outer border in its 'on' state",
@@ -279,11 +279,11 @@
     },
     "--ag-toggle-button-width": {
       "description": "width of the whole toggle button component",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-toggle-button-height": {
       "description": "height of the whole toggle button component",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-input-focus-box-shadow": {
       "description": "box shadow around focussed inputs",
@@ -303,47 +303,47 @@
     },
     "--ag-grid-size": {
       "description": "grid-size is the main control for affecting how tightly data and UI elements are packed together. All padding and spacing in the grid is defined as a multiple of grid-size, so increasing it will make most components larger by increasing their internal white space while leaving the size of text and icons unchanged.",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-icon-size": {
       "description": "The size of square icons and icon-buttons",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-widget-container-horizontal-padding": {
       "description": "The horizontal padding of containers that contain stacked widgets, such as menus and tool panels",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-widget-container-vertical-padding": {
       "description": "The vertical padding of containers that contain stacked widgets, such as menus and tool panels",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-widget-horizontal-spacing": {
       "description": "The horizontal spacing between widgets in containers that contain horizontally stacked widgets such as the column groups header component.",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-widget-vertical-spacing": {
       "description": "The vertical spacing between widgets in containers that contain vertically stacked widgets",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-cell-horizontal-padding": {
       "description": "Horizontal padding for grid and header cells (vertical padding is not set explicitly, but inferred from row-height / header-height",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-cell-widget-spacing": {
       "description": "Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes)",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-row-height": {
       "description": "Height of grid rows",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-header-height": {
       "description": "Height of header rows",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-list-item-height": {
       "description": "Height of items in lists (example of lists are dropdown select inputs and column menu set filters)",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-header-column-separator-display": {
       "description": "Whether to display the header column separator - a vertical line that displays between every header cell",
@@ -351,11 +351,11 @@
     },
     "--ag-header-column-separator-height": {
       "description": "Height of the header column separator. Percentage values are relative to the header height.",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-header-column-separator-width": {
       "description": "Width of the header column separator",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-header-column-separator-color": {
       "description": "Colour of the header column separator",
@@ -367,11 +367,11 @@
     },
     "--ag-header-column-resize-handle-height": {
       "description": "Height of the header resize handle. Percentage values are relative to the header height.",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-header-column-resize-handle-width": {
       "description": "Width of the header resize handle.",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-header-column-resize-handle-color": {
       "description": "Colour of the header resize handle",
@@ -379,31 +379,31 @@
     },
     "--ag-column-select-indent-size": {
       "description": "How much to indent child columns in the column tool panel relative to their parent",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-set-filter-indent-size": {
       "description": "How much to indent child filter items in the Set Filter List relative to their parent",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-row-group-indent-size": {
       "description": "How much to indent child rows in the grid relative to their parent row",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-filter-tool-panel-group-indent": {
       "description": "How much to indent child columns in the filters tool panel relative to their parent",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-tab-min-width": {
       "description": "Minimum width of a tabbed menu (usd in charts)",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-menu-min-width": {
       "description": "Minimum width of a menu that is not tabbed",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-side-bar-panel-width": {
       "description": "Width of the sidebar that contains the columns and filters tool panels",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-font-family": {
       "description": "Font family used for all text",
@@ -411,15 +411,15 @@
     },
     "--ag-font-size": {
       "description": "Default font size for text in the grid",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-icon-font-family": {
       "description": "The [icon font](/custom-icons/) used by the grid.",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-card-radius": {
       "description": "cards are elements that float above the UI",
-      "type": "CSS size (e.g. `0`, `4px` or `50%`)"
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-card-shadow": {
       "description": "the default card shadow applies to simple cards like column drag indicators and text editors",

@@ -91,3 +91,7 @@ The empty aggregation calls happen in the following two scenarios:
 If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates through the API method `refreshClientSideRowModel('aggregate')`.
 
 <api-documentation source='grid-api/api.json' section='data' names='["refreshClientSideRowModel"]' ></api-documentation>
+
+## Next Up
+
+Continue to the next section to learn about [Tree Data](/tree-data/).

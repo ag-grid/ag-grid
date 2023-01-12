@@ -165,10 +165,14 @@ const gridOptions: GridOptions = {
     },
     animateRows: true,
     rowSelection: 'multiple',
+    enableRangeSelection: true,
     autoGroupColumnDef: {
         headerName: 'Symbol',
         cellRenderer: 'agGroupCellRenderer',
         field: 'symbol',
+    },
+    statusBar: {
+        statusPanels: [{ statusPanel: 'agAggregationComponent', align: 'right' }],
     },
     groupDefaultExpanded: 1,
     rowData: immutableStore,

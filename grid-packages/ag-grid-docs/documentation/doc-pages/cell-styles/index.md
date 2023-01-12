@@ -11,6 +11,8 @@ Cell customisation is done a the column level via the column definition. You can
 
 Each of these approaches are presented in the following sections.
 
+Some cell styles may also be overridden with CSS variables. See the full [CSS variables reference](/global-style-customisation-variables/).
+
 ## Cell Style
 
 Used to provide CSS styles directly (not using a class) to the cell. Can be either an object

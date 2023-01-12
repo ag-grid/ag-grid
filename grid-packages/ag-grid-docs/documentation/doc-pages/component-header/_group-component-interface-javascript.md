@@ -15,4 +15,4 @@
 |}
 |```
 |
-|The params passed to `init()` are as follows:
+|The params passed to `init(params)` are as follows:

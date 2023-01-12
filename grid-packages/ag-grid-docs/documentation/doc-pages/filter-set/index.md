@@ -43,7 +43,7 @@ The following example demonstrates how the Set Filter can be enabled. Note the f
 
 ## Set Filter Parameters
 
-Set Filters are configured though the `filterParams` attribute of the column definition:
+Set Filters are configured though the `filterParams` attribute of the column definition (`ISetFilterParams` interface):
 
 <interface-documentation interfaceName='ISetFilterParams' overrideSrc='filter-set/resources/set-filter-params.json' config='{"description":"", "sortAlphabetically":"true"}'></interface-documentation>
 

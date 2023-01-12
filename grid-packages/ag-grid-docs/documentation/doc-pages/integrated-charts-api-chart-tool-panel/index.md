@@ -17,7 +17,7 @@ The example below demonstrates how you can open and close Chart Tool Panels.
 - Click **Open Chart Tool Panel Format tab** to open the `Format` tab via `openChartToolPanel()`
 - Click **Close Chart Tool Panel** to close via `closeChartToolPanel()`
 
-<grid-example title='Open/Close Chart Tool Panel' name='chart-tool-panel-api' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Open/Close Chart Tool Panel' name='chart-tool-panel-api' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"], "myGridReference": 1 }'></grid-example>
 
 ## Next Up
 

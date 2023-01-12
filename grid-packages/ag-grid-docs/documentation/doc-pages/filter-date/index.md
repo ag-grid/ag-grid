@@ -6,7 +6,7 @@ Date filters allow you to filter date data. The [Provided Filters](/filter-provi
 
 ## Date Filter Parameters
 
-Date Filters are configured though the `filterParams` attribute of the column definition:
+Date Filters are configured though the `filterParams` attribute of the column definition (`IDateFilterParams` interface):
 
 <interface-documentation interfaceName='IDateFilterParams' config='{"description":"", "sortAlphabetically":"true"}'  overrideSrc="filter-date/resources/date-filter-params.json"></interface-documentation>
 

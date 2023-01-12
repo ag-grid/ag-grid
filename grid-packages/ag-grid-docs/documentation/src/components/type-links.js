@@ -1,7 +1,7 @@
 /**
  * These are used to create links from types to relevant documentation.
  */
-export const TYPE_LINKS = {
+const TYPE_LINKS = {
     AgChartTheme: '/integrated-charts-customisation/#custom-chart-themes',
     AgChartThemeName: '/integrated-charts-customisation/#provided-themes',
     AgChartThemeOverrides: '/charts-api-themes/#reference-theme.palette',
@@ -74,3 +74,12 @@ export const TYPE_LINKS = {
     ServerSideTransaction: '/server-side-model-transactions/#transaction-api',
     Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
 };
+
+export function getTypeLink(type) {
+    if (typeof (type) === 'string') {
+        // handle removal of generics.
+        const cleanType = type?.split('<')[0];
+        return TYPE_LINKS[cleanType];
+    }
+    return undefined;
+}

@@ -128,6 +128,7 @@ export class LazyCache extends BeanStub {
             node.setRowIndex(displayIndex);
             node.setRowTop(rowBounds!.rowTop);
         });
+        this.rowLoader.queueLoadAction();
         return newNode;
     }
 
@@ -398,7 +399,7 @@ export class LazyCache extends BeanStub {
             let distEnd;
             // may not have an end node if the block came back small 
             if (this.nodeIndexMap[blockEnd - 1]) distEnd = Math.abs(this.nodeIndexMap[blockEnd - 1].rowIndex! - otherDisplayIndex);
-            const farthest = distEnd == null || distStart > distEnd ? distStart : distEnd;
+            const farthest = distEnd == null || distStart < distEnd ? distStart : distEnd;
 
             blockDistanceToMiddle[blockStart] = farthest;
         });
@@ -732,7 +733,7 @@ export class LazyCache extends BeanStub {
             delete this.nodeIndexMap[numericStoreIndex];
         }
 
-        this.numberOfRows -= deletedNodeCount;
+        this.numberOfRows -= this.isLastRowIndexKnown() ? idsToRemove.length : deletedNodeCount;
 
         if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
             nodesToVerify.forEach(node => node.__needsRefreshWhenVisible = true);
