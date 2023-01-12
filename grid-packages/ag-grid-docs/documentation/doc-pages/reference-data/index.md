@@ -65,7 +65,7 @@ const gridOptions = {
 [[note]]
 | When editing using Cell Editors it's important to ensure the underlying data is updated with the codes (keys) rather than the values that are displayed in the cells.
 
-When using the `TextCellEditor` with reference data, you may want to display the formatted text rather than the code. In this case you should also include the `useFormatter` property as follows:
+When using the `TextCellEditor` with a `valueFormatter`, you may want to display the formatted text rather than the code when editing. In this case you should also include the `useFormatter` property as follows:
 
 ```js
 cellEditor: 'agTextCellEditor',
@@ -92,7 +92,7 @@ The following example demonstrates how `Value Handlers` can be combined to work 
 
 ## Using the 'refData' Property
 
-Here we present the same example but this time using the `refData` `ColDef` property. This approach requires less coding and is more straightforward, but might not be flexible enough for scenarios involving more complex reference data formats.
+Here we present the same example but this time using the `refData` ColDef property. This approach requires less coding and is more straightforward, but might not be flexible enough for scenarios involving more complex reference data formats.
 
 <api-documentation source='column-properties/properties.json' section='columns' names='["refData"]'></api-documentation>
 

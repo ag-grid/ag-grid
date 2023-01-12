@@ -3,7 +3,7 @@ export default {
       <div style="padding: 4px">
           <div style="font-weight: bold;">Greater than:</div>
           <div>
-            <input style="margin: 4px 0 4px 0;" type="number" v-model="filterText" placeholder="Number of medals..."/>
+            <input style="margin: 4px 0 4px 0;" type="number" min="0" v-model="filterText" placeholder="Number of medals..."/>
           </div>
       </div>
     `,

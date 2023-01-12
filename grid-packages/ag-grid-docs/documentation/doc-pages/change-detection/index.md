@@ -2,17 +2,17 @@
 title: "Change Detection"
 ---
 
-The grid has built in change detection. When a value in the grid changes, either via the UI or via the grid API, the grid will check all cells to see which ones need updating and update exactly only those cells, so minimal changes are made to the DOM.
+The grid has built in change detection. When a value in the grid changes, either via the UI or via the grid API, the grid will check all cells to see which ones need updating and update only those cells, so minimal changes are made to the DOM.
 
 Change detection can be broken down into the following two categories:
 
 
-1. **Value Change Detection:** When a value for any cell changes (e.g. after an edit), the grid goes through every cell in the grid and compares the current value to the previous value. If the values differ, the cell is refreshed. This allows all cells using `valueGetters` to be kept up to date where a change to one cell (that was edited) may impact the value of another cell (that references the first cell) - just like Excel!
+1. **Value Change Detection:** When a value for any cell changes (e.g. after an edit), the grid goes through every cell in the grid and compares the current value to the previous value. If the values differ, the cell is refreshed. This allows all cells using `valueGetters` to be kept up to date where a change to one cell (that was edited) may impact the value of another cell (that references the first cell).
 
 1. **Aggregation Change Detection:** When a value for any cell changes, the grid will recalculate all [aggregations](/aggregation/) that are impacted by the changed value. This means the grid will automatically keep aggregation results (the values in the grouped row) up to date as the data beneath it changes.
 
 [[note]]
-| If you are using Angular or React to build your cells (eg using an Angular or React cellRenderer), then you will be already benefiting from binding and change detection that your framework provides. In this scenario, your component's `refresh()` method will get called with the new value when the value changes. It is your component's responsibility to save this new value to the components state so it will be picked up as a change from the frameworks change detection.
+| If you are using a custom cell renderer see [Component Refresh](/component-cell-renderer/#component-refresh) for more details on how to update your component following change detection.
 
 ## Example: Change Detection and Value Getters
 
@@ -33,16 +33,9 @@ The grid keeps a local copy of all values rendered in each cell. When a refresh 
 
 [[note]]
 | You might ask, is checking every cell against its value a performance problem? The answer is no.
-| What AG Grid does is similar to the change detection algorithms in frameworks such as React or Angular.
+| What AG Grid does is similar to the change detection algorithms in frameworks.
 | Doing this many checks in JavaScript is not a problem. Slowness comes when the DOM is updated
 | many times. AG Grid minimises the DOM updates by only updating the DOM where changes are detected.
-| <br/>
-| <br/>
-| You might also ask, does AG Grid have a cool Virtual DOM like React does? The answer is no. The grid has
-| state stored in the Row Model. So rather than comparing the actual DOM with a virtual DOM,
-| the grid compares 'the value that was rendered last time into the DOM' with with the values
-| in the Row Model. Having a virtual DOM in this case would be redundant as the grid already has
-| data structures to compare.
 
 ### Comparing Values
 

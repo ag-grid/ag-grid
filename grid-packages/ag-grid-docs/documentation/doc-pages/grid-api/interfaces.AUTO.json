@@ -11194,7 +11194,7 @@
       "value": "V | null | (() => string)",
       "params": "SetFilterParams<any, V>",
       "translate": "(key: keyof ISetFilterLocaleText) => string",
-      "valueFormatter": "(params: ValueFormatterParams) => string",
+      "valueFormatter?": "(params: ValueFormatterParams) => string",
       "item": "SetFilterModelTreeItem | string | null",
       "isSelected": "boolean | undefined",
       "isTree?": "boolean",
@@ -11222,7 +11222,7 @@
       "translate": "(key: keyof ISetFilterLocaleText) => string",
       "caseFormat": "<T extends string | null>(valueToFormat: T) => typeof valueToFormat",
       "createKey": "(value: V | null, node?: RowNode) => string | null",
-      "valueFormatter": "(params: ValueFormatterParams) => string",
+      "valueFormatter?": "(params: ValueFormatterParams) => string",
       "usingComplexObjects?": "boolean",
       "treeDataTreeList?": "boolean",
       "groupingTreeList?": "boolean"

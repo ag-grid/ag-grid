@@ -635,6 +635,9 @@ export class Legend {
             this.paginationTrackingIndex = Math.floor((startIndex + endIndex) / 2);
         }
 
+        this.pagination.update();
+        this.pagination.updateMarkers();
+
         this.updatePositions(pageNumber);
         this.chart.update(ChartUpdateType.SCENE_RENDER);
     }
@@ -751,6 +754,11 @@ export class Legend {
     }
 
     private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
+        if (event.sourceEvent.type.startsWith('touch')) {
+            // Explicitly ignore touch events for this case.
+            return;
+        }
+
         const {
             enabled,
             item: { toggleSeriesVisible },

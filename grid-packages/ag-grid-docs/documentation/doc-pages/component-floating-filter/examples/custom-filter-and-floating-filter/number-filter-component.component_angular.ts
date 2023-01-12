@@ -9,7 +9,7 @@ import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
       <div style="padding: 4px">
       <div style="font-weight: bold;">Greater than:</div>
       <div>
-        <input style="margin: 4px 0 4px 0;" type="number" [(ngModel)]="filterText" (input)="onInputBoxChanged($event)" placeholder="Number of medals..."/>
+        <input style="margin: 4px 0 4px 0;" type="number" min="0" [(ngModel)]="filterText" (input)="onInputBoxChanged($event)" placeholder="Number of medals..."/>
       </div>
       </div>
     `

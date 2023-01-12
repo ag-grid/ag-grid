@@ -40,7 +40,7 @@ export interface SetFilterListItemParams<V> {
     value: V | null | (() => string),
     params: SetFilterParams<any, V>,
     translate: (key: keyof ISetFilterLocaleText) => string,
-    valueFormatter: (params: ValueFormatterParams) => string,
+    valueFormatter?: (params: ValueFormatterParams) => string,
     item: SetFilterModelTreeItem | string | null,
     isSelected: boolean | undefined,
     isTree?: boolean,
@@ -84,7 +84,7 @@ export class SetFilterListItem<V> extends Component {
     private readonly value: V | null | (() => string);
     private readonly params: SetFilterParams<any, V>;
     private readonly translate: (key: keyof ISetFilterLocaleText) => string;
-    private readonly valueFormatter: (params: ValueFormatterParams) => string;
+    private readonly valueFormatter?: (params: ValueFormatterParams) => string;
     private readonly isTree?: boolean;
     private readonly depth: number;
     private readonly isGroup?: boolean;

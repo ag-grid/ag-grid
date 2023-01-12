@@ -113,6 +113,9 @@ const plugins = [
                             'only-javascript-or-angular-or-vue': {
                                 classes: 'angular-or-vue-or-javascript-only-section',
                             },
+                            'only-javascript-or-angular-or-react': {
+                                classes: 'angular-or-react-or-javascript-only-section',
+                            },
                             'only-frameworks': {
                                 classes: 'frameworks-only-section',
                             }

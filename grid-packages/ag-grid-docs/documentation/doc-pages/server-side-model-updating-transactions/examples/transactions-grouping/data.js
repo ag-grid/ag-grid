@@ -1,183 +1,82 @@
-const MIN_BOOK_COUNT = 1;
-const MAX_BOOK_COUNT = 1;
-const MIN_TRADE_COUNT = 2;
-const MAX_TRADE_COUNT = 2;
-
-const products = [
-    'Palm Oil',
+var data = [
+    {
+        product: 'Palm Oil',
+        portfolio: 'Aggressive',
+        book: 'GL-62472',
+        tradeId: 0,
+        current: 23558,
+        previous: 27014,
+    },
+    {
+        product: 'Palm Oil',
+        portfolio: 'Aggressive',
+        book: 'GL-62472',
+        tradeId: 1,
+        current: 92080,
+        previous: 97460,
+    },
+    {
+        product: 'Palm Oil',
+        portfolio: 'Hybrid',
+        book: 'GL-62473',
+        tradeId: 2,
+        current: 1352,
+        previous: 5835,
+    },
+    {
+        product: 'Palm Oil',
+        portfolio: 'Hybrid',
+        book: 'GL-62473',
+        tradeId: 3,
+        current: 87685,
+        previous: 91535,
+    },
+    {
+        product: 'Palm Oil',
+        portfolio: 'Defensive',
+        book: 'GL-62474',
+        tradeId: 4,
+        current: 25263,
+        previous: 26374,
+    },
+    {
+        product: 'Palm Oil',
+        portfolio: 'Defensive',
+        book: 'GL-62474',
+        tradeId: 5,
+        current: 65201,
+        previous: 69745,
+    },
+    {
+        product: 'Palm Oil',
+        portfolio: 'Income',
+        book: 'GL-62475',
+        tradeId: 6,
+        current: 48405,
+        previous: 50367,
+    },
+    {
+        product: 'Palm Oil',
+        portfolio: 'Income',
+        book: 'GL-62475',
+        tradeId: 7,
+        current: 65361,
+        previous: 64564,
+    },
+    {
+        product: 'Palm Oil',
+        portfolio: 'Speculative',
+        book: 'GL-62476',
+        tradeId: 8,
+        current: 94747,
+        previous: 94067,
+    },
+    {
+        product: 'Palm Oil',
+        portfolio: 'Speculative',
+        book: 'GL-62476',
+        tradeId: 9,
+        current: 28967,
+        previous: 32447,
+    },
 ];
-
-const portfolios = ['Aggressive', 'Hybrid', 'Defensive', 'Income', 'Speculative'];
-
-let nextTradeId = 0;
-let nextBookId = 62472;
-
-var data = [];
-
-// IIFE to create initial data
-(function () {   
-
-  for (let i = 0; i < products.length; i++) {
-        let product = products[i];
-        for (let j = 0; j < portfolios.length; j++) {
-            let portfolio = portfolios[j];
-
-            let bookCount = randomBetween(MIN_BOOK_COUNT, MAX_BOOK_COUNT);
-
-            for (let k = 0; k < bookCount; k++) {
-                let book = createBookName();
-                let tradeCount = randomBetween(
-                    MIN_TRADE_COUNT,
-                    MAX_TRADE_COUNT,
-                );
-                for (let l = 0; l < tradeCount; l++) {
-                    let trade = createTradeRecord(product, portfolio, book);
-                        
-                    data.push(trade);
-                }
-            }
-        }
-    }
-})();
-
-var dataObservers = [];
-
-function updatePortfolio(oldPortfolio, newPortfolio) {
-    const createGroup = !data.some(record => record.portfolio === newPortfolio);
-
-    const moved = [];
-    data.forEach(record => {
-        if (record.portfolio === oldPortfolio) {
-            record.portfolio = newPortfolio;
-            moved.push(record);
-        }
-    });
-
-    if (!moved.length) {
-        return;
-    }
-
-    dataObservers.forEach(obs => obs({
-        add: createGroup ? [{ portfolio: newPortfolio }] : [],
-        remove: [{ portfolio: oldPortfolio }],
-    }));
-
-    if (!createGroup) {
-        dataObservers.forEach(obs => obs({
-            route: [newPortfolio],
-            add: moved,
-        }));
-    }
-}
-
-function deleteWhere(predicate) {
-    // removes
-    const remove = {};
-    data = data.filter(record => {
-        if (predicate(record)) {
-            if (!remove[record.portfolio]) {
-                remove[record.portfolio] = [];
-            }
-            remove[record.portfolio].push(record);
-            return false;
-        }
-        return true;
-    });
-
-    const removedGroups = [];
-    Object.entries(remove).forEach(([portfolio, removedRecords]) => {
-        if (!data.some(record => record.portfolio === portfolio)) {
-            removedGroups.push({ portfolio: portfolio });
-        } else {
-            dataObservers.forEach(obs => obs({route:[portfolio], remove: removedRecords})); 
-        }
-    });
-
-    dataObservers.forEach(obs => obs({ remove: removedGroups }));
-}
-
-function createRecord(product, portfolio, book) {
-    const createGroup = !data.some(record => record.portfolio === portfolio);
-
-    const newRecord = createTradeRecord(product, portfolio, book);
-    data.push(newRecord);
-
-    if (createGroup) {
-        dataObservers.forEach(obs => obs({ add: [{ portfolio: portfolio }]}));
-    } else {
-        dataObservers.forEach(obs => obs({ route: [portfolio], add: [newRecord]}));
-    }
-}
-
-let numRemove = 500;
-let numAdd = 500;
-let numUpdate = 500;
-function randomUpdates() {   
-    // removes
-    const remove = [];
-    for(let i=0; i<(Math.ceil(numRemove)); i++) {      
-        const idx = randomBetween(0, data.length-1);
-        const d = data[idx];
-        data.splice(idx, 1);
-        remove.push(d);
-    }  
-
-    // updates
-    const update = [];
-    for(let i=0; i< numUpdate; i++) {            
-        const idx = randomBetween(0, data.length-1);
-        const d = data[idx];
-        d.previous = d.current;
-        d.current = d.previous + 13;
-        update.push(d);
-    } 
-
-    // adds
-    const add = [];
-    for(let i=0; i<(Math.ceil(numAdd)); i++) {       
-        const product = products[randomBetween(0, products.length-1)];
-        const portfolio = portfolios[randomBetween(0, portfolios.length-1)];
-        const book = createBookName();        
-        const newRecord = createTradeRecord(product, portfolio, book);
-        add.push(newRecord);
-    }
-    data.push(...add);
-
-    // notify observers
-    dataObservers.forEach(obs => obs({update, add, remove})); 
-}
-
-function randomBetween(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function createTradeRecord(product, portfolio, book) {
-    let current = Math.floor(Math.random() * 100000) + 100;
-    let previous = current + Math.floor(Math.random() * 10000) - 2000;
-    let trade = {
-        product: product,
-        portfolio: portfolio,
-        book: book,
-        tradeId: createTradeId(),
-        submitterID: randomBetween(10, 1000),
-        submitterDealID: randomBetween(10, 1000),
-        dealType: Math.random() < 0.2 ? 'Physical' : 'Financial',
-        bidFlag: Math.random() < 0.5 ? 'Buy' : 'Sell',
-        current: current,
-        previous: previous,
-        pl1: randomBetween(100, 1000),
-        pl2: randomBetween(100, 1000),
-        gainDx: randomBetween(100, 1000),
-        sxPx: randomBetween(100, 1000),
-        _99Out: randomBetween(100, 1000),
-    };
-    return trade;
-}
-
-function createBookName() {    
-    return 'GL-' + nextBookId++;
-}
-
-function createTradeId() {    
-    return nextTradeId++;
-}

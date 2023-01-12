@@ -12,9 +12,8 @@ export default class NumberFloatingFilterComponent extends Component {
     }
 
     onParentModelChanged(parentModel) {
-        console.log(parentModel);
         // When the filter is empty we will receive a null value here
-        if (!parentModel) {
+        if (parentModel == null) {
             this.setState({ currentValue: null }, () => this.inputRef.current.value = this.state.currentValue);
         } else {
             this.setState({ currentValue: parentModel }, () => this.inputRef.current.value = this.state.currentValue);

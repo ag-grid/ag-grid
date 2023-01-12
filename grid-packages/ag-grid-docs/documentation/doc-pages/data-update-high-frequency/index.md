@@ -23,12 +23,7 @@ applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction
 applyTransactionAsync(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void
 ```
 
-
 Use Async Transactions if you have a high volume of streaming data going into the grid and don't want the grid's rendering and recalculating to be a bottleneck.
-
-[[note]]
-| You might ask, wouldn't using a virtual DOM like React remove the necessity of Async Transactions?
-| The answer is no. A virtual DOM would only batch the DOM related updates, it would not help with the batching of aggregations, sorts and filters.
 
 ## Async Transactions Applied Event
 
