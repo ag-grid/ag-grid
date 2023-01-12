@@ -115,32 +115,14 @@ export class Pagination {
         this.marker.parent = this;
 
         this.update();
+        this.updateMarkers();
     }
+
+    totalPages: number = 0;
+    currentPage: number = 0;
 
     private nextButtonDisabled = false;
     private previousButtonDisabled = false;
-
-    private _totalPages: number = 0;
-    set totalPages(value: number) {
-        if (this._totalPages !== value) {
-            this._totalPages = value;
-            this.update();
-        }
-    }
-    get totalPages() {
-        return this._totalPages;
-    }
-
-    private _currentPage: number = 0;
-    set currentPage(value: number) {
-        if (this._currentPage !== value) {
-            this._currentPage = value;
-            this.update();
-        }
-    }
-    get currentPage() {
-        return this._currentPage;
-    }
 
     private _visible: boolean = true;
     set visible(value: boolean) {
@@ -223,7 +205,7 @@ export class Pagination {
         return this._previousButton;
     }
 
-    private update() {
+    update() {
         this.updateLabel();
         this.updatePositions();
         this.enableOrDisableButtons();
@@ -264,7 +246,7 @@ export class Pagination {
         labelNode.fontFamily = fontFamily;
     }
 
-    private updateMarkers() {
+    updateMarkers() {
         const { nextButton, previousButton, nextButtonDisabled, previousButtonDisabled, activeStyle, inactiveStyle } =
             this;
 
@@ -293,8 +275,6 @@ export class Pagination {
 
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
         this.previousButtonDisabled = onFirstPage || zeroPagesToDisplay;
-
-        this.updateMarkers();
     }
 
     private nextButtonContainsPoint(offsetX: number, offsetY: number) {
@@ -337,7 +317,6 @@ export class Pagination {
     }
 
     private onPaginationChanged() {
-        this.update();
         this.pageUpdateCallback(this.currentPage);
     }
 

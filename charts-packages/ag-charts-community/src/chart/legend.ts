@@ -524,6 +524,7 @@ export class Legend {
             this.pagination.visible = totalPages > 1;
             this.pagination.totalPages = totalPages;
 
+            this.pagination.update();
             lastPassPaginationBBox = this.pagination.computeBBox();
 
             if (!this.pagination.visible) {
@@ -547,6 +548,9 @@ export class Legend {
             (verticalOrientation
                 ? legendItemsHeight + paginationComponentPadding
                 : (legendItemsHeight - paginationBBox.height) / 2);
+
+        this.pagination.update();
+        this.pagination.updateMarkers();
 
         return {
             maxPageHeight,
