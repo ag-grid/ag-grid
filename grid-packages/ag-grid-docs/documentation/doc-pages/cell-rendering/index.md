@@ -30,35 +30,63 @@ The cell renderer for a column is set via `colDef.cellRenderer` and can be any o
 
 The code snippet below demonstrates each of these method types.
 
-<snippet spaceBetweenProperties="true">
-const gridOptions = {
-    columnDefs: [
-        // 1 - undefined - Grid renders the value as a string.
-        {
-            field: 'name',
-            cellRenderer: undefined,
-        },
-        // 2 - String - The name of a cell renderer registered with the grid.
-        {
-            field: 'age',
-            cellRenderer: 'agGroupCellRenderer',
-        },
-        // 3 - Class - Provide your own cell renderer component directly without registering.
-        {
-            field: 'sport',
-            cellRenderer: MyCustomCellRendererClass,
-        },
-        // 4 - Function - A function that returns an HTML string or DOM element for display
-        {
-            field: 'year',
-            cellRenderer: params => {
-                // put the value in bold
-                return 'Value is **' + params.value + '**';
-            }
-        }
-    ]
-}
-</snippet>
+[[only-javascript-or-angular-or-react]]
+| <snippet spaceBetweenProperties="true">
+| const gridOptions = {
+|     columnDefs: [
+|         // 1 - undefined - Grid renders the value as a string.
+|         {
+|             field: 'name',
+|             cellRenderer: undefined,
+|         },
+|         // 2 - String - The name of a cell renderer registered with the grid.
+|         {
+|             field: 'age',
+|             cellRenderer: 'agGroupCellRenderer',
+|         },
+|         // 3 - Class - Provide your own cell renderer component directly without registering.
+|         {
+|             field: 'sport',
+|             cellRenderer: MyCustomCellRendererClass,
+|         },
+|         // 4 - Function - A function that returns an HTML string or DOM element for display
+|         {
+|             field: 'year',
+|             cellRenderer: params => {
+|                 // put the value in bold
+|                 return 'Value is **' + params.value + '**';
+|             }
+|         }
+|     ]
+| }
+| </snippet>
+
+[[only-vue]]
+| <snippet spaceBetweenProperties="true">
+| const gridOptions = {
+|     columnDefs: [
+|         // 1 - undefined - Grid renders the value as a string.
+|         {
+|             field: 'name',
+|             cellRenderer: undefined,
+|         },
+|         // 2 - String - The name of a cell renderer registered with the grid.
+|         {
+|             field: 'age',
+|             cellRenderer: 'agGroupCellRenderer',
+|         },
+|         // 3 - Function - A function that returns an HTML string or DOM element for display
+|         {
+|             field: 'year',
+|             cellRenderer: params => {
+|                 // put the value in bold
+|                 return 'Value is **' + params.value + '**';
+|             }
+|         }
+|     ]
+| }
+| </snippet>
+
 
 This remainder of this documentation page goes through the grid provided cell renderer's. To build your own cell renderer see the section [Cell Rendering Components](/component-cell-renderer/).
 
