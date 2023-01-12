@@ -1,5 +1,6 @@
 import { AgCartesianChartOptions } from 'ag-charts-community'
 import * as agCharts from 'ag-charts-community'
+import { getData } from './data';
 
 const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
@@ -9,29 +10,50 @@ const options: AgCartesianChartOptions = {
   subtitle: {
     text: 'or the area between them to pan around',
   },
-  data: [
-    { label: 'Android', value: 56.9 },
-    { label: 'iOS', value: 22.5 },
-    { label: 'BlackBerry', value: 6.8 },
-    { label: 'Symbian', value: 8.5 },
-    { label: 'Bada', value: 2.6 },
-    { label: 'Windows', value: 1.9 },
-  ],
+  data: getData(),
   series: [
     {
-      type: 'column',
-      xKey: 'label',
-      yKey: 'value',
+      type: 'area',
+      xKey: 'date',
+      yKey: 'Tate Modern',
+      fill: '#c16068',
+      stroke: '#874349',
+    },
+    {
+      type: 'area',
+      xKey: 'date',
+      yKey: 'Tate Britain',
+      fill: '#a2bf8a',
+      stroke: '#718661',
+    },
+    {
+      type: 'area',
+      xKey: 'date',
+      yKey: 'Tate Liverpool',
+      fill: '#ebcc87',
+      stroke: '#a48f5f',
+    },
+    {
+      type: 'area',
+      xKey: 'date',
+      yKey: 'Tate St Ives',
+      fill: '#80a0c3',
+      stroke: '#5a7088',
     },
   ],
   axes: [
     {
-      type: 'number',
-      position: 'left',
+      type: 'time',
+      position: 'bottom',
     },
     {
-      type: 'category',
-      position: 'bottom',
+      type: 'number',
+      position: 'left',
+      label: {
+        formatter: (params) => {
+          return params.value / 1000 + 'k'
+        },
+      },
     },
   ],
   legend: {

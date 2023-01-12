@@ -2,7 +2,10 @@ node_modules
 src
 tools
 coverage
+.docker
 .npmignore
+.lint-staged
+.husky
 gulpfile.js
 jest.config.js
 tsconfig.json

@@ -56,6 +56,7 @@ function onBtExport() {
 
   gridOptions.api!.exportMultipleSheetsAsExcel({
     data: spreadsheets,
+    fileName: 'ag-grid.xlsx'
   })
 }
 
