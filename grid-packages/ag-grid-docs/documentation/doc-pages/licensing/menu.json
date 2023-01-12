@@ -585,21 +585,6 @@
             "title": "Context",
             "url": "/context/",
             "showInCollapsed": true
-          },
-          {
-            "title": "See Also",
-            "url": "",
-            "frameworks": [
-              "angular",
-              "react",
-              "vue"
-            ],
-            "items": [
-              {
-                "title": "Use with RxJS",
-                "url": "/rxjs/"
-              }
-            ]
           }
         ]
       },
@@ -2127,14 +2112,6 @@
           {
             "title": "Material UI Components",
             "url": "/material-design/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
-            "title": "Use with RxJS",
-            "url": "/angular-rxjs/",
             "showInCollapsed": true,
             "frameworks": [
               "angular"
