@@ -8,21 +8,26 @@ const columnDefs: ColGroupDef[] = [
       {
         headerName: 'Name',
         field: 'athlete',
-        minWidth: 200,
+        minWidth: 150,
         columnsMenuParams: {
           columnLayout: [{
             headerName: 'Group 1', // Athlete group renamed to "Group 1"
               children: [
                 // custom column order with columns "gold", "silver", "bronze" omitted
+                { field: 'sport' },
+                { field: 'athlete' },
                 { field: 'age' },
-                { field: 'athlete' }
               ]
           }]
         },
       },
       {
         field: 'age',
-        minWidth: 200,
+        minWidth: 120,
+      },
+      {
+        field: 'sport',
+        minWidth: 150,
         columnsMenuParams: {
           // contracts all column groups
           contractColumnSelection: true,

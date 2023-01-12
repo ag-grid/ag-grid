@@ -214,7 +214,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/accessing-data/ /angular-data-grid/accessing-data/
     Redirect 301 /documentation/angular/aggregation/ /angular-data-grid/aggregation/
     Redirect 301 /documentation/angular/aligned-grids/ /angular-data-grid/aligned-grids/
-    Redirect 301 /documentation/angular/angular-rxjs/ /angular-data-grid/angular-rxjs/
+    Redirect 301 /documentation/angular/angular-rxjs/ /angular-data-grid/data-update/
     Redirect 301 /documentation/angular/angularjs/ /angular-data-grid/getting-started/
     Redirect 301 /documentation/angular/cell-content/ /angular-data-grid/cell-content/
     Redirect 301 /documentation/angular/cell-editing/ /angular-data-grid/cell-editing/
@@ -406,7 +406,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/row-spanning/ /angular-data-grid/row-spanning/
     Redirect 301 /documentation/angular/row-styles/ /angular-data-grid/row-styles/
     Redirect 301 /documentation/angular/rtl/ /angular-data-grid/rtl/
-    Redirect 301 /documentation/angular/rxjs/ /angular-data-grid/rxjs/
+    Redirect 301 /documentation/angular/rxjs/ /angular-data-grid/data-update/
     Redirect 301 /documentation/angular/saving-content/ /angular-data-grid/saving-content/
     Redirect 301 /documentation/angular/scrolling-performance/ /angular-data-grid/scrolling-performance/
     Redirect 301 /documentation/angular/scrolling-scenarios/ /angular-data-grid/scrolling-scenarios/
@@ -912,7 +912,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/row-spanning/ /react-data-grid/row-spanning/
     Redirect 301 /documentation/react/row-styles/ /react-data-grid/row-styles/
     Redirect 301 /documentation/react/rtl/ /react-data-grid/rtl/
-    Redirect 301 /documentation/react/rxjs/ /react-data-grid/rxjs/
+    Redirect 301 /documentation/react/rxjs/ /react-data-grid/data-update/
     Redirect 301 /documentation/react/saving-content/ /react-data-grid/saving-content/
     Redirect 301 /documentation/react/scrolling-performance/ /react-data-grid/scrolling-performance/
     Redirect 301 /documentation/react/scrolling-scenarios/ /react-data-grid/scrolling-scenarios/
@@ -1157,7 +1157,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/row-spanning/ /vue-data-grid/row-spanning/
     Redirect 301 /documentation/vue/row-styles/ /vue-data-grid/row-styles/
     Redirect 301 /documentation/vue/rtl/ /vue-data-grid/rtl/
-    Redirect 301 /documentation/vue/rxjs/ /vue-data-grid/rxjs/
+    Redirect 301 /documentation/vue/rxjs/ /vue-data-grid/data-update/
     Redirect 301 /documentation/vue/saving-content/ /vue-data-grid/saving-content/
     Redirect 301 /documentation/vue/scrolling-performance/ /vue-data-grid/scrolling-performance/
     Redirect 301 /documentation/vue/scrolling-scenarios/ /vue-data-grid/scrolling-scenarios/
@@ -1209,7 +1209,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/ /vue-data-grid/
     Redirect 301 /embracing-the-future-with-angularjs2-web-components-and-ag-grid/ https://medium.com/ag-grid/embracing-the-future-with-angular-2-0-web-components-and-ag-grid-fec000d5a304
     Redirect 301 /example-angular-material-design/ /angular-data-grid/material-design/
-    Redirect 301 /example-angular-rxjs/ /angular-data-grid/angular-rxjs/
+    Redirect 301 /example-angular-rxjs/ /angular-data-grid/data-update/
     Redirect 301 /example-excel-import/ /javascript-data-grid/excel-import/
     Redirect 301 /example-expressions-and-context/ /javascript-data-grid/expressions-and-context/
     Redirect 301 /example-react-redux/ /react-data-grid/redux-integration-pt1/
@@ -1398,7 +1398,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-row-spanning/ /javascript-data-grid/row-spanning/
     Redirect 301 /javascript-grid-row-styles/ /javascript-data-grid/row-styles/
     Redirect 301 /javascript-grid-rtl/ /javascript-data-grid/rtl/
-    Redirect 301 /javascript-grid-rxjs/ /angular-data-grid/rxjs/
+    Redirect 301 /javascript-grid-rxjs/ /javascript-data-grid/data-update/
     Redirect 301 /javascript-grid-scrolling-scenarios/ /javascript-data-grid/scrolling-scenarios/
     Redirect 301 /javascript-grid-security/ /javascript-data-grid/security/
     Redirect 301 /javascript-grid-selection-overview/ /javascript-data-grid/selection-overview/
@@ -1792,7 +1792,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/row-spanning/ /angular-data-grid/row-spanning/
     Redirect 301 /angular-grid/row-styles/ /angular-data-grid/row-styles/
     Redirect 301 /angular-grid/rtl/ /angular-data-grid/rtl/
-    Redirect 301 /angular-grid/rxjs/ /angular-data-grid/rxjs/
+    Redirect 301 /angular-grid/rxjs/ /angular-data-grid/data-update/
     Redirect 301 /angular-grid/saving-content/ /angular-data-grid/saving-content/
     Redirect 301 /angular-grid/scrolling-performance/ /angular-data-grid/scrolling-performance/
     Redirect 301 /angular-grid/scrolling-scenarios/ /angular-data-grid/scrolling-scenarios/
@@ -1996,7 +1996,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/row-spanning/ /react-data-grid/row-spanning/
     Redirect 301 /react-grid/row-styles/ /react-data-grid/row-styles/
     Redirect 301 /react-grid/rtl/ /react-data-grid/rtl/
-    Redirect 301 /react-grid/rxjs/ /react-data-grid/rxjs/
+    Redirect 301 /react-grid/rxjs/ /react-data-grid/data-update/
     Redirect 301 /react-grid/saving-content/ /react-data-grid/saving-content/
     Redirect 301 /react-grid/scrolling-performance/ /react-data-grid/scrolling-performance/
     Redirect 301 /react-grid/scrolling-scenarios/ /react-data-grid/scrolling-scenarios/
@@ -2194,7 +2194,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/row-spanning/ /vue-data-grid/row-spanning/
     Redirect 301 /vue-grid/row-styles/ /vue-data-grid/row-styles/
     Redirect 301 /vue-grid/rtl/ /vue-data-grid/rtl/
-    Redirect 301 /vue-grid/rxjs/ /vue-data-grid/rxjs/
+    Redirect 301 /vue-grid/rxjs/ /vue-data-grid/data-update/
     Redirect 301 /vue-grid/saving-content/ /vue-data-grid/saving-content/
     Redirect 301 /vue-grid/scrolling-performance/ /vue-data-grid/scrolling-performance/
     Redirect 301 /vue-grid/scrolling-scenarios/ /vue-data-grid/scrolling-scenarios/
@@ -2287,6 +2287,12 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-data-grid/server-side-model-row-stores/ /angular-data-grid/server-side-model-configuration/
     Redirect 301 /react-data-grid/server-side-model-row-stores/ /react-data-grid/server-side-model-configuration/
     Redirect 301 /vue-data-grid/server-side-model-row-stores/ /vue-data-grid/server-side-model-configuration/
+
+    Redirect 301 /angular-data-grid/rxjs/ /angular-data-grid/data-update/
+    Redirect 301 /react-data-grid/rxjs/ /react-data-grid/data-update/
+    Redirect 301 /vue-data-grid/rxjs/ /vue-data-grid/data-update/
+
+    Redirect 301 /angular-data-grid/angular-rxjs/ /angular-data-grid/data-update/
 
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy

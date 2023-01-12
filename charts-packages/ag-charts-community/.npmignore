@@ -2,12 +2,15 @@ node_modules
 src
 tools
 coverage
+.docker
+.eslint*
 .npmignore
+.lint-staged
+.husky
+.prettierignore
 gulpfile.js
-jest.config.js
-tsconfig.json
-tsconfig.es6.json
-tsconfig.json
+jest.*.js
+tsconfig.*
 
 dist/**/*.test.*
 *.map

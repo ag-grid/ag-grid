@@ -9,12 +9,12 @@ export class LinearScale extends ContinuousScale {
     readonly type = 'linear';
 
     ticks() {
-        if (!this.domain || this.domain.length < 2) {
+        const count = this.tickCount ?? 10;
+        if (!this.domain || this.domain.length < 2 || count < 1) {
             return [];
         }
         this.refresh();
         const [d0, d1] = this.getDomain();
-        const count = this.tickCount ?? 10;
 
         return ticks(d0, d1, count);
     }
@@ -35,6 +35,10 @@ export class LinearScale extends ContinuousScale {
     protected updateNiceDomain() {
         const count = this.tickCount ?? 10;
         let [start, stop] = this.domain;
+        if (count < 1) {
+            this.niceDomain = [start, stop];
+            return;
+        }
 
         for (let i = 0; i < 2; i++) {
             const step = tickStep(start, stop, count);
