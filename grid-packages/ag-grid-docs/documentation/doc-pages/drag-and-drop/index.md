@@ -4,7 +4,7 @@ title: "Drag & Drop"
 
 Drag & Drop is concerned with moving data around an application, or between applications, using the operating system drag and drop support. When using drag and drop, data is moved or copied around using MIME types in a way similar to using the clipboard.
 
-Native drag and drop is typically used for moving data between applications, eg moving a URL from an email into a web browser to open the URL, or moving a file from a file explorer application to a text editor application. Native drag and drop is not typically used for operating on data inside an application. Native drag and drop is similar to clipboard functionality, e.g. data must be represented as MIME types and objects cannot be passed by reference (the data must be converted to a MIME type and copied).
+Native drag and drop is typically used for moving data between applications, e.g. moving a URL from an email into a web browser to open the URL, or moving a file from a file explorer application to a text editor application. Native drag and drop is not typically used for operating on data inside an application. Native drag and drop is similar to clipboard functionality, e.g. data must be represented as MIME types and objects cannot be passed by reference (the data must be converted to a MIME type and copied).
 
 This section outlines how the grid fits in with native operating system drag and drop. It is assumed the reader is familiar with how drag and drop works. If not, refer to one of the following introductions:
 
@@ -59,7 +59,7 @@ Note that there is no specific drop zone logic in the grid. This was done on pur
 
 On initial analysis, consideration was given to exposing callbacks or firing events in the grid for the drop zone relevant events e.g. `onDragEnter`, `onDragExit` etc. However this did not add any additional value given that the developer can easily add such event listeners to the grid div directly.
 
-**Given that the grid would be simply exposing the underlying events / callbacks rather than doing any processing itself, it would not be adding any value and so providing such callbacks would just be adding a layer of useless logic.**
+Given that the grid would be simply exposing the underlying events / callbacks rather than doing any processing itself, it would not be adding any value and so providing such callbacks would just be adding a layer of useless logic.
 
 ## Custom Drag Data
 
