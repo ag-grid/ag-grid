@@ -1,4 +1,4 @@
-export function extent(values: number[]): [number, number] | undefined {
+export function extent(values: Array<number | Date>): [number, number] | undefined {
     const { length } = values;
     if (length === 0) {
         return undefined;
@@ -9,8 +9,8 @@ export function extent(values: number[]): [number, number] | undefined {
 
     for (let i = 0; i < length; i++) {
         let v = values[i];
-        if ((v as any) instanceof Date) {
-            v = (v as any).getTime();
+        if (v instanceof Date) {
+            v = v.getTime();
         }
         if (typeof v !== 'number') {
             continue;
