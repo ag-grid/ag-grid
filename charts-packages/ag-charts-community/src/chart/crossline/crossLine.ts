@@ -422,6 +422,12 @@ export class CrossLine {
         const labelWidth = crossLineLabelBBox?.width ?? 0;
         const labelHeight = crossLineLabelBBox?.height ?? 0;
 
+        if (labelWidth > seriesRect.width || labelHeight > seriesRect.height) {
+            // If label is bigger than seriesRect, trying to pad is just going to cause
+            // layout instability.
+            return;
+        }
+
         if (labelX + labelWidth >= seriesRect.x + seriesRect.width) {
             const paddingRight = labelX + labelWidth - (seriesRect.x + seriesRect.width);
             padding.right = (padding.right ?? 0) >= paddingRight ? padding.right : paddingRight;
@@ -431,8 +437,8 @@ export class CrossLine {
         }
 
         if (labelY + labelHeight >= seriesRect.y + seriesRect.height) {
-            const paddingbottom = labelY + labelHeight - (seriesRect.y + seriesRect.height);
-            padding.bottom = (padding.bottom ?? 0) >= paddingbottom ? padding.bottom : paddingbottom;
+            const paddingBottom = labelY + labelHeight - (seriesRect.y + seriesRect.height);
+            padding.bottom = (padding.bottom ?? 0) >= paddingBottom ? padding.bottom : paddingBottom;
         } else if (labelY <= seriesRect.y) {
             const paddingTop = seriesRect.y - labelY;
             padding.top = (padding.top ?? 0) >= paddingTop ? padding.top : paddingTop;
