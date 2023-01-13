@@ -1,3 +1,6 @@
+$breakpoint-medium: 740px;
+$breakpoint-large: 1020px;
+
 .framework-selector {
     --height: 44px;
     --icon-size: 26px;
@@ -7,7 +10,7 @@
     display: flex;
     font-weight: 500;
 
-    @media screen and (min-width: 960px) {
+    @media screen and (min-width: $breakpoint-large) {
         --height: 62px;
         --icon-size: 36px;
         --font-size: 22px;
@@ -22,7 +25,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    padding: calc((var(--height) - var(--icon-size)) / 2);
+    padding: calc((var(--height) - var(--icon-size)) / 2) calc((var(--height) - var(--icon-size)) / 2 + 6px);
     text-decoration: none;
     background-color: white;
 
@@ -52,14 +55,14 @@
 
     &:first-child,
     &:first-child::after {
-        padding-left: calc(var(--height) / 2.25);
+        padding-left: calc(var(--height) / 2.25 + 6px);
         border-top-left-radius: calc(var(--height) / 2);
         border-bottom-left-radius: calc(var(--height) / 2);
     }
 
     &:last-child,
     &:last-child::after {
-        padding-right: calc(var(--height) / 2.5);
+        padding-right: calc(var(--height) / 2.5 + 6px);
         border-top-right-radius: calc(var(--height) / 2);
         border-bottom-right-radius: calc(var(--height) / 2);
     }
@@ -81,11 +84,11 @@
         color: #212529;
         transition: opacity .25s ease-in-out;
 
-        @media screen and ( min-width: 680px ) {
+        @media screen and ( min-width: $breakpoint-medium ) {
             display: inline;
         }
 
-        @media screen and ( min-width: 960px ) {
+        @media screen and ( min-width: $breakpoint-large ) {
             margin-left: 8px;
         }
     }
