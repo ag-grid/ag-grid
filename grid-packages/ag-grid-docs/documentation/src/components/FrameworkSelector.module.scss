@@ -10,6 +10,7 @@
     $border-width: 2px;
     $selected-color: #3798f9;
 
+    display: flex;
     position: relative;
     padding: calc((var(--height) - var(--icon-size)) / 2);
     text-decoration: none;
