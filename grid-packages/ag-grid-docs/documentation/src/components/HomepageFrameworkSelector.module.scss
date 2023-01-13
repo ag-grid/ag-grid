@@ -2,6 +2,7 @@
     --height: 44px;
     --icon-size: 26px;
     --font-size: 16px;
+    --border-width: 2px;
 
     display: flex;
     font-weight: 500;
@@ -10,6 +11,7 @@
         --height: 62px;
         --icon-size: 36px;
         --font-size: 22px;
+        --border-width: 3px;
     }
 }
 
@@ -25,7 +27,7 @@
     background-color: white;
 
     &:not(:first-child) {
-        margin-left: $border-width;
+        margin-left: var(--border-width);
     }
 
     // Using ::after to create borders to create pleasant overlap
@@ -34,9 +36,9 @@
         position: absolute;
         height: 100%;
         top: 0;
-        left: -$border-width;
-        right: -$border-width;
-        border: $border-width solid transparent;
+        left: calc(var(--border-width) * -1);
+        right: calc(var(--border-width) * -1);
+        border: var(--border-width) solid transparent;
         transition: border-color .25s ease-in-out;
     }
 
@@ -73,6 +75,7 @@
 
     span {
         display: none;
+        margin-top: -0.15em;
         margin-left: 4px;
         font-size: var(--font-size);
         color: #212529;
