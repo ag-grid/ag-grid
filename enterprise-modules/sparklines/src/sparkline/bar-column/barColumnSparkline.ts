@@ -137,7 +137,7 @@ export abstract class BarColumnSparkline extends Sparkline {
     protected updateYScaleDomain(): void {
         const { yScale, yData, valueAxisDomain } = this;
 
-        const yMinMax = extent(yData);
+        const yMinMax = extent(yData as number[]);
 
         let yMin = 0;
         let yMax = 1;

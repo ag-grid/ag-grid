@@ -105,7 +105,7 @@ export class AreaSparkline extends Sparkline {
 
     protected updateYScaleDomain(): void {
         const { yData, yScale } = this;
-        const yMinMax = extent(yData);
+        const yMinMax = extent(yData as number[]);
 
         let yMin = 0;
         let yMax = 1;
