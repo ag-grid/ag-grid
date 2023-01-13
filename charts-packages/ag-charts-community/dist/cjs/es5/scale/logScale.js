@@ -119,11 +119,11 @@ var LogScale = /** @class */ (function (_super) {
     LogScale.prototype.ticks = function () {
         var _this = this;
         var _a;
-        if (!this.domain || this.domain.length < 2) {
+        var count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
+        if (!this.domain || this.domain.length < 2 || count < 1) {
             return [];
         }
         this.refresh();
-        var count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
         var base = this.base;
         var _b = __read(this.getDomain(), 2), d0 = _b[0], d1 = _b[1];
         var p0 = this.log(d0);

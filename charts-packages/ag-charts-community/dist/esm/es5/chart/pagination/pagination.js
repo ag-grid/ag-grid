@@ -108,10 +108,10 @@ var Pagination = /** @class */ (function () {
         this.inactiveStyle = new PaginationMarkerStyle();
         this.highlightStyle = new PaginationMarkerStyle();
         this.label = new PaginationLabel();
+        this.totalPages = 0;
+        this.currentPage = 0;
         this.nextButtonDisabled = false;
         this.previousButtonDisabled = false;
-        this._totalPages = 0;
-        this._currentPage = 0;
         this._visible = true;
         this._enabled = true;
         this._orientation = 'vertical';
@@ -128,33 +128,8 @@ var Pagination = /** @class */ (function () {
         this.interactionManager.addListener('hover', function (event) { return _this.onPaginationMouseMove(event); });
         this.marker.parent = this;
         this.update();
+        this.updateMarkers();
     }
-    Object.defineProperty(Pagination.prototype, "totalPages", {
-        get: function () {
-            return this._totalPages;
-        },
-        set: function (value) {
-            if (this._totalPages !== value) {
-                this._totalPages = value;
-                this.update();
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Pagination.prototype, "currentPage", {
-        get: function () {
-            return this._currentPage;
-        },
-        set: function (value) {
-            if (this._currentPage !== value) {
-                this._currentPage = value;
-                this.update();
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
     Object.defineProperty(Pagination.prototype, "visible", {
         get: function () {
             return this._visible;
@@ -302,7 +277,6 @@ var Pagination = /** @class */ (function () {
         var onFirstPage = currentPage === 0;
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
         this.previousButtonDisabled = onFirstPage || zeroPagesToDisplay;
-        this.updateMarkers();
     };
     Pagination.prototype.nextButtonContainsPoint = function (offsetX, offsetY) {
         return !this.nextButtonDisabled && this.nextButton.containsPoint(offsetX, offsetY);
@@ -340,7 +314,6 @@ var Pagination = /** @class */ (function () {
         this.chartUpdateCallback(ChartUpdateType.SCENE_RENDER);
     };
     Pagination.prototype.onPaginationChanged = function () {
-        this.update();
         this.pageUpdateCallback(this.currentPage);
     };
     Pagination.prototype.incrementPage = function () {

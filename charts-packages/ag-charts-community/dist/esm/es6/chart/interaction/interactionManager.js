@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { isNumber } from '../../util/value';
 import { BaseManager } from './baseManager';
 const WINDOW_EVENT_HANDLERS = ['pagehide', 'mousemove', 'mouseup'];
 const EVENT_HANDLERS = [
@@ -130,7 +131,7 @@ export class InteractionManager extends BaseManager {
                 }
                 this.touchDown = false;
                 this.dragStartElement = undefined;
-                return ['drag-end', 'click'];
+                return ['drag-end'];
             case 'mouseout':
             case 'touchcancel':
                 return ['leave'];
@@ -196,12 +197,12 @@ export class InteractionManager extends BaseManager {
     }
     buildEvent(opts) {
         let { type, event, clientX, clientY, offsetX, offsetY, pageX, pageY } = opts;
-        if (offsetX == null || offsetY == null) {
+        if (!isNumber(offsetX) || !isNumber(offsetY)) {
             const rect = this.element.getBoundingClientRect();
             offsetX = clientX - rect.left;
             offsetY = clientY - rect.top;
         }
-        if (pageX == null || pageY == null) {
+        if (!isNumber(pageX) || !isNumber(pageY)) {
             const pageRect = this.rootElement.getBoundingClientRect();
             pageX = clientX - pageRect.left;
             pageY = clientY - pageRect.top;

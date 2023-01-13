@@ -7,7 +7,7 @@ export declare class FlatSetDisplayValueModel<V> implements ISetDisplayValueMode
     private readonly column;
     /** All keys that are currently displayed, after the mini-filter has been applied. */
     private displayedKeys;
-    constructor(valueFormatterService: ValueFormatterService, valueFormatter: (params: ValueFormatterParams) => string, formatter: TextFormatter, column: Column);
+    constructor(valueFormatterService: ValueFormatterService, valueFormatter: ((params: ValueFormatterParams) => string) | undefined, formatter: TextFormatter, column: Column);
     updateDisplayedValuesToAllAvailable(_getValue: (key: string | null) => V | null, _allKeys: Iterable<string | null> | undefined, availableKeys: Set<string | null>): void;
     updateDisplayedValuesToMatchMiniFilter(getValue: (key: string | null) => V | null, _allKeys: Iterable<string | null> | undefined, availableKeys: Set<string | null>, matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean): void;
     getDisplayedValueCount(): number;

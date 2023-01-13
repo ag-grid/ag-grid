@@ -86,7 +86,7 @@ function calculatePage(bboxes, indexOffset, primaryCount, primary, secondary, fo
             break;
         }
         const sumPrimary = maxPrimaryValues.reduce((sum, next) => sum + next, 0);
-        if (sumPrimary > primary.max && returnResult) {
+        if (sumPrimary > primary.max && !forceResult) {
             // Breached max main dimension size.
             if (maxPrimaryValues.length < primaryCount) {
                 // Feedback as guess for next iteration if we're on the first round still.

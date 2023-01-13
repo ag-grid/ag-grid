@@ -69,6 +69,7 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+import { isNumber } from '../../util/value';
 import { BaseManager } from './baseManager';
 var WINDOW_EVENT_HANDLERS = ['pagehide', 'mousemove', 'mouseup'];
 var EVENT_HANDLERS = [
@@ -252,7 +253,7 @@ var InteractionManager = /** @class */ (function (_super) {
                 }
                 this.touchDown = false;
                 this.dragStartElement = undefined;
-                return ['drag-end', 'click'];
+                return ['drag-end'];
             case 'mouseout':
             case 'touchcancel':
                 return ['leave'];
@@ -318,12 +319,12 @@ var InteractionManager = /** @class */ (function (_super) {
     };
     InteractionManager.prototype.buildEvent = function (opts) {
         var type = opts.type, event = opts.event, clientX = opts.clientX, clientY = opts.clientY, offsetX = opts.offsetX, offsetY = opts.offsetY, pageX = opts.pageX, pageY = opts.pageY;
-        if (offsetX == null || offsetY == null) {
+        if (!isNumber(offsetX) || !isNumber(offsetY)) {
             var rect = this.element.getBoundingClientRect();
             offsetX = clientX - rect.left;
             offsetY = clientY - rect.top;
         }
-        if (pageX == null || pageY == null) {
+        if (!isNumber(pageX) || !isNumber(pageY)) {
             var pageRect = this.rootElement.getBoundingClientRect();
             pageX = clientX - pageRect.left;
             pageY = clientY - pageRect.top;

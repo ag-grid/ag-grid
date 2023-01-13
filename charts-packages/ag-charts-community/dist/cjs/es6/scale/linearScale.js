@@ -14,12 +14,12 @@ class LinearScale extends continuousScale_1.ContinuousScale {
     }
     ticks() {
         var _a;
-        if (!this.domain || this.domain.length < 2) {
+        const count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
+        if (!this.domain || this.domain.length < 2 || count < 1) {
             return [];
         }
         this.refresh();
         const [d0, d1] = this.getDomain();
-        const count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
         return ticks_1.default(d0, d1, count);
     }
     update() {
@@ -38,6 +38,10 @@ class LinearScale extends continuousScale_1.ContinuousScale {
         var _a;
         const count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
         let [start, stop] = this.domain;
+        if (count < 1) {
+            this.niceDomain = [start, stop];
+            return;
+        }
         for (let i = 0; i < 2; i++) {
             const step = ticks_1.tickStep(start, stop, count);
             if (step >= 1) {

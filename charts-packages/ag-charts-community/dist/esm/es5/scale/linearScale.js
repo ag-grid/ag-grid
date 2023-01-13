@@ -42,12 +42,12 @@ var LinearScale = /** @class */ (function (_super) {
     }
     LinearScale.prototype.ticks = function () {
         var _a;
-        if (!this.domain || this.domain.length < 2) {
+        var count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
+        if (!this.domain || this.domain.length < 2 || count < 1) {
             return [];
         }
         this.refresh();
         var _b = __read(this.getDomain(), 2), d0 = _b[0], d1 = _b[1];
-        var count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
         return ticks(d0, d1, count);
     };
     LinearScale.prototype.update = function () {
@@ -66,6 +66,10 @@ var LinearScale = /** @class */ (function (_super) {
         var _a;
         var count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
         var _b = __read(this.domain, 2), start = _b[0], stop = _b[1];
+        if (count < 1) {
+            this.niceDomain = [start, stop];
+            return;
+        }
         for (var i = 0; i < 2; i++) {
             var step = tickStep(start, stop, count);
             if (step >= 1) {

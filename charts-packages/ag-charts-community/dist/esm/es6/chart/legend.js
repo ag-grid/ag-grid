@@ -390,6 +390,7 @@ export class Legend {
             const totalPages = pages.length;
             this.pagination.visible = totalPages > 1;
             this.pagination.totalPages = totalPages;
+            this.pagination.update();
             lastPassPaginationBBox = this.pagination.computeBBox();
             if (!this.pagination.visible) {
                 break;
@@ -409,6 +410,8 @@ export class Legend {
                 (verticalOrientation
                     ? legendItemsHeight + paginationComponentPadding
                     : (legendItemsHeight - paginationBBox.height) / 2);
+        this.pagination.update();
+        this.pagination.updateMarkers();
         return {
             maxPageHeight,
             maxPageWidth,
@@ -475,6 +478,8 @@ export class Legend {
             // Track the middle item on the page).
             this.paginationTrackingIndex = Math.floor((startIndex + endIndex) / 2);
         }
+        this.pagination.update();
+        this.pagination.updateMarkers();
         this.updatePositions(pageNumber);
         this.chart.update(ChartUpdateType.SCENE_RENDER);
     }
@@ -492,14 +497,36 @@ export class Legend {
         });
     }
     getDatumForPoint(x, y) {
+        const visibleChildBBoxes = [];
+        const closestLeftTop = { dist: Infinity, datum: undefined };
         for (const child of this.group.children) {
+            if (!child.visible)
+                continue;
             if (!(child instanceof MarkerLabel))
                 continue;
-            if (child.visible && child.computeBBox().containsPoint(x, y)) {
+            const childBBox = child.computeBBox();
+            childBBox.grow(this.item.paddingX / 2, 'horizontal');
+            childBBox.grow(this.item.paddingY / 2, 'vertical');
+            if (childBBox.containsPoint(x, y)) {
                 return child.datum;
             }
+            const distX = x - childBBox.x - this.item.paddingX / 2;
+            const distY = y - childBBox.y - this.item.paddingY / 2;
+            const dist = Math.pow(distX, 2) + Math.pow(distY, 2);
+            const toTheLeftTop = distX >= 0 && distY >= 0;
+            if (toTheLeftTop && dist < closestLeftTop.dist) {
+                closestLeftTop.dist = dist;
+                closestLeftTop.datum = child.datum;
+            }
+            visibleChildBBoxes.push(childBBox);
         }
-        return undefined;
+        const pageBBox = BBox.merge(visibleChildBBoxes);
+        if (!pageBBox.containsPoint(x, y)) {
+            // We're not in-between legend items.
+            return undefined;
+        }
+        // Fallback to returning closest match to the left/up.
+        return closestLeftTop.datum;
     }
     computeBBox() {
         return this.group.computeBBox();
@@ -556,6 +583,9 @@ export class Legend {
         if (!pointerInsideLegend) {
             this.cursorManager.updateCursor(this.id);
             this.highlightManager.updateHighlight(this.id);
+            if (this.chart.element.title) {
+                this.chart.element.title = '';
+            }
             return;
         }
         // Prevent other handlers from consuming this event if it's generated inside the legend

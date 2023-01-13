@@ -9,7 +9,11 @@ The Server-Side Row Model requires a datasource to fetch rows for the grid. When
 such as sorting or grouping, more data will be requested via the datasource.
 
 [[note]]
-| The SSRM does not impose any restrictions on the server-side technologies used. It is left up to applications to decide how and where data is sourced for the grid.
+| Most of the Server-Side Row Model examples include a fake server that generates SQL to imitate how a real server
+| might use the requests sent from the grid. These examples use [AlaSQL](http://alasql.org/) which is a
+| JavaScript SQL database that works in browsers.
+|
+| However, note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
 
 ## Enabling Server-Side Row Model
 

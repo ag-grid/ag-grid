@@ -17,4 +17,16 @@ export declare function isStopPropagationForAgGrid(event: Event): boolean;
 export declare const isEventSupported: (eventName: any) => boolean;
 export declare function getCtrlForEvent<T>(gridOptionsService: GridOptionsService, event: Event, type: string): T | null;
 export declare function isElementInEventPath(element: HTMLElement, event: Event): boolean;
+export declare function createEventPath(event: {
+    target: EventTarget;
+}): EventTarget[];
+/**
+ * Gets the path for a browser Event or from the target on an AG Grid Event
+ * https://developer.mozilla.org/en-US/docs/Web/API/Event
+ * @param {Event| { target: EventTarget }} event
+ * @returns {EventTarget[]}
+ */
+export declare function getEventPath(event: Event | {
+    target: EventTarget;
+}): EventTarget[];
 export declare function addSafePassiveEventListener(frameworkOverrides: IFrameworkOverrides, eElement: HTMLElement, event: string, listener: (event?: any) => void): void;

@@ -170,7 +170,7 @@ class SetFilter extends core_1.ProvidedFilter {
         this.convertValuesToStrings = !!params.convertValuesToStrings;
         this.caseSensitive = !!params.caseSensitive;
         let keyCreator = (_a = params.keyCreator) !== null && _a !== void 0 ? _a : params.colDef.keyCreator;
-        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList);
+        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList, !!params.colDef.refData);
         const isGroupCol = params.column.getId().startsWith(core_1.GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList && isGroupCol;
         this.getDataPath = this.gridOptionsService.get('getDataPath');
@@ -194,13 +194,16 @@ class SetFilter extends core_1.ProvidedFilter {
         this.initialiseFilterBodyUi();
         this.addEventListenersForDataChanges();
     }
-    setValueFormatter(providedValueFormatter, keyCreator, convertValuesToStrings, treeList) {
+    setValueFormatter(providedValueFormatter, keyCreator, convertValuesToStrings, treeList, isRefData) {
         let valueFormatter = providedValueFormatter;
         if (!valueFormatter) {
             if (keyCreator && !convertValuesToStrings && !treeList) {
                 throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
             }
-            valueFormatter = params => core_1._.toStringOrNull(params.value);
+            // ref data is handled by ValueFormatterService
+            if (!isRefData) {
+                valueFormatter = params => core_1._.toStringOrNull(params.value);
+            }
         }
         this.valueFormatter = valueFormatter;
     }

@@ -87,11 +87,11 @@ class LogScale extends continuousScale_1.ContinuousScale {
     }
     ticks() {
         var _a;
-        if (!this.domain || this.domain.length < 2) {
+        const count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
+        if (!this.domain || this.domain.length < 2 || count < 1) {
             return [];
         }
         this.refresh();
-        const count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
         const base = this.base;
         const [d0, d1] = this.getDomain();
         let p0 = this.log(d0);

@@ -22,7 +22,7 @@ export declare class SetFilter<V = string> extends ProvidedFilter<SetFilterModel
     private appliedModelKeys;
     private noAppliedModelKeys;
     private createKey;
-    private valueFormatter;
+    private valueFormatter?;
     constructor();
     protected postConstruct(): void;
     protected updateUiVisibility(): void;

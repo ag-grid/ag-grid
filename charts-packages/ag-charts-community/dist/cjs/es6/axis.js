@@ -464,6 +464,13 @@ class Axis {
         //  1 = don't flip (default)
         const parallelFlipRotation = angle_1.normalizeAngle360(rotation);
         const regularFlipRotation = angle_1.normalizeAngle360(rotation - Math.PI / 2);
+        const nice = this.nice;
+        scale.domain = this.dataDomain;
+        if (scale instanceof continuousScale_1.ContinuousScale) {
+            scale.nice = nice;
+            this.setTickCount(scale, this.tick.count);
+            scale.update();
+        }
         const halfBandwidth = (scale.bandwidth || 0) / 2;
         this.updatePosition();
         this.updateLine();
@@ -471,15 +478,8 @@ class Axis {
         let labelOverlap = true;
         let ticks = [];
         const defaultTickCount = 10;
-        const nice = this.nice;
         const continuous = scale instanceof continuousScale_1.ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
-        scale.domain = this.dataDomain;
-        if (scale instanceof continuousScale_1.ContinuousScale) {
-            scale.nice = nice;
-            this.setTickCount(scale, this.tick.count);
-            scale.update();
-        }
         while (labelOverlap) {
             let unchanged = true;
             while (unchanged) {

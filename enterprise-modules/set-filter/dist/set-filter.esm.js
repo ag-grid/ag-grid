@@ -2153,7 +2153,34 @@ function isElementInEventPath(element, event) {
     if (!event || !element) {
         return false;
     }
-    return event.composedPath().indexOf(element) >= 0;
+    return getEventPath(event).indexOf(element) >= 0;
+}
+function createEventPath(event) {
+    var res = [];
+    var pointer = event.target;
+    while (pointer) {
+        res.push(pointer);
+        pointer = pointer.parentElement;
+    }
+    return res;
+}
+/**
+ * Gets the path for a browser Event or from the target on an AG Grid Event
+ * https://developer.mozilla.org/en-US/docs/Web/API/Event
+ * @param {Event| { target: EventTarget }} event
+ * @returns {EventTarget[]}
+ */
+function getEventPath(event) {
+    // This can be called with either a browser event or an AG Grid Event that has a target property.
+    var eventNoType = event;
+    if (eventNoType.path) {
+        return eventNoType.path;
+    }
+    if (eventNoType.composedPath) {
+        return eventNoType.composedPath();
+    }
+    // If this is an AG Grid event build the path ourselves
+    return createEventPath(eventNoType);
 }
 function addSafePassiveEventListener(frameworkOverrides, eElement, event, listener) {
     var isPassive = includes(PASSIVE_EVENTS, event);
@@ -2172,6 +2199,8 @@ var EventUtils = /*#__PURE__*/Object.freeze({
     isEventSupported: isEventSupported,
     getCtrlForEvent: getCtrlForEvent,
     isElementInEventPath: isElementInEventPath,
+    createEventPath: createEventPath,
+    getEventPath: getEventPath,
     addSafePassiveEventListener: addSafePassiveEventListener
 });
 
@@ -48367,7 +48396,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.convertValuesToStrings = !!params.convertValuesToStrings;
         this.caseSensitive = !!params.caseSensitive;
         var keyCreator = (_a = params.keyCreator) !== null && _a !== void 0 ? _a : params.colDef.keyCreator;
-        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList);
+        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList, !!params.colDef.refData);
         var isGroupCol = params.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList && isGroupCol;
         this.getDataPath = this.gridOptionsService.get('getDataPath');
@@ -48391,13 +48420,16 @@ var SetFilter = /** @class */ (function (_super) {
         this.initialiseFilterBodyUi();
         this.addEventListenersForDataChanges();
     };
-    SetFilter.prototype.setValueFormatter = function (providedValueFormatter, keyCreator, convertValuesToStrings, treeList) {
+    SetFilter.prototype.setValueFormatter = function (providedValueFormatter, keyCreator, convertValuesToStrings, treeList, isRefData) {
         var valueFormatter = providedValueFormatter;
         if (!valueFormatter) {
             if (keyCreator && !convertValuesToStrings && !treeList) {
                 throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
             }
-            valueFormatter = function (params) { return _.toStringOrNull(params.value); };
+            // ref data is handled by ValueFormatterService
+            if (!isRefData) {
+                valueFormatter = function (params) { return _.toStringOrNull(params.value); };
+            }
         }
         this.valueFormatter = valueFormatter;
     };

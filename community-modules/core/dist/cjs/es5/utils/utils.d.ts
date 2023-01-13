@@ -93,6 +93,12 @@ export declare const _: {
     isStopPropagationForAgGrid(event: Event): boolean;
     getCtrlForEvent<T_17>(gridOptionsService: import("../gridOptionsService").GridOptionsService, event: Event, type: string): T_17 | null;
     isElementInEventPath(element: HTMLElement, event: Event): boolean;
+    createEventPath(event: {
+        target: EventTarget;
+    }): EventTarget[];
+    getEventPath(event: Event | {
+        target: EventTarget;
+    }): EventTarget[];
     addSafePassiveEventListener(frameworkOverrides: import("../main").IFrameworkOverrides, eElement: HTMLElement, event: string, listener: (event?: any) => void): void;
     isEventSupported: (eventName: any) => boolean;
     radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null | undefined): void;

@@ -6,7 +6,7 @@
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addSafePassiveEventListener = exports.isElementInEventPath = exports.getCtrlForEvent = exports.isEventSupported = exports.isStopPropagationForAgGrid = exports.stopPropagationForAgGrid = void 0;
+exports.addSafePassiveEventListener = exports.getEventPath = exports.createEventPath = exports.isElementInEventPath = exports.getCtrlForEvent = exports.isEventSupported = exports.isStopPropagationForAgGrid = exports.stopPropagationForAgGrid = void 0;
 const array_1 = require("./array");
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel', 'scroll'];
@@ -64,9 +64,38 @@ function isElementInEventPath(element, event) {
     if (!event || !element) {
         return false;
     }
-    return event.composedPath().indexOf(element) >= 0;
+    return getEventPath(event).indexOf(element) >= 0;
 }
 exports.isElementInEventPath = isElementInEventPath;
+function createEventPath(event) {
+    const res = [];
+    let pointer = event.target;
+    while (pointer) {
+        res.push(pointer);
+        pointer = pointer.parentElement;
+    }
+    return res;
+}
+exports.createEventPath = createEventPath;
+/**
+ * Gets the path for a browser Event or from the target on an AG Grid Event
+ * https://developer.mozilla.org/en-US/docs/Web/API/Event
+ * @param {Event| { target: EventTarget }} event
+ * @returns {EventTarget[]}
+ */
+function getEventPath(event) {
+    // This can be called with either a browser event or an AG Grid Event that has a target property.
+    const eventNoType = event;
+    if (eventNoType.path) {
+        return eventNoType.path;
+    }
+    if (eventNoType.composedPath) {
+        return eventNoType.composedPath();
+    }
+    // If this is an AG Grid event build the path ourselves
+    return createEventPath(eventNoType);
+}
+exports.getEventPath = getEventPath;
 function addSafePassiveEventListener(frameworkOverrides, eElement, event, listener) {
     const isPassive = array_1.includes(PASSIVE_EVENTS, event);
     const options = isPassive ? { passive: true } : undefined;

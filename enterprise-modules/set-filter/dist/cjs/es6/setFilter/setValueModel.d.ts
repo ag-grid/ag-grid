@@ -16,7 +16,7 @@ export interface SetValueModelParams<V> {
     translate: (key: keyof ISetFilterLocaleText) => string;
     caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
     createKey: (value: V | null, node?: RowNode) => string | null;
-    valueFormatter: (params: ValueFormatterParams) => string;
+    valueFormatter?: (params: ValueFormatterParams) => string;
     usingComplexObjects?: boolean;
     treeDataTreeList?: boolean;
     groupingTreeList?: boolean;

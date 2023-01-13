@@ -181,7 +181,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.convertValuesToStrings = !!params.convertValuesToStrings;
         this.caseSensitive = !!params.caseSensitive;
         var keyCreator = (_a = params.keyCreator) !== null && _a !== void 0 ? _a : params.colDef.keyCreator;
-        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList);
+        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList, !!params.colDef.refData);
         var isGroupCol = params.column.getId().startsWith(core_1.GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList && isGroupCol;
         this.getDataPath = this.gridOptionsService.get('getDataPath');
@@ -205,13 +205,16 @@ var SetFilter = /** @class */ (function (_super) {
         this.initialiseFilterBodyUi();
         this.addEventListenersForDataChanges();
     };
-    SetFilter.prototype.setValueFormatter = function (providedValueFormatter, keyCreator, convertValuesToStrings, treeList) {
+    SetFilter.prototype.setValueFormatter = function (providedValueFormatter, keyCreator, convertValuesToStrings, treeList, isRefData) {
         var valueFormatter = providedValueFormatter;
         if (!valueFormatter) {
             if (keyCreator && !convertValuesToStrings && !treeList) {
                 throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
             }
-            valueFormatter = function (params) { return core_1._.toStringOrNull(params.value); };
+            // ref data is handled by ValueFormatterService
+            if (!isRefData) {
+                valueFormatter = function (params) { return core_1._.toStringOrNull(params.value); };
+            }
         }
         this.valueFormatter = valueFormatter;
     };

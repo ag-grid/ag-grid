@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InteractionManager = void 0;
+const value_1 = require("../../util/value");
 const baseManager_1 = require("./baseManager");
 const WINDOW_EVENT_HANDLERS = ['pagehide', 'mousemove', 'mouseup'];
 const EVENT_HANDLERS = [
@@ -133,7 +134,7 @@ class InteractionManager extends baseManager_1.BaseManager {
                 }
                 this.touchDown = false;
                 this.dragStartElement = undefined;
-                return ['drag-end', 'click'];
+                return ['drag-end'];
             case 'mouseout':
             case 'touchcancel':
                 return ['leave'];
@@ -199,12 +200,12 @@ class InteractionManager extends baseManager_1.BaseManager {
     }
     buildEvent(opts) {
         let { type, event, clientX, clientY, offsetX, offsetY, pageX, pageY } = opts;
-        if (offsetX == null || offsetY == null) {
+        if (!value_1.isNumber(offsetX) || !value_1.isNumber(offsetY)) {
             const rect = this.element.getBoundingClientRect();
             offsetX = clientX - rect.left;
             offsetY = clientY - rect.top;
         }
-        if (pageX == null || pageY == null) {
+        if (!value_1.isNumber(pageX) || !value_1.isNumber(pageY)) {
             const pageRect = this.rootElement.getBoundingClientRect();
             pageX = clientX - pageRect.left;
             pageY = clientY - pageRect.top;

@@ -401,7 +401,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private setupWidth(): void {
         const listener = () => {
-            this.comp.setWidth(this.column.getActualWidth() + 'px');
+            const columnWidth = this.column.getActualWidth();
+            this.comp.setWidth(`${columnWidth}px`);
         };
 
         this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, listener);

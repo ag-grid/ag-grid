@@ -43,7 +43,23 @@ export class BBox {
             case 'right':
                 this.width -= amount;
                 break;
+            case 'vertical':
+                this.y += amount;
+                this.height -= amount * 2;
+                break;
+            case 'horizontal':
+                this.x += amount;
+                this.width -= amount * 2;
+                break;
+            default:
+                this.x += amount;
+                this.width -= amount * 2;
+                this.y += amount;
+                this.height -= amount * 2;
         }
+    }
+    grow(amount, position) {
+        this.shrink(-amount, position);
     }
     static merge(boxes) {
         let left = Infinity;

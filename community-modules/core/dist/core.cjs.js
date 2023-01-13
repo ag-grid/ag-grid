@@ -2368,7 +2368,34 @@ function isElementInEventPath(element, event) {
     if (!event || !element) {
         return false;
     }
-    return event.composedPath().indexOf(element) >= 0;
+    return getEventPath(event).indexOf(element) >= 0;
+}
+function createEventPath(event) {
+    var res = [];
+    var pointer = event.target;
+    while (pointer) {
+        res.push(pointer);
+        pointer = pointer.parentElement;
+    }
+    return res;
+}
+/**
+ * Gets the path for a browser Event or from the target on an AG Grid Event
+ * https://developer.mozilla.org/en-US/docs/Web/API/Event
+ * @param {Event| { target: EventTarget }} event
+ * @returns {EventTarget[]}
+ */
+function getEventPath(event) {
+    // This can be called with either a browser event or an AG Grid Event that has a target property.
+    var eventNoType = event;
+    if (eventNoType.path) {
+        return eventNoType.path;
+    }
+    if (eventNoType.composedPath) {
+        return eventNoType.composedPath();
+    }
+    // If this is an AG Grid event build the path ourselves
+    return createEventPath(eventNoType);
 }
 function addSafePassiveEventListener(frameworkOverrides, eElement, event, listener) {
     var isPassive = includes(PASSIVE_EVENTS$1, event);
@@ -2387,6 +2414,8 @@ var EventUtils = /*#__PURE__*/Object.freeze({
     isEventSupported: isEventSupported,
     getCtrlForEvent: getCtrlForEvent,
     isElementInEventPath: isElementInEventPath,
+    createEventPath: createEventPath,
+    getEventPath: getEventPath,
     addSafePassiveEventListener: addSafePassiveEventListener
 });
 

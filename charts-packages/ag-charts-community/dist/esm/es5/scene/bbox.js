@@ -43,7 +43,23 @@ var BBox = /** @class */ (function () {
             case 'right':
                 this.width -= amount;
                 break;
+            case 'vertical':
+                this.y += amount;
+                this.height -= amount * 2;
+                break;
+            case 'horizontal':
+                this.x += amount;
+                this.width -= amount * 2;
+                break;
+            default:
+                this.x += amount;
+                this.width -= amount * 2;
+                this.y += amount;
+                this.height -= amount * 2;
         }
+    };
+    BBox.prototype.grow = function (amount, position) {
+        this.shrink(-amount, position);
     };
     BBox.merge = function (boxes) {
         var left = Infinity;

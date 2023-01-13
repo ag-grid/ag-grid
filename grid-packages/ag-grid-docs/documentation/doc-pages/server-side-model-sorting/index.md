@@ -53,15 +53,6 @@ The example below demonstrates sorting using the SSRM. Note the following:
 
 <grid-example title='Server Side Sorting' name='server-side-sorting' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
-[[note]]
-| **Fake Server Implementation**
-|
-| Most of the Server-Side Row Model examples include a fake server that generates SQL to imitate how a real server
-| might use the requests sent from the grid. These examples use [AlaSQL](http://alasql.org/) which is a
-| JavaScript SQL database that works in browsers.
-|
-| However, note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
-
 ## Next Up
 
 Continue to the next section to learn about [SSRM Filtering](/server-side-model-filtering/).

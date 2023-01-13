@@ -734,9 +734,6 @@ class Chart extends observable_1.Observable {
         this.togglePointer(false);
     }
     handlePointer(event) {
-        if (!event) {
-            return;
-        }
         const { lastPick } = this;
         const { pageX, pageY, offsetX, offsetY } = event;
         const disablePointer = () => {
@@ -828,8 +825,8 @@ class Chart extends observable_1.Observable {
     }
     changeHighlightDatum(event) {
         const seriesToUpdate = new Set();
-        const { datum: { series: newSeries = undefined } = {}, datum: newDatum } = event.currentHighlight || {};
-        const { datum: { series: lastSeries = undefined } = {}, datum: lastDatum } = event.previousHighlight || {};
+        const { series: newSeries = undefined, datum: newDatum } = event.currentHighlight || {};
+        const { series: lastSeries = undefined, datum: lastDatum } = event.previousHighlight || {};
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);
         }
@@ -837,10 +834,10 @@ class Chart extends observable_1.Observable {
             seriesToUpdate.add(newSeries);
         }
         // Adjust cursor if a specific datum is highlighted, rather than just a series.
-        if ((lastSeries === null || lastSeries === void 0 ? void 0 : lastSeries.cursor) && (lastDatum === null || lastDatum === void 0 ? void 0 : lastDatum.datum)) {
+        if ((lastSeries === null || lastSeries === void 0 ? void 0 : lastSeries.cursor) && lastDatum) {
             this.cursorManager.updateCursor(lastSeries.id);
         }
-        if ((newSeries === null || newSeries === void 0 ? void 0 : newSeries.cursor) && (newDatum === null || newDatum === void 0 ? void 0 : newDatum.datum)) {
+        if ((newSeries === null || newSeries === void 0 ? void 0 : newSeries.cursor) && newDatum) {
             this.cursorManager.updateCursor(newSeries.id, newSeries.cursor);
         }
         this.lastPick = event.currentHighlight ? { datum: event.currentHighlight } : undefined;

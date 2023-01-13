@@ -1011,9 +1011,6 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.handlePointer = function (event) {
         var _this = this;
-        if (!event) {
-            return;
-        }
         var lastPick = this.lastPick;
         var pageX = event.pageX, pageY = event.pageY, offsetX = event.offsetX, offsetY = event.offsetY;
         var disablePointer = function () {
@@ -1105,8 +1102,8 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.changeHighlightDatum = function (event) {
         var seriesToUpdate = new Set();
-        var _a = event.currentHighlight || {}, _b = _a.datum, _c = (_b === void 0 ? {} : _b).series, newSeries = _c === void 0 ? undefined : _c, newDatum = _a.datum;
-        var _d = event.previousHighlight || {}, _e = _d.datum, _f = (_e === void 0 ? {} : _e).series, lastSeries = _f === void 0 ? undefined : _f, lastDatum = _d.datum;
+        var _a = event.currentHighlight || {}, _b = _a.series, newSeries = _b === void 0 ? undefined : _b, newDatum = _a.datum;
+        var _c = event.previousHighlight || {}, _d = _c.series, lastSeries = _d === void 0 ? undefined : _d, lastDatum = _c.datum;
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);
         }
@@ -1114,10 +1111,10 @@ var Chart = /** @class */ (function (_super) {
             seriesToUpdate.add(newSeries);
         }
         // Adjust cursor if a specific datum is highlighted, rather than just a series.
-        if ((lastSeries === null || lastSeries === void 0 ? void 0 : lastSeries.cursor) && (lastDatum === null || lastDatum === void 0 ? void 0 : lastDatum.datum)) {
+        if ((lastSeries === null || lastSeries === void 0 ? void 0 : lastSeries.cursor) && lastDatum) {
             this.cursorManager.updateCursor(lastSeries.id);
         }
-        if ((newSeries === null || newSeries === void 0 ? void 0 : newSeries.cursor) && (newDatum === null || newDatum === void 0 ? void 0 : newDatum.datum)) {
+        if ((newSeries === null || newSeries === void 0 ? void 0 : newSeries.cursor) && newDatum) {
             this.cursorManager.updateCursor(newSeries.id, newSeries.cursor);
         }
         this.lastPick = event.currentHighlight ? { datum: event.currentHighlight } : undefined;

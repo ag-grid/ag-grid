@@ -103,10 +103,10 @@ class Pagination {
         this.inactiveStyle = new PaginationMarkerStyle();
         this.highlightStyle = new PaginationMarkerStyle();
         this.label = new PaginationLabel();
+        this.totalPages = 0;
+        this.currentPage = 0;
         this.nextButtonDisabled = false;
         this.previousButtonDisabled = false;
-        this._totalPages = 0;
-        this._currentPage = 0;
         this._visible = true;
         this._enabled = true;
         this._orientation = 'vertical';
@@ -123,24 +123,7 @@ class Pagination {
         this.interactionManager.addListener('hover', (event) => this.onPaginationMouseMove(event));
         this.marker.parent = this;
         this.update();
-    }
-    set totalPages(value) {
-        if (this._totalPages !== value) {
-            this._totalPages = value;
-            this.update();
-        }
-    }
-    get totalPages() {
-        return this._totalPages;
-    }
-    set currentPage(value) {
-        if (this._currentPage !== value) {
-            this._currentPage = value;
-            this.update();
-        }
-    }
-    get currentPage() {
-        return this._currentPage;
+        this.updateMarkers();
     }
     set visible(value) {
         this._visible = value;
@@ -261,7 +244,6 @@ class Pagination {
         const onFirstPage = currentPage === 0;
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
         this.previousButtonDisabled = onFirstPage || zeroPagesToDisplay;
-        this.updateMarkers();
     }
     nextButtonContainsPoint(offsetX, offsetY) {
         return !this.nextButtonDisabled && this.nextButton.containsPoint(offsetX, offsetY);
@@ -299,7 +281,6 @@ class Pagination {
         this.chartUpdateCallback(chart_1.ChartUpdateType.SCENE_RENDER);
     }
     onPaginationChanged() {
-        this.update();
         this.pageUpdateCallback(this.currentPage);
     }
     incrementPage() {

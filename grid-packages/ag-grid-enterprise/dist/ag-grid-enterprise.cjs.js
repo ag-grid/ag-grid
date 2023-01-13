@@ -1399,7 +1399,23 @@ var BBox = /** @class */ (function () {
             case 'right':
                 this.width -= amount;
                 break;
+            case 'vertical':
+                this.y += amount;
+                this.height -= amount * 2;
+                break;
+            case 'horizontal':
+                this.x += amount;
+                this.width -= amount * 2;
+                break;
+            default:
+                this.x += amount;
+                this.width -= amount * 2;
+                this.y += amount;
+                this.height -= amount * 2;
         }
+    };
+    BBox.prototype.grow = function (amount, position) {
+        this.shrink(-amount, position);
     };
     BBox.merge = function (boxes) {
         var left = Infinity;
@@ -7483,6 +7499,13 @@ var Axis = /** @class */ (function () {
         //  1 = don't flip (default)
         var parallelFlipRotation = normalizeAngle360(rotation);
         var regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
+        var nice = this.nice;
+        scale.domain = this.dataDomain;
+        if (scale instanceof ContinuousScale) {
+            scale.nice = nice;
+            this.setTickCount(scale, this.tick.count);
+            scale.update();
+        }
         var halfBandwidth = (scale.bandwidth || 0) / 2;
         this.updatePosition();
         this.updateLine();
@@ -7490,15 +7513,8 @@ var Axis = /** @class */ (function () {
         var labelOverlap = true;
         var ticks = [];
         var defaultTickCount = 10;
-        var nice = this.nice;
         var continuous = scale instanceof ContinuousScale;
         var secondaryAxis = primaryTickCount !== undefined;
-        scale.domain = this.dataDomain;
-        if (scale instanceof ContinuousScale) {
-            scale.nice = nice;
-            this.setTickCount(scale, this.tick.count);
-            scale.update();
-        }
         while (labelOverlap) {
             var unchanged = true;
             var _loop_1 = function () {
@@ -8443,12 +8459,12 @@ var LinearScale = /** @class */ (function (_super) {
     }
     LinearScale.prototype.ticks = function () {
         var _a;
-        if (!this.domain || this.domain.length < 2) {
+        var count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
+        if (!this.domain || this.domain.length < 2 || count < 1) {
             return [];
         }
         this.refresh();
         var _b = __read$8(this.getDomain(), 2), d0 = _b[0], d1 = _b[1];
-        var count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
         return generateTicks(d0, d1, count);
     };
     LinearScale.prototype.update = function () {
@@ -8467,6 +8483,10 @@ var LinearScale = /** @class */ (function (_super) {
         var _a;
         var count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
         var _b = __read$8(this.domain, 2), start = _b[0], stop = _b[1];
+        if (count < 1) {
+            this.niceDomain = [start, stop];
+            return;
+        }
         for (var i = 0; i < 2; i++) {
             var step = tickStep(start, stop, count);
             if (step >= 1) {
@@ -10340,7 +10360,7 @@ function calculatePage(bboxes, indexOffset, primaryCount, primary, secondary, fo
             break;
         }
         var sumPrimary = maxPrimaryValues.reduce(function (sum, next) { return sum + next; }, 0);
-        if (sumPrimary > primary.max && returnResult) {
+        if (sumPrimary > primary.max && !forceResult) {
             // Breached max main dimension size.
             if (maxPrimaryValues.length < primaryCount) {
                 // Feedback as guess for next iteration if we're on the first round still.
@@ -10528,10 +10548,10 @@ var Pagination = /** @class */ (function () {
         this.inactiveStyle = new PaginationMarkerStyle();
         this.highlightStyle = new PaginationMarkerStyle();
         this.label = new PaginationLabel();
+        this.totalPages = 0;
+        this.currentPage = 0;
         this.nextButtonDisabled = false;
         this.previousButtonDisabled = false;
-        this._totalPages = 0;
-        this._currentPage = 0;
         this._visible = true;
         this._enabled = true;
         this._orientation = 'vertical';
@@ -10548,33 +10568,8 @@ var Pagination = /** @class */ (function () {
         this.interactionManager.addListener('hover', function (event) { return _this.onPaginationMouseMove(event); });
         this.marker.parent = this;
         this.update();
+        this.updateMarkers();
     }
-    Object.defineProperty(Pagination.prototype, "totalPages", {
-        get: function () {
-            return this._totalPages;
-        },
-        set: function (value) {
-            if (this._totalPages !== value) {
-                this._totalPages = value;
-                this.update();
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Pagination.prototype, "currentPage", {
-        get: function () {
-            return this._currentPage;
-        },
-        set: function (value) {
-            if (this._currentPage !== value) {
-                this._currentPage = value;
-                this.update();
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
     Object.defineProperty(Pagination.prototype, "visible", {
         get: function () {
             return this._visible;
@@ -10722,7 +10717,6 @@ var Pagination = /** @class */ (function () {
         var onFirstPage = currentPage === 0;
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
         this.previousButtonDisabled = onFirstPage || zeroPagesToDisplay;
-        this.updateMarkers();
     };
     Pagination.prototype.nextButtonContainsPoint = function (offsetX, offsetY) {
         return !this.nextButtonDisabled && this.nextButton.containsPoint(offsetX, offsetY);
@@ -10760,7 +10754,6 @@ var Pagination = /** @class */ (function () {
         this.chartUpdateCallback(ChartUpdateType.SCENE_RENDER);
     };
     Pagination.prototype.onPaginationChanged = function () {
-        this.update();
         this.pageUpdateCallback(this.currentPage);
     };
     Pagination.prototype.incrementPage = function () {
@@ -11237,6 +11230,7 @@ var Legend = /** @class */ (function () {
             var totalPages = pages.length;
             this.pagination.visible = totalPages > 1;
             this.pagination.totalPages = totalPages;
+            this.pagination.update();
             lastPassPaginationBBox = this.pagination.computeBBox();
             if (!this.pagination.visible) {
                 break;
@@ -11256,6 +11250,8 @@ var Legend = /** @class */ (function () {
                 (verticalOrientation
                     ? legendItemsHeight + paginationComponentPadding
                     : (legendItemsHeight - paginationBBox.height) / 2);
+        this.pagination.update();
+        this.pagination.updateMarkers();
         return {
             maxPageHeight: maxPageHeight,
             maxPageWidth: maxPageWidth,
@@ -11323,6 +11319,8 @@ var Legend = /** @class */ (function () {
             // Track the middle item on the page).
             this.paginationTrackingIndex = Math.floor((startIndex + endIndex) / 2);
         }
+        this.pagination.update();
+        this.pagination.updateMarkers();
         this.updatePositions(pageNumber);
         this.chart.update(ChartUpdateType.SCENE_RENDER);
     };
@@ -11341,14 +11339,30 @@ var Legend = /** @class */ (function () {
     };
     Legend.prototype.getDatumForPoint = function (x, y) {
         var e_2, _a;
+        var visibleChildBBoxes = [];
+        var closestLeftTop = { dist: Infinity, datum: undefined };
         try {
             for (var _b = __values$a(this.group.children), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var child = _c.value;
+                if (!child.visible)
+                    continue;
                 if (!(child instanceof MarkerLabel))
                     continue;
-                if (child.visible && child.computeBBox().containsPoint(x, y)) {
+                var childBBox = child.computeBBox();
+                childBBox.grow(this.item.paddingX / 2, 'horizontal');
+                childBBox.grow(this.item.paddingY / 2, 'vertical');
+                if (childBBox.containsPoint(x, y)) {
                     return child.datum;
                 }
+                var distX = x - childBBox.x - this.item.paddingX / 2;
+                var distY = y - childBBox.y - this.item.paddingY / 2;
+                var dist = Math.pow(distX, 2) + Math.pow(distY, 2);
+                var toTheLeftTop = distX >= 0 && distY >= 0;
+                if (toTheLeftTop && dist < closestLeftTop.dist) {
+                    closestLeftTop.dist = dist;
+                    closestLeftTop.datum = child.datum;
+                }
+                visibleChildBBoxes.push(childBBox);
             }
         }
         catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -11358,7 +11372,13 @@ var Legend = /** @class */ (function () {
             }
             finally { if (e_2) throw e_2.error; }
         }
-        return undefined;
+        var pageBBox = BBox.merge(visibleChildBBoxes);
+        if (!pageBBox.containsPoint(x, y)) {
+            // We're not in-between legend items.
+            return undefined;
+        }
+        // Fallback to returning closest match to the left/up.
+        return closestLeftTop.datum;
     };
     Legend.prototype.computeBBox = function () {
         return this.group.computeBBox();
@@ -11415,6 +11435,9 @@ var Legend = /** @class */ (function () {
         if (!pointerInsideLegend) {
             this.cursorManager.updateCursor(this.id);
             this.highlightManager.updateHighlight(this.id);
+            if (this.chart.element.title) {
+                this.chart.element.title = '';
+            }
             return;
         }
         // Prevent other handlers from consuming this event if it's generated inside the legend
@@ -13693,7 +13716,7 @@ var InteractionManager = /** @class */ (function (_super) {
                 }
                 this.touchDown = false;
                 this.dragStartElement = undefined;
-                return ['drag-end', 'click'];
+                return ['drag-end'];
             case 'mouseout':
             case 'touchcancel':
                 return ['leave'];
@@ -13759,12 +13782,12 @@ var InteractionManager = /** @class */ (function (_super) {
     };
     InteractionManager.prototype.buildEvent = function (opts) {
         var type = opts.type, event = opts.event, clientX = opts.clientX, clientY = opts.clientY, offsetX = opts.offsetX, offsetY = opts.offsetY, pageX = opts.pageX, pageY = opts.pageY;
-        if (offsetX == null || offsetY == null) {
+        if (!isNumber(offsetX) || !isNumber(offsetY)) {
             var rect = this.element.getBoundingClientRect();
             offsetX = clientX - rect.left;
             offsetY = clientY - rect.top;
         }
-        if (pageX == null || pageY == null) {
+        if (!isNumber(pageX) || !isNumber(pageY)) {
             var pageRect = this.rootElement.getBoundingClientRect();
             pageX = clientX - pageRect.left;
             pageY = clientY - pageRect.top;
@@ -15057,9 +15080,6 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.handlePointer = function (event) {
         var _this = this;
-        if (!event) {
-            return;
-        }
         var lastPick = this.lastPick;
         var pageX = event.pageX, pageY = event.pageY, offsetX = event.offsetX, offsetY = event.offsetY;
         var disablePointer = function () {
@@ -15151,8 +15171,8 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.changeHighlightDatum = function (event) {
         var seriesToUpdate = new Set();
-        var _a = event.currentHighlight || {}, _b = _a.datum, _c = (_b === void 0 ? {} : _b).series, newSeries = _c === void 0 ? undefined : _c, newDatum = _a.datum;
-        var _d = event.previousHighlight || {}, _e = _d.datum, _f = (_e === void 0 ? {} : _e).series, lastSeries = _f === void 0 ? undefined : _f, lastDatum = _d.datum;
+        var _a = event.currentHighlight || {}, _b = _a.series, newSeries = _b === void 0 ? undefined : _b, newDatum = _a.datum;
+        var _c = event.previousHighlight || {}, _d = _c.series, lastSeries = _d === void 0 ? undefined : _d, lastDatum = _c.datum;
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);
         }
@@ -15160,10 +15180,10 @@ var Chart = /** @class */ (function (_super) {
             seriesToUpdate.add(newSeries);
         }
         // Adjust cursor if a specific datum is highlighted, rather than just a series.
-        if ((lastSeries === null || lastSeries === void 0 ? void 0 : lastSeries.cursor) && (lastDatum === null || lastDatum === void 0 ? void 0 : lastDatum.datum)) {
+        if ((lastSeries === null || lastSeries === void 0 ? void 0 : lastSeries.cursor) && lastDatum) {
             this.cursorManager.updateCursor(lastSeries.id);
         }
-        if ((newSeries === null || newSeries === void 0 ? void 0 : newSeries.cursor) && (newDatum === null || newDatum === void 0 ? void 0 : newDatum.datum)) {
+        if ((newSeries === null || newSeries === void 0 ? void 0 : newSeries.cursor) && newDatum) {
             this.cursorManager.updateCursor(newSeries.id, newSeries.cursor);
         }
         this.lastPick = event.currentHighlight ? { datum: event.currentHighlight } : undefined;
@@ -23556,11 +23576,11 @@ var LogScale = /** @class */ (function (_super) {
     LogScale.prototype.ticks = function () {
         var _this = this;
         var _a;
-        if (!this.domain || this.domain.length < 2) {
+        var count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
+        if (!this.domain || this.domain.length < 2 || count < 1) {
             return [];
         }
         this.refresh();
-        var count = (_a = this.tickCount) !== null && _a !== void 0 ? _a : 10;
         var base = this.base;
         var _b = __read$r(this.getDomain(), 2), d0 = _b[0], d1 = _b[1];
         var p0 = this.log(d0);
@@ -57750,7 +57770,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.convertValuesToStrings = !!params.convertValuesToStrings;
         this.caseSensitive = !!params.caseSensitive;
         var keyCreator = (_a = params.keyCreator) !== null && _a !== void 0 ? _a : params.colDef.keyCreator;
-        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList);
+        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList, !!params.colDef.refData);
         var isGroupCol = params.column.getId().startsWith(agGridCommunity.GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList && isGroupCol;
         this.getDataPath = this.gridOptionsService.get('getDataPath');
@@ -57774,13 +57794,16 @@ var SetFilter = /** @class */ (function (_super) {
         this.initialiseFilterBodyUi();
         this.addEventListenersForDataChanges();
     };
-    SetFilter.prototype.setValueFormatter = function (providedValueFormatter, keyCreator, convertValuesToStrings, treeList) {
+    SetFilter.prototype.setValueFormatter = function (providedValueFormatter, keyCreator, convertValuesToStrings, treeList, isRefData) {
         var valueFormatter = providedValueFormatter;
         if (!valueFormatter) {
             if (keyCreator && !convertValuesToStrings && !treeList) {
                 throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
             }
-            valueFormatter = function (params) { return agGridCommunity._.toStringOrNull(params.value); };
+            // ref data is handled by ValueFormatterService
+            if (!isRefData) {
+                valueFormatter = function (params) { return agGridCommunity._.toStringOrNull(params.value); };
+            }
         }
         this.valueFormatter = valueFormatter;
     };
