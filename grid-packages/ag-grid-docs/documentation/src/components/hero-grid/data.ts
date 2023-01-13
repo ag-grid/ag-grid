@@ -7,6 +7,7 @@ import {
     TooltipRendererParams,
     TooltipRendererResult,
 } from 'ag-grid-community';
+import { ChangeCellRenderer } from './changeCellRenderer';
 import { toCurrency, toPercentage, toTime } from './formatters';
 import { randomNumber, randomNumberList } from './generator-utils';
 
@@ -167,6 +168,18 @@ export const columnDefs: ColDef[] = [
     //         } as ColumnSparklineOptions,
     //     },
     // },
+
+    // Using default `agAnimateShowChangeCellRenderer` renderer
+    // {
+    //     headerName: '% Change',
+    //     type: 'numericColumn',
+    //     valueGetter: ({ data }) => {
+    //         const last = getLastValue(data);
+    //         return Boolean(data.current) ? ((data.current - last) / data.current) * 100 : 0;
+    //     },
+    //     valueFormatter: ({ value }) => toPercentage({ value, decimalPlaces: 2 }),
+    //     cellRenderer: 'agAnimateShowChangeCellRenderer',
+    // },
     {
         headerName: '% Change',
         type: 'numericColumn',
@@ -174,8 +187,7 @@ export const columnDefs: ColDef[] = [
             const last = getLastValue(data);
             return Boolean(data.current) ? ((data.current - last) / data.current) * 100 : 0;
         },
-        valueFormatter: ({ value }) => toPercentage({ value, decimalPlaces: 2 }),
-        cellRenderer: 'agAnimateShowChangeCellRenderer',
+        cellRenderer: ChangeCellRenderer,
     },
     {
         field: 'time',
