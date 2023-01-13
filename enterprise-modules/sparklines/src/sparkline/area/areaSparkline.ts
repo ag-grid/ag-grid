@@ -6,7 +6,7 @@ import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
 import { getLineDash } from '../../util/lineDash';
 
-const { extent, isNumber } = _Util;
+const { extent } = _Util;
 const { BandScale } = _Scale;
 
 interface AreaNodeDatum extends SeriesNodeDatum { }
@@ -105,7 +105,7 @@ export class AreaSparkline extends Sparkline {
 
     protected updateYScaleDomain(): void {
         const { yData, yScale } = this;
-        const yMinMax = extent(yData, isNumber);
+        const yMinMax = extent(yData as number[]);
 
         let yMin = 0;
         let yMax = 1;

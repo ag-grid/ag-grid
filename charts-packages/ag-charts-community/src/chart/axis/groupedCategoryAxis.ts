@@ -9,7 +9,6 @@ import { ticksToTree, TreeLayout, treeLayout } from '../../layout/tree';
 import { AxisLabel, AxisLine } from '../../axis';
 import { ChartAxis, ChartAxisDirection } from '../chartAxis';
 import { extent } from '../../util/array';
-import { isContinuous } from '../../util/value';
 import { Point } from '../../scene/point';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
 
@@ -146,7 +145,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
         const domain = new Array<any>().concat(...domains);
 
-        const values = extent(domain, isContinuous) || domain;
+        const values = extent(domain) || domain;
 
         this.dataDomain = this.normaliseDataDomain(values);
     }

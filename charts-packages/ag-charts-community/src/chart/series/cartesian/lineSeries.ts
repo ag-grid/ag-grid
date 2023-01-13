@@ -14,7 +14,7 @@ import { toTooltipHtml } from '../../tooltip/tooltip';
 import { interpolate } from '../../../util/string';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { checkDatum, isContinuous } from '../../../util/value';
+import { checkDatum } from '../../../util/value';
 import { Marker } from '../../marker/marker';
 import {
     NUMBER,
@@ -187,8 +187,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
             });
         }
 
-        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), xAxis) : xData;
-        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData, isContinuous), yAxis) : yData;
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData), xAxis) : xData;
+        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData), yAxis) : yData;
     }
 
     async createNodeData() {
