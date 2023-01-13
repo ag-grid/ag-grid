@@ -1,23 +1,35 @@
 .framework-selector {
     --height: 44px;
     --icon-size: 26px;
+    --font-size: 16px;
+    --border-width: 2px;
 
     display: flex;
+    width: 100%;
+    min-width: 220px;
     font-weight: 500;
 }
 
 .framework-selector__option {
-    $border-width: 2px;
     $selected-color: #3798f9;
 
     display: flex;
     position: relative;
-    padding: calc((var(--height) - var(--icon-size)) / 2);
+    justify-content: center;
+    padding: calc((var(--height) - var(--icon-size)) / 2) 0;
     text-decoration: none;
     background-color: white;
 
     &:not(:first-child) {
-        margin-left: $border-width;
+        margin-left: var(--border-width);
+    }
+
+    &:first-child {
+        padding-left: calc(var(--height) / 4);
+    }
+
+    &:last-child{
+        padding-right: calc(var(--height) / 4);
     }
 
     // Using ::after to create borders to create pleasant overlap
@@ -26,9 +38,9 @@
         position: absolute;
         height: 100%;
         top: 0;
-        left: -$border-width;
-        right: -$border-width;
-        border: $border-width solid transparent;
+        left: calc(var(--border-width) * -1);
+        right: calc(var(--border-width) * -1);
+        border: var(--border-width) solid transparent;
         transition: border-color .25s ease-in-out;
     }
 
@@ -42,20 +54,14 @@
 
     &:first-child,
     &:first-child::after {
-        padding-left: calc(var(--height) / 2.25);
         border-top-left-radius: calc(var(--height) / 2);
         border-bottom-left-radius: calc(var(--height) / 2);
     }
 
     &:last-child,
     &:last-child::after {
-        padding-right: calc(var(--height) / 2.5);
         border-top-right-radius: calc(var(--height) / 2);
         border-bottom-right-radius: calc(var(--height) / 2);
-    }
-
-    &:hover::after {
-        border-color: rgba($selected-color, 0.5);
     }
 
     img {
@@ -69,14 +75,14 @@
         color: #212529;
         opacity: .6666;
         transition: opacity .25s ease-in-out;
-
-        @media screen and ( min-width: 860px ) {
-            display: inline;
-        }
     }
 
     &:hover {
         text-decoration: none;
+        
+        &::after {
+            border-color: rgba($selected-color, 0.5);
+        }
 
         span {
             opacity: .85;
@@ -91,6 +97,27 @@
 
         span {
             opacity: 1;
+        }
+    }
+}
+
+.framework-selector--show-selected .framework-selector__option {
+    width: 25%;
+
+    @media screen and ( min-width: 880px ) {
+        width: auto;
+        padding: calc((var(--height) - var(--icon-size)) / 2);
+
+        &:first-child {
+            padding-left: calc(var(--height) / 1.75);
+        }
+    
+        &:last-child{
+            padding-right: calc(var(--height) / 2);
+        }
+
+        span {
+            display: inline;
         }
     }
 }

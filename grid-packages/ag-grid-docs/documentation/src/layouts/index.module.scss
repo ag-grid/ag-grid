@@ -97,7 +97,12 @@ main {
         composes: p-2 from global;
 
         display: flex;
+        flex-grow: 1;
         align-items: center;
+
+        @media screen and ( min-width: 880px ) {
+            flex-grow: unset;
+        }
     }
 
     &__framework-label {
