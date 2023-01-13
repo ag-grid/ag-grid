@@ -100,3 +100,23 @@ The example below shows this in action where the following can be noted:
 - Click **Refresh ['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `gridOptions.api.refreshServerSide({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
 
 <grid-example title='Purging Tree Data' name='purging-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
+## Filtering Tree Data
+
+Server-Side Tree Data Filtering should behave the same as Client-Side [Tree Data Filtering](/tree-data/#tree-data-filtering). A group will be included if:
+
+<ol style="list-style-type: lower-latin;">
+    <li>it has any children that pass the filter, or</li>
+    <li>it has a parent that passes the filter, or</li>
+    <li>its own data passes the filter</li>
+</ol>
+
+The following example demonstrates Server-Side Tree Data Filtering using the [Set Filter Tree List](/filter-set-tree-list/), which replicates the Tree Data structure in the filter.
+
+- The **Group** column has the Set Filter Tree List enabled via `filterParams.treeList = true`. A Key Creator is specified to convert the path into a string.
+- The **Group** column has the filter values supplied asynchronously as a nested array of strings that matches the data paths.
+- The **Date** column has the Set Filter Tree List enabled via `filterParams.treeList = true`, and is grouped by year -> month -> day.
+- The **Date** column has the filter values supplied asynchronously as an array of `Date` objects.
+- The **Date** column has a `filterParams.keyCreator` provided to convert the `Date` values into the (string) format the server is expecting in the Filter Model.
+
+<grid-example title='Filtering Tree Data' name='filtering-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
