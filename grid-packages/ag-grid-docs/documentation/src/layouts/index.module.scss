@@ -102,7 +102,7 @@ main {
 
     &__framework-label {
         margin-right: 8px;
-        color: $secondary;
+        color: darken($secondary, 10%);
     }
 }
 
