@@ -10,60 +10,24 @@ import styles from './Announcements.module.scss';
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
 
-
-    <Announcement date="Oct 4" version="28.2.0">
+    <Announcement date="Jan 13" version="29.0.0">
         <p className="card-text">
-            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-28-2/">What's new in AG Grid 28.2.0</a><br/><br/>
-            Minor release with new features and bug fixes.
-        </p>
-        <ul>
-            <li className={styles['announcement__list-item']}>
-                <a href="https://ag-grid.com/react-data-grid/solidjs/">Introducing SolidJS</a>
-            </li>
-        </ul>
-    </Announcement>
-
-    <Announcement date="Aug 3" version="28.1.0">
-        <p className="card-text">
-            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-28-1/">What's new in AG Grid 28.1.0</a><br/><br/>
-            Minor release with new features and bug fixes.
-        </p>
-        <ul>
-            <li className={styles['announcement__list-item']}>
-                <a href="https://ag-grid.com/javascript-charts/axes/#cross-line">Chart Cross Lines</a>
-            </li>
-        </ul>
-    </Announcement>
-
-    <Announcement date="Jul 6" version="28.0.0">
-        <p className="card-text">
-            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-28/">What's new in AG Grid 28.0.0</a><br/><br/>
+            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-29/">What's new in AG Grid 29.0.0</a><br/><br/>
             Major release with new features and bug fixes.
         </p>
         <ul>
             <li className={styles['announcement__list-item']}>
-                <a href="https://ag-grid.com/javascript-data-grid/global-style-customisation-variables/">CSS Variables</a>
+                <a href="https://ag-grid.com/javascript-data-grid/filter-set-tree-list/">Set Filter List</a>
             </li>
-        </ul>
-        <ul>
             <li className={styles['announcement__list-item']}>
-                <a href="https://ag-grid.com/javascript-data-grid/grouping-sticky-groups/">Sticky Groups</a>
+                <a href="https://ag-grid.com/javascript-data-grid/server-side-model-updating-transactions/">SSRM Transactions</a>
             </li>
-        </ul>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://ag-grid.com/javascript-charts/legend/">Legend Enhancements</a>
+            </li>
 
-        <ul>
             <li className={styles['announcement__list-item']}>
-                <a href="https://ag-grid.com/javascript-data-grid/column-headers/#auto-header-height">Auto Header Height</a>
-            </li>
-        </ul>
-        <ul>
-            <li className={styles['announcement__list-item']}>
-                <a href="https://ag-grid.com/angular-data-grid/typescript-generics/">Typescript Generics</a>
-            </li>
-        </ul>
-        <ul>
-            <li className={styles['announcement__list-item']}>
-                <a href="https://ag-grid.com/angular-data-grid/angular-compatibility/">Angular Ivy Support</a>
+                <a href="https://ag-grid.com/javascript-charts/treemap-series/">Treemap Enhancements</a>
             </li>
         </ul>
     </Announcement>

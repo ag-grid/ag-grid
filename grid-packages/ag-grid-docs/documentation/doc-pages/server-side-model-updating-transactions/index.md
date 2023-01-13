@@ -29,7 +29,7 @@ gridOptions.api.applyServerSideTransaction({
 });
 </snippet>
 
-The following example demonstrates add / update and remove operations via the transaction API. Note the following:
+The following example demonstrates add / update and remove operations via the Server-Side Transaction API. Note the following:
 
 - **Add Above Selected** - adds a row above the selected row using the`addIndex` property as rows are added at the end by default.
 - **Updated Selected** - updates the 'current' value on the selected row.

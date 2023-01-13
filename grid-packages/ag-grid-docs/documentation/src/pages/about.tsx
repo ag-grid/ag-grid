@@ -93,10 +93,10 @@ const AboutPage = () => {
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='../images/team/rob.jpg' alt="Rob Clarke, Head of Engineering"/>
+                                        <img src='../images/team/rob.jpg' alt="Rob Clarke, VP of Engineering"/>
                                     </div>
                                     <h3>Rob Clarke</h3>
-                                    <h4>Head of Engineering</h4>
+                                    <h4>VP of Engineering</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
