@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-angular-legacy",
-  "version": "6.2.1",
+  "version": "7.0.0",
   "scripts": {
     "clean": "rimraf dist .hash",
     "ng": "ng",
@@ -43,7 +43,7 @@
     "rxjs": "~6.5.4",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2",
-    "ag-charts-community": "~6.2.1"
+    "ag-charts-community": "~7.0.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1002.4",

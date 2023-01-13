@@ -24,9 +24,11 @@ git reset grid-packages/ag-grid-angular/dist
 git reset enterprise-modules/all-modules/dist
 git reset enterprise-modules/all-modules/ts-lint-rules/dist
 git reset enterprise-modules/charts/dist
+git reset enterprise-modules/charts/typings
 git reset enterprise-modules/clipboard/dist
 git reset enterprise-modules/column-tool-panel/dist
 git reset enterprise-modules/core/dist
+git reset enterprise-modules/core/typings
 git reset enterprise-modules/excel-export/dist
 git reset enterprise-modules/filter-tool-panel/dist
 git reset enterprise-modules/master-detail/dist
@@ -60,6 +62,7 @@ git reset community-modules/vue3/dist
 git reset community-modules/vue3/lib
 git reset charts-packages/ag-charts-angular/dist
 git reset charts-packages/ag-charts-community/dist
+git reset charts-packages/ag-charts-community/typings
 git reset charts-packages/ag-charts-react/lib
 git reset charts-packages/ag-charts-react/umd
 git reset charts-packages/ag-charts-vue/lib

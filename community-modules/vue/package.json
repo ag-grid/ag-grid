@@ -1,7 +1,7 @@
 {
   "name": "@ag-grid-community/vue",
   "description": "AG Grid Vue 2 Component",
-  "version": "28.2.1",
+  "version": "29.0.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -31,7 +31,7 @@
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "devDependencies": {
-    "@ag-grid-community/core": "~28.2.1",
+    "@ag-grid-community/core": "~29.0.0",
     "@types/node": "12.20.20",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
@@ -46,7 +46,7 @@
     "rimraf": "3.0.2"
   },
   "peerDependencies": {
-    "@ag-grid-community/core": "~28.2.1",
+    "@ag-grid-community/core": "~29.0.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0 || ^8.0.0 || ^9.1.2"
   },

@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular",
-  "version": "28.2.1",
+  "version": "29.0.0",
   "scripts": {
     "clean": "rimraf dist .hash",
     "ng": "./node_modules/.bin/ng",
@@ -33,8 +33,8 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "ag-grid-community": "~28.2.1",
-    "@ag-grid-community/angular": "~28.2.1",
+    "ag-grid-community": "~29.0.0",
+    "@ag-grid-community/angular": "~29.0.0",
     "@angular-devkit/build-angular": "~12.2.17",
     "@angular/cli": "~12.2.17",
     "@angular/compiler-cli": "~12.2.0",

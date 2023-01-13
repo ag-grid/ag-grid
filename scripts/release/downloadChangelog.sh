@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SSH_LOCATION=$HOME/$SSH_FILE
+SSH_LOCATION=$SSH_FILE
 
 if [ -z "$SSH_LOCATION" ]
 then
