@@ -21,7 +21,6 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         resizable: true,
         sortable: true,
-        flex: 1,
     },
     getRowId: ({ data }: GetRowIdParams) => {
         return data.stock;

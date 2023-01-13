@@ -175,6 +175,7 @@ body {
     }
 
     .headings {
+        flex: 1;
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -182,16 +183,20 @@ body {
     }
 
     h1 {
-        font-size: 68px;
+        margin: 0;
+        font-size: min(3vw, 50px);
     }
 
     h2 {
-        font-size: 28px;
+        margin: 0;
+        font-size: min(2vw, 28px);
     }
 
     .hero-grid {
         display: flex;
         flex-direction: row-reverse;
+        height: 354px;
+        width: 860px;
     }
 }
 

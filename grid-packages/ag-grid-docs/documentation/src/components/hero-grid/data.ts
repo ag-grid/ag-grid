@@ -23,6 +23,7 @@ export interface Stock {
 }
 
 const MAX_NUMBER = 1000000;
+const TIMELINE_SIZE = 20;
 
 const STOCK_NAMES = [
     'Cow Moans',
@@ -101,9 +102,13 @@ function getLastValue(data: Stock): number {
 }
 
 export const columnDefs: ColDef[] = [
-    { field: 'stock' },
+    {
+        field: 'stock',
+        initialWidth: 140
+    },
     {
         field: 'timeline',
+        flex: 1,
         cellRenderer: 'agSparklineCellRenderer',
         cellRendererParams: {
             sparklineOptions: {
@@ -123,6 +128,7 @@ export const columnDefs: ColDef[] = [
         field: 'current',
         type: 'numericColumn',
         valueFormatter: toCurrency,
+        initialWidth: 110
     },
     {
         headerName: 'Last',
@@ -131,6 +137,7 @@ export const columnDefs: ColDef[] = [
             return getLastValue(data);
         },
         valueFormatter: toCurrency,
+        initialWidth: 110
     },
     // {
     //     headerName: 'Change (area)',
@@ -188,6 +195,7 @@ export const columnDefs: ColDef[] = [
             return Boolean(data.current) ? ((data.current - last) / data.current) * 100 : 0;
         },
         cellRenderer: ChangeCellRenderer,
+        initialWidth: 150
     },
     // {
     //     field: 'time',
@@ -203,7 +211,7 @@ function randomValue() {
 
 function generateRandomStock(stockName: string): Stock {
     const current = randomValue();
-    const initialTimelineLength = 9;
+    const initialTimelineLength = TIMELINE_SIZE - 1;
     const previousTimeInterval = 1000;
     const timeline = randomNumberList({
         length: initialTimelineLength,

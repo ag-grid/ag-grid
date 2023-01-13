@@ -47,7 +47,7 @@ const Default = () => {
                 <div className={styles['homepage-hero']}>
                     <section className={styles['contents']}>
                         <section className={styles['headings']}>
-                            <h1>The Best JavaScript Grid in the World</h1>
+                            <h1>The&nbsp;Best JavaScript&nbsp;Grid in&nbsp;the&nbsp;World</h1>
                             <h2>The professional choice for developers building enterprise data applications</h2>
                         </section>
                         

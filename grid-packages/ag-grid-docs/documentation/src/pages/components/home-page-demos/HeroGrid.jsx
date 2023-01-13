@@ -25,7 +25,7 @@ const HeroGrid = () => {
         <Helmet>
             {helmet.map(entry => entry)}
         </Helmet>
-        <div id='heroGrid' style={{ height: "400px", width: "860px" }} className={className}></div>
+        <div id='heroGrid' style={{ height: "100%", width: "100%" }} className={className}></div>
     </>
 };
 
