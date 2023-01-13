@@ -87,7 +87,8 @@
 
 
     &--selected{
-        &::after {
+        &::after,
+        &:hover::after {
             border-color: $selected-color;
         }
 
