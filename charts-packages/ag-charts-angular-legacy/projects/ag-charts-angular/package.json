@@ -21,6 +21,6 @@
   "peerDependencies": {
     "@angular/common": ">=10.0.0",
     "@angular/core": ">=10.0.0",
-    "ag-charts-community": "~7.0.0"
+    "ag-charts-community": "6.2.0"
   }
 }
