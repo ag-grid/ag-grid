@@ -5,6 +5,7 @@ import HeaderNav from 'components/HeaderNav';
 import Menu from 'components/Menu';
 import Footer from 'components/footer/Footer';
 import Search from 'components/search/Search';
+import supportedFrameworks from 'utils/supported-frameworks';
 import FrameworkSelector from 'components/FrameworkSelector';
 import favIcons from '../images/favicons';
 import LogoType from '../images/inline-svgs/ag-grid-logotype.svg';
@@ -12,28 +13,43 @@ import LogoMark from 'components/LogoMark';
 import styles from './index.module.scss';
 import './mailchimp.css';
 
-const TopBar = ({frameworks, framework, path}) => (
-    <div className={styles['top-bar']}>
-        <div className={styles['top-bar__wrapper']}>
-            <div className={styles['top-bar__search']}>
-                <button
-                    className={styles['top-bar__nav-button']}
-                    type="button" data-toggle="collapse"
-                    data-target="#side-nav"
-                    aria-controls="side-nav"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span className={styles['top-bar__nav-button-icon']}></span>
-                </button>
-                <Search currentFramework={framework}/>
-            </div>
-            <div className={styles['top-bar__framework-selector']}>
-                <span className={styles['top-bar__framework-label']}>Framework:</span>
-                <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework}/>
+const TopBar = ({ frameworks, currentFramework, path }) => {
+    const data = supportedFrameworks
+        .filter((f) => !frameworks || frameworks.includes(f))
+        .map((framework) => ({
+            name: framework,
+            url: path.replace(`/${currentFramework}-`, `/${framework}-`),
+        }));
+
+    return (
+        <div className={styles['top-bar']}>
+            <div className={styles['top-bar__wrapper']}>
+                <div className={styles['top-bar__search']}>
+                    <button
+                        className={styles['top-bar__nav-button']}
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#side-nav"
+                        aria-controls="side-nav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span className={styles['top-bar__nav-button-icon']}></span>
+                    </button>
+
+                    <Search currentFramework={currentFramework} />
+                </div>
+
+                {currentFramework && (
+                    <div className={styles['top-bar__framework-selector']}>
+                        <span className={styles['top-bar__framework-label']}>Framework:</span>
+                        <FrameworkSelector data={data} currentFramework={currentFramework} showSelectedFramework />
+                    </div>
+                )}
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 /**
  * This controls the layout template for all pages.
@@ -57,6 +73,7 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
         processedPath === '/privacy' || processedPath === '/privacy/';
 
     const [isLogoHover, setIsLogoHover]  = useState(false);
+
 
     return <GlobalContextProvider>
         <Helmet>
@@ -85,7 +102,7 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
                     <HeaderNav path={path}/>
                 </div>
             </header>
-            {(!fullScreenPage && !fullScreenWithFooter) && <TopBar frameworks={frameworks} framework={framework} path={path}/>}
+            {(!fullScreenPage && !fullScreenWithFooter) && <TopBar frameworks={frameworks} currentFramework={framework} path={path}/>}
             <div className={styles['content-viewport']}>
                 {(!fullScreenPage && !fullScreenWithFooter) &&
                     <aside className={`${styles['main-menu']}`}>
