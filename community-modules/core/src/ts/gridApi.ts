@@ -462,19 +462,19 @@ export class GridApi<TData = any> {
     /**
      * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
      */
-    public setColumnDefs(colDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = "api") {
+    public setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source: ColumnEventType = "api") {
         this.columnModel.setColumnDefs(colDefs, source);
         // Keep gridOptions.columnDefs in sync
         this.gridOptionsService.set('columnDefs', colDefs, true, { source });
     }
 
     /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
-    public setAutoGroupColumnDef(colDef: ColDef, source: ColumnEventType = "api") {
+    public setAutoGroupColumnDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
         this.gridOptionsService.set('autoGroupColumnDef', colDef, true, { source });
     }
 
     /** Call to set new Default Column Definition. */
-    public setDefaultColDef(colDef: ColDef, source: ColumnEventType = "api") {
+    public setDefaultColDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
         this.gridOptionsService.set('defaultColDef', colDef, true, { source });
     }
 
