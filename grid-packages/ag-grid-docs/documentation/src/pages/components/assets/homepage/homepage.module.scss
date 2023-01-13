@@ -85,11 +85,10 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: 24px;
-    padding-bottom: 48px;
+    padding: 24px 15px 48px;
     background-color: $ag-site-fw-background;
 
-    @media screen and ( min-width: 460px ) {
+    @media screen and ( min-width: 640px ) {
         padding-top: 48px;
         flex-direction: row;
     }
@@ -99,12 +98,12 @@ body {
     opacity: .6666;
     margin-bottom: 8px;
 
-    @media screen and ( min-width: 460px ) {
+    @media screen and ( min-width: 640px ) {
         margin-bottom: 0;
         margin-right: 8px;
     }
 
-    @media screen and ( min-width: 960px ) {
+    @media screen and ( min-width: 1020px ) {
         font-size: 22px;
         margin-right: 16px;
     }
@@ -160,6 +159,7 @@ body {
 
 .stage-scenarios {
     @extend %stage;
+
     background-color: $offwhite;
 
     &.main {

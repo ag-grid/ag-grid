@@ -1,7 +1,7 @@
 import React from 'react';
 // @ts-ignore
 import styles from './components/assets/homepage/homepage.module.scss';
-import HomepageFrameWorkSelector from '../components/HomepageFrameWorkSelector';
+import FrameworkSelector from '../components/FrameworkSelector';
 import Footer from '../components/footer/Footer';
 import Seo from "./components/SEO";
 import {agGridVersion} from "../utils/consts";
@@ -16,6 +16,29 @@ const LiveStreamingDemo = React.lazy(() => import("./components/home-page-demos/
 const ChartingDashboardDemo = React.lazy(() => import("./components/home-page-demos/ChartingDashboard"));
 
 const Default = () => {
+    const frameworksData = [
+        {
+            name: "javascript",
+            url: "/javascript-data-grid/",
+        },
+        {
+            name: "react",
+            url: "/react-data-grid/",
+        },
+        {
+            name: "angular",
+            url: "/angular-data-grid/",
+        },
+        {
+            name: "vue",
+            url: "/vue-data-grid/",
+        },
+        {
+            name: "solid",
+            url: "/react-data-grid/solidjs/",
+        },
+    ];    
+
     return (
         <>
             <Seo title="AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid"
@@ -32,8 +55,9 @@ const Default = () => {
                     </section>
                 </div>
                 <div className={styles['stage-frameworks']}>
-                    <span className={styles['stage-frameworks__label']}>Get started</span>
-                    <HomepageFrameWorkSelector frameworks={['javascript', 'react', 'angular', 'vue', 'solid']} />
+                    <span className={styles['stage-frameworks__label']}>Get&nbsp;started</span>
+
+                    <FrameworkSelector data={frameworksData} isFullWidth />
                 </div>
 
                 <div className={styles['stage-description']}>
