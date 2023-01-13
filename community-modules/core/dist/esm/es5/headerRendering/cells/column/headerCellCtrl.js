@@ -334,7 +334,8 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
     HeaderCellCtrl.prototype.setupWidth = function () {
         var _this = this;
         var listener = function () {
-            _this.comp.setWidth(_this.column.getActualWidth() + 'px');
+            var columnWidth = _this.column.getActualWidth();
+            _this.comp.setWidth(columnWidth + "px");
         };
         this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, listener);
         listener();

@@ -58,7 +58,9 @@ class GroupWidthFeature extends beanStub_1.BeanStub {
         this.onWidthChanged();
     }
     onWidthChanged() {
-        this.comp.setWidth(this.columnGroup.getActualWidth() + 'px');
+        const columnWidth = this.columnGroup.getActualWidth();
+        this.comp.setWidth(`${columnWidth}px`);
+        this.comp.addOrRemoveCssClass('ag-hidden', columnWidth === 0);
     }
 }
 __decorate([

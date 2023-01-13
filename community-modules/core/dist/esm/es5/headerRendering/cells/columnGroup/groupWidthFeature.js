@@ -71,7 +71,9 @@ var GroupWidthFeature = /** @class */ (function (_super) {
         this.onWidthChanged();
     };
     GroupWidthFeature.prototype.onWidthChanged = function () {
-        this.comp.setWidth(this.columnGroup.getActualWidth() + 'px');
+        var columnWidth = this.columnGroup.getActualWidth();
+        this.comp.setWidth(columnWidth + "px");
+        this.comp.addOrRemoveCssClass('ag-hidden', columnWidth === 0);
     };
     __decorate([
         PostConstruct
