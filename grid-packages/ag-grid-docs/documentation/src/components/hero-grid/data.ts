@@ -189,12 +189,12 @@ export const columnDefs: ColDef[] = [
         },
         cellRenderer: ChangeCellRenderer,
     },
-    {
-        field: 'time',
-        type: 'rightAligned',
-        filter: 'agDateColumnFilter',
-        valueFormatter: ({ value }) => toTime({ value, showMs: true }),
-    },
+    // {
+    //     field: 'time',
+    //     type: 'rightAligned',
+    //     filter: 'agDateColumnFilter',
+    //     valueFormatter: ({ value }) => toTime({ value, showMs: true }),
+    // },
 ];
 
 function randomValue() {
