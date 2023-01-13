@@ -40,7 +40,7 @@
   "dependencies": {},
   "peerDependencies": {
     "solid-js": ">=1.0.0",
-    "@ag-grid-community/core": "28.2.0"
+    "@ag-grid-community/core": "~29.0.0"
   },
   "devDependencies": {
     "@ag-grid-community/core": "~29.0.0",

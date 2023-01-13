@@ -49,7 +49,7 @@
     "rimraf": "3.0.2"
   },
   "peerDependencies": {
-    "ag-grid-community": "28.2.0",
+    "ag-grid-community": "~29.0.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0 || ^8.0.0 || ^9.1.2"
   },
