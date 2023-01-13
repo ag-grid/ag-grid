@@ -120,7 +120,7 @@ function updateVersionFile(currentFile) {
         const regex = /(export const VERSION =)(.*)$/m;
         const substitute = `$1 '${gridNewVersion}';`;
         const replacement = contents.replace(regex, substitute)
-            
+
         fs.writeFileSync(currentFile,
             replacement,
             "utf8");
@@ -143,7 +143,7 @@ function updateDevDependencies(fileContents) {
 }
 
 function updatePeerDependencies(fileContents) {
-    //return updateDependency(fileContents, 'peerDependencies', "28.2.0", "6.2.0");
+    // return updateDependency(fileContents, 'peerDependencies', "28.2.0", "6.2.0");
     return updateDependency(fileContents, 'peerDependencies', dependencyVersion, chartsDependencyVersion);
 }
 
@@ -182,3 +182,5 @@ function updateDependency(fileContents, property, dependencyVersion, chartsDepen
 
 main();
 
+// node scripts/release/versionModules.js 7.0.0 ~7.0.0 '["charts-packages", "examples-charts"]' all
+// node scripts/release/versionModules.js 29.0.0 ~29.0.0 '["grid-packages", "community-modules", "enterprise-modules", "examples-grid"]' all ~7.0.0
