@@ -751,7 +751,7 @@
         "applyServerSideTransactionAsync": {
             "more": {
                 "name": "Transactions",
-                "url": "/server-side-model-updating-transactions/#high-frequency-updates"
+                "url": "/server-side-model-updating-transactions/#asynchronous-updates"
             }
         }
     }
