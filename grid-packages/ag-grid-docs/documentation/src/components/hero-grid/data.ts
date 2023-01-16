@@ -25,7 +25,7 @@ export interface Stock {
 
 const INIT_MAX_NUMBER = 150;
 const UPDATE_MAX_NUMBER = 75;
-const TIMELINE_SIZE = 20;
+const TIMELINE_SIZE = 16;
 
 const STOCK_NAMES = [
     'Cow Moans',
@@ -145,7 +145,7 @@ export const columnDefs: ColDef[] = [
         type: 'numericColumn',
         valueFormatter: toCurrency,
         cellRenderer: CurrentCellRenderer,
-        initialWidth: 120
+        initialWidth: 130
     },
     {
         headerName: 'Last',
@@ -154,7 +154,7 @@ export const columnDefs: ColDef[] = [
             return getLastValue(data);
         },
         valueFormatter: toCurrency,
-        initialWidth: 120
+        initialWidth: 110
     },
     // {
     //     headerName: 'Change (area)',

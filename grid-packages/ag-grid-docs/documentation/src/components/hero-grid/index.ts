@@ -8,7 +8,7 @@ import { GetRowIdParams, GridOptions } from 'ag-grid-community';
 import { columnDefs, generateStocks, generateStockUpdate } from './data';
 import { createGenerator } from './generator-utils';
 
-const UPDATE_INTERVAL = 100;
+const UPDATE_INTERVAL = 60;
 
 const rowData = generateStocks();
 const generator = createGenerator({
