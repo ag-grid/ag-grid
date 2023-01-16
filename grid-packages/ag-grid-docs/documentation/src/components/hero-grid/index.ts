@@ -67,3 +67,15 @@ export function initGrid(selector: string) {
 
     loadGrid();
 }
+
+/**
+ * Clean up between hot module replacement on dev server
+ */
+// @ts-ignore
+if (import.meta.webpackHot) {
+    // @ts-ignore
+    import.meta.webpackHot.dispose(() => {
+        generator.stop();
+        gridOptions.api?.destroy();
+    });
+}
