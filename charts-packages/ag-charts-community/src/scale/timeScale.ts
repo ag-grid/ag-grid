@@ -28,6 +28,7 @@ enum DefaultTimeFormats {
     WEEK_DAY,
     SHORT_MONTH,
     MONTH,
+    SHORT_YEAR,
     YEAR,
 }
 
@@ -39,6 +40,7 @@ const formatStrings: Record<DefaultTimeFormats, string> = {
     [DefaultTimeFormats.WEEK_DAY]: '%a',
     [DefaultTimeFormats.SHORT_MONTH]: '%d %b',
     [DefaultTimeFormats.MONTH]: '%B',
+    [DefaultTimeFormats.SHORT_YEAR]: '%y',
     [DefaultTimeFormats.YEAR]: '%Y',
 };
 
@@ -126,6 +128,11 @@ export class TimeScale extends ContinuousScale {
         const domain = this.getDomain();
         const start = Math.min(...domain.map(toNumber));
         const stop = Math.max(...domain.map(toNumber));
+
+        const startYear = new Date(start).getFullYear();
+        const stopYear = new Date(stop).getFullYear();
+        const yearChange = stopYear - startYear > 0;
+
         const extent = stop - start;
 
         let formatStringArray: string[] = [formatStrings[defaultTimeFormat]];
@@ -144,16 +151,27 @@ export class TimeScale extends ContinuousScale {
             // fall through deliberately
             case DefaultTimeFormats.HOUR:
                 timeEndIndex = formatStringArray.length;
-                if (extent / durationWeek > 1) {
-                    formatStringArray.push(formatStrings[DefaultTimeFormats.SHORT_MONTH]);
-                } else if (extent / durationDay > 1) {
+                if (extent / durationDay > 1) {
                     formatStringArray.push(formatStrings[DefaultTimeFormats.WEEK_DAY]);
                 }
             // fall through deliberately
-            case DefaultTimeFormats.SHORT_MONTH:
+            case DefaultTimeFormats.WEEK_DAY:
+                if (extent / durationWeek > 1 || yearChange) {
+                    // if it's more than a week or there is a year change, don't show week day
+                    const weekDayIndex = formatStringArray.indexOf(formatStrings[DefaultTimeFormats.WEEK_DAY]);
+
+                    if (weekDayIndex > -1) {
+                        formatStringArray.splice(weekDayIndex, 1, formatStrings[DefaultTimeFormats.SHORT_MONTH]);
+                    }
+                }
             // fall through deliberately
-            case DefaultTimeFormats.MONTH:
+            case DefaultTimeFormats.SHORT_MONTH:
                 if (extent / durationYear > 1) {
+                    formatStringArray.push(formatStrings[DefaultTimeFormats.SHORT_YEAR]);
+                }
+                break; // don't fall through
+            case DefaultTimeFormats.MONTH:
+                if (extent / durationYear > 1 || yearChange) {
                     formatStringArray.push(formatStrings[DefaultTimeFormats.YEAR]);
                 }
             // fall through deliberately
