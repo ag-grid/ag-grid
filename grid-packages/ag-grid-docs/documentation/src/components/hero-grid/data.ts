@@ -40,6 +40,8 @@ const timelineTooltipRenderer = ({ xValue, yValue }: TooltipRendererParams): Too
     return {
         title: toTime({ value: xValue }),
         content: toCurrency({ value: yValue }),
+        color: '#94b2d0',
+        backgroundColor: '#07161b',
     };
 };
 

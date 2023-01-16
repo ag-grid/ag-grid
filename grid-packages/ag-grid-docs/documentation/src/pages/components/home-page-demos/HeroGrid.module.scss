@@ -1,28 +1,41 @@
-:global(.ag-theme-alpine-dark) {
-    &.heroGrid {
-        --ag-background-color: #001223;
-        --ag-foreground-color: #94B2D0;
-        
-        --ag-borders: none;
-        --ag-row-border-style: none;
+:global(#heroGrid.ag-theme-alpine-dark) {
+    --ag-background-color: #001223;
+    --ag-foreground-color: #94b2d0;
     
-        --ag-borders: none;
-        --ag-row-border-style: none;
+    --ag-borders: none;
+    --ag-row-border-style: none;
 
-        --ag-row-height: 48px;
-        --ag-odd-row-background-color: #00162D;
+    --ag-borders: none;
+    --ag-row-border-style: none;
 
-        --ag-header-height: 30px;
-        --ag-header-background-color: #00162D;
-        --ag-foreground-color: #527497;
+    --ag-row-height: 48px;
+    --ag-odd-row-background-color: #00162d;
 
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-        overflow: hidden;
-        align-self: end;
+    --ag-header-height: 30px;
+    --ag-header-background-color: #00162d;
+    --ag-header-foreground-color: #527497;
 
-        :global(.ag-header-row) {
-            font-weight: 400 !important;
-        }
+
+
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    overflow: hidden;
+    align-self: end;
+
+    :global(.ag-header-row) {
+        font-weight: 400 !important;
+    }
+
+    :global(.ag-menu),
+    :global(.ag-menu-header) {
+        --ag-border-color: #527497;
+
+        color: #94b2d0;
+        background-color: #07161b;
+        border: none;
+    }
+
+    :global(.my-tooltip .ag-chart-tooltip-content) {
+        background-color: #07161b;
     }
 }
