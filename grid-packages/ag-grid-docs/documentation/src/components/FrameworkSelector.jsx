@@ -3,10 +3,9 @@ import classnames from 'classnames';
 import styles from './FrameworkSelector.module.scss';
 import fwLogos from 'images/fw-logos';
 
-/**
- * This is shown in the header in the top right, and is used to choose which framework the user wishes to see for the
- * documentation.
- */
+// This is shown on the homepage, and in the top right of the documentation pages.
+// It is used to allow users to choose which framework they wish to see documentation for.
+
 export default function FrameworkSelector({ data, currentFramework, isFullWidth, showSelectedFramework }) {
     return (
         <div className={classnames(styles['framework-selector'], {[styles['framework-selector--show-selected']]: showSelectedFramework, [styles['framework-selector--full-width']]: isFullWidth})}>
