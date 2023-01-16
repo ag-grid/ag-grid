@@ -108,11 +108,13 @@ function getLastValue(data: Stock): number {
 export const columnDefs: ColDef[] = [
     {
         field: 'stock',
-        initialWidth: 180
+        initialWidth: 180,
+        minWidth: 180
     },
     {
         field: 'timeline',
         flex: 1,
+        minWidth: 150,
         cellRenderer: 'agSparklineCellRenderer',
         cellRendererParams: {
             sparklineOptions: {
@@ -145,16 +147,19 @@ export const columnDefs: ColDef[] = [
         type: 'numericColumn',
         valueFormatter: toCurrency,
         cellRenderer: CurrentCellRenderer,
-        initialWidth: 130
+        initialWidth: 130,
+        minWidth: 130
     },
     {
         headerName: 'Last',
+        colId: 'last',
         type: 'numericColumn',
         valueGetter: ({ data }) => {
             return getLastValue(data);
         },
         valueFormatter: toCurrency,
-        initialWidth: 110
+        initialWidth: 110,
+        minWidth: 110
     },
     // {
     //     headerName: 'Change (area)',
@@ -206,13 +211,15 @@ export const columnDefs: ColDef[] = [
     // },
     {
         headerName: '% Change',
+        colId: 'percentageChange',
         type: 'numericColumn',
         valueGetter: ({ data }) => {
             const last = getLastValue(data);
             return Boolean(data.current) ? ((data.current - last) / data.current) * 100 : 0;
         },
         cellRenderer: ChangeCellRenderer,
-        initialWidth: 150
+        initialWidth: 150,
+        minWidth: 150,
     },
     // {
     //     field: 'time',

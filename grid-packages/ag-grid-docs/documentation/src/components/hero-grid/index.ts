@@ -4,11 +4,18 @@
 
 // NOTE: Only typescript types should be imported from the AG Grid packages
 // to prevent AG Grid from loading the code twice
-import { GetRowIdParams, GridOptions } from 'ag-grid-community';
+import { GetRowIdParams, GridOptions, GridSizeChangedEvent } from 'ag-grid-community';
 import { columnDefs, generateStocks, generateStockUpdate } from './data';
 import { createGenerator } from './generator-utils';
 
 const UPDATE_INTERVAL = 60;
+const COLUMN_ID_PRIORITIES = [
+    "stock",
+    "timeline",
+    "percentageChange",
+    "current",
+    "last"
+];
 
 const rowData = generateStocks();
 const generator = createGenerator({
@@ -46,6 +53,27 @@ const gridOptions: GridOptions = {
     onGridReady() {
         generator.start();
     },
+    onGridSizeChanged(params: GridSizeChangedEvent) {
+        const columnsToShow: string[] = [];
+        const columnsToHide: string[] = [];
+        let totalWidth: number = 0;
+        COLUMN_ID_PRIORITIES.forEach((colId) => {
+            const col = params.columnApi.getColumn(colId);
+            const minWidth = col?.getMinWidth() || 0;
+            const newTotalWidth = totalWidth + minWidth;
+
+            if (newTotalWidth <= params.clientWidth) {
+                columnsToShow.push(colId);
+                totalWidth = newTotalWidth;
+            } else {
+                columnsToHide.push(colId);
+            }
+        });
+
+        // show/hide columns based on current grid width
+        params.columnApi.setColumnsVisible(columnsToShow, true);
+        params.columnApi.setColumnsVisible(columnsToHide, false);
+    }
 };
 
 /*
