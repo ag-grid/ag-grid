@@ -87,7 +87,9 @@ export class TimeScale extends ContinuousScale {
         [this.week, 1, durationWeek],
         [this.week, 2, 2 * durationWeek],
         [this.month, 1, durationMonth],
+        [this.month, 2, 2 * durationMonth],
         [this.month, 3, 3 * durationMonth],
+        [this.month, 4, 4 * durationMonth],
         [this.month, 6, 6 * durationMonth],
         [this.year, 1, durationYear],
     ];
