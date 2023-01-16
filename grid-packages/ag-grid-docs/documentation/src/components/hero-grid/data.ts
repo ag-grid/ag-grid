@@ -29,11 +29,11 @@ const STOCK_NAMES = [
     'Cow Moans',
     'Nasraq 500',
     'Fang Peng',
-    'Wiltshire 4500',
-    'DecTax PI',
+    'Wiltshire 4500-kbm',
+    'DT PI',
     'Footsie MID',
     'Capra ibex',
-    'Dax Jadzia',
+    'NY composte index',
 ];
 
 const timelineTooltipRenderer = ({ xValue, yValue }: TooltipRendererParams): TooltipRendererResult => {
@@ -106,7 +106,7 @@ function getLastValue(data: Stock): number {
 export const columnDefs: ColDef[] = [
     {
         field: 'stock',
-        initialWidth: 140
+        initialWidth: 180
     },
     {
         field: 'timeline',
@@ -142,7 +142,7 @@ export const columnDefs: ColDef[] = [
         field: 'current',
         type: 'numericColumn',
         valueFormatter: toCurrency,
-        initialWidth: 110
+        initialWidth: 120
     },
     {
         headerName: 'Last',
@@ -151,7 +151,7 @@ export const columnDefs: ColDef[] = [
             return getLastValue(data);
         },
         valueFormatter: toCurrency,
-        initialWidth: 110
+        initialWidth: 120
     },
     // {
     //     headerName: 'Change (area)',
@@ -209,7 +209,7 @@ export const columnDefs: ColDef[] = [
             return Boolean(data.current) ? ((data.current - last) / data.current) * 100 : 0;
         },
         cellRenderer: ChangeCellRenderer,
-        initialWidth: 150
+        initialWidth: 140
     },
     // {
     //     field: 'time',
