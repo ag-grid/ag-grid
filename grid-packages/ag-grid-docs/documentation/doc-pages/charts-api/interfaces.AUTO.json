@@ -3546,11 +3546,12 @@
       "SECOND",
       "MINUTE",
       "HOUR",
+      "WEEK_DAY",
       "SHORT_MONTH",
       "MONTH",
       "YEAR"
     ],
-    "docs": [null, null, null, null, null, null, null]
+    "docs": [null, null, null, null, null, null, null, null]
   },
   "RedrawType": {
     "meta": { "isEnum": true },
