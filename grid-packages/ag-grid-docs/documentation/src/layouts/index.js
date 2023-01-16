@@ -14,7 +14,7 @@ import styles from './index.module.scss';
 import './mailchimp.css';
 
 const TopBar = ({ frameworks, currentFramework, path }) => {
-    const data = supportedFrameworks
+    const frameworksData = supportedFrameworks
         .filter((f) => !frameworks || frameworks.includes(f))
         .map((framework) => ({
             name: framework,
@@ -43,7 +43,7 @@ const TopBar = ({ frameworks, currentFramework, path }) => {
                 {currentFramework && (
                     <div className={styles['top-bar__framework-selector']}>
                         <span className={styles['top-bar__framework-label']}>Framework:</span>
-                        <FrameworkSelector data={data} currentFramework={currentFramework} showSelectedFramework />
+                        <FrameworkSelector data={frameworksData} currentFramework={currentFramework} showSelectedFramework />
                     </div>
                 )}
             </div>

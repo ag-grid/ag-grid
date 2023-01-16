@@ -1,3 +1,5 @@
+$selected-border-color: #3798f9;
+
 .framework-selector {
     --height: 44px;
     --icon-size: 26px;
@@ -6,16 +8,14 @@
 
     display: flex;
     width: 100%;
-    min-width: 220px;
     font-weight: 500;
 }
 
 .framework-selector__option {
-    $selected-color: #3798f9;
-
     display: flex;
     position: relative;
     justify-content: center;
+    min-width: 44px;
     padding: calc((var(--height) - var(--icon-size)) / 2) 0;
     text-decoration: none;
     background-color: white;
@@ -81,19 +81,7 @@
         text-decoration: none;
         
         &::after {
-            border-color: rgba($selected-color, 0.5);
-        }
-    }
-
-
-    &--selected{
-        &::after,
-        &:hover::after {
-            border-color: $selected-color;
-        }
-
-        span {
-            opacity: 1;
+            border-color: rgba($selected-border-color, 0.5);
         }
     }
 }
@@ -101,12 +89,23 @@
 .framework-selector--show-selected .framework-selector__option {
     width: 25%;
 
+    &:hover {
+        opacity: .85;
+    }
+
     span {
         opacity: .6666;
     }
 
-    &:hover {
-        opacity: .85;
+    &--selected{
+        &::after,
+        &:hover::after {
+            border-color: $selected-border-color;
+        }
+
+        span {
+            opacity: 1;
+        }
     }
 
     @media screen and ( min-width: 880px ) {
@@ -128,6 +127,7 @@
 }
 
 .framework-selector--full-width {
+    min-width: 220px;
     max-width: 420px;
 
     .framework-selector__option {

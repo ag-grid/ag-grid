@@ -8,7 +8,7 @@ import fwLogos from 'images/fw-logos';
 
 export default function FrameworkSelector({ data, currentFramework, isFullWidth, showSelectedFramework }) {
     return (
-        <div className={classnames(styles['framework-selector'], {[styles['framework-selector--show-selected']]: showSelectedFramework, [styles['framework-selector--full-width']]: isFullWidth})}>
+        <div className={classnames(styles['framework-selector'], {[styles['framework-selector--full-width']]: isFullWidth, [styles['framework-selector--show-selected']]: showSelectedFramework})}>
             {data
                 .map((framework) => {
                     const isSelected = showSelectedFramework && framework.name === currentFramework;

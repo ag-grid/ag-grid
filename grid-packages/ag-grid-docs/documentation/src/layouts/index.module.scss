@@ -73,10 +73,13 @@ main {
 
     &__wrapper {
         composes: d-flex w-100 justify-content-end justify-content-lg-between flex-wrap container-lg px-0 from global;
+
+        gap: 0 16px;
     }
 
     &__search {
-        composes: pl-0 pr-2 py-2 navbar navbar-expand-lg flex-nowrap navbar-light from global;
+        composes: py-2 px-0 navbar navbar-expand-lg flex-nowrap navbar-light from global;
+
         width: 290px;
         margin: auto 0;
 
@@ -94,11 +97,11 @@ main {
     }
 
     &__framework-selector {
-        composes: p-2 from global;
-
         display: flex;
         flex-grow: 1;
         align-items: center;
+        padding-top: 8px;
+        padding-bottom: 8px;
 
         @media screen and ( min-width: 880px ) {
             flex-grow: unset;
