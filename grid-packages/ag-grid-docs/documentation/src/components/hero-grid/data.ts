@@ -115,8 +115,20 @@ export const columnDefs: ColDef[] = [
                 type: 'column',
                 xKey: 'time',
                 yKey: 'value',
+                padding: {
+                    top: 10,
+                    bottom: 10,
+                },
+                paddingInner: 0.5,
+                paddingOuter: 0.5,
+                fill: '#65819c',
+                highlightStyle: {
+                    fill: '#94b2d0',
+                    strokeWidth: 0,
+                },
                 axis: {
                     type: 'category',
+                    stroke: '#294056'
                 },
                 tooltip: {
                     renderer: timelineTooltipRenderer,
