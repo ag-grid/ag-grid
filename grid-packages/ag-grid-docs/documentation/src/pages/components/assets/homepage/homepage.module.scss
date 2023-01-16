@@ -166,9 +166,9 @@ body {
 
     .contents {
         display: flex;
-        gap: 40px;
-        max-width: 1400px;
+        gap: 32px;
         width: 100%;
+        max-width: 1400px;
         margin: 0 auto;
         padding-left: 16px;
         padding-right: 16px;
@@ -178,18 +178,22 @@ body {
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 20px;
         padding-bottom: 40px;
     }
 
     h1 {
-        margin: 0;
-        font-size: min(3vw, 50px);
+        margin-top: -0.15em;
+        margin-bottom: .3em;
+        font-size: min(3.4vw, 54px);
+        line-height: 1.3;
+        font-weight: 700;
     }
 
     h2 {
-        margin: 0;
-        font-size: min(2vw, 28px);
+        margin-bottom: 1em;
+        font-size: min(1.9vw, 32px);
+        line-height: 1.4;
+        font-weight: 200;
     }
 
     .hero-grid {
