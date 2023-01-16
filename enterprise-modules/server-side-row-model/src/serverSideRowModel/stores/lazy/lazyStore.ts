@@ -127,7 +127,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         let insertedNodes: RowNode[] | undefined = undefined;
         if (transaction.add?.length) {
-            insertedNodes = this.cache.insertRowNodes(transaction.add, transaction.addIndex);
+            let addIndex = transaction.addIndex;
+            if (addIndex != null && addIndex < 0) {
+                addIndex = undefined;
+            }
+            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
         }
 
         let removedNodes: RowNode[] | undefined = undefined;
