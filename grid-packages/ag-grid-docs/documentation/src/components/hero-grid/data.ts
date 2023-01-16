@@ -108,6 +108,7 @@ function getLastValue(data: Stock): number {
 export const columnDefs: ColDef[] = [
     {
         field: 'stock',
+        filter: 'agSetColumnFilter',
         initialWidth: 180,
         minWidth: 180
     },

@@ -4,7 +4,7 @@
 
 // NOTE: Only typescript types should be imported from the AG Grid packages
 // to prevent AG Grid from loading the code twice
-import { GetRowIdParams, GridOptions, GridSizeChangedEvent } from 'ag-grid-community';
+import { GetRowIdParams, GridOptions, GridSizeChangedEvent, ISetFilter } from 'ag-grid-community';
 import { columnDefs, generateStocks, generateStockUpdate } from './data';
 import { createGenerator } from './generator-utils';
 
@@ -16,6 +16,7 @@ const COLUMN_ID_PRIORITIES = [
     "current",
     "last"
 ];
+const FILTER_ROWS_BREAKPOINT = 550;
 
 const rowData = generateStocks();
 const generator = createGenerator({
@@ -47,6 +48,7 @@ const gridOptions: GridOptions = {
         resizable: true,
         sortable: true,
     },
+    domLayout: 'autoHeight',
     getRowId: ({ data }: GetRowIdParams) => {
         return data.stock;
     },
@@ -73,6 +75,21 @@ const gridOptions: GridOptions = {
         // show/hide columns based on current grid width
         params.columnApi.setColumnsVisible(columnsToShow, true);
         params.columnApi.setColumnsVisible(columnsToHide, false);
+
+        const stockFilter: ISetFilter = params.api.getFilterInstance('stock')!;
+        const stocks = stockFilter.getFilterValues();
+        if (params.clientWidth <= FILTER_ROWS_BREAKPOINT) {
+            stockFilter.setModel({
+                values: stocks.slice(0, 6)
+            });
+
+
+        } else {
+            stockFilter.setModel({
+                values: stocks
+            });
+        }
+        params.api.onFilterChanged();
     }
 };
 
