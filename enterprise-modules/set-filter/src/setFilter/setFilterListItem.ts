@@ -94,6 +94,8 @@ export class SetFilterListItem<V> extends Component {
     private item: SetFilterModelTreeItem | string | null;
     private isSelected: boolean | undefined;
     private isExpanded: boolean | undefined;
+    // only used for select all
+    private valueFunction?: () => string;
 
     private cellRendererParams: ISetFilterCellRendererParams;
     private cellRendererComponent?: ICellRendererComp;
@@ -251,6 +253,14 @@ export class SetFilterListItem<V> extends Component {
             this.setSelected(isSelected, true);
         }
         this.setExpanded(isExpanded, true);
+        if (this.valueFunction) {
+            // underlying value might have changed, so call again and re-render
+            const value = this.valueFunction();
+            this.setTooltipAndCellRendererParams(value as any, value);
+            if (!this.cellRendererComponent) {
+                this.renderCellWithoutCellRenderer();
+            }
+        }
         this.cellRendererComponent?.refresh?.(this.cellRendererParams as any);
     }
 
@@ -261,7 +271,8 @@ export class SetFilterListItem<V> extends Component {
         let formattedValue: string | null = null;
 
         if (typeof value === 'function') {
-            formattedValue = (value as () => string)();
+            this.valueFunction = value as () => string;
+            formattedValue = this.valueFunction();
             // backwards compatibility for select all in value
             value = formattedValue as any;
         } else if (this.isTree) {
@@ -271,6 +282,12 @@ export class SetFilterListItem<V> extends Component {
             formattedValue = this.getFormattedValue(column, value);
         }
 
+        this.setTooltipAndCellRendererParams(value, formattedValue);
+
+        this.renderCell();
+    }
+
+    private setTooltipAndCellRendererParams(value: V | null | (() => string), formattedValue: string | null): void {
         if (this.params.showTooltips) {
             const tooltipValue = formattedValue != null ? formattedValue : _.toStringOrNull(value);
             this.setTooltip(tooltipValue);
@@ -285,8 +302,6 @@ export class SetFilterListItem<V> extends Component {
             colDef: this.params.colDef,
             column: this.params.column,
         };
-
-        this.renderCell();
     }
 
     public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
@@ -308,18 +323,7 @@ export class SetFilterListItem<V> extends Component {
         const cellRendererPromise = compDetails ? compDetails.newAgStackInstance() : undefined;
 
         if (cellRendererPromise == null) {
-            let valueToRender = (this.cellRendererParams.valueFormatted == null ? this.cellRendererParams.value : this.cellRendererParams.valueFormatted) ?? this.translate('blanks');
-            if (typeof valueToRender !== 'string') {
-                _.doOnce(() => console.warn(
-                        'AG Grid: Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'
-                    ), 'setFilterComplexObjectsValueFormatter'
-                );
-                valueToRender = '';
-            }
-
-            this.eCheckbox.setLabel(valueToRender);
-            this.setupFixedAriaLabels(valueToRender)
-
+            this.renderCellWithoutCellRenderer();
             return;
         }
 
@@ -330,6 +334,20 @@ export class SetFilterListItem<V> extends Component {
                 this.addDestroyFunc(() => this.destroyBean(component));
             }
         });
+    }
+
+    private renderCellWithoutCellRenderer(): void {
+        let valueToRender = (this.cellRendererParams.valueFormatted == null ? this.cellRendererParams.value : this.cellRendererParams.valueFormatted) ?? this.translate('blanks');
+        if (typeof valueToRender !== 'string') {
+            _.doOnce(() => console.warn(
+                    'AG Grid: Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'
+                ), 'setFilterComplexObjectsValueFormatter'
+            );
+            valueToRender = '';
+        }
+
+        this.eCheckbox.setLabel(valueToRender);
+        this.setupFixedAriaLabels(valueToRender)
     }
 
     public getComponentHolder(): ColDef {
