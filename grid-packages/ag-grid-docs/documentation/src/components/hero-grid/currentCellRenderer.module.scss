@@ -1,0 +1,11 @@
+.current {
+    border-radius: 20px;
+    padding: 5px 12px;
+    transition: background-color 1s ease-in-out, color 1s ease-in-out;
+}
+
+.update {
+    background-color: rgba(#6eb7ff, .12);
+    color: white;
+    transition: background-color .1s ease-in-out, color .1s ease-in-out;
+}

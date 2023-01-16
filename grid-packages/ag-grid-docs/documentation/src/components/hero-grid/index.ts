@@ -26,13 +26,6 @@ const generator = createGenerator({
         gridOptions.api.applyTransactionAsync(
             {
                 update: [newStock],
-            },
-            () => {
-                const rowNode = gridOptions.api!.getRowNode(newStock.stock)!;
-                gridOptions?.api?.flashCells({
-                    rowNodes: [rowNode],
-                    columns: ['current'],
-                });
             }
         );
     },

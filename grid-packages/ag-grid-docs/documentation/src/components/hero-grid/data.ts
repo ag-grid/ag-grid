@@ -8,7 +8,8 @@ import {
     TooltipRendererResult,
 } from 'ag-grid-community';
 import { ChangeCellRenderer } from './changeCellRenderer';
-import { toCurrency, toPercentage, toTime } from './formatters';
+import { CurrentCellRenderer } from './currentCellRenderer';
+import { toCurrency, toTime } from './formatters';
 import { randomNumber, randomNumberList } from './generator-utils';
 
 type Change = {
@@ -142,6 +143,7 @@ export const columnDefs: ColDef[] = [
         field: 'current',
         type: 'numericColumn',
         valueFormatter: toCurrency,
+        cellRenderer: CurrentCellRenderer,
         initialWidth: 120
     },
     {
