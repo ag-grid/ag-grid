@@ -32,16 +32,15 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     private groupColumnsHashLastTime: string | null;
 
     public execute(params: StageExecuteParams): void {
-        const rootNode = params.rowNode;
         const changedPath = params.changedPath;
         if (this.columnModel.isPivotActive()) {
-            this.executePivotOn(rootNode, changedPath);
+            this.executePivotOn(changedPath!);
         } else {
-            this.executePivotOff(changedPath);
+            this.executePivotOff(changedPath!);
         }
     }
 
-    private executePivotOff(changedPath: ChangedPath | undefined): void {
+    private executePivotOff(changedPath: ChangedPath): void {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
         if (this.columnModel.isSecondaryColumnsPresent()) {
@@ -52,8 +51,8 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private executePivotOn(rootNode: RowNode, changedPath: ChangedPath | undefined): void {
-        const uniqueValues = this.bucketUpRowNodes(rootNode);
+    private executePivotOn(changedPath: ChangedPath): void {
+        const uniqueValues = this.bucketUpRowNodes(changedPath);
 
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
@@ -98,24 +97,16 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    // returns true if values were different
-    private bucketUpRowNodes(rootNode: RowNode): any {
+    private bucketUpRowNodes(changedPath: ChangedPath): any {
 
         // accessed from inside inner function
         const uniqueValues: any = {};
 
-        // finds all leaf groups and calls mapRowNode with it
-        const recursivelySearchForLeafNodes = (rowNode: RowNode) => {
-            if (rowNode.leafGroup) {
-                this.bucketRowNode(rowNode, uniqueValues);
-            } else {
-                rowNode.childrenAfterFilter!.forEach(child => {
-                    recursivelySearchForLeafNodes(child);
-                });
+        changedPath.forEachChangedNodeDepthFirst(node => {
+            if (node.leafGroup) {
+                this.bucketRowNode(node, uniqueValues);
             }
-        };
-
-        recursivelySearchForLeafNodes(rootNode);
+        });
 
         return uniqueValues;
     }
