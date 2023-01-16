@@ -1,19 +1,21 @@
-.heroGrid {
-    --ag-background-color: #001223;
-    --ag-foreground-color: #94B2D0;
+:global(.ag-theme-alpine-dark) {
+    &.heroGrid {
+        --ag-background-color: #001223;
+        --ag-foreground-color: #94B2D0;
+        
+        --ag-borders: none;
+        --ag-row-border-style: none;
     
-    --ag-borders: none;
-    --ag-row-border-style: none;
-
-    --ag-row-height: 40px;
-    --ag-odd-row-background-color: #00162D;
-
-    --ag-header-height: 30px;
-    --ag-header-background-color: #00162D;
-    --ag-foreground-color: #527497;
-
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    overflow: hidden;
-    align-self: end;
+        --ag-row-height: 40px;
+        --ag-odd-row-background-color: #00162D;
+    
+        --ag-header-height: 30px;
+        --ag-header-background-color: #00162D;
+        --ag-foreground-color: #527497;
+    
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        overflow: hidden;
+        align-self: end;
+    }
 }

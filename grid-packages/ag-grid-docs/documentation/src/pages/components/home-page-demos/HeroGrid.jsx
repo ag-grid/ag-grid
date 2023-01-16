@@ -1,3 +1,6 @@
+// Remount component when Fast Refresh is triggered
+// @refresh reset
+
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import styles from "./HeroGrid.module.scss";
