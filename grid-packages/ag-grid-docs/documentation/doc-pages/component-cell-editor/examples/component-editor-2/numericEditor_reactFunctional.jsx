@@ -1,7 +1,5 @@
 import React, {forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
 
-const KEY_BACKSPACE = 'Backspace';
-const KEY_DELETE = 'Delete';
 const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
@@ -13,10 +11,7 @@ export default memo(forwardRef((props, ref) => {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (props.eventKey === KEY_BACKSPACE || props.eventKey === KEY_DELETE) {
-            // if backspace or delete pressed, we clear the cell
-            startValue = '';
-        } else if (props.charPress) {
+        if (props.charPress) {
             // if a letter was pressed, we start with the letter
             startValue = props.charPress;
             highlightAllOnFocus = false;
@@ -76,17 +71,13 @@ export default memo(forwardRef((props, ref) => {
         return isCharNumeric(charStr);
     };
 
-    const deleteOrBackspace = event => {
-        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
-    };
-
     const finishedEditingPressed = event => {
         const key = event.key;
         return key === KEY_ENTER || key === KEY_TAB;
     };
 
     const onKeyDown = event => {
-        if (isLeftOrRight(event) || deleteOrBackspace(event)) {
+        if (isLeftOrRight(event)) {
             event.stopPropagation();
             return;
         }

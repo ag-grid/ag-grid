@@ -2,9 +2,6 @@ import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/
 import { ICellEditorParams } from "@ag-grid-community/core";
 import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 
-const KEY_BACKSPACE = 'Backspace';
-const KEY_DELETE = 'Delete';
-
 @Component({
     selector: 'editor-cell',
     template: `<input class="my-simple-editor" [value]="value" #input /> `
@@ -28,10 +25,7 @@ export class MySimpleEditor implements ICellEditorAngularComp, AfterViewInit {
     getInitialValue(params: ICellEditorParams): any {
         let startValue = params.value;
 
-        const isBackspaceOrDelete = params.eventKey === KEY_BACKSPACE || params.eventKey === KEY_DELETE;
-        if (isBackspaceOrDelete) {
-            startValue = '';
-        } else if (params.charPress) {
+        if (params.charPress) {
             startValue = params.charPress;
         }
 

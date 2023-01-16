@@ -1,7 +1,5 @@
 import React, {Component, createRef} from "react";
 
-const KEY_BACKSPACE = 'Backspace';
-const KEY_DELETE = 'Delete';
 const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
@@ -61,10 +59,7 @@ export default class NumericEditor extends Component {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (props.eventKey === KEY_BACKSPACE || props.eventKey === KEY_DELETE) {
-            // if backspace or delete pressed, we clear the cell
-            startValue = '';
-        } else if (props.charPress) {
+        if (props.charPress) {
             // if a letter was pressed, we start with the letter
             startValue = props.charPress;
             highlightAllOnFocus = false;
@@ -83,7 +78,7 @@ export default class NumericEditor extends Component {
     }
 
     onKeyDown(event) {
-        if (this.isLeftOrRight(event) || this.deleteOrBackspace(event)) {
+        if (this.isLeftOrRight(event)) {
             event.stopPropagation();
             return;
         }
@@ -108,10 +103,6 @@ export default class NumericEditor extends Component {
     isKeyPressedNumeric(event) {
         const charStr = event.key;
         return this.isCharNumeric(charStr);
-    }
-
-    deleteOrBackspace(event) {
-        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
     }
 
     finishedEditingPressed(event) {
