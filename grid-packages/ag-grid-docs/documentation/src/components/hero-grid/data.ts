@@ -209,7 +209,7 @@ export const columnDefs: ColDef[] = [
             return Boolean(data.current) ? ((data.current - last) / data.current) * 100 : 0;
         },
         cellRenderer: ChangeCellRenderer,
-        initialWidth: 140
+        initialWidth: 150
     },
     // {
     //     field: 'time',

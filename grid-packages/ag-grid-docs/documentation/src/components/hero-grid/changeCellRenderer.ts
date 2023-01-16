@@ -24,18 +24,21 @@ export class ChangeCellRenderer implements ICellRendererComp {
 
         const positiveClass = styles.positive;
         const negativeClass = styles.negative;
+        const percentageValue =  toPercentage({ value: Math.abs(value), decimalPlaces: 2 });
+        
         if (value === 0) {
             this.eGui.classList.remove(negativeClass);
             this.eGui.classList.remove(positiveClass);
+            this.eGui.innerHTML = percentageValue;
         } else if (value > 0) {
             this.eGui.classList.remove(negativeClass);
             this.eGui.classList.add(positiveClass);
+            this.eGui.innerHTML = `↑ ${percentageValue}`;
         } else {
             this.eGui.classList.remove(positiveClass);
             this.eGui.classList.add(negativeClass);
+            this.eGui.innerHTML = `↓ ${percentageValue}`;
         }
-
-        this.eGui.innerHTML = toPercentage({ value, decimalPlaces: 2 });
 
         this.lastValue = value;
 
