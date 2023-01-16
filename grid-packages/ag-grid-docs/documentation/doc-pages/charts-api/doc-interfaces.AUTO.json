@@ -4632,6 +4632,7 @@
     "offsetX": { "type": { "returnType": "number", "optional": false } },
     "offsetY": { "type": { "returnType": "number", "optional": false } }
   },
+  "SupportedEvent": {},
   "Layers": {},
   "LegendDatum": {
     "id": { "type": { "returnType": "string", "optional": false } },

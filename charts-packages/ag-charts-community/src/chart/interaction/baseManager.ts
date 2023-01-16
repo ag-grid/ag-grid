@@ -6,8 +6,6 @@ export type Listener<E> = {
 export abstract class BaseManager<EventTypes extends string = never, EventType = never> {
     protected readonly registeredListeners: { [I in EventTypes]?: Listener<EventType>[] } = {};
 
-    protected constructor() {}
-
     public addListener<T extends EventTypes, E extends EventType & { type: T }>(
         type: T,
         cb: (event: E) => void

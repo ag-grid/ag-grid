@@ -207,7 +207,8 @@ function buildPages(
         let pageWidth = 0;
         let pageHeight = 0;
         columns.forEach((column) => {
-            (pageWidth += column.columnWidth), (pageHeight = Math.max(pageHeight, column.columnHeight));
+            pageWidth += column.columnWidth;
+            pageHeight = Math.max(pageHeight, column.columnHeight);
         });
 
         maxPageWidth = Math.max(pageWidth, maxPageWidth);
@@ -227,7 +228,7 @@ function buildPages(
 
 function transpose(data: number[][]) {
     const result: number[][] = [];
-    for (let i = 0; i < data[0].length; i++) {
+    for (const _ of data[0]) {
         result.push([]);
     }
 

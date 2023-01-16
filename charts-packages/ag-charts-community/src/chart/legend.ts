@@ -1,4 +1,4 @@
-import { Node } from '../scene/node';
+import { Node, RedrawType } from '../scene/node';
 import { Group } from '../scene/group';
 import { Selection } from '../scene/selection';
 import { MarkerLabel } from './markerLabel';
@@ -16,7 +16,6 @@ import {
 } from './agChartOptions';
 import { getMarker } from './marker/util';
 import { createId } from '../util/id';
-import { RedrawType } from '../scene/node';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import {
     BOOLEAN,

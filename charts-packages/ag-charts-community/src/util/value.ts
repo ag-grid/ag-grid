@@ -3,28 +3,14 @@ export const isStringObject = (v: any) => !!v && v.hasOwnProperty('toString') &&
 export const isDate = (v: any) => v instanceof Date && !isNaN(+v);
 
 export function isDiscrete(value: any): boolean {
-    if (isString(value)) {
-        return true;
-    } else if (isStringObject(value)) {
-        return true;
-    }
-
-    return false;
+    return isString(value) || isStringObject(value);
 }
 
 export function isContinuous(value: any): boolean {
     const isNumberObject = (v: any) => !!v && v.hasOwnProperty('valueOf') && isNumber(v.valueOf());
     const isDate = (v: any) => v instanceof Date && !isNaN(+v);
 
-    if (isNumber(value)) {
-        return true;
-    } else if (isNumberObject(value)) {
-        return true;
-    } else if (isDate(value)) {
-        return true;
-    }
-
-    return false;
+    return isNumber(value) || isNumberObject(value) || isDate(value);
 }
 
 export function checkDatum<T>(value: T, isContinuousScale: boolean): T | string | undefined {

@@ -354,11 +354,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         applyOptionValues(chart, processedOptions, {
             skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'],
         });
-    } else if (isAgPolarChartOptions(processedOptions)) {
-        applyOptionValues(chart, processedOptions, {
-            skip: ['type', 'data', 'series', 'autoSize', 'listeners', 'theme'],
-        });
-    } else if (isAgHierarchyChartOptions(processedOptions)) {
+    } else if (isAgPolarChartOptions(processedOptions) || isAgHierarchyChartOptions(processedOptions)) {
         applyOptionValues(chart, processedOptions, {
             skip: ['type', 'data', 'series', 'autoSize', 'listeners', 'theme'],
         });
@@ -399,8 +395,8 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         Object.assign(chart.legend.listeners, processedOptions.legend.listeners);
     }
 
-    chart.processedOptions = jsonMerge([chart.processedOptions || {}, processedOptions], noDataCloneMergeOptions);
-    chart.userOptions = jsonMerge([chart.userOptions || {}, userOptions], noDataCloneMergeOptions);
+    chart.processedOptions = jsonMerge([chart.processedOptions ?? {}, processedOptions], noDataCloneMergeOptions);
+    chart.userOptions = jsonMerge([chart.userOptions ?? {}, userOptions], noDataCloneMergeOptions);
 
     const updateType = forceNodeDataRefresh ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
     debug('chart update type', { updateType: ChartUpdateType[updateType] });
