@@ -41,7 +41,7 @@ const generator = createGenerator({
 const gridOptions: GridOptions = {
     columnDefs,
     rowData,
-    rowHeight: 40,
+    rowHeight: 48,
     headerHeight: 30,
     defaultColDef: {
         resizable: true,

@@ -6,16 +6,23 @@
         --ag-borders: none;
         --ag-row-border-style: none;
     
-        --ag-row-height: 40px;
+        --ag-borders: none;
+        --ag-row-border-style: none;
+
+        --ag-row-height: 48px;
         --ag-odd-row-background-color: #00162D;
-    
+
         --ag-header-height: 30px;
         --ag-header-background-color: #00162D;
         --ag-foreground-color: #527497;
-    
+
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
         overflow: hidden;
         align-self: end;
+
+        :global(.ag-header-row) {
+            font-weight: 400 !important;
+        }
     }
 }
