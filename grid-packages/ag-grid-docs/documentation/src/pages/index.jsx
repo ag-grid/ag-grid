@@ -48,7 +48,7 @@ const Default = () => {
                     <section className={styles['contents']}>
                         <section className={styles['headings']}>
                             <h1>The&nbsp;Best&nbsp;JavaScript Grid&nbsp;in&nbsp;the&nbsp;World</h1>
-                            <h2>The&nbsp;professional&nbsp;choice&nbsp;for developers&nbsp;building enterprise&nbsp;applications</h2>
+                            <h2>The professional choice for developers building enterprise&nbsp;applications</h2>
                         </section>
                         
                         <section className={styles['hero-grid']}>
