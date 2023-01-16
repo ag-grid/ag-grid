@@ -23,7 +23,7 @@ export interface Stock {
     timeline: Change[];
 }
 
-const MAX_NUMBER = 1000000;
+const MAX_NUMBER = 150;
 const TIMELINE_SIZE = 20;
 
 const STOCK_NAMES = [

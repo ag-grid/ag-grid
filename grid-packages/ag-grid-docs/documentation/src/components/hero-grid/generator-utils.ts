@@ -1,8 +1,8 @@
-export function randomNumber(maxNumber: number = 100): number {
-    return Math.floor(Math.random() * maxNumber);
+export function randomNumber(maxNumber: number = 10): number {
+    return Math.random() * maxNumber;
 }
 
-export function randomNumberList({ length = 10, maxNumber = 100 }: { length: number; maxNumber: number }): number[] {
+export function randomNumberList({ length = 10, maxNumber = 10 }: { length: number; maxNumber: number }): number[] {
     const list: number[] = [];
     for (let i = 0; i < length; i++) {
         list.push(randomNumber(maxNumber));

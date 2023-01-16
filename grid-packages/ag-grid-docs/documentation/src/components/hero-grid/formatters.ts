@@ -26,7 +26,7 @@ export const toCurrency = ({
      * Maximum fraction digits for `options.maximumFractionDigits` in `Intl.NumberFormat()`
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options
      */
-    maximumFractionDigits = 0,
+    maximumFractionDigits = 2,
 }) => {
     const numberFormatter = new Intl.NumberFormat(locale, {
         style: 'currency',
