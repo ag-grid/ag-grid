@@ -54,11 +54,11 @@ const gridOptions: GridOptions = {
 export function initGrid(selector: string) {
     const init = () => {
         const gridDiv = document.querySelector(selector);
-        new agGrid.Grid(gridDiv, gridOptions);
+        new globalThis.agGrid.Grid(gridDiv, gridOptions);
     };
 
     const loadGrid = function () {
-        if (document.querySelector(selector) && window.agGrid) {
+        if (document.querySelector(selector) && globalThis.agGrid) {
             init();
         } else {
             requestAnimationFrame(() => loadGrid())
