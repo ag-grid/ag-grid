@@ -1102,6 +1102,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             atLeastOne = true;
         });
 
+        // when pivotMode but pivot not active, root node is displayed on its own
+        // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
+        this.rootNode.setRowHeight(this.rootNode.rowHeight, true);
+
         if (atLeastOne) {
             this.onRowHeightChanged();
         }
