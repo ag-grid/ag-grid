@@ -23,7 +23,8 @@ export interface Stock {
     timeline: Change[];
 }
 
-const MAX_NUMBER = 150;
+const INIT_MAX_NUMBER = 150;
+const UPDATE_MAX_NUMBER = 75;
 const TIMELINE_SIZE = 20;
 
 const STOCK_NAMES = [
@@ -221,17 +222,13 @@ export const columnDefs: ColDef[] = [
     // },
 ];
 
-function randomValue() {
-    return randomNumber(MAX_NUMBER);
-}
-
 function generateRandomStock(stockName: string): Stock {
-    const current = randomValue();
+    const current = randomNumber(INIT_MAX_NUMBER);
     const initialTimelineLength = TIMELINE_SIZE - 1;
     const previousTimeInterval = 1000;
     const timeline = randomNumberList({
         length: initialTimelineLength,
-        maxNumber: MAX_NUMBER,
+        maxNumber: INIT_MAX_NUMBER,
     }).map((value, index) => {
         const time = new Date(Date.now() - (initialTimelineLength - index + 1) * previousTimeInterval);
         return {
@@ -255,7 +252,7 @@ function generateRandomStock(stockName: string): Stock {
 }
 
 export function generateStockUpdate(stock: Stock): Stock {
-    const current = randomValue();
+    const current = stock.current + (randomNumber(UPDATE_MAX_NUMBER) * (Math.random() > 0.5 ? 1 : -0.75));
     const time = new Date();
     const timeline = stock.timeline.slice(1, stock.timeline.length);
     timeline.push({
