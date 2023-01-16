@@ -116,12 +116,12 @@ describe('TimeScale', () => {
             {
                 name: 'several days spanning months',
                 ticks: [new Date(2022, 0, 30), new Date(2022, 0, 31), new Date(2022, 2, 1), new Date(2022, 2, 2)],
-                expectedFormat: '%d %b', // week day
+                expectedFormat: '%d %b', // date + short month
             },
             {
                 name: 'several days across years',
                 ticks: [new Date(2022, 11, 28), new Date(2022, 11, 30), new Date(2023, 0, 2), new Date(2023, 0, 4)],
-                expectedFormat: '%d %b', // week day
+                expectedFormat: '%d %b', // date + short month
             },
             {
                 name: 'several months spanning years',
@@ -132,12 +132,12 @@ describe('TimeScale', () => {
                     new Date(2022, 9, 1),
                     new Date(2023, 0, 1),
                 ],
-                expectedFormat: '%B %Y', // full month and year
+                expectedFormat: '%B %Y', // full month + year
             },
             {
                 name: 'several months across years',
                 ticks: [new Date(2022, 10, 1), new Date(2022, 11, 1), new Date(2023, 0, 1)],
-                expectedFormat: '%B %Y', // full month and year
+                expectedFormat: '%B %Y', // full month + year
             },
         ];
 
