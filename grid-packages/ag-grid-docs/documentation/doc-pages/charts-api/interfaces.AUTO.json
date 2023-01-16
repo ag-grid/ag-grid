@@ -3113,6 +3113,10 @@
     "meta": { "isTypeAlias": true },
     "type": "MouseEvent | TouchEvent | Event"
   },
+  "TooltipState": {
+    "meta": {},
+    "type": { "content": "string", "meta": "TooltipMeta" }
+  },
   "Layers": {
     "meta": { "isEnum": true },
     "type": [
@@ -3514,7 +3518,7 @@
       "pageY": "number",
       "offsetX": "number",
       "offsetY": "number",
-      "event": "Event"
+      "event": "Event | InteractionEvent<any>"
     }
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
