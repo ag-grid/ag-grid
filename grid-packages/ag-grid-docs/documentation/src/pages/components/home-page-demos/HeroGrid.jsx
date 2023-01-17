@@ -28,7 +28,7 @@ const HeroGrid = () => {
             {helmet.map(entry => entry)}
         </Helmet>
         <div id='heroGrid' style={{ height: "100%", width: "100%" }} className="ag-theme-alpine-dark">
-            <LogoMark isLoading/>
+            <LogoMark isSpinning />
         </div>
     </>
 };

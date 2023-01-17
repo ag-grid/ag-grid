@@ -101,6 +101,8 @@ export function initGrid(selector: string) {
     const init = () => {
         const gridDiv = document.querySelector(selector);
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
+
+        gridDiv?.classList.add('loaded');
     };
 
     const loadGrid = function () {

@@ -52,7 +52,7 @@ const Default = () => {
                         </section>
                         
                         <section className={styles['hero-grid']}>
-                            {!IS_SSR && <React.Suspense fallback={<div>Loading...</div>}>
+                            {!IS_SSR && <React.Suspense fallback={<></>}>
                                 <HeroGrid />
                             </React.Suspense>}
                         </section>

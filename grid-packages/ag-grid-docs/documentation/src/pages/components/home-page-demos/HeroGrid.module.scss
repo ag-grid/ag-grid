@@ -38,9 +38,13 @@
         background-color: #07161b;
     }
 
-    :global(svg[class*="logo-mark"]) {
+    svg[class*="logo-mark"] {
         display: block;
         margin: 184px auto;
         transform: scale(2);
+    }
+
+    &:global(.loaded) svg[class*="logo-mark"] {
+        display: none;
     }
 }
