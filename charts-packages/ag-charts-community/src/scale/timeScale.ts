@@ -225,7 +225,7 @@ export class TimeScale extends ContinuousScale {
 
         const tickCount = this.tickCount ?? 10;
         const tickIntervals = this.tickIntervals;
-        const target = Math.abs(stop - start) / tickCount;
+        const target = Math.abs(stop - start) / (tickCount - 1);
         let i = 0;
         while (i < tickIntervals.length && target > tickIntervals[i][2]) {
             i++;
@@ -240,9 +240,9 @@ export class TimeScale extends ContinuousScale {
             step = tickStep(y0, y1, tickCount);
             interval = this.year;
         } else {
-            const ratio0 = target / tickIntervals[i - 1][2];
-            const ratio1 = tickIntervals[i][2] / target;
-            const index = ratio0 < ratio1 ? i - 1 : i;
+            const diff0 = target - tickIntervals[i - 1][2];
+            const diff1 = tickIntervals[i][2] - target;
+            const index = diff0 < diff1 ? i - 1 : i;
             [interval, step] = tickIntervals[index];
         }
 
