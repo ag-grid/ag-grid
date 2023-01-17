@@ -25,6 +25,7 @@ import { ClipRect } from '../scene/clipRect';
 import { Layers } from './layers';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
+import { TooltipManager } from './interaction/tooltipManager';
 
 /** Types of chart-update, in pipeline execution order. */
 export enum ChartUpdateType {
@@ -193,6 +194,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected readonly interactionManager: InteractionManager;
     protected readonly cursorManager: CursorManager;
     protected readonly highlightManager: HighlightManager;
+    protected readonly tooltipManager: TooltipManager;
     protected readonly axisGroup: Group;
 
     protected constructor(
@@ -256,13 +258,20 @@ export abstract class Chart extends Observable implements AgChartInstance {
         });
 
         this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
-        this.legend = new Legend(this, this.interactionManager, this.cursorManager, this.highlightManager);
+        this.tooltipManager = new TooltipManager(this.tooltip);
+        this.legend = new Legend(
+            this,
+            this.interactionManager,
+            this.cursorManager,
+            this.highlightManager,
+            this.tooltipManager
+        );
         this.container = container;
 
         // Add interaction listeners last so child components are registered first.
         this.interactionManager.addListener('click', (event) => this.onClick(event));
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
-        this.interactionManager.addListener('leave', () => this.togglePointer(false));
+        this.interactionManager.addListener('leave', () => this.disablePointer());
         this.interactionManager.addListener('page-left', () => this.destroy());
 
         this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
@@ -306,14 +315,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
     }
 
-    togglePointer(visible?: boolean) {
-        if (this.tooltip.enabled) {
-            this.tooltip.toggle(visible);
-        }
-        if (!visible) {
-            this.highlightManager.updateHighlight(this.id);
-        }
-        if (!visible && this.lastInteractionEvent) {
+    disablePointer() {
+        this.tooltipManager.updateTooltip(this.id);
+        this.highlightManager.updateHighlight(this.id);
+        if (this.lastInteractionEvent) {
             this.lastInteractionEvent = undefined;
         }
     }
@@ -869,23 +874,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
     };
 
     protected onMouseMove(event: InteractionEvent<'hover'>): void {
-        if (this.tooltip.enabled) {
-            if (this.tooltip.delay > 0) {
-                this.togglePointer(false);
-            }
-        }
-
         this.lastInteractionEvent = event;
         this.pointerScheduler.schedule();
 
         this.extraDebugStats['mouseX'] = event.offsetX;
         this.extraDebugStats['mouseY'] = event.offsetY;
         this.update(ChartUpdateType.SCENE_RENDER);
-    }
-
-    private disablePointer() {
-        this.highlightManager.updateHighlight(this.id);
-        this.togglePointer(false);
     }
 
     private lastInteractionEvent?: InteractionEvent<'hover'> = undefined;
@@ -927,7 +921,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         lastPick.event = event.sourceEvent;
 
         if (this.tooltip.enabled && pick.series.tooltip.enabled) {
-            this.tooltip.show(this.mergePointerDatum(meta, pick.datum));
+            this.tooltipManager.updateTooltip(this.id, this.mergePointerDatum(meta, pick.datum));
         }
     }
 
@@ -991,7 +985,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const tooltipEnabled = this.tooltip.enabled && datum.series.tooltip.enabled;
         const html = tooltipEnabled && datum.series.getTooltipHtml(datum);
         if (html) {
-            this.tooltip.show(meta, html);
+            this.tooltipManager.updateTooltip(this.id, meta, html);
         }
     }
 

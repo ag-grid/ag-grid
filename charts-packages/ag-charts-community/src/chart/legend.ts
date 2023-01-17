@@ -41,6 +41,8 @@ import { CursorManager } from './interaction/cursorManager';
 import { HighlightManager } from './interaction/highlightManager';
 import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
+import { TooltipManager } from './interaction/tooltipManager';
+import { toTooltipHtml } from './tooltip/tooltip';
 
 const ORIENTATIONS = ['horizontal', 'vertical'];
 export const OPT_ORIENTATION = predicateWithMessage(
@@ -248,7 +250,6 @@ export class Legend {
         private readonly chart: {
             readonly series: Series<any>[];
             readonly element: HTMLElement;
-            togglePointer(visible: boolean): void;
             update(
                 type: ChartUpdateType,
                 opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
@@ -256,7 +257,8 @@ export class Legend {
         },
         private readonly interactionManager: InteractionManager,
         private readonly cursorManager: CursorManager,
-        private readonly highlightManager: HighlightManager
+        private readonly highlightManager: HighlightManager,
+        private readonly tooltipManager: TooltipManager
     ) {
         this.item.marker.parent = this;
         this.pagination = new Pagination(
@@ -737,7 +739,6 @@ export class Legend {
         }
 
         if (!newEnabled) {
-            chart.togglePointer(false);
             highlightManager.updateHighlight(this.id);
         } else {
             highlightManager.updateHighlight(this.id, {
@@ -763,15 +764,13 @@ export class Legend {
         }
 
         const legendBBox = this.computeBBox();
-        const { offsetX, offsetY } = event;
+        const { pageX, pageY, offsetX, offsetY } = event;
         const pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
 
         if (!pointerInsideLegend) {
             this.cursorManager.updateCursor(this.id);
             this.highlightManager.updateHighlight(this.id);
-            if (this.chart.element.title) {
-                this.chart.element.title = '';
-            }
+            this.tooltipManager.updateTooltip(this.id);
             return;
         }
 
@@ -787,17 +786,21 @@ export class Legend {
             return;
         }
 
+        const series = datum ? this.chart.series.find((series) => series.id === datum?.id) : undefined;
         if (datum && this.truncatedItems.has(datum.itemId || datum.id)) {
-            this.chart.element.title = datum.label.text;
+            this.tooltipManager.updateTooltip(
+                this.id,
+                { pageX, pageY, offsetX, offsetY, event },
+                toTooltipHtml({ content: datum.label.text })
+            );
         } else {
-            this.chart.element.title = '';
+            this.tooltipManager.updateTooltip(this.id);
         }
 
         if (toggleSeriesVisible || listeners.legendItemClick !== NO_OP_LISTENER) {
             this.cursorManager.updateCursor(this.id, 'pointer');
         }
 
-        const series = datum ? this.chart.series.find((series) => series.id === datum?.id) : undefined;
         if (datum?.enabled && series) {
             this.highlightManager.updateHighlight(this.id, {
                 series,
