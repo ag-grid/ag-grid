@@ -113,7 +113,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const embeddedRowMismatch = this.isEmbeddedRowMismatch();
         // This allows for empty strings to appear as groups since
         // it will only return for null or undefined.
-        const nullValue = params.value == null;
+        const isNullValueAndNotMaster = params.value == null && !params.node.master;
         let skipCell = false;
 
         // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
@@ -129,7 +129,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             }
         }
 
-        this.cellIsBlank = topLevelFooter ? false : (embeddedRowMismatch || nullValue || skipCell);
+        this.cellIsBlank = topLevelFooter ? false : (embeddedRowMismatch || (isNullValueAndNotMaster && !params.node.master) || skipCell);
 
         if (this.cellIsBlank) { return; }
 
