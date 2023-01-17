@@ -587,11 +587,10 @@ export class NavigationService extends BeanStub {
             // as fullWidth rows have no cells, so we skip it
             if (!nextCell) {
                 const row = this.rowRenderer.getRowByPosition(nextPosition);
-                if (!row || !row.isFullWidth()) {
+                if (!row || !row.isFullWidth() || startEditing) {
                     continue;
-                } else {
-                    return row;
                 }
+                return row;
             }
 
             if (nextCell.isSuppressNavigable()) { continue; }
