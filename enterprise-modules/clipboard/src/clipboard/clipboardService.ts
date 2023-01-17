@@ -40,7 +40,6 @@ import {
     WithoutGridCommon,
     ProcessRowGroupForExportParams,
 } from "@ag-grid-community/core";
-import { stringToArray } from "./csv";
 
 interface RowCallback {
     (gridRow: RowPosition, rowNode: RowNode | undefined, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
@@ -180,7 +179,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private processClipboardData(data: string): void {
         if (data == null) { return; }
 
-        let parsedData: string[][] | null = stringToArray(data, this.getClipboardDelimiter());
+        let parsedData: string[][] | null = ClipboardService.stringToArray(data, this.getClipboardDelimiter());
 
         const userFunc = this.gridOptionsService.getCallback('processDataFromClipboard');
 
@@ -212,6 +211,83 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         this.doPasteOperation(pasteOperation);
     }
+
+    // This will parse a delimited string into an array of arrays.
+    static stringToArray(strData: string, delimiter = ','): string[][] {
+        const data: any[][] = [];
+        const isNewline = (char: string) => char === '\r' || char === '\n';
+
+        let insideQuotedField = false;
+
+        if (strData === '') { return [['']]; }
+
+        // iterate over each character, keep track of current row and column (of the returned array)
+        for (let row = 0, column = 0, position = 0; position < strData.length; position++) {
+            const previousChar = strData[position - 1];
+            const currentChar = strData[position];
+            const nextChar = strData[position + 1];
+            const ensureDataExists = () => {
+                if (!data[row]) {
+                    // create row if it doesn't exist
+                    data[row] = [];
+                }
+
+                if (!data[row][column]) {
+                    // create column if it doesn't exist
+                    data[row][column] = '';
+                }
+            };
+
+            ensureDataExists();
+
+            if (currentChar === '"') {
+                if (insideQuotedField) {
+                    if (nextChar === '"') {
+                        // unescape double quote
+                        data[row][column] += '"';
+                        position++;
+                    } else {
+                        // exit quoted field
+                        insideQuotedField = false;
+                    }
+
+                    continue;
+                } else if (previousChar === undefined || previousChar === delimiter || isNewline(previousChar)) {
+                    // enter quoted field
+                    insideQuotedField = true;
+                    continue;
+                }
+            }
+
+            if (!insideQuotedField) {
+                if (currentChar === delimiter) {
+                    // move to next column
+                    column++;
+                    ensureDataExists();
+
+                    continue;
+                } else if (isNewline(currentChar)) {
+                    // move to next row
+                    column = 0;
+                    row++;
+                    ensureDataExists();
+
+                    if (currentChar === '\r' && nextChar === '\n') {
+                        // skip over second newline character if it exists
+                        position++;
+                    }
+
+                    continue;
+                }
+            }
+
+            // add current character to current column
+            data[row][column] += currentChar;
+        }
+
+        return data;
+    }
+
 
     // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
     private doPasteOperation(pasteOperationFunc: (
