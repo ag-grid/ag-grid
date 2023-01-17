@@ -68,7 +68,7 @@ const GridComp = ({ context }: GridCompProps) => {
                 const els: HTMLElement[] = [];
 
                 const gridBodyCompEl = eRootWrapperRef.current!.querySelector('.ag-root');
-                const sideBarEl = eRootWrapperRef.current!.querySelector('.ag-side-bar')
+                const sideBarEl = eRootWrapperRef.current!.querySelector('.ag-side-bar:not(.ag-hidden)');
 
                 if (gridBodyCompEl) {
                     els.push(gridBodyCompEl as HTMLElement);

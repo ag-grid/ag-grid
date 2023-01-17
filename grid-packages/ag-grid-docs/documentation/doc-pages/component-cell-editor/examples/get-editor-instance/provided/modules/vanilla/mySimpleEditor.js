@@ -1,5 +1,3 @@
-const KEY_BACKSPACE = 'Backspace';
-const KEY_DELETE = 'Delete';
 const KEY_F2 = 'F2';
 
 class MySimpleEditor {
@@ -12,10 +10,7 @@ class MySimpleEditor {
 
         let startValue = params.value;
 
-        const isBackspaceOrDelete = params.eventKey === KEY_BACKSPACE || params.eventKey === KEY_DELETE;
-        if (isBackspaceOrDelete) {
-            startValue = '';
-        } else if (params.charPress) {
+        if (params.charPress) {
             startValue = params.charPress;
         }
 

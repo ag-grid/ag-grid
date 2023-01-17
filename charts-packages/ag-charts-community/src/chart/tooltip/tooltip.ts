@@ -1,6 +1,7 @@
 import { BBox } from '../../scene/bbox';
 import { Validate, BOOLEAN, NUMBER, OPT_STRING } from '../../util/validation';
 import { AgTooltipRendererResult } from '../agChartOptions';
+import { InteractionEvent } from '../interaction/interactionManager';
 
 export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
@@ -107,7 +108,7 @@ export interface TooltipMeta {
     pageY: number;
     offsetX: number;
     offsetY: number;
-    event: Event;
+    event: Event | InteractionEvent<any>;
 }
 
 export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?: AgTooltipRendererResult): string {
@@ -207,7 +208,7 @@ export class Tooltip {
         return !element.classList.contains(DEFAULT_TOOLTIP_CLASS + '-hidden');
     }
 
-    updateClass(visible?: boolean, constrained?: boolean) {
+    private updateClass(visible?: boolean, constrained?: boolean) {
         const { element, class: newClass, lastClass } = this;
 
         const wasVisible = !element.classList.contains(`${DEFAULT_TOOLTIP_CLASS}-hidden`);

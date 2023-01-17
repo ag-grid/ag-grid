@@ -653,7 +653,7 @@ export class ChartTheme {
                 const chartConfig = overrides[seriesType];
                 if (chartConfig) {
                     if (chartConfig.series) {
-                        (chartConfig as any).series = { [seriesType]: chartConfig.series };
+                        chartConfig.series = { [seriesType]: chartConfig.series };
                     }
                     defaults[seriesType] = deepMerge(defaults[seriesType], chartConfig, mergeOptions);
                 }

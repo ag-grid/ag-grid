@@ -4,7 +4,7 @@ import { _Scale, _Scene, _Util } from 'ag-charts-community';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
 
-const { extent, isNumber, isContinuous, isString, isStringObject, isDate, createId, Padding } = _Util;
+const { extent, isNumber, isString, isStringObject, isDate, createId, Padding } = _Util;
 const { LinearScale, BandScale, TimeScale } = _Scale;
 
 export interface SeriesNodeDatum {
@@ -213,10 +213,8 @@ export abstract class Sparkline {
         const { xData, xScale } = this;
 
         let xMinMax;
-        if (xScale instanceof LinearScale) {
-            xMinMax = extent(xData, isNumber);
-        } else if (xScale instanceof TimeScale) {
-            xMinMax = extent(xData, isContinuous);
+        if (xScale instanceof LinearScale || xScale instanceof TimeScale) {
+            xMinMax = extent(xData);
         }
 
         this.xScale.domain = xMinMax ? xMinMax.slice() : xData;

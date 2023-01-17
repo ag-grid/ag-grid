@@ -15,7 +15,7 @@ import { extent, findMinMax } from '../../../util/array';
 import { equal } from '../../../util/equal';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { checkDatum, isContinuous, isNumber } from '../../../util/value';
+import { checkDatum, isNumber } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
 import {
@@ -442,7 +442,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             }
             // The last node will be clipped if the scale is not a band scale
             // Extend the domain by the smallest data interval so that the last band is not clipped
-            const xDomain = extent(this.xData, isContinuous, Number) || [NaN, NaN];
+            const xDomain = extent(this.xData) || [NaN, NaN];
             if (flipXY) {
                 xDomain[0] = xDomain[0] - (this.smallestDataInterval?.x ?? 0);
             } else {

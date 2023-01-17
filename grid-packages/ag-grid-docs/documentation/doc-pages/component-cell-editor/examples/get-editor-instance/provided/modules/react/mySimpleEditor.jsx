@@ -1,8 +1,5 @@
 import React, {Component, createRef} from 'react';
 
-const KEY_BACKSPACE = 'Backspace';
-const KEY_DELETE = 'Delete';
-
 export default class MySimpleEditor extends Component {
     constructor(props) {
         super(props);
@@ -21,10 +18,7 @@ export default class MySimpleEditor extends Component {
     getInitialValue(props) {
         let startValue = props.value;
 
-        const isBackspaceOrDelete = props.eventKey === KEY_BACKSPACE || props.eventKey === KEY_DELETE;
-        if (isBackspaceOrDelete) {
-            startValue = '';
-        } else if (props.charPress) {
+        if (props.charPress) {
             startValue = props.charPress;
         }
 

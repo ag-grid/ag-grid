@@ -1,61 +1,32 @@
-// Custom `Array.find` implementation for legacy browsers.
-export function find<T>(arr: T[], predicate: (item: T, index: number, arr: T[]) => boolean): T | undefined {
-    for (let i = 0; i < arr.length; i++) {
-        const value = arr[i];
-        if (predicate(value, i, arr)) {
-            return value;
-        }
-    }
-}
-
-export function findIndex<T>(arr: T[], predicate: (item: T, index: number, arr: T[]) => boolean): number {
-    for (let i = 0; i < arr.length; i++) {
-        if (predicate(arr[i], i, arr)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-function identity<T>(value: T): T {
-    return value;
-}
-
-export function extent<T>(values: T[], predicate: (value: T) => boolean): [T, T] | undefined;
-export function extent<T, K>(values: T[], predicate: (value: T) => boolean, map: (value: T) => K): [K, K] | undefined;
-export function extent<T, K>(
-    values: T[],
-    predicate: (value: T) => boolean,
-    map?: (value: T) => K
-): [T | K, T | K] | undefined {
-    const transform = map || identity;
-    const n = values.length;
-    let i = -1;
-    let value;
-    let min;
-    let max;
-
-    while (++i < n) {
-        // Find the first value.
-        value = values[i];
-        if (predicate(value)) {
-            min = max = value;
-            while (++i < n) {
-                // Compare the remaining values.
-                value = values[i];
-                if (predicate(value)) {
-                    if (min > value) {
-                        min = value;
-                    }
-                    if (max < value) {
-                        max = value;
-                    }
-                }
-            }
-        }
+export function extent(values: Array<number | Date>): [number, number] | undefined {
+    const { length } = values;
+    if (length === 0) {
+        return undefined;
     }
 
-    return min === undefined || max === undefined ? undefined : [transform(min), transform(max)];
+    let min = Infinity;
+    let max = -Infinity;
+
+    for (let i = 0; i < length; i++) {
+        let v = values[i];
+        if (v instanceof Date) {
+            v = v.getTime();
+        }
+        if (typeof v !== 'number') {
+            continue;
+        }
+        if (v < min) {
+            min = v;
+        }
+        if (v > max) {
+            max = v;
+        }
+    }
+    const extent = [min, max] as [number, number];
+    if (extent.some((v) => !isFinite(v))) {
+        return undefined;
+    }
+    return extent;
 }
 
 /**
@@ -75,17 +46,4 @@ export function findMinMax(values: number[]): { min?: number; max?: number } {
     }
 
     return { min, max };
-}
-
-export function copy(array: any[], start: number = 0, count: number = array.length): any[] {
-    const result = [];
-    let n = array.length;
-
-    if (n) {
-        for (let i = 0; i < count; i++) {
-            result.push(array[(start + i) % n]);
-        }
-    }
-
-    return result;
 }

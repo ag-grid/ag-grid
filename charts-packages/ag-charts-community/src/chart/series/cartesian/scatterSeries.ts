@@ -15,7 +15,7 @@ import { Text } from '../../../scene/shape/text';
 import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Marker } from '../../marker/marker';
 import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
-import { checkDatum, isContinuous } from '../../../util/value';
+import { checkDatum } from '../../../util/value';
 import { OPT_FUNCTION, OPT_STRING, STRING, Validate } from '../../../util/validation';
 import {
     AgScatterSeriesTooltipRendererParams,
@@ -151,14 +151,14 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         this.sizeData = sizeKey ? this.validData.map((d) => d[sizeKey]) : [];
 
-        this.sizeScale.domain = marker.domain ? marker.domain : extent(this.sizeData, isContinuous) || [1, 1];
+        this.sizeScale.domain = marker.domain ? marker.domain : extent(this.sizeData) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
-            this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), xAxis);
+            this.xDomain = this.fixNumericExtent(extent(this.xData), xAxis);
         } else {
             this.xDomain = this.xData;
         }
         if (yAxis.scale instanceof ContinuousScale) {
-            this.yDomain = this.fixNumericExtent(extent(this.yData, isContinuous), yAxis);
+            this.yDomain = this.fixNumericExtent(extent(this.yData), yAxis);
         } else {
             this.yDomain = this.yData;
         }

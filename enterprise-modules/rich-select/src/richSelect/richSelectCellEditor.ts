@@ -188,7 +188,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             return;
         }
 
-        const topSuggestion = _.fuzzySuggestions(this.searchString, searchStrings, true, true)[0];
+        const topSuggestion = _.fuzzySuggestions(this.searchString, searchStrings)[0];
 
         if (!topSuggestion) {
             return;

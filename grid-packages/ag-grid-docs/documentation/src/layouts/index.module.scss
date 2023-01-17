@@ -55,11 +55,11 @@ main {
 .top-bar {
     composes: px-2 px-md-3 from global;
     position: relative;
-    background-color: transparentize($light, 0.05);
+    background-color: $ag-site-fw-background;
     border-bottom: 1px solid $ag-light-grey;
 
     @supports (backdrop-filter: none) {
-        background-color: transparentize($light, 0.30);
+        background-color: rgba(darken($ag-site-fw-background, 16), 0.3);
         backdrop-filter: blur(20px);
     }
 
@@ -73,10 +73,13 @@ main {
 
     &__wrapper {
         composes: d-flex w-100 justify-content-end justify-content-lg-between flex-wrap container-lg px-0 from global;
+
+        gap: 0 16px;
     }
 
     &__search {
-        composes: pl-0 pr-2 py-2 navbar navbar-expand-lg flex-nowrap navbar-light from global;
+        composes: py-2 px-0 navbar navbar-expand-lg flex-nowrap navbar-light from global;
+
         width: 290px;
         margin: auto 0;
 
@@ -94,7 +97,20 @@ main {
     }
 
     &__framework-selector {
-        composes: p-2 from global;
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+        padding-top: 8px;
+        padding-bottom: 8px;
+
+        @media screen and ( min-width: 880px ) {
+            flex-grow: unset;
+        }
+    }
+
+    &__framework-label {
+        margin-right: 8px;
+        color: darken($secondary, 10%);
     }
 }
 

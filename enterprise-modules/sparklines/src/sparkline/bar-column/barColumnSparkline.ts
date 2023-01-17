@@ -5,7 +5,7 @@ import { SeriesNodeDatum, Sparkline } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { Label } from '../label/label';
 
-const { extent, isNumber } = _Util;
+const { extent } = _Util;
 
 export interface RectNodeDatum extends SeriesNodeDatum {
     readonly x: number;
@@ -137,7 +137,7 @@ export abstract class BarColumnSparkline extends Sparkline {
     protected updateYScaleDomain(): void {
         const { yScale, yData, valueAxisDomain } = this;
 
-        const yMinMax = extent(yData, isNumber);
+        const yMinMax = extent(yData as number[]);
 
         let yMin = 0;
         let yMax = 1;

@@ -1,7 +1,5 @@
 import {nextTick} from 'vue';
 
-const KEY_BACKSPACE = 'Backspace';
-const KEY_DELETE = 'Delete';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
@@ -25,10 +23,7 @@ export default {
         setInitialState(params) {
             let startValue;
 
-            if (params.eventKey === KEY_BACKSPACE || params.eventKey === KEY_DELETE) {
-                // if backspace or delete pressed, we clear the cell
-                startValue = '';
-            } else if (params.charPress) {
+            if (params.charPress) {
                 // if a letter was pressed, we start with the letter
                 startValue = params.charPress;
             } else {
@@ -49,7 +44,7 @@ export default {
             if (event.key === 'Escape') {
                 return;
             }
-            if (this.isLeftOrRight(event) || this.deleteOrBackspace(event)) {
+            if (this.isLeftOrRight(event)) {
                 event.stopPropagation();
                 return;
             }
@@ -71,10 +66,6 @@ export default {
         finishedEditingPressed(event) {
             const key = event.key;
             return key === KEY_ENTER || key === KEY_TAB;
-        },
-
-        deleteOrBackspace(event) {
-            return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
         },
 
         isLeftOrRight(event) {
