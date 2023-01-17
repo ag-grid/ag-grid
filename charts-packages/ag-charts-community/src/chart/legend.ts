@@ -470,14 +470,54 @@ export class Legend {
         maxPageWidth: number;
         pages: Page[];
     } {
-        const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
-
         const orientation = this.getOrientation();
-        const verticalOrientation = orientation === 'vertical';
+        const trackingIndex = Math.min(this.paginationTrackingIndex, bboxes.length);
+
         this.pagination.orientation = orientation;
 
         this.pagination.translationX = 0;
         this.pagination.translationY = 0;
+
+        const { pages, maxPageHeight, maxPageWidth, paginationBBox, verticalOrientation } = this.calculatePagination(
+            bboxes,
+            width,
+            height
+        );
+
+        const newCurrentPage = pages.findIndex((p) => p.endIndex >= trackingIndex);
+        this.pagination.currentPage = Math.min(Math.max(newCurrentPage, 0), pages.length - 1);
+
+        const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
+        const paginationComponentPadding = 8;
+        const legendItemsWidth = maxPageWidth - itemPaddingX;
+        const legendItemsHeight = maxPageHeight - itemPaddingY;
+
+        let paginationX = 0;
+        let paginationY = -paginationBBox.y - this.item.marker.size / 2;
+        if (verticalOrientation) {
+            paginationY += legendItemsHeight + paginationComponentPadding;
+        } else {
+            paginationX += -paginationBBox.x + legendItemsWidth + paginationComponentPadding;
+            paginationY += (legendItemsHeight - paginationBBox.height) / 2;
+        }
+
+        this.pagination.translationX = paginationX;
+        this.pagination.translationY = paginationY;
+        this.pagination.update();
+        this.pagination.updateMarkers();
+
+        return {
+            maxPageHeight,
+            maxPageWidth,
+            pages,
+        };
+    }
+
+    calculatePagination(bboxes: BBox[], width: number, height: number) {
+        const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
+
+        const orientation = this.getOrientation();
+        const verticalOrientation = orientation === 'vertical';
 
         let paginationBBox: BBox = this.pagination.computeBBox();
         let lastPassPaginationBBox: BBox = new BBox(0, 0, 0, 0);
@@ -485,8 +525,6 @@ export class Legend {
         let maxPageWidth = 0;
         let maxPageHeight = 0;
         let count = 0;
-
-        const trackingIndex = Math.min(this.paginationTrackingIndex, bboxes.length);
 
         const stableOutput = (lastPassPaginationBBox: BBox) => {
             const { width, height } = lastPassPaginationBBox;
@@ -533,31 +571,7 @@ export class Legend {
             }
         } while (!stableOutput(lastPassPaginationBBox));
 
-        const newCurrentPage = pages.findIndex((p) => p.endIndex >= trackingIndex);
-        this.pagination.currentPage = Math.min(Math.max(newCurrentPage, 0), pages.length - 1);
-
-        const paginationComponentPadding = 8;
-        const legendItemsWidth = maxPageWidth - itemPaddingX;
-        const legendItemsHeight = maxPageHeight - itemPaddingY;
-
-        this.pagination.translationX = verticalOrientation
-            ? 0
-            : -paginationBBox.x + legendItemsWidth + paginationComponentPadding;
-        this.pagination.translationY =
-            -paginationBBox.y -
-            this.item.marker.size / 2 +
-            (verticalOrientation
-                ? legendItemsHeight + paginationComponentPadding
-                : (legendItemsHeight - paginationBBox.height) / 2);
-
-        this.pagination.update();
-        this.pagination.updateMarkers();
-
-        return {
-            maxPageHeight,
-            maxPageWidth,
-            pages,
-        };
+        return { maxPageWidth, maxPageHeight, pages, paginationBBox, verticalOrientation };
     }
 
     updatePositions(pageNumber: number = 0) {
