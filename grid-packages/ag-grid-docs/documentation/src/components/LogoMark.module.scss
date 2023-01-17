@@ -15,33 +15,70 @@
         fill: #b4bebe;
     }
 
-    rect[class*='right'] {
-        animation-name: logo-mark-bounce;
+    rect {
         animation-iteration-count: infinite;
         animation-timing-function: ease-in-out;
-        animation-duration: 1.15s;
         animation-play-state: paused;
-        transition: transform 1s ease-in-out;
     }
 
-    rect:global(.right-2) {
-        animation-delay: calc(1.15s / 6);
-    }
-
-    rect:global(.right-3) {
-        animation-delay: calc(1.15s / 6 * 2);
-    }
-
-    &:not(.bounce) rect[class*="right"] {
+    &:not(.bounce, .loading) rect {
         transform: translateX(0) !important;
     }
 }
 
 .bounce rect[class*='right'] {
+    $animation-duration: 1.15s;
+
+    animation-name: logo-mark-bounce-right;
+    animation-duration: $animation-duration;
     animation-play-state: running;
+
+    &:global(.right-2) {
+        animation-delay: $animation-duration / 6;
+    }
+
+    &:global(.right-3) {
+        animation-delay: $animation-duration / 6 * 2;
+    }
 }
 
-@keyframes logo-mark-bounce {
+.loading rect[class*='right'] {
+    $animation-duration: 1.25s;
+
+    animation-name: logo-mark-bounce-right;
+    animation-duration: $animation-duration;
+    animation-play-state: running;
+
+    &:global(.right-2) {
+        animation-delay: $animation-duration / 6;
+    }
+
+    &:global(.right-3) {
+        animation-delay: $animation-duration / 6 * 2;
+    }
+}
+
+.loading rect[class*='left'] {
+  $animation-duration: 1.25s;
+
+  animation-name: logo-mark-bounce-left;
+  animation-duration: $animation-duration;
+  animation-play-state: running;
+
+    &:global(.left-3) {
+        animation-delay: $animation-duration / 6 * 3;
+    }
+
+    &:global(.left-2) {
+        animation-delay: $animation-duration / 6 * 4;
+    }
+
+    &:global(.left-1) {
+        animation-delay: $animation-duration / 6 * 5;
+    }
+}
+
+@keyframes logo-mark-bounce-right {
     0% {
         transform: translateX(0%);
     }
@@ -53,4 +90,18 @@
     33.3333% {
         transform: translateX(0);
     }
+}
+
+@keyframes logo-mark-bounce-left {
+  0% {
+      transform: translateX(0%);
+  }
+
+  16.6666% {
+      transform: translateX(-3px);
+  }
+
+  33.3333% {
+      transform: translateX(0);
+  }
 }

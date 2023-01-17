@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet";
 import styles from "./HeroGrid.module.scss";
 import { localPrefix } from '../../../utils/consts';
 import isDevelopment from '../../../utils/is-development';
+import LogoMark from '../../../components/LogoMark';
 
 import { initGrid } from '../../../components/hero-grid';
 
@@ -28,7 +29,9 @@ const HeroGrid = () => {
         <Helmet>
             {helmet.map(entry => entry)}
         </Helmet>
-        <div id='heroGrid' style={{ height: "100%", width: "100%" }} className={className}></div>
+        <div id='heroGrid' style={{ height: "100%", width: "100%" }} className={className}>
+            <LogoMark isLoading/>
+        </div>
     </>
 };
 

@@ -228,11 +228,11 @@ body {
     .hero-grid {
         display: flex;
         flex-direction: row-reverse;
-        // height: 320px;
+        height: 320px;
 
         @media screen and ( min-width: $breakpoint-large ) {
           width: 860px;
-        //   height: 416px;
+          height: 416px;
         }
     }
 }

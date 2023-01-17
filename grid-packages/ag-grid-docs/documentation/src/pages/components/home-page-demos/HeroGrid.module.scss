@@ -15,12 +15,11 @@
     --ag-header-background-color: #00162d;
     --ag-header-foreground-color: #527497;
 
-
-
+    align-self: end;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
+    background-color: var(--ag-odd-row-background-color);
     overflow: hidden;
-    align-self: end;
 
     :global(.ag-header-row) {
         font-weight: 400 !important;
@@ -37,5 +36,11 @@
 
     :global(.my-tooltip .ag-chart-tooltip-content) {
         background-color: #07161b;
+    }
+
+    :global(svg[class*="logo-mark"]) {
+        display: block;
+        margin: 184px auto;
+        transform: scale(2);
     }
 }
