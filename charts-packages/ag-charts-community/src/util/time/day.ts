@@ -1,5 +1,5 @@
 import { CountableTimeInterval } from './interval';
-import { durationDay, durationMinute } from './duration';
+import { durationDay } from './duration';
 
 function floor(date: Date) {
     date.setHours(0, 0, 0, 0);
@@ -7,13 +7,9 @@ function floor(date: Date) {
 function offset(date: Date, days: number) {
     date.setDate(date.getDate() + days);
 }
-function count(start: Date, end: Date): number {
-    const tzMinuteDelta = end.getTimezoneOffset() - start.getTimezoneOffset();
-    return (end.getTime() - start.getTime() - tzMinuteDelta * durationMinute) / durationDay;
-}
-function field(date: Date): number {
-    return Math.floor(date.getTime() / durationDay);
+function stepTest(date: Date, days: number) {
+    return Math.floor(date.getTime() / durationDay) % days === 0;
 }
 
-export const day = new CountableTimeInterval(floor, offset, count, field);
+export const day = new CountableTimeInterval(floor, offset, stepTest);
 export default day;

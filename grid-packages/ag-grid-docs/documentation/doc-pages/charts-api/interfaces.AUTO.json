@@ -3788,13 +3788,9 @@
     "meta": { "isTypeAlias": true },
     "type": "(date: Date, step: number) => void"
   },
-  "CountFn": {
+  "StepTestFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(start: Date, end: Date) => number"
-  },
-  "FieldFn": {
-    "meta": { "isTypeAlias": true },
-    "type": "(date: Date) => number"
+    "type": "(date: Date, step: number) => boolean"
   },
   "FormattingFn": {
     "meta": { "isTypeAlias": true },

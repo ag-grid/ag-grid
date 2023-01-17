@@ -1,18 +1,15 @@
 import { CountableTimeInterval } from './interval';
-import { durationMinute, durationSecond } from './duration';
+import { durationMinute } from './duration';
 
 function floor(date: Date) {
-    date.setTime(date.getTime() - date.getMilliseconds() - date.getSeconds() * durationSecond);
+    date.setSeconds(0, 0);
 }
 function offset(date: Date, minutes: number) {
-    date.setTime(date.getTime() + minutes * durationMinute);
+    date.setMinutes(date.getMinutes() + minutes);
 }
-function count(start: Date, end: Date): number {
-    return (end.getTime() - start.getTime()) / durationMinute;
-}
-function field(date: Date): number {
-    return Math.floor(date.getTime() / durationMinute);
+function stepTest(date: Date, minutes: number) {
+    return Math.floor(date.getTime() / durationMinute) % minutes === 0;
 }
 
-export const minute = new CountableTimeInterval(floor, offset, count, field);
+export const minute = new CountableTimeInterval(floor, offset, stepTest);
 export default minute;

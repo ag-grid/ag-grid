@@ -2,14 +2,14 @@ import { CountableTimeInterval } from './interval';
 import { durationSecond } from './duration';
 
 function floor(date: Date) {
-    date.setTime(date.getTime() - date.getMilliseconds());
+    date.setMilliseconds(0);
 }
 function offset(date: Date, seconds: number) {
-    date.setTime(date.getTime() + seconds * durationSecond);
+    date.setSeconds(date.getSeconds() + seconds);
 }
-function count(start: Date, end: Date): number {
-    return (end.getTime() - start.getTime()) / durationSecond;
+function stepTest(date: Date, seconds: number) {
+    return Math.floor(date.getTime() / durationSecond) % seconds === 0;
 }
 
-export const second = new CountableTimeInterval(floor, offset, count);
+export const second = new CountableTimeInterval(floor, offset, stepTest);
 export default second;

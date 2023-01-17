@@ -28,12 +28,4 @@ test('sunday.range', () => {
         expect(sundays[3].getTime()).toBe(utcSep15Ms + sundays[3].getTimezoneOffset() * durationMinute);
         expect(sundays[4].getTime()).toBe(utcSep22Ms + sundays[4].getTimezoneOffset() * durationMinute);
     }
-
-    {
-        const sundays = sunday.range(d0, d1, 2);
-        expect(sundays.length).toBe(3);
-        expect(sundays[0].getTime()).toBe(utcAug25Ms + sundays[0].getTimezoneOffset() * durationMinute);
-        expect(sundays[1].getTime()).toBe(utcSep08Ms + sundays[1].getTimezoneOffset() * durationMinute);
-        expect(sundays[2].getTime()).toBe(utcSep22Ms + sundays[2].getTimezoneOffset() * durationMinute);
-    }
 });

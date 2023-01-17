@@ -7,11 +7,8 @@ function floor(date: Date) {
 function offset(date: Date, months: number) {
     date.setUTCMonth(date.getUTCMonth() + months);
 }
-function count(start: Date, end: Date): number {
-    return end.getUTCMonth() - start.getUTCMonth() + (end.getUTCFullYear() - start.getUTCFullYear()) * 12;
-}
-function field(date: Date): number {
-    return date.getUTCMonth();
+function stepTest(date: Date, months: number) {
+    return date.getUTCMonth() % months === 0;
 }
 
-export const utcMonth = new CountableTimeInterval(floor, offset, count, field);
+export const utcMonth = new CountableTimeInterval(floor, offset, stepTest);

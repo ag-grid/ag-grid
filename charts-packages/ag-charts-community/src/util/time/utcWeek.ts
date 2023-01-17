@@ -13,12 +13,19 @@ function weekday(n: number): CountableTimeInterval {
     function offset(date: Date, weeks: number) {
         date.setUTCDate(date.getUTCDate() + weeks * 7);
     }
-    // Count the number of weeks between the start and end dates.
-    function count(start: Date, end: Date): number {
-        return (end.getTime() - start.getTime()) / durationWeek;
+
+    function stepTest(date: Date, weeks: number) {
+        const start = new Date(0);
+        floor(start);
+
+        const end = new Date(date.getTime() + 1);
+        floor(end);
+        offset(end, 1);
+
+        return Math.floor((end.getTime() - start.getTime()) / durationWeek) % weeks === 0;
     }
 
-    return new CountableTimeInterval(floor, offset, count);
+    return new CountableTimeInterval(floor, offset, stepTest);
 }
 
 export const utcSunday = weekday(0);

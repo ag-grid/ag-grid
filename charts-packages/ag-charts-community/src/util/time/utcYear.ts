@@ -7,12 +7,9 @@ function floor(date: Date) {
 function offset(date: Date, years: number) {
     date.setUTCFullYear(date.getUTCFullYear() + years);
 }
-function count(start: Date, end: Date): number {
-    return end.getUTCFullYear() - start.getUTCFullYear();
-}
-function field(date: Date): number {
-    return date.getUTCFullYear();
+function stepTest(date: Date, years: number) {
+    return date.getUTCFullYear() % years === 0;
 }
 
-export const utcYear = new CountableTimeInterval(floor, offset, count, field);
+export const utcYear = new CountableTimeInterval(floor, offset, stepTest);
 export default utcYear;
