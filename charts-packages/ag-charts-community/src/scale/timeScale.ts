@@ -38,7 +38,7 @@ const formatStrings: Record<DefaultTimeFormats, string> = {
     [DefaultTimeFormats.MINUTE]: '%I:%M',
     [DefaultTimeFormats.HOUR]: '%I %p',
     [DefaultTimeFormats.WEEK_DAY]: '%a',
-    [DefaultTimeFormats.SHORT_MONTH]: '%d %b',
+    [DefaultTimeFormats.SHORT_MONTH]: '%b %d',
     [DefaultTimeFormats.MONTH]: '%B',
     [DefaultTimeFormats.SHORT_YEAR]: '%y',
     [DefaultTimeFormats.YEAR]: '%Y',
@@ -166,10 +166,6 @@ export class TimeScale extends ContinuousScale {
                 }
             // fall through deliberately
             case DefaultTimeFormats.SHORT_MONTH:
-                if (extent / durationYear > 1) {
-                    formatStringArray.push(formatStrings[DefaultTimeFormats.SHORT_YEAR]);
-                }
-                break; // don't fall through
             case DefaultTimeFormats.MONTH:
                 if (extent / durationYear > 1 || yearChange) {
                     formatStringArray.push(formatStrings[DefaultTimeFormats.YEAR]);
