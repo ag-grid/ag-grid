@@ -111,17 +111,17 @@ describe('TimeScale', () => {
                     new Date(2023, 0, 2, 12),
                     new Date(2023, 0, 14, 0),
                 ],
-                expectedFormat: '%I %p %d %b', // hour + date + short month
+                expectedFormat: '%I %p %b %d', // hour + short month + date
             },
             {
                 name: 'several days spanning months',
                 ticks: [new Date(2022, 0, 30), new Date(2022, 0, 31), new Date(2022, 2, 1), new Date(2022, 2, 2)],
-                expectedFormat: '%d %b', // date + short month
+                expectedFormat: '%b %d', // short month + date
             },
             {
                 name: 'several days across years',
                 ticks: [new Date(2022, 11, 28), new Date(2022, 11, 30), new Date(2023, 0, 2), new Date(2023, 0, 4)],
-                expectedFormat: '%d %b', // date + short month
+                expectedFormat: '%b %d %Y', // short month + date + year
             },
             {
                 name: 'several months spanning years',
