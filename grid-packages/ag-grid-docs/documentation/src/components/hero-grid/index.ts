@@ -16,7 +16,7 @@ const COLUMN_ID_PRIORITIES = [
     "current",
     "last"
 ];
-const FILTER_ROWS_BREAKPOINT = 550;
+const FILTER_ROWS_BREAKPOINT = 1020;
 
 const rowData = generateStocks();
 const generator = createGenerator({
@@ -78,7 +78,8 @@ const gridOptions: GridOptions = {
 
         const stockFilter: ISetFilter = params.api.getFilterInstance('stock')!;
         const stocks = stockFilter.getFilterValues();
-        if (params.clientWidth <= FILTER_ROWS_BREAKPOINT) {
+        
+        if (innerWidth < FILTER_ROWS_BREAKPOINT) {
             stockFilter.setModel({
                 values: stocks.slice(0, 6)
             });
