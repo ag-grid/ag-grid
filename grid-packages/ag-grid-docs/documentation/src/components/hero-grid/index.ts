@@ -83,8 +83,6 @@ const gridOptions: GridOptions = {
             stockFilter.setModel({
                 values: stocks.slice(0, 6)
             });
-
-
         } else {
             stockFilter.setModel({
                 values: stocks
