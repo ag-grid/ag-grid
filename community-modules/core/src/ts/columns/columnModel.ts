@@ -4056,18 +4056,18 @@ export class ColumnModel extends BeanStub {
     }
 
     public getHeaderHeight(): number | null | undefined {
-        return this.gridOptionsService.getNum('headerHeight') || this.environment.getFromTheme(25, 'headerHeight');
+        return this.gridOptionsService.getNum('headerHeight') ??this.environment.getFromTheme(25, 'headerHeight');
     }
     public getFloatingFiltersHeight(): number | null | undefined {
-        return this.gridOptionsService.getNum('floatingFiltersHeight') || this.environment.getFromTheme(25, 'headerHeight');
+        return this.gridOptionsService.getNum('floatingFiltersHeight') ?? this.environment.getFromTheme(25, 'headerHeight');
     }
     private getGroupHeaderHeight(): number | null | undefined {
-        return this.gridOptionsService.getNum('groupHeaderHeight') || this.getHeaderHeight();
+        return this.gridOptionsService.getNum('groupHeaderHeight') ?? this.getHeaderHeight();
     }
     private getPivotHeaderHeight(): number | null | undefined {
-        return this.gridOptionsService.getNum('pivotHeaderHeight') || this.getHeaderHeight();
+        return this.gridOptionsService.getNum('pivotHeaderHeight') ?? this.getHeaderHeight();
     }
     private getPivotGroupHeaderHeight(): number | null | undefined {
-        return this.gridOptionsService.getNum('pivotGroupHeaderHeight') || this.getGroupHeaderHeight();
+        return this.gridOptionsService.getNum('pivotGroupHeaderHeight') ?? this.getGroupHeaderHeight();
     }
 }
