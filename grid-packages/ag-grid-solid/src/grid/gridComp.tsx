@@ -107,7 +107,7 @@ const GridComp = (props: {context: Context, class?: string})=> {
         });
     };
 
-    onMount( ()=> {
+    onMount(() => {
         gridCtrl = context.createBean(new GridCtrl());
         destroyFuncs.push( ()=> context.destroyBean(gridCtrl) );
 
@@ -125,7 +125,7 @@ const GridComp = (props: {context: Context, class?: string})=> {
                 const els: HTMLElement[] = [];
 
                 const gridBodyCompEl = eGui.querySelector('.ag-root');
-                const sideBarEl = eGui.querySelector('.ag-side-bar')
+                const sideBarEl = eGui.querySelector('.ag-side-bar:not(.ag-hidden)');
 
                 if (gridBodyCompEl) {
                     els.push(gridBodyCompEl as HTMLElement);
