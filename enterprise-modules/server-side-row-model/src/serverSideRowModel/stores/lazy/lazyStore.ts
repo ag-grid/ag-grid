@@ -548,7 +548,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             suppressInfiniteScroll: false,
             route: this.parentRowNode.getGroupKeys(),
             rowCount: this.getRowCount(),
+            lastRowIndexKnown: this.isLastRowIndexKnown(),
             info: this.info,
+            maxBlocksInCache: this.storeParams.maxBlocksInCache,
+            cacheBlockSize: this.storeParams.cacheBlockSize,
         });
         this.forEachChildStoreShallow(childStore => childStore.addStoreStates(result));
     }
