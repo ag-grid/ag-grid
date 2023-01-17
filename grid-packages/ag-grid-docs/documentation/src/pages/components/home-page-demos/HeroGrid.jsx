@@ -19,8 +19,6 @@ if (isDevelopment()) {
 }
 
 const HeroGrid = () => {
-    const className = `${styles['heroGrid']} ag-theme-alpine-dark`;
-
     useEffect(() => {
         initGrid('#heroGrid');
     }, []);
@@ -29,7 +27,7 @@ const HeroGrid = () => {
         <Helmet>
             {helmet.map(entry => entry)}
         </Helmet>
-        <div id='heroGrid' style={{ height: "100%", width: "100%" }} className={className}>
+        <div id='heroGrid' style={{ height: "100%", width: "100%" }} className="ag-theme-alpine-dark">
             <LogoMark isLoading/>
         </div>
     </>
