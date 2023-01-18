@@ -335,22 +335,14 @@ export abstract class Node extends ChangeDetectable {
         }
     }
 
-    findNode(id: string | RegExp): Node[] | undefined {
-        if (typeof id === 'string') {
-            if (this.id === id) {
-                return [this];
-            }
+    findNodes(predicate: (node: Node) => boolean): Node[] | undefined {
+        const result: Node[] = predicate(this) ? [this] : [];
 
-            if (this.childSet[id]) {
-                return [this.children.find((n) => n.id === id)!];
-            }
-        } else if (id.test(this.id)) {
-            return [this];
-        }
-
-        const result: Node[] = [];
         for (const child of this.children) {
-            result.push(...(child.findNode(id) ?? []));
+            const childResult = child.findNodes(predicate);
+            if (childResult) {
+                result.push(...childResult);
+            }
         }
 
         return result.length > 0 ? result : undefined;

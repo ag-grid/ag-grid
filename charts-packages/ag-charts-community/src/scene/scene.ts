@@ -455,10 +455,26 @@ export class Scene {
         sceneNodeHighlight: (string | RegExp)[],
         debugNodes: Record<string, Node>
     ) {
+        const regexpPredicate = (matcher: RegExp) => (n: Node) => {
+            if (matcher.test(n.id)) {
+                return true;
+            }
+
+            return n instanceof Group && n.name != null && matcher.test(n.name);
+        };
+        const stringPredicate = (match: string) => (n: Node) => {
+            if (match === n.id) {
+                return true;
+            }
+
+            return n instanceof Group && n.name != null && match === n.name;
+        };
+
         for (const next of sceneNodeHighlight) {
             if (typeof next === 'string' && debugNodes[next] != null) continue;
 
-            const nodes = this.root?.findNode(next);
+            const predicate = typeof next === 'string' ? stringPredicate(next) : regexpPredicate(next);
+            const nodes = this.root?.findNodes(predicate);
             if (!nodes) {
                 console.warn(`AG Charts - No debugging node with id [${next}] in scene graph.`);
                 continue;

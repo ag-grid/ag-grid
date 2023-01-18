@@ -104,16 +104,6 @@ export class Group extends Node {
         super.markDirty(source, type, parentType);
     }
 
-    findNode(id: string | RegExp): Node[] | undefined {
-        if (typeof id === 'string' && this.name === id) {
-            return [this];
-        } else if (typeof id !== 'string' && this.name != null && id.test(this.name ?? '')) {
-            return [this];
-        }
-
-        return super.findNode(id);
-    }
-
     // We consider a group to be boundless, thus any point belongs to it.
     containsPoint(_x: number, _y: number): boolean {
         return true;
