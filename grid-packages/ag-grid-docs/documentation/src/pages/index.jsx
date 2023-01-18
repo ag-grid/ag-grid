@@ -64,6 +64,12 @@ const Default = () => {
                     <FrameworkSelector data={frameworksData} isFullWidth />
                 </div>
 
+                <div className={`${styles['stage-scenarios']} ${styles['stage-quotes']}`}>
+                    <section>
+                        <Quotes data={quotesData} />
+                    </section>
+                </div>
+
                 <div className={styles['stage-description']}>
                     <section>
                         <div>
@@ -101,14 +107,6 @@ const Default = () => {
                                 <LiveStreamingDemo />
                             </React.Suspense>}
                         </div>
-                    </section>
-                </div>
-
-                <div className={`${styles['stage-scenarios']} ${styles['stage-quotes']}`}>
-                    <h2 className={styles['heading-scenarios']}>By Developers for Developers</h2>
-
-                    <section>
-                        <Quotes data={quotesData} />
                     </section>
                 </div>
 

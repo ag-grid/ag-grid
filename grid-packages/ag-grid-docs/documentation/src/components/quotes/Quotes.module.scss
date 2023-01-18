@@ -6,6 +6,7 @@ $breakpoint-large: 1200px;
 
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
@@ -14,6 +15,7 @@ $breakpoint-large: 1200px;
 
   @media screen and (min-width: $breakpoint-medium) {
     flex-direction: row;
+    align-items: flex-start;
     max-width: none;
     gap: 20px;
   }
@@ -51,12 +53,6 @@ $breakpoint-large: 1200px;
       @media screen and (min-width: $breakpoint-large) {
         bottom: -22px;
       }
-    }
-  }
-
-  li:nth-child(odd) {
-    @media screen and (max-width: $breakpoint-medium) {
-      align-self: flex-end;
     }
   }
 
@@ -98,6 +94,28 @@ $breakpoint-large: 1200px;
       "avatar name"
       "avatar orgContainer";
     line-height: 1;
+  }
+  
+  @media screen and (max-width: $breakpoint-large) {
+    li:nth-child(even) {
+      blockquote::before {
+        transform: scale(-1, 1);
+        left: auto;
+        right: var(--avatar-size);
+      }
+  
+      figcaption {
+        grid-template-columns: auto var(--avatar-size);
+        grid-template-areas: 
+          "name avatar"
+          "orgContainer avatar";
+        text-align: right;
+      }
+  
+      .orgContainer{
+        justify-content: flex-end;
+      }
+    }
   }
 }
 
