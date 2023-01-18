@@ -21,9 +21,9 @@ export class TimeInterval {
      * @param date
      */
     floor(date: Date | number): Date {
-        const res = new Date(date);
-        this._floor(res);
-        return res;
+        const result = new Date(date);
+        this._floor(result);
+        return result;
     }
 
     /**
@@ -31,10 +31,10 @@ export class TimeInterval {
      * @param date
      */
     ceil(date: Date | number): Date {
-        const res = new Date(Number(date) - 1);
-        this._floor(res);
-        this._offset(res, 1);
-        return res;
+        const result = new Date(Number(date) - 1);
+        this._floor(result);
+        this._offset(result, 1);
+        return result;
     }
 
     /**
@@ -46,7 +46,7 @@ export class TimeInterval {
         let date = this.ceil(start);
         const range: Date[] = [];
 
-        while (date < stop) {
+        while (date <= stop) {
             range.push(date);
             date = new Date(date);
             this._offset(date, 1);
@@ -66,10 +66,11 @@ export class CountableTimeInterval extends TimeInterval {
 
     /**
      * Returns a filtered view of this interval representing every step'th date.
-     * The meaning of step is dependent on this interval’s parent interval as defined by the `field` function.
+     * It can be a number of minutes, hours, days etc.
+     * Must be a positive integer.
      * @param step
      */
-    every(step: number): TimeInterval | undefined {
+    every(step: number): TimeInterval {
         const test = this._stepTest;
         const floor = (date: Date): Date => {
             this._floor(date);

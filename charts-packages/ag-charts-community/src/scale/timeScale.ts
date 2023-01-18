@@ -189,17 +189,16 @@ export class TimeScale extends ContinuousScale {
     private getTickInterval({
         start,
         stop,
-        step,
     }: {
         start: number;
         stop: number;
-        step?: number;
     }): CountableTimeInterval | TimeInterval | undefined {
         let interval = this.tickInterval;
         if (interval) {
             return interval;
         }
 
+        let step;
         const tickCount = this.tickCount ?? 10;
         const tickIntervals = this.tickIntervals;
         const target = Math.abs(stop - start) / tickCount;

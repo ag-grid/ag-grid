@@ -7,7 +7,7 @@ function weekday(n: number): CountableTimeInterval {
     // n == 0 is Sunday.
     function floor(date: Date) {
         date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 7 - n) % 7));
-        date.setHours(0, 0, 0, 0); // h, m, s, ms
+        date.setUTCHours(0, 0, 0, 0);
     }
     // Offset the date by the given number of weeks.
     function offset(date: Date, weeks: number) {
@@ -30,4 +30,8 @@ function weekday(n: number): CountableTimeInterval {
 
 export const utcSunday = weekday(0);
 export const utcMonday = weekday(1);
+export const utcTuesday = weekday(2);
+export const utcWednesday = weekday(3);
 export const utcThursday = weekday(4);
+export const utcFriday = weekday(5);
+export const utcSaturday = weekday(6);
