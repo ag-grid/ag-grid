@@ -35,102 +35,109 @@ describe('TimeScale', () => {
             {
                 name: 'several seconds',
                 ticks: [
-                    new Date('01 Jan 2020 13:25:30 GMT'),
-                    new Date('01 Jan 2020 13:25:35 GMT'),
-                    new Date('01 Jan 2020 13:25:40 GMT'),
+                    new Date(2023, 0, 1, 13, 25, 30),
+                    new Date(2023, 0, 1, 13, 25, 35),
+                    new Date(2023, 0, 1, 13, 25, 40),
+                    new Date(2023, 0, 1, 13, 25, 45),
                 ],
                 expectedFormat: ':%S', //  second
             },
             {
                 name: 'several minutes',
                 ticks: [
-                    new Date('01 Jan 2020 13:25:00 GMT'),
-                    new Date('01 Jan 2020 13:26:00 GMT'),
-                    new Date('01 Jan 2020 13:27:00 GMT'),
+                    new Date(2023, 0, 1, 13, 25),
+                    new Date(2023, 0, 1, 13, 26),
+                    new Date(2023, 0, 1, 13, 27),
+                    new Date(2023, 0, 1, 13, 28),
                 ],
                 expectedFormat: '%I:%M', // hour:minute
             },
             {
                 name: 'several hours',
                 ticks: [
-                    new Date('01 Jan 2020 13:00:00 GMT'),
-                    new Date('01 Jan 2020 15:00:00 GMT'),
-                    new Date('01 Jan 2020 17:00:00 GMT'),
+                    new Date(2023, 0, 1, 13),
+                    new Date(2023, 0, 1, 15),
+                    new Date(2023, 0, 1, 17),
+                    new Date(2023, 0, 1, 19),
                 ],
                 expectedFormat: '%I %p', // hour
             },
             {
                 name: 'several days',
-                ticks: [
-                    new Date('01 Jan 2020 00:00:00 GMT'),
-                    new Date('02 Jan 2020 00:00:00 GMT'),
-                    new Date('03 Jan 2020 00:00:00 GMT'),
-                ],
-                expectedFormat: '%b %d', // short month
+                ticks: [new Date(2022, 0, 1), new Date(2022, 0, 2), new Date(2022, 0, 3)],
+                expectedFormat: '%a', // week day
             },
             {
                 name: 'several months',
-                ticks: [
-                    new Date('01 Jan 2020 00:00:00 GMT'),
-                    new Date('01 Feb 2020 00:00:00 GMT'),
-                    new Date('01 Mar 2020 00:00:00 GMT'),
-                ],
+                ticks: [new Date(2022, 0, 1), new Date(2022, 1, 1), new Date(2022, 2, 1)],
                 expectedFormat: '%B', // full month
             },
             {
                 name: 'several years',
-                ticks: [
-                    new Date('01 Jan 2020 00:00:00 GMT'),
-                    new Date('01 Jan 2021 00:00:00 GMT'),
-                    new Date('01 Jan 2022 00:00:00 GMT'),
-                ],
+                ticks: [new Date(2021, 0, 1), new Date(2022, 0, 1), new Date(2023, 0, 1)],
                 expectedFormat: '%Y', // year
             },
             {
                 name: 'several seconds spanning minutes',
                 ticks: [
-                    new Date('01 Jan 2020 13:25:00 GMT'),
-                    new Date('01 Jan 2020 13:26:30 GMT'),
-                    new Date('01 Jan 2020 13:27:00 GMT'),
+                    new Date(2023, 0, 1, 13, 25, 0),
+                    new Date(2023, 0, 1, 13, 25, 30),
+                    new Date(2023, 0, 1, 13, 26, 0),
+                    new Date(2023, 0, 1, 13, 26, 30),
+                    new Date(2023, 0, 1, 13, 27, 0),
                 ],
                 expectedFormat: '%I:%M:%S', // hour:minute:second
             },
             {
                 name: 'several minutes spanning hours',
-                ticks: [
-                    new Date('01 Jan 2020 13:25:00 GMT'),
-                    new Date('01 Jan 2020 15:25:00 GMT'),
-                    new Date('01 Jan 2020 17:25:00 GMT'),
-                ],
-                expectedFormat: '%I %p%I:%M', // hour:minute [ '%I:%M', '%I %p' ] ---> not good
+                ticks: [new Date(2023, 0, 1, 13, 25), new Date(2023, 0, 1, 15, 25), new Date(2023, 0, 1, 17, 25)],
+                expectedFormat: '%I %p%I:%M',
             },
             {
                 name: 'several hours spanning days',
                 ticks: [
-                    new Date('01 Jan 2020 12:00:00 GMT'),
-                    new Date('02 Jan 2020 00:00:00 GMT'),
-                    new Date('02 Jan 2020 12:00:00 GMT'),
-                    new Date('03 Jan 2020 00:00:00 GMT'),
+                    new Date(2023, 0, 1, 12),
+                    new Date(2023, 0, 2, 0),
+                    new Date(2023, 0, 2, 12),
+                    new Date(2023, 0, 3, 0),
                 ],
-                expectedFormat: '%I %p %b %d', // hour + short month + day
+                expectedFormat: '%I %p %a', // hour + week day
+            },
+            {
+                name: 'several hours spanning weeks',
+                ticks: [
+                    new Date(2023, 0, 1, 12),
+                    new Date(2023, 0, 2, 0),
+                    new Date(2023, 0, 2, 12),
+                    new Date(2023, 0, 14, 0),
+                ],
+                expectedFormat: '%I %p %b %d', // hour + short month + date
             },
             {
                 name: 'several days spanning months',
-                ticks: [
-                    new Date('30 Jan 2020 00:00:00 GMT'),
-                    new Date('31 Jan 2020 00:00:00 GMT'),
-                    new Date('01 Jan 2020 00:00:00 GMT'),
-                ],
-                expectedFormat: '%b %d', // short month + day
+                ticks: [new Date(2022, 0, 30), new Date(2022, 0, 31), new Date(2022, 2, 1), new Date(2022, 2, 2)],
+                expectedFormat: '%b %d', // short month + date
+            },
+            {
+                name: 'several days across years',
+                ticks: [new Date(2022, 11, 28), new Date(2022, 11, 30), new Date(2023, 0, 2), new Date(2023, 0, 4)],
+                expectedFormat: '%b %d %Y', // short month + date + year
             },
             {
                 name: 'several months spanning years',
                 ticks: [
-                    new Date('01 Jan 2020 00:00:00 GMT'),
-                    new Date('01 Feb 2020 00:00:00 GMT'),
-                    new Date('01 Jan 2021 00:00:00 GMT'),
+                    new Date(2022, 0, 1),
+                    new Date(2022, 3, 1),
+                    new Date(2022, 6, 1),
+                    new Date(2022, 9, 1),
+                    new Date(2023, 0, 1),
                 ],
-                expectedFormat: '%B %Y', // full month and year
+                expectedFormat: '%B %Y', // full month + year
+            },
+            {
+                name: 'several months across years',
+                ticks: [new Date(2022, 10, 1), new Date(2022, 11, 1), new Date(2023, 0, 1)],
+                expectedFormat: '%B %Y', // full month + year
             },
         ];
 

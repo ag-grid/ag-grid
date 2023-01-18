@@ -25,8 +25,10 @@ enum DefaultTimeFormats {
     SECOND,
     MINUTE,
     HOUR,
+    WEEK_DAY,
     SHORT_MONTH,
     MONTH,
+    SHORT_YEAR,
     YEAR,
 }
 
@@ -35,8 +37,10 @@ const formatStrings: Record<DefaultTimeFormats, string> = {
     [DefaultTimeFormats.SECOND]: ':%S',
     [DefaultTimeFormats.MINUTE]: '%I:%M',
     [DefaultTimeFormats.HOUR]: '%I %p',
+    [DefaultTimeFormats.WEEK_DAY]: '%a',
     [DefaultTimeFormats.SHORT_MONTH]: '%b %d',
     [DefaultTimeFormats.MONTH]: '%B',
+    [DefaultTimeFormats.SHORT_YEAR]: '%y',
     [DefaultTimeFormats.YEAR]: '%Y',
 };
 
@@ -86,8 +90,11 @@ export class TimeScale extends ContinuousScale {
         [this.day, 2, 2 * durationDay],
         [this.week, 1, durationWeek],
         [this.week, 2, 2 * durationWeek],
+        [this.week, 3, 3 * durationWeek],
         [this.month, 1, durationMonth],
+        [this.month, 2, 2 * durationMonth],
         [this.month, 3, 3 * durationMonth],
+        [this.month, 4, 4 * durationMonth],
         [this.month, 6, 6 * durationMonth],
         [this.year, 1, durationYear],
     ];
@@ -102,28 +109,26 @@ export class TimeScale extends ContinuousScale {
         };
 
         for (let value of ticks ?? []) {
-            this.second.floor(value) < value
-                ? updateFormat(DefaultTimeFormats.MILLISECOND)
-                : this.minute.floor(value) < value
-                ? updateFormat(DefaultTimeFormats.SECOND)
-                : this.hour.floor(value) < value
-                ? updateFormat(DefaultTimeFormats.MINUTE)
-                : this.day.floor(value) < value
-                ? updateFormat(DefaultTimeFormats.HOUR)
-                : this.month.floor(value) < value
-                ? updateFormat(DefaultTimeFormats.SHORT_MONTH)
-                : this.year.floor(value) < value
-                ? updateFormat(DefaultTimeFormats.MONTH)
-                : updateFormat(DefaultTimeFormats.YEAR);
+            const format = this.getLowestGranularityFormat(value);
+            updateFormat(format);
         }
+
+        return this.buildFormatString(defaultTimeFormat);
+    }
+
+    buildFormatString(defaultTimeFormat: DefaultTimeFormats): string {
+        let formatStringArray: string[] = [formatStrings[defaultTimeFormat]];
+        let timeEndIndex = 0;
 
         const domain = this.getDomain();
         const start = Math.min(...domain.map(toNumber));
         const stop = Math.max(...domain.map(toNumber));
-        const extent = stop - start;
 
-        let formatStringArray: string[] = [formatStrings[defaultTimeFormat]];
-        let timeEndIndex = 0;
+        const startYear = new Date(start).getFullYear();
+        const stopYear = new Date(stop).getFullYear();
+        const yearChange = stopYear - startYear > 0;
+
+        const extent = stop - start;
 
         switch (defaultTimeFormat) {
             case DefaultTimeFormats.SECOND:
@@ -139,13 +144,22 @@ export class TimeScale extends ContinuousScale {
             case DefaultTimeFormats.HOUR:
                 timeEndIndex = formatStringArray.length;
                 if (extent / durationDay > 1) {
-                    formatStringArray.push(formatStrings[DefaultTimeFormats.SHORT_MONTH]);
+                    formatStringArray.push(formatStrings[DefaultTimeFormats.WEEK_DAY]);
+                }
+            // fall through deliberately
+            case DefaultTimeFormats.WEEK_DAY:
+                if (extent / durationWeek > 1 || yearChange) {
+                    // if it's more than a week or there is a year change, don't show week day
+                    const weekDayIndex = formatStringArray.indexOf(formatStrings[DefaultTimeFormats.WEEK_DAY]);
+
+                    if (weekDayIndex > -1) {
+                        formatStringArray.splice(weekDayIndex, 1, formatStrings[DefaultTimeFormats.SHORT_MONTH]);
+                    }
                 }
             // fall through deliberately
             case DefaultTimeFormats.SHORT_MONTH:
-            // fall through deliberately
             case DefaultTimeFormats.MONTH:
-                if (extent / durationYear > 1) {
+                if (extent / durationYear > 1 || yearChange) {
                     formatStringArray.push(formatStrings[DefaultTimeFormats.YEAR]);
                 }
             // fall through deliberately
@@ -176,6 +190,27 @@ export class TimeScale extends ContinuousScale {
         return formatStringArray.join('');
     }
 
+    getLowestGranularityFormat(value: Date | number): DefaultTimeFormats {
+        if (this.second.floor(value) < value) {
+            return DefaultTimeFormats.MILLISECOND;
+        } else if (this.minute.floor(value) < value) {
+            return DefaultTimeFormats.SECOND;
+        } else if (this.hour.floor(value) < value) {
+            return DefaultTimeFormats.MINUTE;
+        } else if (this.day.floor(value) < value) {
+            return DefaultTimeFormats.HOUR;
+        } else if (this.month.floor(value) < value) {
+            if (this.week.floor(value) < value) {
+                return DefaultTimeFormats.WEEK_DAY;
+            }
+            return DefaultTimeFormats.SHORT_MONTH;
+        } else if (this.year.floor(value) < value) {
+            return DefaultTimeFormats.MONTH;
+        }
+
+        return DefaultTimeFormats.YEAR;
+    }
+
     defaultTickFormat(ticks?: any[]) {
         const formatString = this.calculateDefaultTickFormat(ticks);
         return (date: Date) => buildFormatter(formatString)(date);
@@ -202,7 +237,7 @@ export class TimeScale extends ContinuousScale {
 
         const tickCount = this.tickCount ?? 10;
         const tickIntervals = this.tickIntervals;
-        const target = Math.abs(stop - start) / tickCount;
+        const target = Math.abs(stop - start) / (tickCount - 1);
         let i = 0;
         while (i < tickIntervals.length && target > tickIntervals[i][2]) {
             i++;
@@ -217,9 +252,9 @@ export class TimeScale extends ContinuousScale {
             step = tickStep(y0, y1, tickCount);
             interval = this.year;
         } else {
-            const ratio0 = target / tickIntervals[i - 1][2];
-            const ratio1 = tickIntervals[i][2] / target;
-            const index = ratio0 < ratio1 ? i - 1 : i;
+            const diff0 = target - tickIntervals[i - 1][2];
+            const diff1 = tickIntervals[i][2] - target;
+            const index = diff0 < diff1 ? i - 1 : i;
             [interval, step] = tickIntervals[index];
         }
 
