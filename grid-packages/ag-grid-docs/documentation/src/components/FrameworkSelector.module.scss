@@ -21,6 +21,7 @@ $selected-color: #3798f9;
     min-width: 44px;
     padding: calc((var(--height) - var(--icon-size)) / 2) var(--x-padding);
     text-decoration: none;
+    outline: none;
 
     &::after {
         content: "";
@@ -46,7 +47,8 @@ $selected-color: #3798f9;
         transition: opacity .25s ease-in-out;
     }
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
         text-decoration: none;
         
         &::after {
@@ -66,13 +68,15 @@ $selected-color: #3798f9;
         opacity: .6666;
     }
 
-    &:hover span {
+    &:hover span,
+    &:focus-visible span {
         opacity: .85;
     }
 
     &--selected{
         &::after,
-        &:hover::after {
+        &:hover::after,
+        &:focus-visible::after {
             background-color: $selected-color;
         }
 
@@ -159,5 +163,12 @@ $selected-color: #3798f9;
         span {
             display: inline;
         }
+    }
+
+    @media screen and ( min-width: 1020px ) {
+      &::after {
+        height: 3px;
+        border-radius: 1.5px;
+      }
     }
 }
