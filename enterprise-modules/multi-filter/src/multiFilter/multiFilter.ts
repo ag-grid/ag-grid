@@ -282,12 +282,12 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         return AgPromise.all(promises).then(() => { });
     }
 
-    public applyModel(): boolean {
+    public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         let result = false;
 
         this.filters!.forEach((filter) => {
             if (filter instanceof ProvidedFilter) {
-                result = filter.applyModel() || result;
+                result = filter.applyModel(source) || result;
             }
         });
 

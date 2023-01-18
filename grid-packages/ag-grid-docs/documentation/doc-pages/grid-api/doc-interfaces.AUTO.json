@@ -8832,8 +8832,12 @@
   },
   "IProvidedFilter": {
     "applyModel": {
-      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
+      "type": {
+        "arguments": { "source?": "'api' | 'ui' | 'rowDataUpdated'" },
+        "returnType": "boolean",
+        "optional": false
+      }
     },
     "getModelFromUi": {
       "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n     * applied, this model will reflect those changes.\n     */",
@@ -8961,8 +8965,12 @@
   "JoinOperator": {},
   "ISimpleFilter": {
     "applyModel": {
-      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
+      "type": {
+        "arguments": { "source?": "'api' | 'ui' | 'rowDataUpdated'" },
+        "returnType": "boolean",
+        "optional": false
+      }
     },
     "getModelFromUi": {
       "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n     * applied, this model will reflect those changes.\n     */",
@@ -13916,8 +13924,12 @@
       }
     },
     "applyModel": {
-      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
+      "type": {
+        "arguments": { "source?": "'api' | 'ui' | 'rowDataUpdated'" },
+        "returnType": "boolean",
+        "optional": false
+      }
     },
     "getModelFromUi": {
       "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n     * applied, this model will reflect those changes.\n     */",
@@ -15724,8 +15736,12 @@
     },
     "meta": { "typeParams": ["V = string"] },
     "applyModel": {
-      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
+      "type": {
+        "arguments": { "source?": "'api' | 'ui' | 'rowDataUpdated'" },
+        "returnType": "boolean",
+        "optional": false
+      }
     },
     "isFilterActive": {
       "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n     * If active then 1) the grid will show the filter icon in the column header \n     * and 2) the filter will be included in the filtering of the data.\n    */",
