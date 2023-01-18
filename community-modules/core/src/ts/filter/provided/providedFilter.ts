@@ -61,8 +61,9 @@ export interface IProvidedFilter extends IFilter {
     /**
      * Applies the model shown in the UI (so that `getModel()` will now return what was in the UI
      * when `applyModel()` was called).
+     * @param source The source of the method call. Default 'api'.
      */
-    applyModel(): boolean;
+    applyModel(source?: 'api' | 'ui' | 'rowDataUpdated'): boolean;
     /**
      * Returns the filter model from the UI. If changes have been made to the UI but not yet
      * applied, this model will reflect those changes.
@@ -261,7 +262,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             // we set the model from the GUI, rather than the provided model,
             // so the model is consistent, e.g. handling of null/undefined will be the same,
             // or if model is case insensitive, then casing is removed.
-            this.applyModel();
+            this.applyModel('api');
         });
     }
 
@@ -295,7 +296,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     /**
      * Applies changes made in the UI to the filter, and returns true if the model has changed.
      */
-    public applyModel(): boolean {
+    public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         const newModel = this.getModelFromUi();
 
         if (!this.isModelValid(newModel!)) { return false; }
@@ -320,7 +321,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     protected onBtApply(afterFloatingFilter = false, afterDataChange = false, e?: Event): void {
         // Prevent form submission
         if (e) { e.preventDefault(); }
-        if (this.applyModel()) {
+        if (this.applyModel(afterDataChange ? 'rowDataUpdated' : 'ui')) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
             this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange });

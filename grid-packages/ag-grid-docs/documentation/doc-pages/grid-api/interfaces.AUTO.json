@@ -5013,7 +5013,7 @@
       "doc": "/** Interface contract for the public aspects of the ProvidedFilter implementation(s). */"
     },
     "type": {
-      "applyModel()": "boolean",
+      "applyModel(source?: 'api' | 'ui' | 'rowDataUpdated')": "boolean",
       "getModelFromUi()": "any",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
@@ -5025,7 +5025,7 @@
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
-      "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
+      "applyModel(source?: 'api' | 'ui' | 'rowDataUpdated')": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
       "getModelFromUi()": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n     * applied, this model will reflect those changes.\n     */",
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n     * If active then 1) the grid will show the filter icon in the column header \n     * and 2) the filter will be included in the filtering of the data.\n    */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n     * filter fails, then the row will be excluded from the final set. The method is provided a\n     * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n     * (the data object that you provided to the grid for that row).\n     */",
@@ -5093,7 +5093,7 @@
       "doc": "/** Interface contract for the public aspects of the SimpleFilter implementation(s). */"
     },
     "type": {
-      "applyModel()": "boolean",
+      "applyModel(source?: 'api' | 'ui' | 'rowDataUpdated')": "boolean",
       "getModelFromUi()": "any",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
@@ -5106,7 +5106,7 @@
       "onFloatingFilterChanged(type: string | null, value: any)": "void"
     },
     "docs": {
-      "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
+      "applyModel(source?: 'api' | 'ui' | 'rowDataUpdated')": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
       "getModelFromUi()": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n     * applied, this model will reflect those changes.\n     */",
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n     * If active then 1) the grid will show the filter icon in the column header \n     * and 2) the filter will be included in the filtering of the data.\n    */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n     * filter fails, then the row will be excluded from the final set. The method is provided a\n     * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n     * (the data object that you provided to the grid for that row).\n     */",
@@ -7881,7 +7881,7 @@
     },
     "type": {
       "getChildFilterInstance(index: number)": "IFilter | undefined",
-      "applyModel()": "boolean",
+      "applyModel(source?: 'api' | 'ui' | 'rowDataUpdated')": "boolean",
       "getModelFromUi()": "any",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
@@ -7894,7 +7894,7 @@
     },
     "docs": {
       "getChildFilterInstance(index: number)": "/** @returns the child filter instance at the given index. */",
-      "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
+      "applyModel(source?: 'api' | 'ui' | 'rowDataUpdated')": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
       "getModelFromUi()": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n     * applied, this model will reflect those changes.\n     */",
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n     * If active then 1) the grid will show the filter icon in the column header \n     * and 2) the filter will be included in the filtering of the data.\n    */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n     * filter fails, then the row will be excluded from the final set. The method is provided a\n     * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n     * (the data object that you provided to the grid for that row).\n     */",
@@ -8697,7 +8697,7 @@
       "getMiniFilter()": "string | null",
       "setMiniFilter(newMiniFilter: string | null)": "void",
       "getModelFromUi()": "SetFilterModel | null",
-      "applyModel()": "boolean",
+      "applyModel(source?: 'api' | 'ui' | 'rowDataUpdated')": "boolean",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
       "setModel(model: any)": "void | AgPromise<void>",
@@ -8718,7 +8718,7 @@
       "getMiniFilter()": "/** Returns the current mini-filter text. */",
       "setMiniFilter(newMiniFilter: string | null)": "/** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */",
       "getModelFromUi()": "/** Returns the current UI state (potentially un-applied). */",
-      "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
+      "applyModel(source?: 'api' | 'ui' | 'rowDataUpdated')": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n     * If active then 1) the grid will show the filter icon in the column header \n     * and 2) the filter will be included in the filtering of the data.\n    */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n     * filter fails, then the row will be excluded from the final set. The method is provided a\n     * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n     * (the data object that you provided to the grid for that row).\n     */",
       "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n     * de-activate the filter.\n     */",

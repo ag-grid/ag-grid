@@ -575,17 +575,17 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
     }
 
-    public applyModel(): boolean {
+    public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        if (this.setFilterParams.excelMode && this.valueModel.isEverythingVisibleSelected()) {
+        if (this.setFilterParams.excelMode && source !== 'rowDataUpdated' && this.valueModel.isEverythingVisibleSelected()) {
             // In Excel, if the filter is applied with all visible values selected, then any active filter on the
             // column is removed. This ensures the filter is removed in this situation.
             this.valueModel.selectAllMatchingMiniFilter();
         }
 
-        const result = super.applyModel();
+        const result = super.applyModel(source);
 
         // keep appliedModelKeys in sync with the applied model
         const appliedModel = this.getModel();
