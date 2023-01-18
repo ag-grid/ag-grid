@@ -82,6 +82,10 @@ function FakeServer(allData) {
                 return key + " LIKE '" + item.filter + "%'";
             case 'endsWith':
                 return key + " LIKE '%" + item.filter + "'";
+            case 'blank':
+                return key + " IS NULL or " + key + " = ''";
+            case 'notBlank':
+                return key + " IS NOT NULL and " + key + " != ''";
             default:
                 console.log('unknown text filter type: ' + item.type);
         }
@@ -103,6 +107,10 @@ function FakeServer(allData) {
                 return key + ' <= ' + item.filter;
             case 'inRange':
                 return '(' + key + ' >= ' + item.filter + ' and ' + key + ' <= ' + item.filterTo + ')';
+            case 'blank':
+                return key + " IS NULL";
+            case 'notBlank':
+                return key + " IS NOT NULL";
             default:
                 console.log('unknown number filter type: ' + item.type);
         }
