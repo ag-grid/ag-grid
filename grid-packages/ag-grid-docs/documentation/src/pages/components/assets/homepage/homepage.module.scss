@@ -157,6 +157,99 @@ body {
     }
 }
 
+.homepage-hero {
+    $breakpoint-medium: 620px;
+    $breakpoint-large: 1020px;
+
+    background-color: $blue-1;
+    padding-top: 40px;
+
+    font-family: 'Roboto', sans-serif;
+    color: $white;
+
+    @media screen and ( min-width: $breakpoint-medium ) {
+        padding-top: 60px;
+    }
+
+    @media screen and ( min-width: $breakpoint-large ) {
+        padding-top: 100px;
+    }
+
+    .contents {
+        display: flex;
+        flex-direction: column;
+        gap: 0 32px;
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding-left: 16px;
+        padding-right: 16px;
+
+        @media screen and ( min-width: $breakpoint-large ) {
+            flex-direction: row;
+        }
+    }
+
+    .headings {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+
+        @media screen and ( min-width: $breakpoint-large ) {
+          text-align: unset;
+        }
+    }
+
+    h1 {
+        margin-bottom: .15em;
+        font-size: 28px;
+        line-height: 1.3;
+        font-weight: 700;
+
+        @media screen and ( min-width: $breakpoint-medium ) {
+            font-size: 38px;
+        }
+
+        @media screen and ( min-width: $breakpoint-large ) {
+            margin-top: -0.15em;
+            margin-bottom: .3em;
+            font-size: min(3.4vw, 54px);
+        }
+    }
+
+    h2 {
+        max-width: 18em;
+        margin-right: auto;
+        margin-bottom: 1.4em;
+        margin-left: auto;
+        font-size: 16px;
+        line-height: 1.4;
+        font-weight: 200;
+
+        @media screen and ( min-width: $breakpoint-medium ) {
+            font-size: 22px;
+        }
+
+        @media screen and ( min-width: $breakpoint-large ) {
+            max-width: unset;
+            margin-bottom: 1em;
+            font-size: min(1.9vw, 32px);
+        }
+    }
+
+    .hero-grid {
+        display: flex;
+        flex-direction: row-reverse;
+        height: 320px;
+
+        @media screen and ( min-width: $breakpoint-large ) {
+          width: 860px;
+          height: 416px;
+        }
+    }
+}
+
 .stage-scenarios {
     @extend %stage;
 
