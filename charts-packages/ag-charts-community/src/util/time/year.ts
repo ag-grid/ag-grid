@@ -1,4 +1,3 @@
-import { epochYear } from './duration';
 import { CountableTimeInterval } from './interval';
 
 function floor(date: Date) {
@@ -8,12 +7,9 @@ function floor(date: Date) {
 function offset(date: Date, years: number) {
     date.setFullYear(date.getFullYear() + years);
 }
-function count(start: Date, end: Date): number {
-    return end.getFullYear() - start.getFullYear();
-}
-function field(date: Date): number {
-    return date.getFullYear() - epochYear;
+function stepTest(date: Date, years: number) {
+    return date.getFullYear() % years === 0;
 }
 
-export const year = new CountableTimeInterval(floor, offset, count, field);
+export const year = new CountableTimeInterval(floor, offset, stepTest);
 export default year;

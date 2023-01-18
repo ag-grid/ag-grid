@@ -7,20 +7,31 @@ function weekday(n: number): CountableTimeInterval {
     // n == 0 is Sunday.
     function floor(date: Date) {
         date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 7 - n) % 7));
-        date.setHours(0, 0, 0, 0); // h, m, s, ms
+        date.setUTCHours(0, 0, 0, 0);
     }
     // Offset the date by the given number of weeks.
     function offset(date: Date, weeks: number) {
         date.setUTCDate(date.getUTCDate() + weeks * 7);
     }
-    // Count the number of weeks between the start and end dates.
-    function count(start: Date, end: Date): number {
-        return (end.getTime() - start.getTime()) / durationWeek;
+
+    function stepTest(date: Date, weeks: number) {
+        const start = new Date(0);
+        floor(start);
+
+        const end = new Date(date.getTime() + 1);
+        floor(end);
+        offset(end, 1);
+
+        return Math.floor((end.getTime() - start.getTime()) / durationWeek) % weeks === 0;
     }
 
-    return new CountableTimeInterval(floor, offset, count);
+    return new CountableTimeInterval(floor, offset, stepTest);
 }
 
 export const utcSunday = weekday(0);
 export const utcMonday = weekday(1);
+export const utcTuesday = weekday(2);
+export const utcWednesday = weekday(3);
 export const utcThursday = weekday(4);
+export const utcFriday = weekday(5);
+export const utcSaturday = weekday(6);
