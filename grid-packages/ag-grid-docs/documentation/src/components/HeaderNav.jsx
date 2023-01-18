@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {withPrefix} from 'gatsby';
 import MenuIcon from '../images/inline-svgs/menu-icon.svg';
+import GithubLogo from '../images/inline-svgs/github-logo.svg';
 import classnames from 'classnames';
 import styles from './HeaderNav.module.scss';
 
@@ -20,6 +21,12 @@ const links = [
     {
         name: 'Blog',
         url: 'https://blog.ag-grid.com/'
+    },
+    {
+        name: 'Github',
+        url: 'https://github.com/ag-grid/ag-grid',
+        icon: <GithubLogo />,
+        cssClass: 'github-item'
     }
 ];
 
@@ -41,14 +48,18 @@ const HeaderLinks = ({path}) => {
         <ul className={styles['header-nav__navbar']}>
             {links.map(link => {
                 const linkClasses = classnames(
-                    styles['header-nav__link'],
-                    {
-                        [styles['header-nav__link--active']]: link.name === active && path !== '/'
-                    });
+                    styles['header-nav__link'], {
+                        [styles['header-nav__link--active']]: link.name === active && path !== '/',
+                        [styles[link.cssClass]]: link.cssClass
+                    }
+                );
 
                 return (
                     <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
-                        <a className={styles['header-nav__link-anchor']} href={link.url} onClick={() => setActive(link.name)}>{link.name}</a>
+                        <a className={styles['header-nav__link-anchor']} href={link.url} onClick={() => setActive(link.name)}>
+                            {link.icon}
+                            <span>{link.name}</span>
+                        </a>
                     </li>
                 );
             })}
