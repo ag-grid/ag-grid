@@ -19,7 +19,7 @@
     "init-prod": "npm run initLatest && npm run updateAndRebuildProd",
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
     "clean": "npx lerna run clean && npx lerna clean --yes",
-    "bootstrap": "npx lerna bootstrap --no-ci",
+    "bootstrap": "node scriptes/patchLerna.js && npx lerna bootstrap --no-ci",
     "bootstrap-single-thread": "npx lerna bootstrap --no-ci --concurrency 1",
     "build-tsc": "npx tsc --build",
     "build": "npx lerna run build",
