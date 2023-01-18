@@ -150,54 +150,6 @@ export const columnDefs: ColDef[] = [
         initialWidth: 110,
         minWidth: 110
     },
-    // {
-    //     headerName: 'Change (area)',
-    //     valueGetter: changeValueGetter,
-    //     cellRenderer: 'agSparklineCellRenderer',
-    //     cellRendererParams: {
-    //         sparklineOptions: {
-    //             type: 'area',
-    //             axis: {
-    //                 type: 'category',
-    //             },
-    //             tooltip: {
-    //                 renderer: changesTooltipRenderer,
-    //             },
-    //             marker: {
-    //                 formatter: positiveNegativeAreaFormatter,
-    //             },
-    //         } as AreaSparklineOptions,
-    //     },
-    // },
-    // {
-    //     headerName: 'Change (column)',
-    //     valueGetter: changeValueGetter,
-    //     cellRenderer: 'agSparklineCellRenderer',
-    //     cellRendererParams: {
-    //         sparklineOptions: {
-    //             type: 'column',
-    //             axis: {
-    //                 type: 'category',
-    //             },
-    //             tooltip: {
-    //                 renderer: changesTooltipRenderer,
-    //             },
-    //             formatter: positiveNegativeColumnFormatter,
-    //         } as ColumnSparklineOptions,
-    //     },
-    // },
-
-    // Using default `agAnimateShowChangeCellRenderer` renderer
-    // {
-    //     headerName: '% Change',
-    //     type: 'numericColumn',
-    //     valueGetter: ({ data }) => {
-    //         const last = getLastValue(data);
-    //         return Boolean(data.current) ? ((data.current - last) / data.current) * 100 : 0;
-    //     },
-    //     valueFormatter: ({ value }) => toPercentage({ value, decimalPlaces: 2 }),
-    //     cellRenderer: 'agAnimateShowChangeCellRenderer',
-    // },
     {
         headerName: '% Change',
         colId: 'percentageChange',
@@ -209,13 +161,7 @@ export const columnDefs: ColDef[] = [
         cellRenderer: ChangeCellRenderer,
         initialWidth: 150,
         minWidth: 150,
-    },
-    // {
-    //     field: 'time',
-    //     type: 'rightAligned',
-    //     filter: 'agDateColumnFilter',
-    //     valueFormatter: ({ value }) => toTime({ value, showMs: true }),
-    // },
+    }
 ];
 
 function randomValue() {
