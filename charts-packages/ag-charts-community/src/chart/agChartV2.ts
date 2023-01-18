@@ -32,7 +32,7 @@ import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
 import { TimeAxis } from './axis/timeAxis';
 import { Chart, ChartUpdateType } from './chart';
-import { SourceEventListener } from '../util/observable';
+import { TypedEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
 import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
 import {
@@ -535,13 +535,13 @@ function createAxis(options: AgCartesianAxisOptions[]): ChartAxis[] {
 }
 
 type ObservableLike = {
-    addEventListener(key: string, cb: SourceEventListener<any>): void;
+    addEventListener(key: string, cb: TypedEventListener): void;
     clearEventListeners(): void;
 };
 function registerListeners<T extends ObservableLike>(source: T, listeners?: {}) {
     source.clearEventListeners();
     for (const property in listeners) {
-        source.addEventListener(property, (listeners as any)[property] as SourceEventListener<any>);
+        source.addEventListener(property, (listeners as any)[property] as TypedEventListener);
     }
 }
 

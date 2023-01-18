@@ -2986,7 +2986,7 @@
   },
   "ObservableLike": {
     "meta": { "isTypeAlias": true },
-    "type": "{ addEventListener(key: string, cb: SourceEventListener<any>): void; clearEventListeners(): void; }"
+    "type": "{ addEventListener(key: string, cb: TypedEventListener): void; clearEventListeners(): void; }"
   },
   "VisibilityMap": {
     "meta": { "isTypeAlias": true },
@@ -3753,13 +3753,9 @@
     }
   },
   "TypedEvent": { "meta": {}, "type": { "type": "string" } },
-  "SourceEvent": {
-    "meta": { "typeParams": ["S"] },
-    "type": { "source": "S", "type": "string" }
-  },
-  "SourceEventListener": {
-    "meta": { "isTypeAlias": true, "typeParams": ["S"] },
-    "type": "(event: SourceEvent<S>) => any"
+  "TypedEventListener": {
+    "meta": { "isTypeAlias": true },
+    "type": "(event: TypedEvent) => any"
   },
   "Callback": {
     "meta": { "isTypeAlias": true },
