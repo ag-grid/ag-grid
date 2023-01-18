@@ -95,6 +95,7 @@ export const columnDefs: ColDef[] = [
     {
         field: 'stock',
         filter: 'agSetColumnFilter',
+        flex: 1,
         initialWidth: 180,
         minWidth: 180
     },
@@ -134,6 +135,7 @@ export const columnDefs: ColDef[] = [
         type: 'numericColumn',
         valueFormatter: toCurrency,
         cellRenderer: CurrentCellRenderer,
+        flex: 1,
         initialWidth: 130,
         minWidth: 130
     },

@@ -22,9 +22,9 @@ export const STOCK_NAMES = [
  */
 export const COLUMN_ID_PRIORITIES = [
     "stock",
+    "current",
     "timeline",
     "percentageChange",
-    "current",
     "last"
 ];
 
@@ -33,6 +33,12 @@ export const COLUMN_ID_PRIORITIES = [
  * Based on `window.innerWidth`
  */
 export const FILTER_ROWS_BREAKPOINT = 1020;
+
+/**
+ * When to filter rows for smaller screens.
+ * Based on `window.innerWidth`
+ */
+export const SHOW_CURRENT_COLORS_BREAKPOINT = 642;
 
 /**
  * Maximum number for data values

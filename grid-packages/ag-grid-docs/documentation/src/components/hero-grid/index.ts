@@ -50,15 +50,17 @@ const gridOptions: GridOptions = {
         const columnsToShow: string[] = [];
         const columnsToHide: string[] = [];
         let totalWidth: number = 0;
+        let hasFilledColumns = false;
         COLUMN_ID_PRIORITIES.forEach((colId) => {
             const col = params.columnApi.getColumn(colId);
             const minWidth = col?.getMinWidth() || 0;
             const newTotalWidth = totalWidth + minWidth;
 
-            if (newTotalWidth <= params.clientWidth) {
+            if (!hasFilledColumns && (newTotalWidth <= params.clientWidth)) {
                 columnsToShow.push(colId);
                 totalWidth = newTotalWidth;
             } else {
+                hasFilledColumns = true;
                 columnsToHide.push(colId);
             }
         });

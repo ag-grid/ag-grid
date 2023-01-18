@@ -1,3 +1,6 @@
+$positive-color: #46E372;
+$negative-color: #FF005C;
+
 .current {
     border-radius: 20px;
     padding: 5px 12px;
@@ -8,4 +11,22 @@
     background-color: rgba(#6eb7ff, .12);
     color: white;
     transition: background-color .1s ease-in-out, color .1s ease-in-out;
+
+    &.showColors.positive {
+        color: $positive-color;
+        background-color: rgba($positive-color, .1);
+
+        &::before {
+            content: '↑ ';
+        }
+    }
+    
+    &.showColors.negative {
+        color: $negative-color;
+        background-color: rgba($negative-color, .19);
+
+        &::before {
+            content: '↓ ';
+        }
+    }
 }
