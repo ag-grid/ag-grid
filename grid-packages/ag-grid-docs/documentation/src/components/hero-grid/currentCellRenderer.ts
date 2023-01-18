@@ -22,7 +22,7 @@ export class CurrentCellRenderer implements ICellRendererComp {
             return false;
         }
 
-        this.eGui.innerHTML = toCurrency({ value, decimalPlaces: 2 });
+        this.eGui.innerHTML = toCurrency({ value });
 
         this.eGui.classList.add(styles.update);
         
