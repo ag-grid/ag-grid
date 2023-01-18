@@ -8,6 +8,7 @@ import {
     TooltipRendererResult,
 } from 'ag-grid-community';
 import { ChangeCellRenderer } from './changeCellRenderer';
+import { MAX_NUMBER, STOCK_NAMES, TIMELINE_SIZE } from './constants';
 import { CurrentCellRenderer } from './currentCellRenderer';
 import { toCurrency, toTime } from './formatters';
 import { randomNumber, randomNumberList } from './generator-utils';
@@ -22,20 +23,6 @@ export interface Stock {
     time: Date;
     timeline: Change[];
 }
-
-const MAX_NUMBER = 150;
-const TIMELINE_SIZE = 20;
-
-const STOCK_NAMES = [
-    'Cow Moans',
-    'Nasraq 500',
-    'Fang Peng',
-    'Wiltshire 4500-kbm',
-    'DT PI',
-    'Footsie MID',
-    'Capra ibex',
-    'NY composte index',
-];
 
 const timelineTooltipRenderer = ({ xValue, yValue }: TooltipRendererParams): TooltipRendererResult => {
     return {

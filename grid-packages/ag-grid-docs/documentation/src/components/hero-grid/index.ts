@@ -7,16 +7,7 @@
 import { GetRowIdParams, GridOptions, GridSizeChangedEvent, ISetFilter } from 'ag-grid-community';
 import { columnDefs, generateStocks, generateStockUpdate } from './data';
 import { createGenerator } from './generator-utils';
-
-const UPDATE_INTERVAL = 60;
-const COLUMN_ID_PRIORITIES = [
-    "stock",
-    "timeline",
-    "percentageChange",
-    "current",
-    "last"
-];
-const FILTER_ROWS_BREAKPOINT = 1020;
+import { COLUMN_ID_PRIORITIES, FILTER_ROWS_BREAKPOINT, UPDATE_INTERVAL } from './constants';
 
 const rowData = generateStocks();
 const generator = createGenerator({
