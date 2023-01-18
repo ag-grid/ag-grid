@@ -23,7 +23,8 @@ const FULL_SCREEN_WITH_FOOTER_PAGES = [
     'cookies',
     'changelog',
     'pipeline',
-    'privacy'
+    'privacy',
+    'style-guide'
 ];
 
 const getAllPageUrls = (pages) => {

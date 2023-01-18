@@ -1,0 +1,23 @@
+@use '../../design-system' as *;
+
+.ag-styles {
+  @include design-system-styles();
+
+  section {
+    margin-bottom: 4rem;
+  }
+
+  .grid {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .grid > * {
+    min-width: 10rem;
+  }
+
+  #form form > div {
+    margin-bottom: 2rem;
+  }
+}

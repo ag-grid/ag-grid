@@ -1,0 +1,12 @@
+@use '../core' as *;
+
+ul.list-style-none,
+ol.list-style-none {
+  margin-bottom: unset;
+  padding-left: unset;
+  list-style: none;
+} 
+
+pre {
+  --font-family: #{$monospace-font-family};
+}

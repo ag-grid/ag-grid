@@ -1,0 +1,215 @@
+@use "sass:math";
+@use "../core" as *;
+@use "button" as *;
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+
+  &:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+}
+
+legend {
+  padding: unset;
+}
+
+label {
+  fieldset & {
+    display: block;
+  }
+
+  + input,
+  + select {
+    margin-left: math.div(8rem, 16);
+  }
+
+  &[for*="radio"],
+  &[for*="checkbox"],
+  &[for*="switch"] {
+    cursor: pointer;
+  }
+}
+
+
+input {
+  font-size: var(--font-size);
+}
+
+input[type="text"],
+input[type="search"],
+input[type="email"] {
+  padding: math.div(6rem, 16) math.div(12rem, 16);
+  line-height: 1.5;
+  border-radius: var(--border-radius);
+  background-color: $white;
+  border: 1px solid var(--border-color);
+  outline: none;
+  transition: border-color $default-transition-timing,
+    box-shadow $default-transition-timing;
+
+  &::placeholder {
+    font-style: italic;
+    color: var(--secondary-text-color);
+  }
+
+  &:hover:not(:disabled),
+  &:focus,
+  &:focus-visible {
+    border-color: $sky-blue;
+  }
+
+  &:focus,
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba($azure-blue, 0.25);
+  }
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  $size: 1.25em;
+
+  appearance: none;
+  position: relative;
+  width: $size;
+  height: $size;
+  top: math.div(4rem, 16);
+  outline: none;
+
+  &:not(:disabled) {
+    cursor: pointer;
+  }
+
+  &:checked {
+    background-color: $azure-blue;
+  }
+}
+
+input[type="checkbox"]:not(.switch) {
+  $svg-tick: url('data:image/svg+xml;utf8,<svg fill="none" stroke="#{$white}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path d="m9 15 3.75 3.75L21 10.5"/></svg>');
+
+  border-radius: var(--border-radius);
+  border: 0.125em solid var(--secondary-text-color);
+  background-image: $svg-tick;
+  transition: background-color $default-transition-timing,
+              border-color $default-transition-timing,
+              box-shadow $default-transition-timing;
+
+  &:hover:not(:disabled),
+  &:focus,
+  &:focus-visible,
+  &:checked {
+    border-color: $azure-blue;
+  }
+
+  &:focus,
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba($azure-blue, 0.25);
+  }
+}
+
+input[type="checkbox"].switch {
+  $height: 1.25em;
+
+  width: 2em;
+  height: $height;
+  background-color: $ag-grid-grey;
+  border-radius: math.div($height, 2);
+  background-image: radial-gradient($white calc($height / 2 - 3px), transparent calc($height / 2 - 3px));
+  background-repeat: no-repeat;
+  background-size: $height;
+  transition: background-position $default-transition-timing,
+              background-color $default-transition-timing,
+              box-shadow $default-transition-timing;
+
+  &:checked {
+    background-position: right;
+    background-color: $azure-blue;
+  }
+
+  &:focus,
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba($azure-blue, 0.25);
+  }
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.125em var(--secondary-text-color),
+              inset 0 0 0 0.25em $white;
+  transition: background-color $default-transition-timing,
+              box-shadow $default-transition-timing;
+
+  &:hover:not(:disabled),
+  &:checked {
+    box-shadow: inset 0 0 0 0.125em $azure-blue,
+                inset 0 0 0 0.25em $white;
+  }
+
+  &:focus,
+  &:focus-visible {
+    box-shadow: inset 0 0 0 0.125em $azure-blue,
+                inset 0 0 0 0.25em $white,
+                0 0 0 3px rgba($azure-blue, 0.25);
+  }
+}
+
+input[type="reset"],
+input[type="submit"] {
+  @include button();
+}
+
+select {
+  $svg-chevron-down: url('data:image/svg+xml;utf8,<svg fill="none" stroke="#{$dark-gunmetal-gray}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 30"><path d="m7.5 13.688 5.25 4.125L18 13.688"/></svg>');
+
+  appearance: none;
+  padding: math.div(6rem, 16) math.div(36rem, 16) math.div(6rem, 16) math.div(12rem, 16);
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: var(--border-radius);
+  background-color: $white;
+  background-image: $svg-chevron-down;
+  background-repeat: no-repeat;
+  background-position: center right;
+  border: 1px solid var(--border-color);
+  outline: none;
+  transition: border-color $default-transition-timing,
+    box-shadow $default-transition-timing;
+
+  &:not(:disabled) {
+    cursor: pointer;
+  }
+
+  &:hover:not(:disabled),
+  &:focus,
+  &:focus-visible {
+    border-color: $sky-blue;
+  }
+
+  &:focus,
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba($azure-blue, 0.25);
+  }
+}
+
+input[type="range"] {
+  appearance: none;
+  position: relative;
+  top: -.125em;
+  background-color: $ag-grid-grey;
+  border-radius: var(--border-radius);
+  height: math.div(4em, 16);
+  cursor: pointer;
+
+  &::-webkit-slider-thumb,
+  &::-moz-range-thumb,
+  &::-ms-thumb {
+    appearance: none;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    background-color: $azure-blue;
+  }
+}

@@ -1,0 +1,24 @@
+@use './variables' as *;
+
+#{$css-variables-root} {
+  --border-radius: #{$border-radius};
+
+  --font-family: #{$font-family};
+  --monospace-font-family: #{$monospace-font-family};
+
+  --font-size: #{$font-size-medium};
+  --line-height: #{$line-height-normal};
+  --font-weight: #{$font-weight-normal};
+
+  --text-color: #{$dark-gunmetal-gray};
+  --secondary-text-color: #{$auro-metal};
+
+  --link-color: #{$azure-blue};
+  --link-hover-color: #{$ag-grid-orange};
+
+  --button-color: #{$azure-blue};
+  --button-hover-color: #{$medium-electric-blue};
+  --button-active-color: #{$dark-cerulean-blue};
+
+  --border-color: #{$light-gray};
+}
