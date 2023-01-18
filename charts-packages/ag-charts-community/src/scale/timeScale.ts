@@ -109,22 +109,16 @@ export class TimeScale extends ContinuousScale {
         };
 
         for (let value of ticks ?? []) {
-            this.second.floor(value) < value
-                ? updateFormat(DefaultTimeFormats.MILLISECOND)
-                : this.minute.floor(value) < value
-                ? updateFormat(DefaultTimeFormats.SECOND)
-                : this.hour.floor(value) < value
-                ? updateFormat(DefaultTimeFormats.MINUTE)
-                : this.day.floor(value) < value
-                ? updateFormat(DefaultTimeFormats.HOUR)
-                : this.month.floor(value) < value
-                ? this.week.floor(value) < value
-                    ? updateFormat(DefaultTimeFormats.WEEK_DAY)
-                    : updateFormat(DefaultTimeFormats.SHORT_MONTH)
-                : this.year.floor(value) < value
-                ? updateFormat(DefaultTimeFormats.MONTH)
-                : updateFormat(DefaultTimeFormats.YEAR);
+            const format = this.getLowestGranularityFormat(value);
+            updateFormat(format);
         }
+
+        return this.buildFormatString(defaultTimeFormat);
+    }
+
+    buildFormatString(defaultTimeFormat: DefaultTimeFormats): string {
+        let formatStringArray: string[] = [formatStrings[defaultTimeFormat]];
+        let timeEndIndex = 0;
 
         const domain = this.getDomain();
         const start = Math.min(...domain.map(toNumber));
@@ -135,9 +129,6 @@ export class TimeScale extends ContinuousScale {
         const yearChange = stopYear - startYear > 0;
 
         const extent = stop - start;
-
-        let formatStringArray: string[] = [formatStrings[defaultTimeFormat]];
-        let timeEndIndex = 0;
 
         switch (defaultTimeFormat) {
             case DefaultTimeFormats.SECOND:
@@ -197,6 +188,28 @@ export class TimeScale extends ContinuousScale {
         }
 
         return formatStringArray.join('');
+    }
+
+    getLowestGranularityFormat(value: Date | number): DefaultTimeFormats {
+        if (this.second.floor(value) < value) {
+            return DefaultTimeFormats.MILLISECOND;
+        } else if (this.minute.floor(value) < value) {
+            return DefaultTimeFormats.SECOND;
+        } else if (this.hour.floor(value) < value) {
+            return DefaultTimeFormats.MINUTE;
+        } else if (this.day.floor(value) < value) {
+            return DefaultTimeFormats.HOUR;
+        } else if (this.month.floor(value) < value) {
+            if (this.week.floor(value) < value) {
+                return DefaultTimeFormats.WEEK_DAY;
+            } else {
+                return DefaultTimeFormats.SHORT_MONTH;
+            }
+        } else if (this.year.floor(value) < value) {
+            return DefaultTimeFormats.MONTH;
+        }
+
+        return DefaultTimeFormats.YEAR;
     }
 
     defaultTickFormat(ticks?: any[]) {
