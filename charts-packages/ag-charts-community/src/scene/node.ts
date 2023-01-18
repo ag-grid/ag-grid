@@ -335,7 +335,7 @@ export abstract class Node extends ChangeDetectable {
         }
     }
 
-    findNodes(predicate: (node: Node) => boolean): Node[] | undefined {
+    findNodes(predicate: (node: Node) => boolean): Node[] {
         const result: Node[] = predicate(this) ? [this] : [];
 
         for (const child of this.children) {
@@ -345,7 +345,7 @@ export abstract class Node extends ChangeDetectable {
             }
         }
 
-        return result.length > 0 ? result : undefined;
+        return result;
     }
 
     computeBBox(): BBox | undefined {

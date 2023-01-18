@@ -475,7 +475,7 @@ export class Scene {
 
             const predicate = typeof next === 'string' ? stringPredicate(next) : regexpPredicate(next);
             const nodes = this.root?.findNodes(predicate);
-            if (!nodes) {
+            if (!nodes || nodes.length === 0) {
                 console.warn(`AG Charts - No debugging node with id [${next}] in scene graph.`);
                 continue;
             }
