@@ -1,14 +1,17 @@
-$selected-border-color: #3798f9;
+$border-color: #ced4da;
+$selected-color: #3798f9;
 
 .framework-selector {
-    --height: 44px;
+    --height: 38px;
     --icon-size: 26px;
     --font-size: 16px;
-    --border-width: 2px;
+    --x-padding: 10px;
 
     display: flex;
     width: 100%;
     font-weight: 500;
+    border-radius: 4px;
+    background-color: white;
 }
 
 .framework-selector__option {
@@ -16,52 +19,18 @@ $selected-border-color: #3798f9;
     position: relative;
     justify-content: center;
     min-width: 44px;
-    padding: calc((var(--height) - var(--icon-size)) / 2) 0;
+    padding: calc((var(--height) - var(--icon-size)) / 2) var(--x-padding);
     text-decoration: none;
-    background-color: white;
 
-    &:not(:first-child) {
-        margin-left: var(--border-width);
-    }
-
-    &:first-child {
-        padding-left: calc(var(--height) / 4);
-    }
-
-    &:last-child{
-        padding-right: calc(var(--height) / 4);
-    }
-
-    // Using ::after to create borders to create pleasant overlap
     &::after {
         content: "";
         position: absolute;
-        height: 100%;
-        top: 0;
-        left: calc(var(--border-width) * -1);
-        right: calc(var(--border-width) * -1);
-        border: var(--border-width) solid transparent;
-        transition: border-color .25s ease-in-out;
-    }
-
-    &:first-child::after {
-        left: 0;
-    }
-
-    &:last-child::after {
-        right: 0;
-    }
-
-    &:first-child,
-    &:first-child::after {
-        border-top-left-radius: calc(var(--height) / 2);
-        border-bottom-left-radius: calc(var(--height) / 2);
-    }
-
-    &:last-child,
-    &:last-child::after {
-        border-top-right-radius: calc(var(--height) / 2);
-        border-bottom-right-radius: calc(var(--height) / 2);
+        height: 2px;
+        bottom: -1px;
+        left: 5px;
+        right: 5px;
+        border-radius: 1px;
+        transition: background-color .25s ease-in-out;
     }
 
     img {
@@ -81,26 +50,30 @@ $selected-border-color: #3798f9;
         text-decoration: none;
         
         &::after {
-            border-color: rgba($selected-border-color, 0.5);
+            background-color: rgba($selected-color, 0.5);
         }
     }
+}
+
+.framework-selector--show-selected {
+  border: 1px solid $border-color;
 }
 
 .framework-selector--show-selected .framework-selector__option {
     width: 25%;
 
-    &:hover {
-        opacity: .85;
-    }
-
     span {
         opacity: .6666;
+    }
+
+    &:hover span {
+        opacity: .85;
     }
 
     &--selected{
         &::after,
         &:hover::after {
-            border-color: $selected-border-color;
+            background-color: $selected-color;
         }
 
         span {
@@ -110,14 +83,22 @@ $selected-border-color: #3798f9;
 
     @media screen and ( min-width: 880px ) {
         width: unset;
-        padding: calc((var(--height) - var(--icon-size)) / 2);
+        padding: calc((var(--height) - var(--icon-size)) / 2) 10px;
 
         &:first-child {
-            padding-left: calc(var(--height) / 1.75);
+          padding-left: calc(var(--x-padding) * 2);
+
+          &::after {
+            left: calc(var(--x-padding) * 1.5);
+          }
         }
-    
-        &:last-child{
-            padding-right: calc(var(--height) / 2);
+
+        &:last-child {
+          padding-right: calc(var(--x-padding) * 2);
+
+          &::after {
+            right: calc(var(--x-padding) * 1.5);
+          }
         }
 
         span {
@@ -129,45 +110,54 @@ $selected-border-color: #3798f9;
 .framework-selector--full-width {
     min-width: 220px;
     max-width: 420px;
-
-    .framework-selector__option {
-        width: 20%;
-    }
+    border-radius: 8px;
 
     @media screen and ( min-width: 740px ) {
         width: unset;
         max-width: unset;
-
-        .framework-selector__option {
-            width: unset;
-            padding: calc((var(--height) - var(--icon-size)) / 2);
-    
-            &:first-child {
-                padding-left: calc(var(--height) / 1.75);
-            }
-        
-            &:last-child{
-                padding-right: calc(var(--height) / 2);
-            }
-    
-            span {
-                display: inline;
-            }
-        }
     }
 
     @media screen and ( min-width: 1020px ) {
         --height: 62px;
         --icon-size: 36px;
         --font-size: 22px;
-        --border-width: 3px;
-
-        .framework-selector__option {
-            padding: calc((var(--height) - var(--icon-size)) / 2) calc(var(--height) / 3);
-        }
+        --x-padding: 20px;
 
         span {
             margin-left: 8px;
+        }
+    }
+}
+
+.framework-selector--full-width .framework-selector__option {
+    width: 20%;
+
+    &:hover::after {
+      background-color: $selected-color;
+    }
+
+    @media screen and ( min-width: 740px ) {
+        width: unset;
+        padding: calc((var(--height) - var(--icon-size)) / 2) var(--x-padding);
+
+        &:first-child {
+          padding-left: calc(var(--x-padding) * 2);
+
+          &::after {
+            left: calc(var(--x-padding) * 1.5);
+          }
+        }
+
+        &:last-child {
+          padding-right: calc(var(--x-padding) * 2);
+
+          &::after {
+            right: var(--x-padding);
+          }
+        }
+
+        span {
+            display: inline;
         }
     }
 }
