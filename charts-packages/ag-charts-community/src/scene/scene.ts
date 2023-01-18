@@ -11,6 +11,7 @@ interface DebugOptions {
     dirtyTree: boolean;
     renderBoundingBoxes: boolean;
     consoleLog: boolean;
+    sceneNodeHighlight: (string | RegExp)[];
 }
 
 interface SceneOptions {
@@ -26,6 +27,28 @@ interface SceneLayer {
     canvas: HdpiOffscreenCanvas | HdpiCanvas;
     getComputedOpacity: () => number;
     getVisibility: () => boolean;
+}
+
+function buildSceneNodeHighlight() {
+    let config = windowValue('agChartsSceneDebug') ?? [];
+
+    if (typeof config === 'string') {
+        config = [config];
+    }
+
+    const result: (string | RegExp)[] = [];
+    config.forEach((name: string) => {
+        switch (name) {
+            case 'layout':
+                result.push('seriesRoot', 'legend', 'root', /.*Axis-[0-9]+-axis.*/);
+                break;
+
+            default:
+                result.push(name);
+        }
+    });
+
+    return result;
 }
 
 export class Scene {
@@ -61,6 +84,7 @@ export class Scene {
         this.debug.consoleLog = windowValue('agChartsDebug') === true;
         this.debug.stats = windowValue('agChartsSceneStats') ?? false;
         this.debug.dirtyTree = windowValue('agChartsSceneDirtyTree') ?? false;
+        this.debug.sceneNodeHighlight = buildSceneNodeHighlight();
         this.canvas = new HdpiCanvas({ document, width, height, overrideDevicePixelRatio });
         this.ctx = this.canvas.context;
     }
@@ -254,6 +278,7 @@ export class Scene {
         stats: false,
         renderBoundingBoxes: false,
         consoleLog: false,
+        sceneNodeHighlight: [],
     };
 
     /** Alternative to destroy() that preserves re-usable resources. */
@@ -318,6 +343,7 @@ export class Scene {
             ctx,
             forceRender: true,
             resized: !!pendingSize,
+            debugNodes: {},
         };
         if (this.debug.stats === 'detailed') {
             renderCtx.stats = { layersRendered: 0, layersSkipped: 0, nodesRendered: 0, nodesSkipped: 0 };
@@ -368,6 +394,7 @@ export class Scene {
         this._dirty = false;
 
         this.debugStats(debugSplitTimes, ctx, renderCtx.stats, extraDebugStats);
+        this.debugSceneNodeHighlight(ctx, this.debug.sceneNodeHighlight, renderCtx.debugNodes);
 
         if (root && this.debug.consoleLog) {
             console.log('after', { redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
@@ -421,6 +448,57 @@ export class Scene {
             }
             ctx.restore();
         }
+    }
+
+    debugSceneNodeHighlight(
+        ctx: CanvasRenderingContext2D,
+        sceneNodeHighlight: (string | RegExp)[],
+        debugNodes: Record<string, Node>
+    ) {
+        for (const next of sceneNodeHighlight) {
+            if (typeof next === 'string' && debugNodes[next] != null) continue;
+
+            const nodes = this.root?.findNode(next);
+            if (!nodes) {
+                console.warn(`AG Charts - No debugging node with id [${next}] in scene graph.`);
+                continue;
+            }
+
+            for (const node of nodes) {
+                if (node instanceof Group && node.name) {
+                    debugNodes[node.name] = node;
+                } else {
+                    debugNodes[node.id] = node;
+                }
+            }
+        }
+
+        ctx.save();
+
+        for (const [name, node] of Object.entries(debugNodes)) {
+            const bbox = node.computeTransformedBBox();
+
+            if (!bbox) {
+                console.warn(`AG Charts - No bbox for debugged node [${name}].`);
+                continue;
+            }
+
+            ctx.globalAlpha = 0.8;
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(bbox.x, bbox.y, bbox.width, bbox.height);
+
+            ctx.fillStyle = 'red';
+            ctx.strokeStyle = 'white';
+            ctx.font = '16px sans-serif';
+            ctx.textBaseline = 'top';
+            ctx.textAlign = 'left';
+            ctx.lineWidth = 2;
+            ctx.strokeText(name, bbox.x, bbox.y, bbox.width);
+            ctx.fillText(name, bbox.x, bbox.y, bbox.width);
+        }
+
+        ctx.restore();
     }
 
     buildTree(node: Node): { name?: string; node?: any; dirty?: string } {

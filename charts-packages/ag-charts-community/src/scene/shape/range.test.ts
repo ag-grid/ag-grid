@@ -89,7 +89,7 @@ describe('Range', () => {
 
                     // Render.
                     ctx.save();
-                    range.render({ ctx, forceRender: true, resized: false });
+                    range.render({ ctx, forceRender: true, resized: false, debugNodes: {} });
                     ctx.restore();
 
                     // Prepare for next case.

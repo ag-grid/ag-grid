@@ -5092,7 +5092,10 @@
     "renderBoundingBoxes": {
       "type": { "returnType": "boolean", "optional": false }
     },
-    "consoleLog": { "type": { "returnType": "boolean", "optional": false } }
+    "consoleLog": { "type": { "returnType": "boolean", "optional": false } },
+    "sceneNodeHighlight": {
+      "type": { "returnType": "(string | RegExp)[]", "optional": false }
+    }
   },
   "SceneOptions": {
     "document": { "type": { "returnType": "Document", "optional": false } },

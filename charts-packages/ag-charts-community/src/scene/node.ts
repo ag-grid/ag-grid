@@ -25,6 +25,7 @@ export type RenderContext = {
         layersRendered: number;
         layersSkipped: number;
     };
+    debugNodes: Record<string, Node>;
 };
 
 const zIndexChangedCallback = (o: any) => {
@@ -332,6 +333,27 @@ export abstract class Node extends ChangeDetectable {
             // a leaf node, but not a container leaf
             return this;
         }
+    }
+
+    findNode(id: string | RegExp): Node[] | undefined {
+        if (typeof id === 'string') {
+            if (this.id === id) {
+                return [this];
+            }
+
+            if (this.childSet[id]) {
+                return [this.children.find((n) => n.id === id)!];
+            }
+        } else if (id.test(this.id)) {
+            return [this];
+        }
+
+        const result: Node[] = [];
+        for (const child of this.children) {
+            result.push(...(child.findNode(id) ?? []));
+        }
+
+        return result.length > 0 ? result : undefined;
     }
 
     computeBBox(): BBox | undefined {
