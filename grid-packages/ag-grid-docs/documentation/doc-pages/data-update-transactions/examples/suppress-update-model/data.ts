@@ -105,7 +105,7 @@ export function getData() {
 
 export function createDataItem(name: string, distro: string, laptop: string, city: string, value: number, idToUse: number | undefined = undefined): any {
 
-    const id = idToUse || idCounter++;
+    const id = idToUse != null ? idToUse : idCounter++;
     return {
         id: id,
         name: name,
