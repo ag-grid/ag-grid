@@ -14,6 +14,7 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   autoGroupColumnDef: {
+    sort: 'desc',
     minWidth: 200,
   },
   groupDisplayType: 'multipleColumns',
