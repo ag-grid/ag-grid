@@ -5241,12 +5241,7 @@
   "TypedEvent": {
     "type": { "type": { "returnType": "string", "optional": false } }
   },
-  "SourceEvent": {
-    "source": { "type": { "returnType": "S", "optional": false } },
-    "meta": { "typeParams": ["S"] },
-    "type": { "type": { "returnType": "string", "optional": false } }
-  },
-  "SourceEventListener": { "meta": { "typeParams": ["S"] } },
+  "TypedEventListener": {},
   "Callback": {},
   "OnSizeChange": {},
   "Entry": {},

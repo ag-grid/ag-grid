@@ -7,7 +7,7 @@ import { Legend, LegendDatum } from './legend';
 import { BBox } from '../scene/bbox';
 import { SizeMonitor } from '../util/sizeMonitor';
 import { Caption } from '../caption';
-import { Observable, SourceEvent } from '../util/observable';
+import { Observable, TypedEvent } from '../util/observable';
 import { ChartAxis, ChartAxisDirection } from './chartAxis';
 import { createId } from '../util/id';
 import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '../util/labelPlacement';
@@ -510,12 +510,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (!series.data) {
             series.data = this.data;
         }
-        series.addEventListener('nodeClick', this.onSeriesNodeClick, this);
+        series.addEventListener('nodeClick', this.onSeriesNodeClick);
     }
 
     protected freeSeries(series: Series<any>) {
         series.chart = undefined;
-        series.removeEventListener('nodeClick', this.onSeriesNodeClick, this);
+        series.removeEventListener('nodeClick', this.onSeriesNodeClick);
     }
 
     removeAllSeries(): void {
@@ -955,7 +955,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return false;
     }
 
-    private onSeriesNodeClick(event: SourceEvent<Series<any>>) {
+    private onSeriesNodeClick = (event: TypedEvent) => {
         const seriesNodeClickEvent = {
             ...event,
             type: 'seriesNodeClick',
@@ -966,7 +966,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             get: () => (event as any).series,
         });
         this.fireEvent(seriesNodeClickEvent);
-    }
+    };
 
     private onSeriesDatumPick(meta: PointerMeta, datum: SeriesNodeDatum) {
         const { lastPick } = this;
