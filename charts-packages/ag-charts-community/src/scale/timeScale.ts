@@ -202,9 +202,8 @@ export class TimeScale extends ContinuousScale {
         } else if (this.month.floor(value) < value) {
             if (this.week.floor(value) < value) {
                 return DefaultTimeFormats.WEEK_DAY;
-            } else {
-                return DefaultTimeFormats.SHORT_MONTH;
             }
+            return DefaultTimeFormats.SHORT_MONTH;
         } else if (this.year.floor(value) < value) {
             return DefaultTimeFormats.MONTH;
         }
