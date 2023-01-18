@@ -13,6 +13,24 @@ import LogoMark from 'components/LogoMark';
 import styles from './index.module.scss';
 import './mailchimp.css';
 
+const FULL_SCREEN_PAGES = [
+    'example'
+];
+
+const FULL_SCREEN_WITH_FOOTER_PAGES = [
+    'license-pricing',
+    'about',
+    'cookies',
+    'changelog',
+    'pipeline',
+    'privacy'
+];
+
+const getAllPageUrls = (pages) => {
+    return pages.map((page) => `/${page}`)
+        .concat(pages.map((page) => `/${page}/`));
+}
+
 const TopBar = ({ frameworks, currentFramework, path }) => {
     const frameworksData = supportedFrameworks
         .filter((f) => !frameworks || frameworks.includes(f))
@@ -63,14 +81,9 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
     const processedPath = path.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/,'');
 
     const fullScreenPage = processedPath === '/' ||
-        processedPath === '/example' || processedPath === '/example/';
+        getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
 
-    const fullScreenWithFooter = processedPath === '/license-pricing' || processedPath === '/license-pricing/' ||
-        processedPath === '/about' || processedPath === '/about/' ||
-        processedPath === '/cookies' || processedPath === '/cookies/' ||
-        processedPath === '/changelog' || processedPath === '/changelog/' ||
-        processedPath === '/pipeline' || processedPath === '/pipeline/' ||
-        processedPath === '/privacy' || processedPath === '/privacy/';
+    const fullScreenWithFooter = getAllPageUrls(FULL_SCREEN_WITH_FOOTER_PAGES).includes(processedPath);
 
     const [isLogoHover, setIsLogoHover]  = useState(false);
 
