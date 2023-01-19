@@ -1,4 +1,4 @@
-import { deepMerge, getValue, isObject } from '../../util/object';
+import { deepMerge } from '../../util/object';
 import {
     FontWeight,
     AgPolarSeriesTheme,
@@ -683,17 +683,6 @@ export class ChartTheme {
         });
 
         return config as AgChartThemeOverrides;
-    }
-
-    getConfig<T = any>(path: string, defaultValue?: T): T {
-        const value = getValue(this.config, path, defaultValue);
-        if (Array.isArray(value)) {
-            return deepMerge([], value);
-        }
-        if (isObject(value)) {
-            return deepMerge({}, value);
-        }
-        return value;
     }
 
     /**
