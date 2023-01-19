@@ -363,7 +363,6 @@ export class Legend {
         const bboxes: BBox[] = [];
 
         const font = label.getFont();
-        const ellipsis = `...`;
 
         const itemMaxWidthPercentage = 0.8;
         const maxItemWidth = maxWidth ?? width * itemMaxWidthPercentage;
@@ -378,45 +377,8 @@ export class Legend {
             markerLabel.fontSize = fontSize;
             markerLabel.fontFamily = fontFamily;
 
-            const textChars = text.split('');
-            let addEllipsis = false;
-
-            if (text.length > maxLength) {
-                text = `${text.substring(0, maxLength)}`;
-                addEllipsis = true;
-            }
-
-            const labelWidth = Math.floor(paddedMarkerWidth + HdpiCanvas.getTextSize(text, font).width);
-            if (labelWidth > maxItemWidth) {
-                let truncatedText = '';
-                const characterWidths = this.getCharacterWidths(font);
-                let cumulativeWidth = paddedMarkerWidth + characterWidths[ellipsis];
-
-                for (const char of textChars) {
-                    if (!characterWidths[char]) {
-                        characterWidths[char] = HdpiCanvas.getTextSize(char, font).width;
-                    }
-
-                    cumulativeWidth += characterWidths[char];
-
-                    if (cumulativeWidth > maxItemWidth) {
-                        break;
-                    }
-
-                    truncatedText += char;
-                }
-
-                text = truncatedText;
-                addEllipsis = true;
-            }
-
             const id = datum.itemId || datum.id;
-            if (addEllipsis) {
-                text += ellipsis;
-                this.truncatedItems.add(id);
-            } else {
-                this.truncatedItems.delete(id);
-            }
+            text = this.truncate(text, maxLength, maxItemWidth, paddedMarkerWidth, font, id);
 
             markerLabel.text = text;
             bboxes.push(markerLabel.computeBBox());
@@ -459,6 +421,58 @@ export class Legend {
 
         // Update legend item properties that don't affect the layout.
         this.update();
+    }
+
+    truncate(
+        text: string,
+        maxCharLength: number,
+        maxItemWidth: number,
+        paddedMarkerWidth: number,
+        font: string,
+        id: string
+    ): string {
+        const ellipsis = `...`;
+
+        const textChars = text.split('');
+        let addEllipsis = false;
+
+        if (text.length > maxCharLength) {
+            text = `${text.substring(0, maxCharLength)}`;
+            addEllipsis = true;
+        }
+
+        const labelWidth = Math.floor(paddedMarkerWidth + HdpiCanvas.getTextSize(text, font).width);
+        if (labelWidth > maxItemWidth) {
+            let truncatedText = '';
+            const characterWidths = this.getCharacterWidths(font);
+            let cumulativeWidth = paddedMarkerWidth + characterWidths[ellipsis];
+
+            for (const char of textChars) {
+                if (!characterWidths[char]) {
+                    characterWidths[char] = HdpiCanvas.getTextSize(char, font).width;
+                }
+
+                cumulativeWidth += characterWidths[char];
+
+                if (cumulativeWidth > maxItemWidth) {
+                    break;
+                }
+
+                truncatedText += char;
+            }
+
+            text = truncatedText;
+            addEllipsis = true;
+        }
+
+        if (addEllipsis) {
+            text += ellipsis;
+            this.truncatedItems.add(id);
+        } else {
+            this.truncatedItems.delete(id);
+        }
+
+        return text;
     }
 
     updatePagination(
