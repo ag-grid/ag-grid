@@ -167,40 +167,28 @@ export class ClientSideNodeManager {
         // create new row nodes for each data item
         const newNodes: RowNode[] = add!.map(item => this.createNode(item, this.rootNode, ClientSideNodeManager.TOP_LEVEL));
 
-        // add new row nodes to the root nodes 'allLeafChildren'
-        const useIndex = typeof addIndex === 'number' && addIndex >= 0;
-
-        let nodesBeforeIndex: RowNode[];
-        let nodesAfterIndex: RowNode[];
-
-        if (useIndex) {
+        if (typeof addIndex === 'number' && addIndex >= 0) {
             // new rows are inserted in one go by concatenating them in between the existing rows at the desired index.
             // this is much faster than splicing them individually into 'allLeafChildren' when there are large inserts.
-            // allLeafChildren can be out of order, so we loop over all the Nodes to find the correct index that
-            // represents the position `addIndex` intended to be.
             const { allLeafChildren } = this.rootNode;
-            // if addIndex is 0, it should always be added at the start of the array
-            // there is no need to verify the order of node by nodeIndex.
-            const normalizedAddIndex = addIndex === 0 ? 0 : (allLeafChildren.reduce((prevIdx: number, currNode: RowNode, currIdx: number) => {
-                const { rowIndex } = currNode;
-                const prevValueAtIndex = allLeafChildren[prevIdx]?.rowIndex;
-                const shouldUpdateIndex = rowIndex != null && prevValueAtIndex != null && rowIndex < addIndex! && rowIndex > prevValueAtIndex;
+            const len = allLeafChildren.length;
+            let normalisedAddIndex = addIndex;
 
-                return shouldUpdateIndex ? currIdx : prevIdx;
-            }, 0) + 1);
-            nodesBeforeIndex = allLeafChildren.slice(0, normalizedAddIndex);
-            nodesAfterIndex = allLeafChildren.slice(normalizedAddIndex, allLeafChildren.length);
+            if (this.doingTreeData && addIndex > 0 && len > 0) {
+                for (let i = 0; i < len; i++) {
+                    if (allLeafChildren[i]?.rowIndex == addIndex - 1) { normalisedAddIndex = i + 1; break; }
+                }
+            }
+
+            const nodesBeforeIndex = allLeafChildren.slice(0, normalisedAddIndex);
+            const nodesAfterIndex = allLeafChildren.slice(normalisedAddIndex, allLeafChildren.length);
+            this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
         } else {
-            nodesBeforeIndex = this.rootNode.allLeafChildren;
-            nodesAfterIndex = [];
+            this.rootNode.allLeafChildren = [...this.rootNode.allLeafChildren, ...newNodes];
         }
-
-        this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
-
         if (this.rootNode.sibling) {
             this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
         }
-
         // add new row nodes to the transaction add items
         rowNodeTransaction.add = newNodes;
     }
