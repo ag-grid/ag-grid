@@ -379,7 +379,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     }
 
     let propertyType = getPropertyType(type, config);
-    const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
+    const typeUrl = isObject
+        ? `#reference-${id}.${name}` :
+        (propertyType !== 'Function' ?
+            getTypeUrl(type, framework) : null);
 
     const codeSection = <FunctionCodeSample framework={framework} name={name} type={type} config={config} />;
 
