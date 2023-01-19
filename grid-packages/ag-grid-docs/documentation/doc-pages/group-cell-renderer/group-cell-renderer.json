@@ -1,6 +1,6 @@
 {
     "_config_": {},
-    "GroupCellRendererParams": {
+    "IGroupCellRendererParams": {
         "footerValueGetter": {
             "interfaceHierarchyOverrides": {
                 "exclude": [

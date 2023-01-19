@@ -32,16 +32,10 @@ export interface FooterValueGetterFunc {
     (params: GroupCellRendererParams): any;
 }
 
-export interface GroupCellRendererParams<TData = any, TValue = any> extends ICellRendererParams<TData, TValue> {
-
-    /**
-     * Only when in fullWidth, this gives whether the comp is pinned or not.
-     * If not doing fullWidth, then this is not provided, as pinned can be got from the column.
-     */
-    pinned?: "left" | "right" | null;
-    /** 'true' if comp is showing full width. */
-    fullWidth: boolean;
-
+/**
+ * Parameters used in `colDef.cellRendererParams` to configure a  Group Cell Renderer (`agGroupCellRenderer`).
+ */
+export interface IGroupCellRendererParams {
     /** Set to `true` to not include any padding (indentation) in the child rows. */
     suppressPadding: boolean;
     /** Set to `true` to suppress expand on double click. */
@@ -54,7 +48,6 @@ export interface GroupCellRendererParams<TData = any, TValue = any> extends ICel
     suppressCount: boolean;
     /** If `true`, a selection checkbox is included.  */
     checkbox: any;
-    rowDrag?: boolean;
 
     /** The renderer to use for inside the cell (after grouping functions are added) */
     innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
@@ -67,6 +60,24 @@ export interface GroupCellRendererParams<TData = any, TValue = any> extends ICel
     /** Callback to enable different innerRenderers to be used based of value of params. */
     innerRendererSelector?: CellRendererSelectorFunc;
 }
+
+interface GroupCellRendererFullRow {
+    /**
+     * Only when in fullWidth, this gives whether the comp is pinned or not.
+     * If not doing fullWidth, then this is not provided, as pinned can be got from the column.
+     */
+    pinned?: "left" | "right" | null;
+    /** 'true' if comp is showing full width. */
+    fullWidth: boolean;
+
+    rowDrag?: boolean;
+}
+
+/**
+ * Parameters provided by the grid to the `init` method of a `agGroupCellRenderer`.
+ * Do not use in `colDef.cellRendererParams` - see `IGroupCellRendererParams` instead.
+ */
+export type GroupCellRendererParams<TData = any, TValue = any> = IGroupCellRendererParams & ICellRendererParams<TData, TValue> & GroupCellRendererFullRow;
 
 export class GroupCellRendererCtrl extends BeanStub {
 

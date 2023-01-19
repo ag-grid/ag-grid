@@ -38,9 +38,9 @@ const gridOptions = {
 }
 </snippet>
 
-The set of parameters for the group cell renderer are defined on `GroupCellRendererParams` and include:
+The full set of parameters for the group cell renderer are defined on `IGroupCellRendererParams` and include:
 
-<interface-documentation interfaceName='GroupCellRendererParams' overrideSrc='group-cell-renderer/group-cell-renderer.json' names='["checkbox","suppressCount","suppressPadding","suppressDoubleClickExpand","suppressEnterExpand","innerRenderer", "innerRendererParams","innerRendererSelector","footerValueGetter"]' ></interface-documentation>
+<interface-documentation interfaceName='IGroupCellRendererParams' overrideSrc='group-cell-renderer/group-cell-renderer.json' ></interface-documentation>
 
 Below shows an example of configuring a group cell renderer. The example setup is not realistic as it has many columns configured for showing the groups. The reason for this is to demonstrate different group column configurations side by side. In your application, you will typically have one column for showing the groups.
 
