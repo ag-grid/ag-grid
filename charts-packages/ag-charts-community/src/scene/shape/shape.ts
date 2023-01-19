@@ -1,5 +1,4 @@
 import { Node, RedrawType, SceneChangeDetection } from '../node';
-import { chainObjects } from '../../util/object';
 import { DropShadow } from '../dropShadow';
 
 export type ShapeLineCap = 'butt' | 'round' | 'square';
@@ -38,7 +37,7 @@ export abstract class Shape extends Node {
      * has been applied (using the `restoreOwnStyles` and `restoreAllStyles` methods).
      * These static defaults are meant to be inherited by subclasses.
      */
-    protected static defaultStyles = chainObjects(
+    protected static defaultStyles = Object.assign(
         {},
         {
             fill: 'black',
