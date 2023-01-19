@@ -94,6 +94,8 @@ export class Pagination {
     readonly highlightStyle = new PaginationMarkerStyle();
     readonly label = new PaginationLabel();
 
+    private highlightActive?: 'previous' | 'next';
+
     constructor(
         private readonly chartUpdateCallback: (type: ChartUpdateType) => void,
         private readonly pageUpdateCallback: (newPage: number) => void,
@@ -247,14 +249,29 @@ export class Pagination {
     }
 
     updateMarkers() {
-        const { nextButton, previousButton, nextButtonDisabled, previousButtonDisabled, activeStyle, inactiveStyle } =
-            this;
+        const {
+            nextButton,
+            previousButton,
+            nextButtonDisabled,
+            previousButtonDisabled,
+            activeStyle,
+            inactiveStyle,
+            highlightStyle,
+            highlightActive,
+        } = this;
 
-        const nextButtonStyle = nextButtonDisabled ? inactiveStyle : activeStyle;
-        this.updateMarker(nextButton, nextButtonStyle);
+        const buttonStyle = (button: 'next' | 'previous', disabled: boolean) => {
+            if (disabled) {
+                return inactiveStyle;
+            } else if (button === highlightActive) {
+                return highlightStyle;
+            }
 
-        const previousButtonStyle = previousButtonDisabled ? inactiveStyle : activeStyle;
-        this.updateMarker(previousButton, previousButtonStyle);
+            return activeStyle;
+        };
+
+        this.updateMarker(nextButton, buttonStyle('next', nextButtonDisabled));
+        this.updateMarker(previousButton, buttonStyle('previous', previousButtonDisabled));
     }
 
     private updateMarker(marker: Marker, style: PaginationMarkerStyle) {
@@ -304,14 +321,16 @@ export class Pagination {
 
         if (this.nextButtonContainsPoint(offsetX, offsetY)) {
             this.cursorManager.updateCursor(this.id, 'pointer');
-            this.updateMarker(this.nextButton, this.highlightStyle);
+            this.highlightActive = 'next';
         } else if (this.previousButtonContainsPoint(offsetX, offsetY)) {
             this.cursorManager.updateCursor(this.id, 'pointer');
-            this.updateMarker(this.previousButton, this.highlightStyle);
+            this.highlightActive = 'previous';
         } else {
-            this.updateMarkers();
             this.cursorManager.updateCursor(this.id);
+            this.highlightActive = undefined;
         }
+
+        this.updateMarkers();
 
         this.chartUpdateCallback(ChartUpdateType.SCENE_RENDER);
     }
