@@ -12,7 +12,7 @@ import { CartesianSeries, CartesianSeriesNodeClickEvent } from './cartesianSerie
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from '../../chartAxis';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent, findMinMax } from '../../../util/array';
-import { equal } from '../../../util/equal';
+import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { checkDatum, isNumber } from '../../../util/value';
@@ -209,7 +209,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             yKeys = this.grouped ? flatYKeys.map((k) => [k]) : [flatYKeys];
         }
 
-        if (!equal(this._yKeys, yKeys)) {
+        if (!areArrayItemsStrictlyEqual(this._yKeys, yKeys)) {
             this.flatYKeys = flatYKeys ? flatYKeys : undefined;
             this._yKeys = yKeys;
 
