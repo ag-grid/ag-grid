@@ -154,7 +154,7 @@ const plugins = [
         // This allows us to use SCSS
         resolve: 'gatsby-plugin-sass',
         options: {
-            additionalData: `@import './src/custom.module';`, // adds this import into every SCSS file
+            additionalData: `@use './src/custom.module' as *;`, // adds this import into every SCSS file
 
             cssLoaderOptions: {
                 esModule: false,
