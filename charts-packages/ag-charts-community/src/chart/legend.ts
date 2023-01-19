@@ -553,11 +553,9 @@ export class Legend {
                 forceResult,
             });
 
-            if (layout) {
-                pages = layout.pages;
-                maxPageWidth = layout.maxPageWidth;
-                maxPageHeight = layout.maxPageHeight;
-            }
+            pages = layout?.pages ?? [];
+            maxPageWidth = layout?.maxPageWidth ?? 0;
+            maxPageHeight = layout?.maxPageHeight ?? 0;
 
             const totalPages = pages.length;
             this.pagination.visible = totalPages > 1;
