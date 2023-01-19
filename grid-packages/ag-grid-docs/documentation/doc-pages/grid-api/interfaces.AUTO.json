@@ -10145,7 +10145,7 @@
       "innerRendererSelector?": "/** Callback to enable different innerRenderers to be used based of value of params. */"
     }
   },
-  "GroupCellRendererFullRow": {
+  "IGroupCellRendererFullRowParams": {
     "meta": {},
     "type": {
       "pinned?": "\"left\" | \"right\" | null",
@@ -10162,7 +10162,7 @@
       "isTypeAlias": true,
       "typeParams": ["TData = any", "TValue = any"]
     },
-    "type": "IGroupCellRendererParams & ICellRendererParams<TData, TValue> & GroupCellRendererFullRow"
+    "type": "IGroupCellRendererParams & ICellRendererParams<TData, TValue> & IGroupCellRendererFullRowParams"
   },
   "ICellRendererParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },

@@ -61,7 +61,7 @@ export interface IGroupCellRendererParams {
     innerRendererSelector?: CellRendererSelectorFunc;
 }
 
-interface GroupCellRendererFullRow {
+export interface IGroupCellRendererFullRowParams {
     /**
      * Only when in fullWidth, this gives whether the comp is pinned or not.
      * If not doing fullWidth, then this is not provided, as pinned can be got from the column.
@@ -77,7 +77,7 @@ interface GroupCellRendererFullRow {
  * Parameters provided by the grid to the `init` method of a `agGroupCellRenderer`.
  * Do not use in `colDef.cellRendererParams` - see `IGroupCellRendererParams` instead.
  */
-export type GroupCellRendererParams<TData = any, TValue = any> = IGroupCellRendererParams & ICellRendererParams<TData, TValue> & GroupCellRendererFullRow;
+export type GroupCellRendererParams<TData = any, TValue = any> = IGroupCellRendererParams & ICellRendererParams<TData, TValue> & IGroupCellRendererFullRowParams;
 
 export class GroupCellRendererCtrl extends BeanStub {
 

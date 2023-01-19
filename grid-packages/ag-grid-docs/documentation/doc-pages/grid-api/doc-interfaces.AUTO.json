@@ -18026,7 +18026,7 @@
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
     }
   },
-  "GroupCellRendererFullRow": {
+  "IGroupCellRendererFullRowParams": {
     "pinned": {
       "description": "/** Only when in fullWidth, this gives whether the comp is pinned or not.\n     * If not doing fullWidth, then this is not provided, as pinned can be got from the column.\n     */",
       "type": { "returnType": "\"left\" | \"right\" | null", "optional": true }
