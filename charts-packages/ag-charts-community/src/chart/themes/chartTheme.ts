@@ -1,4 +1,4 @@
-import { deepMerge, defaultIsMergeableObject, getValue, isObject } from '../../util/object';
+import { deepMerge, getValue, isObject } from '../../util/object';
 import {
     FontWeight,
     AgPolarSeriesTheme,
@@ -13,23 +13,12 @@ import {
     AgCartesianSeriesTheme,
     AgHierarchySeriesTheme,
 } from '../agChartOptions';
-import { TimeInterval } from '../../util/time/interval';
 import { DEFAULT_TOOLTIP_CLASS } from '../tooltip/tooltip';
 
 const palette: AgChartThemePalette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
     strokes: ['#aa4520', '#b07513', '#3d803d', '#2d768d', '#2e3e8d', '#6c2e8c', '#8c2d46', '#5f5f5f'],
 };
-
-function arrayMerge(_target: any, source: any, _options: any) {
-    return source;
-}
-
-function isMergeableObject(value: any): boolean {
-    return defaultIsMergeableObject(value) && !(value instanceof TimeInterval);
-}
-
-const mergeOptions = { arrayMerge, isMergeableObject };
 
 type ChartThemeDefaults = {
     cartesian: AgCartesianThemeOptions;
@@ -624,7 +613,7 @@ export class ChartTheme {
     };
 
     constructor(options?: AgChartThemeOptions) {
-        options = deepMerge({}, options || {}, mergeOptions) as AgChartThemeOptions;
+        options = deepMerge({}, options || {}) as AgChartThemeOptions;
         const { overrides = null, palette = null } = options;
 
         let defaults = this.createChartConfigPerChartType(this.getDefaults());
@@ -638,9 +627,9 @@ export class ChartTheme {
                 overrideOpts: AgChartThemeOverrides[K]
             ) => {
                 if (overrideOpts) {
-                    defaults[type] = deepMerge(defaults[type], overrideOpts, mergeOptions);
+                    defaults[type] = deepMerge(defaults[type], overrideOpts);
                     seriesTypes.forEach((seriesType) => {
-                        defaults[seriesType] = deepMerge(defaults[seriesType], overrideOpts, mergeOptions);
+                        defaults[seriesType] = deepMerge(defaults[seriesType], overrideOpts);
                     });
                 }
             };
@@ -655,7 +644,7 @@ export class ChartTheme {
                     if (chartConfig.series) {
                         chartConfig.series = { [seriesType]: chartConfig.series };
                     }
-                    defaults[seriesType] = deepMerge(defaults[seriesType], chartConfig, mergeOptions);
+                    defaults[seriesType] = deepMerge(defaults[seriesType], chartConfig);
                 }
             });
         }
@@ -688,11 +677,7 @@ export class ChartTheme {
         Object.entries(typeToAliases).forEach(([type, aliases]) => {
             aliases.forEach((alias) => {
                 if (!config[alias as keyof ChartThemeDefaults]) {
-                    config[alias as keyof ChartThemeDefaults] = deepMerge(
-                        {},
-                        config[type as keyof ChartThemeDefaults],
-                        mergeOptions
-                    );
+                    config[alias as keyof ChartThemeDefaults] = deepMerge({}, config[type as keyof ChartThemeDefaults]);
                 }
             });
         });
@@ -703,10 +688,10 @@ export class ChartTheme {
     getConfig<T = any>(path: string, defaultValue?: T): T {
         const value = getValue(this.config, path, defaultValue);
         if (Array.isArray(value)) {
-            return deepMerge([], value, mergeOptions);
+            return deepMerge([], value);
         }
         if (isObject(value)) {
-            return deepMerge({}, value, mergeOptions);
+            return deepMerge({}, value);
         }
         return value;
     }
@@ -721,13 +706,13 @@ export class ChartTheme {
      * ```
      */
     protected getDefaults(): ChartThemeDefaults {
-        return deepMerge({}, ChartTheme.defaults, mergeOptions);
+        return deepMerge({}, ChartTheme.defaults);
     }
 
     protected mergeWithParentDefaults(
         parentDefaults: ChartThemeDefaults,
         defaults: ChartThemeDefaults
     ): ChartThemeDefaults {
-        return deepMerge(parentDefaults, defaults, mergeOptions);
+        return deepMerge(parentDefaults, defaults);
     }
 }
