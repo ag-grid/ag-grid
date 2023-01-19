@@ -213,36 +213,3 @@ export function isInvisibleScrollbar(): boolean {
     }
     return invisibleScrollbar;
 }
-
-/** @deprecated */
-export function hasOverflowScrolling(): boolean {
-    const prefixes: string[] = ['webkit', 'moz', 'o', 'ms'];
-    const div: HTMLElement = document.createElement('div');
-    const body: HTMLBodyElement = document.getElementsByTagName('body')[0];
-    let found: boolean = false;
-    let p: string;
-
-    body.appendChild(div);
-    div.setAttribute('style', prefixes.map(prefix => `-${prefix}-overflow-scrolling: touch`).concat('overflow-scrolling: touch').join(';'));
-
-    const computedStyle: CSSStyleDeclaration = window.getComputedStyle(div);
-
-    if ((computedStyle as any).overflowScrolling === 'touch') {
-        found = true;
-    }
-
-    if (!found) {
-        for (p of prefixes) {
-            if ((computedStyle as any)[`${p}OverflowScrolling`] === 'touch') {
-                found = true;
-                break;
-            }
-        }
-    }
-
-    if (div.parentNode) {
-        div.parentNode.removeChild(div);
-    }
-
-    return found;
-}
