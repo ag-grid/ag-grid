@@ -369,7 +369,6 @@ export class Legend {
         const paddedMarkerWidth = markerSize + markerPadding + paddingX;
 
         itemSelection.each((markerLabel, datum) => {
-            let text = datum.label.text ?? '<unknown>';
             markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;
@@ -378,9 +377,9 @@ export class Legend {
             markerLabel.fontFamily = fontFamily;
 
             const id = datum.itemId || datum.id;
-            text = this.truncate(text, maxLength, maxItemWidth, paddedMarkerWidth, font, id);
+            const text = datum.label.text ?? '<unknown>';
+            markerLabel.text = this.truncate(text, maxLength, maxItemWidth, paddedMarkerWidth, font, id);
 
-            markerLabel.text = text;
             bboxes.push(markerLabel.computeBBox());
         });
 
