@@ -49,9 +49,7 @@ export function isBrowserChrome(): boolean {
 
 export function isBrowserFirefox(): boolean {
     if (isFirefox === undefined) {
-        const win = window as any;
-
-        isFirefox = typeof win.InstallTrigger !== 'undefined';
+        isFirefox = /(firefox)/i.test(navigator.userAgent);
     }
 
     return isFirefox;
