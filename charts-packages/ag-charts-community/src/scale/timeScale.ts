@@ -236,7 +236,7 @@ export class TimeScale extends ContinuousScale {
         let step;
         const tickCount = this.tickCount ?? 10;
         const tickIntervals = this.tickIntervals;
-        const target = Math.abs(stop - start) / (tickCount - 1);
+        const target = Math.abs(stop - start) / Math.max(tickCount - 1, 1);
         let i = 0;
         while (i < tickIntervals.length && target > tickIntervals[i][2]) {
             i++;
