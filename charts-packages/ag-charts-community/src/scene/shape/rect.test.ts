@@ -122,7 +122,7 @@ describe('Rect', () => {
 
                     // Render.
                     ctx.save();
-                    rect.render({ ctx, forceRender: true, resized: false });
+                    rect.render({ ctx, forceRender: true, resized: false, debugNodes: {} });
                     ctx.restore();
 
                     // Prepare for next case.

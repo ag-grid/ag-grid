@@ -25,6 +25,7 @@ export type RenderContext = {
         layersRendered: number;
         layersSkipped: number;
     };
+    debugNodes: Record<string, Node>;
 };
 
 const zIndexChangedCallback = (o: any) => {
@@ -332,6 +333,19 @@ export abstract class Node extends ChangeDetectable {
             // a leaf node, but not a container leaf
             return this;
         }
+    }
+
+    findNodes(predicate: (node: Node) => boolean): Node[] {
+        const result: Node[] = predicate(this) ? [this] : [];
+
+        for (const child of this.children) {
+            const childResult = child.findNodes(predicate);
+            if (childResult) {
+                result.push(...childResult);
+            }
+        }
+
+        return result;
     }
 
     computeBBox(): BBox | undefined {
