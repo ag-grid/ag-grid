@@ -4,8 +4,6 @@
  * from http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
  */
 let isSafari: boolean;
-let isIE: boolean;
-let isEdge: boolean;
 let isChrome: boolean;
 let isFirefox: boolean;
 let isMacOs: boolean;
@@ -60,22 +58,6 @@ function getBrowserInfo(): { name: string, version: number } {
 
     return browserInfo;
  }
-
-function isBrowserIE(): boolean {
-    if (isIE === undefined) {
-        isIE = /*@cc_on!@*/false || !!(document as any).documentMode; // At least IE6
-    }
-
-    return isIE;
-}
-
-export function isBrowserEdge(): boolean {
-    if (isEdge === undefined) {
-        isEdge = !isBrowserIE() && !!(window as any).StyleMedia;
-    }
-
-    return isEdge;
-}
 
 export function isBrowserSafari(): boolean {
     if (isSafari === undefined) {

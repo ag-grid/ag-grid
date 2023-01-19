@@ -3,7 +3,7 @@ import { ConditionPosition, ISimpleFilterModel, Tuple } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { isBrowserChrome, isBrowserEdge } from '../../../utils/browser';
+import { isBrowserChrome } from '../../../utils/browser';
 import { IFilterParams } from '../../../interfaces/iFilter';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
@@ -193,8 +193,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             return allowedCharPattern;
         }
 
-        if (!isBrowserChrome() && !isBrowserEdge()) {
-            // only Chrome and Edge support the HTML5 number field, so for other browsers we provide an equivalent
+        if (!isBrowserChrome()) {
+            // only Chrome and Edge (Chromium) support the HTML5 number field, so for other browsers we provide an equivalent
             // constraint instead
             return '\\d\\-\\.';
         }
