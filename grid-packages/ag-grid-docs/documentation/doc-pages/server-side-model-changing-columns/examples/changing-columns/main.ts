@@ -32,7 +32,7 @@ const columnDefs: ColDef[] = [
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
-    flex: 1,
+    initialFlex: 1,
     minWidth: 120,
     resizable: true,
     sortable: true,
@@ -40,6 +40,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   autoGroupColumnDef: {
     minWidth: 200,
   },
+  maintainColumnOrder: true,
   // use the server-side row model
   rowModelType: 'serverSide',
 
