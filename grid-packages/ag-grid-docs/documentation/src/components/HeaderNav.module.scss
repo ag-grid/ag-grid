@@ -83,6 +83,43 @@ $mobile-header-breakpoint: 768px;
         }
     }
 
+    .github-item a {
+        position: relative;
+        padding-left: 48px;
+
+        &::after {
+            display: none;
+        }
+
+        svg {
+            position: absolute;
+            width: 26px;
+            top: 9px;
+            left: 14px;
+            border-radius: 13px;
+        }
+
+        @media screen and (min-width: $mobile-header-breakpoint) {
+            padding-left: 24px;
+
+            &:hover svg {
+              box-shadow: 0 0 0 3px $ag-site-header-background, 
+                          0 0 0 6px rgba(white, 0.3);
+            }
+
+            svg {
+                position: relative;
+                top: -2px;
+                left: 0;
+                transition: box-shadow .25s ease-in-out;
+            }
+
+            span {
+                display: none;
+            }
+        }
+    }
+
     &__link-anchor {
         display: block;
         position: relative;
