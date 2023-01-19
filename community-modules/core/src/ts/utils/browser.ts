@@ -17,7 +17,7 @@ let browserInfo: { name: string, version: number };
 /**
  * from https://stackoverflow.com/a/16938481/1388233
  */
-export function getBrowserInfo(): { name: string, version: number } {
+function getBrowserInfo(): { name: string, version: number } {
     if (browserInfo) {
         return browserInfo;
     }
@@ -245,46 +245,4 @@ export function hasOverflowScrolling(): boolean {
     }
 
     return found;
-}
-
-/**
- * Gets the document body width
- * from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
- * @returns {number}
- */
-export function getBodyWidth(): number {
-    if (document.body) {
-        return document.body.clientWidth;
-    }
-
-    if (window.innerHeight) {
-        return window.innerWidth;
-    }
-
-    if (document.documentElement && document.documentElement.clientWidth) {
-        return document.documentElement.clientWidth;
-    }
-
-    return -1;
-}
-
-/**
- * Gets the body height
- * from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
- * @returns {number}
- */
-export function getBodyHeight(): number {
-    if (document.body) {
-        return document.body.clientHeight;
-    }
-
-    if (window.innerHeight) {
-        return window.innerHeight;
-    }
-
-    if (document.documentElement && document.documentElement.clientHeight) {
-        return document.documentElement.clientHeight;
-    }
-
-    return -1;
 }
