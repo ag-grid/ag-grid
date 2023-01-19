@@ -73,6 +73,7 @@ const options: AgChartOptions = {
     position: 'bottom',
     maxHeight: 200,
     item: {
+      maxWidth: 130,
       paddingX: 32,
       paddingY: 8,
       marker: {
