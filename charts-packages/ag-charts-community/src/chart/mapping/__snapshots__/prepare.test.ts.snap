@@ -8185,7 +8185,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "area",
       "visibles": Array [
@@ -8194,6 +8194,9 @@ Object {
       "xKey": "date",
       "xName": "",
       "yKeys": Array [
+        "Tate Modern",
+      ],
+      "yNames": Array [
         "Tate Modern",
       ],
     },
@@ -8254,7 +8257,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "area",
       "visibles": Array [
@@ -8263,6 +8266,9 @@ Object {
       "xKey": "date",
       "xName": "",
       "yKeys": Array [
+        "Tate Britain",
+      ],
+      "yNames": Array [
         "Tate Britain",
       ],
     },
@@ -8323,7 +8329,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "area",
       "visibles": Array [
@@ -8332,6 +8338,9 @@ Object {
       "xKey": "date",
       "xName": "",
       "yKeys": Array [
+        "Tate Liverpool",
+      ],
+      "yNames": Array [
         "Tate Liverpool",
       ],
     },
@@ -8392,7 +8401,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "area",
       "visibles": Array [
@@ -8401,6 +8410,9 @@ Object {
       "xKey": "date",
       "xName": "",
       "yKeys": Array [
+        "Tate St Ives",
+      ],
+      "yNames": Array [
         "Tate St Ives",
       ],
     },
@@ -8419,6 +8431,9 @@ Object {
       "area": Object {
         "series": Object {
           "fillOpacity": 0.8,
+          "tooltip": Object {
+            "renderer": [Function],
+          },
         },
       },
     },
@@ -10201,7 +10216,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "area",
       "visibles": Array [
@@ -10215,6 +10230,14 @@ Object {
       "xKey": "date",
       "xName": "",
       "yKeys": Array [
+        "Science Museum",
+        "National Media Museum",
+        "National Railway Museum",
+        "Locomotion",
+        "Museum of Science and Industry, Manchester",
+        "National Coal Mining Museum for England",
+      ],
+      "yNames": Array [
         "Science Museum",
         "National Media Museum",
         "National Railway Museum",
@@ -10244,6 +10267,9 @@ Object {
           },
           "marker": Object {
             "enabled": true,
+          },
+          "tooltip": Object {
+            "renderer": [Function],
           },
         },
       },
