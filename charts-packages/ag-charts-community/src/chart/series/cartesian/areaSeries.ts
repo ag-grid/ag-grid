@@ -11,7 +11,7 @@ import { ChartAxisDirection } from '../../chartAxis';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
-import { equal } from '../../../util/equal';
+import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { interpolate } from '../../../util/string';
 import { Text } from '../../../scene/shape/text';
 import { Label } from '../../label';
@@ -175,7 +175,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     @Validate(STRING_ARRAY)
     protected _yKeys: string[] = [];
     set yKeys(values: string[]) {
-        if (!equal(this._yKeys, values)) {
+        if (!areArrayItemsStrictlyEqual(this._yKeys, values)) {
             this._yKeys = values;
             this.yData = [];
 
