@@ -1,4 +1,4 @@
-import { Grid, GridOptions, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
+import { IGroupCellRendererParams, Grid, GridOptions, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
 import { getData, createNewRowData } from "./data";
 
 
@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
     cellRenderer: 'agGroupCellRenderer',
     cellRendererParams: {
       checkbox: true,
-    },
+    } as IGroupCellRendererParams,
   },
   groupDefaultExpanded: 1,
   rowData: getData(),

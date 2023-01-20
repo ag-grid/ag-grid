@@ -1,4 +1,4 @@
-import { Grid, CheckboxSelectionCallbackParams, ColDef, GridOptions, HeaderCheckboxSelectionCallbackParams } from '@ag-grid-community/core'
+import { Grid, CheckboxSelectionCallbackParams, IGroupCellRendererParams, ColDef, GridOptions, HeaderCheckboxSelectionCallbackParams } from '@ag-grid-community/core'
 
 var checkboxSelection = function (params: CheckboxSelectionCallbackParams) {
   // we put checkbox on the name if we are not doing grouping
@@ -41,7 +41,7 @@ var autoGroupColumnDef: ColDef = {
   cellRenderer: 'agGroupCellRenderer',
   cellRendererParams: {
     checkbox: true,
-  },
+  } as IGroupCellRendererParams,
 }
 
 const gridOptions: GridOptions<IOlympicData> = {
