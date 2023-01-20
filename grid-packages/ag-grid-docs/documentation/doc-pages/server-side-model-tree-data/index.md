@@ -114,7 +114,7 @@ Server-Side Tree Data Filtering should behave the same as Client-Side [Tree Data
 The following example demonstrates Server-Side Tree Data Filtering using the [Set Filter Tree List](/filter-set-tree-list/), which replicates the Tree Data structure in the filter.
 
 - The **Group** column has the Set Filter Tree List enabled via `filterParams.treeList = true`. A Key Creator is specified to convert the path into a string.
-- The **Group** column has the filter values supplied asynchronously as a nested array of strings that matches the data paths.
+- The **Group** column has the filter values supplied asynchronously as a nested array of strings that matches the data paths. The supplied values are at the child level only.
 - The **Date** column has the Set Filter Tree List enabled via `filterParams.treeList = true`, and is grouped by year -> month -> day.
 - The **Date** column has the filter values supplied asynchronously as an array of `Date` objects.
 - The **Date** column has a `filterParams.keyCreator` provided to convert the `Date` values into the (string) format the server is expecting in the Filter Model.

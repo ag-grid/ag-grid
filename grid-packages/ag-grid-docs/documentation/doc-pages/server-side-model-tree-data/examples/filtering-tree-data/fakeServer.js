@@ -25,7 +25,8 @@ function FakeServer(allData) {
             return alasql(sql, [processedData]).map(row => row.startDate);
         },
         getEmployees() {
-            var sql = 'SELECT DISTINCT dataPath FROM ? ORDER BY dataPath ASC';
+            // get children only
+            var sql = 'SELECT DISTINCT dataPath FROM ? WHERE underlings = FALSE ORDER BY dataPath ASC';
 
             return alasql(sql, [processedData]).map(row => row.dataPath ? row.dataPath.split(',') : null);
         }
