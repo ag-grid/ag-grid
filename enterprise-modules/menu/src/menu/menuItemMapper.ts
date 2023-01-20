@@ -88,6 +88,10 @@ export class MenuItemMapper extends BeanStub {
                 };
             case 'valueAggSubMenu':
                 if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Aggregation from Menu')) {
+                    if (!column?.isPrimary() && !column?.getColDef().pivotValueColumn) {
+                        return null;
+                    }
+
                     return {
                         name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                         icon: _.createIconNoSpan('menuValue', this.gridOptionsService, null),
