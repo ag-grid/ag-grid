@@ -119,6 +119,14 @@ export function getMaxDivHeight(): number {
     return res;
 }
 
+export function getBodyWidth(): number {
+    return document.body?.clientWidth ?? (window.innerHeight || document.documentElement?.clientWidth || -1);
+}
+
+export function getBodyHeight(): number {
+    return document.body?.clientHeight ?? (window.innerHeight || document.documentElement?.clientHeight || -1);
+}
+
 export function getScrollbarWidth(): number | null {
     if (browserScrollbarWidth == null) {
         initScrollbarWidthAndVisibility();

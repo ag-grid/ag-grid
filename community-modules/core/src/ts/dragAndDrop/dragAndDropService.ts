@@ -10,6 +10,7 @@ import { escapeString } from "../utils/string";
 import { createIcon } from "../utils/icon";
 import { flatten, removeFromArray } from "../utils/array";
 import { loadTemplate, clearElement } from "../utils/dom";
+import { getBodyWidth, getBodyHeight } from "../utils/browser";
 import { isFunction } from "../utils/function";
 import { IRowNode } from "../interfaces/iRowNode";
 
@@ -442,8 +443,8 @@ export class DragAndDropService extends BeanStub {
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
         // then brought in scrollbars to the browser. no idea why, but putting in -2 here
         // works around it which is good enough for me.
-        const browserWidth = this.getBodyWidth() - 2;
-        const browserHeight = this.getBodyHeight() - 2;
+        const browserWidth = getBodyWidth() - 2;
+        const browserHeight = getBodyHeight() - 2;
 
         let top = event.pageY - (ghostHeight / 2);
         let left = event.pageX - 10;
@@ -472,15 +473,6 @@ export class DragAndDropService extends BeanStub {
 
         ghost.style.left = `${left}px`;
         ghost.style.top = `${top}px`;
-    }
-
-
-    private getBodyWidth(): number {
-        return document.body?.clientWidth ?? (window.innerHeight || document.documentElement?.clientWidth || -1);
-    }
-
-    private getBodyHeight(): number {
-        return document.body?.clientHeight ?? (window.innerHeight || document.documentElement?.clientHeight || -1);
     }
 
     private removeGhost(): void {
