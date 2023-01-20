@@ -17978,33 +17978,42 @@
     }
   },
   "FooterValueGetterFunc": {},
+  "GroupCheckboxSelectionCallbackParams": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
+  "GroupCheckboxSelectionCallback": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "IGroupCellRendererParams": {
     "suppressPadding": {
       "description": "/** Set to `true` to not include any padding (indentation) in the child rows. */",
-      "type": { "returnType": "boolean", "optional": false }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "suppressDoubleClickExpand": {
       "description": "/** Set to `true` to suppress expand on double click. */",
-      "type": { "returnType": "boolean", "optional": false }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "suppressEnterExpand": {
       "description": "/** Set to `true` to suppress expand on <kbd>Enter</kbd> */",
-      "type": { "returnType": "boolean", "optional": false }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "footerValueGetter": {
       "description": "/** The value getter for the footer text. Can be a function or expression. */",
       "type": {
         "returnType": "string | FooterValueGetterFunc",
-        "optional": false
+        "optional": true
       }
     },
     "suppressCount": {
       "description": "/** If `true`, count is not displayed beside the name. */",
-      "type": { "returnType": "boolean", "optional": false }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "checkbox": {
-      "description": "/** If `true`, a selection checkbox is included.  */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** \n     * Set to `true`, or a function that returns `true`, if a checkbox should be included.\n     */",
+      "type": {
+        "returnType": "boolean | GroupCheckboxSelectionCallback<TData, TValue>",
+        "optional": true
+      }
     },
     "innerRenderer": {
       "description": "/** The renderer to use for inside the cell (after grouping functions are added) */",
@@ -18024,7 +18033,8 @@
     "innerRendererSelector": {
       "description": "/** Callback to enable different innerRenderers to be used based of value of params. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
-    }
+    },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
   },
   "IGroupCellRendererFullRowParams": {
     "pinned": {

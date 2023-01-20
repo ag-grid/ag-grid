@@ -10116,29 +10116,49 @@
       "returnType": "any"
     }
   },
+  "GroupCheckboxSelectionCallbackParams": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
+    "type": "ColumnFunctionCallbackParams<TData> & GroupCellRendererParams<TData, TValue>"
+  },
+  "GroupCheckboxSelectionCallback": {
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
+    "type": {
+      "arguments": {
+        "params": "GroupCheckboxSelectionCallbackParams<TData, TValue>"
+      },
+      "returnType": "boolean"
+    }
+  },
   "IGroupCellRendererParams": {
     "meta": {
+      "typeParams": ["TData = any", "TValue = any"],
       "doc": "/** Parameters used in `colDef.cellRendererParams` to configure a  Group Cell Renderer (`agGroupCellRenderer`).\n */"
     },
     "type": {
-      "suppressPadding": "boolean",
-      "suppressDoubleClickExpand": "boolean",
-      "suppressEnterExpand": "boolean",
-      "footerValueGetter": "string | FooterValueGetterFunc",
-      "suppressCount": "boolean",
-      "checkbox": "any",
+      "suppressPadding?": "boolean",
+      "suppressDoubleClickExpand?": "boolean",
+      "suppressEnterExpand?": "boolean",
+      "footerValueGetter?": "string | FooterValueGetterFunc",
+      "suppressCount?": "boolean",
+      "checkbox?": "boolean | GroupCheckboxSelectionCallback<TData, TValue>",
       "innerRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "innerRendererFramework?": "any",
       "innerRendererParams?": "any",
       "innerRendererSelector?": "CellRendererSelectorFunc"
     },
     "docs": {
-      "suppressPadding": "/** Set to `true` to not include any padding (indentation) in the child rows. */",
-      "suppressDoubleClickExpand": "/** Set to `true` to suppress expand on double click. */",
-      "suppressEnterExpand": "/** Set to `true` to suppress expand on <kbd>Enter</kbd> */",
-      "footerValueGetter": "/** The value getter for the footer text. Can be a function or expression. */",
-      "suppressCount": "/** If `true`, count is not displayed beside the name. */",
-      "checkbox": "/** If `true`, a selection checkbox is included.  */",
+      "suppressPadding?": "/** Set to `true` to not include any padding (indentation) in the child rows. */",
+      "suppressDoubleClickExpand?": "/** Set to `true` to suppress expand on double click. */",
+      "suppressEnterExpand?": "/** Set to `true` to suppress expand on <kbd>Enter</kbd> */",
+      "footerValueGetter?": "/** The value getter for the footer text. Can be a function or expression. */",
+      "suppressCount?": "/** If `true`, count is not displayed beside the name. */",
+      "checkbox?": "/** \n     * Set to `true`, or a function that returns `true`, if a checkbox should be included.\n     */",
       "innerRenderer?": "/** The renderer to use for inside the cell (after grouping functions are added) */",
       "innerRendererFramework?": "/** @deprecated as of v27, use innerRenderer for Framework components\n     * Same as `innerRenderer` but for a framework component. */",
       "innerRendererParams?": "/** Additional params to customise to the `innerRenderer`. */",
