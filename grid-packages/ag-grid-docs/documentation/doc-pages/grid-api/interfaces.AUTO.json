@@ -10147,7 +10147,7 @@
       "footerValueGetter?": "string | FooterValueGetterFunc",
       "suppressCount?": "boolean",
       "checkbox?": "boolean | GroupCheckboxSelectionCallback<TData, TValue>",
-      "innerRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
+      "innerRenderer?": "any",
       "innerRendererFramework?": "any",
       "innerRendererParams?": "any",
       "innerRendererSelector?": "CellRendererSelectorFunc"

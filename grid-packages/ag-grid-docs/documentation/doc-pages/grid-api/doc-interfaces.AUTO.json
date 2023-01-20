@@ -18017,10 +18017,7 @@
     },
     "innerRenderer": {
       "description": "/** The renderer to use for inside the cell (after grouping functions are added) */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "innerRendererFramework": {
       "description": "/** @deprecated as of v27, use innerRenderer for Framework components\n     * Same as `innerRenderer` but for a framework component. */",
