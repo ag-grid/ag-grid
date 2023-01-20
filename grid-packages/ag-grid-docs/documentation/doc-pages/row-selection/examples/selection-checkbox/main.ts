@@ -1,4 +1,4 @@
-import { Grid, CheckboxSelectionCallbackParams, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, CheckboxSelectionCallbackParams, GridOptions, ICellRendererParams, IGroupCellRendererParams } from '@ag-grid-community/core'
 
 function checkboxSelection(params: CheckboxSelectionCallbackParams) {
   return params.node.group === true
@@ -35,7 +35,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     cellRenderer: 'agGroupCellRenderer',
     cellRendererParams: {
       checkbox
-    },
+    } as IGroupCellRendererParams,
   },
   rowSelection: 'multiple',
   groupSelectsChildren: true,

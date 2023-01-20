@@ -7,6 +7,7 @@ import { RefSelector } from '../widgets/componentAnnotations';
 import { RowNode } from '../entities/rowNode';
 import { stopPropagationForAgGrid } from '../utils/event';
 import { CheckboxSelectionCallback } from '../entities/colDef';
+import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
 
 export class CheckboxSelectionComponent extends Component {
 
@@ -15,7 +16,7 @@ export class CheckboxSelectionComponent extends Component {
     private rowNode: RowNode;
     private column: Column | undefined;
     private overrides?: {
-        isVisible: boolean | CheckboxSelectionCallback<any>,
+        isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined,
         callbackParams: any,
         removeHidden: boolean;
     };
@@ -78,7 +79,7 @@ export class CheckboxSelectionComponent extends Component {
         rowNode: RowNode,
         column?: Column,
         overrides?: {
-            isVisible: boolean | CheckboxSelectionCallback<any>,
+            isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined,
             callbackParams: any,
             removeHidden: boolean;
         },

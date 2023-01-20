@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, IGroupCellRendererParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -22,7 +22,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     cellRenderer: 'agGroupCellRenderer',
     cellRendererParams: {
       checkbox: true,
-    },
+    } as IGroupCellRendererParams,
   },
   rowSelection: 'multiple',
   groupSelectsChildren: true,

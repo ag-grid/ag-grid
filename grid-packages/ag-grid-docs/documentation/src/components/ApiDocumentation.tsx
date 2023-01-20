@@ -1,13 +1,11 @@
 import classnames from 'classnames';
-import { convertMarkdown, convertUrl, escapeGenericCode, getLinkedType, getLongestNameLength, getTypeUrl, inferType } from 'components/documentation-helpers';
-import anchorIcon from 'images/anchor';
 import React, { useState } from 'react';
+import anchorIcon from '../images/anchor';
 import styles from './ApiDocumentation.module.scss';
-import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry, ChildDocEntry } from './ApiDocumentation.types';
+import { ApiProps, ChildDocEntry, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, InterfaceEntry, ObjectCode, PropertyCall, PropertyType, SectionProps } from './ApiDocumentation.types';
 import Code from './Code';
-import { extractInterfaces, writeAllInterfaces, formatJsDocString, sortAndFilterProperties, addMoreLink, getInterfaceWithGenericParams } from './documentation-helpers';
+import { addMoreLink, convertMarkdown, convertUrl, escapeGenericCode, extractInterfaces, formatJsDocString, getInterfaceWithGenericParams, getJsonFromFile, getLinkedType, getLongestNameLength, getTypeUrl, inferType, sortAndFilterProperties, writeAllInterfaces } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
-import { getJsonFromFile } from './documentation-helpers';
 
 /**
  * This generates tabulated interface documentation based on information in JSON files.
@@ -721,8 +719,15 @@ function getPropertyType(type: string | PropertyType, config: Config) {
         }
     }
     // We hide generics from this part of the display for simplicity
-    propertyType = propertyType.replace(/<TData>/g, '');
-    //.replace(/TData\[\]/g, 'any[]').replace(/TData/g, 'any');
+    // Could be done with a Regex...
+    propertyType = propertyType
+        .replace(/<TData>/g, '')
+        .replace(/<TData, TValue>/g, '')
+        .replace(/<TData, TValue, TContext>/g, '')
+        .replace(/<TData, TContext>/g, '')
+        .replace(/<TData, TContext, TValue>/g, '')
+        .replace(/<TValue>/g, '')
+        .replace(/<TContext>/g, '');
 
     return propertyType;
 }

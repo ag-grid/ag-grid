@@ -7,6 +7,7 @@ import {
     Grid,
     GridOptions,
     ICellRendererParams,
+    IGroupCellRendererParams,
     MenuItemDef,
     RowSelectedEvent,
     SelectionChangedEvent,
@@ -207,7 +208,7 @@ const autoGroupColumnDef: ColDef = {
     headerCheckboxSelectionFilteredOnly: true,
     cellRendererParams: {
         checkbox: true,
-    },
+    } as IGroupCellRendererParams,
 };
 
 const gridOptions: GridOptions = {

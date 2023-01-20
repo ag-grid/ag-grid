@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { ColDef, Grid, GridOptions, IGroupCellRendererParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 import { SimpleCellRenderer } from './simpleCellRenderer_typescript';
 
@@ -44,7 +44,7 @@ const columnDefs: ColDef[] = [
             innerRenderer: SimpleCellRenderer,
             suppressDoubleClickExpand: true,
             suppressEnterExpand: true,
-        },
+        } as IGroupCellRendererParams,
     },
 
     { headerName: 'Type', field: 'type', rowGroup: true },

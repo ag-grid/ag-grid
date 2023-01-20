@@ -10116,73 +10116,73 @@
       "returnType": "any"
     }
   },
-  "GroupCellRendererParams": {
-    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+  "GroupCheckboxSelectionCallbackParams": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
+    "type": "ColumnFunctionCallbackParams<TData> & GroupCellRendererParams<TData, TValue>"
+  },
+  "GroupCheckboxSelectionCallback": {
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "pinned?": "\"left\" | \"right\" | null",
-      "fullWidth": "boolean",
-      "suppressPadding": "boolean",
-      "suppressDoubleClickExpand": "boolean",
-      "suppressEnterExpand": "boolean",
-      "footerValueGetter": "string | FooterValueGetterFunc",
-      "suppressCount": "boolean",
-      "checkbox": "any",
-      "rowDrag?": "boolean",
-      "innerRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
+      "arguments": {
+        "params": "GroupCheckboxSelectionCallbackParams<TData, TValue>"
+      },
+      "returnType": "boolean"
+    }
+  },
+  "IGroupCellRendererParams": {
+    "meta": {
+      "typeParams": ["TData = any", "TValue = any"],
+      "doc": "/** Parameters used in `colDef.cellRendererParams` to configure a  Group Cell Renderer (`agGroupCellRenderer`).\n */"
+    },
+    "type": {
+      "suppressPadding?": "boolean",
+      "suppressDoubleClickExpand?": "boolean",
+      "suppressEnterExpand?": "boolean",
+      "footerValueGetter?": "string | FooterValueGetterFunc",
+      "suppressCount?": "boolean",
+      "checkbox?": "boolean | GroupCheckboxSelectionCallback<TData, TValue>",
+      "innerRenderer?": "any",
       "innerRendererFramework?": "any",
       "innerRendererParams?": "any",
-      "innerRendererSelector?": "CellRendererSelectorFunc",
-      "value": "TValue",
-      "valueFormatted": "string | null | undefined",
-      "fullWidth?": "boolean",
-      "data": "TData | undefined",
-      "node": "IRowNode<TData>",
-      "rowIndex": "number",
-      "colDef?": "ColDef",
-      "column?": "Column",
-      "eGridCell": "HTMLElement",
-      "eParentOfValue": "HTMLElement",
-      "getValue?": "() => any",
-      "setValue?": "(value: any) => void",
-      "formatValue?": "(value: any) => any",
-      "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "any"
+      "innerRendererSelector?": "CellRendererSelectorFunc"
     },
     "docs": {
-      "pinned?": "/** Only when in fullWidth, this gives whether the comp is pinned or not.\n     * If not doing fullWidth, then this is not provided, as pinned can be got from the column.\n     */",
-      "fullWidth": "/** 'true' if comp is showing full width. */",
-      "suppressPadding": "/** Set to `true` to not include any padding (indentation) in the child rows. */",
-      "suppressDoubleClickExpand": "/** Set to `true` to suppress expand on double click. */",
-      "suppressEnterExpand": "/** Set to `true` to suppress expand on <kbd>Enter</kbd> */",
-      "footerValueGetter": "/** The value getter for the footer text. Can be a function or expression. */",
-      "suppressCount": "/** If `true`, count is not displayed beside the name. */",
-      "checkbox": "/** If `true`, a selection checkbox is included.  */",
+      "suppressPadding?": "/** Set to `true` to not include any padding (indentation) in the child rows. */",
+      "suppressDoubleClickExpand?": "/** Set to `true` to suppress expand on double click. */",
+      "suppressEnterExpand?": "/** Set to `true` to suppress expand on <kbd>Enter</kbd> */",
+      "footerValueGetter?": "/** The value getter for the footer text. Can be a function or expression. */",
+      "suppressCount?": "/** If `true`, count is not displayed beside the name. */",
+      "checkbox?": "/** \n     * Set to `true`, or a function that returns `true`, if a checkbox should be included.\n     */",
       "innerRenderer?": "/** The renderer to use for inside the cell (after grouping functions are added) */",
       "innerRendererFramework?": "/** @deprecated as of v27, use innerRenderer for Framework components\n     * Same as `innerRenderer` but for a framework component. */",
       "innerRendererParams?": "/** Additional params to customise to the `innerRenderer`. */",
-      "innerRendererSelector?": "/** Callback to enable different innerRenderers to be used based of value of params. */",
-      "value": "/** Value to be rendered. */",
-      "valueFormatted": "/** Formatted value to be rendered. */",
-      "fullWidth?": "/** True if this is a full width row. */",
-      "data": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
-      "node": "/** The row node. */",
-      "rowIndex": "/** The current index of the row (this changes after filter and sort). */",
-      "colDef?": "/** The cell's column definition. */",
-      "column?": "/** The cell's column. */",
-      "eGridCell": "/** The grid's cell, a DOM div element. */",
-      "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
-      "getValue?": "/** Convenience function to get most recent up to date value. */",
-      "setValue?": "/** Convenience function to set the value. */",
-      "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
-      "refreshCell?": "/** Convenience function to refresh the cell. */",
-      "registerRowDragger": "/** registerRowDragger:\n     * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n     * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n     * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n     * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n     */",
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */"
+      "innerRendererSelector?": "/** Callback to enable different innerRenderers to be used based of value of params. */"
     }
+  },
+  "IGroupCellRendererFullRowParams": {
+    "meta": {},
+    "type": {
+      "pinned?": "\"left\" | \"right\" | null",
+      "fullWidth": "boolean",
+      "rowDrag?": "boolean"
+    },
+    "docs": {
+      "pinned?": "/** Only when in fullWidth, this gives whether the comp is pinned or not.\n     * If not doing fullWidth, then this is not provided, as pinned can be got from the column.\n     */",
+      "fullWidth": "/** 'true' if comp is showing full width. */"
+    }
+  },
+  "GroupCellRendererParams": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
+    "type": "IGroupCellRendererParams & ICellRendererParams<TData, TValue> & IGroupCellRendererFullRowParams"
   },
   "ICellRendererParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
