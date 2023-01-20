@@ -35,7 +35,7 @@ export class MiniScatter extends MiniChartWithAxes {
                 arc.strokeWidth = 1;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
-                arc.radiusX = arc.radiusY = 2.5;
+                arc.radius = 2.5;
                 points.push(arc);
             });
         });

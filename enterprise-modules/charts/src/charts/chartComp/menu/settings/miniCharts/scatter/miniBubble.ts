@@ -34,7 +34,7 @@ export class MiniBubble extends MiniChartWithAxes {
                 arc.strokeWidth = 1;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
-                arc.radiusX = arc.radiusY = radius;
+                arc.radius = radius;
                 arc.fillOpacity = 0.7;
                 points.push(arc);
             });
