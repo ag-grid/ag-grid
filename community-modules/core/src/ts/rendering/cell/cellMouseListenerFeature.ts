@@ -1,6 +1,6 @@
 import { Column } from "../../entities/column";
 import { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent, Events } from "../../events";
-import { isBrowserEdge, isBrowserSafari, isIOSUserAgent } from "../../utils/browser";
+import { isBrowserSafari, isIOSUserAgent } from "../../utils/browser";
 import { isElementChildOfClass, isFocusableFormField } from "../../utils/dom";
 import { isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
 import { Beans } from "../beans";
@@ -125,10 +125,10 @@ export class CellMouseListenerFeature extends Beans {
         const ranges = rangeService && rangeService.getCellRanges().length != 0;
 
         if (!shiftKey || !ranges) {
-            // We only need to pass true to focusCell when the browser is IE/Edge/Safari and we are trying
+            // We only need to pass true to focusCell when the browser is Safari and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
-            const forceBrowserFocus = (isBrowserEdge() || isBrowserSafari()) && !this.cellCtrl.isEditing() && !isFocusableFormField(target);
+            const forceBrowserFocus = (isBrowserSafari()) && !this.cellCtrl.isEditing() && !isFocusableFormField(target);
 
             this.cellCtrl.focusCell(forceBrowserFocus);
         }

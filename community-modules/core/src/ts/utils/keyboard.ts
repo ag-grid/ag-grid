@@ -4,13 +4,9 @@ import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
 import { GridOptionsService } from '../gridOptionsService';
 import { IRowNode } from '../interfaces/iRowNode';
-import { isBrowserEdge, isMacOsUserAgent } from './browser';
+import { isMacOsUserAgent } from './browser';
 import { exists } from './generic';
 
-const NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
-
-// Using legacy values to match AZERTY keyboards
-const NUMPAD_DEL_NUMLOCK_ON_KEYCODE = 46;
 const A_KEYCODE = 65;
 const C_KEYCODE = 67;
 const V_KEYCODE = 86;
@@ -26,11 +22,7 @@ export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
     // non-printable characters have names, eg 'Enter' or 'Backspace'.
     const printableCharacter = event.key.length === 1;
 
-    // IE11 & Edge treat the numpad del key differently - with numlock on we get "Del" for key,
-    // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browsers
-    const numpadDelWithNumlockOnForEdgeOrIe = isNumpadDelWithNumLockOnForEdge(event);
-
-    return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
+    return printableCharacter;
 }
 
 /**
@@ -99,12 +91,6 @@ export function isUserSuppressingHeaderKeyboardEvent(
     };
 
     return !!colDefFunc(params);
-}
-
-function isNumpadDelWithNumLockOnForEdge(event: KeyboardEvent) {
-    return (isBrowserEdge()) &&
-        event.key === NUMPAD_DEL_NUMLOCK_ON_KEY &&
-        event.charCode === NUMPAD_DEL_NUMLOCK_ON_KEYCODE;
 }
 
 export function normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
