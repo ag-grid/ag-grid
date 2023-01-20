@@ -159,12 +159,7 @@ export class UndoRedoService extends BeanStub {
             // checks if the row has been filtered out
             if (!currentRow!.displayed) { return; }
 
-            const extractedValue = valueExtractor(cellValueChange);
-
-            // when values are 'complex objects' we need to invoke their `toString()` to obtain value
-            const value = (typeof extractedValue?.toString === 'function') ? extractedValue.toString() : extractedValue;
-
-            currentRow!.setDataValue(columnId, value);
+            currentRow!.setDataValue(columnId, valueExtractor(cellValueChange));
         });
     }
 

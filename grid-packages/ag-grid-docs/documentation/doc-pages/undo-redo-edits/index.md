@@ -83,8 +83,96 @@ To see undo / redo in action, try the following:
 - **Copy / Paste**: use <kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd> to copy and paste a range of cells.
 - **Undo Shortcut**: use <kbd>Ctrl</kbd>+<kbd>Z</kbd> to undo the cell edits.
 - **Redo Shortcut**: use <kbd>Ctrl</kbd>+<kbd>Y</kbd> to redo the undone cell edits.
-- **Undo API**: use the 'Undo' button to invoke `gridApi.undoCellEditing().`
-- **Redo API**: use the 'Redo' button to invoke `gridApi.redoCellEditing().`
+- **Undo API**: use the 'Undo' button to invoke `gridApi.undoCellEditing()`.
+- **Redo API**: use the 'Redo' button to invoke `gridApi.redoCellEditing()`.
 - **Undo / Redo Limit**: only 5 actions are allowed as `undoRedoCellEditingLimit=5`.
 
 <grid-example title='Undo / Redo' name='undo-redo' type='generated' options='{ "enterprise": true, "exampleHeight": 530, "modules": ["clientside", "range", "clipboard"] }'></grid-example>
+
+## Complex Objects
+
+If your cell values contain complex objects, there are a few steps necessary for undo / redo to work.
+
+For manual editing, a [Value Parser](/value-parsers/) is required to convert string values back into complex objects.
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'a',
+            editable: true,
+            valueParser: params => {
+                // convert `params.newValue` string value into complex object
+                return {
+                    actualValue: params.newValue,
+                    anotherProperty: params.data.anotherProperty,
+                }
+            }
+        }
+    ]
+}
+</snippet>
+
+If a [Value Getter](/value-getters/) is being used to create complex objects, a [Value Setter](/value-setters/) must be used to update the data. `colDef.equals` is also needed when [Comparing Values](/change-detection/#comparing-values) to determine if the cell value has changed for rendering.
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'a',
+            editable: true,
+            valueGetter: params => {
+                // create complex object from data
+                return {
+                    actualValue: params.data[params.colDef.field],
+                    anotherProperty: params.data.anotherProperty,
+                }
+            },
+            valueSetter: params => {
+                // update data from complex object
+                params.data[params.colDef.field] = params.newValue.actualValue
+                return true
+            },
+            equals: (valueA, valueB) => {
+                // compare complex objects
+                return valueA.actualValue === valueB.actualValue
+            }
+        }
+    ]
+}
+</snippet>
+
+Complex object cell values must be immutable. If the cell values are mutated, undo / redo will not be able to restore the original values. This means that the Value Parser must return a new complex object.
+
+When using a [Fill Handle](/range-selection-fill-handle/) with a horizontal fill direction and your columns do not all have same complex object type, you will need to implement a [Custom User Function](/range-selection-fill-handle/#custom-user-function). Note that the fill values provided to the function could be complex objects from any column, which you will need to handle.
+
+[Clipboard](/clipboard/) operations (copy/paste) use string values, so complex objects require [Processing Pasted Data](/clipboard/#processing-pasted-data) to convert between complex objects and strings.
+
+The following example demonstrates how to use complex objects with undo / redo.
+- For column **A**:
+    - A Value Getter is used to create complex objects from the data.
+    - The complex objects have a `toString` property used for rendering.
+    - A Value Setter is used to update the data from the complex objects (the inverse of the Value Getter).
+    - A Value Parser is used to convert the string values produced from cell editing into complex objects (the inverse of the `toString` method).
+    - A Column Definition `equals` function is provided to compare the complex objects (without this the grid would use reference equality, but this won't work here as the Value Getter returns a new object each time).
+- For column **B**:
+    - The column values are complex objects.
+    - A [Value Formatter](/value-formatters/) is used to convert the complex objects into strings for rendering.
+    - A Value Parser is used to convert the string values produced from cell editing into complex objects (the inverse of the Value Formatter).
+    - [Dynamic Parameters](/cell-editors/#dynamic-parameters) are provided to the cell editor to display a string value when you edit the cell (column **A** didn't need this as it has a `toString` property).
+- For all columns:
+    - `fillHandleDirection = 'y'` which prevents the Fill Handle from being used to drag values between the columns, as they have different complex object formats.
+    - `processCellForClipboard` is implemented, which converts complex object values into strings when copying cell values.
+    - `processCellFromClipboard` is implemented, which converts string values into complex objects when pasting cell values.
+- Try the following actions:
+    - **Cell Editing**: click and edit some cell values.
+    - **Fill Handle**: drag the fill handle to change a range of cells.
+    - **Copy / Paste**: use <kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd> to copy and paste a range of cells.
+    - **Undo Shortcut**: use <kbd>Ctrl</kbd>+<kbd>Z</kbd> to undo the cell edits.
+    - **Redo Shortcut**: use <kbd>Ctrl</kbd>+<kbd>Y</kbd> to redo the undone cell edits.
+    - **Undo API**: use the 'Undo' button to invoke `gridApi.undoCellEditing()`.
+    - **Redo API**: use the 'Redo' button to invoke `gridApi.redoCellEditing()`.
+    - **Undo / Redo Limit**: only 5 actions are allowed as `undoRedoCellEditingLimit=5`.
+
+
+<grid-example title='Undo / Redo with Complex Objects' name='undo-redo-complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 530, "modules": ["clientside", "range", "clipboard"] }'></grid-example>
