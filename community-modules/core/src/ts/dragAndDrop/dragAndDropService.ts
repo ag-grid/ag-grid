@@ -9,8 +9,8 @@ import { RowDropZoneParams } from "../gridBodyComp/rowDragFeature";
 import { escapeString } from "../utils/string";
 import { createIcon } from "../utils/icon";
 import { flatten, removeFromArray } from "../utils/array";
+import { getBodyHeight, getBodyWidth } from "../utils/browser";
 import { loadTemplate, clearElement } from "../utils/dom";
-import { getBodyWidth, getBodyHeight } from "../utils/browser";
 import { isFunction } from "../utils/function";
 import { IRowNode } from "../interfaces/iRowNode";
 
