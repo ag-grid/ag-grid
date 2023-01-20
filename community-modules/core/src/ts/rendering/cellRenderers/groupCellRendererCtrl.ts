@@ -17,7 +17,7 @@ import { ExpressionService } from "../../valueService/expressionService";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { RowDragComp } from "../row/rowDragComp";
 import { ValueFormatterService } from "../valueFormatterService";
-import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "./iCellRenderer";
+import { ICellRendererParams } from "./iCellRenderer";
 
 export interface IGroupCellRenderer {
     setInnerRenderer(compDetails: UserCompDetails | undefined, valueToDisplay: any): void;
@@ -58,7 +58,7 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
     checkbox?: boolean | GroupCheckboxSelectionCallback<TData, TValue>;
 
     /** The renderer to use for inside the cell (after grouping functions are added) */
-    innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    innerRenderer?: any;
     /**
      * @deprecated as of v27, use innerRenderer for Framework components
      * Same as `innerRenderer` but for a framework component. */
