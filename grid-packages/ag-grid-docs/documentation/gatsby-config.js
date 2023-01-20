@@ -166,6 +166,10 @@ const plugins = [
             // cssLoaderOptions: {
             //   camelCase: false, // Preserve CSS names as-is, rather than converting to camelCase, when accessing in JS
             // },
+            sassOptions: {
+                // Don't show deprecations for dependencies eg, bootstrap
+                quietDeps: true
+            }
         }
     },
     'gatsby-plugin-minify-classnames', // This minifies classnames to reduce CSS size

@@ -103,7 +103,7 @@
     "react-player": "2.10.0",
     "react-visibility-sensor": "5.1.1",
     "rehype-react": "6.2.0",
-    "sass": "1.32.8",
+    "sass": "1.57.1",
     "typescript": "~4.5.2",
     "unist-util-visit": "2.0.3",
     "use-query-params": "1.2.0"
