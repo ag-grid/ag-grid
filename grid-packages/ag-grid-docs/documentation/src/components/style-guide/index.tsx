@@ -180,11 +180,11 @@ export const StyleGuide = () => {
 
                         <div className="grid">
                             <label htmlFor="valid">
-                                Valid
+                                Valid{' '}
                                 <input type="text" id="valid" name="valid" placeholder="Valid" aria-invalid="false" />
                             </label>
                             <label htmlFor="invalid">
-                                Invalid
+                                Invalid{' '}
                                 <input
                                     type="text"
                                     id="invalid"
@@ -194,7 +194,7 @@ export const StyleGuide = () => {
                                 />
                             </label>
                             <label htmlFor="disabled">
-                                Disabled
+                                Disabled{' '}
                                 <input type="text" id="disabled" name="disabled" placeholder="Disabled" disabled />
                             </label>
                         </div>
@@ -205,11 +205,11 @@ export const StyleGuide = () => {
                                     <strong>Checkboxes</strong>
                                 </legend>
                                 <label htmlFor="checkbox-1">
-                                    <input type="checkbox" id="checkbox-1" name="checkbox-1" defaultChecked />
+                                    <input type="checkbox" id="checkbox-1" name="checkbox-1" defaultChecked />{' '}
                                     Checkbox
                                 </label>
                                 <label htmlFor="checkbox-2">
-                                    <input type="checkbox" id="checkbox-2" name="checkbox-2" />
+                                    <input type="checkbox" id="checkbox-2" name="checkbox-2" />{' '}
                                     Checkbox
                                 </label>
                             </fieldset>
@@ -219,11 +219,11 @@ export const StyleGuide = () => {
                                     <strong>Radio buttons</strong>
                                 </legend>
                                 <label htmlFor="radio-1">
-                                    <input type="radio" id="radio-1" name="radio" value="radio-1" defaultChecked />
+                                    <input type="radio" id="radio-1" name="radio" value="radio-1" defaultChecked />{' '}
                                     Radio button
                                 </label>
                                 <label htmlFor="radio-2">
-                                    <input type="radio" id="radio-2" name="radio" value="radio-2" />
+                                    <input type="radio" id="radio-2" name="radio" value="radio-2" />{' '}
                                     Radio button
                                 </label>
                             </fieldset>
@@ -240,7 +240,7 @@ export const StyleGuide = () => {
                                         role="switch"
                                         defaultChecked
                                         className="switch"
-                                    />
+                                    />{' '}
                                     Switch
                                 </label>
                                 <label htmlFor="switch-2">
@@ -250,7 +250,7 @@ export const StyleGuide = () => {
                                         name="switch-2"
                                         role="switch"
                                         className="switch"
-                                    />
+                                    />{' '}
                                     Switch
                                 </label>
                             </fieldset>
