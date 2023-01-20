@@ -115,6 +115,16 @@ export class Path2D {
         this.params.push(x, y, r, sAngle, eAngle, antiClockwise ? 1 : 0);
     }
 
+    cubicCurveTo(cx1: number, cy1: number, cx2: number, cy2: number, x: number, y: number) {
+        if (!this.xy) {
+            this.moveTo(cx1, cy1);
+        }
+        this.commands.push('C');
+        this.params.push(cx1, cy1, cx2, cy2, x, y);
+        this.xy![0] = x;
+        this.xy![1] = y;
+    }
+
     private _closedPath: boolean = false;
     get closedPath(): boolean {
         return this._closedPath;
