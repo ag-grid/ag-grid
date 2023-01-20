@@ -151,7 +151,6 @@ export { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu
 export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
 
 // misc
-export { simpleHttpRequest } from "./misc/simpleHttpRequest";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";

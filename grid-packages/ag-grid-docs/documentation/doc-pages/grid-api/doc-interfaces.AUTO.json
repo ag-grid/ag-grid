@@ -17521,9 +17521,6 @@
     "list": { "type": { "returnType": "TaskItem[]", "optional": false } },
     "sorted": { "type": { "returnType": "boolean", "optional": false } }
   },
-  "SimpleHttpRequestParams": {
-    "url": { "type": { "returnType": "string", "optional": false } }
-  },
   "ModuleNames": {},
   "GridOptionKey": {},
   "AnyGridOptions": {},
