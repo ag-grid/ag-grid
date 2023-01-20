@@ -51,6 +51,7 @@
     "@fortawesome/react-fontawesome": "0.1.14",
     "@types/jquery": "3.5.8",
     "@types/jqueryui": "1.12.16",
+    "@types/react-helmet": "^6.1.6",
     "ag-charts-community": "~7.0.0",
     "algoliasearch": "4.11.0",
     "bootstrap": "4.6.0",
