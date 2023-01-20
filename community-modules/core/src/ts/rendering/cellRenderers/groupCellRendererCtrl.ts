@@ -4,7 +4,7 @@ import { KeyCode } from "../../constants/keyCode";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
-import { CellRendererSelectorFunc } from "../../entities/colDef";
+import { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from "../../entities/colDef";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { IRowNode } from "../../interfaces/iRowNode";
@@ -32,22 +32,30 @@ export interface FooterValueGetterFunc {
     (params: GroupCellRendererParams): any;
 }
 
+export type GroupCheckboxSelectionCallbackParams<TData = any, TValue = any> = ColumnFunctionCallbackParams<TData> & GroupCellRendererParams<TData, TValue>;
+
+export interface GroupCheckboxSelectionCallback<TData = any, TValue = any> {
+    (params: GroupCheckboxSelectionCallbackParams<TData, TValue>): boolean;
+}
+
 /**
  * Parameters used in `colDef.cellRendererParams` to configure a  Group Cell Renderer (`agGroupCellRenderer`).
  */
-export interface IGroupCellRendererParams {
+export interface IGroupCellRendererParams<TData = any, TValue = any> {
     /** Set to `true` to not include any padding (indentation) in the child rows. */
-    suppressPadding: boolean;
+    suppressPadding?: boolean;
     /** Set to `true` to suppress expand on double click. */
-    suppressDoubleClickExpand: boolean;
+    suppressDoubleClickExpand?: boolean;
     /** Set to `true` to suppress expand on <kbd>Enter</kbd> */
-    suppressEnterExpand: boolean;
+    suppressEnterExpand?: boolean;
     /** The value getter for the footer text. Can be a function or expression. */
-    footerValueGetter: string | FooterValueGetterFunc;
+    footerValueGetter?: string | FooterValueGetterFunc;
     /** If `true`, count is not displayed beside the name. */
-    suppressCount: boolean;
-    /** If `true`, a selection checkbox is included.  */
-    checkbox: any;
+    suppressCount?: boolean;
+    /** 
+     * Set to `true`, or a function that returns `true`, if a checkbox should be included.
+     */
+    checkbox?: boolean | GroupCheckboxSelectionCallback<TData, TValue>;
 
     /** The renderer to use for inside the cell (after grouping functions are added) */
     innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
