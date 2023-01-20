@@ -26,7 +26,13 @@ const options: AgChartOptions = {
             series: {
               dimOpacity: 0.2
             }
-          }
+          },
+          tooltip: {
+            renderer: ({ xValue, yValue }) => {
+              const date = Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' }).format(xValue);
+              return { content: `${date}: ${(Math.round(yValue / 100) / 10) + 'k'}` };
+            },
+          },
         }
       }
     },
@@ -39,30 +45,34 @@ const options: AgChartOptions = {
     text: "Source: Department for Digital, Culture, Media & Sport",
   },
   series: [
-    { type: "area", xKey: "date", stacked: true, yKey: "Science Museum" },
+    { type: "area", xKey: "date", stacked: true, yKey: "Science Museum", yName: "Science Museum" },
     {
       type: "area",
       xKey: "date",
       stacked: true,
       yKey: "National Media Museum",
+      yName: "National Media Museum",
     },
     {
       type: "area",
       xKey: "date",
       stacked: true,
       yKey: "National Railway Museum",
+      yName: "National Railway Museum",
     },
-    { type: "area", xKey: "date", stacked: true, yKey: "Locomotion" },
+    { type: "area", xKey: "date", stacked: true, yKey: "Locomotion", yName: "Locomotion" },
     {
       type: "area",
       xKey: "date",
       yKey: "Museum of Science and Industry, Manchester",
+      yName: "Museum of Science and Industry, Manchester",
       stacked: true,
     },
     {
       type: "area",
       xKey: "date",
       yKey: "National Coal Mining Museum for England",
+      yName: "National Coal Mining Museum for England",
       stacked: true,
     },
   ],
