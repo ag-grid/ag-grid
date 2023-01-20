@@ -3,25 +3,8 @@ import { LogScale } from '../../scale/logScale';
 import { extent } from '../../util/array';
 import { ChartAxis } from '../chartAxis';
 import { doOnce } from '../../util/function';
-import { predicateWithMessage, Validate, GREATER_THAN, AND, LESS_THAN } from '../../util/validation';
+import { Validate, GREATER_THAN, AND, LESS_THAN, NUMBER_OR_NAN } from '../../util/validation';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
-
-function NUMBER_OR_NAN(min?: number, max?: number) {
-    // Can be NaN or finite number
-    const message = `expecting a finite Number${
-        (min !== undefined ? ', more than or equal to ' + min : '') +
-        (max !== undefined ? ', less than or equal to ' + max : '')
-    }`;
-
-    return predicateWithMessage(
-        (v: any) =>
-            typeof v === 'number' &&
-            (isNaN(v) || Number.isFinite(v)) &&
-            (min !== undefined ? v >= min : true) &&
-            (max !== undefined ? v <= max : true),
-        message
-    );
-}
 
 export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
     static className = 'NumberAxis';

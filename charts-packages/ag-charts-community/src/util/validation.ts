@@ -189,6 +189,22 @@ export function OPT_NUMBER(min?: number, max?: number) {
     return predicateWithMessage((v: any, ctx) => OPTIONAL(v, ctx, NUMBER(min, max)), message);
 }
 
+export function NUMBER_OR_NAN(min?: number, max?: number) {
+    // Can be NaN or finite number
+    const message = `expecting a finite Number${
+        (min !== undefined ? ', more than or equal to ' + min : '') +
+        (max !== undefined ? ', less than or equal to ' + max : '')
+    }`;
+
+    return predicateWithMessage(
+        (v: any) =>
+            typeof v === 'number' &&
+            (isNaN(v) ||
+                (Number.isFinite(v) && (min !== undefined ? v >= min : true) && (max !== undefined ? v <= max : true))),
+        message
+    );
+}
+
 export const NUMBER_ARRAY = predicateWithMessage(ARRAY(undefined, NUMBER()), 'expecting an Array of numbers');
 export const OPT_NUMBER_ARRAY = predicateWithMessage(
     (v: any, ctx) => OPTIONAL(v, ctx, NUMBER_ARRAY),
