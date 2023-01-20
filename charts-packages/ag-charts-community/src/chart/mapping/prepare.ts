@@ -216,7 +216,7 @@ function prepareMainOptions<T>(
 
 function prepareTheme<T extends AgChartOptions>(options: T) {
     const theme = getChartTheme(options.theme);
-    const themeConfig = theme.getConfig(optionsType(options) || 'cartesian');
+    const themeConfig = theme.config[optionsType(options) || 'cartesian'];
 
     const seriesThemes = Object.entries<any>(theme.config).reduce((result, [seriesType, { series }]) => {
         result[seriesType] = series?.[seriesType];

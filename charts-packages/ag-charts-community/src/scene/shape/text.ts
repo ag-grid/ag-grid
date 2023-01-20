@@ -1,5 +1,4 @@
 import { Shape } from './shape';
-import { chainObjects } from '../../util/object';
 import { BBox } from '../bbox';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
@@ -13,7 +12,7 @@ function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: a
 export class Text extends Shape {
     static className = 'Text';
 
-    protected static defaultStyles = chainObjects(Shape.defaultStyles, {
+    protected static defaultStyles = Object.assign({}, Shape.defaultStyles, {
         textAlign: 'start' as CanvasTextAlign,
         fontStyle: undefined,
         fontWeight: undefined,

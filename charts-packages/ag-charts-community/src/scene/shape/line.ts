@@ -1,12 +1,11 @@
 import { Shape } from './shape';
-import { chainObjects } from '../../util/object';
 import { BBox } from '../bbox';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
 
 export class Line extends Shape {
     static className = 'Line';
 
-    protected static defaultStyles = chainObjects(Shape.defaultStyles, {
+    protected static defaultStyles = Object.assign({}, Shape.defaultStyles, {
         fill: undefined,
         strokeWidth: 1,
     });

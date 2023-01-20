@@ -6,7 +6,6 @@ function clamp(x: number, min: number, max: number) {
 
 /**
  * Maps a discrete domain to a continuous numeric range.
- * See https://github.com/d3/d3-scale#band-scales for more info.
  */
 export class BandScale<D> implements Scale<D, number> {
     readonly type = 'band';

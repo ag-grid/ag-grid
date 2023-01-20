@@ -2,7 +2,6 @@ import { Shape } from './shape';
 import { Path, ScenePathChangeDetection } from './path';
 import { BBox } from '../bbox';
 import { normalizeAngle360 } from '../../util/angle';
-import { chainObjects } from '../../util/object';
 import { isEqual } from '../../util/number';
 
 enum ArcType {
@@ -17,7 +16,7 @@ enum ArcType {
 export class Arc extends Path {
     static className = 'Arc';
 
-    protected static defaultStyles = chainObjects(Shape.defaultStyles, {
+    protected static defaultStyles = Object.assign({}, Shape.defaultStyles, {
         lineWidth: 1,
         fillStyle: null,
     });
