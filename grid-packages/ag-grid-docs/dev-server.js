@@ -735,7 +735,7 @@ const readModulesState = () => {
     return modulesState;
 };
 
-module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, done) => {
+module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, done) => {
     tcpPortUsed.check(EXPRESS_HTTPS_PORT)
         .then(async (inUse) => {
             if (inUse) {
@@ -802,13 +802,16 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, done)
 
             serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
 
-            // regenerate examples and then watch them
-            console.log("Watch and Generate Examples");
-            await watchAndGenerateExamples(chartsOnly);
-            console.log("Examples Generated");
-
-            console.log("Watch Typescript examples...");
-            await watchValidateExampleTypes();
+            if (skipExampleGeneration) {
+                console.log("Skipping Example Generation");
+            } else {
+                // regenerate examples and then watch them
+                console.log("Watch and Generate Examples");
+                await watchAndGenerateExamples(chartsOnly);
+                console.log("Examples Generated");
+    
+                console.log("Watch Typescript examples...");
+                await watchValidateExampleTypes();
 
             // todo - iterate everything under src and serve it
             // ...or use app.get('/' and handle it that way
