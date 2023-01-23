@@ -66,6 +66,8 @@ b,
 strong,
 .bold-text {
   --font-weight: #{$font-weight-bold};
+
+  font-weight: var(--font-weight);
 }
 
 .normal-weight-text {

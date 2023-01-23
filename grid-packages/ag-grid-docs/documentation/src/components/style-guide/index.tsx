@@ -14,18 +14,14 @@ const SECTIONS = [
         groupName: 'Base',
     },
     {
-        id: 'color',
-        name: 'Color',
-        content: <Color />
-    },
-    {
         id: 'typography',
         name: 'Typography',
         content: <Typography />
     },
     {
-        id: 'colors',
-        name: 'Colors',
+        id: 'color',
+        name: 'Color',
+        content: <Color />
     },
     {
         groupName: 'HTML Elements',

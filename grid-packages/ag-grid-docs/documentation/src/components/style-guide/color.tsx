@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import designSystemColors from '../../design-system/color.module.scss';
 import styles from './color.module.scss';
 
@@ -6,8 +7,7 @@ const formatName = (name) => {
     return name.replace('ag-grid', 'AG Grid').replaceAll('-', ' ');
 };
 
-function hexToHSL(hex) {
-    // Convert hex to RGB first
+function hexToRGB(hex) {
     let r = 0,
         g = 0,
         b = 0;
@@ -20,10 +20,25 @@ function hexToHSL(hex) {
         g = parseInt('0x' + hex[3] + hex[4]);
         b = parseInt('0x' + hex[5] + hex[6]);
     }
+
+    return [r, g, b];
+};
+
+function isLight(hex) {
+    let [r, g, b] = hexToRGB(hex);
+
+    return (r + g + b) / 3 > 150; 
+};
+
+function hexToHSL(hex) {
+    // Convert hex to RGB first
+    let [r, g, b] = hexToRGB(hex);
+
     // Then to HSL
     r /= 255;
     g /= 255;
     b /= 255;
+
     let cmin = Math.min(r, g, b),
         cmax = Math.max(r, g, b),
         delta = cmax - cmin,
@@ -52,11 +67,12 @@ function hexToHSL(hex) {
     s = +(s * 100).toFixed(1);
     l = +(l * 100).toFixed(1);
 
-    return `${h},${s},${l}`;
+    return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
 export const Color = () => {
     const colors = Object.keys(designSystemColors);
+
     return (
         <div className={styles.swatches}>
             {colors.map((key) => {
@@ -64,16 +80,16 @@ export const Color = () => {
                 return (
                     <div className={styles.swatch}>
                         <div
-                            className={styles.color}
+                            className={classnames(styles.color, isLight(hexColor) ? styles['color--light'] : '')}
                             style={{
                                 backgroundColor: hexColor,
                             }}
                         ></div>
-                        <span className={styles.name}>{formatName(key)}</span>
-                        <pre className={styles.sassName}>{key}</pre>
+                        <p className={styles.name}>{formatName(key)}</p>
+                        <p className={styles.cssName}><code>--{key}</code></p>
 
-                        <pre className={styles.hexColor}>{hexColor}</pre>
-                        <pre className={styles.hslColor}>{hexToHSL(hexColor)}</pre>
+                        <p className={styles.hexColor}>{hexColor}</p>
+                        <p className={styles.hslColor}>{hexToHSL(hexColor)}</p>
                     </div>
                 );
             })}

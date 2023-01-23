@@ -1,9 +1,12 @@
+@use '../../design-system' as *;
+
 $colorFlowBreakpoint: 1050px;
 
 .swatches {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 40px 20px;
+  gap: $size-4;
+  margin-top: $size-4;
 }
 
 .swatch {
@@ -27,20 +30,31 @@ $colorFlowBreakpoint: 1050px;
 
 .color {
   grid-area: color;
-  border: 1px solid black;
   width: 100%;
   height: 50px;
+  border-radius: var(--border-radius);
+}
+
+.color--light {
+  border: 1px solid var(--border-color);
 }
 
 .name {
+  composes: font-size-large bold-text from global;
+
   grid-area: name;
+  margin-bottom: $size-half !important; // !important needed because of .ag-styles specificity
   text-transform: capitalize;
-  font-weight: 500;
 }
 
-.sassName {
+.cssName {
   grid-area: sassName;
-  color: var(--cerise-pink);
+  margin-bottom: $size-1 !important; // !important needed because of .ag-styles specificity
+}
+
+.hexColor,
+.hslColor {
+  composes: font-size-extra-small monospace-text from global;
 }
 
 .hexColor {
