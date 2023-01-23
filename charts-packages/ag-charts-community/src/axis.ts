@@ -35,6 +35,7 @@ import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
 import { AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight } from './chart/agChartOptions';
+import { LogScale } from './scale/logScale';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -1032,7 +1033,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     // For formatting (nice rounded) tick values.
     formatTickDatum(datum: any, index: number): string {
-        const { label, labelFormatter, fractionDigits } = this;
+        const { label, labelFormatter, fractionDigits, scale } = this;
+
+        const logScale = scale instanceof LogScale;
 
         return label.formatter
             ? label.formatter({
@@ -1043,7 +1046,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
               })
             : labelFormatter
             ? labelFormatter(datum)
-            : typeof datum === 'number' && fractionDigits >= 0
+            : !logScale && typeof datum === 'number' && fractionDigits >= 0
             ? // the `datum` is a floating point number
               datum.toFixed(fractionDigits)
             : // the`datum` is an integer, a string or an object
