@@ -13,8 +13,7 @@ md-include:simple-date-vue.md
 
 ## Registering Date Components
 
-By default the grid will use the browser provided date picker for Chrome and Firefox (as we think it's nice), but for all other browsers it will just provide a simple text field.
-You can use your own date picker in AG Grid by providing a custom Date Component as follows:
+By default the grid will use the browser-provided date picker for all [Supported Browsers](/supported-browsers/), but for other browsers it will just provide a simple text field. You can use your own date picker in AG Grid by providing a custom Date Component as follows:
 
 [[only-javascript]]
 |```js
