@@ -33,9 +33,10 @@ export function extent(values: Array<number | Date>): [number, number] | undefin
  * finds the min and max using a process appropriate for stacked values. Ie,
  * summing up the positive and negative numbers, and returning the totals of each
  */
-export function findMinMax(values: number[]): { min?: number; max?: number } {
+export function findMinMax(values: number[]): { min?: number; max?: number; extent?: [number, number] } {
     let min: number | undefined = undefined;
     let max: number | undefined = undefined;
+    let extent: [number, number] = [Infinity, -Infinity];
 
     for (const value of values) {
         if (value < 0) {
@@ -43,7 +44,14 @@ export function findMinMax(values: number[]): { min?: number; max?: number } {
         } else if (value >= 0) {
             max = (max ?? 0) + value;
         }
+
+        if (extent[0] > value) {
+            extent[0] = value;
+        }
+        if (extent[1] < value) {
+            extent[1] = value;
+        }
     }
 
-    return { min, max };
+    return { min, max, extent };
 }
