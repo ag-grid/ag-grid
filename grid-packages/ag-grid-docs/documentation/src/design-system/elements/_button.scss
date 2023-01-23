@@ -29,9 +29,3 @@
 button {
   @include button();
 }
-
-.btn {
-  --font-size: 24px;
-  --button-color: red;
-  --button-hover-color: orange;
-}

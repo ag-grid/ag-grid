@@ -12,6 +12,16 @@ $border-radius: .25em;
 // =====================
 $default-transition-timing: .25s ease-in-out;
 
+// Size constants
+// ==============
+$size-half: 4px;
+$size-1: 8px;
+$size-2: 16px;
+$size-3: 24px;
+$size-4: 32px;
+$size-5: 40px;
+$size-6: 48px;
+
 // Typographic constants
 // =====================
 $font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -35,31 +45,32 @@ $line-height-loose: 1.75;
 
 // Color constants (names from color-name.com)
 // ===========================================
-// Brand (from logo)
-$ag-grid-dark-blue: hsl(210, 100%, 20%); // #003264
-$ag-grid-aqua: hsl(190, 51%, 56%); // #55b4c8
-$ag-grid-orange: hsl(33, 100%, 50%); // #ff8c00
-$ag-grid-red: hsl(0, 100%, 50%); // #ff0000
+$abstract-colors: (
+  // Brand (from logo)
+  "ag-grid-dark-blue": #003264, // hsl(210, 100%, 20%)
+  "ag-grid-aqua": #55b4c8, // hsl(190, 51%, 56%)
+  "ag-grid-orange": #ff8c00, // hsl(33, 100%, 50%)
+  "ag-grid-red": #ff0000, // hsl(0, 100%, 50%)
 
-// Blues
-$dark-cerulean-blue: hsl(210, 100%, 25%); // #00407f
-$medium-electric-blue: hsl(210, 95%, 30%); // #044c93
-$azure-blue: hsl(211, 100%, 50%); // #007bff
-$sky-blue: hsl(211, 100%, 75%); // #80bdff
-$water-blue: hsl(211, 100%, 90%); // #cce5ff
-$ghost-blue: hsl(210, 100%, 99%); // #f9fcff
+  // Blues
+  "dark-cerulean-blue": #00407f, // hsl(210, 100%, 25%)
+  "medium-electric-blue": #044c93, // hsl(210, 95%, 30%)
+  "azure-blue": #007bff, // hsl(211, 100%, 50%)
+  "sky-blue": #80bdff, // hsl(211, 100%, 75%)
+  "water-blue": #cce5ff, // hsl(211, 100%, 90%)
+  "ghost-blue": #f9fcff, // hsl(210, 100%, 99%)
 
-// Grays
-$black: hsl(210, 0%, 0%); // #000000
-$dark-gunmetal-gray: hsl(210, 10.81%, 14.51%); // #212529
-$auro-metal: hsl(208, 7%, 46%); // #6c757d
-$ag-grid-grey: hsl(180, 7%, 73%); // #b4bebe 
-$dull-light-gray: hsl(200, 7%, 83%); // #d0d4d6
-$light-gray: hsl(210, 14%, 83%); // #ced4da
-$platinum-gray: hsl(210, 14%, 89%); // #dee2e6
-$ghost-white: hsl(210, 17%, 98%); // #f8f9fa
-$white: hsl(210, 0%, 100%); // #ffffff
+  // Grays
+  "black": #000000, // hsl(210, 0%, 0%)
+  "dark-gunmetal-gray": #212529, // hsl(210, 10.81%, 14.51%)
+  "auro-metal": #6c757d, // hsl(208, 7%, 46%)
+  "ag-grid-grey": #b4bebe,  // hsl(180, 7%, 73%)
+  "dull-light-gray": #d0d4d6, // hsl(200, 7%, 83%)
+  "light-gray": #ced4da, // hsl(210, 14%, 83%)
+  "platinum-gray": #dee2e6, // hsl(210, 14%, 89%)
+  "ghost-white": #f8f9fa, // hsl(210, 17%, 98%)
+  "white": #ffffff, // hsl(210, 0%, 100%)
 
-// Other
-
-$cerise-pink: hsl(332, 79%, 58%); // #e83e8c
+  // Other
+  "cerise-pink": #e83e8c, // hsl(332, 79%, 58%)  
+);

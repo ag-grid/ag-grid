@@ -2,14 +2,14 @@
 
 table {
     width: 100%;
-    margin-bottom: 2rem;
+    margin-bottom: $size-2;
     border-collapse: collapse;
     border-bottom: 1px solid var(--border-color);
   }
   
   thead,
   tr:nth-child(even) {
-    background-color: $ghost-blue;
+    background-color: var(--table-odd-row-background-color);
   }
   
   tr {
@@ -17,6 +17,6 @@ table {
   }
   
   th, td {
-    padding: 0.5rem 1rem;
+    padding: $size-1 $size-2;
     text-align: left;
   }

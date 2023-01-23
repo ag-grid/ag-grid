@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "sass:map";
 @use "../core" as *;
 @use "button" as *;
 
@@ -8,7 +9,7 @@ fieldset {
   border: none;
 
   &:not(:last-child) {
-    margin-bottom: 2rem;
+    margin-bottom: $size-2;
   }
 }
 
@@ -23,7 +24,7 @@ label {
 
   + input,
   + select {
-    margin-left: math.div(8rem, 16);
+    margin-left: $size-1;
   }
 
   &[for*="radio"],
@@ -52,7 +53,7 @@ select {
 input[type="text"],
 input[type="search"],
 input[type="email"] {
-  padding: math.div(6rem, 16) math.div(12rem, 16);
+  padding: math.div(6em, 16) math.div(12em, 16);
   line-height: 1.5;
   border-radius: var(--border-radius);
   background-color: var(--input-background-color);
@@ -81,7 +82,7 @@ input[type="radio"] {
   position: relative;
   width: $size;
   height: $size;
-  top: math.div(4rem, 16);
+  top: math.div(4em, 16);
   outline: none;
 
   &:not(:disabled) {
@@ -94,7 +95,7 @@ input[type="radio"] {
 }
 
 input[type="checkbox"]:not(.switch) {
-  $svg-tick: url('data:image/svg+xml;utf8,<svg fill="none" stroke="#{$white}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path d="m9 15 3.75 3.75L21 10.5"/></svg>');
+  $svg-tick: url('data:image/svg+xml;utf8,<svg fill="none" stroke="#{map.get($abstract-colors, "white")}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path d="m9 15 3.75 3.75L21 10.5"/></svg>');
 
   border-radius: var(--border-radius);
   border: 0.125em solid var(--input-secondary-border-color);
@@ -158,10 +159,10 @@ input[type="submit"] {
 }
 
 select {
-  $svg-chevron-down: url('data:image/svg+xml;utf8,<svg fill="none" stroke="#{$dark-gunmetal-gray}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 30"><path d="m7.5 13.688 5.25 4.125L18 13.688"/></svg>');
+  $svg-chevron-down: url('data:image/svg+xml;utf8,<svg fill="none" stroke="#{map.get($abstract-colors, "dark-gunmetal-gray")}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 30"><path d="m7.5 13.688 5.25 4.125L18 13.688"/></svg>');
 
   appearance: none;
-  padding: math.div(6rem, 16) math.div(36rem, 16) math.div(6rem, 16) math.div(12rem, 16);
+  padding: math.div(6em, 16) math.div(36em, 16) math.div(6em, 16) math.div(12em, 16);
   font-size: 1rem;
   line-height: 1.5;
   border-radius: var(--border-radius);

@@ -1,4 +1,5 @@
 @use '../core' as *;
+@use "sass:map";
 
 a {
   text-decoration: none;
@@ -30,6 +31,6 @@ kbd {
   border-radius: var(--border-radius);
   background-color: var(--inline-element-background);
   border: 1px solid #ccc;
-  box-shadow: 0 1px 0 rgb(0 0 0 / 20%), inset 0 0 0 2px $white;
-  text-shadow: 0 1px 0 $white;
+  box-shadow: 0 1px 0 rgb(0 0 0 / 20%), inset 0 0 0 2px map.get($abstract-colors, "white");
+  text-shadow: 0 1px 0 map.get($abstract-colors, "white");
 }
