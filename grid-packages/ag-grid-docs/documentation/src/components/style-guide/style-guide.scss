@@ -4,23 +4,28 @@
   @include design-system-styles();
 }
 
-.style-guide {
+.ag-styles .style-guide {
   display: grid;
   grid-template-columns: 200px 1fr;
   grid-template-areas:
     "sidebar header"
     "sidebar main";
 
-  section {
-    margin-bottom: 4rem;
-  }
-
   header {
     grid-area: header;
+    margin-bottom: 2rem;
   }
 
   main {
     grid-area: main;
+  }
+
+  main > section {
+    margin-bottom: 4rem;
+
+    h2:first-child {
+        margin-bottom: -1rem;
+    }
   }
 
   aside {
@@ -31,15 +36,19 @@
 
   .grid {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    gap: $size-6;
   }
 
-  .grid > * {
-    min-width: 10rem;
-  }
+  .item-label {
+    margin-top: $size-4;
+    margin-bottom: $size-half;
 
-  #form form > div {
-    margin-bottom: 2rem;
+    span {
+        text-transform: capitalize;
+    }
+
+    code {
+        margin-left: $size-half;
+    }
   }
 }

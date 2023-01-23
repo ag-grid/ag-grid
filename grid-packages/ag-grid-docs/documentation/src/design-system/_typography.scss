@@ -7,6 +7,7 @@ h3,
 h4,
 h5,
 h6,
+.font-size-gigantic,
 .font-size-massive,
 .font-size-extra-large,
 .font-size-large,
@@ -19,9 +20,15 @@ h6,
   font-weight: var(--font-weight);
 }
 
+.font-size-gigantic {
+  --font-size: #{$font-size-gigantic};
+  --line-height: #{$line-height-tight};
+}
+
 h1,
 .font-size-massive {
   --font-size: #{$font-size-massive};
+  --line-height: #{$line-height-tight};
 }
 
 h2,
@@ -56,8 +63,17 @@ h4,
 h5,
 h6,
 b,
-strong {
+strong,
+.bold-text {
   --font-weight: #{$font-weight-bold};
+}
+
+.normal-weight-text {
+  --font-weight: var(--font-weight-bold);
+}
+
+.monospace-text {
+  font-family: var(--monospace-font-family);
 }
 
 h1:not(:last-child),
