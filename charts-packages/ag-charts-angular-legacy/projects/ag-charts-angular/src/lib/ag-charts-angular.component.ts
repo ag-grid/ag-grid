@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Input, ViewEncapsulation} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewEncapsulation} from "@angular/core";
 
 import { AgChartInstance, AgChart, AgChartOptions } from 'ag-charts-community';
 
@@ -12,12 +12,14 @@ export class AgChartsAngular implements AfterViewInit {
 
     private _nativeElement: any;
     private _initialised = false;
-    private _destroyed = false;
-
-    private _chart!: AgChartInstance;
+ 
+    public chart?: AgChartInstance;
 
     @Input()
-    public options!: AgChartOptions;
+    public options: AgChartOptions = {};
+
+    @Output()
+    public onChartReady: EventEmitter<AgChartInstance> = new EventEmitter();
 
     constructor(elementDef: ElementRef) {
         this._nativeElement = elementDef.nativeElement;
@@ -26,24 +28,29 @@ export class AgChartsAngular implements AfterViewInit {
     ngAfterViewInit(): void {
         const options = this.applyContainerIfNotSet(this.options);
 
-        this._chart = AgChart.create(options);
-
+        this.chart = AgChart.create(options);
         this._initialised = true;
+
+        (this.chart as any).chart.waitForUpdate()
+            .then(() => {
+                this.onChartReady.emit(this.chart);
+            });
     }
 
-  // noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+    // noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
     ngOnChanges(changes: any): void {
-        if (this._initialised) {
-            AgChart.update(this._chart, this.applyContainerIfNotSet(this.options));
+        if (!this._initialised || !this.chart) {
+            return;
         }
+
+        AgChart.update(this.chart, this.applyContainerIfNotSet(this.options));
     }
 
     public ngOnDestroy(): void {
-        if (this._initialised) {
-            if (this._chart) {
-                this._chart.destroy();
-            }
-            this._destroyed = true;
+        if (this._initialised && this.chart) {
+            this.chart.destroy();
+            this.chart = undefined;
+            this._initialised = false;
         }
     }
 
