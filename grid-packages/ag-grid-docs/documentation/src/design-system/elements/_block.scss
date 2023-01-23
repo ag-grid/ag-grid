@@ -1,7 +1,9 @@
 @use '../core' as *;
 
 ul.list-style-none,
-ol.list-style-none {
+ol.list-style-none,
+.list-style-none > li ul,
+.list-style-none > li ol {
   margin-bottom: unset;
   padding-left: unset;
   list-style: none;

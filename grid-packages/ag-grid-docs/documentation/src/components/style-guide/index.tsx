@@ -2,11 +2,12 @@ import React from 'react';
 import './style-guide.scss';
 
 import { Typography } from './typography';
+import { Color } from './color';
+import { TextElements } from './textElements';
 import { Buttons } from './buttons';
 import { Form } from './form';
 import { Tables } from './tables';
 import { Loading } from './loading';
-import { Color } from './color';
 
 
 const SECTIONS = [
@@ -29,7 +30,7 @@ const SECTIONS = [
     {
         id: 'text',
         name: 'Text Elements',
-        content: <Buttons />
+        content: <TextElements />
     },
     {
         id: 'buttons',

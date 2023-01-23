@@ -21,7 +21,7 @@
   }
 
   main > section {
-    margin-bottom: 4rem;
+    margin-bottom: 128px;
 
     h2:first-child {
         margin-bottom: -1rem;
@@ -31,7 +31,7 @@
   aside {
     grid-area: sidebar;
     position: fixed;
-    padding: 20px;
+    padding: $size-3 $size-3 $size-3 0;
   }
 
   .group-name:not(:first-child) {
@@ -53,6 +53,15 @@
 
     code {
         margin-left: $size-half;
+    }
+  }
+
+  .text-elements-list {
+    display: flex;
+    flex-wrap: wrap;
+
+    p {
+        min-width: 20%;
     }
   }
 }

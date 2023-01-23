@@ -93,3 +93,7 @@ ol:not(:last-child),
 blockquote:not(:last-child) {
   margin-bottom: 1rem;
 }
+
+.max-text-length {
+  max-width: 40em;
+}
