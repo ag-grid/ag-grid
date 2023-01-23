@@ -5,8 +5,5 @@ export const Buttons = () => {
         <div>
             <button>Primary</button>
         </div>
-        <div>
-            <button className="secondary">Secondary</button>
-        </div>
     </div>;
 };

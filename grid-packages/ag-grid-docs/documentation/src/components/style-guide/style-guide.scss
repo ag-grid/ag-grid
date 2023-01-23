@@ -23,8 +23,8 @@
   main > section {
     margin-bottom: 128px;
 
-    h2:first-child {
-        margin-bottom: -1rem;
+    h2:first-child + .item-label {
+        margin-top: 0;
     }
   }
 
