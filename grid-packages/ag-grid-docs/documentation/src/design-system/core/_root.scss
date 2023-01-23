@@ -13,6 +13,8 @@
   --text-color: #{$dark-gunmetal-gray};
   --secondary-text-color: #{$auro-metal};
 
+  --border-color: #{$light-gray};
+
   --link-color: #{$azure-blue};
   --link-hover-color: #{$ag-grid-orange};
 
@@ -21,5 +23,14 @@
   --button-hover-color: #{$medium-electric-blue};
   --button-active-color: #{$dark-cerulean-blue};
 
-  --border-color: #{$light-gray};
+  --inline-element-background: #{$ghost-white};
+
+  --code-text-color: #{$cerise-pink};
+
+  --input-background-color: #{$white};
+  --input-secondary-background-color: #{$ag-grid-grey};
+  --input-secondary-border-color: #{$auro-metal};
+  --input-primary-color: #{$azure-blue};
+  --input-focus-border-color: #{$sky-blue};
+  --input-focus-box-shadow-color: #{$water-blue};
 }

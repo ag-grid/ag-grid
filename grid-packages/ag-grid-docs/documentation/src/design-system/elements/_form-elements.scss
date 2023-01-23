@@ -40,11 +40,22 @@ input {
 
 input[type="text"],
 input[type="search"],
+input[type="email"],
+input[type="checkbox"],
+select {
+  &:focus,
+  &:focus-visible {
+    box-shadow: 0 0 0 3px var(--input-focus-box-shadow-color);
+  }
+}
+
+input[type="text"],
+input[type="search"],
 input[type="email"] {
   padding: math.div(6rem, 16) math.div(12rem, 16);
   line-height: 1.5;
   border-radius: var(--border-radius);
-  background-color: $white;
+  background-color: var(--input-background-color);
   border: 1px solid var(--border-color);
   outline: none;
   transition: border-color $default-transition-timing,
@@ -58,12 +69,7 @@ input[type="email"] {
   &:hover:not(:disabled),
   &:focus,
   &:focus-visible {
-    border-color: $sky-blue;
-  }
-
-  &:focus,
-  &:focus-visible {
-    box-shadow: 0 0 0 3px rgba($azure-blue, 0.25);
+    border-color: var(--input-focus-border-color);
   }
 }
 
@@ -83,7 +89,7 @@ input[type="radio"] {
   }
 
   &:checked {
-    background-color: $azure-blue;
+    background-color: var(--input-primary-color);
   }
 }
 
@@ -91,7 +97,7 @@ input[type="checkbox"]:not(.switch) {
   $svg-tick: url('data:image/svg+xml;utf8,<svg fill="none" stroke="#{$white}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path d="m9 15 3.75 3.75L21 10.5"/></svg>');
 
   border-radius: var(--border-radius);
-  border: 0.125em solid var(--secondary-text-color);
+  border: 0.125em solid var(--input-secondary-border-color);
   background-image: $svg-tick;
   transition: background-color $default-transition-timing,
               border-color $default-transition-timing,
@@ -101,12 +107,7 @@ input[type="checkbox"]:not(.switch) {
   &:focus,
   &:focus-visible,
   &:checked {
-    border-color: $azure-blue;
-  }
-
-  &:focus,
-  &:focus-visible {
-    box-shadow: 0 0 0 3px rgba($azure-blue, 0.25);
+    border-color: var(--input-primary-color);
   }
 }
 
@@ -115,9 +116,9 @@ input[type="checkbox"].switch {
 
   width: 2em;
   height: $height;
-  background-color: $ag-grid-grey;
+  background-color: var(--input-secondary-background-color);
   border-radius: math.div($height, 2);
-  background-image: radial-gradient($white calc($height / 2 - 3px), transparent calc($height / 2 - 3px));
+  background-image: radial-gradient(var(--input-background-color) calc($height / 2 - 3px), transparent calc($height / 2 - 3px));
   background-repeat: no-repeat;
   background-size: $height;
   transition: background-position $default-transition-timing,
@@ -126,33 +127,28 @@ input[type="checkbox"].switch {
 
   &:checked {
     background-position: right;
-    background-color: $azure-blue;
-  }
-
-  &:focus,
-  &:focus-visible {
-    box-shadow: 0 0 0 3px rgba($azure-blue, 0.25);
+    background-color: var(--input-primary-color);
   }
 }
 
 input[type="radio"] {
   border-radius: 50%;
-  box-shadow: inset 0 0 0 0.125em var(--secondary-text-color),
-              inset 0 0 0 0.25em $white;
+  box-shadow: inset 0 0 0 0.125em var(--input-secondary-border-color),
+              inset 0 0 0 0.25em var(--input-background-color);
   transition: background-color $default-transition-timing,
               box-shadow $default-transition-timing;
 
   &:hover:not(:disabled),
   &:checked {
-    box-shadow: inset 0 0 0 0.125em $azure-blue,
-                inset 0 0 0 0.25em $white;
+    box-shadow: inset 0 0 0 0.125em var(--input-primary-color),
+                inset 0 0 0 0.25em var(--input-background-color);
   }
 
   &:focus,
   &:focus-visible {
-    box-shadow: inset 0 0 0 0.125em $azure-blue,
-                inset 0 0 0 0.25em $white,
-                0 0 0 3px rgba($azure-blue, 0.25);
+    box-shadow: inset 0 0 0 0.125em var(--input-primary-color),
+                inset 0 0 0 0.25em var(--input-background-color),
+                0 0 0 3px var(--input-focus-box-shadow-color);
   }
 }
 
@@ -169,7 +165,7 @@ select {
   font-size: 1rem;
   line-height: 1.5;
   border-radius: var(--border-radius);
-  background-color: $white;
+  background-color: var(--input-background-color);
   background-image: $svg-chevron-down;
   background-repeat: no-repeat;
   background-position: center right;
@@ -185,12 +181,7 @@ select {
   &:hover:not(:disabled),
   &:focus,
   &:focus-visible {
-    border-color: $sky-blue;
-  }
-
-  &:focus,
-  &:focus-visible {
-    box-shadow: 0 0 0 3px rgba($azure-blue, 0.25);
+    border-color: var(--input-focus-border-color);
   }
 }
 
@@ -198,7 +189,7 @@ input[type="range"] {
   appearance: none;
   position: relative;
   top: -.125em;
-  background-color: $ag-grid-grey;
+  background-color: var(--input-secondary-background-color);
   border-radius: var(--border-radius);
   height: math.div(4em, 16);
   cursor: pointer;
@@ -210,6 +201,6 @@ input[type="range"] {
     width: 1em;
     height: 1em;
     border-radius: 50%;
-    background-color: $azure-blue;
+    background-color: var(--input-primary-color);
   }
 }
