@@ -12,7 +12,9 @@ Date Filters are configured though the `filterParams` attribute of the column de
 
 ## Date Selection Component
 
-By default the grid will use the browser-provided date picker for Chrome and Firefox (as we think it's nice), but for all other browsers it will provide a simple text field. To override this and provide a custom date picker, see [Date Component](/component-date/).
+By default the grid will use the browser-provided date picker for all [Supported Browsers](/supported-browsers/), but for other browsers it will provide a simple text field. To override this and provide a custom date picker, see [Date Component](/component-date/).
+
+It is also possible to enable a native date picker for unsupported browsers by setting `filterParams.browserDatePicker = true`. However, you will need to test this behaviour yourself.
 
 ## Date Filter Comparator
 

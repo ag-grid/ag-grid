@@ -18,7 +18,7 @@ export function isBrowserSafari(): boolean {
     return isSafari;
 }
 
-function getSafariVersion(): number {
+export function getSafariVersion(): number {
     if (safariVersion === undefined) {
         if (isBrowserSafari()) {
             const versionMatch = navigator.userAgent.match(/version\/(\d+)/i);
