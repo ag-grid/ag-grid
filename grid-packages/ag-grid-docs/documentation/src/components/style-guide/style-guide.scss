@@ -2,7 +2,9 @@
 
 .ag-styles {
   @include design-system-styles();
+}
 
+.style-guide {
   section {
     margin-bottom: 4rem;
   }
