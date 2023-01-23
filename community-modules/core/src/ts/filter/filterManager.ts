@@ -687,9 +687,8 @@ export class FilterManager extends BeanStub {
             (filter!.setModel(null) || AgPromise.resolve()).then(() => {
                 this.getContext().destroyBean(filter);
 
-                filterWrapper.column.setFilterActive(false, source);
-
                 this.allColumnFilters.delete(filterWrapper.column.getColId());
+                filterWrapper.column.setFilterActive(false, source);
             });
         });
     }
