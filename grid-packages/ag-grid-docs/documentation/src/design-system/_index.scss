@@ -1,6 +1,9 @@
 @use "sass:meta";
 
-// Expose all sass/css variables
+// Include css variables
+@use "root";
+
+// Expose all sass variables
 @forward "./core";
 
 @mixin design-system-styles() {

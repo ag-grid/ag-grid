@@ -1,4 +1,4 @@
-@use './variables' as *;
+@use 'core' as *;
 
 #{$css-variables-root} {
   // create a CSS variable for every abstract color
