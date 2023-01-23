@@ -17,6 +17,10 @@ $filter-rows-breakpoint: 1020px;
     --ag-header-background-color: #00162d;
     --ag-header-foreground-color: #527497;
 
+    @media screen and ( max-width: 620px ) {
+        --ag-range-selection-border-color: transparent;
+    }
+
     position: relative;
     align-self: end;
     border-top-left-radius: 4px;
