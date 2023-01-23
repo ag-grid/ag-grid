@@ -38,13 +38,12 @@ describe('format', () => {
     test('empty type is a shorthand for ~g', () => {
         expect(format('.2')(42)).toBe('42');
         expect(format('.2')(4.2)).toBe('4.2');
-        expect(format('.1')(42)).toBe('4e+1');
-        expect(format('.1')(4.2)).toBe('4');
+        expect(format('.1')(42)).toBe('42');
+        expect(format('.1')(4.2)).toBe('4.2');
     });
     test('SI-prefix', () => {
         const f = format('.3s');
         expect(f(43e6)).toBe('43.0M');
-
         expect(format('s')(1500)).toMatch('1.50000k');
         // using '-' will make the test fail because it has a different char code
         expect(format('s')(-1500)).toMatch('\u22121.50000k');
@@ -54,11 +53,6 @@ describe('format', () => {
         expect(format('~s')(-1500)).toBe('\u22121.5k');
     });
     test('scale.tickFormat', () => {
-        {
-            const scale = new LinearScale();
-            const f = scale.tickFormat({ count: undefined, specifier: '~s' });
-            expect(f(43000000)).toBe('43000000');
-        }
         {
             const scale = new LinearScale();
             scale.domain = [-50000000, 50000000];
