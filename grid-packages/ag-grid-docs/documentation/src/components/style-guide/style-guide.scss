@@ -5,8 +5,28 @@
 }
 
 .style-guide {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-areas:
+    "sidebar header"
+    "sidebar main";
+
   section {
     margin-bottom: 4rem;
+  }
+
+  header {
+    grid-area: header;
+  }
+
+  main {
+    grid-area: main;
+  }
+
+  aside {
+    grid-area: sidebar;
+    position: fixed;
+    padding: 20px;
   }
 
   .grid {
