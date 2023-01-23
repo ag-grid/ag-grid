@@ -21,6 +21,8 @@ code {
 }
 
 kbd {
+  color: var(--text-color); // Bootstrap conflict 
+
   display: inline-block;
   margin: 0 0.1em;
   padding: 0.1em 0.6em;

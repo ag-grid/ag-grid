@@ -87,18 +87,14 @@ export const StyleGuide = () => {
                     </div>
                     <div className="grid">
                         <p>
-                            <a href="#">Primary link</a>
+                            <a href="#">Link</a>
                         </p>
-                        <p>
-                            <a href="#" className="secondary">
-                                Secondary link
-                            </a>
-                        </p>
-                        <p>
-                            <a href="#" className="contrast">
-                                Contrast link
-                            </a>
-                        </p>
+                    </div>
+
+                    <div>
+                        <p>In hic fugit nostrum <strong>Bold</strong> exercitationem aut nam quaerat occaecati. Cumque quo explicabo. Mollitia fugiat <em>Italic</em> unde mollitia dolor consequatur incidunt. Quod debitis aliquam <u>Underline</u> ipsum quis sed qui aut.</p>
+                        <p>Quis dicta et incidunt <del>Deleted</del> mollitia quo vel omnis. Voluptas quibusdam vitae voluptates <ins>Inserted</ins> aspernatur mollitia amet. Id rem magnam at <s>Strikethrough</s> harum a quidem velit maiores. Accusamus autem dolorem <small>Small </small> voluptatem fuga cumque<sub>Sub</sub> maxime labore<sup>Sup</sup> ut. Aliquid iure sed id incidunt necessitatibus.</p>
+                        <p>Eum beatae <kbd>Kbd</kbd> doloremque est harum veniam veniam <code>{'${code}'}</code> ducimus. Et dignissimos praesentium placeat <a href="#">link</a> voluptatum eum non. Qui iste dolorum voluptate omnis omnis veniam.</p>
                     </div>
 
                     <h3>Heading 3</h3>
@@ -172,10 +168,8 @@ export const StyleGuide = () => {
                         </div>
 
                         <div>
-                            <label htmlFor="range">
-                                Range slider
-                                <input type="range" min="0" max="100" id="range" name="range" defaultValue="50" />
-                            </label>
+                            <label htmlFor="range">Range slider</label>
+                            <input type="range" min="0" max="100" id="range" name="range" defaultValue="50" />
                         </div>
 
                         <div className="grid">
