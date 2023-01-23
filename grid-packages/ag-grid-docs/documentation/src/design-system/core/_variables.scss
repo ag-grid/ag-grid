@@ -35,16 +35,21 @@ $line-height-loose: 1.75;
 
 // Color constants (names from color-name.com)
 // ===========================================
-// blues
+// Brand (from logo)
 $ag-grid-dark-blue: hsl(210, 100%, 20%); // #003264
+$ag-grid-aqua: hsl(190, 51%, 56%); // #55b4c8
+$ag-grid-orange: hsl(33, 100%, 50%); // #ff8c00
+$ag-grid-red: hsl(0, 100%, 50%); // #ff0000
+
+// Blues
 $dark-cerulean-blue: hsl(210, 100%, 25%); // #00407f
 $medium-electric-blue: hsl(210, 95%, 30%); // #044c93
 $azure-blue: hsl(211, 100%, 50%); // #007bff
-$ag-grid-aqua: hsl(190, 51%, 56%); // #55b4c8
 $sky-blue: hsl(211, 100%, 75%); // #80bdff
 $water-blue: hsl(211, 100%, 90%); // #cce5ff
+$ghost-blue: hsl(210, 100%, 99%); // #f9fcff
 
-// grays
+// Grays
 $black: hsl(210, 0%, 0%); // #000000
 $dark-gunmetal-gray: hsl(210, 10.81%, 14.51%); // #212529
 $auro-metal: hsl(208, 7%, 46%); // #6c757d
@@ -55,7 +60,6 @@ $platinum-gray: hsl(210, 14%, 89%); // #dee2e6
 $ghost-white: hsl(210, 17%, 98%); // #f8f9fa
 $white: hsl(210, 0%, 100%); // #ffffff
 
-// others
-$ag-grid-orange: hsl(33, 100%, 50%); // #ff8c00
-$ag-grid-red: hsl(0, 100%, 50%); // #ff0000
+// Other
+
 $cerise-pink: hsl(332, 79%, 58%); // #e83e8c

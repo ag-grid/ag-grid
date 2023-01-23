@@ -1,0 +1,22 @@
+@use '../core' as *;
+
+table {
+    width: 100%;
+    margin-bottom: 2rem;
+    border-collapse: collapse;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  thead,
+  tr:nth-child(even) {
+    background-color: $ghost-blue;
+  }
+  
+  tr {
+    border-top: 1px solid var(--border-color);
+  }
+  
+  th, td {
+    padding: 0.5rem 1rem;
+    text-align: left;
+  }

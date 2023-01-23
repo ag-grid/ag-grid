@@ -12,5 +12,6 @@
     @include meta.load-css("./src/design-system/elements/block");
     @include meta.load-css("./src/design-system/elements/inline");
     @include meta.load-css("./src/design-system/elements/button");
-    @include meta.load-css("./src/design-system/elements/forms");
+    @include meta.load-css("./src/design-system/elements/form-elements");
+    @include meta.load-css("./src/design-system/elements/table");
 }
