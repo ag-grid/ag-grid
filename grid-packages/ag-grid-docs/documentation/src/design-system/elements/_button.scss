@@ -1,6 +1,6 @@
 @use '../core' as *;
 
-@mixin button {
+button {
   appearance: none;
 
   font-size: var(--font-size);
@@ -24,8 +24,4 @@
     background-color: var(--button-active-color);
     transition: background-color 0.125s ease-in-out;
   }
-}
-
-button {
-  @include button();
 }

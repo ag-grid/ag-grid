@@ -155,7 +155,7 @@ input[type="radio"] {
 
 input[type="reset"],
 input[type="submit"] {
-  @include button();
+  @extend button;
 }
 
 select {
