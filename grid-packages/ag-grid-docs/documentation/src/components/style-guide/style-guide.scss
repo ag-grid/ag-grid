@@ -34,6 +34,10 @@
     padding: 20px;
   }
 
+  .group-name:not(:first-child) {
+    margin-top: $size-2;
+  }
+
   .grid {
     display: flex;
     gap: $size-6;

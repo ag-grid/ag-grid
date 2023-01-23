@@ -10,7 +10,11 @@ import { Progress } from './progress';
 import { Loading } from './loading';
 import { Color } from './color';
 
+
 const SECTIONS = [
+    {
+        groupName: 'Base',
+    },
     {
         id: 'color',
         name: 'Color',
@@ -20,6 +24,18 @@ const SECTIONS = [
         id: 'typography',
         name: 'Typography',
         content: <Typography />
+    },
+    {
+        id: 'colors',
+        name: 'Colors',
+    },
+    {
+        groupName: 'HTML Elements',
+    },
+    {
+        id: 'text',
+        name: 'Text ELements',
+        content: <Buttons />
     },
     {
         id: 'buttons',
@@ -37,19 +53,10 @@ const SECTIONS = [
         content: <Tables />
     },
     {
-        id: 'article',
-        name: 'Article',
-        content: <Article />
+        groupName: 'Components',
     },
     {
-        id: 'progress',
-        name: 'Progress bar',
-        content: <Progress />
-    },
-    {
-        id: 'loading',
-        name: 'Loading',
-        content: <Loading />
+        name: 'Example components',
     },
 ]
 
@@ -63,20 +70,22 @@ export const StyleGuide = () => {
                 </header>
 
                 <main>
-                    {SECTIONS.map(({ id, name, content }) => {
-                        return <section id={id}>
-                            <h2>{name}</h2>
-                            {content}
-                        </section>
+                    {SECTIONS.filter(({ groupName }) => {
+                        return !groupName;
+                    }).map(({ id, name, content }) => {
+                        return (
+                            <section id={id}>
+                                <h2>{name}</h2>
+                                {content}
+                            </section>
+                        );
                     })}
                 </main>
 
                 <aside>
                     <ul className="list-style-none">
-                        {SECTIONS.map(({ id, name }) => {
-                            return <li>
-                                <a href={`#${id}`}>{name}</a>
-                            </li>
+                        {SECTIONS.map(({ id, name, groupName }) => {
+                            return <li className={groupName ? 'group-name': ''}>{groupName ? <span>{groupName}</span> : <a href={`#${id}`}>{name}</a>}</li>;
                         })}
                     </ul>
                 </aside>
