@@ -122,6 +122,7 @@ export class LogScale extends ContinuousScale {
 
     tickFormat({
         count,
+        ticks,
         specifier,
     }: {
         count?: any;
@@ -146,7 +147,8 @@ export class LogScale extends ContinuousScale {
             count = 10;
         }
 
-        const k = Math.max(1, (base * count) / this.ticks().length);
+        ticks = ticks ?? this.ticks();
+        const k = Math.max(1, (base * count) / ticks.length);
 
         return (d) => {
             let i = d / this.pow(Math.round(this.log(d)));
