@@ -5,8 +5,6 @@ import { Typography } from './typography';
 import { Buttons } from './buttons';
 import { Form } from './form';
 import { Tables } from './tables';
-import { Article } from './article';
-import { Progress } from './progress';
 import { Loading } from './loading';
 import { Color } from './color';
 
@@ -34,7 +32,7 @@ const SECTIONS = [
     },
     {
         id: 'text',
-        name: 'Text ELements',
+        name: 'Text Elements',
         content: <Buttons />
     },
     {
