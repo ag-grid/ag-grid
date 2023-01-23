@@ -1,4 +1,3 @@
-import { Column } from '../entities/column';
 import { SortDirection } from '../main';
 
 export type ColumnSortState = 'ascending' | 'descending' | 'other' | 'none';
