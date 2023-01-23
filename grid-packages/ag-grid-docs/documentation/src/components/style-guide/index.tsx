@@ -8,8 +8,14 @@ import { Tables } from './tables';
 import { Article } from './article';
 import { Progress } from './progress';
 import { Loading } from './loading';
+import { Color } from './color';
 
 const SECTIONS = [
+    {
+        id: 'color',
+        name: 'Color',
+        content: <Color />
+    },
     {
         id: 'typography',
         name: 'Typography',
