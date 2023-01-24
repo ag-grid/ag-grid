@@ -17,7 +17,7 @@ code {
     white-space: normal;
     border-radius: var(--border-radius);
     color: var(--code-text-color);
-    background-color: var(--inline-element-background);
+    background-color: var(--inline-element-background-color);
     border: 1px solid rgba(black, 0.1);
 }
 
@@ -29,7 +29,7 @@ kbd {
     padding: 0.1em 0.6em;
     font-family: var(--font-family);
     border-radius: var(--border-radius);
-    background-color: var(--inline-element-background);
+    background-color: var(--inline-element-background-color);
     border: 1px solid #ccc;
     box-shadow: 0 1px 0 rgb(0 0 0 / 20%), inset 0 0 0 2px map.get($abstract-colors, 'white');
     text-shadow: 0 1px 0 map.get($abstract-colors, 'white');
