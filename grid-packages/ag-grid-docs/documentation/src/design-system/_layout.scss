@@ -1,0 +1,9 @@
+@use './core' as *;
+
+.page-margin {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: $size-2;
+    padding-right: $size-2;
+}

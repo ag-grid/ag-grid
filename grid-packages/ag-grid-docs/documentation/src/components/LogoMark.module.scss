@@ -1,3 +1,5 @@
+@use "sass:math";
+
 :global(.logo-mark) {
     :global(.aqua) {
         fill: #55b4c8;
@@ -34,11 +36,11 @@
     animation-play-state: running;
 
     &:global(.right-2) {
-        animation-delay: $animation-duration / 6;
+        animation-delay: math.div($animation-duration, 6);
     }
 
     &:global(.right-3) {
-        animation-delay: $animation-duration / 6 * 2;
+        animation-delay: math.div($animation-duration, 6) * 2;
     }
 }
 
@@ -50,11 +52,11 @@
     animation-play-state: running;
 
     &:global(.right-2) {
-        animation-delay: $animation-duration / 6;
+        animation-delay: math.div($animation-duration, 6);
     }
 
     &:global(.right-3) {
-        animation-delay: $animation-duration / 6 * 2;
+        animation-delay: math.div($animation-duration, 6) * 2;
     }
 }
 
@@ -66,15 +68,15 @@
   animation-play-state: running;
 
     &:global(.left-3) {
-        animation-delay: $animation-duration / 6 * 3;
+        animation-delay: math.div($animation-duration, 6) * 3;
     }
 
     &:global(.left-2) {
-        animation-delay: $animation-duration / 6 * 4;
+        animation-delay: math.div($animation-duration, 6) * 4;
     }
 
     &:global(.left-1) {
-        animation-delay: $animation-duration / 6 * 5;
+        animation-delay: math.div($animation-duration, 6) * 5;
     }
 }
 

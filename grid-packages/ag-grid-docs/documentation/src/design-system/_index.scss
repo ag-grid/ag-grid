@@ -1,0 +1,20 @@
+@use "sass:meta";
+
+// Include css variables
+@use "root";
+
+// Expose all sass variables
+@forward "./core";
+
+@mixin design-system-styles() {
+    @include meta.load-css('./src/design-system/base');
+    @include meta.load-css('./src/design-system/layout');
+    @include meta.load-css('./src/design-system/typography');
+    @include meta.load-css('./src/design-system/color');
+
+    @include meta.load-css('./src/design-system/elements/block');
+    @include meta.load-css('./src/design-system/elements/inline');
+    @include meta.load-css('./src/design-system/elements/button');
+    @include meta.load-css('./src/design-system/elements/form-elements');
+    @include meta.load-css('./src/design-system/elements/table');
+}
