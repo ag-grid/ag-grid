@@ -1,6 +1,7 @@
 import { tickStep } from './ticks';
 
 interface FormatterOptions {
+    prefix?: string;
     fill?: string;
     align?: string;
     sign?: string;
@@ -11,12 +12,14 @@ interface FormatterOptions {
     precision?: number;
     trim?: string;
     type?: string;
+    suffix?: string;
 }
 
-const formatRegEx = (() => {
-    const group = (content: string) => `(${content})?`;
-    const nonCapturingGroup = (content: string) => group(`?:${content}`);
+const group = (content: string) => `(${content})`;
+const optionalGroup = (content: string) => `${group(content)}?`;
+const nonCapturingGroup = (content: string) => optionalGroup(`?:${content}`);
 
+const formatRegEx = (() => {
     const fill = '.';
     const align = '[<>=^]';
     const sign = '[+\\-( ]';
@@ -31,22 +34,36 @@ const formatRegEx = (() => {
     return new RegExp(
         [
             '^',
-            nonCapturingGroup(`${group(fill)}(${align})`),
-            group(sign),
-            group(symbol),
-            group(zero),
-            group(width),
-            group(comma),
-            nonCapturingGroup(`\\.(${precision})`),
-            group(tilde),
-            group(type),
+            nonCapturingGroup(`${optionalGroup(fill)}${group(align)}`),
+            optionalGroup(sign),
+            optionalGroup(symbol),
+            optionalGroup(zero),
+            optionalGroup(width),
+            optionalGroup(comma),
+            nonCapturingGroup(`\\.${group(precision)}`),
+            optionalGroup(tilde),
+            optionalGroup(type),
             '$',
         ].join(''),
         'i'
     );
 })();
 
+const surroundedRegEx = (() => {
+    const prefix = '.*?';
+    const content = '.+?';
+    const suffix = '.*?';
+    return new RegExp(['^', group(prefix), `#\\{${group(content)}\\}`, group(suffix), '$'].join(''));
+})();
+
 function parseFormatter(formatter: string): FormatterOptions {
+    let prefix: string | undefined;
+    let suffix: string | undefined;
+    const surrounded = formatter.match(surroundedRegEx);
+    if (surrounded) {
+        [, prefix, formatter, suffix] = surrounded;
+    }
+
     const match = formatter.match(formatRegEx);
     if (!match) {
         throw new Error(`The number formatter is invalid: ${formatter}`);
@@ -63,12 +80,27 @@ function parseFormatter(formatter: string): FormatterOptions {
         precision: parseInt(precision),
         trim,
         type,
+        prefix,
+        suffix,
     };
 }
 
 export function format(formatter: string | FormatterOptions) {
     const options = typeof formatter === 'string' ? parseFormatter(formatter) : formatter;
-    let { fill, align, sign = '-', symbol, zero, width, comma, precision, trim, type = 'g' } = options;
+    let {
+        fill,
+        align,
+        sign = '-',
+        symbol,
+        zero,
+        width,
+        comma,
+        precision,
+        trim,
+        type = 'g',
+        prefix = '',
+        suffix = '',
+    } = options;
 
     const signer = signs[sign || '-'];
     let formatBody: (n: number, f: number) => string;
@@ -128,6 +160,10 @@ export function format(formatter: string | FormatterOptions) {
         if (type === 's') {
             result = `${result}${getPrefix(n)}`;
         }
+        if (type === '%') {
+            result = `${result}%`;
+        }
+        result = `${prefix}${result}${suffix}`;
         if (setPadding) {
             result = setPadding(result);
         }
@@ -145,7 +181,7 @@ const integerTypes: Record<string, (n: number) => string> = {
     x: (n) => absFloor(n).toString(16),
     X: (n) => integerTypes.x(n).toUpperCase(),
     n: (n) => integerTypes.d(n),
-    '%': (n) => `${absFloor(n * 100).toFixed(0)}%`,
+    '%': (n) => `${absFloor(n * 100).toFixed(0)}`,
 };
 
 const floatingTypes: Record<string, (n: number, f: number) => string> = {
@@ -166,7 +202,7 @@ const floatingTypes: Record<string, (n: number, f: number) => string> = {
         const p = Math.sign(power) * Math.floor(Math.abs(power) / 3) * 3;
         return floatingTypes.f(n / Math.pow(10, p), Math.max(0, f - (Math.floor(Math.abs(power)) % 3) - 1));
     },
-    '%': (n, f) => `${Math.abs(n * 100).toFixed(f)}%`,
+    '%': (n, f) => `${Math.abs(n * 100).toFixed(f)}`,
 };
 
 function insertSeparator(numString: string, separator: string) {

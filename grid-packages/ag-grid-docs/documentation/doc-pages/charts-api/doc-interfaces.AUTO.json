@@ -5173,6 +5173,7 @@
     "y": { "type": { "returnType": "number", "optional": false } }
   },
   "FormatterOptions": {
+    "prefix": { "type": { "returnType": "string", "optional": true } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "align": { "type": { "returnType": "string", "optional": true } },
     "sign": { "type": { "returnType": "string", "optional": true } },
@@ -5182,7 +5183,8 @@
     "comma": { "type": { "returnType": "string", "optional": true } },
     "precision": { "type": { "returnType": "number", "optional": true } },
     "trim": { "type": { "returnType": "string", "optional": true } },
-    "type": { "type": { "returnType": "string", "optional": true } }
+    "type": { "type": { "returnType": "string", "optional": true } },
+    "suffix": { "type": { "returnType": "string", "optional": true } }
   },
   "TypedEvent": {
     "type": { "type": { "returnType": "string", "optional": false } }

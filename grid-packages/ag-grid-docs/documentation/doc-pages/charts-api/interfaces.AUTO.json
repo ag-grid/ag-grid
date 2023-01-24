@@ -3702,6 +3702,7 @@
   "FormatterOptions": {
     "meta": {},
     "type": {
+      "prefix?": "string",
       "fill?": "string",
       "align?": "string",
       "sign?": "string",
@@ -3711,7 +3712,8 @@
       "comma?": "string",
       "precision?": "number",
       "trim?": "string",
-      "type?": "string"
+      "type?": "string",
+      "suffix?": "string"
     }
   },
   "TypedEvent": { "meta": {}, "type": { "type": "string" } },
