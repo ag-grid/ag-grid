@@ -1,0 +1,17 @@
+{
+    "extends": ["plugin:compat/recommended"],
+    "env": {
+        "browser": true,
+        "es6": false
+    },
+    "parserOptions": {
+        "ecmaVersion": 5
+    },
+    "settings": {
+        "polyfills": [
+            "ResizeObserver",
+            "Reflect",
+            "Math.sign" // we do a check for it..so allow this
+        ]
+    }
+}

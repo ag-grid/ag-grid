@@ -1,0 +1,15 @@
+{
+    "extends": "../../module-build/tsconfig.cjs.es5.json",
+    "compilerOptions": {
+        "outDir": "dist/cjs/es5",
+        "baseUrl": ".",
+        "paths": {
+            "@ag-*": ["node_modules/@ag-*/dist/cjs/es5/main"]
+        },
+        "noUnusedParameters": true,
+        "noUnusedLocals": true,
+        "strict": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["**/*.test.ts", "**/test/*.ts"]
+}
