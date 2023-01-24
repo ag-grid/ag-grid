@@ -59,7 +59,7 @@ main {
     border-bottom: 1px solid $ag-light-grey;
 
     @supports (backdrop-filter: none) {
-        background-color: rgba(darken($ag-site-fw-background, 16), 0.3);
+        background-color: rgba(#dbe5f0, 0.7);
         backdrop-filter: blur(20px);
     }
 
