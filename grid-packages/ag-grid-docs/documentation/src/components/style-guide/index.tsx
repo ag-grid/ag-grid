@@ -35,12 +35,12 @@ const SECTIONS: SectionGroup[] = [
                 name: 'Color',
                 content: <Color />
             },
+            {
+                id: 'sizes',
+                name: 'Sizes',
+                content: <Sizes />
+            },
         ]
-    },
-    {
-        id: 'sizes',
-        name: 'Sizes',
-        content: <Sizes />
     },
     {
         groupName: 'HTML Elements',
