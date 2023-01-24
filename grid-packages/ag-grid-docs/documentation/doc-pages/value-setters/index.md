@@ -56,7 +56,7 @@ the following:
 
 ## Read Only Edit
 
-Read Only is a mode in the grid whereby Cell Editing will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request. To enable this mode, set the grid property `readOnlyEdit=true`.
+Read Only Edit is a mode in the grid whereby Cell Editing will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request. To enable this mode, set the grid property `readOnlyEdit=true`.
 
 [[only-javascript]]
 |```ts
