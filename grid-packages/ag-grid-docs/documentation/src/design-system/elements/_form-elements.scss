@@ -121,7 +121,7 @@ input[type='checkbox'].switch {
         transparent calc($height / 2 - 3px)
     );
     background-repeat: no-repeat;
-    background-size: $height;
+    background-size: $height $height;
     transition: background-position $default-transition-timing, background-color $default-transition-timing,
         box-shadow $default-transition-timing;
 

@@ -72,8 +72,11 @@
     .size-example {
         height: var(--size-example-size);
         width: var(--size-example-size);
-        border-radius: var(--border-radius);
         background-color: var(--ag-grid-dark-blue);
+
+        &:not(.size-half):not(.size-1) {
+            border-radius: var(--border-radius);
+        }
 
         &.size-half {
             --size-example-size: #{$size-half};
