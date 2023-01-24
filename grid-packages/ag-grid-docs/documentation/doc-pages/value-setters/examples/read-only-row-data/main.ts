@@ -26,8 +26,9 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
 let rowImmutableStore: any[];
 
 function onCellEditRequest(event: CellEditRequestEvent) {
-  const { colDef, newValue, data } = event;
-  const { field } = colDef;
+  const data = event.data;
+  const field = event.colDef.field;
+  const newValue = event.newValue;
 
   const oldItem = rowImmutableStore.find(row => row.id === data.id);
 
