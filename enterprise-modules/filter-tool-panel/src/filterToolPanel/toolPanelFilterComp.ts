@@ -106,8 +106,8 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
         if (this.expanded && event.source === 'filterDestroyed' && event.columns?.some(col => col.getId() === this.column.getId())) {
             // filter destroyed, need to recreate UI component
-            this.removeFilterComponent();
-            this.addFilterComponent();
+            this.removeFilterElement();
+            this.addFilterElement();
         }
         this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }
@@ -125,10 +125,10 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandChecked, true);
         _.setDisplayed(this.eExpandUnchecked, false);
 
-        this.addFilterComponent();
+        this.addFilterElement();
     }
 
-    private addFilterComponent(): void {
+    private addFilterElement(): void {
         const filterPanelWrapper = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
         const filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR');
 
@@ -160,14 +160,14 @@ export class ToolPanelFilterComp extends Component {
 
         this.expanded = false;
         _.setAriaExpanded(this.eFilterToolPanelHeader, false);
-        this.removeFilterComponent();
+        this.removeFilterElement();
 
         _.setDisplayed(this.eExpandChecked, false);
         _.setDisplayed(this.eExpandUnchecked, true);
     }
 
-    private removeFilterComponent(): void {
-        this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
+    private removeFilterElement(): void {
+        _.clearElement(this.agFilterToolPanelBody);
     }
 
     public refreshFilter(): void {
