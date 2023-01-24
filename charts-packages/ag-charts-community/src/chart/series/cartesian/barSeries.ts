@@ -379,18 +379,26 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         // where min is zero and max is a positive total of all values in the stack
         // or min is a negative total of all values in the stack and max is zero.
         const isLogAxis = yAxis instanceof LogAxis;
-        let yMinMax = this.yData.map((group) =>
-            group.map((stack) => {
-                let { min, max, extent } = findMinMax(stack);
+        let yMinMax: {
+            min?: number | undefined;
+            max?: number | undefined;
+        }[][];
 
-                if (isLogAxis && extent) {
-                    min = extent[0];
-                    max = extent[1];
-                }
+        if (!isLogAxis) {
+            yMinMax = this.yData.map((group) => group.map((stack) => findMinMax(stack)));
+        } else {
+            yMinMax = this.yData.map((group) =>
+                group.map((stack) => {
+                    const stackExtent = extent(stack) ?? [];
 
-                return { min, max };
-            })
-        );
+                    return {
+                        min: stackExtent[0],
+                        max: stackExtent[1],
+                    };
+                })
+            );
+        }
+
         const { yData, normalizedTo } = this;
 
         // Calculate the sum of the absolute values of all items in each stack in each group. Used for normalization of stacked bars.
