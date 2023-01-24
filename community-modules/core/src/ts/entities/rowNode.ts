@@ -728,10 +728,17 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     public updateHasChildren(): void {
-        // we need to return true when this.group=true, as this is used by server side row model
-        // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
-        // if children exist.
-        const newValue = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        // in CSRM, the rowNode will always have children loaded if it's a group
+        let newValue: boolean = !!this.childrenAfterGroup && this.childrenAfterGroup.length > 0;
+
+        const isSsrm = this.beans.gridOptionsService.isRowModelType('serverSide');
+        if (isSsrm) {
+            const isTreeData = this.beans.gridOptionsService.isTreeData();
+            const isGroupFunc = this.beans.gridOptionsService.get('isServerSideGroup');
+            // stubs and footers can never have children, as they're grid rows. if tree data the presence of children
+            // is determined by the isServerSideGroup callback, if not tree data then the rows group property will be set.
+            newValue = !this.stub && !this.footer && (isTreeData ? !!isGroupFunc && isGroupFunc(this.data) : !!this.group);
+        }
 
         if (newValue !== this.__hasChildren) {
             this.__hasChildren = !!newValue;
