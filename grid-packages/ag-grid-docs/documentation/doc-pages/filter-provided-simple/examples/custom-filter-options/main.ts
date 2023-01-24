@@ -149,7 +149,6 @@ var equalsFilterParams: IDateFilterParams = {
     }
     return 0;
   },
-  browserDatePicker: true,
 }
 
 var notEqualsFilterParams: ITextFilterParams = {

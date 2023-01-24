@@ -3,7 +3,7 @@ import { Component } from '../../../widgets/component';
 import { IDateComp, IDateParams } from '../../../rendering/dateComponent';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
-import { isBrowserChrome, isBrowserFirefox } from '../../../utils/browser';
+import { getSafariVersion, isBrowserChrome, isBrowserFirefox, isBrowserSafari } from '../../../utils/browser';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 
 export class DefaultDateComponent extends Component implements IDateComp {
@@ -27,13 +27,16 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const eDocument = this.gridOptionsService.getDocument();
         const inputElement = this.eDateInput.getInputElement();
 
-        if (this.shouldUseBrowserDatePicker(params)) {
+        const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
+        if (shouldUseBrowserDatePicker) {
             inputElement.type = 'date';
         }
 
-        // ensures that the input element is focussed when a clear button is clicked
+        // ensures that the input element is focussed when a clear button is clicked,
+        // unless using safari as there is no clear button and focus does not work properly
+        const usingSafariDatePicker = shouldUseBrowserDatePicker && isBrowserSafari();
         this.addManagedListener(inputElement, 'mousedown', () => {
-            if (this.eDateInput.isDisabled()) { return; }
+            if (this.eDateInput.isDisabled() || usingSafariDatePicker) { return; }
             inputElement.focus();
         });
 
@@ -80,6 +83,6 @@ export class DefaultDateComponent extends Component implements IDateComp {
             return params.filterParams.browserDatePicker;
         }
 
-        return isBrowserChrome() || isBrowserFirefox();
+        return isBrowserChrome() || isBrowserFirefox() || (isBrowserSafari() && getSafariVersion() >= 14.1);
     }
 }

@@ -4,6 +4,8 @@ import { AgChartInstance, AgChart, AgChartOptions } from "ag-charts-community";
 
 export interface AgChartProps {
     options: AgChartOptions;
+    onChartReady?: (chart: AgChartInstance) => void;
+    containerStyle: {};
 }
 
 interface AgChartState {
@@ -12,12 +14,12 @@ interface AgChartState {
 export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     static propTypes: any;
 
-    private chart!: AgChartInstance;
+    public chart?: AgChartInstance;
 
     protected chartRef: RefObject<HTMLElement>;
 
-    constructor(public props: any, public state: any) {
-        super(props, state);
+    constructor(public props: AgChartProps) {
+        super(props);
         this.chartRef = createRef();
     }
 
@@ -37,7 +39,12 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
 
     componentDidMount() {
         const options = this.applyContainerIfNotSet(this.props.options);
-        this.chart = AgChart.create(options);
+
+        const chart = AgChart.create(options);
+        this.chart = chart;
+
+        (chart as any).chart.waitForUpdate()
+            .then(() => this.props.onChartReady?.(chart));
     }
 
     private applyContainerIfNotSet(propsOptions: any) {
@@ -58,12 +65,15 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     }
 
     processPropsChanges(prevProps: any, nextProps: any) {
-        AgChart.update(this.chart, this.applyContainerIfNotSet(nextProps.options));
+        if (this.chart) {
+            AgChart.update(this.chart, this.applyContainerIfNotSet(nextProps.options));
+        }
     }
 
     componentWillUnmount() {
         if (this.chart) {
             this.chart.destroy();
+            this.chart = undefined;
         }
     }
 }

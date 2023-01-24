@@ -141,7 +141,7 @@ const getFrameworkFiles = (framework, internalFramework) => {
 };
 
 export const getExampleFiles = (exampleInfo, forPlunker = false) => {
-    const { sourcePath, framework, internalFramework, boilerplatePath } = exampleInfo;
+    const { sourcePath, framework, internalFramework, boilerplatePath, library } = exampleInfo;
 
     const filesForExample = exampleInfo
         .getFiles()
@@ -179,8 +179,14 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
             .then(source => {
 
                 if (forPlunker && f.path === 'main.js') {
-                    source = source.replace(`const columnDefs = [`, `/** @type {(import('ag-grid-community').ColDef | import('ag-grid-community').ColGroupDef )[]} */\nconst columnDefs = [`);
-                    source = source.replace(`const gridOptions = {`, `/** @type {import('ag-grid-community').GridOptions} */\nconst gridOptions = {`);
+
+                    if (library === 'grid') {
+                        source = source.replace(`const columnDefs = [`, `/** @type {(import('ag-grid-community').ColDef | import('ag-grid-community').ColGroupDef )[]} */\nconst columnDefs = [`);
+                        source = source.replace(`const gridOptions = {`, `/** @type {import('ag-grid-community').GridOptions} */\nconst gridOptions = {`);
+                    }
+                    if (library === 'charts') {
+                        source = source.replace(`const options = {`, `/** @type {import('ag-charts-community').AgChartOptions} */\nconst options = {`);
+                    }
                 }
 
                 files[f.path] = { source, isFramework: f.isFramework }

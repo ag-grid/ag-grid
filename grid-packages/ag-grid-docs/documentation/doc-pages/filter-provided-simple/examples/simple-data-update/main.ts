@@ -24,7 +24,6 @@ var filterParams: IDateFilterParams = {
     }
     return 0;
   },
-  browserDatePicker: true,
 }
 
 var fetchedData: any[];

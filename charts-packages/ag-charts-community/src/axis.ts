@@ -789,8 +789,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     arc.centerX = 0;
                     arc.centerY = scale.range[0] - radius;
                     arc.endAngle = angularGridLength;
-                    arc.radiusX = radius;
-                    arc.radiusY = radius;
+                    arc.radius = radius;
                 });
             } else {
                 gridLines = this.gridlineGroupSelection.selectByTag<Line>(Tags.GridLine).each((line) => {

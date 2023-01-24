@@ -1,0 +1,75 @@
+@use '../../design-system' as *;
+
+$colorFlowBreakpoint: 1050px;
+
+.swatches {
+    display: flex;
+    flex-direction: column;
+    gap: $size-2;
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: $size-1;
+    }
+
+    p {
+    }
+}
+
+.swatch {
+    display: grid;
+    grid-template-columns: 100px 1fr 1fr;
+    gap: 0 $size-2;
+    grid-template-areas:
+        'color name name'
+        'color sassName sassName'
+        'color hexColor hslColor';
+
+    @media (min-width: $colorFlowBreakpoint) {
+        grid-template-areas:
+            'color name name'
+            'color sassName sassName'
+            'color hexColor hslColor';
+    }
+}
+
+.color {
+    grid-area: color;
+    border-radius: var(--border-radius);
+}
+
+.color--light {
+    border: 1px solid var(--border-color);
+}
+
+.name {
+    composes: font-size-large bold-text from global;
+
+    grid-area: name;
+    margin-bottom: $size-half !important; // !important needed because of .ag-styles specificity
+    text-transform: capitalize;
+}
+
+.cssName {
+    grid-area: sassName;
+    margin-bottom: $size-1 !important; // !important needed because of .ag-styles specificity
+}
+
+.hexColor,
+.hslColor {
+    composes: font-size-extra-small monospace-text from global;
+    margin-bottom: $size-1 !important; // !important needed because of .ag-styles specificity
+}
+
+.hexColor {
+    grid-area: hexColor;
+}
+
+.hslColor {
+    grid-area: hslColor;
+
+    @media (min-width: $colorFlowBreakpoint) {
+        text-align: right;
+    }
+}

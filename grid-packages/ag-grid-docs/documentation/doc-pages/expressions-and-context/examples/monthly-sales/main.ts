@@ -1,4 +1,4 @@
-import { Grid, ColDef, ColGroupDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, ColDef, ColGroupDef, GridOptions, ICellRendererParams, IGroupCellRendererParams } from '@ag-grid-community/core'
 
 var monthValueGetter =
   '(ctx.month < ctx.months.indexOf(colDef.field)) ? data[colDef.field + "_bud"] : data[colDef.field + "_act"]'
@@ -109,7 +109,7 @@ const gridOptions: GridOptions = {
     cellRenderer: 'agGroupCellRenderer',
     cellRendererParams: {
       checkbox: true,
-    },
+    } as IGroupCellRendererParams,
   },
   animateRows: true,
   rowSelection: 'multiple',

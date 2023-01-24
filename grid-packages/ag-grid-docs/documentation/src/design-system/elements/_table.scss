@@ -1,0 +1,23 @@
+@use '../core' as *;
+
+table {
+    width: 100%;
+    margin-bottom: $size-2;
+    border-collapse: collapse;
+    border-bottom: 1px solid var(--border-color);
+}
+
+thead,
+tr:nth-child(even) {
+    background-color: var(--table-odd-row-background-color);
+}
+
+tr {
+    border-top: 1px solid var(--border-color);
+}
+
+th,
+td {
+    padding: $size-1 $size-2;
+    text-align: left;
+}

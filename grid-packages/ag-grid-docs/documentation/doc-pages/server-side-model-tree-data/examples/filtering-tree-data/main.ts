@@ -95,11 +95,10 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
     getRows: (params) => {
       console.log('[Datasource] - rows requested by grid: ', params.request)
 
-      // get data for request from our fake server
-      var response = server.getData(params.request)
-
       // simulating real server call with a 500ms delay
       setTimeout(function () {
+        // get data for request from our fake server
+        var response = server.getData(params.request)
         if (response.success) {
           // supply rows for requested block to grid
           params.success({ rowData: response.rows, rowCount: response.lastRow })

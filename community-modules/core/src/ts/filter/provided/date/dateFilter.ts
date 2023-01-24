@@ -38,7 +38,7 @@ export interface IDateFilterParams extends IScalarFilterParams {
     /** Required if the data for the column are not native JS `Date` objects. */
     comparator?: IDateComparatorFunc;
     /**
-     * If a date component is not provided then by default the grid will use the browser date picker if it is functionally complete and a plain text box if it is not.
+     * If a date component is not provided then by default the grid will use the browser date picker for all supported browsers and a plain text box for other browsers.
      *  - `true`: Force the browser date picker to be used.
      *  - `false`: Force a plain text box to be used.
      * Default: `undefined`

@@ -33,10 +33,7 @@ export class Arc extends Path {
     centerY: number = 0;
 
     @ScenePathChangeDetection()
-    radiusX: number = 10;
-
-    @ScenePathChangeDetection()
-    radiusY: number = 10;
+    radius: number = 10;
 
     @ScenePathChangeDetection()
     startAngle: number = 0;
@@ -70,21 +67,7 @@ export class Arc extends Path {
         const path = this.path;
 
         path.clear(); // No need to recreate the Path, can simply clear the existing one.
-        // This is much faster than the native Path2D implementation even though this `cubicArc`
-        // method is pure TypeScript and actually produces the definition of an elliptical arc,
-        // where you can specify two radii and rotation, while Path2D's `arc` method simply produces
-        // a circular arc. Maybe it's due to the experimental nature of the Path2D class,
-        // maybe it's because we have to create a new instance of it on each render, who knows...
-        path.cubicArc(
-            this.centerX,
-            this.centerY,
-            this.radiusX,
-            this.radiusY,
-            0,
-            this.startAngle,
-            this.endAngle,
-            this.counterClockwise ? 1 : 0
-        );
+        path.arc(this.centerX, this.centerY, this.radius, this.startAngle, this.endAngle, this.counterClockwise);
 
         if (this.type === ArcType.Chord) {
             path.closePath();
@@ -96,7 +79,7 @@ export class Arc extends Path {
 
     computeBBox(): BBox {
         // Only works with full arcs (circles) and untransformed ellipses.
-        return new BBox(this.centerX - this.radiusX, this.centerY - this.radiusY, this.radiusX * 2, this.radiusY * 2);
+        return new BBox(this.centerX - this.radius, this.centerY - this.radius, this.radius * 2, this.radius * 2);
     }
 
     isPointInPath(x: number, y: number): boolean {

@@ -161,8 +161,8 @@ function heartFactory() {
       const y = this.y + r / 2
 
       path.clear()
-      path.cubicArc(x - r, y - r, r, r, 0, rad(130), rad(330), 0)
-      path.cubicArc(x + r, y - r, r, r, 0, rad(220), rad(50), 0)
+      path.arc(x - r, y - r, r, rad(130), rad(330))
+      path.arc(x + r, y - r, r, rad(220), rad(50))
       path.lineTo(x, y + r)
       path.closePath()
     }

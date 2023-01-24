@@ -24,7 +24,6 @@ var filterParams: IDateFilterParams = {
     }
     return 0;
   },
-  browserDatePicker: true,
   minValidYear: 2000,
   maxValidYear: 2021,
   inRangeFloatingFilterDateFormat: 'Do MMM YYYY',

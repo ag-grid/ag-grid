@@ -261,7 +261,7 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
         }
     });
 
-    // extract the simpleHttpRequest call
+    // extract the Http Request call
     tsOnReadyCollectors.push({
         matches: tsNodeIsSimpleFetchRequest,
         apply: (bindings, node) => {

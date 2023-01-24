@@ -36,11 +36,6 @@ export function areEqual<T>(a?: T[] | null, b?: T[] | null, comparator?: (a: T, 
 }
 
 /** @deprecated */
-export function compareArrays(array1?: any[], array2?: any[]): boolean {
-    return areEqual(array1, array2);
-}
-
-/** @deprecated */
 export function shallowCompare(arr1: any[], arr2: any[]): boolean {
     return areEqual(arr1, arr2);
 }

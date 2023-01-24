@@ -151,7 +151,6 @@ export { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu
 export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
 
 // misc
-export { simpleHttpRequest } from "./misc/simpleHttpRequest";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
@@ -171,7 +170,7 @@ export { ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParam
 export { AnimateShowChangeCellRenderer } from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 export { AnimateSlideCellRenderer } from "./rendering/cellRenderers/animateSlideCellRenderer";
 export { GroupCellRenderer, } from "./rendering/cellRenderers/groupCellRenderer";
-export { GroupCellRendererParams, FooterValueGetterFunc, IGroupCellRenderer, GroupCellRendererCtrl } from "./rendering/cellRenderers/groupCellRendererCtrl";
+export { GroupCellRendererParams, IGroupCellRendererParams, IGroupCellRendererFullRowParams, FooterValueGetterFunc, IGroupCellRenderer, GroupCellRendererCtrl, GroupCheckboxSelectionCallback, GroupCheckboxSelectionCallbackParams } from "./rendering/cellRenderers/groupCellRendererCtrl";
 
 // status bar components
 export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams } from "./interfaces/iStatusPanel";

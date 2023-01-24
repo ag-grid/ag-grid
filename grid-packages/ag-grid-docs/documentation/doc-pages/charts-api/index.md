@@ -72,7 +72,7 @@ The following example demonstrates both create and update cases:
 ## API
 Static methods available on the `AgChart` factory class:
 [[only-javascript]]
-| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></api-documentation>
+| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions"] }'></api-documentation>
 [[only-frameworks]]
-| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["updateDelta"]' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></api-documentation>
-<interface-documentation interfaceName='AgChartInstance' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["updateDelta"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions"] }'></api-documentation>
+<interface-documentation interfaceName='AgChartInstance' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartOptions"] }'></interface-documentation>

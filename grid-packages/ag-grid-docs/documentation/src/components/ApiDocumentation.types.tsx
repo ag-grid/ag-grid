@@ -133,6 +133,7 @@ export interface Config {
     isApi?: boolean;
     isEvent?: boolean;
     showSnippets?: boolean;
+    lookupRoot?: string;
     lookups?: {
         codeLookup: {
             [key: string]: CodeEntry;
@@ -181,6 +182,9 @@ export interface Config {
 
     /** A regular expression limiting the names that should appear */
     namePattern: string;
+
+    /** A list of types to suppress from generated documentation. */
+    suppressTypes?: string[];
 }
 export type SectionProps = {
     framework: string;

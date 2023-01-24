@@ -8,7 +8,7 @@ export class Circle extends Marker {
         const r = size / 2;
 
         path.clear();
-        path.cubicArc(x, y, r, r, 0, 0, Math.PI * 2, 0);
+        path.arc(x, y, r, 0, Math.PI * 2);
         path.closePath();
     }
 }

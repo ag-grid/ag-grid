@@ -1,0 +1,94 @@
+@use "sass:math";
+
+// Configuration
+// =============
+$css-variables-root: '.ag-styles' !default; // The root level where CSS variables are applied
+
+// Size constants
+// ==============
+$border-radius: 0.25em;
+
+// Transition contstants
+// =====================
+$default-transition-timing: 0.25s ease-in-out;
+
+// Size constants
+// ==============
+$size-half: 4px;
+$size-1: 8px;
+$size-2: 16px;
+$size-3: 24px;
+$size-4: 32px;
+$size-5: 40px;
+$size-6: 48px;
+
+// Typographic constants
+// =====================
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+$monospace-font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
+
+$font-weight-normal: 400;
+$font-weight-bold: 600;
+
+$font-size-extra-small: math.div(12rem, 16); // convert px values to rems
+$font-size-small: math.div(14rem, 16); // convert px values to rems
+$font-size-medium: math.div(16rem, 16); // convert px values to rems
+$font-size-large: math.div(24rem, 16); // convert px values to rems
+$font-size-extra-large: math.div(36rem, 16); // convert px values to rems
+$font-size-massive: math.div(54rem, 16); // convert px values to rems
+$font-size-gigantic: math.div(82rem, 16); // convert px values to rems
+
+$line-height-tight: 1.25;
+$line-height-normal: 1.5;
+$line-height-loose: 1.75;
+
+// Color constants (names from color-name.com)
+// ===========================================
+$abstract-colors: (
+    // Brand (from logo)
+    'ag-grid-dark-blue': #003264,
+    // hsl(210, 100%, 20%)
+    'ag-grid-aqua': #55b4c8,
+    // hsl(190, 51%, 56%)
+    'ag-grid-orange': #ff8c00,
+    // hsl(33, 100%, 50%)
+    'ag-grid-red': #ff0000,
+    // hsl(0, 100%, 50%)
+    // Blues
+    'dark-cerulean-blue': #00407f,
+    // hsl(210, 100%, 25%)
+    'medium-electric-blue': #044c93,
+    // hsl(210, 95%, 30%)
+    'azure-blue': #007bff,
+    // hsl(211, 100%, 50%)
+    'sky-blue': #80bdff,
+    // hsl(211, 100%, 75%)
+    'water-blue': #cce5ff,
+    // hsl(211, 100%, 90%)
+    'ghost-blue': #f9fcff,
+    // hsl(210, 100%, 99%)
+    // Grays
+    'black': #000000,
+    // hsl(210, 0%, 0%)
+    'dark-gunmetal-gray': #212529,
+    // hsl(210, 10.81%, 14.51%)
+    'auro-metal': #6c757d,
+    // hsl(208, 7%, 46%)
+    'ag-grid-grey': #b4bebe,
+    // hsl(180, 7%, 73%)
+    'dull-light-gray': #d0d4d6,
+    // hsl(200, 7%, 83%)
+    'light-gray': #ced4da,
+    // hsl(210, 14%, 83%)
+    'platinum-gray': #dee2e6,
+    // hsl(210, 14%, 89%)
+    'ghost-white': #f8f9fa,
+    // hsl(210, 17%, 98%)
+    'white': #ffffff,
+    // hsl(210, 0%, 100%)
+    // Other
+    'cerise-pink': #e83e8c,
+    // hsl(332, 79%, 58%)
+);

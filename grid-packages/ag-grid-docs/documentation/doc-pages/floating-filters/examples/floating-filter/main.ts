@@ -26,7 +26,6 @@ var dateFilterParams: IDateFilterParams = {
     }
     return 0;
   },
-  browserDatePicker: true,
 }
 
 const columnDefs: ColDef[] = [
