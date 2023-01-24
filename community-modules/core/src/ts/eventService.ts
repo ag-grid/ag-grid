@@ -118,6 +118,16 @@ export class EventService implements IEventEmitter {
 
     private dispatchToListeners(event: AgEvent, async: boolean) {
         const eventType = event.type;
+
+        if (async && 'event' in event) {
+            const browserEvent = (event as any).event;
+            if (browserEvent instanceof Event) {
+                // AG-7893 - Patch composedPath so that it still returns the correct value even after being passed to the user asynchronously
+                const composedPath = browserEvent.composedPath();
+                browserEvent.composedPath = () => composedPath;
+            }
+        }
+
         const processEventListeners = (listeners: Set<Function>) => listeners.forEach(listener => {
             if (async) {
                 this.dispatchAsync(() => listener(event));
