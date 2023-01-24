@@ -7,6 +7,7 @@
     <mapping directory="$PROJECT_DIR$/examples-charts/ag-charts-react-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/examples-charts/ag-charts-vue-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/examples-charts/ag-charts-vue3-example" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples-charts/ag-charts-enterprise-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/examples-grid/ag-grid-angular-cli-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/examples-grid/ag-grid-angular-cli-legacy-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/examples-grid/ag-grid-angular-cli-legacy-package-example" vcs="Git" />
