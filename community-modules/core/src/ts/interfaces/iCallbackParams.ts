@@ -2,7 +2,7 @@ import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ChartMenuOptions } from "./iChartOptions";
 import { AgGridCommon } from "./iCommon";
 import { ServerSideTransaction } from "./serverSideTransaction";
-import { CellPosition } from "../entities/cellPosition";
+import { CellPosition } from "../entities/cellPositionUtils";
 import { Column } from "../entities/column";
 import { IRowNode } from "./iRowNode";
 

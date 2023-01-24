@@ -4,7 +4,7 @@ import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { missing, exists } from "../utils/generic";
-import { RowPosition } from "../entities/rowPosition";
+import { RowPosition } from "../entities/rowPositionUtils";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
 @Bean('paginationProxy')

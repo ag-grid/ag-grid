@@ -13,6 +13,7 @@ import { getAllKeysInObjects } from "../utils/object";
 import { Column } from "./column";
 import { IsFullWidthRowParams } from "../interfaces/iCallbackParams";
 import { CellChangedEvent, DataChangedEvent, IRowNode, RowHighlightPosition, RowNodeEvent, RowNodeEventType, RowPinnedType, SetSelectedParams } from "../interfaces/iRowNode";
+import { CellEditRequestEvent } from "../main";
 
 export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
@@ -691,7 +692,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const oldValue = this.beans.valueService.getValue(column, this);
 
         if (this.beans.gridOptionsService.is('readOnlyEdit')) {
-            this.beans.cellPositionUtils.dispatchEventForSaveValueReadOnly(this, column, oldValue, newValue);
+            this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue);
             return false;
         }
 
@@ -701,6 +702,28 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.checkRowSelectable();
 
         return valueChanged;
+    }
+
+    private dispatchEventForSaveValueReadOnly(column: Column, oldValue: any, newValue: any, eventSource?: string): void {
+        const event: CellEditRequestEvent = {
+            type: Events.EVENT_CELL_EDIT_REQUEST,
+            event: null,
+            rowIndex: this.rowIndex!,
+            rowPinned: this.rowPinned,
+            column: column,
+            colDef: column.getColDef(),
+            context: this.beans.gridOptionsService.get('context'),
+            api: this.beans.gridOptionsService.get('api')!,
+            columnApi: this.beans.gridOptionsService.get('columnApi')!,
+            data: this.data,
+            node: this,
+            oldValue,
+            newValue,
+            value: newValue,
+            source: eventSource
+        };
+
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public setGroupValue(colKey: string | Column, newValue: any): void {

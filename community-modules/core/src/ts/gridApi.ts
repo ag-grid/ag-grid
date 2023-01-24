@@ -4,7 +4,7 @@ import { ColumnModel, ISizeColumnsToFitParams } from "./columns/columnModel";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
-import { CellPosition } from "./entities/cellPosition";
+import { CellPosition } from "./entities/cellPositionUtils";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { Column } from "./entities/column";
 import {

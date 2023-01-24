@@ -80,7 +80,7 @@ import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
-import { CellPosition } from "./cellPosition";
+import { CellPosition } from "./cellPositionUtils";
 import { ColDef, ColGroupDef, IAggFunc, SortDirection } from "./colDef";
 import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "../interfaces/iCallbackParams";
 import { SideBarDef } from "../interfaces/iSideBar";
@@ -985,7 +985,7 @@ export interface GridOptions<TData = any> {
      *  if cell value has changed as a result of paste operation.
     */
     onCellValueChanged?(event: CellValueChangedEvent<TData>): void;
-    /** Value has changed after editing. Only fires when doing `readOnlyEdit=true`. */
+    /** Value has changed after editing. Only fires when `readOnlyEdit=true`. */
     onCellEditRequest?(event: CellEditRequestEvent<TData>): void;
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */
     onRowValueChanged?(event: RowValueChangedEvent<TData>): void;

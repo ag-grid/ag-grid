@@ -4060,7 +4060,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -4069,7 +4069,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -21931,7 +21931,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -21940,7 +21940,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -24653,7 +24653,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -24662,7 +24662,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -27381,7 +27381,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -27390,7 +27390,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",

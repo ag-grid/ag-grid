@@ -12,7 +12,7 @@ import {
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
 import { FocusService } from "../focusService";
-import { CellPosition } from "../entities/cellPosition";
+import { CellPosition } from "../entities/cellPositionUtils";
 import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { Beans } from "./beans";
@@ -20,7 +20,7 @@ import { RowContainerHeightService } from "./rowContainerHeightService";
 import { ICellRenderer } from "./cellRenderers/iCellRenderer";
 import { ICellEditor } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
-import { RowPosition } from "../entities/rowPosition";
+import { RowPosition } from "../entities/rowPositionUtils";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists, missing } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";

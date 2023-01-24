@@ -3,7 +3,7 @@ import { Column } from "../../entities/column";
 import { NewValueParams } from "../../entities/colDef";
 import { RowNode } from "../../entities/rowNode";
 import { CellChangedEvent } from "../../interfaces/iRowNode";
-import { CellPosition } from "../../entities/cellPosition";
+import { CellPosition } from "../../entities/cellPositionUtils";
 import {
     CellContextMenuEvent,
     CellEditingStartedEvent,
@@ -20,7 +20,7 @@ import { CellPositionFeature } from "./cellPositionFeature";
 import { escapeString } from "../../utils/string";
 import { CellCustomStyleFeature } from "./cellCustomStyleFeature";
 import { TooltipFeature, ITooltipFeatureCtrl } from "../../widgets/tooltipFeature";
-import { RowPosition } from "../../entities/rowPosition";
+import { RowPosition } from "../../entities/rowPositionUtils";
 import { RowCtrl } from "../row/rowCtrl";
 import { CellMouseListenerFeature } from "./cellMouseListenerFeature";
 import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";

@@ -1007,7 +1007,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          *  if cell value has changed as a result of paste operation.
         */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
-    /** Value has changed after editing. Only fires when doing `readOnlyEdit=true`.     */
+    /** Value has changed after editing. Only fires when `readOnlyEdit=true`.     */
     @Output() public cellEditRequest: EventEmitter<CellEditRequestEvent<TData>> = new EventEmitter<CellEditRequestEvent<TData>>();
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only.     */
     @Output() public rowValueChanged: EventEmitter<RowValueChangedEvent<TData>> = new EventEmitter<RowValueChangedEvent<TData>>();
