@@ -44,8 +44,9 @@ $line-height-tight: 1.25;
 $line-height-normal: 1.5;
 $line-height-loose: 1.75;
 
-// Color constants (names from color-name.com)
+// Color constants
 // ===========================================
+// Names from color-name.com
 $abstract-colors: (
     // Brand (from logo)
     'ag-grid-dark-blue': #003264,
@@ -71,4 +72,34 @@ $abstract-colors: (
     'white': #ffffff,
     // Other
     'cerise-pink': #e83e8c
+);
+
+// Semantic colors based on abstract colors
+$semantic-colors: (
+    // Text
+    'text-color': dark-gunmetal-gray,
+    'secondary-text-color': auro-metal,
+    // Border
+    'border-color': light-gray,
+    // Link
+    'link-color': azure-blue,
+    'link-hover-color': ag-grid-orange,
+    // Button
+    'button-text-color': white,
+    'button-color': azure-blue,
+    'button-hover-color': medium-electric-blue,
+    'button-active-color': dark-cerulean-blue,
+    // Inline
+    'inline-element-background-color': ghost-white,
+    // Code
+    'code-text-color': cerise-pink,
+    // Input
+    'input-background-color': white,
+    'input-secondary-background-color': ag-grid-grey,
+    'input-secondary-border-color': auro-metal,
+    'input-primary-color': azure-blue,
+    'input-focus-border-color': sky-blue,
+    'input-focus-box-shadow-color': water-blue,
+    // Table
+    'table-odd-row-background-color': ghost-blue
 );
