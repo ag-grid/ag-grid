@@ -1,86 +1,100 @@
 @use '../../design-system' as *;
 
 .ag-styles {
-  @include design-system-styles();
+    @include design-system-styles();
 
-  color: var(--text-color); // Needed as we can't set styles for <html> yet
+    color: var(--text-color); // Needed as we can't set styles for <html> yet
 }
 
 .ag-styles .style-guide {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  grid-template-areas:
-    "sidebar header"
-    "sidebar main";
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-areas:
+        'sidebar header'
+        'sidebar main';
 
-  header {
-    grid-area: header;
-    margin-bottom: 2rem;
-  }
-
-  main {
-    grid-area: main;
-  }
-
-  main > section {
-    margin-bottom: 128px;
-
-    h2:first-child + .item-label {
-        margin-top: 0;
-    }
-  }
-
-  aside {
-    grid-area: sidebar;
-    position: fixed;
-    padding: $size-3 $size-3 $size-3 0;
-  }
-
-  .group-name:not(:first-child) {
-    margin-top: $size-2;
-  }
-
-  .grid {
-    display: flex;
-    gap: $size-6;
-  }
-
-  .item-label {
-    margin-top: $size-4;
-    margin-bottom: $size-half;
-
-    span {
-        text-transform: capitalize;
+    header {
+        grid-area: header;
+        margin-bottom: 2rem;
     }
 
-    code {
-        margin-left: $size-half;
+    main {
+        grid-area: main;
     }
-  }
 
-  .text-elements-list,
-  .size-examples-list {
-    display: flex;
-    flex-wrap: wrap;
+    main > section {
+        margin-bottom: 128px;
 
-    p,
-    > div {
-        min-width: 20%;
+        h2:first-child + .item-label {
+            margin-top: 0;
+        }
     }
-  }
 
-  .size-example {
-    height: var(--size-example-size);
-    width: var(--size-example-size);
-    border-radius: var(--border-radius);
-    background-color: var(--ag-grid-dark-blue);
+    aside {
+        grid-area: sidebar;
+        position: fixed;
+        padding: $size-3 $size-3 $size-3 0;
+    }
 
-    &.size-half { --size-example-size: #{$size-half}; }
-    &.size-1 { --size-example-size: #{$size-1}; }
-    &.size-2 { --size-example-size: #{$size-2}; }
-    &.size-3 { --size-example-size: #{$size-3}; }
-    &.size-4 { --size-example-size: #{$size-4}; }
-    &.size-5 { --size-example-size: #{$size-5}; }
-    &.size-6 { --size-example-size: #{$size-6}; }
-  }
+    .group-name:not(:first-child) {
+        margin-top: $size-2;
+    }
+
+    .grid {
+        display: flex;
+        gap: $size-6;
+    }
+
+    .item-label {
+        margin-top: $size-4;
+        margin-bottom: $size-half;
+
+        span {
+            text-transform: capitalize;
+        }
+
+        code {
+            margin-left: $size-half;
+        }
+    }
+
+    .text-elements-list,
+    .size-examples-list {
+        display: flex;
+        flex-wrap: wrap;
+
+        p,
+        > div {
+            min-width: 20%;
+        }
+    }
+
+    .size-example {
+        height: var(--size-example-size);
+        width: var(--size-example-size);
+        border-radius: var(--border-radius);
+        background-color: var(--ag-grid-dark-blue);
+
+        &.size-half {
+            --size-example-size: #{$size-half};
+        }
+        &.size-1 {
+            --size-example-size: #{$size-1};
+        }
+        &.size-2 {
+            --size-example-size: #{$size-2};
+        }
+        &.size-3 {
+            --size-example-size: #{$size-3};
+        }
+        &.size-4 {
+            --size-example-size: #{$size-4};
+        }
+        &.size-5 {
+            --size-example-size: #{$size-5};
+        }
+        &.size-6 {
+            --size-example-size: #{$size-6};
+        }
+    }
 }

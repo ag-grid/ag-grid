@@ -1,5 +1,5 @@
-import React from 'react';
 import classnames from 'classnames';
+import React from 'react';
 import designSystemColors from '../../design-system/color.module.scss';
 import styles from './color.module.scss';
 
@@ -22,13 +22,13 @@ function hexToRGB(hex) {
     }
 
     return [r, g, b];
-};
+}
 
 function isLight(hex) {
     let [r, g, b] = hexToRGB(hex);
 
-    return (r + g + b) / 3 > 150; 
-};
+    return (r + g + b) / 3 > 150;
+}
 
 function hexToHSL(hex) {
     // Convert hex to RGB first
@@ -86,7 +86,9 @@ export const Color = () => {
                             }}
                         ></div>
                         <p className={styles.name}>{formatName(key)}</p>
-                        <p className={styles.cssName}><code>--{key}</code></p>
+                        <p className={styles.cssName}>
+                            <code>--{key}</code>
+                        </p>
 
                         <p className={styles.hexColor}>{hexColor}</p>
                         <p className={styles.hslColor}>{hexToHSL(hexColor)}</p>

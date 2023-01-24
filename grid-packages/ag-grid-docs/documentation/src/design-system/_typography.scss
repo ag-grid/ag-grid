@@ -14,46 +14,46 @@ h6,
 .font-size-medium,
 .font-size-small,
 .font-size-extra-small {
-  font-family: var(--font-family);
-  font-size: var(--font-size);
-  line-height: var(--line-height);
-  font-weight: var(--font-weight);
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    font-weight: var(--font-weight);
 }
 
 .font-size-gigantic {
-  --font-size: #{$font-size-gigantic};
-  --line-height: #{$line-height-tight};
+    --font-size: #{$font-size-gigantic};
+    --line-height: #{$line-height-tight};
 }
 
 h1,
 .font-size-massive {
-  --font-size: #{$font-size-massive};
-  --line-height: #{$line-height-tight};
+    --font-size: #{$font-size-massive};
+    --line-height: #{$line-height-tight};
 }
 
 h2,
 .font-size-extra-large {
-  --font-size: #{$font-size-extra-large};
+    --font-size: #{$font-size-extra-large};
 }
 
 h3,
 .font-size-large {
-  --font-size: #{$font-size-large};
+    --font-size: #{$font-size-large};
 }
 
 h4,
 .font-size-medium {
-  --font-size: #{$font-size-medium};
+    --font-size: #{$font-size-medium};
 }
 
 h5,
 .font-size-small {
-  --font-size: #{$font-size-small};
+    --font-size: #{$font-size-small};
 }
 
 h6,
 .font-size-extra-small {
-  --font-size: #{$font-size-extra-small};
+    --font-size: #{$font-size-extra-small};
 }
 
 h1,
@@ -65,17 +65,17 @@ h6,
 b,
 strong,
 .bold-text {
-  --font-weight: #{$font-weight-bold};
+    --font-weight: #{$font-weight-bold};
 
-  font-weight: var(--font-weight);
+    font-weight: var(--font-weight);
 }
 
 .normal-weight-text {
-  --font-weight: var(--font-weight-bold);
+    --font-weight: var(--font-weight-bold);
 }
 
 .monospace-text {
-  font-family: var(--monospace-font-family);
+    font-family: var(--monospace-font-family);
 }
 
 h1:not(:last-child),
@@ -84,16 +84,16 @@ h3:not(:last-child),
 h4:not(:last-child),
 h5:not(:last-child),
 h6:not(:last-child) {
-  margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 p:not(:last-child),
 ul:not(:last-child),
 ol:not(:last-child),
 blockquote:not(:last-child) {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 .max-text-length {
-  max-width: 40em;
+    max-width: 40em;
 }

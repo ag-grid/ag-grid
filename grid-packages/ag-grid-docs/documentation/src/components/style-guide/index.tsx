@@ -1,24 +1,22 @@
 import React, { ReactElement } from 'react';
-import './style-guide.scss';
-
-import { Typography } from './typography';
-import { Color } from './color';
-import { Sizes } from './sizes';
-import { TextElements } from './textElements';
 import { Buttons } from './buttons';
+import { Color } from './color';
 import { Form } from './form';
+import { Sizes } from './sizes';
+import './style-guide.scss';
 import { Tables } from './tables';
-
+import { TextElements } from './textElements';
+import { Typography } from './typography';
 
 interface Section {
-    id: string,
-    name: string,
-    content: ReactElement
+    id: string;
+    name: string;
+    content: ReactElement;
 }
 
 interface SectionGroup {
-    groupName: string,
-    children: Section[]
+    groupName: string;
+    children: Section[];
 }
 
 const SECTIONS: SectionGroup[] = [
@@ -28,19 +26,19 @@ const SECTIONS: SectionGroup[] = [
             {
                 id: 'typography',
                 name: 'Typography',
-                content: <Typography />
+                content: <Typography />,
             },
             {
                 id: 'color',
                 name: 'Color',
-                content: <Color />
+                content: <Color />,
             },
             {
                 id: 'sizes',
                 name: 'Sizes',
-                content: <Sizes />
+                content: <Sizes />,
             },
-        ]
+        ],
     },
     {
         groupName: 'HTML Elements',
@@ -48,24 +46,24 @@ const SECTIONS: SectionGroup[] = [
             {
                 id: 'text',
                 name: 'Text Elements',
-                content: <TextElements />
+                content: <TextElements />,
             },
             {
                 id: 'buttons',
                 name: 'Buttons',
-                content: <Buttons />
+                content: <Buttons />,
             },
             {
                 id: 'form',
                 name: 'Form elements',
-                content: <Form />
+                content: <Form />,
             },
             {
                 id: 'tables',
                 name: 'Tables',
-                content: <Tables />
+                content: <Tables />,
             },
-        ]
+        ],
     },
     {
         groupName: 'Components',
@@ -73,11 +71,11 @@ const SECTIONS: SectionGroup[] = [
             {
                 id: 'example-components',
                 name: 'Example components',
-                content: <></>
-            }
-        ]
+                content: <></>,
+            },
+        ],
     },
-]
+];
 
 export const StyleGuide = () => {
     const bodySections = SECTIONS.reduce<Section[]>((acc, value) => {
@@ -106,12 +104,18 @@ export const StyleGuide = () => {
                 <aside>
                     <ul className="list-style-none">
                         {SECTIONS.map(({ groupName, children }) => {
-                            return <>
-                                <li className='group-name'>{groupName}</li>
-                                {children.map(({ id, name }) => {
-                                    return <li><a href={`#${id}`}>{name}</a></li>
-                                })}
-                            </>;
+                            return (
+                                <>
+                                    <li className="group-name">{groupName}</li>
+                                    {children.map(({ id, name }) => {
+                                        return (
+                                            <li>
+                                                <a href={`#${id}`}>{name}</a>
+                                            </li>
+                                        );
+                                    })}
+                                </>
+                            );
                         })}
                     </ul>
                 </aside>

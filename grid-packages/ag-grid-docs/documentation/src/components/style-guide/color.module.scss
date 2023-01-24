@@ -3,67 +3,67 @@
 $colorFlowBreakpoint: 1050px;
 
 .swatches {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: $size-4;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: $size-4;
 }
 
 .swatch {
-  display: grid;
-  grid-template-areas:
-    'color'
-    'name'
-    'sassName'
-    'hexColor'
-    'hslColor';
-  flex-direction: column;
-
-  @media (min-width: $colorFlowBreakpoint) {
+    display: grid;
     grid-template-areas:
-    'color color'
-    'name name'
-    'sassName sassName'
-    'hexColor hslColor';
-  }
+        'color'
+        'name'
+        'sassName'
+        'hexColor'
+        'hslColor';
+    flex-direction: column;
+
+    @media (min-width: $colorFlowBreakpoint) {
+        grid-template-areas:
+            'color color'
+            'name name'
+            'sassName sassName'
+            'hexColor hslColor';
+    }
 }
 
 .color {
-  grid-area: color;
-  width: 100%;
-  height: 50px;
-  border-radius: var(--border-radius);
+    grid-area: color;
+    width: 100%;
+    height: 50px;
+    border-radius: var(--border-radius);
 }
 
 .color--light {
-  border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color);
 }
 
 .name {
-  composes: font-size-large bold-text from global;
+    composes: font-size-large bold-text from global;
 
-  grid-area: name;
-  margin-bottom: $size-half !important; // !important needed because of .ag-styles specificity
-  text-transform: capitalize;
+    grid-area: name;
+    margin-bottom: $size-half !important; // !important needed because of .ag-styles specificity
+    text-transform: capitalize;
 }
 
 .cssName {
-  grid-area: sassName;
-  margin-bottom: $size-1 !important; // !important needed because of .ag-styles specificity
+    grid-area: sassName;
+    margin-bottom: $size-1 !important; // !important needed because of .ag-styles specificity
 }
 
 .hexColor,
 .hslColor {
-  composes: font-size-extra-small monospace-text from global;
+    composes: font-size-extra-small monospace-text from global;
 }
 
 .hexColor {
-  grid-area: hexColor;
+    grid-area: hexColor;
 }
 
 .hslColor {
-  grid-area: hslColor;
-  
-  @media (min-width: $colorFlowBreakpoint) {
-    text-align: right;
-  }
+    grid-area: hslColor;
+
+    @media (min-width: $colorFlowBreakpoint) {
+        text-align: right;
+    }
 }

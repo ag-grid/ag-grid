@@ -71,12 +71,15 @@ export const TextElements = () => {
                 omnis omnis veniam.
             </p>
 
-            <div className='grid'>
+            <div className="grid">
                 <div>
-                    <p className="item-label">Un ordered list <code>ul</code></p>
+                    <p className="item-label">
+                        Un ordered list <code>ul</code>
+                    </p>
                     <ul>
                         <li>Aliquam lobortis lacus eu libero ornare facilisis.</li>
-                        <li>Nam et magna at libero scelerisque egestas.
+                        <li>
+                            Nam et magna at libero scelerisque egestas.
                             <ul>
                                 <li>Proin ultricies turpis et volutpat vehicula.</li>
                             </ul>
@@ -87,10 +90,13 @@ export const TextElements = () => {
                 </div>
 
                 <div>
-                    <p className="item-label">Ordered list <code>ol</code></p>
+                    <p className="item-label">
+                        Ordered list <code>ol</code>
+                    </p>
                     <ol>
                         <li>Aliquam lobortis lacus eu libero ornare facilisis.</li>
-                        <li>Nam et magna at libero scelerisque egestas.
+                        <li>
+                            Nam et magna at libero scelerisque egestas.
                             <ul>
                                 <li>Proin ultricies turpis et volutpat vehicula.</li>
                             </ul>
@@ -101,10 +107,13 @@ export const TextElements = () => {
                 </div>
 
                 <div>
-                    <p className="item-label">List style none: <code>.list-style-none</code></p>
-                    <ul className='list-style-none'>
+                    <p className="item-label">
+                        List style none: <code>.list-style-none</code>
+                    </p>
+                    <ul className="list-style-none">
                         <li>Aliquam lobortis lacus eu libero ornare facilisis.</li>
-                        <li>Nam et magna at libero scelerisque egestas.
+                        <li>
+                            Nam et magna at libero scelerisque egestas.
                             <ul>
                                 <li>Proin ultricies turpis et volutpat vehicula.</li>
                             </ul>
@@ -115,22 +124,34 @@ export const TextElements = () => {
                 </div>
             </div>
 
-            <p className="item-label">Heading one: <code>h1</code></p>
+            <p className="item-label">
+                Heading one: <code>h1</code>
+            </p>
             <h1>Heading one</h1>
 
-            <p className="item-label">Heading two: <code>h2</code></p>
+            <p className="item-label">
+                Heading two: <code>h2</code>
+            </p>
             <h2>Heading two</h2>
 
-            <p className="item-label">Heading three: <code>h3</code></p>
+            <p className="item-label">
+                Heading three: <code>h3</code>
+            </p>
             <h3>Heading three</h3>
 
-            <p className="item-label">Heading four: <code>h4</code></p>
+            <p className="item-label">
+                Heading four: <code>h4</code>
+            </p>
             <h4>Heading four</h4>
 
-            <p className="item-label">Heading five: <code>h5</code></p>
+            <p className="item-label">
+                Heading five: <code>h5</code>
+            </p>
             <h5>Heading five</h5>
 
-            <p className="item-label">Heading six: <code>h6</code></p>
+            <p className="item-label">
+                Heading six: <code>h6</code>
+            </p>
             <h6>Heading six</h6>
         </>
     );

@@ -2,35 +2,35 @@
 @use "sass:map";
 
 a {
-  text-decoration: none;
-  color: var(--link-color);
+    text-decoration: none;
+    color: var(--link-color);
 
-  &:hover {
-    color: var(--link-hover-color);
-  }
+    &:hover {
+        color: var(--link-hover-color);
+    }
 }
 
 code {
-  font-size: 0.9rem;
-  padding: 0 0.2em;
-  font-family: var(--monospace-font-family);
-  white-space: normal;
-  border-radius: var(--border-radius);
-  color: var(--code-text-color);
-  background-color: var(--inline-element-background);
-  border: 1px solid rgba(black, 0.1);
+    font-size: 0.9rem;
+    padding: 0 0.2em;
+    font-family: var(--monospace-font-family);
+    white-space: normal;
+    border-radius: var(--border-radius);
+    color: var(--code-text-color);
+    background-color: var(--inline-element-background);
+    border: 1px solid rgba(black, 0.1);
 }
 
 kbd {
-  color: var(--text-color); // Bootstrap conflict 
+    color: var(--text-color); // Bootstrap conflict
 
-  display: inline-block;
-  margin: 0 0.1em;
-  padding: 0.1em 0.6em;
-  font-family: var(--font-family);
-  border-radius: var(--border-radius);
-  background-color: var(--inline-element-background);
-  border: 1px solid #ccc;
-  box-shadow: 0 1px 0 rgb(0 0 0 / 20%), inset 0 0 0 2px map.get($abstract-colors, "white");
-  text-shadow: 0 1px 0 map.get($abstract-colors, "white");
+    display: inline-block;
+    margin: 0 0.1em;
+    padding: 0.1em 0.6em;
+    font-family: var(--font-family);
+    border-radius: var(--border-radius);
+    background-color: var(--inline-element-background);
+    border: 1px solid #ccc;
+    box-shadow: 0 1px 0 rgb(0 0 0 / 20%), inset 0 0 0 2px map.get($abstract-colors, 'white');
+    text-shadow: 0 1px 0 map.get($abstract-colors, 'white');
 }
