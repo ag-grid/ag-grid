@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import './style-guide.scss';
 
 import { Typography } from './typography';
@@ -7,55 +7,77 @@ import { TextElements } from './textElements';
 import { Buttons } from './buttons';
 import { Form } from './form';
 import { Tables } from './tables';
-import { Loading } from './loading';
 
 
-const SECTIONS = [
+interface Section {
+    id: string,
+    name: string,
+    content: ReactElement
+}
+
+interface SectionGroup {
+    groupName: string,
+    children: Section[]
+}
+
+const SECTIONS: SectionGroup[] = [
     {
         groupName: 'Base',
-    },
-    {
-        id: 'typography',
-        name: 'Typography',
-        content: <Typography />
-    },
-    {
-        id: 'color',
-        name: 'Color',
-        content: <Color />
+        children: [
+            {
+                id: 'typography',
+                name: 'Typography',
+                content: <Typography />
+            },
+            {
+                id: 'color',
+                name: 'Color',
+                content: <Color />
+            },
+        ]
     },
     {
         groupName: 'HTML Elements',
-    },
-    {
-        id: 'text',
-        name: 'Text Elements',
-        content: <TextElements />
-    },
-    {
-        id: 'buttons',
-        name: 'Buttons',
-        content: <Buttons />
-    },
-    {
-        id: 'form',
-        name: 'Form elements',
-        content: <Form />
-    },
-    {
-        id: 'tables',
-        name: 'Tables',
-        content: <Tables />
+        children: [
+            {
+                id: 'text',
+                name: 'Text Elements',
+                content: <TextElements />
+            },
+            {
+                id: 'buttons',
+                name: 'Buttons',
+                content: <Buttons />
+            },
+            {
+                id: 'form',
+                name: 'Form elements',
+                content: <Form />
+            },
+            {
+                id: 'tables',
+                name: 'Tables',
+                content: <Tables />
+            },
+        ]
     },
     {
         groupName: 'Components',
-    },
-    {
-        name: 'Example components',
+        children: [
+            {
+                id: 'example-components',
+                name: 'Example components',
+                content: <></>
+            }
+        ]
     },
 ]
 
 export const StyleGuide = () => {
+    const bodySections = SECTIONS.reduce<Section[]>((acc, value) => {
+        return acc.concat(value.children);
+    }, []);
+
     return (
         <div className="ag-styles">
             <div className="style-guide page-margin">
@@ -65,9 +87,7 @@ export const StyleGuide = () => {
                 </header>
 
                 <main>
-                    {SECTIONS.filter(({ groupName }) => {
-                        return !groupName;
-                    }).map(({ id, name, content }) => {
+                    {bodySections.map(({ id, name, content }) => {
                         return (
                             <section id={id}>
                                 <h2>{name}</h2>
@@ -79,8 +99,13 @@ export const StyleGuide = () => {
 
                 <aside>
                     <ul className="list-style-none">
-                        {SECTIONS.map(({ id, name, groupName }) => {
-                            return <li className={groupName ? 'group-name': ''}>{groupName ? <span>{groupName}</span> : <a href={`#${id}`}>{name}</a>}</li>;
+                        {SECTIONS.map(({ groupName, children }) => {
+                            return <>
+                                <li className='group-name'>{groupName}</li>
+                                {children.map(({ id, name }) => {
+                                    return <li><a href={`#${id}`}>{name}</a></li>
+                                })}
+                            </>;
                         })}
                     </ul>
                 </aside>
