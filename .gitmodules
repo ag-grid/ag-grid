@@ -10,19 +10,19 @@
 	path = examples-grid/ag-grid-vue-example
 	url = https://github.com/ag-grid/ag-grid-vue-example.git
     branch = latest
-[submodule "charts-packages/ag-charts-react-example"]
+[submodule "charts-community-modules/ag-charts-react-example"]
 	path = examples-charts/ag-charts-react-example
 	url = https://github.com/ag-grid/ag-charts-react-example.git
 	branch = latest
-[submodule "charts-packages/ag-charts-vue-example"]
+[submodule "charts-community-modules/ag-charts-vue-example"]
 	path = examples-charts/ag-charts-vue-example
 	url = https://github.com/ag-grid/ag-charts-vue-example.git
 	branch = latest
-[submodule "charts-packages/ag-charts-polymer-example"]
+[submodule "charts-community-modules/ag-charts-polymer-example"]
 	path = examples-charts/ag-charts-polymer-example
 	url = https://github.com/ag-grid/ag-charts-polymer-example.git
 	branch = latest
-[submodule "charts-packages/ag-charts-angular-example"]
+[submodule "charts-community-modules/ag-charts-angular-example"]
 	path = examples-charts/ag-charts-angular-example
 	url = https://github.com/ag-grid/ag-charts-angular-example.git
 	branch = latest

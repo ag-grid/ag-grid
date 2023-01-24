@@ -54,7 +54,7 @@ const spawnCssWatcher = ({paths, buildChains}) => {
     const buildOperation = (path, operation) => {
         console.log(`File ${path} has been ${operation}`);
 
-        const rootModule = path.includes('community-modules/styles') ? '@ag-grid-community/styles' : '@ag-grid-community/core'
+        const rootModule = path.includes('grid-community-modules/styles') ? '@ag-grid-community/styles' : '@ag-grid-community/core'
         // noinspection JSIgnoredPromiseFromCall
         buildDependencyChain(rootModule, buildChains);
     };
@@ -165,10 +165,10 @@ const generateBuildChain = async (packageName, allPackagesOrdered, includeExampl
 
 const extractCssBuildChain = (buildChainInfo) => {
     const corePaths = buildChainInfo.paths
-        .filter(path => path.includes('community-modules/core'))
+        .filter(path => path.includes('grid-community-modules/core'))
         .map(path => `${path}/src/styles`);
     const stylePaths = buildChainInfo.paths
-        .filter(path => path.includes('community-modules/styles'))
+        .filter(path => path.includes('grid-community-modules/styles'))
         .map(path => `${path}/src`);
     return {
         paths: corePaths.concat(stylePaths),
@@ -313,7 +313,7 @@ function moduleChanged(moduleRoot) {
 const readModulesState = (buildChain) => {
     const agPackages = Object.keys(buildChain);
 
-    const moduleRootNames = ['grid-packages', 'community-modules', 'enterprise-modules', 'charts-packages', 'examples-grid', 'grid-packages/ag-grid-docs'];
+    const moduleRootNames = ['grid-packages', 'grid-community-modules', 'grid-enterprise-modules', 'charts-community-modules', 'examples-grid', 'grid-packages/ag-grid-docs'];
     const exclusions = ['ag-grid-dev', 'prettier-no-op'];
 
     const modulesState = {};

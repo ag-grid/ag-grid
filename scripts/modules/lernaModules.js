@@ -40,7 +40,7 @@ const executeLernaCommand = (arguments) => {
 const getCommunityScopes = () => flattenArray(getScopeForBarrelledModules(['../../community']));
 const getEnterpriseScopes = () => flattenArray(getScopeForBarrelledModules(['../../enterprise']));
 const getModuleScopes = () => flattenArray(getScopeForBarrelledModules(['../../community', '../../enterprise']));
-const getChartsModuleScopes = () => flattenArray(getScopeForModules('../../charts-packages'));
+const getChartsModuleScopes = () => flattenArray(getScopeForModules('../../charts-community-modules'));
 
 module.exports.cleanCommunityModules = () => executeLernaCommand(['clean', '--yes', getCommunityScopes()]);
 module.exports.cleanEnterpriseModules = () => executeLernaCommand(['clean', '--yes', getEnterpriseScopes()]);

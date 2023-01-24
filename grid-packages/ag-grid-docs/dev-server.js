@@ -135,19 +135,19 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
 
     let linkType = 'symbolic';
 
-    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
-    lnk('../../community-modules/vue3/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue3'});
-    lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
+    lnk('../../grid-community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
+    lnk('../../grid-community-modules/vue3/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue3'});
+    lnk('../../grid-community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
         rename: 'angular'
     });
-    lnk('../../community-modules/angular-legacy/', '_dev/@ag-grid-community', {
+    lnk('../../grid-community-modules/angular-legacy/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
         rename: 'angular-legacy'
     });
-    lnk('../../community-modules/react/', '_dev/@ag-grid-community', {
+    lnk('../../grid-community-modules/react/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
         rename: 'react'
@@ -180,34 +180,34 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
             });
         });
 
-    lnk('../../community-modules/styles/', '_dev/@ag-grid-community', {
+    lnk('../../grid-community-modules/styles/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
         rename: 'styles'
     });
 
 
-    lnk('../../charts-packages/ag-charts-react/', '_dev/', {
+    lnk('../../charts-community-modules/ag-charts-react/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-react'
     });
-    lnk('../../charts-packages/ag-charts-angular/', '_dev/', {
+    lnk('../../charts-community-modules/ag-charts-angular/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-angular'
     });
-    lnk('../../charts-packages/ag-charts-angular-legacy/', '_dev/', {
+    lnk('../../charts-community-modules/ag-charts-angular-legacy/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-angular-legacy'
     });
-    lnk('../../charts-packages/ag-charts-vue/', '_dev/', {
+    lnk('../../charts-community-modules/ag-charts-vue/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-vue'
     });
-    lnk('../../charts-packages/ag-charts-vue3/', '_dev/', {
+    lnk('../../charts-community-modules/ag-charts-vue3/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-vue3'
@@ -482,7 +482,7 @@ const watchCoreModules = async (skipFrameworks, chartsOnly) => {
 };
 
 const updateCoreModuleHashes = () => {
-    const coreModuleRootNames = ['community-modules', 'enterprise-modules', 'charts-packages'];
+    const coreModuleRootNames = ['grid-community-modules', 'grid-enterprise-modules', 'charts-community-modules'];
     const exclusions = ['react', 'angular', 'angular-legacy', 'vue', 'vue3', 'polymer'];
 
     coreModuleRootNames.forEach(moduleRootName => {
@@ -520,15 +520,15 @@ const buildCoreModules = async (exitOnError, chartsOnly) => {
     // future commits will make this more generic/flexible
     cp.spawnSync('./node_modules/.bin/tsc', ['-p', 'tsconfig.typings.json'], {
         stdio: 'inherit',
-        cwd: '../../community-modules/csv-export'
+        cwd: '../../grid-community-modules/csv-export'
     });
     cp.spawnSync('./node_modules/.bin/tsc', ['-p', 'tsconfig.typings.json'], {
         stdio: 'inherit',
-        cwd: '../../enterprise-modules/set-filter'
+        cwd: '../../grid-enterprise-modules/set-filter'
     });
     cp.spawnSync('./node_modules/.bin/tsc', ['-p', 'tsconfig.typings.json'], {
         stdio: 'inherit',
-        cwd: '../../enterprise-modules/excel-export'
+        cwd: '../../grid-enterprise-modules/excel-export'
     });
     console.log("Core Modules Built");
 
@@ -642,7 +642,7 @@ const watchFrameworkModules = async () => {
     ];
 
     const moduleFrameworks = ['angular', 'angular-legacy', 'vue', 'vue3', 'react'];
-    const moduleRootDirectory = `../../community-modules/`;
+    const moduleRootDirectory = `../../grid-community-modules/`;
     moduleFrameworks.forEach(moduleFramework => {
         const frameworkDirectory = resolve(`${moduleRootDirectory}${moduleFramework}`);
 
@@ -671,15 +671,15 @@ const watchAutoDocFiles = async () => {
         '.AUTO.json',
     ];
 
-    // Matches the paths used in community-modules/all-modules/generate-code-reference-files.js
+    // Matches the paths used in grid-community-modules/all-modules/generate-code-reference-files.js
     const INTERFACE_GLOBS = [
-        '../../community-modules/core/src/ts/**/*.ts',
-        '../../enterprise-modules/set-filter/src/**/*.ts',
-        '../../enterprise-modules/filter-tool-panel/src/**/*.ts',
-        '../../enterprise-modules/multi-filter/src/**/*.ts',
-        '../../community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts',
-        '../../community-modules/react/src/shared/**/*.ts',
-        '../../charts-packages/ag-charts-community/src/**/*.ts',
+        '../../grid-community-modules/core/src/ts/**/*.ts',
+        '../../grid-enterprise-modules/set-filter/src/**/*.ts',
+        '../../grid-enterprise-modules/filter-tool-panel/src/**/*.ts',
+        '../../grid-enterprise-modules/multi-filter/src/**/*.ts',
+        '../../grid-community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts',
+        '../../grid-community-modules/react/src/shared/**/*.ts',
+        '../../charts-community-modules/ag-charts-community/src/**/*.ts',
     ];
 
     const ignoredFolders = [...defaultIgnoreFolders];
@@ -715,7 +715,7 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
 };
 
 const readModulesState = () => {
-    const moduleRootNames = ['grid-packages', 'community-modules', 'enterprise-modules', 'charts-packages'];
+    const moduleRootNames = ['grid-packages', 'grid-community-modules', 'grid-enterprise-modules', 'charts-community-modules'];
     const exclusions = ['ag-grid-dev', 'ag-grid-docs', 'ag-grid-documentation'];
     const modulesState = {};
 

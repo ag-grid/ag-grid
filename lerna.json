@@ -1,8 +1,10 @@
 {
   "packages": [
-    "community-modules/*",
-    "enterprise-modules/*",
-    "charts-packages/*",
+    "common-modules/*",
+    "grid-community-modules/*",
+    "grid-enterprise-modules/*",
+    "charts-community-modules/*",
+    "charts-enterprise-modules/*",
     "grid-packages/*",
     "examples-charts/*",
     "examples-grid/*",

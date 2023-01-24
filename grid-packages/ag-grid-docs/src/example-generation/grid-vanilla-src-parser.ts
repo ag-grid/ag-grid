@@ -1,7 +1,7 @@
 import * as $ from 'jquery';
 import * as ts from 'typescript';
-import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
-import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
+import { Events } from '../../../../grid-community-modules/core/src/ts/eventKeys';
+import { PropertyKeys } from '../../../../grid-community-modules/core/src/ts/propertyKeys';
 import {
     extractClassDeclarations,
     extractEventHandlers,

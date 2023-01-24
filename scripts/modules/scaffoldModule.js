@@ -35,7 +35,7 @@ const main = async () => {
     const answers = await getRequiredInputs();
 
     const moduleName = `${answers.enterprise ? '@ag-grid-enterprise' : '@ag-grid-community'}/${answers.packageName}`;
-    const moduleDirName = `${answers.enterprise ? 'enterprise-modules' : 'community-modules'}/${answers.packageName}`;
+    const moduleDirName = `${answers.enterprise ? 'grid-enterprise-modules' : 'grid-community-modules'}/${answers.packageName}`;
     if(fs.existsSync(`./${moduleDirName}`)) {
         console.error(`!! ${moduleDirName} already exists - exiting.`);
         process.exit(1);
