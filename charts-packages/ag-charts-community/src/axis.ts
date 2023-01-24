@@ -1037,20 +1037,21 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const logScale = scale instanceof LogScale;
 
-        return label.formatter
-            ? label.formatter({
-                  value: fractionDigits >= 0 ? datum : String(datum),
-                  index,
-                  fractionDigits,
-                  formatter: labelFormatter,
-              })
-            : labelFormatter
-            ? labelFormatter(datum)
-            : !logScale && typeof datum === 'number' && fractionDigits >= 0
-            ? // the `datum` is a floating point number
-              datum.toFixed(fractionDigits)
-            : // the`datum` is an integer, a string or an object
-              String(datum);
+        if (label.formatter) {
+            return label.formatter({
+                value: fractionDigits >= 0 ? datum : String(datum),
+                index,
+                fractionDigits,
+                formatter: labelFormatter,
+            });
+        } else if (labelFormatter) {
+            return labelFormatter(datum);
+        } else if (!logScale && typeof datum === 'number' && fractionDigits >= 0) {
+            // the `datum` is a floating point number
+            return datum.toFixed(fractionDigits);
+        }
+        // The axis is using a logScale or the`datum` is an integer, a string or an object
+        return String(datum);
     }
 
     // For formatting arbitrary values between the ticks.
