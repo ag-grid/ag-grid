@@ -3,6 +3,7 @@ import './style-guide.scss';
 
 import { Typography } from './typography';
 import { Color } from './color';
+import { Sizes } from './sizes';
 import { TextElements } from './textElements';
 import { Buttons } from './buttons';
 import { Form } from './form';
@@ -35,6 +36,11 @@ const SECTIONS: SectionGroup[] = [
                 content: <Color />
             },
         ]
+    },
+    {
+        id: 'sizes',
+        name: 'Sizes',
+        content: <Sizes />
     },
     {
         groupName: 'HTML Elements',

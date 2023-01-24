@@ -58,12 +58,29 @@
     }
   }
 
-  .text-elements-list {
+  .text-elements-list,
+  .size-examples-list {
     display: flex;
     flex-wrap: wrap;
 
-    p {
+    p,
+    > div {
         min-width: 20%;
     }
+  }
+
+  .size-example {
+    height: var(--size-example-size);
+    width: var(--size-example-size);
+    border-radius: var(--border-radius);
+    background-color: var(--ag-grid-dark-blue);
+
+    &.size-half { --size-example-size: #{$size-half}; }
+    &.size-1 { --size-example-size: #{$size-1}; }
+    &.size-2 { --size-example-size: #{$size-2}; }
+    &.size-3 { --size-example-size: #{$size-3}; }
+    &.size-4 { --size-example-size: #{$size-4}; }
+    &.size-5 { --size-example-size: #{$size-5}; }
+    &.size-6 { --size-example-size: #{$size-6}; }
   }
 }
