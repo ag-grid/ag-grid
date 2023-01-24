@@ -2,6 +2,8 @@
 
 .ag-styles {
   @include design-system-styles();
+
+  color: var(--text-color); // Needed as we can't set styles for <html> yet
 }
 
 .ag-styles .style-guide {
