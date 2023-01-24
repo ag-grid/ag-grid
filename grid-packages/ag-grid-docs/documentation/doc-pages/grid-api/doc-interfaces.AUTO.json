@@ -14913,7 +14913,7 @@
       }
     },
     "setData": {
-      "description": "/** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. \n    */",
+      "description": "/** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.\n     */",
       "type": {
         "arguments": { "data": "TData" },
         "returnType": "void",
@@ -14921,7 +14921,7 @@
       }
     },
     "updateData": {
-      "description": "/** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.\n    */",
+      "description": "/** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.\n     */",
       "type": {
         "arguments": { "data": "TData" },
         "returnType": "void",
@@ -14929,7 +14929,7 @@
       }
     },
     "setDataValue": {
-      "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode. \n     *\n     * @param colKey The column where the value should be updated.\n     * @param newValue The new value.\n     * @param eventSource The source of the event, optional.\n     * @returns `true` if the value was changed, otherwise `false`.\n     */",
+      "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode.\n     *\n     * @param colKey The column where the value should be updated\n     * @param newValue The new value\n     * @param eventSource The source of the event\n     * @returns `True` if the value was changed, otherwise `False`.\n     */",
       "type": {
         "arguments": {
           "colKey": "string | Column",

@@ -13,7 +13,7 @@ import { getAllKeysInObjects } from "../utils/object";
 import { Column } from "./column";
 import { IsFullWidthRowParams } from "../interfaces/iCallbackParams";
 import { CellChangedEvent, DataChangedEvent, IRowNode, RowHighlightPosition, RowNodeEvent, RowNodeEventType, RowPinnedType, SetSelectedParams } from "../interfaces/iRowNode";
-import { CellEditRequestEvent } from "../main";
+import { CellEditRequestEvent } from "../events";
 
 export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
@@ -237,7 +237,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.beans = beans;
     }
 
-    /** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. 
+    /**
+     * Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
      */
     public setData(data: TData): void {
         this.setDataCommon(data, false);
@@ -249,7 +250,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
     // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
 
-    /** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
+    /**
+     * Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
      */
     public updateData(data: TData): void {
         this.setDataCommon(data, true);
@@ -676,7 +678,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     /**
      * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
-     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode. 
+     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode.
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value

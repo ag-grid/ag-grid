@@ -10,8 +10,7 @@ import {
     CellEvent,
     CellFocusedEvent,
     Events,
-    FlashCellsEvent,
-    CellEditRequestEvent
+    FlashCellsEvent
 } from "../../events";
 import { CellRangeFeature } from "./cellRangeFeature";
 import { exists, makeNull } from "../../utils/generic";

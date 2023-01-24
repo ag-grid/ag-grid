@@ -229,23 +229,25 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      */
     setRowHeight(rowHeight: number | undefined | null, estimated?: boolean): void
 
-    /** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. 
-    */
+    /**
+     * Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
+     */
     setData(data: TData): void;
 
-    /** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
-    */
+    /**
+     * Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
+     */
     updateData(data: TData): void;
 
     /**
      * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
-     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode. 
+     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode.
      *
-     * @param colKey The column where the value should be updated.
-     * @param newValue The new value.
-     * @param eventSource The source of the event, optional.
-     * @returns `true` if the value was changed, otherwise `false`.
+     * @param colKey The column where the value should be updated
+     * @param newValue The new value
+     * @param eventSource The source of the event
+     * @returns `True` if the value was changed, otherwise `False`.
      */
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;
 
