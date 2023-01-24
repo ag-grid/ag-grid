@@ -30,6 +30,10 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     const codeLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/doc-interfaces.AUTO.json`);
     const htmlLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/doc-interfaces.HTML.json`);
 
+    for (const ignoreName of config.suppressTypes ?? []) {
+        delete interfaceLookup[ignoreName];
+    }
+
     const lookups = { codeLookup: codeLookup[interfacename], interfaces: interfaceLookup, htmlLookup: htmlLookup[interfacename] };
     let hideHeader = true;
     if (config.hideHeader !== undefined) {
@@ -38,7 +42,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     if (config.sortAlphabetically !== undefined) {
         config.sortAlphabetically = String(config.sortAlphabetically).toLowerCase() == 'true';
     }
-    config = { ...config, lookups, codeSrcProvided, hideHeader };
+    config = { ...config, lookupRoot, lookups, codeSrcProvided, hideHeader };
 
     const li = interfaceLookup[interfacename];
 
@@ -155,9 +159,14 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
             config = { ...config, suppressMissingPropCheck: true }
         }
     })
-    const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
+
+    const { lookupRoot = 'grid-api' } = config;
+    const interfaceLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/interfaces.AUTO.json`);
     const lookups = { codeLookup, interfaces: interfaceLookup };
-    config = { ...config, lookups, codeSrcProvided }
+    for (const ignoreName of config.suppressTypes ?? []) {
+        delete interfaceLookup[ignoreName];
+    }
+    config = { ...config, lookupRoot, lookups, codeSrcProvided }
 
     if (section == null) {
         const properties: DocEntryMap = mergeObjects(propertiesFromFiles);

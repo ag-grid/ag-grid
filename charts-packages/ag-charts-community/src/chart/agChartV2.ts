@@ -73,13 +73,13 @@ type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgTreemapSeriesOptions
     : never;
 
-type DownloadOptions = {
+export interface DownloadOptions {
     width?: number;
     height?: number;
     fileName?: string;
     /** The standard MIME type for the image format to return. If you do not specify this parameter, the default value is a PNG format image. See `Canvas.toDataURL()` */
     fileFormat?: string;
-};
+}
 
 function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian' | 'polar' | 'hierarchy' {
     if (isAgCartesianChartOptions(options)) {

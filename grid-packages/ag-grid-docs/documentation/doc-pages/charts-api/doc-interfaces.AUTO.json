@@ -4528,7 +4528,15 @@
   "ChartType": {},
   "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
   "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
-  "DownloadOptions": {},
+  "DownloadOptions": {
+    "width": { "type": { "returnType": "number", "optional": true } },
+    "height": { "type": { "returnType": "number", "optional": true } },
+    "fileName": { "type": { "returnType": "string", "optional": true } },
+    "fileFormat": {
+      "description": "/** The standard MIME type for the image format to return. If you do not specify this parameter, the default value is a PNG format image. See `Canvas.toDataURL()` */",
+      "type": { "returnType": "string", "optional": true }
+    }
+  },
   "DeepPartialDepth": {},
   "DeepPartial": { "meta": { "typeParams": ["T"] } },
   "AgChart": {
