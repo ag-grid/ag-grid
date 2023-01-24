@@ -18,10 +18,6 @@
 	path = examples-charts/ag-charts-vue-example
 	url = https://github.com/ag-grid/ag-charts-vue-example.git
 	branch = latest
-[submodule "charts-community-modules/ag-charts-polymer-example"]
-	path = examples-charts/ag-charts-polymer-example
-	url = https://github.com/ag-grid/ag-charts-polymer-example.git
-	branch = latest
 [submodule "charts-community-modules/ag-charts-angular-example"]
 	path = examples-charts/ag-charts-angular-example
 	url = https://github.com/ag-grid/ag-charts-angular-example.git
@@ -71,3 +67,6 @@
 [submodule "charts-enterprise-modules/ag-charts-enterprise"]
 	path = charts-enterprise-modules/ag-charts-enterprise
 	url = https://github.com/ag-grid/ag-charts-enterprise.git
+[submodule "examples-charts/ag-charts-enterprise-example"]
+	path = examples-charts/ag-charts-enterprise-example
+	url = https://github.com/ag-grid/ag-charts-enterprise-example.git
