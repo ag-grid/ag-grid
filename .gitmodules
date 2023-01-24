@@ -65,3 +65,9 @@
 [submodule "examples-grid/ag-grid-solid-package-example"]
 	path = examples-grid/ag-grid-solid-package-example
 	url = https://github.com/ag-grid/ag-grid-solid-package-example.git
+[submodule "common-modules/license"]
+	path = common-modules/license
+	url = https://github.com/ag-grid/license.git
+[submodule "charts-enterprise-modules/ag-charts-enterprise"]
+	path = charts-enterprise-modules/ag-charts-enterprise
+	url = https://github.com/ag-grid/ag-charts-enterprise.git
