@@ -7,11 +7,13 @@ const getModuleDirNames = (type, postfix = '-modules') => fs.readdirSync(path.re
 
 const flattenArray = array => [].concat.apply([], array);
 
-const mapToBarrelledScopes = (barrelName, moduleDirNames) => flattenArray(moduleDirNames.map(moduleDirName => ['--scope', `@ag-grid-${barrelName}/${moduleDirName}`]));
+const mapToBarrelledScopes = (barrelName, moduleDirNames) => flattenArray(moduleDirNames.map(moduleDirName => ['--scope', `@ag-${barrelName}/${moduleDirName}`]));
 const mapToScopes = (rootDirectory, moduleDirNames) => flattenArray(moduleDirNames.map(moduleDirName => ['--scope', require(`${rootDirectory}/${moduleDirName}/package.json`).name]));
+const mapToCommonScopes = (rootDirectory, moduleDirNames) => flattenArray(moduleDirNames.map(moduleDirName => ['--scope', require(`${rootDirectory}/${moduleDirName}/package.json`).name]));
 
 const getScopeForBarrelledModules = rootDirectories => flattenArray(rootDirectories.map(rootDirectory => mapToBarrelledScopes(rootDirectory.replace('../../', ''), getModuleDirNames(rootDirectory))));
 const getScopeForModules = rootDirectory => mapToScopes(rootDirectory, getModuleDirNames(rootDirectory, ''));
+const getCommonScopeForModules = rootDirectory => mapToCommonScopes(rootDirectory, getModuleDirNames(rootDirectory, ''));
 
 const executeLernaCommand = (arguments) => {
     if (docsLock.isLocked()) {
@@ -37,10 +39,10 @@ const executeLernaCommand = (arguments) => {
 };
 
 
-const getCommunityScopes = () => flattenArray(getScopeForBarrelledModules(['../../community']));
-const getEnterpriseScopes = () => flattenArray(getScopeForBarrelledModules(['../../enterprise']));
-const getModuleScopes = () => flattenArray(getScopeForBarrelledModules(['../../community', '../../enterprise']));
-const getChartsModuleScopes = () => flattenArray(getScopeForModules('../../charts-community-modules'));
+const getCommunityScopes = () => flattenArray(getScopeForBarrelledModules(['../../common', '../../grid-community']));
+const getEnterpriseScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-enterprise']));
+const getModuleScopes = () => flattenArray(getScopeForModules('../../common-modules').concat(getScopeForBarrelledModules(['../../grid-community', '../../grid-enterprise'])));
+const getChartsModuleScopes = () => flattenArray(getScopeForModules('../../common-modules').concat(getScopeForModules('../../charts-community-modules')).concat(getScopeForModules('../../charts-enterprise-modules')))
 
 module.exports.cleanCommunityModules = () => executeLernaCommand(['clean', '--yes', getCommunityScopes()]);
 module.exports.cleanEnterpriseModules = () => executeLernaCommand(['clean', '--yes', getEnterpriseScopes()]);

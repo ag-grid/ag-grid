@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 git checkout HEAD -- .gitignore
+git reset common-modules/license/dist
 git reset grid-packages/ag-grid-vue/lib/main.d.ts
 git reset grid-packages/ag-grid-vue/lib/main.js
 git reset grid-packages/ag-grid-vue/main.d.ts
@@ -69,6 +70,7 @@ git reset charts-community-modules/ag-charts-vue/lib
 git reset charts-community-modules/ag-charts-vue/dist
 git reset charts-community-modules/ag-charts-vue3/lib
 git reset charts-community-modules/ag-charts-vue3/dist
+git reset charts-enterprise-modules/ag-charts-enterprise/dist
 git reset grid-community-modules/vue/lib
 
 git reset grid-community-modules/all-modules/styles
