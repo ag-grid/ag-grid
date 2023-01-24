@@ -19,7 +19,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
     editable: true,
   },
   getRowId: (params: GetRowIdParams) => params.data.id,
-  readOnlyEdit: true,
+  readOnlyGrid: true,
   onCellEditRequest: onCellEditRequest
 }
 

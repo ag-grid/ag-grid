@@ -8,7 +8,7 @@ This page discusses alternatives to this approach.
 
 [Value Setters](/value-setters/#value-setter) provides an alternative to using `field` for setting the data. Use `valueSetter` if you want the grid to manage the data (ie update the data inline) but you want to update in a way other than using `field`. This is useful if you are not using `field`, or somehow need to manipulate the data in another way (e.g. the data item isn't a simple key / value pair map, but contains a more complex structure).
 
-[Read Only Edit](/value-setters/#read-only-edit) stops the grid from updating data, and relies on the application to make the update after the edit is complete. Use this if you want to manage the grid data state externally, such as in a Redux store.
+[Read Only Grid](/value-setters/#read-only-grid) stops the grid from updating data, and relies on the application to make the update after the edit is complete. Use this if you want to manage the grid data state externally, such as in a Redux store.
 
 ## Value Setter
 
@@ -54,14 +54,14 @@ the following:
 
 <grid-example title='Value Setters' name='example-setters' type='generated'></grid-example>
 
-## Read Only Edit
+## Read Only Grid
 
-Read Only Edit is a mode in the grid whereby Cell Editing will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request. To enable this mode, set the grid property `readOnlyEdit=true`.
+Read Only is a mode in the grid whereby Cell Editing will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request. To enable this mode, set the grid property `readOnlyGrid=true`.
 
 [[only-javascript]]
 |```ts
 |const gridOptions = {
-|    readOnlyEdit: true,
+|    readOnlyGrid: true,
 |    onCellEditRequest: event => {
 |        console.log('Cell Editing updated a cell, but the grid did nothing!');
 |        // the application should update the data somehow
@@ -72,7 +72,7 @@ Read Only Edit is a mode in the grid whereby Cell Editing will not update the da
 [[only-angular]]
 |```ts
 |<ag-grid-angular
-|    [readOnlyEdit]="true"
+|    [readOnlyGrid]="true"
 |    (cellEditRequest)="onCellEditRequest($event)"
 |    /* other grid options ... */>
 |</ag-grid-angular>
@@ -86,20 +86,20 @@ Read Only Edit is a mode in the grid whereby Cell Editing will not update the da
 
 [[only-react]]
 |```jsx
-|const readOnlyEdit = true;
+|const readOnlyGrid = true;
 |const onCellEditRequest = event => {
 |    console.log('Cell Editing updated a cell, but the grid did nothing!');
 |    // the application should update the data somehow
 |};
 |
-|<AgGridReact readOnlyEdit={readOnlyEdit} onCellEditRequest={onCellEditRequest}></AgGridReact>
+|<AgGridReact readOnlyGrid={readOnlyGrid} onCellEditRequest={onCellEditRequest}></AgGridReact>
 |```
 
 
 [[only-vue]]
 |```ts
 |<ag-grid-vue
-|    :readOnlyEdit="true"
+|    :readOnlyGrid="true"
 |    @cell-edit-request="onCellEditRequest"
 |    /* other grid options ... */>
 |</ag-grid-vue>
@@ -110,17 +110,17 @@ Read Only Edit is a mode in the grid whereby Cell Editing will not update the da
 |};
 |```
 
-The example below has Cell Editing enabled, however the editing does nothing because `readOnlyEdit=true` is set. The application listens for `cellEditRequest` event and prints to the console. As the application does not try to update the data, the cell keeps its old value, giving the impression that editing is not working.
+The example below has Cell Editing enabled, however the editing does nothing because `readOnlyGrid=true` is set. The application listens for `cellEditRequest` event and prints to the console. As the application does not try to update the data, the cell keeps its old value, giving the impression that editing is not working.
 
-<grid-example title='Read Only Edit - Not Implemented' name='read-only' type='generated' options='{"exampleHeight": 350}'></grid-example>
+<grid-example title='Read Only Grid - Not Implemented' name='read-only' type='generated' options='{"exampleHeight": 350}'></grid-example>
 
 This next example extends the above by getting the application to update the data.
 
 1. The application listens for `cellEditRequest` and updates the Row Data.
 1. The Row Data has ID's and `getRowId` is implemented. This allows the grid to only refresh the desired row after new Row Data is set.
 
-<grid-example title='Read Only Edit - Row Data' name='read-only-row-data' type='generated'></grid-example>
+<grid-example title='Read Only Grid - Row Data' name='read-only-row-data' type='generated'></grid-example>
 
 This final example is similar to before, except it uses Transactions to update the data after the edit rather than updating the whole Row Data.
 
-<grid-example title='Read Only Edit - Transactions' name='read-only-transactions' type='generated'></grid-example>
+<grid-example title='Read Only Grid - Transactions' name='read-only-transactions' type='generated'></grid-example>

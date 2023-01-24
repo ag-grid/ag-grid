@@ -426,11 +426,6 @@ export class CellCtrl extends BeanStub {
     private saveNewValue(oldValue: any, newValue: any): boolean {
         if (newValue === oldValue) { return false; }
 
-        if (this.beans.gridOptionsService.is('readOnlyEdit')) {
-            this.dispatchEventForSaveValueReadOnly(oldValue, newValue);
-            return false;
-        }
-
         // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
         // getting triggered, which results in all cells getting refreshed. we do not want this refresh
         // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
@@ -440,28 +435,6 @@ export class CellCtrl extends BeanStub {
         this.suppressRefreshCell = false;
 
         return valueChanged;
-    }
-
-    private dispatchEventForSaveValueReadOnly(oldValue: any, newValue: any): void {
-        const rowNode = this.rowNode;
-        const event: CellEditRequestEvent = {
-            type: Events.EVENT_CELL_EDIT_REQUEST,
-            event: null,
-            rowIndex: rowNode.rowIndex!,
-            rowPinned: rowNode.rowPinned,
-            column: this.column,
-            api: this.beans.gridApi,
-            columnApi: this.beans.columnApi,
-            colDef: this.column.getColDef(),
-            context: this.beans.gridOptionsService.get('context'),
-            data: rowNode.data,
-            node: rowNode,
-            oldValue,
-            newValue,
-            value: newValue,
-            source: undefined
-        };
-        this.beans.eventService.dispatchEvent(event);
     }
 
     /**

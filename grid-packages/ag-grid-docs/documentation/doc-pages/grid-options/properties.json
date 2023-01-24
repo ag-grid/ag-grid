@@ -259,10 +259,10 @@
             }
         },
         "undoRedoCellEditingLimit": {},
-        "readOnlyEdit": {
+        "readOnlyGrid": {
             "more": {
-                "name": "Read Only Edit",
-                "url": "/value-setters/#read-only-edit/"
+                "name": "Read Only Grid",
+                "url": "/value-setters/#read-only-grid"
             }
         }
     },

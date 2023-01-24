@@ -2548,7 +2548,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** @deprecated As of v29.1, use `readonlyGrid`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "readOnlyGrid": {
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -4060,7 +4064,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when doing `readOnlyGrid=true`, ie `readOnlyGrid=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -4069,7 +4073,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when doing `readOnlyGrid=true`, ie `readOnlyGrid=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -14913,7 +14917,7 @@
       }
     },
     "setData": {
-      "description": "/** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */",
+      "description": "/** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. \n    */",
       "type": {
         "arguments": { "data": "TData" },
         "returnType": "void",
@@ -14921,7 +14925,7 @@
       }
     },
     "updateData": {
-      "description": "/** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */",
+      "description": "/** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.\n    */",
       "type": {
         "arguments": { "data": "TData" },
         "returnType": "void",
@@ -14929,7 +14933,7 @@
       }
     },
     "setDataValue": {
-      "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     *\n     * @param colKey The column where the value should be updated.\n     * @param newValue The new value.\n     * @param eventSource The source of the event, optional.\n     * @returns `true` if the value was changed, otherwise `false`.\n     */",
+      "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode. \n     *\n     * @param colKey The column where the value should be updated.\n     * @param newValue The new value.\n     * @param eventSource The source of the event, optional.\n     * @returns `true` if the value was changed, otherwise `false`.\n     */",
       "type": {
         "arguments": {
           "colKey": "string | Column",
@@ -20419,7 +20423,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** @deprecated As of v29.1, use `readonlyGrid`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "readOnlyGrid": {
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -21931,7 +21939,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when doing `readOnlyGrid=true`, ie `readOnlyGrid=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -21940,7 +21948,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when doing `readOnlyGrid=true`, ie `readOnlyGrid=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -23141,7 +23149,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** @deprecated As of v29.1, use `readonlyGrid`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "readOnlyGrid": {
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -24653,7 +24665,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when doing `readOnlyGrid=true`, ie `readOnlyGrid=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -24662,7 +24674,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when doing `readOnlyGrid=true`, ie `readOnlyGrid=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -25869,7 +25881,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** @deprecated As of v29.1, use `readonlyGrid`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "readOnlyGrid": {
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -27381,7 +27397,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when doing `readOnlyGrid=true`, ie `readOnlyGrid=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -27390,7 +27406,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when doing `readOnlyGrid=true`, ie `readOnlyGrid=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
