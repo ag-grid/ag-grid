@@ -1,0 +1,8 @@
+@use 'core' as *;
+
+// Export colors for JavaScript
+:export {
+    @each $key, $value in $abstract-colors {
+        #{unquote($key)}: $value;
+    }
+}
