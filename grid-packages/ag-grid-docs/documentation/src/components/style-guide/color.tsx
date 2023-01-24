@@ -70,29 +70,60 @@ function hexToHSL(hex) {
     return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
+const colorGroups = {
+    Brand: ['ag-grid-dark-blue', 'ag-grid-aqua', 'ag-grid-orange', 'ag-grid-red'],
+    Blues: ['dark-cerulean-blue', 'medium-electric-blue', 'azure-blue', 'sky-blue', 'water-blue', 'ghost-blue'],
+    Grays: [
+        'black',
+        'dark-gunmetal-gray',
+        'auro-metal',
+        'ag-grid-grey',
+        'dull-light-gray',
+        'light-gray',
+        'platinum-gray',
+        'ghost-white',
+        'white',
+    ],
+    Other: ['cerise-pink'],
+};
+
+const ColorSwatch = ({ id, hexColor }) => {
+    return (
+        <li className={styles.swatch}>
+            <div
+                className={classnames(styles.color, isLight(hexColor) ? styles['color--light'] : '')}
+                style={{
+                    backgroundColor: hexColor,
+                }}
+            ></div>
+            <p className={styles.name}>{formatName(id)}</p>
+            <p className={styles.cssName}>
+                <code>--{id}</code>
+            </p>
+
+            <p className={styles.hexColor}>{hexColor}</p>
+            <p className={styles.hslColor}>{hexToHSL(hexColor)}</p>
+        </li>
+    );
+};
+
 export const Color = () => {
     const colors = Object.keys(designSystemColors);
 
     return (
         <div className={styles.swatches}>
-            {colors.map((key) => {
-                const hexColor = designSystemColors[key];
-                return (
-                    <div className={styles.swatch}>
-                        <div
-                            className={classnames(styles.color, isLight(hexColor) ? styles['color--light'] : '')}
-                            style={{
-                                backgroundColor: hexColor,
-                            }}
-                        ></div>
-                        <p className={styles.name}>{formatName(key)}</p>
-                        <p className={styles.cssName}>
-                            <code>--{key}</code>
-                        </p>
+            {Object.keys(colorGroups).map((groupName) => {
+                const groupColors = colorGroups[groupName];
 
-                        <p className={styles.hexColor}>{hexColor}</p>
-                        <p className={styles.hslColor}>{hexToHSL(hexColor)}</p>
-                    </div>
+                return (
+                    <>
+                        <h3>{groupName}</h3>
+                        <ul className={classnames('list-style-none', styles.colorGroup)}>
+                            {groupColors.map((key) => {
+                                return <ColorSwatch id={key} hexColor={designSystemColors[key]} />;
+                            })}
+                        </ul>
+                    </>
                 );
             })}
         </div>

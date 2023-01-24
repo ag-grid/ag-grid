@@ -3,34 +3,39 @@
 $colorFlowBreakpoint: 1050px;
 
 .swatches {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: $size-4;
+    display: flex;
+    flex-direction: column;
+    gap: $size-2;
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: $size-1;
+    }
+
+    p {
+    }
 }
 
 .swatch {
     display: grid;
+    grid-template-columns: 100px 1fr 1fr;
+    gap: 0 $size-2;
     grid-template-areas:
-        'color'
-        'name'
-        'sassName'
-        'hexColor'
-        'hslColor';
-    flex-direction: column;
+        'color name name'
+        'color sassName sassName'
+        'color hexColor hslColor';
 
     @media (min-width: $colorFlowBreakpoint) {
         grid-template-areas:
-            'color color'
-            'name name'
-            'sassName sassName'
-            'hexColor hslColor';
+            'color name name'
+            'color sassName sassName'
+            'color hexColor hslColor';
     }
 }
 
 .color {
     grid-area: color;
-    width: 100%;
-    height: 50px;
     border-radius: var(--border-radius);
 }
 
@@ -54,6 +59,7 @@ $colorFlowBreakpoint: 1050px;
 .hexColor,
 .hslColor {
     composes: font-size-extra-small monospace-text from global;
+    margin-bottom: $size-1 !important; // !important needed because of .ag-styles specificity
 }
 
 .hexColor {
