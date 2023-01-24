@@ -93,7 +93,7 @@ export const StyleGuide = () => {
                 <main>
                     {bodySections.map(({ id, name, content }) => {
                         return (
-                            <section id={id}>
+                            <section key={id} id={id}>
                                 <h2>{name}</h2>
                                 {content}
                             </section>
@@ -105,16 +105,16 @@ export const StyleGuide = () => {
                     <ul className="list-style-none">
                         {SECTIONS.map(({ groupName, children }) => {
                             return (
-                                <>
+                                <React.Fragment key={groupName}>
                                     <li className="group-name">{groupName}</li>
                                     {children.map(({ id, name }) => {
                                         return (
-                                            <li>
+                                            <li key={id}>
                                                 <a href={`#${id}`}>{name}</a>
                                             </li>
                                         );
                                     })}
-                                </>
+                                </React.Fragment>
                             );
                         })}
                     </ul>
