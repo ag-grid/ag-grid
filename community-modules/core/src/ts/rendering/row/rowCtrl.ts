@@ -74,8 +74,6 @@ export class RowCtrl extends BeanStub {
 
     private rowType: RowType;
 
-    private rowComp: IRowComp | undefined;
-
     private leftGui: RowGui | undefined;
     private centerGui: RowGui;
     private rightGui: RowGui | undefined;
@@ -173,7 +171,6 @@ export class RowCtrl extends BeanStub {
     public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
         const gui: RowGui = { rowComp, element, containerType };
         this.allRowGuis.push(gui);
-        this.rowComp = rowComp;
 
         if (containerType === RowContainerType.LEFT) {
             this.leftGui = gui;
@@ -196,8 +193,6 @@ export class RowCtrl extends BeanStub {
     }
 
     public unsetComp(containerType: RowContainerType): void {
-        this.rowComp = undefined;
-
         this.allRowGuis = this.allRowGuis
             .filter(rowGui => rowGui.containerType !== containerType);
 
@@ -373,8 +368,8 @@ export class RowCtrl extends BeanStub {
         return this.printLayout;
     }
 
-    public getRowComp() {
-        return this.rowComp;
+    public getFullWidthCellRenderer(): ICellRenderer<any> | null | undefined {
+        return this.fullWidthGui?.rowComp?.getFullWidthCellRenderer();
     }
 
     // use by autoWidthCalculator, as it clones the elements
