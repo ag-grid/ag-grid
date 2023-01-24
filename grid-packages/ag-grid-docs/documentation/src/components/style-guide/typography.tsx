@@ -28,7 +28,7 @@ export const Typography = () => {
 
                 <div>
                     <p className="item-label">
-                        <span>Font size extra:</span>
+                        <span>Font weight bold:</span>
                         <code>.bold-text</code>
                     </p>
                     <p className="font-size-large bold-text">600</p>
@@ -36,7 +36,7 @@ export const Typography = () => {
             </div>
 
             <p className="item-label">
-                <span>font-size-extra-small</span>
+                <span>font size extra small</span>
                 <code>.font-size-extra-small</code>
             </p>
             <p className="font-size-extra-small max-text-length">
@@ -46,7 +46,7 @@ export const Typography = () => {
             </p>
 
             <p className="item-label">
-                <span>font-size-small</span>
+                <span>font size small</span>
                 <code>.font-size-small</code>
             </p>
             <p className="font-size-small max-text-length">
@@ -56,7 +56,7 @@ export const Typography = () => {
             </p>
 
             <p className="item-label">
-                <span>font-size-medium</span>
+                <span>font size medium</span>
                 <code>.font-size-medium</code>
             </p>
             <p className="font-size-medium max-text-length">
@@ -66,7 +66,7 @@ export const Typography = () => {
             </p>
 
             <p className="item-label">
-                <span>font-size-large</span>
+                <span>font size large</span>
                 <code>.font-size-large</code>
             </p>
             <p className="font-size-large max-text-length">
@@ -76,7 +76,7 @@ export const Typography = () => {
             </p>
 
             <p className="item-label">
-                <span>font-size-extra-large</span>
+                <span>font size extra large</span>
                 <code>.font-size-extra-large</code>
             </p>
             <p className="font-size-extra-large max-text-length">
@@ -85,7 +85,7 @@ export const Typography = () => {
             </p>
 
             <p className="item-label">
-                <span>font-size-massive</span>
+                <span>font size massive</span>
                 <code>.font-size-massive</code>
             </p>
             <p className="font-size-massive max-text-length">
@@ -93,7 +93,7 @@ export const Typography = () => {
             </p>
 
             <p className="item-label">
-                <span>font-size-gigantic</span>
+                <span>font size gigantic</span>
                 <code>.font-size-gigantic</code>
             </p>
             <p className="font-size-gigantic ">Sunt velit sed et. Quo recusandae dolores error saepe dolores.</p>

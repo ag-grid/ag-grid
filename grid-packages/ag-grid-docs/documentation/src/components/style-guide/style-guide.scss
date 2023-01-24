@@ -3,6 +3,11 @@
 .ag-styles {
     @include design-system-styles();
 
+    font-family: var(--font-family); // Needed as we can't set styles for <html> yet
+    font-size: var(--font-size); // Needed as we can't set styles for <html> yet
+    line-height: var(--line-height); // Needed as we can't set styles for <html> yet
+    font-weight: var(--font-weight); // Needed as we can't set styles for <html> yet
+
     color: var(--text-color); // Needed as we can't set styles for <html> yet
 }
 

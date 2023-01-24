@@ -65,13 +65,11 @@ h6,
 b,
 strong,
 .bold-text {
-    --font-weight: #{$font-weight-bold};
-
-    font-weight: var(--font-weight);
+    font-weight: var(--font-weight-bold);
 }
 
 .normal-weight-text {
-    --font-weight: var(--font-weight-bold);
+    --font-weight: var(--font-weight);
 }
 
 .monospace-text {
