@@ -40,6 +40,7 @@ import {
     AgTooltipRendererResult,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
+import { LogAxis } from '../../axis/logAxis';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -372,6 +373,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             // set the yMin and yMax based on cumulative sum of normalized values
             yMin = (yMin ?? 0) < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
             yMax = (yMax ?? 0) > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
+        }
+
+        const isLogAxis = yAxis instanceof LogAxis;
+        if (yMin === undefined && isLogAxis) {
+            yMin = extent(yData[0])?.[0];
         }
 
         this.yDomain = this.fixNumericExtent(
