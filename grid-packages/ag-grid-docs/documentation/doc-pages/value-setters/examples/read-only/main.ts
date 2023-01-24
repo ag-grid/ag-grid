@@ -18,7 +18,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 100,
     editable: true,
   },
-  readOnlyGrid: true,
+  readOnlyEdit: true,
   onCellEditRequest: onCellEditRequest
 }
 

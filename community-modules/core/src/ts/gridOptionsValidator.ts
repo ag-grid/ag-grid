@@ -163,7 +163,6 @@ export class GridOptionsValidator {
     }
 
     private deprecatedProperties: DeprecatedReference<GridOptions> = {
-        readOnlyEdit: { version: '29.1', copyToNewProp: true, newPropValue: 'readOnlyGrid' },
         serverSideInfiniteScroll: { version: '29', message: 'Infinite Scrolling is now the default behaviour. This can be suppressed with `suppressServerSideInfiniteScroll`.' },
         rememberGroupStateWhenNewData: { version: '24', message: 'Now that transaction updates are possible and they keep group state, this feature is no longer needed.' },
 

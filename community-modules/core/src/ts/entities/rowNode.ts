@@ -690,7 +690,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const column = this.beans.columnModel.getPrimaryColumn(colKey)!;
         const oldValue = this.beans.valueService.getValue(column, this);
 
-        if (this.beans.gridOptionsService.is('readOnlyGrid')) {
+        if (this.beans.gridOptionsService.is('readOnlyEdit')) {
             this.beans.cellPositionUtils.dispatchEventForSaveValueReadOnly(this, column, oldValue, newValue);
             return false;
         }

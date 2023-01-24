@@ -225,11 +225,8 @@ export interface GridOptions<TData = any> {
     /** Set to `true` so that neither single nor double click starts editing. Default: `false` */
     suppressClickEdit?: boolean;
 
-    /** @deprecated As of v29.1, use `readonlyGrid`. */
-    readOnlyEdit?: boolean;
-
     /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */
-    readOnlyGrid?: boolean;
+    readOnlyEdit?: boolean;
 
     /**
      * Set this to `true` to stop cell editing when grid loses focus.
@@ -988,7 +985,7 @@ export interface GridOptions<TData = any> {
      *  if cell value has changed as a result of paste operation.
     */
     onCellValueChanged?(event: CellValueChangedEvent<TData>): void;
-    /** Value has changed after editing. Only fires when doing `readOnlyGrid=true`, ie `readOnlyGrid=true`. */
+    /** Value has changed after editing. Only fires when doing `readOnlyEdit=true`. */
     onCellEditRequest?(event: CellEditRequestEvent<TData>): void;
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */
     onRowValueChanged?(event: RowValueChangedEvent<TData>): void;

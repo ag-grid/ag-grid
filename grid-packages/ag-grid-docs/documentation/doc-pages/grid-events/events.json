@@ -92,8 +92,8 @@
         "cellValueChanged": {},
         "cellEditRequest": {
             "more": {
-                "name": "Read Only Grids",
-                "url": "/value-setters/#read-only-grid"
+                "name": "Read Only Edit",
+                "url": "/value-setters/#read-only-edit"
             }
         },
         "rowValueChanged": {
