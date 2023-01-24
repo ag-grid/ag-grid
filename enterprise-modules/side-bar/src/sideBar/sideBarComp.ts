@@ -229,7 +229,7 @@ export class SideBarComp extends Component implements ISideBar {
         const openToolPanelChanged = currentlyOpenedKey !== newlyOpenedKey;
         if (openToolPanelChanged) {
             this.sideBarButtonsComp.setActiveButton(key);
-            this.raiseToolPanelVisibleEvent(key);
+            this.raiseToolPanelVisibleEvent(key, currentlyOpenedKey ?? undefined);
         }
     }
 
@@ -244,10 +244,12 @@ export class SideBarComp extends Component implements ISideBar {
         return toolPanelWrapper.getToolPanelInstance();
     }
 
-    private raiseToolPanelVisibleEvent(key: string | undefined): void {
+    private raiseToolPanelVisibleEvent(key: string | undefined, previousKey: string | undefined): void {
         const event: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
             type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            source: key
+            source: key,
+            key,
+            previousKey
         };
         this.eventService.dispatchEvent(event);
     }

@@ -48,6 +48,10 @@ export interface AgGridEvent<TData = any> extends AgGridCommon<TData>, AgEvent {
 
 export interface ToolPanelVisibleChangedEvent<TData = any> extends AgGridEvent<TData> {
     source: string | undefined;
+    /** Key for tool panel that is now visible, or `undefined` if hidden  */
+    key: string | undefined;
+    /** Key for tool panel that was previously visible, or `undefined` if was hidden  */
+    previousKey: string | undefined;
 }
 
 export interface ToolPanelSizeChangedEvent<TData = any> extends AgGridEvent<TData> {

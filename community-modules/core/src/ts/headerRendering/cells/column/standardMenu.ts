@@ -69,6 +69,8 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         let hidePopup: (() => void);
 
+        const afterGuiDetached = () => filterWrapper.filterPromise?.then(filter => filter?.afterGuiDetached?.());
+
         const anchorToElement = eventSource || this.ctrlsService.getGridBodyCtrl().getGui();
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             column.setMenuVisible(false, 'contextMenu');
@@ -83,6 +85,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
                 if (focusableEl) { focusableEl.focus(); }
             }
+            afterGuiDetached();
         };
 
         const translate = this.localeService.getLocaleTextFunc();
