@@ -216,7 +216,6 @@ export class GridOptionsValidator {
         });
 
         // Manual messages and deprecation behaviour that don't fit our standard approach above.
-
         if (options.groupSuppressAutoColumn) {
             const propName = options.treeData ? 'treeDataDisplayType' : 'groupDisplayType';
 

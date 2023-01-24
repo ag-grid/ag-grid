@@ -1,6 +1,6 @@
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
-import { RowPosition } from "../entities/rowPosition";
+import { RowPosition } from "../entities/rowPositionUtils";
 import { AgGridCommon } from "./iCommon";
 import { IRowNode } from "./iRowNode";
 

@@ -1,6 +1,6 @@
 import { Column } from "../entities/column";
-import { CellPosition } from "../entities/cellPosition";
-import { RowPosition } from "../entities/rowPosition";
+import { CellPosition } from "../entities/cellPositionUtils";
+import { RowPosition } from "../entities/rowPositionUtils";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 import { RowPinnedType } from "../interfaces/iRowNode";
 

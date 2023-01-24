@@ -13,6 +13,7 @@ import { getAllKeysInObjects } from "../utils/object";
 import { Column } from "./column";
 import { IsFullWidthRowParams } from "../interfaces/iCallbackParams";
 import { CellChangedEvent, DataChangedEvent, IRowNode, RowHighlightPosition, RowNodeEvent, RowNodeEventType, RowPinnedType, SetSelectedParams } from "../interfaces/iRowNode";
+import { CellEditRequestEvent } from "../events";
 
 export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
@@ -236,7 +237,9 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.beans = beans;
     }
 
-    /** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */
+    /**
+     * Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
+     */
     public setData(data: TData): void {
         this.setDataCommon(data, false);
     }
@@ -247,7 +250,9 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
     // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
 
-    /** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */
+    /**
+     * Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
+     */
     public updateData(data: TData): void {
         this.setDataCommon(data, true);
     }
@@ -673,6 +678,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     /**
      * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
+     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode.
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value
@@ -687,11 +693,39 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const column = this.beans.columnModel.getPrimaryColumn(colKey)!;
         const oldValue = this.beans.valueService.getValue(column, this);
 
+        if (this.beans.gridOptionsService.is('readOnlyEdit')) {
+            this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue);
+            return false;
+        }
+
         const valueChanged = this.beans.valueService.setValue(this, column, newValue, eventSource);
+
         this.dispatchCellChangedEvent(column, newValue, oldValue);
         this.checkRowSelectable();
 
         return valueChanged;
+    }
+
+    private dispatchEventForSaveValueReadOnly(column: Column, oldValue: any, newValue: any, eventSource?: string): void {
+        const event: CellEditRequestEvent = {
+            type: Events.EVENT_CELL_EDIT_REQUEST,
+            event: null,
+            rowIndex: this.rowIndex!,
+            rowPinned: this.rowPinned,
+            column: column,
+            colDef: column.getColDef(),
+            context: this.beans.gridOptionsService.get('context'),
+            api: this.beans.gridOptionsService.get('api')!,
+            columnApi: this.beans.gridOptionsService.get('columnApi')!,
+            data: this.data,
+            node: this,
+            oldValue,
+            newValue,
+            value: newValue,
+            source: eventSource
+        };
+
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public setGroupValue(colKey: string | Column, newValue: any): void {

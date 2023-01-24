@@ -386,7 +386,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                     changedPath.addParentNode(rowNode.parent, [column]);
                 }
 
-                const cellId = this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
+                const { rowIndex, rowPinned } = currentRow;
+                const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
             });
 
@@ -491,7 +492,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                             changedPath.addParentNode(rowNode.parent, [column]);
                         }
 
-                        const cellId = this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
+                        const { rowIndex, rowPinned } = currentRow;
+                        const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned });
                         cellsToFlash[cellId] = true;
                     });
                 }
@@ -593,8 +595,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'));
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
-
-        const cellId = this.cellPositionUtils.createIdFromValues(rowNode.rowIndex!, column, rowNode.rowPinned);
+        
+        const { rowIndex, rowPinned } = rowNode;
+        const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex: rowIndex!, column, rowPinned });
         cellsToFlash[cellId] = true;
 
         if (changedPath) {
@@ -750,7 +753,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         while (node) {
             rowPositions.push(node);
             range.columns.forEach(column => {
-                const cellId = this.cellPositionUtils.createIdFromValues(node!.rowIndex, column, node!.rowPinned);
+                const { rowIndex, rowPinned } = node!;
+                const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
             });
             if (this.rowPositionUtils.sameRow(node, lastRow)) { break; }

@@ -152,7 +152,7 @@ The following example shows custom code to process the data from the clipboard:
 
 ### Pasting new rows at the bottom of the Grid
 
-By default, when pasting multiple rows near the last record shown in the grid, any rows exceeding the total number of rows shown in the grid will not be pasted. 
+By default, when pasting multiple rows near the last record shown in the grid, any rows exceeding the total number of rows shown in the grid will not be pasted.
 
 In order to insert all the copied rows in the grid, a custom `processDataFromClipboard` function is needed to add the necessary number of new rows using the [Transaction Update API](/data-update-transactions/#transaction-update-api).
 
@@ -164,6 +164,14 @@ The example below uses a custom `processDataFromClipboard` function to add new r
 * Notice that the `Ryan Lochte` row has been overwritten and 2 extra rows are created at the bottom of the grid to accommodate the additional 2 rows pasted
 
 <grid-example title='Paste New Rows' name='pasting-extra-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
+
+### Read Only Edit
+
+When the grid is in [Read Only Edit](/value-setters/#read-only-edit) mode the `Clipboard` will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request.
+
+The example below will show how to update cell value combining the `Clipboard` with `readOnlyEdit=true`.
+
+<grid-example title='Clipboard - ReadOnlyEdit' name='read-only-edit' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard"] }'></grid-example>
 
 ## Changing the Delimiter for Copy & Paste
 
