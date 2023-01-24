@@ -7,10 +7,10 @@ import { AgChart, AgChartInstance, AgChartOptions } from 'ag-charts-community';
     },
 })
 export class AgChartsVue extends Vue {
+    public chart?: AgChartInstance;
+
     private isCreated = false;
     private isDestroyed = false;
-
-    private chart!: AgChartInstance;
 
     private options!: AgChartOptions;
 
@@ -28,6 +28,9 @@ export class AgChartsVue extends Vue {
         });
 
         this.isCreated = true;
+
+        (this.chart as any).chart.waitForUpdate()
+            .then(() => this.$emit('onChartReady', this.chart));
     }
 
     public destroyed() {
@@ -41,7 +44,7 @@ export class AgChartsVue extends Vue {
     }
 
     private processChanges(currentValue: any, previousValue: any) {
-        if (this.isCreated) {
+        if (this.isCreated && this.chart) {
             AgChart.update(this.chart, this.applyContainerIfNotSet(this.options));
         }
     }

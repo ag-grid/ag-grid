@@ -7,6 +7,7 @@ import {toRaw} from '@vue/reactivity';
     props: {
         options: {},
     },
+    emits: ['onChartReady'],
     // watch: {
     //     options: {
     //         handler(currentValue, previousValue) {
@@ -17,10 +18,10 @@ import {toRaw} from '@vue/reactivity';
     // },
 })
 export class AgChartsVue extends Vue {
+    public chart?: AgChartInstance;
+
     private isCreated = false;
     private isDestroyed = false;
-
-    private chart!: AgChartInstance;
 
     private options!: AgChartOptions;
 
@@ -41,6 +42,9 @@ export class AgChartsVue extends Vue {
         });
 
         this.isCreated = true;
+
+        (this.chart as any).chart.waitForUpdate()
+            .then(() => this.$emit('onChartReady', this.chart!));
     }
 
     public destroyed() {
@@ -58,7 +62,7 @@ export class AgChartsVue extends Vue {
     }
 
     public processChanges(currentValue: any, previousValue: any) {
-        if (this.isCreated) {
+        if (this.isCreated && this.chart) {
             AgChart.update(this.chart, toRaw(this.applyContainerIfNotSet(toRaw(this.options))));
         }
     }
