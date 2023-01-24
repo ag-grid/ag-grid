@@ -1,14 +1,12 @@
-// Documented APIs.
-export * from './chart/agChartOptions';
-export * as time from './util/time/index';
-export { AgChart } from './chart/agChartV2';
-export { VERSION } from './version';
+import {AgChart,AgChartOptions,AgChartInstance } from 'ag-charts-community';
+import {LicenseManager} from '@ag/license';
 
-// Undocumented APIs used by examples.
-export { Marker } from './chart/marker/marker';
+export * from 'ag-charts-community';
 
-// Undocumented APIs used by Integrated Charts.
-export * as _Scene from './integrated-charts-scene';
-export * as _Theme from './integrated-charts-theme';
-export * as _Scale from './sparklines-scale';
-export * as _Util from './sparklines-util';
+export class AgEnterpriseCharts {
+    public static create(options: AgChartOptions): AgChartInstance {
+        new LicenseManager(options.container as any).validateLicense();
+
+        return AgChart.create(options);
+    }
+}
