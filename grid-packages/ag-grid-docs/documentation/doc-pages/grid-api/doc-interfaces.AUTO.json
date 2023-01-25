@@ -5987,6 +5987,10 @@
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
     },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
@@ -6035,6 +6039,10 @@
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
     },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
@@ -6081,6 +6089,10 @@
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
+    },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
@@ -6129,6 +6141,10 @@
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
     },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
@@ -6175,6 +6191,10 @@
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
+    },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
@@ -7039,6 +7059,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "meta": { "typeParams": ["TData"] },
     "api": {
       "description": "/** The grid api. */",
@@ -7079,6 +7103,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7117,6 +7145,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7161,6 +7193,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7199,6 +7235,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7242,6 +7282,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7280,6 +7324,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7320,6 +7368,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7358,6 +7410,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7398,6 +7454,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7436,6 +7496,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7476,6 +7540,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7514,6 +7582,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7560,6 +7632,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7604,6 +7680,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7650,6 +7730,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7694,6 +7778,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7740,6 +7828,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7784,6 +7876,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7830,6 +7926,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7874,6 +7974,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7920,6 +8024,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7965,6 +8073,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -8009,6 +8121,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -8067,6 +8183,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -8117,6 +8237,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -8166,6 +8290,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
