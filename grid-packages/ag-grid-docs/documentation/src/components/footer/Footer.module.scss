@@ -1,103 +1,101 @@
+@use '../../design-system/core/' as *;
+
 $two-column-breakpoint: 480px;
 $four-column-breakpoint: 760px;
 
 .footer {
-    color: $white;
-    background-color: $ag-dark-blue;
+    composes: page-margin from global;
 
-    &__wrapper {
-        composes: container-lg from global;
+    padding-top: $size-5;
+    padding-bottom: calc($size-5 * 2);
+    background-color: var(--dark-cerulean-blue);
 
-        padding-top: 40px;
-        padding-bottom: 80px;
+    // Required to deal with .ag-styles specificity
+    &:global(.ag-styles) {
+        --text-color: var(--white);
+        --link-color: var(--white);
+        --link-hover-color: var(--white);
     }
 
-    &__row {
-        @media screen and (min-width: $two-column-breakpoint) {
-            display: flex;
-            flex-wrap: wrap;
-        }
+    h4,
+    p {
+        opacity: 0.6666;
+    }
 
-        @media screen and (min-width: $four-column-breakpoint) {
-            justify-content: space-between;
-        }
+    p:first-child {
+        margin-right: $size-4;
+    }
+}
 
-        p {
-            margin-bottom: 8px;
-            font-size: 14px;
-            line-height: 1.2;
-            font-weight: 300;
-            opacity: 0.6666;
+.row {
+    @media screen and (min-width: $two-column-breakpoint) {
+        display: flex;
+        flex-wrap: wrap;
+    }
 
-            &:first-child {
-                margin-right: 32px;
-            }
+    @media screen and (min-width: $four-column-breakpoint) {
+        justify-content: space-between;
+    }
+}
+
+.menu-column {
+    // Required to deal with .ag-styles specificity
+    :global(.ag-styles) & {
+        margin-bottom: $size-5;
+    }
+
+    @media screen and (min-width: $two-column-breakpoint) and (max-width: $four-column-breakpoint) {
+        width: 50%;
+
+        &:nth-child(even) {
+            text-align: right;
         }
     }
 
-    &__links {
-        margin-bottom: 40px;
-
-        @media screen and (min-width: $two-column-breakpoint) and (max-width: $four-column-breakpoint) {
-            width: 50%;
-
-            &:nth-child(even) {
-                text-align: right;
-            }
+    @media screen and (min-width: $four-column-breakpoint) {
+        &:last-child {
+            text-align: right;
         }
+    }
 
-        @media screen and (min-width: $four-column-breakpoint) {
-            &:last-child {
-                text-align: right;
-            }
-        }
+    li {
+        overflow: hidden;
+    }
 
-        &__list {
-            padding-left: 0;
-            list-style-type: none;
-        }
+    a {
+        display: inline-block;
+        min-width: $size-6;
+        margin-top: -12px;
+        margin-bottom: -12px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        transition: text-decoration-color $default-transition-timing;
 
-        li {
-            overflow: hidden;
-        }
-
-        h4 {
-            font-size: 1rem;
-            opacity: 0.6666;
-        }
-
-        a {
-            display: inline-block;
-            min-width: 48px;
-            margin-top: -12px;
-            margin-bottom: -12px;
-            padding-top: 12px;
-            padding-bottom: 12px;
-            color: $white;
+        // Required to deal with .ag-styles specificity
+        :global(.ag-styles) & {
             text-decoration: underline;
-            text-underline-offset: 2px;
-            text-decoration-color: rgba($white, 0);
-            transition: text-decoration-color 0.25s ease-in-out;
+            text-decoration-color: transparent;
+        }
 
-            &:hover {
-                color: $white;
-                text-decoration-color: rgba($white, 1);
+        &:hover {
+            text-decoration-color: var(--white);
 
-                img {
-                    opacity: 1;
-                }
+            img {
+                opacity: 1;
             }
         }
+    }
 
-        img {
-            display: inline;
-            position: relative;
-            width: 18px;
-            height: 18px;
-            top: -1px;
-            margin-right: 4px;
-            opacity: 0.6666;
-            transition: opacity 0.25s ease-in-out;
-        }
+    img {
+        display: inline;
+        position: relative;
+        width: 18px;
+        height: 18px;
+        top: -1px;
+        margin-right: $size-half;
+        opacity: 0.6666;
+        transition: opacity $default-transition-timing;
     }
 }

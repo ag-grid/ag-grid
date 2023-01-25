@@ -4529,11 +4529,20 @@
   "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
   "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
   "DownloadOptions": {
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "fileName": { "type": { "returnType": "string", "optional": true } },
+    "width": {
+      "description": "/** Width of downloaded chart image in pixels. Defaults to current chart width. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** Height of downloaded chart image in pixels. Defaults to current chart height. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fileName": {
+      "description": "/** Name of downloaded image file. Defaults to `image`.  */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fileFormat": {
-      "description": "/** The standard MIME type for the image format to return. If you do not specify this parameter, the default value is a PNG format image. See `Canvas.toDataURL()` */",
+      "description": "/** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */",
       "type": { "returnType": "string", "optional": true }
     }
   },
