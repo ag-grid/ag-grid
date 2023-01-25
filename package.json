@@ -12,6 +12,7 @@
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
     "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
+    "watch-esm": "tsc -p tsconfig.esm.es5.json -w",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-enterprise --umdModuleName agChartsEnterprise",
     "build": "npm run build-cjs && npm run build-esm && npm run hash",
     "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
