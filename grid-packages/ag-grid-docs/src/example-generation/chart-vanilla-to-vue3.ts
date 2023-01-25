@@ -7,12 +7,16 @@ function processFunction(code: string): string {
     return wrapOptionsUpdateCode(removeFunctionKeyword(code));
 }
 
-function getImports(componentFileNames: string[]): string[] {
+function getImports(componentFileNames: string[], properties: { name: string, value: string }[]): string[] {
     const imports = [
         "import { createApp } from 'vue';",
-        "import * as agCharts from 'ag-charts-community';",
         "import { AgChartsVue } from 'ag-charts-vue3';",
     ];
+
+    if (properties.some(p => p?.value?.includes(' time.'))) {
+        imports.push("import { time } from 'ag-charts-community';");
+    }
+
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
@@ -78,7 +82,7 @@ function getAllMethods(bindings: any): [string[], string[], string[]] {
 
 export function vanillaToVue3(bindings: any, componentFileNames: string[]): () => string {
     return () => {
-        const imports = getImports(componentFileNames);
+        const imports = getImports(componentFileNames, bindings.properties);
         const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
         const [externalEventHandlers, instanceMethods, globalMethods] = getAllMethods(bindings);
         const template = getTemplate(bindings, propertyAttributes);

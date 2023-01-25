@@ -10,13 +10,17 @@ export function processFunction(code: string): string {
         'this.setState({ options });');
 }
 
-function getImports(componentFilenames: string[]): string[] {
+function getImports(componentFilenames: string[], properties: { name: string, value: string }[]): string[] {
     const imports = [
         "import React, { Component } from 'react';",
         "import { render } from 'react-dom';",
-        "import * as agCharts from 'ag-charts-community';",
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
+
+    if (properties.some(p => p?.value?.includes(' time.'))) {
+        imports.push("import { time } from 'ag-charts-community';");
+    }
+
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
@@ -38,7 +42,7 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
 export function vanillaToReact(bindings: any, componentFilenames: string[]): () => string {
     return () => {
         const { properties } = bindings;
-        const imports = getImports(componentFilenames);
+        const imports = getImports(componentFilenames, properties);
         const stateProperties = [];
         const componentAttributes = [];
         const instanceBindings = [];

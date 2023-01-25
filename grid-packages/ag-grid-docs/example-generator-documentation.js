@@ -518,6 +518,8 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
                     // replace Typescript AgChart. with Javascript agCharts.AgChart.
                     jsFile = jsFile.replace(/(?<!\.)AgChart\./g, 'agCharts.AgChart.');
+                    // replace Typescript time. with Javascript agCharts.time.
+                    jsFile = jsFile.replace(/(?<!\.)time\./g, 'agCharts.time.');
                     // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
                     jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
 

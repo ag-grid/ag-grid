@@ -209,7 +209,7 @@ export function tsNodeIsGlobalFunctionCall(node: ts.Node) {
     // Get top level function calls like 
     // setInterval(callback, 500)
     // but don't match things like
-    // agCharts.AgChart.create(options)
+    // AgChart.create(options)
     if (ts.isExpressionStatement(node)) {
         return ts.isSourceFile(node.parent) && ts.isCallExpression(node.expression) && ts.isIdentifier(node.expression.expression);
     }
