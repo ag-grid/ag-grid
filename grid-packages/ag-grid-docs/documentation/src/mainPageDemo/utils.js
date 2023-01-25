@@ -102,3 +102,7 @@ export const booleanComparator = (value1, value2) => {
     const value2Ordinal = value2Cleaned === true ? 0 : value2Cleaned === false ? 1 : 2;
     return value1Ordinal - value2Ordinal;
 };
+
+export function createDataSizeValue(rows, cols) {
+    return `${rows / 1000}x${cols}`;
+}
