@@ -1,6 +1,7 @@
 @use "../../design-system/" as *;
 
 $mobile-header-breakpoint: 768px;
+$header-height: 64px;
 
 .header {
     display: flex;
@@ -39,8 +40,8 @@ $mobile-header-breakpoint: 768px;
 
     appearance: none;
     flex-basis: content;
-    width: 64px;
-    height: 64px;
+    width: $header-height;
+    height: $header-height;
     margin-left: auto !important; // !important for .ag-styles specificity
     border: none;
     transition: background-color 0.4s ease-in-out;
@@ -58,8 +59,31 @@ $mobile-header-breakpoint: 768px;
     @media screen and (min-width: $mobile-header-breakpoint) {
         display: none;
     }
+}
 
-    &[aria-expanded='true'] {
+.menuIcon {
+    g {
+        transition: transform 0.2s 0.2s;
+    }
+
+    rect {
+        fill: #fff;
+        transition: transform 0.2s;
+    }
+
+    :global(.middle) {
+        transition: opacity 0s 0.2s;
+    }
+
+    :global(.top) rect {
+        transform-origin: center 8px;
+    }
+
+    :global(.bottom) rect {
+        transform-origin: center 28px;
+    }
+
+    .mobileMenuButton[aria-expanded='true'] & {
         g {
             transition: transform 0.2s;
         }
@@ -90,29 +114,6 @@ $mobile-header-breakpoint: 768px;
     }
 }
 
-.menuIcon {
-    g {
-        transition: transform 0.2s 0.2s;
-    }
-
-    rect {
-        fill: #fff;
-        transition: transform 0.2s;
-    }
-
-    :global(.middle) {
-        transition: opacity 0s 0.2s;
-    }
-
-    :global(.top) rect {
-        transform-origin: center 8px;
-    }
-
-    :global(.bottom) rect {
-        transform-origin: center 28px;
-    }
-}
-
 // Bootstrap styles for collapsed navbar
 .nav {
     &.collapse:not(.show) {
@@ -123,7 +124,7 @@ $mobile-header-breakpoint: 768px;
         position: relative;
         height: 0;
         overflow: hidden;
-        transition: height 0.35s ease;
+        transition: height 0.35s ease-in-out;
 
         @media (prefers-reduced-motion: reduce) {
             transition: none;
@@ -153,7 +154,7 @@ $mobile-header-breakpoint: 768px;
 .navItemList {
     @media screen and (min-width: $mobile-header-breakpoint) {
         display: flex;
-        height: 64px;
+        height: $header-height;
         align-items: center;
     }
 }
@@ -170,7 +171,7 @@ $mobile-header-breakpoint: 768px;
         }
 
         &.navItemActive a::after {
-            opacity: 0.5 !important;
+            opacity: 0.5;
             transform: scaleX(1);
         }
     }
