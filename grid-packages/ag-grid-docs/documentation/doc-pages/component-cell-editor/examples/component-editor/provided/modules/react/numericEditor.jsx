@@ -1,5 +1,7 @@
 import React, {Component, createRef} from "react";
 
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
 const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
@@ -59,7 +61,10 @@ export default class NumericEditor extends Component {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (props.charPress) {
+        if (props.eventKey === KEY_BACKSPACE) {
+            // if backspace or delete pressed, we clear the cell
+            startValue = '';
+        } else if (props.charPress) {
             // if a letter was pressed, we start with the letter
             startValue = props.charPress;
             highlightAllOnFocus = false;
@@ -78,7 +83,7 @@ export default class NumericEditor extends Component {
     }
 
     onKeyDown(event) {
-        if (this.isLeftOrRight(event)) {
+        if (this.isLeftOrRight(event) || this.isBackspace(event)) {
             event.stopPropagation();
             return;
         }
@@ -103,6 +108,10 @@ export default class NumericEditor extends Component {
     isKeyPressedNumeric(event) {
         const charStr = event.key;
         return this.isCharNumeric(charStr);
+    }
+
+    isBackspace(event) {
+        return event.key === KEY_BACKSPACE;
     }
 
     finishedEditingPressed(event) {

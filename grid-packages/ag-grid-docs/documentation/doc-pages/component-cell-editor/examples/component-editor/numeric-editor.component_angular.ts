@@ -3,6 +3,8 @@ import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/
 import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 import { ICellEditorParams } from "@ag-grid-community/core";
 
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
 const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
@@ -32,7 +34,10 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (params.charPress) {
+        if (params.eventKey === KEY_BACKSPACE) {
+            // if backspace or delete pressed, we clear the cell
+            startValue = '';
+        } else if (params.charPress) {
             // if a letter was pressed, we start with the letter
             startValue = params.charPress;
             highlightAllOnFocus = false;
@@ -63,7 +68,7 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     }
 
     onKeyDown(event: any): void {
-        if (this.isLeftOrRight(event)) {
+        if (this.isLeftOrRight(event) || this.isBackspace(event)) {
             event.stopPropagation();
             return;
         }
@@ -103,6 +108,10 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     private isKeyPressedNumeric(event: any): boolean {
         const charStr = event.key;
         return this.isCharNumeric(charStr);
+    }
+
+    private isBackspace(event: any) {
+        return event.key === KEY_BACKSPACE;
     }
 
     private isLeftOrRight(event: any) {
