@@ -1,3 +1,6 @@
+@use "../pages/components/assets/common/mixins";
+@use "../pages/components/assets/common/vars";
+
 .options-container select {
     appearance: none;
     -webkit-appearance: none;
@@ -42,7 +45,7 @@ body:not(.dark) {
             background-color: rgba(255, 128, 171, 0.4);
         }
     }
-    @include scrollbars(15px, #c2c2c2, #fafafa, #7d7d7d, #e8e8e8);
+    @include mixins.scrollbars(15px, #c2c2c2, #fafafa, #7d7d7d, #e8e8e8);
 }
 
 .dark {
@@ -71,8 +74,8 @@ button[disabled] {
     justify-content: center;
     flex-direction: column;
     overflow: hidden;
-    background: $blue-4;
-    border-bottom: 1px solid $blue-3;
+    background: vars.$blue-4;
+    border-bottom: 1px solid vars.$blue-3;
 
     margin-bottom: 0;
     padding: 5px 0;
@@ -137,7 +140,7 @@ button[disabled] {
                 &::before {
                     content: '';
                     display: inline-block;
-                    background: transparent url('../../../../../../src/images/YouTubeSmall.png') no-repeat;
+                    background: transparent url('../../../src/images/YouTubeSmall.png') no-repeat;
                     background-size: contain;
                     width: 26px;
                     height: 18px;
@@ -162,7 +165,7 @@ button[disabled] {
     > div {
         cursor: pointer;
         display: none;
-        border: 1px solid $blue-3;
+        border: 1px solid vars.$blue-3;
         border-top: none;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
