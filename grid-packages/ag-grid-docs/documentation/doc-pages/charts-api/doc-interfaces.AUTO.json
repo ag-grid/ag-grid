@@ -5182,7 +5182,7 @@
     "width": { "type": { "returnType": "number", "optional": true } },
     "comma": { "type": { "returnType": "string", "optional": true } },
     "precision": { "type": { "returnType": "number", "optional": true } },
-    "trim": { "type": { "returnType": "string", "optional": true } },
+    "trim": { "type": { "returnType": "boolean", "optional": true } },
     "type": { "type": { "returnType": "string", "optional": true } },
     "suffix": { "type": { "returnType": "string", "optional": true } }
   },

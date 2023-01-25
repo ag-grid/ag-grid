@@ -10,7 +10,7 @@ interface FormatterOptions {
     width?: number;
     comma?: string;
     precision?: number;
-    trim?: string;
+    trim?: boolean;
     type?: string;
     suffix?: string;
 }
@@ -78,7 +78,7 @@ function parseFormatter(formatter: string): FormatterOptions {
         width: parseInt(width),
         comma,
         precision: parseInt(precision),
-        trim,
+        trim: Boolean(trim),
         type,
         prefix,
         suffix,
@@ -97,29 +97,31 @@ export function format(formatter: string | FormatterOptions) {
         comma,
         precision,
         trim,
-        type = 'g',
+        type,
         prefix = '',
         suffix = '',
     } = options;
 
     const signer = signs[sign || '-'];
+
     let formatBody: (n: number, f: number) => string;
-    if (type in floatingTypes && type in integerTypes) {
-        formatBody = isNaN(precision!) ? integerTypes[type] : floatingTypes[type];
-    } else if (type in floatingTypes || !type) {
-        if (isNaN(precision!)) {
-            precision = 6;
-        }
-        formatBody = floatingTypes[type || 'g'];
+    if (!type) {
+        formatBody = decimalTypes['g'];
+        trim = true;
+    } else if (type in decimalTypes && type in integerTypes) {
+        formatBody = isNaN(precision!) ? integerTypes[type] : decimalTypes[type];
+    } else if (type in decimalTypes) {
+        formatBody = decimalTypes[type];
     } else if (type in integerTypes) {
         formatBody = integerTypes[type];
-    } else if (isNaN(precision!)) {
-        formatBody = (n: number) => n.toString();
     } else {
-        if (isNaN(precision!)) {
-            precision = 6;
-        }
+        throw new Error(`The number formatter type is invalid: ${type}`);
     }
+
+    if (isNaN(precision!)) {
+        precision = 6;
+    }
+
     const w = Number(width);
     const setPadding = isNaN(w)
         ? undefined
@@ -145,8 +147,7 @@ export function format(formatter: string | FormatterOptions) {
         const t = formatBody(n, precision!);
         let result = `${s}${t}`;
         if (trim) {
-            result = result.replace(/\.0+$/, '');
-            result = result.replace(/(\.[1-9])0+$/, '$1');
+            result = removeTrailingZeros(result);
         }
         if (symbol && symbol !== '#') {
             result = `${symbol}${result}`;
@@ -158,7 +159,7 @@ export function format(formatter: string | FormatterOptions) {
             result = insertSeparator(result, comma);
         }
         if (type === 's') {
-            result = `${result}${getPrefix(n)}`;
+            result = `${result}${getSIPrefix(n)}`;
         }
         if (type === '%') {
             result = `${result}%`;
@@ -184,26 +185,49 @@ const integerTypes: Record<string, (n: number) => string> = {
     '%': (n) => `${absFloor(n * 100).toFixed(0)}`,
 };
 
-const floatingTypes: Record<string, (n: number, f: number) => string> = {
+const decimalTypes: Record<string, (n: number, f: number) => string> = {
     e: (n, f) => Math.abs(n).toExponential(f),
-    E: (n, f) => floatingTypes.e(n, f).toUpperCase(),
+    E: (n, f) => decimalTypes.e(n, f).toUpperCase(),
     f: (n, f) => Math.abs(n).toFixed(f),
-    F: (n, f) => floatingTypes.f(n, f).toUpperCase(),
-    g: (n, f) =>
-        Math.abs(n)
-            .toString()
-            .replace(new RegExp(`(\\.\d{${f}}).+`), '$1'),
-    G: (n, f) => floatingTypes.g(n, f).toUpperCase(),
-    n: (n, f) => floatingTypes.g(n, f),
-    r: (n, f) => (Math.round(Math.abs(n) / Math.pow(10, f)) * Math.pow(10, f)).toFixed(),
+    F: (n, f) => decimalTypes.f(n, f).toUpperCase(),
+    g: (n, f) => {
+        if (n === 0) {
+            return '0';
+        }
+        const a = Math.abs(n);
+        const p = Math.floor(Math.log10(a));
+        if (p >= -4 && p < f) {
+            return a.toFixed(f - 1 - p);
+        }
+        return a.toExponential(f - 1);
+    },
+    G: (n, f) => decimalTypes.g(n, f).toUpperCase(),
+    n: (n, f) => decimalTypes.g(n, f),
+    r: (n, f) => {
+        if (n === 0) {
+            return '0';
+        }
+        const a = Math.abs(n);
+        const p = Math.floor(Math.log10(a));
+        const q = p - (f - 1);
+        if (q <= 0) {
+            return a.toFixed(-q);
+        }
+        const x = Math.pow(10, q);
+        return (Math.round(a / x) * x).toFixed();
+    },
     s: (n, f) => {
         const a = Math.abs(n);
         const power = Math.log10(a);
-        const p = Math.sign(power) * Math.floor(Math.abs(power) / 3) * 3;
-        return floatingTypes.f(n / Math.pow(10, p), Math.max(0, f - (Math.floor(Math.abs(power)) % 3) - 1));
+        const p = getSIPrefixPower(n);
+        return decimalTypes.f(n / Math.pow(10, p), Math.max(0, f - (Math.floor(Math.abs(power)) % 3) - 1));
     },
     '%': (n, f) => `${Math.abs(n * 100).toFixed(f)}`,
 };
+
+function removeTrailingZeros(numString: string) {
+    return numString.replace(/\.0+$/, '').replace(/(\.[1-9])0+$/, '$1');
+}
 
 function insertSeparator(numString: string, separator: string) {
     let dotIndex = numString.indexOf('.');
@@ -211,26 +235,28 @@ function insertSeparator(numString: string, separator: string) {
         dotIndex = numString.length;
     }
     const integerChars = numString.substring(0, dotIndex).split('');
-    const floatingChars = numString.substring(dotIndex + 1).split('');
+    const fractionalPart = numString.substring(dotIndex);
 
     for (let i = integerChars.length - 3; i > 0; i -= 3) {
         integerChars.splice(i, 0, separator);
     }
-    for (let i = 3; i < floatingChars.length - 1; i += 4) {
-        floatingChars.splice(i, 0, separator);
-    }
-    return `${integerChars.join('')}${floatingChars.length > 0 ? '.' : ''}${floatingChars.join('')}`;
+    return `${integerChars.join('')}${fractionalPart}`;
 }
 
-function getPrefix(n: number) {
-    const a = Math.abs(n);
-    const power = Math.log10(a);
-    const p = Math.sign(power) * Math.floor(Math.abs(power) / 3) * 3;
-    return siPrefixes.has(p) ? siPrefixes.get(p) : siPrefixes.get(Math.sign(p) * 8);
+function getSIPrefix(n: number) {
+    return siPrefixes.get(getSIPrefixPower(n));
 }
 
+function getSIPrefixPower(n: number) {
+    const power = Math.log10(Math.abs(n));
+    const p = Math.floor(power / 3) * 3;
+    return Math.max(minSIPrefix, Math.min(maxSIPrefix, p));
+}
+
+const minSIPrefix = -24;
+const maxSIPrefix = 24;
 const siPrefixes = new Map<number, string>();
-siPrefixes.set(-24, 'y');
+siPrefixes.set(minSIPrefix, 'y');
 siPrefixes.set(-21, 'z');
 siPrefixes.set(-18, 'a');
 siPrefixes.set(-15, 'f');
@@ -246,7 +272,7 @@ siPrefixes.set(12, 'T');
 siPrefixes.set(15, 'P');
 siPrefixes.set(18, 'E');
 siPrefixes.set(21, 'Z');
-siPrefixes.set(24, 'Y');
+siPrefixes.set(maxSIPrefix, 'Y');
 
 const minusSign = '\u2212';
 const signs: Record<string, (n: number) => string> = {
@@ -266,8 +292,8 @@ export function tickFormat(
     if (isNaN(options.precision!)) {
         if (options.type === 's') {
             options.precision = step.toExponential().indexOf('e');
-        } else if (!options.type || options.type in floatingTypes) {
-            options.precision = 5;
+        } else if (!options.type || options.type in decimalTypes) {
+            options.precision = 6;
         }
     }
     const f = format(options);

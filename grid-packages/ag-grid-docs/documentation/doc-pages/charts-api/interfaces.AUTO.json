@@ -3711,7 +3711,7 @@
       "width?": "number",
       "comma?": "string",
       "precision?": "number",
-      "trim?": "string",
+      "trim?": "boolean",
       "type?": "string",
       "suffix?": "string"
     }
