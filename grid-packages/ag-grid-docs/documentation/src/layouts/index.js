@@ -1,16 +1,13 @@
-import classnames from 'classnames';
 import Footer from 'components/footer/Footer';
 import FrameworkSelector from 'components/FrameworkSelector';
 import { GlobalContextProvider } from 'components/GlobalContext';
-import HeaderNav from 'components/HeaderNav';
-import LogoMark from 'components/LogoMark';
 import Menu from 'components/Menu';
 import Search from 'components/search/Search';
-import React, { useState } from 'react';
+import { SiteHeader } from 'components/site-header/SiteHeader';
+import React from 'react';
 import { Helmet } from 'react-helmet';
 import supportedFrameworks from 'utils/supported-frameworks';
 import favIcons from '../images/favicons';
-import LogoType from '../images/inline-svgs/ag-grid-logotype.svg';
 import styles from './index.module.scss';
 import './mailchimp.css';
 
@@ -78,7 +75,6 @@ export const Layout = ({
     children,
     pageContext: { frameworks, framework = 'javascript', layout, pageName },
     location: { pathname: path },
-    data,
 }) => {
     if (layout === 'bare') {
         // only for on the fly example runner
@@ -92,8 +88,6 @@ export const Layout = ({
 
     const fullScreenWithFooter = getAllPageUrls(FULL_SCREEN_WITH_FOOTER_PAGES).includes(processedPath);
 
-    const [isLogoHover, setIsLogoHover] = useState(false);
-
     return (
         <GlobalContextProvider>
             <Helmet>
@@ -102,26 +96,8 @@ export const Layout = ({
             </Helmet>
             <div className={styles['main-container']}>
                 <Helmet htmlAttributes={{ lang: 'en' }} />
-                <header className={classnames('ag-styles', styles.header)}>
-                    <div className={classnames(styles.headerInner, 'page-margin')}>
-                        <a
-                            href="/"
-                            aria-label="Home"
-                            className={styles.headerLogo}
-                            onMouseEnter={() => {
-                                setIsLogoHover(true);
-                            }}
-                            onMouseLeave={() => {
-                                setIsLogoHover(false);
-                            }}
-                        >
-                            <LogoType />
-                            <LogoMark bounce={isLogoHover} />
-                        </a>
+                <SiteHeader path={path} />
 
-                        <HeaderNav path={path} />
-                    </div>
-                </header>
                 {!fullScreenPage && !fullScreenWithFooter && (
                     <TopBar frameworks={frameworks} currentFramework={framework} path={path} />
                 )}

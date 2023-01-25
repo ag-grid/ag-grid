@@ -1,9 +1,11 @@
 import classnames from 'classnames';
 import { withPrefix } from 'gatsby';
 import React, { useState } from 'react';
-import GithubLogo from '../images/inline-svgs/github-logo.svg';
-import MenuIcon from '../images/inline-svgs/menu-icon.svg';
-import styles from './HeaderNav.module.scss';
+import LogoType from '../../images/inline-svgs/ag-grid-logotype.svg';
+import GithubLogo from '../../images/inline-svgs/github-logo.svg';
+import MenuIcon from '../../images/inline-svgs/menu-icon.svg';
+import LogoMark from '../LogoMark';
+import styles from './SiteHeader.module.scss';
 
 const links = [
     {
@@ -87,4 +89,28 @@ const HeaderNav = ({ path }) => (
     </>
 );
 
-export default HeaderNav;
+export const SiteHeader = ({ path }) => {
+    const [isLogoHover, setIsLogoHover] = useState(false);
+    return (
+        <header className={classnames('ag-styles', styles.header)}>
+            <div className={classnames(styles.headerInner, 'page-margin')}>
+                <a
+                    href="/"
+                    aria-label="Home"
+                    className={styles.headerLogo}
+                    onMouseEnter={() => {
+                        setIsLogoHover(true);
+                    }}
+                    onMouseLeave={() => {
+                        setIsLogoHover(false);
+                    }}
+                >
+                    <LogoType />
+                    <LogoMark bounce={isLogoHover} />
+                </a>
+
+                <HeaderNav path={path} />
+            </div>
+        </header>
+    );
+};

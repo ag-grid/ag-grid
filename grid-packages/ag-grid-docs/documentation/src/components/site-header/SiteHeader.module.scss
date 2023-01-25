@@ -1,6 +1,36 @@
-@use "../design-system/" as *;
+@use "../../design-system/" as *;
 
 $mobile-header-breakpoint: 768px;
+
+.header {
+    display: flex;
+    align-items: center;
+    position: relative;
+    background-color: $ag-site-header-background;
+}
+
+.headerInner {
+    display: flex;
+    flex-wrap: wrap;
+
+    @media screen and (max-width: $mobile-header-breakpoint) {
+        padding-left: 0 !important; // !important needed because of .ag-styles specificity
+        padding-right: 0 !important; // !important needed because of .ag-styles specificity
+    }
+
+    @media screen and (min-width: $mobile-header-breakpoint) {
+        flex-wrap: unset;
+    }
+}
+
+.headerLogo {
+    display: block;
+    padding: $size-1;
+
+    @media screen and (min-width: $mobile-header-breakpoint) {
+        margin-left: -$size-2 !important; // !important needed because of .ag-styles specificity
+    }
+}
 
 .mobileMenuButton {
     --button-color: transparent;
