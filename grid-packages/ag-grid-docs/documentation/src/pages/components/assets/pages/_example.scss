@@ -1,4 +1,5 @@
 .options-container select {
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     background-image: url("data:image/svg+xml,\ <svg version='1.1' xmlns='http://www.w3.org/2000/svg' width='14px'\ height='14px' viewBox='0 0 1200 1000' fill='rgb(51,51,51)'>\ <path d='M1100 411l-198 -199l-353 353l-353 -353l-197 199l551 551z'/>\ </svg>");
@@ -30,23 +31,24 @@
 
 body:not(.dark) {
     .good-score {
-        &:not(.ag-cell-range-selected), &.ag-cell-focus:not(.ag-cell-inline-editing) {
+        &:not(.ag-cell-range-selected),
+        &.ag-cell-focus:not(.ag-cell-inline-editing) {
             background-color: rgba(185, 246, 202, 0.4);
         }
     }
     .bad-score {
-        &:not(.ag-cell-range-selected), &.ag-cell-focus:not(.ag-cell-inline-editing) {
+        &:not(.ag-cell-range-selected),
+        &.ag-cell-focus:not(.ag-cell-inline-editing) {
             background-color: rgba(255, 128, 171, 0.4);
         }
     }
     @include scrollbars(15px, #c2c2c2, #fafafa, #7d7d7d, #e8e8e8);
 }
 
-
 .dark {
-    background-color:#222;
+    background-color: #222;
     color: white;
-     .good-score {
+    .good-score {
         color: lightgreen;
     }
     .bad-score {
@@ -76,7 +78,8 @@ button[disabled] {
     padding: 5px 0;
     transition: height 1s;
 
-    select, input {
+    select,
+    input {
         height: 35px;
         width: 180px;
         border-radius: 5px;
@@ -98,7 +101,7 @@ button[disabled] {
         border-bottom-color: #666;
         a {
             color: lightblue;
-            &:hover{
+            &:hover {
                 color: white;
             }
         }
@@ -154,7 +157,7 @@ button[disabled] {
         padding-left: 10px;
     }
     > div span::before {
-        content: '\2191'
+        content: '\2191';
     }
     > div {
         cursor: pointer;
@@ -176,7 +179,7 @@ button[disabled] {
 
 .collapsed {
     + .options-expander > div span::before {
-        content: '\2193'
+        content: '\2193';
     }
 }
 
@@ -210,10 +213,6 @@ button[disabled] {
     100% {
         transform: translatey(20px);
     }
-}
-
-.oval {
-    // animation: zoom-in 2s infinite;
 }
 
 @keyframes zoom-in {
