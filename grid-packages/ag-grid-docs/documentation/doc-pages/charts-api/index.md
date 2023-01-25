@@ -2,12 +2,10 @@
 title: "Options Reference"
 ---
 
-The `AgChartOptions` interface is the gateway to creating charts.
-
 An instance of `AgChartOptions` is an essential configuration object required to create a chart with the desired data and attributes.
 
 [[only-javascript]]
-| To initialise a chart, an instance of the `AgChartOptions` is passed to the `AgChart.create()` factory method. Once the chart is initialised, it can be modified using the `AgChart.update()` method.
+| To initialise a chart, an instance of the `AgChartOptions` is passed to the `AgChart.create()` factory method. Once the chart is initialised, it can be modified using the `AgChart.update()` and `AgChart.updateDelta()` methods.
 
 [[only-frameworks]]
 | Our framework specific tags accept JS objects following the interface contract of `AgChartOptions` as their
@@ -15,11 +13,7 @@ An instance of `AgChartOptions` is an essential configuration object required to
 
 ## Options by Chart Type
 
-Properties, formatters and event handlers are all available through the `AgChartOptions` interface. Specifying these on the `options` object will enable fine grained control of charts including registering event listeners and applying styles to individual data points.
-
-The `AgChartOptions` interface is displayed below in an expandable JSON graph, which can be navigated to explore the object structure.
-
-Click through the tabs to see the three main variations of `AgChartOptions` depending on the chart/series type to be rendered.
+The main sub-variants of `AgChartOptions` interface are displayed below in expandable JSON graphs, which can be navigated to explore the object structures.
 
 <tabs>
     <expandable-snippet label="Cartesian" interfaceName='AgCartesianChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]' config='{ "lookupRoot": "charts-api" }'></expandable-snippet>
@@ -35,7 +29,7 @@ Click through the tabs to see the three main variations of `AgChartOptions` depe
 | `AgChart.update()` should be called for changes to be applied.
 |
 | [[note]]
-| | NOTE: We expect the options supplied to `AgChart.update()` to be the full configuration to update
+| | NOTE: We expect the options supplied to `AgChart.update()` to be the full configuration state to update
 | | to, not a partial configuration. Use `AgChart.updateDelta()` to apply partial updates.
 
 [[only-frameworks]]
@@ -61,18 +55,31 @@ The following example demonstrates both create and update cases:
 | ## Updating Charts Using Partial Options
 |
 | `AgChart` exposes an `updateDelta()` static method to allow partial updates to an existing charts configuration.
-| To assist with state management, the complete applied options state can be retrieved by calling `getOptions()` on the
-| chart instance.
 |
-| [[note]]
-| | These APIs should not be normally used with framework wrappers for Angular, React or Vue, as the framework will
-| | perform change detection and update the chart automatically after a partial options update. However when using
-| | Integrated Charts it may be necessary to use Javascript APIs to perform chart updates in Grid callbacks.
+| `updateDelta()` should not be normally used with framework wrappers for Angular, React or Vue, as the
+| framework will perform change detection and update the chart automatically after an options mutation. 
+| However when using [Integrated Charts](/integrated-charts-events/#accessing-chart-instance) it may be
+| necessary to use this API to perform chart updates in Grid callbacks.
+|
+| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["updateDelta"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
 
 ## API
-Static methods available on the `AgChart` factory class:
+
+We expose APIs for performing certain actions on `AgChartInstance`s via the `AgChart` class:
+
 [[only-javascript]]
-| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions"] }'></api-documentation>
+| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
+|
+| Additionally `AgChartInstance` exposes API methods on a per-instance basis:
+| <interface-documentation interfaceName='AgChartInstance' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartOptions"], "description": "" }'></interface-documentation>
+
 [[only-frameworks]]
-| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["updateDelta"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions"] }'></api-documentation>
-<interface-documentation interfaceName='AgChartInstance' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartOptions"] }'></interface-documentation>
+| <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["download"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
+
+ ### API Usage Example
+
+ This example demonstrates:
+ - How to obtain a reference to an `AgChartInstance`.
+ - How to use `AgChart.download()` to initiate a chart image download.
+
+ <chart-example title='Download via AgChart API' name='download' type='generated'></chart-example>
