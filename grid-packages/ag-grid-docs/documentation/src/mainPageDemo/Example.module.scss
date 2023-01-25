@@ -1,3 +1,4 @@
+@use "../design-system/" as *;
 @use "../pages/components/assets/common/mixins";
 @use "../pages/components/assets/common/vars";
 
@@ -22,6 +23,7 @@
     min-height: 90vh;
 
     &__grid-wrapper {
+        margin-top: $size-2;
         flex: 1 1 auto;
         overflow: hidden;
         display: flex;
@@ -151,41 +153,6 @@ button[disabled] {
     }
 }
 
-.options-expander {
-    justify-content: center;
-    user-select: none;
-    display: flex;
-    > span {
-        flex: 1 1 auto;
-        padding-left: 10px;
-    }
-    > div span::before {
-        content: '\2191';
-    }
-    > div {
-        cursor: pointer;
-        display: none;
-        border: 1px solid vars.$blue-3;
-        border-top: none;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        background-color: #4a799c;
-        padding: 2px 5px;
-        color: white;
-        font-size: 12px;
-        font-weight: bold;
-        .dark & {
-            border-color: #666;
-        }
-    }
-}
-
-.collapsed {
-    + .options-expander > div span::before {
-        content: '\2193';
-    }
-}
-
 .stretch-html {
     height: 100%;
     width: 100%;
@@ -249,12 +216,6 @@ button[disabled] {
         }
         &.collapsed {
             height: 0;
-        }
-    }
-    .options-expander {
-        margin-bottom: 10px;
-        > div {
-            display: block;
         }
     }
 }

@@ -627,7 +627,6 @@ const Example = () => {
         setGridTheme(theme);
     }, []);
     const [bodyClass, setBodyClass] = useState('');
-    const [toolbarCollapsed, setToolbarCollapsed] = useState(false);
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -1444,10 +1443,6 @@ const Example = () => {
         }
     }
 
-    function toggleOptionsCollapsed() {
-        setToolbarCollapsed(!toolbarCollapsed);
-    }
-
     function onFilterChanged(event) {
         gridRef.current.api.setQuickFilter(event.target.value);
     }
@@ -1455,16 +1450,11 @@ const Example = () => {
     return (
         <>
             <Helmet>
-                <style type="text/css">{`
-                .collapsed {
-                    height: 0;
-                }
-            `}</style>
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
                 {helmet.map((entry) => entry)}
             </Helmet>
             <div className={`${styles['example-wrapper']} ${bodyClass}`}>
-                <div className={`${styles['example-toolbar']} ${toolbarCollapsed ? styles['collapsed'] : ''}`}>
+                <div className={`${styles['example-toolbar']}`}>
                     <div className={styles['options-container']}>
                         <div>
                             <label htmlFor="data-size">Data Size:</label>
@@ -1521,13 +1511,6 @@ const Example = () => {
                     {message}
                     <i className="fa fa-spinner fa-pulse fa-fw margin-bottom" />
                 </span>
-                <div className={styles['options-expander']}>
-                    <span id="messageText" />
-                    <div id="options-toggle" onClick={toggleOptionsCollapsed}>
-                        <span>&nbsp;</span>OPTIONS
-                    </div>
-                    <span>&nbsp;</span>
-                </div>
                 <section className={styles['example-wrapper__grid-wrapper']} style={{ padding: '1rem', paddingTop: 0 }}>
                     {gridTheme && (
                         <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }} className={gridTheme}>
