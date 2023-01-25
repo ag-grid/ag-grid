@@ -89,7 +89,7 @@ const Cookies = () => {
                                     This helps us to develop and improve our website as well as products and / or
                                     services in response to what you might need or want.
                                 </p>
-                                <h3 className="text-uppercase">Cookies are either:</h3>
+                                <h4>Cookies are either:</h4>
                                 <ul>
                                     <li>
                                         <strong>Session cookies:</strong> these are only stored on your computer during
@@ -105,9 +105,7 @@ const Cookies = () => {
                                         use persistent cookies for Google Analytics.
                                     </li>
                                 </ul>
-                                <h3 className="text-uppercase">
-                                    <strong>Cookies can also be categorised as follows:</strong>
-                                </h3>
+                                <h4>Cookies can also be categorised as follows:</h4>
                                 <ul>
                                     <li>
                                         <strong>Strictly necessary cookies:</strong> These cookies are essential to
