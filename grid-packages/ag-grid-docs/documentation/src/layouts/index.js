@@ -61,7 +61,6 @@ const TopBar = ({ frameworks, currentFramework, path }) => {
 
                 {currentFramework && (
                     <div className={styles['top-bar__framework-selector']}>
-                        <span className={styles['top-bar__framework-label']}>Framework:</span>
                         <FrameworkSelector data={frameworksData} currentFramework={currentFramework} showSelectedFramework />
                     </div>
                 )}
