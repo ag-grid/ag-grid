@@ -251,7 +251,7 @@
     }
   },
   "getQuickFilterText": {
-    "description": "/** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
+    "description": "/** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
     "type": {
       "arguments": { "params": "GetQuickFilterTextParams<TData>" },
       "returnType": "string"

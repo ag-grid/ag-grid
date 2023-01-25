@@ -1005,7 +1005,7 @@
       }
     },
     "getQuickFilterText": {
-      "description": "/** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
+      "description": "/** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
       "type": {
         "arguments": { "params": "GetQuickFilterTextParams<TData>" },
         "returnType": "string",
@@ -2596,11 +2596,11 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -20467,11 +20467,11 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -23189,11 +23189,11 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -25917,11 +25917,11 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {

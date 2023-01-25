@@ -236,11 +236,11 @@
     "type": { "returnType": "ExcelStyle[]" }
   },
   "quickFilterText": {
-    "description": "/** Rows are filtered using this text as a quick filter. */",
+    "description": "/** Rows are filtered using this text as a Quick Filter. */",
     "type": { "returnType": "string" }
   },
   "cacheQuickFilter": {
-    "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+    "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "excludeChildrenWhenTreeDataFiltering": {
