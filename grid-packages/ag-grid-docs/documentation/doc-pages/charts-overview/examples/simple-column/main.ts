@@ -1,5 +1,4 @@
-import * as agCharts from 'ag-charts-community';
-import { AgChartOptions } from 'ag-charts-community';
+import { AgChart, AgChartOptions } from 'ag-charts-community';
 import { getData } from "./data";
 
 function formatNumber(value: number) {
@@ -64,4 +63,4 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

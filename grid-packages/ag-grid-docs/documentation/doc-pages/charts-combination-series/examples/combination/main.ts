@@ -1,7 +1,6 @@
 import { getData } from "./data";
 
-import { AgCartesianChartOptions, AgCartesianAxisOptions, AgCartesianSeriesOptions, AgBarSeriesOptions, AgLineSeriesOptions, AgCartesianSeriesTooltipRendererParams } from "ag-charts-community"
-import * as agCharts from "ag-charts-community"
+import { AgCartesianChartOptions, AgCartesianAxisOptions, AgCartesianSeriesOptions, AgBarSeriesOptions, AgLineSeriesOptions, AgCartesianSeriesTooltipRendererParams, AgChart } from "ag-charts-community"
 
 function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
   const { yValue, xValue } = params;
@@ -112,16 +111,16 @@ const options: AgCartesianChartOptions = {
   },
 };
 
-var chart = agCharts.AgChart.create(options);
+var chart = AgChart.create(options);
 
 function columnLine() {
   console.log("Column & Line", COLUMN_AND_LINE);
   options.series = COLUMN_AND_LINE;
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }
 
 function areaColumn() {
   console.log("Column & Area", AREA_AND_COLUMN);
   options.series = AREA_AND_COLUMN;
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }

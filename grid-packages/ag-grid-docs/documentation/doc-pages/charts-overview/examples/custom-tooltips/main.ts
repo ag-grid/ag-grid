@@ -1,8 +1,7 @@
 import { getData } from "./data";
 
 import { AgCartesianSeriesTooltipRendererParams } from "ag-charts-community"
-import { AgChartOptions } from "ag-charts-community"
-import * as agCharts from "ag-charts-community"
+import { AgChartOptions, AgChart } from "ag-charts-community"
 
 function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
   var formatThousands = function (value: number) {
@@ -133,4 +132,4 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

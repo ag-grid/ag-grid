@@ -1,5 +1,4 @@
-import * as agCharts from "ag-charts-community"
-import { AgChartOptions } from "ag-charts-community"
+import { AgChart, AgChartOptions } from "ag-charts-community"
 
 const colors = [
   "#AC9BF5",
@@ -81,13 +80,13 @@ const options: AgChartOptions = {
   ],
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)
 
 function updateHeight(event: any) {
   var value = +event.target.value
 
   options.height = value
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 
   document.getElementById("sliderValue")!.innerHTML = String(value)
 }
