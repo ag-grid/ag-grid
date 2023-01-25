@@ -74,10 +74,13 @@ type SeriesOptionType<T extends Series> = T extends LineSeries
     : never;
 
 export interface DownloadOptions {
+    /** Width of downloaded chart image in pixels. Defaults to current chart width. */
     width?: number;
+    /** Height of downloaded chart image in pixels. Defaults to current chart height. */
     height?: number;
+    /** Name of downloaded image file. Defaults to `image`.  */
     fileName?: string;
-    /** The standard MIME type for the image format to return. If you do not specify this parameter, the default value is a PNG format image. See `Canvas.toDataURL()` */
+    /** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */
     fileFormat?: string;
 }
 
