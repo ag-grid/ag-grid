@@ -1969,6 +1969,10 @@
                 "url": "/charts-axes/"
               },
               {
+                "title": "Download",
+                "url": "/charts-download/"
+              },
+              {
                 "title": "Events",
                 "url": "/charts-events/"
               }
