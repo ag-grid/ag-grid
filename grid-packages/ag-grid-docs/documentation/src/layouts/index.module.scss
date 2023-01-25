@@ -1,5 +1,5 @@
-@import "~bootstrap/scss/type";
-@import "~bootstrap/scss/alert";
+@import '~bootstrap/scss/type';
+@import '~bootstrap/scss/alert';
 
 $mobile-header-breakpoint: 768px;
 
@@ -103,7 +103,7 @@ main {
         padding-top: 8px;
         padding-bottom: 8px;
 
-        @media screen and ( min-width: 880px ) {
+        @media screen and (min-width: 880px) {
             flex-grow: unset;
         }
     }
@@ -163,7 +163,7 @@ main {
     &:global(.note) {
         @extend .alert, .alert-primary;
 
-        background-image: url("../images/info.svg");
+        background-image: url('../images/info.svg');
         background-size: 3rem;
         background-repeat: no-repeat;
         background-position: 1rem 1rem;
@@ -189,7 +189,7 @@ main {
 
         &:global(.warning) {
             @extend .alert-warning;
-            background-image: url("../images/warning.svg");
+            background-image: url('../images/warning.svg');
         }
     }
 
