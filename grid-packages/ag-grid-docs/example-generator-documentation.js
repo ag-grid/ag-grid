@@ -516,10 +516,17 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     let jsFile = readAsJsFile(tsFile);
                     // replace Typescript new Grid( with Javascript new agGrid.Grid(
                     jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
-                    // replace Typescript AgChart. with Javascript agCharts.AgChart.
-                    jsFile = jsFile.replace(/(?<!\.)AgChart\./g, 'agCharts.AgChart.');
-                    // replace Typescript time. with Javascript agCharts.time.
-                    jsFile = jsFile.replace(/(?<!\.)time\./g, 'agCharts.time.');
+
+                    // Chart classes that need scoping
+                    const chartImports = typedBindings.imports.find(i => i.module == "'ag-charts-community'");
+                    if (chartImports) {
+                        chartImports.imports.forEach(i => {
+                            const toReplace = `(?<!\\.)${i}([\\s\/.])`
+                            const reg = new RegExp(toReplace, "g");
+                            jsFile = jsFile.replace(reg, `agCharts.${i}$1`);
+                        })
+                    }
+
                     // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
                     jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
 

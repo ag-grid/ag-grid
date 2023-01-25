@@ -15,7 +15,7 @@ function tsGenerateWithOptionReferences(node, srcFile) {
 }
 
 export function parser(examplePath, fileName, srcFile, html) {
-    const bindings = internalParser(readAsJsFile(srcFile), html);
+    const bindings = internalParser(readAsJsFile(srcFile, { includeImports: true }), html);
     const typedBindings = internalParser(srcFile, html);
     return { bindings, typedBindings };
 }

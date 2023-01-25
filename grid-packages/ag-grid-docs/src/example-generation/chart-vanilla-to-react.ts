@@ -1,5 +1,5 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
-import { isInstanceMethod, convertFunctionToProperty } from './parser-utils';
+import { isInstanceMethod, convertFunctionToProperty, BindingImport } from './parser-utils';
 import { convertTemplate, getImport } from './react-utils';
 import { wrapOptionsUpdateCode } from './chart-utils';
 
@@ -10,17 +10,20 @@ export function processFunction(code: string): string {
         'this.setState({ options });');
 }
 
-function getImports(componentFilenames: string[], properties: { name: string, value: string }[]): string[] {
+function getImports(componentFilenames: string[], bindingImports: BindingImport[]): string[] {
     const imports = [
         "import React, { Component } from 'react';",
         "import { render } from 'react-dom';",
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
 
-    if (properties.some(p => p?.value?.includes(' time.'))) {
-        imports.push("import { time } from 'ag-charts-community';");
+    const chartsImport = bindingImports.find(i => i.module === "'ag-charts-community'");
+    if (chartsImport) {
+        const extraImports = chartsImport.imports.filter(i => i !== 'AgChart');
+        if (extraImports.length > 0) {
+            imports.push(`import { ${extraImports.join(', ')} } from 'ag-charts-community';`);
+        }
     }
-
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
@@ -41,8 +44,8 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
 
 export function vanillaToReact(bindings: any, componentFilenames: string[]): () => string {
     return () => {
-        const { properties } = bindings;
-        const imports = getImports(componentFilenames, properties);
+        const { properties, imports: bindingImports } = bindings;
+        const imports = getImports(componentFilenames, bindingImports);
         const stateProperties = [];
         const componentAttributes = [];
         const instanceBindings = [];

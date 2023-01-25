@@ -12,10 +12,10 @@ export interface BindingImport {
 
 const moduleMapping = require('../../documentation/doc-pages/modules/modules.json');
 
-export function readAsJsFile(srcFile) {
+export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
     const tsFile = srcFile
         // Remove imports that are not required in javascript
-        .replace(/import.*from.*\n/g, '')
+        .replace((options?.includeImports ? '' : /import.*from.*\n/g), '')
         // Remove export statement
         .replace(/export /g, "")
 
