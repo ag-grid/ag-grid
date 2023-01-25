@@ -12388,6 +12388,13 @@
         "optional": false
       }
     },
+    "cutToClipboard": {
+      "type": {
+        "arguments": { "params?": "IClipboardCopyParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "copySelectedRowsToClipboard": {
       "type": {
         "arguments": { "params?": "IClipboardCopyRowsParams" },

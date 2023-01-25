@@ -10,6 +10,7 @@ export interface IClipboardCopyRowsParams extends IClipboardCopyParams {
 export interface IClipboardService {
     pasteFromClipboard(): void;
     copyToClipboard(params?: IClipboardCopyParams): void;
+    cutToClipboard(params?: IClipboardCopyParams): void;
     copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void;
     copySelectedRangeToClipboard(params?: IClipboardCopyParams): void;
     copyRangeDown(): void;

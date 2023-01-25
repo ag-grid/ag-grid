@@ -1110,6 +1110,10 @@
     "description": "/** Copies data to clipboard by following the same rules as pressing Ctrl+C. */",
     "type": { "arguments": { "params?": "IClipboardCopyParams" } }
   },
+  "cutToClipboard": {
+    "description": "/** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */",
+    "type": { "arguments": { "params?": "IClipboardCopyParams" } }
+  },
   "copySelectedRowsToClipboard": {
     "description": "/** Copies the selected rows to the clipboard. */",
     "type": {

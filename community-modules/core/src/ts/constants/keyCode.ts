@@ -21,9 +21,10 @@ export class KeyCode {
     // as `event.key` changes when non-latin keyboards are used
     static A = 'KeyA';
     static C = 'KeyC';
-    static V = 'KeyV';
     static D = 'KeyD';
-    static Z = 'KeyZ';
+    static V = 'KeyV';
+    static X = 'KeyX';
     static Y = 'KeyY';
+    static Z = 'KeyZ';
 
 }

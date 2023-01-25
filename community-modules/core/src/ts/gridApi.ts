@@ -1550,6 +1550,13 @@ export class GridApi<TData = any> {
         }
     }
 
+    /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
+    public cutToClipboard(params?: IClipboardCopyParams) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard')) {
+            this.clipboardService.cutToClipboard(params);
+        }
+    }
+
     /** Copies the selected rows to the clipboard. */
     public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
         if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard')) {
