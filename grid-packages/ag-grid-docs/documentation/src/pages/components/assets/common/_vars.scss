@@ -52,9 +52,3 @@ body {
     content: 'e';
     margin-left: 3px;
 }
-
-.enterprise-icon {
-    @include enterprise-icon;
-    vertical-align: baseline;
-    transform: translatey(2px);
-}
