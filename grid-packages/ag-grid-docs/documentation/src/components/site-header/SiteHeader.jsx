@@ -1,6 +1,7 @@
-import classnames from 'classnames';
-import { withPrefix } from 'gatsby';
 import React, { useState } from 'react';
+import { withPrefix } from 'gatsby';
+import classnames from 'classnames';
+import supportedFrameworks from 'utils/supported-frameworks.js';
 import LogoType from '../../images/inline-svgs/ag-grid-logotype.svg';
 import GithubLogo from '../../images/inline-svgs/github-logo.svg';
 import MenuIcon from '../../images/inline-svgs/menu-icon.svg';
@@ -32,30 +33,35 @@ const links = [
     },
 ];
 
-const getActiveLink = (path) => {
-    const rawPath = path.replaceAll('/', '');
-    const match = links.filter((link) => link.url.includes(rawPath));
-    if (match && match.length === 1) {
-        return match[0].name;
-    }
+const getCurrentPageName = (path) => {
+    const rawPath = path.split('/')[1];
+    
+    const allLinks = [
+        ...links,
+        ...supportedFrameworks.map(framework => (
+          { name: 'Documentation', url: `/${framework}-data-grid`}
+        ))
+    ];
 
-    return 'Documentation';
+    const match = allLinks.filter(link => (link.url.includes(rawPath)));
+
+    if (match && match.length === 1) {
+        return match[0].name
+    }
 };
 
 const HeaderLinks = ({ path }) => {
-    const [active, setActive] = useState(getActiveLink(path));
-
     return (
         <ul className={classnames(styles.navItemList, 'list-style-none')}>
             {links.map((link) => {
                 const linkClasses = classnames(styles.navItem, {
-                    [styles.navItemActive]: link.name === active && path !== '/',
+                    [styles.navItemActive]: link.name === getCurrentPageName(path),
                     [styles[link.cssClass]]: link.cssClass,
                 });
 
                 return (
                     <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
-                        <a className={styles.navLink} href={link.url} onClick={() => setActive(link.name)}>
+                        <a className={styles.navLink} href={link.url} >
                             {link.icon}
                             <span>{link.name}</span>
                         </a>
