@@ -23,9 +23,9 @@ import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import styles from '../pages/components/assets/homepage/homepage.module.scss';
 import { booleanValues, colNames, countries, COUNTRY_CODES, firstNames, games, lastNames, months } from './consts';
 import { CountryFloatingFilterComponent } from './CountryFloatingFilterComponent';
+import styles from './Example.module.scss';
 import { PersonFilter } from './PersonFilter';
 import { PersonFloatingFilterComponent } from './PersonFloatingFilterComponent';
 import {
