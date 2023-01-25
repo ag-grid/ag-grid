@@ -1,3 +1,4 @@
+@use "sass:map";
 @use "../../design-system/" as *;
 
 $mobile-header-breakpoint: 768px;
@@ -7,7 +8,7 @@ $header-height: 64px;
     display: flex;
     align-items: center;
     position: relative;
-    background-color: $ag-site-header-background;
+    background-color: var(--site-header-background);
 }
 
 .headerInner {
@@ -36,7 +37,7 @@ $header-height: 64px;
 .mobileMenuButton {
     --button-color: transparent;
     --border-radius: 0;
-    --button-hover-color: #{rgba($ag-site-nav-background, 0.6666)}; // needed for .ag-styles specificity
+    --button-hover-color: #{rgba(map.get($abstract-colors, ag-grid-dark-blue), 0.6666)}; // needed for .ag-styles specificity
 
     appearance: none;
     flex-basis: content;
@@ -48,7 +49,7 @@ $header-height: 64px;
 
     &[aria-expanded='true'],
     &:hover[aria-expanded='true'] {
-        background-color: $ag-site-nav-background;
+        background-color: var(--site-nav-background);
     }
 
     svg {
@@ -142,7 +143,7 @@ $header-height: 64px;
 
     width: 100%;
     margin-left: auto !important; // !important for .ag-styles specificity
-    background-color: $ag-site-nav-background;
+    background-color: var(--site-nav-background);
 
     @media screen and (min-width: $mobile-header-breakpoint) {
         margin-right: -$size-3 !important; // !important for .ag-styles specificity
@@ -161,7 +162,7 @@ $header-height: 64px;
 
 .navItem {
     &:not(:last-child) {
-        border-bottom: 1px solid $ag-site-header-background;
+        border-bottom: 1px solid var(--site-header-background);
     }
 
     @media screen and (min-width: $mobile-header-breakpoint) {
@@ -234,7 +235,7 @@ $header-height: 64px;
         padding-left: 24px;
 
         &:hover svg {
-            box-shadow: 0 0 0 3px $ag-site-header-background, 0 0 0 6px rgba(white, 0.3);
+            box-shadow: 0 0 0 3px var(--site-header-background), 0 0 0 6px rgba(white, 0.3);
         }
 
         svg {

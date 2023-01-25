@@ -48,6 +48,7 @@ const SEMANTIC_COLOR_GROUPS = {
         'input-focus-box-shadow-color',
     ],
     Table: ['table-odd-row-background-color'],
+    "Site Header": ['site-header-background', 'site-nav-background'],
 };
 
 const AbstractColorSwatch = ({ id, hexColor }) => {
