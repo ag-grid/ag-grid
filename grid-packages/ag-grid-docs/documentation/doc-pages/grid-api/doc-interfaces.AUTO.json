@@ -17665,7 +17665,7 @@
     },
     "setUserStyles": {
       "type": {
-        "arguments": { "styles": "any" },
+        "arguments": { "styles": "CellStyle" },
         "returnType": "void",
         "optional": false
       }
@@ -18806,7 +18806,7 @@
     },
     "setUserStyles": {
       "type": {
-        "arguments": { "styles": "any" },
+        "arguments": { "styles": "RowStyle" },
         "returnType": "void",
         "optional": false
       }

@@ -1,6 +1,6 @@
 import { Beans } from "./../beans";
 import { Column } from "../../entities/column";
-import { NewValueParams } from "../../entities/colDef";
+import { CellStyle, NewValueParams } from "../../entities/colDef";
 import { RowNode } from "../../entities/rowNode";
 import { CellChangedEvent } from "../../interfaces/iRowNode";
 import { CellPosition } from "../../entities/cellPositionUtils";
@@ -47,7 +47,7 @@ const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
 
 export interface ICellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setUserStyles(styles: any): void;
+    setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
 
     setTabIndex(tabIndex: number): void;

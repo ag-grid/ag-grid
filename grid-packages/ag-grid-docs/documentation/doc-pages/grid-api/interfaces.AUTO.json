@@ -10008,7 +10008,7 @@
     "meta": {},
     "type": {
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "setUserStyles(styles: any)": "void",
+      "setUserStyles(styles: CellStyle)": "void",
       "getFocusableElement()": "HTMLElement",
       "setTabIndex(tabIndex: number)": "void",
       "setRole(role: string)": "void",
@@ -10588,7 +10588,7 @@
       "setRowId(rowId: string)": "void",
       "setRowBusinessKey(businessKey: string)": "void",
       "setTabIndex(tabIndex: number)": "void",
-      "setUserStyles(styles: any)": "void",
+      "setUserStyles(styles: RowStyle)": "void",
       "setRole(role: string)": "void"
     }
   },

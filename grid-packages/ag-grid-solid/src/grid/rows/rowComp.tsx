@@ -1,4 +1,4 @@
-import { CellCtrl, CssClassManager, ICellRenderer, IRowComp, RowContainerType, RowCtrl, UserCompDetails } from 'ag-grid-community';
+import { CellCtrl, CssClassManager, ICellRenderer, IRowComp, RowContainerType, RowCtrl, RowStyle, UserCompDetails } from 'ag-grid-community';
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount } from "solid-js";
 import CellComp from '../cells/cellComp';
 import UserComp from '../userComps/userComp';
@@ -58,7 +58,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     const [getRole, setRole] = createSignal<string>();
     const [getRowBusinessKey, setRowBusinessKey] = createSignal<string>();
     const [getTabIndex, setTabIndex] = createSignal<number>();
-    const [getUserStyles, setUserStyles] = createSignal<any>();
+    const [getUserStyles, setUserStyles] = createSignal<RowStyle>();
     const [getCellCtrls, setCellCtrls] = createSignal<CellCtrls>({ list: [], instanceIdMap: new Map() });
     const [getFullWidthCompDetails, setFullWidthCompDetails] = createSignal<UserCompDetails>();
     const [getDomOrder, setDomOrder] = createSignal<boolean>(false);
@@ -124,7 +124,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
             setRowId: value => setRowId(value),
             setRowBusinessKey: value => setRowBusinessKey(value),
             setTabIndex: value => setTabIndex(value),
-            setUserStyles: styles => setUserStyles(styles),
+            setUserStyles: (styles: RowStyle) => setUserStyles(styles),
             setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
