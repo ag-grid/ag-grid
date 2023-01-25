@@ -203,6 +203,8 @@ export interface RowDragEvent<TData = any> extends AgGridEvent<TData> {
     nodes: IRowNode<TData>[];
     /** The underlying mouse move event associated with the drag. */
     event: MouseEvent;
+    /** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */
+    eventPath?: EventTarget[];
     /** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */
     vDirection: string;
     /** The row index the mouse is dragging over or -1 if over no row. */
@@ -439,6 +441,8 @@ interface BaseRowEvent<TData> extends AgGridEvent<TData> {
     rowPinned: RowPinnedType;
     /** If event was due to browser event (eg click), this is the browser event */
     event?: Event | null;
+    /** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */
+    eventPath?: EventTarget[];
 }
 
 export interface RowEvent<TData = any> extends BaseRowEvent<TData> {
