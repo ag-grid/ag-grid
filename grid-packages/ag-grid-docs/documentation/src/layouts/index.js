@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import Footer from 'components/footer/Footer';
 import FrameworkSelector from 'components/FrameworkSelector';
 import { GlobalContextProvider } from 'components/GlobalContext';
@@ -101,12 +102,12 @@ export const Layout = ({
             </Helmet>
             <div className={styles['main-container']}>
                 <Helmet htmlAttributes={{ lang: 'en' }} />
-                <header className={styles.header}>
-                    <div className={styles.header__wrapper}>
+                <header className={classnames('ag-styles', styles.header)}>
+                    <div className={classnames(styles.headerInner, 'page-margin')}>
                         <a
                             href="/"
                             aria-label="Home"
-                            className={styles['header__logo']}
+                            className={styles.headerLogo}
                             onMouseEnter={() => {
                                 setIsLogoHover(true);
                             }}

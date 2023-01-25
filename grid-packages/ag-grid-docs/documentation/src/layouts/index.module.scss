@@ -1,3 +1,4 @@
+@use "../design-system/" as ds;
 @import '~bootstrap/scss/type';
 @import '~bootstrap/scss/alert';
 
@@ -30,26 +31,29 @@ main {
     align-items: center;
     position: relative;
     background-color: $ag-site-header-background;
+}
 
-    &__wrapper {
-        display: flex;
-        flex-wrap: wrap;
-        width: 100%;
+.headerInner {
+    display: flex;
+    flex-wrap: wrap;
 
-        @media screen and (min-width: $mobile-header-breakpoint) {
-            flex-wrap: unset;
-            max-width: 1400px + 30px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 16px;
-            padding-right: 24px;
-        }
+    @media screen and (max-width: $mobile-header-breakpoint) {
+        padding-left: 0 !important; // !important needed because of .ag-styles specificity
+        padding-right: 0 !important; // !important needed because of .ag-styles specificity
+    }
+
+    @media screen and (min-width: $mobile-header-breakpoint) {
+        flex-wrap: unset;
     }
 }
 
-.header__logo {
+.headerLogo {
     display: block;
-    padding: 8px;
+    padding: ds.$size-1;
+
+    @media screen and (min-width: $mobile-header-breakpoint) {
+        margin-left: -1 * ds.$size-2 !important; // !important needed because of .ag-styles specificity
+    }
 }
 
 .top-bar {

@@ -44,20 +44,16 @@ const HeaderLinks = ({ path }) => {
     const [active, setActive] = useState(getActiveLink(path));
 
     return (
-        <ul className={styles['header-nav__navbar']}>
+        <ul className={classnames(styles.navItemList, 'list-style-none')}>
             {links.map((link) => {
-                const linkClasses = classnames(styles['header-nav__link'], {
-                    [styles['header-nav__link--active']]: link.name === active && path !== '/',
+                const linkClasses = classnames(styles.navItem, {
+                    [styles.navItemActive]: link.name === active && path !== '/',
                     [styles[link.cssClass]]: link.cssClass,
                 });
 
                 return (
                     <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
-                        <a
-                            className={styles['header-nav__link-anchor']}
-                            href={link.url}
-                            onClick={() => setActive(link.name)}
-                        >
+                        <a className={styles.navLink} href={link.url} onClick={() => setActive(link.name)}>
                             {link.icon}
                             <span>{link.name}</span>
                         </a>
@@ -70,7 +66,7 @@ const HeaderLinks = ({ path }) => {
 
 const HeaderExpandButton = () => (
     <button
-        className={styles['header-nav__button']}
+        className={styles.mobileMenuButton}
         type="button"
         data-toggle="collapse"
         data-target="#main-nav"
@@ -78,21 +74,15 @@ const HeaderExpandButton = () => (
         aria-expanded="false"
         aria-label="Toggle navigation"
     >
-        <MenuIcon className={styles['header-nav__menu-icon']} />
+        <MenuIcon className={styles.menuIcon} />
     </button>
 );
 
 const HeaderNav = ({ path }) => (
     <>
-        <div className={styles['header-nav__widgets']}>
-            <HeaderExpandButton />
-        </div>
-        <nav className={styles['header-nav']}>
-            <div className={styles['header-nav__wrapper']}>
-                <div className={styles['header-nav__navbar-collapse']} id="main-nav">
-                    <HeaderLinks path={path} />
-                </div>
-            </div>
+        <HeaderExpandButton />
+        <nav className={classnames(styles.nav, 'collapse')} id="main-nav">
+            <HeaderLinks path={path} />
         </nav>
     </>
 );
