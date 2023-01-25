@@ -1,39 +1,42 @@
+import DocumentationLink from 'components/DocumentationLink';
 import React from 'react';
 import footerItems from './footer-items.json';
-import DocumentationLink from 'components/DocumentationLink';
 import styles from './Footer.module.scss';
 
-
-const MenuColumns = ({ framework = 'javascript' }) => footerItems.map(({ title, links }) => (
-    <div key={title} className={styles['footer__links']}>
-        <h4>{title}</h4>
-        <ul className={styles['footer__links__list']}>
-            {links.map(({ name, url, newTab, iconUrl }) => (
-                <li key={`${title}_${name}`}>
-                    {url.indexOf('../') === 0 ?
-                        <DocumentationLink framework={framework} href={url.replace('../', '/')}>{name}</DocumentationLink> :
-                        <a href={url} {...newTab ? { target: '_blank', rel: 'noreferrer' } : {}}>
-                            { iconUrl &&
-                                <img src={iconUrl} alt={name}/>
-                            }
-                            {name}
-                        </a>
-                    }
-                </li>
-            ))}
-        </ul>
-    </div>
-));
+const MenuColumns = ({ framework = 'javascript' }) =>
+    footerItems.map(({ title, links }) => (
+        <div key={title} className={styles['menu-column']}>
+            <h4 className="thin-text">{title}</h4>
+            <ul className="list-style-none">
+                {links.map(({ name, url, newTab, iconUrl }) => (
+                    <li key={`${title}_${name}`}>
+                        {url.indexOf('../') === 0 ? (
+                            <DocumentationLink framework={framework} href={url.replace('../', '/')}>
+                                {name}
+                            </DocumentationLink>
+                        ) : (
+                            <a href={url} {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}>
+                                {iconUrl && <img src={iconUrl} alt={name} />}
+                                {name}
+                            </a>
+                        )}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    ));
 
 const Footer = ({ framework }) => (
-    <footer className={styles['footer']}>
-        <div className={styles['footer__wrapper']}>
-            <div className={styles['footer__row']}>
+    <footer className={`${styles['footer']} ag-styles`}>
+        <div className="page-margin">
+            <div className={styles['row']}>
                 <MenuColumns framework={framework} />
             </div>
-            <div className={styles['footer__row']}>
-                <p>AG Grid Ltd registered in the United Kingdom. Company&nbsp;No.&nbsp;07318192.</p>
-                <p>&copy; AG Grid Ltd. 2015-{new Date().getFullYear()}</p>
+            <div className={styles['row']}>
+                <p className="font-size-small thin-text">
+                    AG Grid Ltd registered in the United Kingdom. Company&nbsp;No.&nbsp;07318192.
+                </p>
+                <p className="font-size-small thin-text">&copy; AG Grid Ltd. 2015-{new Date().getFullYear()}</p>
             </div>
         </div>
     </footer>
