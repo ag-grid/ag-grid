@@ -266,9 +266,9 @@ export interface GridOptions<TData = any> {
     excelStyles?: ExcelStyle[];
 
     // *** Filter *** //
-    /** Rows are filtered using this text as a quick filter. */
+    /** Rows are filtered using this text as a Quick Filter. */
     quickFilterText?: string;
-    /** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */
+    /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */
     cacheQuickFilter?: boolean;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
