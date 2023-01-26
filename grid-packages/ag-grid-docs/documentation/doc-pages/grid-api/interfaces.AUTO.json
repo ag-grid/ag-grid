@@ -565,6 +565,7 @@
       "suppressMenu?": "boolean",
       "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData>",
       "headerCheckboxSelectionFilteredOnly?": "boolean",
+      "headerCheckboxSelectionCurrentPageOnly?": "boolean",
       "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
       "pinned?": "boolean | 'left' | 'right' | null",
       "initialPinned?": "boolean | 'left' | 'right'",
@@ -692,6 +693,7 @@
       "suppressMenu?": "/** Set to `true` if no menu should be shown for this column header. Default: `false` */",
       "headerCheckboxSelection?": "/** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */",
       "headerCheckboxSelectionFilteredOnly?": "/** If `true`, the header checkbox selection will only select filtered items. */",
+      "headerCheckboxSelectionCurrentPageOnly?": "/** If `true`, the header checkbox selection will only select nodes on the current page. */",
       "chartDataType?": "/** Defines the chart data type that should be used for a column. */",
       "pinned?": "/** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`. */",
       "initialPinned?": "/** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions. */",
@@ -2767,7 +2769,7 @@
   },
   "SelectionEventSourceType": {
     "meta": { "isTypeAlias": true },
-    "type": "'api' | 'apiSelectAll' | 'apiSelectAllFiltered' | 'checkboxSelected' | 'rowClicked' | 'rowDataChanged' | 'rowGroupChanged' | 'selectableChanged' | 'spacePressed' | 'uiSelectAll' | 'uiSelectAllFiltered'"
+    "type": "'api' | 'apiSelectAll' | 'apiSelectAllFiltered' | 'apiSelectAllCurrentPage' | 'checkboxSelected' | 'rowClicked' | 'rowDataChanged' | 'rowGroupChanged' | 'selectableChanged' | 'spacePressed' | 'uiSelectAll' | 'uiSelectAllFiltered' | 'uiSelectAllCurrentPage'"
   },
   "SelectionChangedEvent": {
     "meta": { "typeParams": ["TData = any"] },

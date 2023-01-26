@@ -3,7 +3,7 @@ import { BeanStub } from "../../../context/beanStub";
 import { Autowired } from "../../../context/context";
 import { ColumnApi } from "../../../columns/columnApi";
 import { GridApi } from "../../../gridApi";
-import { Events } from "../../../events";
+import { Events, SelectionEventSourceType } from "../../../events";
 import { IRowModel } from "../../../interfaces/iRowModel";
 import { Column } from "../../../entities/column";
 import { RowNode } from "../../../entities/rowNode";
@@ -25,6 +25,8 @@ export class SelectAllFeature extends BeanStub {
     private headerCellCtrl: HeaderCellCtrl;
 
     private filteredOnly: boolean;
+    private currentPageOnly: boolean;
+
     private cbSelectAll: AgCheckbox;
 
     constructor(column: Column) {
@@ -32,7 +34,8 @@ export class SelectAllFeature extends BeanStub {
         this.column = column;
 
         const colDef = column.getColDef();
-        this.filteredOnly = colDef ? !!colDef.headerCheckboxSelectionFilteredOnly : false;
+        this.filteredOnly = !!colDef?.headerCheckboxSelectionFilteredOnly;
+        this.currentPageOnly = !!colDef?.headerCheckboxSelectionCurrentPageOnly;
     }
 
     public onSpaceKeyPressed(e: KeyboardEvent): void {
@@ -59,6 +62,7 @@ export class SelectAllFeature extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideSelectAll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
         this.addManagedListener(this.cbSelectAll, AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
         setAriaHidden(this.cbSelectAll.getGui(), true);
@@ -157,11 +161,7 @@ export class SelectAllFeature extends BeanStub {
             }
         };
 
-        if (this.filteredOnly) {
-            this.gridApi.forEachNodeAfterFilter(callback);
-        } else {
-            this.gridApi.forEachNode(callback);
-        }
+        this.selectionService.getNodesToSelect(this.filteredOnly, this.currentPageOnly).forEach(callback);
 
         return {
             notSelected: notSelectedCount,
@@ -186,11 +186,19 @@ export class SelectAllFeature extends BeanStub {
 
         const value = this.cbSelectAll.getValue();
 
-        const source = this.filteredOnly ? 'uiSelectAllFiltered' : 'uiSelectAll';
+        let source: SelectionEventSourceType = 'uiSelectAll';
+        if (this.currentPageOnly) source = 'uiSelectAllCurrentPage';
+        else if (this.filteredOnly) source = 'uiSelectAllFiltered';
+
+        const params = {
+            source,
+            justFiltered: this.filteredOnly,
+            justCurrentPage: this.currentPageOnly,
+        };
         if (value) {
-            this.selectionService.selectAllRowNodes(source, this.filteredOnly);
+            this.selectionService.selectAllRowNodes(params);
         } else {
-            this.selectionService.deselectAllRowNodes(source, this.filteredOnly);
+            this.selectionService.deselectAllRowNodes(params);
         }
     }
 

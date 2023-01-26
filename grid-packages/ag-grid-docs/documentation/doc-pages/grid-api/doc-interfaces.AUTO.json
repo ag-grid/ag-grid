@@ -1066,6 +1066,10 @@
       "description": "/** If `true`, the header checkbox selection will only select filtered items. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "headerCheckboxSelectionCurrentPageOnly": {
+      "description": "/** If `true`, the header checkbox selection will only select nodes on the current page. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "chartDataType": {
       "description": "/** Defines the chart data type that should be used for a column. */",
       "type": {
