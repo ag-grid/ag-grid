@@ -4,7 +4,6 @@
 @import "../common/content.scss";
 @import "../common/mixins.scss";
 @import "./demo.scss";
-@import "../pages/about.scss";
 @import "../pages/example.scss";
 @import "../pages/license-pricing.scss";
 
@@ -86,22 +85,22 @@ body {
     padding: 24px 15px 48px;
     background-color: $ag-site-fw-background;
 
-    @media screen and ( min-width: 640px ) {
+    @media screen and (min-width: 640px) {
         padding-top: 48px;
         flex-direction: row;
     }
 }
 
 .stage-frameworks__label {
-    opacity: .6666;
+    opacity: 0.6666;
     margin-bottom: 8px;
 
-    @media screen and ( min-width: 640px ) {
+    @media screen and (min-width: 640px) {
         margin-bottom: 0;
         margin-right: 8px;
     }
 
-    @media screen and ( min-width: 1020px ) {
+    @media screen and (min-width: 1020px) {
         font-size: 22px;
         margin-right: 16px;
     }
@@ -165,11 +164,11 @@ body {
     font-family: 'Roboto', sans-serif;
     color: $white;
 
-    @media screen and ( min-width: $breakpoint-medium ) {
+    @media screen and (min-width: $breakpoint-medium) {
         padding-top: 60px;
     }
 
-    @media screen and ( min-width: $breakpoint-large ) {
+    @media screen and (min-width: $breakpoint-large) {
         padding-top: 100px;
     }
 
@@ -183,7 +182,7 @@ body {
         padding-left: 16px;
         padding-right: 16px;
 
-        @media screen and ( min-width: $breakpoint-large ) {
+        @media screen and (min-width: $breakpoint-large) {
             flex-direction: row;
         }
     }
@@ -194,24 +193,24 @@ body {
         flex-direction: column;
         text-align: center;
 
-        @media screen and ( min-width: $breakpoint-large ) {
-          text-align: unset;
+        @media screen and (min-width: $breakpoint-large) {
+            text-align: unset;
         }
     }
 
     h1 {
-        margin-bottom: .15em;
+        margin-bottom: 0.15em;
         font-size: 28px;
         line-height: 1.3;
         font-weight: 700;
 
-        @media screen and ( min-width: $breakpoint-medium ) {
+        @media screen and (min-width: $breakpoint-medium) {
             font-size: 38px;
         }
 
-        @media screen and ( min-width: $breakpoint-large ) {
+        @media screen and (min-width: $breakpoint-large) {
             margin-top: -0.15em;
-            margin-bottom: .3em;
+            margin-bottom: 0.3em;
             font-size: min(3.4vw, 54px);
         }
     }
@@ -225,11 +224,11 @@ body {
         line-height: 1.4;
         font-weight: 200;
 
-        @media screen and ( min-width: $breakpoint-medium ) {
+        @media screen and (min-width: $breakpoint-medium) {
             font-size: 22px;
         }
 
-        @media screen and ( min-width: $breakpoint-large ) {
+        @media screen and (min-width: $breakpoint-large) {
             max-width: unset;
             margin-bottom: 1em;
             font-size: min(1.9vw, 32px);
@@ -241,9 +240,9 @@ body {
         flex-direction: row-reverse;
         height: 320px;
 
-        @media screen and ( min-width: $breakpoint-large ) {
-          width: 860px;
-          height: 416px;
+        @media screen and (min-width: $breakpoint-large) {
+            width: 860px;
+            height: 416px;
         }
     }
 }
@@ -346,7 +345,7 @@ body {
                 text-align: right;
             }
 
-            input[type="text"] {
+            input[type='text'] {
                 @extend .form-control;
             }
         }
