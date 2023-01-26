@@ -1,5 +1,5 @@
 ---
-title: "Chart Download"
+title: "Download"
 ---
 
 Saving chart images by API call.

@@ -1885,6 +1885,15 @@
                 "url": "/charts-api-themes/"
               },
               {
+                "title": "Create/Update",
+                "showInCollapsed": true,
+                "url": "/charts-api-create-update/"
+              },
+              {
+                "title": "Download",
+                "url": "/charts-api-download/"
+              },
+              {
                 "title": "Explorer",
                 "showInCollapsed": true,
                 "url": "/charts-api-explorer/"
@@ -1967,10 +1976,6 @@
               {
                 "title": "Axes",
                 "url": "/charts-axes/"
-              },
-              {
-                "title": "Download",
-                "url": "/charts-download/"
               },
               {
                 "title": "Events",
