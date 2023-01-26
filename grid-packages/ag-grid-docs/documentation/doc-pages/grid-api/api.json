@@ -97,6 +97,8 @@
         "deselectAll": {},
         "selectAllFiltered": {},
         "deselectAllFiltered": {},
+        "selectAllOnCurrentPage": {},
+        "deselectAllOnCurrentPage": {},
         "getSelectedNodes": {},
         "getSelectedRows": {},
         "getBestCostNodeSelection": {},

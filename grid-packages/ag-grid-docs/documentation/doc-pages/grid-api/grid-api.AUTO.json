@@ -336,6 +336,22 @@
       }
     }
   },
+  "selectAllOnCurrentPage": {
+    "description": "/** Select all rows on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`\n     */",
+    "type": {
+      "arguments": {
+        "source": "SelectionEventSourceType = 'apiSelectAllCurrentPage'"
+      }
+    }
+  },
+  "deselectAllOnCurrentPage": {
+    "description": "/** Clear all filtered on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`\n     */",
+    "type": {
+      "arguments": {
+        "source": "SelectionEventSourceType = 'apiSelectAllCurrentPage'"
+      }
+    }
+  },
   "sizeColumnsToFit": {
     "description": "/** Sets columns to adjust in size to fit the grid horizontally.\n     **/",
     "type": { "arguments": { "params?": "ISizeColumnsToFitParams" } }

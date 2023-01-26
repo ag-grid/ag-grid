@@ -674,7 +674,7 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
      */
     public selectAll(source: SelectionEventSourceType = 'apiSelectAll') {
-        this.selectionService.selectAllRowNodes(source);
+        this.selectionService.selectAllRowNodes({ source });
     }
 
     /**
@@ -682,7 +682,7 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
      */
     public deselectAll(source: SelectionEventSourceType = 'apiSelectAll') {
-        this.selectionService.deselectAllRowNodes(source);
+        this.selectionService.deselectAllRowNodes({ source });
     }
 
     /**
@@ -690,7 +690,7 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
      */
     public selectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-        this.selectionService.selectAllRowNodes(source, true);
+        this.selectionService.selectAllRowNodes({ source, justFiltered: true });
     }
 
     /**
@@ -698,7 +698,23 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
      */
     public deselectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-        this.selectionService.deselectAllRowNodes(source, true);
+        this.selectionService.deselectAllRowNodes({ source, justFiltered: true });
+    }
+
+    /**
+     * Select all rows on the current page.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     */
+    public selectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
+        this.selectionService.selectAllRowNodes({ source, justCurrentPage: true });
+    }
+
+    /**
+     * Clear all filtered on the current page.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     */
+    public deselectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
+        this.selectionService.deselectAllRowNodes({ source, justCurrentPage: true });
     }
 
     /**

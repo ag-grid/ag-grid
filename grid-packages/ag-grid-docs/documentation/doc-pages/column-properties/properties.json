@@ -152,6 +152,12 @@
                 "name": "Select Everything or Just Filtered",
                 "url": "/row-selection/#select-everything-or-just-filtered"
             }
+        },
+        "headerCheckboxSelectionCurrentPageOnly": {
+            "more": {
+                "name": "Select Everything on the Current Page",
+                "url": "/row-selection/#example-select-only-the-current-page"
+            }
         }
     },
     "display": {

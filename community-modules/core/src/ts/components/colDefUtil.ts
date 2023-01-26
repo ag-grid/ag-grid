@@ -87,6 +87,7 @@ export class ColDefUtil {
         showDisabledCheckboxes: undefined,
         headerCheckboxSelection: undefined,
         headerCheckboxSelectionFilteredOnly: undefined,
+        headerCheckboxSelectionCurrentPageOnly: undefined,
         suppressMenu: undefined,
         suppressMovable: undefined,
         lockPosition: undefined,
