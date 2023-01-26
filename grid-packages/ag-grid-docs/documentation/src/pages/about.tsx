@@ -83,77 +83,77 @@ const AboutPage = () => {
                                     <img src="../images/team/niall.jpg" alt="Niall Crosby, Founder / CEO / CTO" />
                                 </div>
                                 <h3>Niall Crosby</h3>
-                                <h4>CEO / CTO</h4>
+                                <p>CEO / CTO</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/rob.jpg" alt="Rob Clarke, VP of Engineering" />
                                 </div>
                                 <h3>Rob Clarke</h3>
-                                <h4>VP of Engineering</h4>
+                                <p>VP of Engineering</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/sean.jpg" alt="Sean Landsman, Lead Developer" />
                                 </div>
                                 <h3>Sean Landsman</h3>
-                                <h4>Lead Developer, Frameworks</h4>
+                                <p>Lead Developer, Frameworks</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/gil.jpg" alt="Guilherme Lopes, Lead Developer" />
                                 </div>
                                 <h3>Guilherme Lopes</h3>
-                                <h4>Lead Developer, UI</h4>
+                                <p>Lead Developer, UI</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/stephen.jpeg" alt="Stephen Cooper, Developer" />
                                 </div>
                                 <h3>Stephen Cooper</h3>
-                                <h4>Developer, Grid Core</h4>
+                                <p>Developer, Grid Core</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/andy.jpeg" alt="Andrew Glazier, Developer" />
                                 </div>
                                 <h3>Andrew Glazier</h3>
-                                <h4>Developer, Grid Core</h4>
+                                <p>Developer, Grid Core</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/tak.png" alt="Tak Tran, Developer" />
                                 </div>
                                 <h3>Tak Tran</h3>
-                                <h4>Developer, Grid Core</h4>
+                                <p>Developer, Grid Core</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/peter.jpg" alt="Peter Reynolds, Developer" />
                                 </div>
                                 <h3>Peter Reynolds</h3>
-                                <h4>Developer, Grid Core</h4>
+                                <p>Developer, Grid Core</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/alanT.jpg" alt="Alan Treadway, Developer" />
                                 </div>
                                 <h3>Alan Treadway</h3>
-                                <h4>Lead Developer, Data Visualisation</h4>
+                                <p>Lead Developer, Data Visualisation</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/mana.jpeg" alt="Mana Peirov, Developer" />
                                 </div>
                                 <h3>Mana Peirov</h3>
-                                <h4>Developer, Data Visualisation</h4>
+                                <p>Developer, Data Visualisation</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/alex.png" alt="Alex (Sasha) Shutau, Developer" />
                                 </div>
                                 <h3>Alex (Sasha) Shutau</h3>
-                                <h4>Developer, Data Visualisation</h4>
+                                <p>Developer, Data Visualisation</p>
                             </div>
                             <div>
                                 <div>
@@ -163,14 +163,14 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Alberto Gutierrez</h3>
-                                <h4>Head of Customer Services</h4>
+                                <p>Head of Customer Services</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/kiril.png" alt="Kiril Matev, Technical Product Manager" />
                                 </div>
                                 <h3>Kiril Matev</h3>
-                                <h4>Technical Product Manager</h4>
+                                <p>Technical Product Manager</p>
                             </div>
                             <div>
                                 <div>
@@ -180,14 +180,14 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>David Glickman</h3>
-                                <h4>Technical Product Analyst</h4>
+                                <p>Technical Product Analyst</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/viqas.jpg" alt="Viqas Hussain, Lead Developer" />
                                 </div>
                                 <h3>Viqas Hussain</h3>
-                                <h4>Lead Developer, E-commerce</h4>
+                                <p>Lead Developer, E-commerce</p>
                             </div>
 
                             <div>
@@ -195,7 +195,7 @@ const AboutPage = () => {
                                     <img src="../images/team/mark.jpg" alt="Mark Durrant, Lead UX designer" />
                                 </div>
                                 <h3>Mark Durrant</h3>
-                                <h4>Lead UX Designer</h4>
+                                <p>Lead UX Designer</p>
                             </div>
                         </article>
                     </section>
@@ -207,7 +207,7 @@ const AboutPage = () => {
                                     <img src="../images/team/dimo.jpg" alt="Dimo Iliev, Managing Director" />
                                 </div>
                                 <h3>Dimo Iliev</h3>
-                                <h4>Managing Director</h4>
+                                <p>Managing Director</p>
                             </div>
                             <div>
                                 <div>
@@ -217,14 +217,14 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Simon Kenny</h3>
-                                <h4>Sales Director</h4>
+                                <p>Sales Director</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/nathan.jpeg" alt="Nathan Gauge-Klein, General Counsel" />
                                 </div>
                                 <h3>Nathan Gauge-Klein</h3>
-                                <h4>General Counsel</h4>
+                                <p>General Counsel</p>
                             </div>
                             <div>
                                 <div>
@@ -234,7 +234,7 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Victoria Tennant</h3>
-                                <h4>Renewals Team Manager</h4>
+                                <p>Renewals Team Manager</p>
                             </div>
                             <div>
                                 <div>
@@ -244,7 +244,7 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Dimple Unalkat</h3>
-                                <h4>Initials Team Manager</h4>
+                                <p>Initials Team Manager</p>
                             </div>
                             <div>
                                 <div>
@@ -254,7 +254,7 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Sachshell Rhoden</h3>
-                                <h4>Sales Operations Manager</h4>
+                                <p>Sales Operations Manager</p>
                             </div>
                             <div>
                                 <div>
@@ -264,7 +264,7 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Alison Bunworth</h3>
-                                <h4>Business Development Manager</h4>
+                                <p>Business Development Manager</p>
                             </div>
                             <div>
                                 <div>
@@ -274,7 +274,7 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Rob Dunkiert</h3>
-                                <h4>Customer Experience Manager</h4>
+                                <p>Customer Experience Manager</p>
                             </div>
                             <div>
                                 <div>
@@ -284,7 +284,7 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Seweety Kumar</h3>
-                                <h4>Customer Experience Manager</h4>
+                                <p>Customer Experience Manager</p>
                             </div>
                             <div>
                                 <div>
@@ -294,7 +294,7 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Laiyan Woo</h3>
-                                <h4>Customer Experience Manager</h4>
+                                <p>Customer Experience Manager</p>
                             </div>
                             <div>
                                 <div>
@@ -304,7 +304,7 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Amir Hussain</h3>
-                                <h4>Customer Experience Manager</h4>
+                                <p>Customer Experience Manager</p>
                             </div>
                             <div>
                                 <div>
@@ -314,14 +314,14 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Jordan Shekoni</h3>
-                                <h4>Customer Experience Manager</h4>
+                                <p>Customer Experience Manager</p>
                             </div>
                             <div>
                                 <div>
                                     <img src="../images/team/tobi.jpg" alt="Tobi Aguda, Customer Experience Manager" />
                                 </div>
                                 <h3>Tobi Aguda</h3>
-                                <h4>Customer Experience Manager</h4>
+                                <p>Customer Experience Manager</p>
                             </div>
                             <div>
                                 <div>
@@ -331,7 +331,7 @@ const AboutPage = () => {
                                     />
                                 </div>
                                 <h3>Kathryn Knapman</h3>
-                                <h4>PA to CEO and Office Manager</h4>
+                                <p>PA to CEO and Office Manager</p>
                             </div>
                         </article>
                     </section>

@@ -14,11 +14,15 @@
 
     display: flex;
     flex-wrap: wrap;
-    gap: $size-4;
+    gap: $size-2;
     margin-bottom: calc($size-6 * 2) !important; // !important for .ag-styles specificity
 
+    @media screen and (min-width: 660px) {
+        gap: $size-4;
+    }
+
     > div {
-        max-width: calc((100% - $size-4 * 1) / 2);
+        max-width: calc((100% - $size-2 * 1) / 2);
 
         @media screen and (min-width: 660px) {
             max-width: calc((100% - $size-4 * 2) / 3);
