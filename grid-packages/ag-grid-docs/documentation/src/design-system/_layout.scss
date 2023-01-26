@@ -2,7 +2,7 @@
 
 .page-margin {
     width: 100%;
-    max-width: $max-page-width;
+    max-width: var(--max-page-width);
     margin-left: auto;
     margin-right: auto;
     padding-left: $size-2;

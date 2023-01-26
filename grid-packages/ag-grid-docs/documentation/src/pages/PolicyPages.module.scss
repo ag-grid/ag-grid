@@ -17,7 +17,7 @@
         margin-bottom: $size-1;
     }
 
-    @media screen and (min-width: $max-page-width) {
+    @media screen and (min-width: var(--max-page-width)) {
         header {
             display: flex;
             gap: $size-4;
@@ -55,7 +55,7 @@
         font-size: $font-size-large;
     }
 
-    @media screen and (min-width: calc($max-page-width + $size-4)) {
+    @media screen and (min-width: calc(var(--max-page-width) + $size-4)) {
         list-style: decimal;
         padding-left: unset;
 

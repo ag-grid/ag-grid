@@ -10,6 +10,8 @@
         --#{$name}: var(--#{$var-name});
     }
 
+    --max-page-width: #{$max-page-width};
+
     --border-radius: #{$border-radius};
 
     --font-family: #{$font-family};
