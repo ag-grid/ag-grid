@@ -12,7 +12,7 @@ import {
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
 import { FocusService } from "../focusService";
-import { CellPosition } from "../entities/cellPosition";
+import { CellPosition } from "../entities/cellPositionUtils";
 import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { Beans } from "./beans";
@@ -20,7 +20,7 @@ import { RowContainerHeightService } from "./rowContainerHeightService";
 import { ICellRenderer } from "./cellRenderers/iCellRenderer";
 import { ICellEditor } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
-import { RowPosition } from "../entities/rowPosition";
+import { RowPosition } from "../entities/rowPositionUtils";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists, missing } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
@@ -660,29 +660,31 @@ export class RowRenderer extends BeanStub {
     }
 
     public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
-        const rowIdMap = this.mapRowNodes(params.rowNodes);
-
-        const fullWidthRenderers: ICellRenderer[] = [];
-        
-        const isSelectingColumns = !!params.columns?.length;
-        if (!isSelectingColumns) {
-            // the rowCtrls here mimics those used within getCellCtrls
-            const rowCtrls = [...Object.values(this.rowCtrlsByRowIndex), ...this.topRowCtrls, ...this.bottomRowCtrls];
-            rowCtrls.forEach(rowCtrl => {
-                if (rowIdMap && !this.isRowInMap(rowCtrl.getRowNode(), rowIdMap)) {
-                    return;
-                }
-    
-                const fullWidthRenderer = rowCtrl.getRowComp()?.getFullWidthCellRenderer();
-                if (rowCtrl.isFullWidth() && fullWidthRenderer) {
-                    fullWidthRenderers.push(fullWidthRenderer);
-                }
-            });
-        }
-
         const cellRenderers = this.getCellCtrls(params.rowNodes, params.columns)
             .map(cellCtrl => cellCtrl.getCellRenderer())
             .filter(renderer => renderer != null) as ICellRenderer[];
+        if (params.columns?.length) {
+            return cellRenderers;
+        }
+
+        const fullWidthRenderers: ICellRenderer[] = [];
+        const rowIdMap = this.mapRowNodes(params.rowNodes);
+        
+        this.getAllRowCtrls().forEach(rowCtrl => {
+            if (rowIdMap && !this.isRowInMap(rowCtrl.getRowNode(), rowIdMap)) {
+                return;
+            }
+
+            if (!rowCtrl.isFullWidth()) {
+                return;
+            }
+
+            const fullWidthRenderer = rowCtrl.getFullWidthCellRenderer();
+            if (fullWidthRenderer) {
+                fullWidthRenderers.push(fullWidthRenderer);
+            }
+        });
+
         return [...fullWidthRenderers, ...cellRenderers];
     }
 
@@ -787,17 +789,7 @@ export class RowRenderer extends BeanStub {
             });
         };
 
-        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
-            processRow(rowComp);
-        });
-
-        if (this.topRowCtrls) {
-            this.topRowCtrls.forEach(processRow);
-        }
-
-        if (this.bottomRowCtrls) {
-            this.bottomRowCtrls.forEach(processRow);
-        }
+        this.getAllRowCtrls().forEach(row => processRow(row));
 
         return res;
     }

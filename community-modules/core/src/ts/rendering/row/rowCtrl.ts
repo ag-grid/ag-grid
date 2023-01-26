@@ -2,12 +2,12 @@ import { ProcessRowParams } from "../../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { BeanStub } from "../../context/beanStub";
-import { CellPosition } from "../../entities/cellPosition";
+import { CellPosition } from "../../entities/cellPositionUtils";
 import { Column, ColumnPinnedType } from "../../entities/column";
-import { RowClassParams } from "../../entities/gridOptions";
+import { RowClassParams, RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
 import { DataChangedEvent, RowHighlightPosition } from "../../interfaces/iRowNode";
-import { RowPosition } from "../../entities/rowPosition";
+import { RowPosition } from "../../entities/rowPositionUtils";
 import { CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
@@ -47,7 +47,7 @@ export interface IRowComp {
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
     setTabIndex(tabIndex: number): void;
-    setUserStyles(styles: any): void;
+    setUserStyles(styles: RowStyle): void;
     setRole(role: string): void;
 }
 
@@ -73,8 +73,6 @@ export class RowCtrl extends BeanStub {
     private readonly beans: Beans;
 
     private rowType: RowType;
-
-    private rowComp: IRowComp | undefined;
 
     private leftGui: RowGui | undefined;
     private centerGui: RowGui;
@@ -173,7 +171,6 @@ export class RowCtrl extends BeanStub {
     public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
         const gui: RowGui = { rowComp, element, containerType };
         this.allRowGuis.push(gui);
-        this.rowComp = rowComp;
 
         if (containerType === RowContainerType.LEFT) {
             this.leftGui = gui;
@@ -196,8 +193,6 @@ export class RowCtrl extends BeanStub {
     }
 
     public unsetComp(containerType: RowContainerType): void {
-        this.rowComp = undefined;
-
         this.allRowGuis = this.allRowGuis
             .filter(rowGui => rowGui.containerType !== containerType);
 
@@ -373,8 +368,8 @@ export class RowCtrl extends BeanStub {
         return this.printLayout;
     }
 
-    public getRowComp() {
-        return this.rowComp;
+    public getFullWidthCellRenderer(): ICellRenderer<any> | null | undefined {
+        return this.fullWidthGui?.rowComp?.getFullWidthCellRenderer();
     }
 
     // use by autoWidthCalculator, as it clones the elements

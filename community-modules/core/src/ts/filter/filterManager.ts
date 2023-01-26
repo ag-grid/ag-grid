@@ -303,7 +303,7 @@ export class FilterManager extends BeanStub {
         return newFilter.toUpperCase();
     }
 
-    public setQuickFilter(newFilter: string): void {
+    private setQuickFilter(newFilter: string): void {
         if (newFilter != null && typeof newFilter !== 'string') {
             console.warn(`AG Grid - setQuickFilter() only supports string inputs, received: ${typeof newFilter}`);
             return;
@@ -687,9 +687,8 @@ export class FilterManager extends BeanStub {
             (filter!.setModel(null) || AgPromise.resolve()).then(() => {
                 this.getContext().destroyBean(filter);
 
-                filterWrapper.column.setFilterActive(false, source);
-
                 this.allColumnFilters.delete(filterWrapper.column.getColId());
+                filterWrapper.column.setFilterActive(false, source);
             });
         });
     }

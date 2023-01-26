@@ -4,7 +4,7 @@ import { ColumnModel, ISizeColumnsToFitParams } from "./columns/columnModel";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
-import { CellPosition } from "./entities/cellPosition";
+import { CellPosition } from "./entities/cellPositionUtils";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { Column } from "./entities/column";
 import {
@@ -545,7 +545,7 @@ export class GridApi<TData = any> {
         return this.filterManager.isColumnFilterPresent() || this.filterManager.isAggregateFilterPresent();
     }
 
-    /** Returns `true` if the quick filter is set, otherwise `false`. */
+    /** Returns `true` if the Quick Filter is set, otherwise `false`. */
     public isQuickFilterPresent(): boolean {
         return this.filterManager.isQuickFilterPresent();
     }
@@ -659,7 +659,12 @@ export class GridApi<TData = any> {
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
-    /** Pass a quick filter text into the grid for filtering. */
+    /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
+    public getQuickFilter(): string | undefined {
+        return this.gridOptionsService.get('quickFilterText');
+    }
+
+    /** Pass a Quick Filter text into the grid for filtering. */
     public setQuickFilter(newFilter: string): void {
         this.gridOptionsService.set('quickFilterText', newFilter);
     }
@@ -1418,7 +1423,7 @@ export class GridApi<TData = any> {
         return this.destroyCalled;
     }
 
-    /** Reset the quick filter cache text on every rowNode. */
+    /** Reset the Quick Filter cache text on every rowNode. */
     public resetQuickFilter(): void {
         if (this.warnIfDestroyed('resetQuickFilter')) { return; }
         this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
@@ -1542,6 +1547,13 @@ export class GridApi<TData = any> {
     public copyToClipboard(params?: IClipboardCopyParams) {
         if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard')) {
             this.clipboardService.copyToClipboard(params);
+        }
+    }
+
+    /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
+    public cutToClipboard(params?: IClipboardCopyParams) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard')) {
+            this.clipboardService.cutToClipboard(params);
         }
     }
 

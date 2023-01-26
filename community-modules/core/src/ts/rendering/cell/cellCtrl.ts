@@ -1,17 +1,16 @@
 import { Beans } from "./../beans";
 import { Column } from "../../entities/column";
-import { NewValueParams } from "../../entities/colDef";
+import { CellStyle, NewValueParams } from "../../entities/colDef";
 import { RowNode } from "../../entities/rowNode";
 import { CellChangedEvent } from "../../interfaces/iRowNode";
-import { CellPosition } from "../../entities/cellPosition";
+import { CellPosition } from "../../entities/cellPositionUtils";
 import {
     CellContextMenuEvent,
     CellEditingStartedEvent,
     CellEvent,
     CellFocusedEvent,
     Events,
-    FlashCellsEvent,
-    CellEditRequestEvent
+    FlashCellsEvent
 } from "../../events";
 import { CellRangeFeature } from "./cellRangeFeature";
 import { exists, makeNull } from "../../utils/generic";
@@ -20,7 +19,7 @@ import { CellPositionFeature } from "./cellPositionFeature";
 import { escapeString } from "../../utils/string";
 import { CellCustomStyleFeature } from "./cellCustomStyleFeature";
 import { TooltipFeature, ITooltipFeatureCtrl } from "../../widgets/tooltipFeature";
-import { RowPosition } from "../../entities/rowPosition";
+import { RowPosition } from "../../entities/rowPositionUtils";
 import { RowCtrl } from "../row/rowCtrl";
 import { CellMouseListenerFeature } from "./cellMouseListenerFeature";
 import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";
@@ -48,7 +47,7 @@ const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
 
 export interface ICellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setUserStyles(styles: any): void;
+    setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
 
     setTabIndex(tabIndex: number): void;
@@ -426,11 +425,6 @@ export class CellCtrl extends BeanStub {
     private saveNewValue(oldValue: any, newValue: any): boolean {
         if (newValue === oldValue) { return false; }
 
-        if (this.beans.gridOptionsService.is('readOnlyEdit')) {
-            this.dispatchEventForSaveValueReadOnly(oldValue, newValue);
-            return false;
-        }
-
         // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
         // getting triggered, which results in all cells getting refreshed. we do not want this refresh
         // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
@@ -440,28 +434,6 @@ export class CellCtrl extends BeanStub {
         this.suppressRefreshCell = false;
 
         return valueChanged;
-    }
-
-    private dispatchEventForSaveValueReadOnly(oldValue: any, newValue: any): void {
-        const rowNode = this.rowNode;
-        const event: CellEditRequestEvent = {
-            type: Events.EVENT_CELL_EDIT_REQUEST,
-            event: null,
-            rowIndex: rowNode.rowIndex!,
-            rowPinned: rowNode.rowPinned,
-            column: this.column,
-            api: this.beans.gridApi,
-            columnApi: this.beans.columnApi,
-            colDef: this.column.getColDef(),
-            context: this.beans.gridOptionsService.get('context'),
-            data: rowNode.data,
-            node: rowNode,
-            oldValue,
-            newValue,
-            value: newValue,
-            source: undefined
-        };
-        this.beans.eventService.dispatchEvent(event);
     }
 
     /**

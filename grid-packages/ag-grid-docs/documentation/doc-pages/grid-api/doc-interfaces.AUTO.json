@@ -1005,7 +1005,7 @@
       }
     },
     "getQuickFilterText": {
-      "description": "/** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
+      "description": "/** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
       "type": {
         "arguments": { "params": "GetQuickFilterTextParams<TData>" },
         "returnType": "string",
@@ -2548,7 +2548,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -2596,11 +2596,11 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -4060,7 +4060,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -4069,7 +4069,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -5995,6 +5995,10 @@
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
     },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
@@ -6043,6 +6047,10 @@
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
     },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
@@ -6089,6 +6097,10 @@
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
+    },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
@@ -6137,6 +6149,10 @@
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
     },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
@@ -6183,6 +6199,10 @@
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
+    },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
@@ -7047,6 +7067,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "meta": { "typeParams": ["TData"] },
     "api": {
       "description": "/** The grid api. */",
@@ -7087,6 +7111,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7125,6 +7153,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7169,6 +7201,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7207,6 +7243,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7250,6 +7290,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7288,6 +7332,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7328,6 +7376,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7366,6 +7418,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7406,6 +7462,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7444,6 +7504,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7484,6 +7548,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7522,6 +7590,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7568,6 +7640,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7612,6 +7688,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7658,6 +7738,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7702,6 +7786,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7748,6 +7836,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7792,6 +7884,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7838,6 +7934,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7882,6 +7982,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7928,6 +8032,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7973,6 +8081,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -8017,6 +8129,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -8075,6 +8191,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -8125,6 +8245,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -8174,6 +8298,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -12276,6 +12404,13 @@
         "optional": false
       }
     },
+    "cutToClipboard": {
+      "type": {
+        "arguments": { "params?": "IClipboardCopyParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "copySelectedRowsToClipboard": {
       "type": {
         "arguments": { "params?": "IClipboardCopyRowsParams" },
@@ -14941,7 +15076,7 @@
       }
     },
     "setData": {
-      "description": "/** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */",
+      "description": "/** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.\n     */",
       "type": {
         "arguments": { "data": "TData" },
         "returnType": "void",
@@ -14949,7 +15084,7 @@
       }
     },
     "updateData": {
-      "description": "/** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */",
+      "description": "/** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.\n     */",
       "type": {
         "arguments": { "data": "TData" },
         "returnType": "void",
@@ -14957,7 +15092,7 @@
       }
     },
     "setDataValue": {
-      "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     *\n     * @param colKey The column where the value should be updated.\n     * @param newValue The new value.\n     * @param eventSource The source of the event, optional.\n     * @returns `true` if the value was changed, otherwise `false`.\n     */",
+      "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode.\n     *\n     * @param colKey The column where the value should be updated\n     * @param newValue The new value\n     * @param eventSource The source of the event\n     * @returns `True` if the value was changed, otherwise `False`.\n     */",
       "type": {
         "arguments": {
           "colKey": "string | Column",
@@ -17572,7 +17707,7 @@
     },
     "setUserStyles": {
       "type": {
-        "arguments": { "styles": "any" },
+        "arguments": { "styles": "CellStyle" },
         "returnType": "void",
         "optional": false
       }
@@ -18713,7 +18848,7 @@
     },
     "setUserStyles": {
       "type": {
-        "arguments": { "styles": "any" },
+        "arguments": { "styles": "RowStyle" },
         "returnType": "void",
         "optional": false
       }
@@ -20462,7 +20597,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -20510,11 +20645,11 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -21974,7 +22109,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -21983,7 +22118,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -23184,7 +23319,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -23232,11 +23367,11 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -24696,7 +24831,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -24705,7 +24840,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -25912,7 +26047,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -25960,11 +26095,11 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -27424,7 +27559,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -27433,7 +27568,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",

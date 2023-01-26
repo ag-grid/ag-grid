@@ -169,10 +169,16 @@
                 "url": "/filtering-overview/"
             }
         },
+        "getQuickFilter": {
+            "more": {
+                "name": "Checking the Quick Filter",
+                "url": "/filter-quick/#checking-the-quick-filter"
+            }
+        },
         "setQuickFilter": {
             "more": {
-                "name": "Quick Filter",
-                "url": "/filter-quick/"
+                "name": "Setting the Quick Filter",
+                "url": "/filter-quick/#setting-the-quick-filter"
             }
         },
         "resetQuickFilter": {
@@ -181,7 +187,12 @@
                 "url": "/filter-quick/#reset-cache-text"
             }
         },
-        "isQuickFilterPresent": {},
+        "isQuickFilterPresent": {
+            "more": {
+                "name": "Checking the Quick Filter",
+                "url": "/filter-quick/#checking-the-quick-filter"
+            }
+        },
         "isColumnFilterPresent": {},
         "isAnyFilterPresent": {},
         "getFilterInstance": {

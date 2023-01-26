@@ -44,6 +44,7 @@ import {
     FontStyle,
     FontWeight,
 } from '../../agChartOptions';
+import { LogAxis } from '../../axis/logAxis';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -377,7 +378,27 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         // Contains min/max values for each stack in each group,
         // where min is zero and max is a positive total of all values in the stack
         // or min is a negative total of all values in the stack and max is zero.
-        const yMinMax = this.yData.map((group) => group.map((stack) => findMinMax(stack)));
+        const isLogAxis = yAxis instanceof LogAxis;
+        let yMinMax: {
+            min?: number | undefined;
+            max?: number | undefined;
+        }[][];
+
+        if (!isLogAxis) {
+            yMinMax = this.yData.map((group) => group.map((stack) => findMinMax(stack)));
+        } else {
+            yMinMax = this.yData.map((group) =>
+                group.map((stack) => {
+                    const stackExtent = extent(stack) ?? [];
+
+                    return {
+                        min: stackExtent[0],
+                        max: stackExtent[1],
+                    };
+                })
+            );
+        }
+
         const { yData, normalizedTo } = this;
 
         // Calculate the sum of the absolute values of all items in each stack in each group. Used for normalization of stacked bars.
@@ -391,6 +412,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         );
 
         let { min: yMin, max: yMax } = this.findLargestMinMax(yMinMax);
+
         if (yMin === Infinity && yMax === -Infinity) {
             // There's no data in the domain.
             this.yDomain = [];
@@ -398,8 +420,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         if (normalizedTo && isFinite(normalizedTo)) {
-            yMin = yMin < 0 ? -normalizedTo : 0;
-            yMax = yMax > 0 ? normalizedTo : 0;
+            yMin = yMin < 0 ? -normalizedTo : isLogAxis ? 1 : 0;
+            yMax = yMax > 0 ? normalizedTo : isLogAxis ? -1 : 0;
             yData.forEach((group, i) => {
                 group.forEach((stack, j) => {
                     stack.forEach((y, k) => {

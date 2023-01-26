@@ -121,6 +121,14 @@ The example below will use the custom `fillOperation` to prevent values in the *
 [[warning]]
 | Non editable cells will **not** be changed by the Fill Handle, so there is no need to add custom logic to skip columns that aren't editable.
 
+## Read Only Edit
+
+When the grid is in [Read Only Edit](/value-setters/#read-only-edit) mode the `Fill Handle` will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request.
+
+The example below will show how to update cell value combining the `Fill Handle` with `readOnlyEdit=true`.
+
+<grid-example title='Fill Handle - ReadOnlyEdit' name='read-only-edit' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
+
 ## Suppressing the Fill Handle
 
 The Fill Handle can be disabled on a per column basis by setting the column definition property `suppressFillHandle` to true .

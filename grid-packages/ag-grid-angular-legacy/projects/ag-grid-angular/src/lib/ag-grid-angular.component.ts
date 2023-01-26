@@ -388,7 +388,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public singleClickEdit: boolean | undefined = undefined;
     /** Set to `true` so that neither single nor double click starts editing. Default: `false`     */
     @Input() public suppressClickEdit: boolean | undefined = undefined;
-    /** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid.     */
+    /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.         */
     @Input() public readOnlyEdit: boolean | undefined = undefined;
     /** Set this to `true` to stop cell editing when grid loses focus.
          * The default is that the grid stays editing until focus goes onto another cell.
@@ -421,9 +421,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressExcelExport: boolean | undefined = undefined;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.     */
     @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
-    /** Rows are filtered using this text as a quick filter.     */
+    /** Rows are filtered using this text as a Quick Filter.     */
     @Input() public quickFilterText: string | undefined = undefined;
-    /** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false`     */
+    /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false`     */
     @Input() public cacheQuickFilter: boolean | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
@@ -1007,7 +1007,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          *  if cell value has changed as a result of paste operation.
         */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
-    /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`.     */
+    /** Value has changed after editing. Only fires when `readOnlyEdit=true`.     */
     @Output() public cellEditRequest: EventEmitter<CellEditRequestEvent<TData>> = new EventEmitter<CellEditRequestEvent<TData>>();
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only.     */
     @Output() public rowValueChanged: EventEmitter<RowValueChangedEvent<TData>> = new EventEmitter<RowValueChangedEvent<TData>>();

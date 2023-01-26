@@ -1,6 +1,6 @@
 import { Bean } from "../context/context";
 import { Autowired } from "../context/context";
-import { CellPosition } from "../entities/cellPosition";
+import { CellPosition } from "../entities/cellPositionUtils";
 import { NumberSequence } from '../utils';
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";

@@ -1,5 +1,5 @@
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
-import { CellPosition } from "../entities/cellPosition";
+import { CellPosition } from "../entities/cellPositionUtils";
 import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { Column } from "../entities/column";
@@ -15,7 +15,7 @@ import { GridBodyCtrl } from "./gridBodyCtrl";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 import { RowCtrl } from "../rendering/row/rowCtrl";
 import { doOnce, throttle } from "../utils/function";
-import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
+import { RowPosition, RowPositionUtils } from "../entities/rowPositionUtils";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { CellNavigationService } from "../cellNavigationService";

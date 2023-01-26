@@ -315,8 +315,8 @@ export { IRowModel, RowBounds, RowModelType } from "./interfaces/iRowModel";
 export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
-export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
-export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
+export { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
+export { RowPosition, RowPositionUtils } from "./entities/rowPositionUtils";
 export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/common/headerNavigationService";
 export {

@@ -188,7 +188,7 @@
     "type": { "returnType": "boolean" }
   },
   "readOnlyEdit": {
-    "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+    "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
     "type": { "returnType": "boolean" }
   },
   "stopEditingWhenCellsLoseFocus": {
@@ -236,11 +236,11 @@
     "type": { "returnType": "ExcelStyle[]" }
   },
   "quickFilterText": {
-    "description": "/** Rows are filtered using this text as a quick filter. */",
+    "description": "/** Rows are filtered using this text as a Quick Filter. */",
     "type": { "returnType": "string" }
   },
   "cacheQuickFilter": {
-    "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+    "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "excludeChildrenWhenTreeDataFiltering": {
@@ -1581,7 +1581,7 @@
     "meta": { "isEvent": true, "name": "onCellValueChanged" }
   },
   "onCellEditRequest": {
-    "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+    "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
     "type": {
       "arguments": { "event": "CellEditRequestEvent<TData>" },
       "returnType": "void"
@@ -1589,7 +1589,7 @@
     "meta": { "isEvent": true, "name": "onCellEditRequest" }
   },
   "cellEditRequest": {
-    "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+    "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
     "type": {
       "arguments": { "event": "CellEditRequestEvent<TData>" },
       "returnType": "void"

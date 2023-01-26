@@ -2,6 +2,12 @@
 
 $colorFlowBreakpoint: 1050px;
 
+.colorSubsections {
+    display: flex;
+    flex-direction: column;
+    gap: $size-3;
+}
+
 .swatches {
     display: flex;
     flex-direction: column;

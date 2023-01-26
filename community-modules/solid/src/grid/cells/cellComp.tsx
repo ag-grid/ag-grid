@@ -1,4 +1,4 @@
-import { CellCtrl, CssClassManager, ICellComp, ICellEditor, ICellRenderer, _ } from '@ag-grid-community/core';
+import { CellCtrl, CellStyle, CssClassManager, ICellComp, ICellEditor, ICellRenderer, _ } from '@ag-grid-community/core';
 import { createEffect, createMemo, createSignal, For, onMount } from 'solid-js';
 import { EditDetails, RenderDetails } from './common';
 import ShowEditDetails from './showEditDetails';
@@ -35,7 +35,7 @@ const CellComp = (props: {
     let renderCompVersion = 0;
     const [renderCompVersionList, setRenderCompVersionList] = createSignal<number[]>([renderCompVersion]);
 
-    const [userStyles, setUserStyles] = createSignal<any>();
+    const [userStyles, setUserStyles] = createSignal<CellStyle>();
 
     const [tabIndex, setTabIndex] = createSignal<number>();
     const [role, setRole] = createSignal<string>();
@@ -106,7 +106,7 @@ const CellComp = (props: {
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
-            setUserStyles: styles => setUserStyles(styles),
+            setUserStyles: (styles: CellStyle) => setUserStyles(styles),
             getFocusableElement: () => eGui,
             setTabIndex: tabIndex => setTabIndex(tabIndex),
             setRole: role => setRole(role),

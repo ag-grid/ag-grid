@@ -5,6 +5,10 @@
     @each $name, $hex in $abstract-colors {
         --#{$name}: #{$hex};
     }
+    // create a CSS variable for every semantic color
+    @each $name, $var-name in $semantic-colors {
+        --#{$name}: var(--#{$var-name});
+    }
 
     --border-radius: #{$border-radius};
 
@@ -14,31 +18,6 @@
     --font-size: #{$font-size-medium};
     --line-height: #{$line-height-normal};
     --font-weight: #{$font-weight-normal};
+    --font-weight-thin: #{$font-weight-thin};
     --font-weight-bold: #{$font-weight-bold};
-
-    --text-color: var(--dark-gunmetal-gray);
-    --secondary-text-color: var(--auro-metal);
-
-    --border-color: var(--light-gray);
-
-    --link-color: var(--azure-blue);
-    --link-hover-color: var(--ag-grid-orange);
-
-    --button-text-color: var(--white);
-    --button-color: var(--azure-blue);
-    --button-hover-color: var(--medium-electric-blue);
-    --button-active-color: var(--dark-cerulean-blue);
-
-    --inline-element-background: var(--ghost-white);
-
-    --code-text-color: var(--cerise-pink);
-
-    --input-background-color: var(--white);
-    --input-secondary-background-color: var(--ag-grid-grey);
-    --input-secondary-border-color: var(--auro-metal);
-    --input-primary-color: var(--azure-blue);
-    --input-focus-border-color: var(--sky-blue);
-    --input-focus-box-shadow-color: var(--water-blue);
-
-    --table-odd-row-background-color: var(--ghost-blue);
 }

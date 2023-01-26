@@ -1204,6 +1204,32 @@ export const TRUNCATED_LEGEND_ITEMS: AgCartesianChartOptions = {
     },
 };
 
+export const CARTESIAN_CATEGORY_X_AXIS_LOG_Y_AXIS = (
+    data: any[],
+    seriesType: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'
+): AgCartesianChartOptions => {
+    return {
+        data,
+        series: [
+            {
+                type: seriesType,
+                xKey: 'os',
+                yKey: 'share',
+            },
+        ],
+        axes: [
+            {
+                type: 'category',
+                position: 'bottom',
+            },
+            {
+                type: 'log',
+                position: 'left',
+            },
+        ],
+    };
+};
+
 // START ADVANCED EXAMPLES =========================================================================
 
 export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgCartesianChartOptions =

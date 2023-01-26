@@ -1,7 +1,8 @@
 @use './core' as *;
 
 .page-margin {
-    max-width: 1400px;
+    width: 100%;
+    max-width: $max-page-width;
     margin-left: auto;
     margin-right: auto;
     padding-left: $size-2;

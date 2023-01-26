@@ -17,6 +17,7 @@ import { addStylesToElement, clearElement, loadTemplate, removeFromParent } from
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { browserSupportsPreventScroll } from "../../utils/browser";
+import { CellStyle } from "../../entities/colDef";
 
 export class CellComp extends Component implements TooltipParentComp {
 
@@ -90,7 +91,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setUserStyles: styles => addStylesToElement(eGui, styles),
+            setUserStyles: (styles: CellStyle) => addStylesToElement(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
             setTabIndex: tabIndex => setAttribute('tabindex', tabIndex.toString()),
             setRole: role => setAriaRole(eGui, role),

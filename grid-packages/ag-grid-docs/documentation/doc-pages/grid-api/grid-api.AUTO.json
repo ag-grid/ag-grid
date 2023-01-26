@@ -239,7 +239,7 @@
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "isQuickFilterPresent": {
-    "description": "/** Returns `true` if the quick filter is set, otherwise `false`. */",
+    "description": "/** Returns `true` if the Quick Filter is set, otherwise `false`. */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "getModel": {
@@ -300,8 +300,12 @@
       }
     }
   },
+  "getQuickFilter": {
+    "description": "/** Get the current Quick Filter text from the grid, or `undefined` if none is set. */",
+    "type": { "arguments": {}, "returnType": "string | undefined" }
+  },
   "setQuickFilter": {
-    "description": "/** Pass a quick filter text into the grid for filtering. */",
+    "description": "/** Pass a Quick Filter text into the grid for filtering. */",
     "type": { "arguments": { "newFilter": "string" }, "returnType": "void" }
   },
   "selectAll": {
@@ -1007,7 +1011,7 @@
     "type": { "arguments": {}, "returnType": "void" }
   },
   "resetQuickFilter": {
-    "description": "/** Reset the quick filter cache text on every rowNode. */",
+    "description": "/** Reset the Quick Filter cache text on every rowNode. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
   "getCellRanges": {
@@ -1104,6 +1108,10 @@
   },
   "copyToClipboard": {
     "description": "/** Copies data to clipboard by following the same rules as pressing Ctrl+C. */",
+    "type": { "arguments": { "params?": "IClipboardCopyParams" } }
+  },
+  "cutToClipboard": {
+    "description": "/** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */",
     "type": { "arguments": { "params?": "IClipboardCopyParams" } }
   },
   "copySelectedRowsToClipboard": {

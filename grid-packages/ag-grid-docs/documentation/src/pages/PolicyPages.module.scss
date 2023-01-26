@@ -1,0 +1,70 @@
+@use '../design-system' as *;
+
+.policyPage {
+    margin-top: $size-6;
+    margin-bottom: calc($size-6 * 4);
+
+    nav {
+        margin-top: $size-4;
+        margin-bottom: $size-4;
+    }
+
+    nav li:not(:last-child) {
+        margin-bottom: $size-half;
+    }
+
+    hr {
+        margin-bottom: $size-1;
+    }
+
+    @media screen and (min-width: $max-page-width) {
+        header {
+            display: flex;
+            gap: $size-4;
+        }
+
+        nav {
+            display: inline-block;
+            order: -1;
+        }
+
+        nav li:not(:last-child) {
+            margin-bottom: $size-1;
+            line-height: $line-height-tight;
+        }
+    }
+}
+
+.introduction {
+    margin-top: $size-4 !important; // !important needed because of .ag-styles specificity
+}
+
+.policyList {
+    list-style: none;
+    padding-left: 0;
+
+    > li {
+        margin-bottom: $size-6;
+    }
+
+    li h3::before {
+        content: counter(count, decimal) '. ';
+    }
+
+    li::marker {
+        font-size: $font-size-large;
+    }
+
+    @media screen and (min-width: calc($max-page-width + $size-4)) {
+        list-style: decimal;
+        padding-left: unset;
+
+        li h3::before {
+            display: none;
+        }
+    }
+}
+
+.settingsButton {
+    margin-bottom: $size-2 !important; // !important needed because of .ag-styles specificity
+}

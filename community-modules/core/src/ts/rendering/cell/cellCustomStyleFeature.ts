@@ -81,7 +81,9 @@ export class CellCustomStyleFeature extends BeanStub {
             styles = colDef.cellStyle;
         }
 
-        this.cellComp.setUserStyles(styles);
+        if (styles) {
+            this.cellComp.setUserStyles(styles);
+        }
     }
 
     public applyClassesFromColDef() {

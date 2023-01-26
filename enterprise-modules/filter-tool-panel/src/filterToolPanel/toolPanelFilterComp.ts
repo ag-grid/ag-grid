@@ -10,7 +10,8 @@ import {
     IFilterComp,
     KeyCode,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    ColumnEvent
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
@@ -101,8 +102,13 @@ export class ToolPanelFilterComp extends Component {
         return this.filterManager.isFilterActive(this.column);
     }
 
-    private onFilterChanged(): void {
+    private onFilterChanged(event: ColumnEvent): void {
         _.setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
+        if (this.expanded && event.source === 'filterDestroyed' && event.columns?.some(col => col.getId() === this.column.getId())) {
+            // filter destroyed, need to recreate UI component
+            this.removeFilterElement();
+            this.addFilterElement();
+        }
         this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }
 
@@ -119,6 +125,10 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandChecked, true);
         _.setDisplayed(this.eExpandUnchecked, false);
 
+        this.addFilterElement();
+    }
+
+    private addFilterElement(): void {
         const filterPanelWrapper = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
         const filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR');
 
@@ -142,6 +152,7 @@ export class ToolPanelFilterComp extends Component {
                 }
             });
         });
+        
     }
 
     public collapse(): void {
@@ -149,12 +160,16 @@ export class ToolPanelFilterComp extends Component {
 
         this.expanded = false;
         _.setAriaExpanded(this.eFilterToolPanelHeader, false);
-        this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
+        this.removeFilterElement();
 
         _.setDisplayed(this.eExpandChecked, false);
         _.setDisplayed(this.eExpandUnchecked, true);
 
         this.underlyingFilter?.afterGuiDetached?.();
+    }
+
+    private removeFilterElement(): void {
+        _.clearElement(this.agFilterToolPanelBody);
     }
 
     public refreshFilter(isDisplayed: boolean): void {

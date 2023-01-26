@@ -3175,32 +3175,10 @@ export class ColumnModel extends BeanStub {
 
     private processSecondaryColumnDefinitions(colDefs: (ColDef | ColGroupDef)[] | null) {
 
-        const predictPrimaryColumn = (colDef: ColDef) => {
-            const secondaryColField = colDef.field;
-            if(!secondaryColField) {
-                return;
-            }
-
-            let bestGuessCol: Column | null = null;
-            let bestGuessField: string;
-            this.primaryColumns?.forEach(col => {
-                const primaryColField = col.getColDef().field;
-                if (!primaryColField) {
-                    return;
-                }
-                if (secondaryColField.endsWith(primaryColField)) {
-                    if (!bestGuessField || bestGuessField.length < primaryColField.length) {
-                        bestGuessField = primaryColField;
-                        bestGuessCol = col;
-                    }
-                }
-            });
-
-            colDef.pivotValueColumn = bestGuessCol;
-        }
-
         const columnCallback = this.gridOptionsService.get('processPivotResultColDef') || this.gridOptionsService.get('processSecondaryColDef');
         const groupCallback = this.gridOptionsService.get('processPivotResultColGroupDef') || this.gridOptionsService.get('processSecondaryColGroupDef');
+
+        if (!columnCallback && !groupCallback) { return undefined; }
 
         const searchForColDefs = (colDefs2: (ColDef | ColGroupDef)[]): void => {
             colDefs2.forEach((abstractColDef: AbstractColDef) => {
@@ -3213,9 +3191,6 @@ export class ColumnModel extends BeanStub {
                     searchForColDefs(colGroupDef.children);
                 } else {
                     const colDef = abstractColDef as ColDef;
-                    if (!colDef.pivotValueColumn) {
-                        predictPrimaryColumn(colDef);
-                    }
                     if (columnCallback) {
                         columnCallback(colDef);
                     }
