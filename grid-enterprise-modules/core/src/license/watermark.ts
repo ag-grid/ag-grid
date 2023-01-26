@@ -1,5 +1,5 @@
 import { Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
-import { LicenseManager } from '@ag/license';
+import { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 
 export class WatermarkComp extends Component {
 

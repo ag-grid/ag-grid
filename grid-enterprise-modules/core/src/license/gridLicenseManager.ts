@@ -1,18 +1,13 @@
 import { _, Autowired, Bean, BeanStub, PreConstruct } from '@ag-grid-community/core';
-import {LicenseManager} from "@ag/license";
+import {LicenseManager} from "./licenseManager";
 
 @Bean('licenseManager')
 export class GridLicenseManager extends BeanStub {
     private licenseManager: LicenseManager;
 
-    constructor(template?: string) {
-        super();
-
-        this.licenseManager = new LicenseManager(this.gridOptionsService.getDocument())
-    }
-
     @PreConstruct
     public validateLicense(): void {
+        this.licenseManager = new LicenseManager(this.gridOptionsService.getDocument())
         this.licenseManager.validateLicense();
     }
 

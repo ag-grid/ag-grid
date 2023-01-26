@@ -1,4 +1,4 @@
-COMMUNITY_ROOTS=("grid-community-modules" "charts-community-modules" "common-modules")
+COMMUNITY_ROOTS=("grid-community-modules" "charts-community-modules")
 ENTERPRISE_ROOTS=("grid-enterprise-modules" "charts-enterprise-modules")
 PACKAGES_ROOTS=("grid-packages")
 

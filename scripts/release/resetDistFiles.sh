@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 git checkout HEAD -- .gitignore
-git reset common-modules/license/dist
 git reset grid-packages/ag-grid-vue/lib/main.d.ts
 git reset grid-packages/ag-grid-vue/lib/main.js
 git reset grid-packages/ag-grid-vue/main.d.ts

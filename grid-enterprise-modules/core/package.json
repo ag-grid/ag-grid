@@ -48,7 +48,6 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "@ag/license": "~29.0.0",
     "@ag-grid-community/core": "~29.0.0"
   },
   "devDependencies": {

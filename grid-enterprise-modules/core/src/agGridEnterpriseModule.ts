@@ -2,7 +2,6 @@ import { Module, ModuleNames } from "@ag-grid-community/core";
 import { GridLicenseManager as LicenseManager } from "./license/gridLicenseManager";
 import { WatermarkComp } from "./license/watermark";
 
-export { LicenseManager } from "@ag/license";
 export { WatermarkComp } from "./license/watermark";
 import { VERSION } from "./version";
 

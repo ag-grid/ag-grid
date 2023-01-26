@@ -1,6 +1,5 @@
 {
   "packages": [
-    "common-modules/*",
     "grid-community-modules/*",
     "grid-enterprise-modules/*",
     "charts-community-modules/*",
