@@ -74,6 +74,10 @@
         }
     }
 
+    .size-examples-list {
+        margin-top: -$size-4;
+    }
+
     .size-example {
         height: $size-4;
         width: var(--size-example-size);

@@ -11,13 +11,12 @@ const getAbstractColor = (key) => designSystemColors[getAbstractColorId(key)];
 const getAbstractColorOfSemanticColor = (key) => designSystemColors[getSemanticColorId(key)];
 
 const ABSTRACT_COLOR_GROUPS = {
-    Brand: ['ag-grid-dark-blue', 'ag-grid-aqua', 'ag-grid-orange', 'ag-grid-red'],
+    Brand: ['ag-grid-dark-blue', 'ag-grid-aqua', 'ag-grid-orange', 'ag-grid-red', 'ag-grid-grey'],
     Blues: ['dark-cerulean-blue', 'medium-electric-blue', 'azure-blue', 'sky-blue', 'water-blue', 'ghost-blue'],
     Grays: [
         'black',
         'dark-gunmetal-gray',
         'auro-metal',
-        'ag-grid-grey',
         'dull-light-gray',
         'light-gray',
         'platinum-gray',
@@ -48,7 +47,7 @@ const SEMANTIC_COLOR_GROUPS = {
         'input-focus-box-shadow-color',
     ],
     Table: ['table-odd-row-background-color'],
-    "Site Header": ['site-header-background', 'site-nav-background'],
+    'Site Header': ['site-header-background', 'site-nav-background'],
 };
 
 const AbstractColorSwatch = ({ id, hexColor }) => {
@@ -65,8 +64,9 @@ const AbstractColorSwatch = ({ id, hexColor }) => {
                 <code>--{id}</code>
             </p>
 
-            <p className={styles.hexColor}>{hexColor}</p>
-            <p className={styles.hslColor}>{hexToHSL(hexColor)}</p>
+            <p className={styles.colorValue}>
+                {hexColor} <span>|</span> {hexToHSL(hexColor)}
+            </p>
         </li>
     );
 };
@@ -85,9 +85,10 @@ const SemanticColorSwatch = ({ cssVarName }) => {
             ></div>
             <p className={styles.name}>{formatName(cssVarName)}</p>
             <p className={styles.cssName}>
-                <code>
-                    --{cssVarName}: <a href={`#${getAbstractColorId(abstractColor)}`}>--{abstractColor}</a>
-                </code>
+                <code>--{cssVarName}</code>
+            </p>
+            <p className={styles.colorValue}>
+                <a href={`#${getAbstractColorId(abstractColor)}`}>--{abstractColor}</a>
             </p>
         </li>
     );
