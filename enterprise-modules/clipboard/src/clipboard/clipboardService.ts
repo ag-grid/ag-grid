@@ -652,7 +652,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private clearCellsAfterCopy(type: CellClearType) {
         if (type === CellClearType.CellRange) {
-            this.rangeService.clearCellRangeCellValues();
+            this.rangeService.clearCellRangeCellValues(undefined, 'clipboardService');
         } else if (type === CellClearType.SelectedRows) {
             this.clearSelectedRows();
         } else {
