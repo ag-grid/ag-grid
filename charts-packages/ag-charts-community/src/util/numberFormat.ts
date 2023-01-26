@@ -221,7 +221,7 @@ function insertSeparator(numString: string, separator: string) {
 }
 
 function getSIPrefix(n: number) {
-    return siPrefixes.get(getSIPrefixPower(n));
+    return siPrefixes[getSIPrefixPower(n)];
 }
 
 function getSIPrefixPower(n: number) {
@@ -232,24 +232,25 @@ function getSIPrefixPower(n: number) {
 
 const minSIPrefix = -24;
 const maxSIPrefix = 24;
-const siPrefixes = new Map<number, string>()
-    .set(minSIPrefix, 'y')
-    .set(-21, 'z')
-    .set(-18, 'a')
-    .set(-15, 'f')
-    .set(-12, 'p')
-    .set(-9, 'n')
-    .set(-6, 'µ')
-    .set(-3, 'm')
-    .set(0, '')
-    .set(3, 'k')
-    .set(6, 'M')
-    .set(9, 'G')
-    .set(12, 'T')
-    .set(15, 'P')
-    .set(18, 'E')
-    .set(21, 'Z')
-    .set(maxSIPrefix, 'Y');
+const siPrefixes: Record<number, string> = {
+    [minSIPrefix]: 'y',
+    [-21]: 'z',
+    [-18]: 'a',
+    [-15]: 'f',
+    [-12]: 'p',
+    [-9]: 'n',
+    [-6]: 'µ',
+    [-3]: 'm',
+    [0]: '',
+    [3]: 'k',
+    [6]: 'M',
+    [9]: 'G',
+    [12]: 'T',
+    [15]: 'P',
+    [18]: 'E',
+    [21]: 'Z',
+    [maxSIPrefix]: 'Y',
+};
 
 const minusSign = '\u2212';
 
