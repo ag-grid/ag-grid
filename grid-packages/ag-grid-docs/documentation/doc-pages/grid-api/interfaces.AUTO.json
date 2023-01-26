@@ -8089,7 +8089,7 @@
       "getRangeEndRow(cellRange: CellRange)": "RowPosition",
       "createCellRangeFromCellRangeParams(params: CellRangeParams)": "CellRange | undefined",
       "setCellRanges(cellRanges: CellRange[])": "void",
-      "clearCellRangeCellValues()": "void"
+      "clearCellRangeCellValues(cellRanges?: CellRange[], source?: string)": "void"
     }
   },
   "ISelectionHandle": {

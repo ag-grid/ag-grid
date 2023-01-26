@@ -14429,7 +14429,11 @@
       }
     },
     "clearCellRangeCellValues": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
+      "type": {
+        "arguments": { "cellRanges?": "CellRange[]", "source?": "string" },
+        "returnType": "void",
+        "optional": false
+      }
     }
   },
   "ISelectionHandle": {
