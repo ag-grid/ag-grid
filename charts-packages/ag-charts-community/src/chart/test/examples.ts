@@ -62,7 +62,7 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
 
     let evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
     // @ts-ignore - used in the eval() call.
-    const agCharts = require('../../main');
+    const { AgChart, time, Marker } = require('../../main');
     try {
         return eval(evalExpr);
     } catch (error) {

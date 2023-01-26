@@ -1,5 +1,4 @@
-import * as agCharts from 'ag-charts-community';
-import { AgChartOptions } from 'ag-charts-community';
+import { AgChart, AgChartOptions, time } from 'ag-charts-community';
 
 var lastTime = new Date('07 Jan 2020 13:25:00 GMT').getTime()
 var data: { time: Date, voltage: number }[] = []
@@ -33,7 +32,7 @@ const options: AgChartOptions = {
       position: 'bottom',
       nice: false,
       tick: {
-        count: agCharts.time.second.every(5),
+        count: time.second.every(5),
       },
       label: {
         format: '%H:%M:%S',
@@ -55,7 +54,7 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)
 var updating = false
 
 function startUpdates() {
@@ -70,7 +69,7 @@ function startUpdates() {
 
 function update() {
   options.data = getData()
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 
 

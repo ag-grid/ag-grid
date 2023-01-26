@@ -148,6 +148,17 @@ export class PaginationProxy extends BeanStub {
         return this.rowModel.forEachNode(callback);
     }
 
+    public forEachNodeOnPage(callback: (rowNode: RowNode) => void) {
+        const firstRow = this.getPageFirstRow();
+        const lastRow = this.getPageLastRow();
+        for (let i = firstRow; i <= lastRow; i++) {
+            const node = this.getRow(i);
+            if (node) {
+                callback(node);
+            }
+        }
+    }
+
     public getType(): RowModelType {
         return this.rowModel.getType();
     }

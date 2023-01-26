@@ -1,5 +1,4 @@
-import * as agCharts from 'ag-charts-community';
-import { AgChartOptions } from 'ag-charts-community';
+import { AgChart, AgChartOptions, Marker } from 'ag-charts-community';
 import { getData } from "./data";
 
 const options: AgChartOptions = {
@@ -24,10 +23,10 @@ const options: AgChartOptions = {
   },
 }
 
-agCharts.AgChart.create(options)
+AgChart.create(options)
 
 function heartFactory() {
-  class Heart extends agCharts.Marker {
+  class Heart extends Marker {
     rad(degree: number) {
       return degree / 180 * Math.PI;
     }

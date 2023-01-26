@@ -1,6 +1,5 @@
-import * as agCharts from "ag-charts-community"
 import {
-  AgAreaSeriesOptions,
+  AgChart, AgAreaSeriesOptions,
   AgCartesianChartOptions,
 } from "ag-charts-community"
 import { getData } from "./data"
@@ -61,7 +60,7 @@ const options: AgCartesianChartOptions = {
   ],
 }
 
-let chart = agCharts.AgChart.create(options)
+let chart = AgChart.create(options)
 
 function missingYValues() {
   const data = getData()
@@ -70,7 +69,7 @@ function missingYValues() {
 
   options.data = data
 
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 
 function missingXValues() {
@@ -82,20 +81,20 @@ function missingXValues() {
 
   options.data = data
 
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 
 function stack() {
   options.series = series.map(s => ({ ...s, stacked: true }))
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 
 function group() {
   options.series = series.map(s => ({ ...s, stacked: false }))
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 
 function reset() {
   options.data = getData()
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }

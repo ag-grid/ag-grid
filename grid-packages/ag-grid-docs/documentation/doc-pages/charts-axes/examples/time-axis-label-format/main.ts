@@ -1,5 +1,4 @@
-import { AgCartesianChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import { AgCartesianChartOptions, AgChart, time } from 'ag-charts-community'
 
 const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
@@ -19,7 +18,7 @@ const options: AgCartesianChartOptions = {
       nice: false,
       position: 'bottom',
       tick: {
-        count: agCharts.time.month,
+        count: time.month,
       },
       label: {
         format: '%b %Y',
@@ -68,14 +67,14 @@ const options: AgCartesianChartOptions = {
   ],
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)
 
 function useOneMonthInterval() {
-  options.axes![0].tick!.count = agCharts.time.month
-  agCharts.AgChart.update(chart, options)
+  options.axes![0].tick!.count = time.month
+  AgChart.update(chart, options)
 }
 
 function useTwoMonthInterval() {
-  options.axes![0].tick!.count = agCharts.time.month.every(2)
-  agCharts.AgChart.update(chart, options)
+  options.axes![0].tick!.count = time.month.every(2)
+  AgChart.update(chart, options)
 }

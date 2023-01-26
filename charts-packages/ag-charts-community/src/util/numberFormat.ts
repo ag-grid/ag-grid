@@ -1,672 +1,297 @@
 import { tickStep } from './ticks';
 
-type FormatType = '' | '%' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'o' | 'p' | 'r' | 's' | 'X' | 'x';
-
-function formatDefault(x: number, p?: number): string {
-    const xs = x.toPrecision(p);
-
-    let i0 = -1;
-    let i1 = 0;
-    let exit = false;
-    for (let n = xs.length, i = 1; !exit && i < n; ++i) {
-        switch (xs[i]) {
-            case '.':
-                i0 = i1 = i;
-                break;
-            case '0':
-                if (i0 === 0) i0 = i;
-                i1 = i;
-                break;
-            case 'e':
-                exit = true;
-                break;
-            default:
-                if (i0 > 0) i0 = 0;
-                break;
-        }
-    }
-
-    return i0 > 0 ? xs.slice(0, i0) + xs.slice(i1 + 1) : xs;
-}
-
-const formatTypes: { [key in FormatType]: (x: number, p?: number) => string } = {
-    '': formatDefault,
-    // Multiply by 100, and then decimal notation with a percent sign.
-    '%': (x: number, p?: number): string => (x * 100).toFixed(p),
-    // Binary notation, rounded to integer.
-    b: (x: number) => Math.round(x).toString(2),
-    // Converts the integer to the corresponding unicode character before printing.
-    c: (x: number) => String(x),
-    // Decimal notation, rounded to integer.
-    d: formatDecimal,
-    // Exponent notation.
-    e: (x: number, p?: number) => x.toExponential(p),
-    // Fixed point notation.
-    f: (x: number, p?: number) => x.toFixed(p),
-    // Either decimal or exponent notation, rounded to significant digits.
-    g: (x: number, p?: number) => x.toPrecision(p),
-    // Octal notation, rounded to integer.
-    o: (x: number) => Math.round(x).toString(8),
-    // Multiply by 100, round to significant digits, and then decimal notation with a percent sign.
-    p: (x: number, p?: number) => formatRounded(x * 100, p),
-    // Decimal notation, rounded to significant digits.
-    r: formatRounded,
-    // Decimal notation with a SI prefix, rounded to significant digits.
-    s: formatPrefixAuto,
-    // Hexadecimal notation, using upper-case letters, rounded to integer.
-    X: (x: number) => Math.round(x).toString(16).toUpperCase(),
-    // Hexadecimal notation, using lower-case letters, rounded to integer.
-    x: (x: number) => Math.round(x).toString(16),
-};
-
-const prefixes = ['y', 'z', 'a', 'f', 'p', 'n', '\xB5', 'm', '', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
-
-interface FormatSpecifierOptions {
+interface FormatterOptions {
+    prefix?: string;
     fill?: string;
     align?: string;
     sign?: string;
     symbol?: string;
     zero?: string;
-    width?: string;
-    comma?: string;
-    precision?: string;
-    trim?: string;
-    type?: FormatType;
-    string?: string;
-}
-
-/**
- * [[fill]align][sign][#][0][width][grouping_option][.precision][type]
- */
-class FormatSpecifier {
-    /**
-     * Can be any character.
-     */
-    fill: string;
-    /**
-     * `>` - Forces the field to be right-aligned within the available space (default).
-     * `<` - Forces the field to be left-aligned within the available space.
-     * `^` - Forces the field to be centered within the available space.
-     * `=` - Like >, but with any sign and symbol to the left of any padding.
-     */
-    align: string;
-    /**
-     * `-` - Nothing for zero or positive and a minus sign for negative (default).
-     * `+` - A plus sign for zero or positive and a minus sign for negative.
-     * `(` - Nothing for zero or positive and parentheses for negative.
-     * ` ` - A space for zero or positive and a minus sign for negative.
-     */
-    sign: string;
-    /**
-     * `$` - Apply currency symbols per the locale definition.
-     * `#` - For binary, octal, or hexadecimal notation, prefix by `0b`, `0o`, or `0x`, respectively.
-     */
-    symbol: string;
-    /**
-     * The `0` option enables zero-padding. Implicitly sets fill to `0` and align to `=`.
-     */
-    zero: boolean;
-    /**
-     * The width defines the minimum field width.
-     * If not specified, then the width will be determined by the content.
-     */
     width?: number;
-    /**
-     * The comma `,` option enables the use of a group separator, such as a comma for thousands.
-     */
-    comma: boolean;
-    /**
-     * Depending on the type, the precision either indicates the number of digits
-     * that follow the decimal point (types `f` and `%`), or the number of significant digits (types ` `​, `e`, `g`, `r`, `s` and `p`).
-     * If the precision is not specified, it defaults to 6 for all types except `​ ` (none), which defaults to 12.
-     * Precision is ignored for integer formats (types `b`, `o`, `d`, `x`, `X` and `c`).
-     */
+    comma?: string;
     precision?: number;
-    /**
-     * The `~` option trims insignificant trailing zeros across all format types.
-     * This is most commonly used in conjunction with types `r`, `e`, `s` and `%`.
-     */
-    trim: boolean;
-    /**
-     * Presentation style.
-     */
-    type: FormatType | '';
-    /**
-     * Interpolation string.
-     */
-    string?: string;
-
-    constructor(specifier: FormatSpecifierOptions | FormatSpecifier) {
-        if (specifier instanceof FormatSpecifier) {
-            this.fill = specifier.fill;
-            this.align = specifier.align;
-            this.sign = specifier.sign;
-            this.symbol = specifier.symbol;
-            this.zero = specifier.zero;
-            this.width = specifier.width;
-            this.comma = specifier.comma;
-            this.precision = specifier.precision;
-            this.trim = specifier.trim;
-            this.type = specifier.type;
-            this.string = specifier.string;
-        } else {
-            this.fill = specifier.fill === undefined ? ' ' : String(specifier.fill);
-            this.align = specifier.align === undefined ? '>' : String(specifier.align);
-            this.sign = specifier.sign === undefined ? '-' : String(specifier.sign);
-            this.symbol = specifier.symbol === undefined ? '' : String(specifier.symbol);
-            this.zero = !!specifier.zero;
-            this.width = specifier.width === undefined ? undefined : +specifier.width;
-            this.comma = !!specifier.comma;
-            this.precision = specifier.precision === undefined ? undefined : +specifier.precision;
-            this.trim = !!specifier.trim;
-            this.type = specifier.type === undefined ? '' : (String(specifier.type) as FormatType);
-            this.string = specifier.string;
-        }
-    }
+    trim?: boolean;
+    type?: string;
+    suffix?: string;
 }
 
-// [[fill]align][sign][symbol][0][width][,][.precision][~][type]
-const formatRegEx = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
-const interpolateRegEx = /(#\{(.*?)\})/g;
+const group = (content: string) => `(${content})`;
+const optionalGroup = (content: string) => `${group(content)}?`;
+const nonCapturingGroup = (content: string) => optionalGroup(`?:${content}`);
 
-function makeFormatSpecifier(specifier: string | FormatSpecifier): FormatSpecifier {
-    if (specifier instanceof FormatSpecifier) {
-        return new FormatSpecifier(specifier);
+const formatRegEx = (() => {
+    const fill = '.';
+    const align = '[<>=^]';
+    const sign = '[+\\-( ]';
+    const symbol = '[$€£¥₣₹#]';
+    const zero = '0';
+    const width = '\\d+';
+    const comma = ',';
+    const precision = '\\d+';
+    const tilde = '~';
+    const type = '[%a-z]';
+
+    return new RegExp(
+        [
+            '^',
+            nonCapturingGroup(`${optionalGroup(fill)}${group(align)}`),
+            optionalGroup(sign),
+            optionalGroup(symbol),
+            optionalGroup(zero),
+            optionalGroup(width),
+            optionalGroup(comma),
+            nonCapturingGroup(`\\.${group(precision)}`),
+            optionalGroup(tilde),
+            optionalGroup(type),
+            '$',
+        ].join(''),
+        'i'
+    );
+})();
+
+const surroundedRegEx = (() => {
+    const prefix = '.*?';
+    const content = '.+?';
+    const suffix = '.*?';
+    return new RegExp(['^', group(prefix), `#\\{${group(content)}\\}`, group(suffix), '$'].join(''));
+})();
+
+function parseFormatter(formatter: string): FormatterOptions {
+    let prefix: string | undefined;
+    let suffix: string | undefined;
+    const surrounded = formatter.match(surroundedRegEx);
+    if (surrounded) {
+        [, prefix, formatter, suffix] = surrounded;
     }
 
-    let found = false;
-    let string = specifier.replace(interpolateRegEx, function () {
-        if (!found) {
-            specifier = arguments[2];
-            found = true;
-        }
-        return '#{}';
-    });
-    const match = formatRegEx.exec(specifier);
-
+    const match = formatter.match(formatRegEx);
     if (!match) {
-        throw new Error(`Invalid format: ${specifier}`);
+        throw new Error(`The number formatter is invalid: ${formatter}`);
+    }
+    const [, fill, align, sign, symbol, zero, width, comma, precision, trim, type] = match;
+    return {
+        fill,
+        align,
+        sign,
+        symbol,
+        zero,
+        width: parseInt(width),
+        comma,
+        precision: parseInt(precision),
+        trim: Boolean(trim),
+        type,
+        prefix,
+        suffix,
+    };
+}
+
+export function format(formatter: string | FormatterOptions) {
+    const options = typeof formatter === 'string' ? parseFormatter(formatter) : formatter;
+    let {
+        fill,
+        align,
+        sign = '-',
+        symbol,
+        zero,
+        width,
+        comma,
+        precision,
+        trim,
+        type,
+        prefix = '',
+        suffix = '',
+    } = options;
+
+    let formatBody: (n: number, f: number) => string;
+    if (!type) {
+        formatBody = decimalTypes['g'];
+        trim = true;
+    } else if (type in decimalTypes && type in integerTypes) {
+        formatBody = isNaN(precision!) ? integerTypes[type] : decimalTypes[type];
+    } else if (type in decimalTypes) {
+        formatBody = decimalTypes[type];
+    } else if (type in integerTypes) {
+        formatBody = integerTypes[type];
+    } else {
+        throw new Error(`The number formatter type is invalid: ${type}`);
     }
 
-    return new FormatSpecifier({
-        fill: match[1],
-        align: match[2],
-        sign: match[3],
-        symbol: match[4],
-        zero: match[5],
-        width: match[6],
-        comma: match[7],
-        precision: match[8] && match[8].slice(1),
-        trim: match[9],
-        type: match[10] as FormatType,
-        string: found ? string : undefined,
-    });
+    if (isNaN(precision!)) {
+        precision = 6;
+    }
+
+    return (n: number) => {
+        let result = formatBody(n, precision!);
+        if (trim) {
+            result = removeTrailingZeros(result);
+        }
+        result = addSign(n, result, sign);
+        if (symbol && symbol !== '#') {
+            result = `${symbol}${result}`;
+        }
+        if (symbol === '#' && type === 'x') {
+            result = `0x${result}`;
+        }
+        if (comma) {
+            result = insertSeparator(result, comma);
+        }
+        if (type === 's') {
+            result = `${result}${getSIPrefix(n)}`;
+        }
+        if (type === '%') {
+            result = `${result}%`;
+        }
+        result = `${prefix}${result}${suffix}`;
+        if (!isNaN(width!)) {
+            result = addPadding(result, width!, fill || zero, align);
+        }
+        return result;
+    };
+}
+
+const absFloor = (n: number) => Math.floor(Math.abs(n));
+
+const integerTypes: Record<string, (n: number) => string> = {
+    b: (n) => absFloor(n).toString(2),
+    c: (n) => String.fromCharCode(n),
+    d: (n) => absFloor(n).toFixed(0),
+    o: (n) => absFloor(n).toString(8),
+    x: (n) => absFloor(n).toString(16),
+    X: (n) => integerTypes.x(n).toUpperCase(),
+    n: (n) => integerTypes.d(n),
+    '%': (n) => `${absFloor(n * 100).toFixed(0)}`,
+};
+
+const decimalTypes: Record<string, (n: number, f: number) => string> = {
+    e: (n, f) => Math.abs(n).toExponential(f),
+    E: (n, f) => decimalTypes.e(n, f).toUpperCase(),
+    f: (n, f) => Math.abs(n).toFixed(f),
+    F: (n, f) => decimalTypes.f(n, f).toUpperCase(),
+    g: (n, f) => {
+        if (n === 0) {
+            return '0';
+        }
+        const a = Math.abs(n);
+        const p = Math.floor(Math.log10(a));
+        if (p >= -4 && p < f) {
+            return a.toFixed(f - 1 - p);
+        }
+        return a.toExponential(f - 1);
+    },
+    G: (n, f) => decimalTypes.g(n, f).toUpperCase(),
+    n: (n, f) => decimalTypes.g(n, f),
+    r: (n, f) => {
+        if (n === 0) {
+            return '0';
+        }
+        const a = Math.abs(n);
+        const p = Math.floor(Math.log10(a));
+        const q = p - (f - 1);
+        if (q <= 0) {
+            return a.toFixed(-q);
+        }
+        const x = Math.pow(10, q);
+        return (Math.round(a / x) * x).toFixed();
+    },
+    s: (n, f) => {
+        const a = Math.abs(n);
+        const power = Math.log10(a);
+        const p = getSIPrefixPower(n);
+        return decimalTypes.f(n / Math.pow(10, p), Math.max(0, f - (Math.floor(Math.abs(power)) % 3) - 1));
+    },
+    '%': (n, f) => `${Math.abs(n * 100).toFixed(f)}`,
+};
+
+function removeTrailingZeros(numString: string) {
+    return numString.replace(/\.0+$/, '').replace(/(\.[1-9])0+$/, '$1');
+}
+
+function insertSeparator(numString: string, separator: string) {
+    let dotIndex = numString.indexOf('.');
+    if (dotIndex < 0) {
+        dotIndex = numString.length;
+    }
+    const integerChars = numString.substring(0, dotIndex).split('');
+    const fractionalPart = numString.substring(dotIndex);
+
+    for (let i = integerChars.length - 3; i > 0; i -= 3) {
+        integerChars.splice(i, 0, separator);
+    }
+    return `${integerChars.join('')}${fractionalPart}`;
+}
+
+function getSIPrefix(n: number) {
+    return siPrefixes[getSIPrefixPower(n)];
+}
+
+function getSIPrefixPower(n: number) {
+    const power = Math.log10(Math.abs(n));
+    const p = Math.floor(power / 3) * 3;
+    return Math.max(minSIPrefix, Math.min(maxSIPrefix, p));
+}
+
+const minSIPrefix = -24;
+const maxSIPrefix = 24;
+const siPrefixes: Record<number, string> = {
+    [minSIPrefix]: 'y',
+    [-21]: 'z',
+    [-18]: 'a',
+    [-15]: 'f',
+    [-12]: 'p',
+    [-9]: 'n',
+    [-6]: 'µ',
+    [-3]: 'm',
+    [0]: '',
+    [3]: 'k',
+    [6]: 'M',
+    [9]: 'G',
+    [12]: 'T',
+    [15]: 'P',
+    [18]: 'E',
+    [21]: 'Z',
+    [maxSIPrefix]: 'Y',
+};
+
+const minusSign = '\u2212';
+
+function addSign(num: number, numString: string, signType = '') {
+    if (signType === '(') {
+        return num >= 0 ? numString : `(${numString})`;
+    }
+    return `${num >= 0 ? (signType === '+' ? '+' : '') : minusSign}${numString}`;
+}
+
+function addPadding(numString: string, width: number, fill = ' ', align = '>') {
+    let result = numString;
+    if (align === '>' || !align) {
+        result = result.padStart(width, fill);
+    } else if (align === '<') {
+        result = result.padEnd(width, fill);
+    } else if (align === '^') {
+        const padWidth = Math.max(0, width - result.length);
+        const padLeft = Math.ceil(padWidth / 2);
+        const padRight = Math.floor(padWidth / 2);
+        result = result.padStart(padLeft + result.length, fill);
+        result = result.padEnd(padRight + result.length, fill);
+    }
+    return result;
 }
 
 export function tickFormat(
     start: number,
     stop: number,
     count: number,
-    specifier?: string
+    formatter?: string
 ): (n: number | { valueOf(): number }) => string {
     const step = tickStep(start, stop, count);
-    const formatSpecifier = makeFormatSpecifier(specifier == undefined ? ',f' : specifier);
-    let precision: number;
-
-    switch (formatSpecifier.type) {
-        case 's': {
-            const value = Math.max(Math.abs(start), Math.abs(stop));
-            if (formatSpecifier.precision == null) {
-                precision = precisionPrefix(step, value);
-                if (!isNaN(precision)) {
-                    formatSpecifier.precision = precision;
-                }
-            }
-            return formatPrefix(formatSpecifier, value);
-        }
-        case '':
-        case 'e':
-        case 'g':
-        case 'p':
-        case 'r': {
-            if (formatSpecifier.precision == null) {
-                precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop)));
-                if (!isNaN(precision)) {
-                    formatSpecifier.precision = precision - +(formatSpecifier.type === 'e');
-                }
-            }
-            break;
-        }
-        case 'f':
-        case '%': {
-            if (formatSpecifier.precision == null) {
-                precision = precisionFixed(step);
-                if (!isNaN(precision)) {
-                    formatSpecifier.precision = precision - +(formatSpecifier.type === '%') * 2;
-                }
-            }
-            break;
+    const options = parseFormatter(formatter || ',f');
+    if (isNaN(options.precision!)) {
+        if (options.type === 's') {
+            options.precision = step.toExponential().indexOf('e');
+        } else if (!options.type || options.type in decimalTypes) {
+            options.precision = 6;
         }
     }
-    return format(formatSpecifier);
-}
-
-let prefixExponent: number;
-function formatPrefixAuto(x: number, p: number = 0) {
-    const d = formatDecimalParts(x, p);
-    if (!d) {
-        return String(x);
-    }
-
-    const coefficient = d[0];
-    const exponent = d[1];
-    prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3;
-    const i = exponent - prefixExponent + 1;
-    const n = coefficient.length;
-
-    if (i === n) {
-        return coefficient;
-    } else if (i > n) {
-        return coefficient + new Array(i - n + 1).join('0');
-    } else if (i > 0) {
-        return coefficient.slice(0, i) + '.' + coefficient.slice(i);
-    } else {
-        const parts = formatDecimalParts(x, Math.max(0, p + i - 1));
-        return '0.' + new Array(1 - i).join('0') + parts![0]; // less than 1y!
-    }
-}
-
-function formatDecimal(x: number): string {
-    x = Math.round(x);
-    return Math.abs(x) >= 1e21 ? x.toLocaleString('en').replace(/,/g, '') : x.toString(10);
-}
-
-function formatGroup(grouping: number[], thousands: string): (value: string, width: number) => string {
-    return (value, width) => {
-        const t: string[] = [];
-
-        let i = value.length;
-        let j = 0;
-        let g = grouping[0];
-        let length = 0;
-
-        while (i > 0 && g > 0) {
-            if (length + g + 1 > width) {
-                g = Math.max(1, width - length);
-            }
-            i -= g;
-            t.push(value.substring(i, i + g));
-            if ((length += g + 1) > width) {
-                break;
-            }
-            j = (j + 1) % grouping.length;
-            g = grouping[j];
-        }
-
-        t.reverse();
-        return t.join(thousands);
-    };
-}
-
-function formatNumerals(numerals: string[]): (value: string) => string {
-    return (value) => value.replace(/\d/g, (i) => numerals[+i]);
-}
-
-// Trims insignificant zeros, e.g., replaces 1.2000k with 1.2k.
-function formatTrim(s: string): string {
-    let i0 = -1,
-        i1 = 0;
-    let exit = false;
-    for (let n = s.length, i = 1; !exit && i < n; ++i) {
-        switch (s[i]) {
-            case '.':
-                i0 = i1 = i;
-                break;
-            case '0':
-                if (i0 === 0) i0 = i;
-                i1 = i;
-                break;
-            default:
-                if (!+s[i]) {
-                    exit = true;
-                    break;
-                }
-                if (i0 > 0) i0 = 0;
-                break;
-        }
-    }
-    return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
-}
-
-function formatRounded(x: number, p?: number) {
-    const d = formatDecimalParts(x, p);
-    if (!d) {
-        return String(x);
-    }
-
-    const coefficient = d[0];
-    const exponent = d[1];
-
-    if (exponent < 0) {
-        return '0.' + new Array(-exponent).join('0') + coefficient;
-    } else {
-        if (coefficient.length > exponent + 1) {
-            return coefficient.slice(0, exponent + 1) + '.' + coefficient.slice(exponent + 1);
-        } else {
-            return coefficient + new Array(exponent - coefficient.length + 2).join('0');
-        }
-    }
-}
-
-// Computes the decimal coefficient and exponent of the specified number x with
-// significant digits p, where x is positive and p is in [1, 21] or undefined.
-// For example, formatDecimalParts(1.23) returns ['123', 0].
-function formatDecimalParts(x: number, p?: number): [string, number] | undefined {
-    const sx = p ? x.toExponential(p - 1) : x.toExponential();
-    const i = sx.indexOf('e');
-
-    if (i < 0) {
-        // NaN, ±Infinity
-        return undefined;
-    }
-
-    const coefficient = sx.slice(0, i);
-    // The string returned by toExponential either has the form \d\.\d+e[-+]\d+
-    // (e.g., 1.2e+3) or the form \de[-+]\d+ (e.g., 1e+3).
-    return [coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient, +sx.slice(i + 1)];
-}
-
-function identity<T>(x: T): T {
-    return x;
-}
-
-let formatDefaultLocale: FormatLocale;
-export let format: (specifier: string | FormatSpecifier) => (n: number | { valueOf(): number }) => string;
-let formatPrefix: (specifier: string | FormatSpecifier, value: number) => (n: number | { valueOf(): number }) => string;
-
-defaultLocale({
-    thousands: ',',
-    grouping: [3],
-    currency: ['$', ''],
-});
-
-function defaultLocale(definition: any) {
-    formatDefaultLocale = formatLocale(definition);
-    format = formatDefaultLocale.format;
-    formatPrefix = formatDefaultLocale.formatPrefix;
-}
-
-function exponent(x: number): number {
-    const parts = formatDecimalParts(Math.abs(x));
-    if (parts) {
-        return parts[1];
-    }
-    return NaN;
-}
-
-function precisionFixed(step: number) {
-    return Math.max(0, -exponent(Math.abs(step)));
-}
-
-function precisionPrefix(step: number, value: number) {
-    let x = Math.floor(exponent(value) / 3);
-    x = Math.min(8, x);
-    x = Math.max(-8, x);
-    return Math.max(0, x * 3 - exponent(Math.abs(step)));
-}
-
-function precisionRound(step: number, max: number) {
-    step = Math.abs(step);
-    max = Math.abs(max) - step;
-    return Math.max(0, exponent(max) - exponent(step)) + 1;
-}
-
-interface FormatLocaleOptions {
-    /**
-     * The decimal point (e.g., '.')
-     */
-    decimal: string;
-    /**
-     * The group separator (e.g., ','). Note that the thousands property is a misnomer,
-     * as the grouping definition allows groups other than thousands.
-     */
-    thousands: string;
-    /**
-     * The array of group sizes (e.g., [3]), cycled as needed.
-     */
-    grouping: number[];
-    /**
-     * The currency prefix and suffix (e.g., ['$', '']).
-     */
-    currency: [string, string];
-    /**
-     * Array of ten strings to replace the numerals 0-9.
-     */
-    numerals?: string[];
-    /**
-     * Symbol to replace the `percent` suffix; the percent suffix (defaults to '%').
-     */
-    percent?: string;
-    /**
-     * The minus sign (defaults to '−').
-     */
-    minus?: string;
-    /**
-     * The not-a-number value (defaults 'NaN').
-     */
-    nan?: string;
-}
-
-interface FormatLocale {
-    /**
-     * Returns a new format function for the given string specifier. The returned function
-     * takes a number as the only argument, and returns a string representing the formatted number.
-     *
-     * @param specifier A Specifier string.
-     * @throws Error on invalid format specifier.
-     */
-    format(specifier: string | FormatSpecifier): (n: number | { valueOf(): number }) => string;
-
-    /**
-     * Returns a new format function for the given string specifier. The returned function
-     * takes a number as the only argument, and returns a string representing the formatted number.
-     * The returned function will convert values to the units of the appropriate SI prefix for the
-     * specified numeric reference value before formatting in fixed point notation.
-     *
-     * @param specifier A Specifier string.
-     * @param value The reference value to determine the appropriate SI prefix.
-     * @throws Error on invalid format specifier.
-     */
-    formatPrefix(specifier: string | FormatSpecifier, value: number): (n: number | { valueOf(): number }) => string;
-}
-
-function formatLocale(locale: FormatLocaleOptions): FormatLocale {
-    const group =
-        locale.grouping === undefined || locale.thousands === undefined
-            ? identity
-            : formatGroup(locale.grouping.map(Number), String(locale.thousands));
-    const currencyPrefix = locale.currency === undefined ? '' : String(locale.currency[0]);
-    const currencySuffix = locale.currency === undefined ? '' : String(locale.currency[1]);
-    const decimal = locale.decimal === undefined ? '.' : String(locale.decimal);
-    const numerals = locale.numerals === undefined ? identity : formatNumerals(locale.numerals.map(String));
-    const percent = locale.percent === undefined ? '%' : String(locale.percent);
-    const minus = locale.minus === undefined ? '\u2212' : String(locale.minus);
-    const nan = locale.nan === undefined ? 'NaN' : String(locale.nan);
-
-    function newFormat(specifier: string | FormatSpecifier): (n: number | { valueOf(): number }) => string {
-        const formatSpecifier = makeFormatSpecifier(specifier);
-
-        let fill = formatSpecifier.fill;
-        let align = formatSpecifier.align;
-        const sign = formatSpecifier.sign;
-        const symbol = formatSpecifier.symbol;
-        let zero = formatSpecifier.zero;
-        const width = formatSpecifier.width!;
-        let comma = formatSpecifier.comma;
-        let precision = formatSpecifier.precision;
-        let trim = formatSpecifier.trim;
-        let type = formatSpecifier.type;
-
-        // The 'n' type is an alias for ',g'.
-        if ((type as string) === 'n') {
-            comma = true;
-            type = 'g';
-        } else if (!formatTypes[type]) {
-            // The '' type, and any invalid type, is an alias for '.12~g'.
-            if (precision === undefined) {
-                precision = 12;
-            }
-            trim = true;
-            type = 'g';
-        }
-
-        // If zero fill is specified, padding goes after sign and before digits.
-        if (zero || (fill === '0' && align === '=')) {
-            zero = true;
-            fill = '0';
-            align = '=';
-        }
-
-        // Compute the prefix and suffix.
-        // For SI-prefix, the suffix is lazily computed.
-        const prefix =
-            symbol === '$' ? currencyPrefix : symbol === '#' && /[boxX]/.test(type) ? '0' + type.toLowerCase() : '';
-        const suffix = symbol === '$' ? currencySuffix : /[%p]/.test(type) ? percent : '';
-
-        // What format function should we use?
-        // Is this an integer type?
-        // Can this type generate exponential notation?
-        const formatType = formatTypes[type];
-        const maybeSuffix = /[defgprs%]/.test(type);
-
-        // Set the default precision if not specified,
-        // or clamp the specified precision to the supported range.
-        // For significant precision, it must be in [1, 21].
-        // For fixed precision, it must be in [0, 20].
-        if (precision === undefined) {
-            precision = 6;
-        } else if (/[gprs]/.test(type)) {
-            precision = Math.max(1, Math.min(21, precision));
-        } else {
-            precision = Math.max(0, Math.min(20, precision));
-        }
-
-        function format(x: number | { valueOf(): number }): string {
-            let valuePrefix = prefix;
-            let valueSuffix = suffix;
-            let value: string;
-
-            if (type === 'c') {
-                valueSuffix = formatType(+x) + valueSuffix;
-                value = '';
-            } else {
-                const nx = +x;
-                // Determine the sign. -0 is not less than 0, but 1 / -0 is!
-                let valueNegative = x < 0 || 1 / nx < 0;
-
-                // Perform the initial formatting.
-                value = isNaN(nx) ? nan : formatType(Math.abs(nx), precision);
-
-                // Trim insignificant zeros.
-                if (trim) {
-                    value = formatTrim(value);
-                }
-
-                // If a negative value rounds to zero after formatting, and no explicit positive sign is requested, hide the sign.
-                if (valueNegative && +value === 0 && sign !== '+') {
-                    valueNegative = false;
-                }
-
-                // Compute the prefix and suffix.
-                let signPrefix = valueNegative
-                    ? sign === '('
-                        ? sign
-                        : minus
-                    : sign === '-' || sign === '('
-                    ? ''
-                    : sign;
-                let signSuffix = valueNegative && sign === '(' ? ')' : '';
-                valuePrefix = signPrefix + valuePrefix;
-                valueSuffix = (type === 's' ? prefixes[8 + prefixExponent / 3] : '') + valueSuffix + signSuffix;
-
-                // Break the formatted value into the integer “value” part that can be
-                // grouped, and fractional or exponential “suffix” part that is not.
-                if (maybeSuffix) {
-                    for (let i = 0, n = value.length; i < n; i++) {
-                        const c = value.charCodeAt(i);
-                        if (48 > c || c > 57) {
-                            valueSuffix = (c === 46 ? decimal + value.slice(i + 1) : value.slice(i)) + valueSuffix;
-                            value = value.slice(0, i);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // If the fill character is not '0', grouping is applied before padding.
-            if (comma && !zero) value = group(value, Infinity);
-
-            // Compute the padding.
-            let length = valuePrefix.length + value.length + valueSuffix.length;
-            let padding = length < width ? new Array(width - length + 1).join(fill) : '';
-
-            // If the fill character is '0', grouping is applied after padding.
-            if (comma && zero) {
-                value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity);
-                padding = '';
-            }
-
-            // Reconstruct the final output based on the desired alignment.
-            switch (align) {
-                case '<':
-                    value = valuePrefix + value + valueSuffix + padding;
-                    break;
-                case '=':
-                    value = valuePrefix + padding + value + valueSuffix;
-                    break;
-                case '^':
-                    value =
-                        padding.slice(0, (length = padding.length >> 1)) +
-                        valuePrefix +
-                        value +
-                        valueSuffix +
-                        padding.slice(length);
-                    break;
-                default:
-                    value = padding + valuePrefix + value + valueSuffix;
-                    break;
-            }
-
-            const { string } = formatSpecifier;
-            if (string) {
-                return string.replace(interpolateRegEx, () => numerals(value));
-            }
-
-            return numerals(value);
-        }
-
-        return format;
-    }
-
-    function formatPrefix(
-        specifier: string | FormatSpecifier,
-        value: number
-    ): (n: number | { valueOf(): number }) => string {
-        const formatSpecifier = makeFormatSpecifier(specifier);
-        formatSpecifier.type = 'f';
-
-        const f = newFormat(formatSpecifier);
-        const e = Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3;
-        const k = Math.pow(10, -e);
-        const prefix = prefixes[8 + e / 3];
-
-        return function (value: number | { valueOf(): number }) {
-            return f(k * +value) + prefix;
-        };
-    }
-
-    return {
-        format: newFormat,
-        formatPrefix: formatPrefix,
-    };
+    const f = format(options);
+    return (n) => f(Number(n));
 }
