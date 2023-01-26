@@ -149,15 +149,47 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
         const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
 
+        // compares two sets of columns, ensuring no columns have been added or removed (unless specified via allowRemovedColumns)
+        // if the columns are found, also ensures the field and aggFunc properties have not been changed.
+        const areColsSame = (params: { oldCols: ColumnVO[], newCols: ColumnVO[], allowRemovedColumns?: boolean }) => {
+            const oldColsMap: { [key: string]: ColumnVO } = {};
+            params.oldCols.forEach(col => oldColsMap[col.id] = col);
+
+            const allColsUnchanged = params.newCols.every(col => {
+                const equivalentCol = oldColsMap[col.id];
+                if (equivalentCol) {
+                    delete oldColsMap[col.id];
+                }
+                return equivalentCol && equivalentCol.field === col.field && equivalentCol.aggFunc === col.aggFunc;
+            });
+
+            const missingCols = !params.allowRemovedColumns && !!Object.values(oldColsMap).length;
+            return allColsUnchanged && !missingCols;
+        }
+
         const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortListener.extractSortModel());
-        const rowGroupDifferent = !_.jsonEquals(this.storeParams.rowGroupCols, rowGroupColumnVos);
-        const pivotDifferent = !_.jsonEquals(this.storeParams.pivotCols, pivotColumnVos);
-        const valuesDifferent = !_.jsonEquals(this.storeParams.valueCols, valueColumnVos);
+        const rowGroupDifferent = !areColsSame({
+            oldCols: this.storeParams.rowGroupCols,
+            newCols: rowGroupColumnVos,
+        });
+        const pivotDifferent = !areColsSame({
+            oldCols: this.storeParams.pivotCols,
+            newCols: pivotColumnVos,
+        });
+        const valuesDifferent = !areColsSame({
+            oldCols: this.storeParams.valueCols,
+            newCols: valueColumnVos,
+            allowRemovedColumns: true,
+        });
 
         const resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
 
         if (resetRequired) {
             this.resetRootStore();
+        } else {
+            // reset root store already does this, but regardless of whether resetting params should be updated
+            // as something has changed
+            this.storeParams = this.createStoreParams();
         }
     }
 
