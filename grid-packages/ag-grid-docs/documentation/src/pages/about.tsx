@@ -15,8 +15,10 @@ const AboutPage = () => {
                     <section>
                         <h1>About AG Grid</h1>
                     </section>
+
                     <section>
                         <h2>Our Mission</h2>
+
                         <article>
                             <p>
                                 At AG Grid, our mission is simple: <strong>Build the best datagrid in the world</strong>
@@ -54,282 +56,209 @@ const AboutPage = () => {
                             </p>
                         </article>
                     </section>
+
                     <section>
                         <h2>Our Principles</h2>
+
                         <article>
                             <p>
                                 We believe that a datagrid should be agnostic to the framework that developers choose.
                                 This allows flexibility and future-proofs your development. This is also where the 'ag'
                                 in <strong>AG Grid </strong>
-                                comes from.{' '}
+                                comes from.
                             </p>
                             <p>
                                 Our experience is in building Enterprise applications: we know that the datagrid is at
                                 the core of an Enterprise application, and needs to deliver performance and a rich
-                                feature set.{' '}
+                                feature set.
                             </p>
                             <p>
                                 We give away what others charge for. <strong>AG Grid Community</strong> provides all of
                                 the features of our competition. We only charge when we go above and beyond, with
-                                features that other grids don’t provide.{' '}
+                                features that other grids don’t provide.
                             </p>
                         </article>
                     </section>
+
                     <section>
-                        <h2 id="core-development-team">The Dev Team</h2>
+                        <h2>The Dev Team</h2>
+
                         <article className={styles.team}>
                             <div>
-                                <div>
-                                    <img src="../images/team/niall.jpg" alt="Niall Crosby, Founder / CEO / CTO" />
-                                </div>
+                                <img src="../images/team/niall.jpg" alt="Niall Crosby, Founder / CEO / CTO" />
                                 <h3>Niall Crosby</h3>
                                 <p>CEO / CTO</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/rob.jpg" alt="Rob Clarke, VP of Engineering" />
-                                </div>
+                                <img src="../images/team/rob.jpg" alt="Rob Clarke, VP of Engineering" />
                                 <h3>Rob Clarke</h3>
                                 <p>VP of Engineering</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/sean.jpg" alt="Sean Landsman, Lead Developer" />
-                                </div>
+                                <img src="../images/team/sean.jpg" alt="Sean Landsman, Lead Developer" />
                                 <h3>Sean Landsman</h3>
                                 <p>Lead Developer, Frameworks</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/gil.jpg" alt="Guilherme Lopes, Lead Developer" />
-                                </div>
+                                <img src="../images/team/gil.jpg" alt="Guilherme Lopes, Lead Developer" />
                                 <h3>Guilherme Lopes</h3>
                                 <p>Lead Developer, UI</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/stephen.jpeg" alt="Stephen Cooper, Developer" />
-                                </div>
+                                <img src="../images/team/stephen.jpeg" alt="Stephen Cooper, Developer" />
                                 <h3>Stephen Cooper</h3>
                                 <p>Developer, Grid Core</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/andy.jpeg" alt="Andrew Glazier, Developer" />
-                                </div>
+                                <img src="../images/team/andy.jpeg" alt="Andrew Glazier, Developer" />
                                 <h3>Andrew Glazier</h3>
                                 <p>Developer, Grid Core</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/tak.png" alt="Tak Tran, Developer" />
-                                </div>
+                                <img src="../images/team/tak.png" alt="Tak Tran, Developer" />
                                 <h3>Tak Tran</h3>
                                 <p>Developer, Grid Core</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/peter.jpg" alt="Peter Reynolds, Developer" />
-                                </div>
+                                <img src="../images/team/peter.jpg" alt="Peter Reynolds, Developer" />
                                 <h3>Peter Reynolds</h3>
                                 <p>Developer, Grid Core</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/alanT.jpg" alt="Alan Treadway, Developer" />
-                                </div>
+                                <img src="../images/team/alanT.jpg" alt="Alan Treadway, Developer" />
                                 <h3>Alan Treadway</h3>
                                 <p>Lead Developer, Data Visualisation</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/mana.jpeg" alt="Mana Peirov, Developer" />
-                                </div>
+                                <img src="../images/team/mana.jpeg" alt="Mana Peirov, Developer" />
                                 <h3>Mana Peirov</h3>
                                 <p>Developer, Data Visualisation</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/alex.png" alt="Alex (Sasha) Shutau, Developer" />
-                                </div>
+                                <img src="../images/team/alex.png" alt="Alex (Sasha) Shutau, Developer" />
                                 <h3>Alex (Sasha) Shutau</h3>
                                 <p>Developer, Data Visualisation</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/alberto.jpg"
-                                        alt="Alberto Gutierrez, Head of Customer Services"
-                                    />
-                                </div>
+                                <img
+                                    src="../images/team/alberto.jpg"
+                                    alt="Alberto Gutierrez, Head of Customer Services"
+                                />
                                 <h3>Alberto Gutierrez</h3>
                                 <p>Head of Customer Services</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/kiril.png" alt="Kiril Matev, Technical Product Manager" />
-                                </div>
+                                <img src="../images/team/kiril.png" alt="Kiril Matev, Technical Product Manager" />
                                 <h3>Kiril Matev</h3>
                                 <p>Technical Product Manager</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/david.jpg"
-                                        alt="David Glickman, Technical Product Analyst"
-                                    />
-                                </div>
+                                <img src="../images/team/david.jpg" alt="David Glickman, Technical Product Analyst" />
                                 <h3>David Glickman</h3>
                                 <p>Technical Product Analyst</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/viqas.jpg" alt="Viqas Hussain, Lead Developer" />
-                                </div>
+                                <img src="../images/team/viqas.jpg" alt="Viqas Hussain, Lead Developer" />
                                 <h3>Viqas Hussain</h3>
                                 <p>Lead Developer, E-commerce</p>
                             </div>
-
                             <div>
-                                <div>
-                                    <img src="../images/team/mark.jpg" alt="Mark Durrant, Lead UX designer" />
-                                </div>
+                                <img src="../images/team/mark.jpg" alt="Mark Durrant, Lead UX Designer" />
                                 <h3>Mark Durrant</h3>
                                 <p>Lead UX Designer</p>
                             </div>
                         </article>
                     </section>
+
                     <section>
-                        <h2 id="operations_team">The Operations Team</h2>
+                        <h2>The Operations Team</h2>
+
                         <article className={styles.team}>
                             <div>
-                                <div>
-                                    <img src="../images/team/dimo.jpg" alt="Dimo Iliev, Managing Director" />
-                                </div>
+                                <img src="../images/team/dimo.jpg" alt="Dimo Iliev, Managing Director" />
                                 <h3>Dimo Iliev</h3>
                                 <p>Managing Director</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/simon.jpg"
-                                        alt="Simon Kenny, Customer Experience Manager"
-                                    />
-                                </div>
+                                <img src="../images/team/simon.jpg" alt="Simon Kenny, Customer Experience Manager" />
                                 <h3>Simon Kenny</h3>
                                 <p>Sales Director</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/nathan.jpeg" alt="Nathan Gauge-Klein, General Counsel" />
-                                </div>
+                                <img src="../images/team/nathan.jpeg" alt="Nathan Gauge-Klein, General Counsel" />
                                 <h3>Nathan Gauge-Klein</h3>
                                 <p>General Counsel</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/victoria.jpeg"
-                                        alt="Victoria Tennant, Business Development Manager"
-                                    />
-                                </div>
+                                <img
+                                    src="../images/team/victoria.jpeg"
+                                    alt="Victoria Tennant, Business Development Manager"
+                                />
                                 <h3>Victoria Tennant</h3>
                                 <p>Renewals Team Manager</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/dimple.jpg"
-                                        alt="Dimple Unalkat, Customer Experience Team"
-                                    />
-                                </div>
+                                <img src="../images/team/dimple.jpg" alt="Dimple Unalkat, Customer Experience Team" />
                                 <h3>Dimple Unalkat</h3>
                                 <p>Initials Team Manager</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/sachshell.png"
-                                        alt="Sachshell Rhoden, Customer Experience Manager"
-                                    />
-                                </div>
+                                <img
+                                    src="../images/team/sachshell.png"
+                                    alt="Sachshell Rhoden, Customer Experience Manager"
+                                />
                                 <h3>Sachshell Rhoden</h3>
                                 <p>Sales Operations Manager</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/alison.jpeg"
-                                        alt="Alison Bunworth, Business Development Manager"
-                                    />
-                                </div>
+                                <img
+                                    src="../images/team/alison.jpeg"
+                                    alt="Alison Bunworth, Business Development Manager"
+                                />
                                 <h3>Alison Bunworth</h3>
                                 <p>Business Development Manager</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/robD.jpg"
-                                        alt="Rob Dunkiert, Customer Experience Manager"
-                                    />
-                                </div>
+                                <img src="../images/team/robD.jpg" alt="Rob Dunkiert, Customer Experience Manager" />
                                 <h3>Rob Dunkiert</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/seweety.jpeg"
-                                        alt="Seweety Kumar, Customer Experience Manager"
-                                    />
-                                </div>
+                                <img
+                                    src="../images/team/seweety.jpeg"
+                                    alt="Seweety Kumar, Customer Experience Manager"
+                                />
                                 <h3>Seweety Kumar</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/laiyan.jpeg"
-                                        alt="Laiyan Woo, Customer Experience Manager"
-                                    />
-                                </div>
+                                <img src="../images/team/laiyan.jpeg" alt="Laiyan Woo, Customer Experience Manager" />
                                 <h3>Laiyan Woo</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/amir.jpeg"
-                                        alt="Amir Hussain, Customer Experience Manager"
-                                    />
-                                </div>
+                                <img src="../images/team/amir.jpeg" alt="Amir Hussain, Customer Experience Manager" />
                                 <h3>Amir Hussain</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/jordan.jpeg"
-                                        alt="Jordan Shekoni, Customer Experience Manager"
-                                    />
-                                </div>
+                                <img
+                                    src="../images/team/jordan.jpeg"
+                                    alt="Jordan Shekoni, Customer Experience Manager"
+                                />
                                 <h3>Jordan Shekoni</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
-                                <div>
-                                    <img src="../images/team/tobi.jpg" alt="Tobi Aguda, Customer Experience Manager" />
-                                </div>
+                                <img src="../images/team/tobi.jpg" alt="Tobi Aguda, Customer Experience Manager" />
                                 <h3>Tobi Aguda</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
-                                <div>
-                                    <img
-                                        src="../images/team/kathryn.png"
-                                        alt="Kathryn Knapman, Customer Experience Manager"
-                                    />
-                                </div>
+                                <img
+                                    src="../images/team/kathryn.png"
+                                    alt="Kathryn Knapman, Customer Experience Manager"
+                                />
                                 <h3>Kathryn Knapman</h3>
                                 <p>PA to CEO and Office Manager</p>
                             </div>
@@ -337,7 +266,8 @@ const AboutPage = () => {
                     </section>
 
                     <section>
-                        <h2 id="contact">Contact Us</h2>
+                        <h2>Contact Us</h2>
+
                         <article className={styles.footer}>
                             <div>
                                 <h3>Our Address</h3>
@@ -358,6 +288,7 @@ const AboutPage = () => {
                                     Email Enquiries: <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
                                 </p>
                             </div>
+
                             <div>
                                 <h3>Want to work with us?</h3>
                                 <p>
