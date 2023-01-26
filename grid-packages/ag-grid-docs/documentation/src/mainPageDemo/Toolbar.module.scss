@@ -1,0 +1,61 @@
+@use "sass:map";
+@use "../design-system/" as *;
+
+$mobile-toolbar-breakpoint: 1024px;
+
+.toolbar {
+    width: 100%;
+    position: relative;
+
+    background: var(--toolbar-background);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.controlsContainer {
+    padding: ($size-1 + 1px) 0 $size-1;
+    overflow: auto;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    width: $mobile-toolbar-breakpoint;
+
+    select,
+    input {
+        max-width: 200px;
+        margin-right: $size-4;
+    }
+}
+
+.scrollIndicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 70px;
+    background: linear-gradient(90deg, transparent 0%, var(--toolbar-background) 110%);
+    pointer-events: none;
+
+    @media (min-width: $mobile-toolbar-breakpoint) {
+        display: none;
+    }
+}
+
+.videoTour {
+    display: flex;
+    align-items: center;
+    gap: $size-1;
+
+    &:hover {
+        text-decoration: none;
+    }
+    &::before {
+        content: '';
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        background: transparent url('/images/social-icons/youtube-red.svg') no-repeat;
+        background-size: contain;
+    }
+}

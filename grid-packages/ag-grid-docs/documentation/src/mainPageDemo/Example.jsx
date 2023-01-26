@@ -21,6 +21,7 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
+import classnames from 'classnames';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { booleanValues, colNames, countries, COUNTRY_CODES, firstNames, games, lastNames, months } from './consts';
@@ -632,7 +633,7 @@ const Example = () => {
     const [columnDefs, setColumnDefs] = useState();
     const [rowData, setRowData] = useState();
     const [message, setMessage] = useState();
-    const [messageStyle, setMessageStyle] = useState({ display: 'inline' });
+    const [showMessage, setShowMessage] = useState(false);
     const [rowCols, setRowCols] = useState([]);
     const [dataSize, setDataSize] = useState();
 
@@ -1253,7 +1254,7 @@ const Example = () => {
         let row = 0;
         const data = [];
 
-        setMessageStyle({ display: 'inline' });
+        setShowMessage(true);
         setMessage(` Generating rows`);
 
         const loopCount = rowCount > 10000 ? 10000 : 1000;
@@ -1277,7 +1278,7 @@ const Example = () => {
             setMessage(` Generating rows ${row}`);
 
             if (row >= rowCount) {
-                setMessageStyle({ display: 'none' });
+                setShowMessage(false);
                 setMessage('');
                 clearInterval(intervalId);
                 setColumnDefs(colDefs);
@@ -1427,7 +1428,7 @@ const Example = () => {
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
                 {helmet.map((entry) => entry)}
             </Helmet>
-            <div className={`${styles['example-wrapper']} ${bodyClass}`}>
+            <div className={classnames(styles.exampleWrapper, bodyClass)}>
                 <Toolbar
                     gridRef={gridRef}
                     dataSize={dataSize}
@@ -1436,11 +1437,11 @@ const Example = () => {
                     gridTheme={gridTheme}
                     setGridTheme={setGridTheme}
                 />
-                <span style={{ marginLeft: 10, ...messageStyle }}>
+                <span className={classnames({ [styles.messages]: true, [styles.show]: showMessage })}>
                     {message}
                     <i className="fa fa-spinner fa-pulse fa-fw margin-bottom" />
                 </span>
-                <section className={styles['example-wrapper__grid-wrapper']} style={{ padding: '1rem', paddingTop: 0 }}>
+                <section className={styles.gridWrapper} style={{ padding: '1rem', paddingTop: 0 }}>
                     {gridTheme && (
                         <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }} className={gridTheme}>
                             <AgGridReactMemo

@@ -1,5 +1,6 @@
+import classnames from 'classnames';
 import React from 'react';
-import styles from './Example.module.scss';
+import styles from './Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
 
 const IS_SSR = typeof window === 'undefined';
@@ -30,9 +31,9 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
     }
 
     return (
-        <div className={styles['example-toolbar']}>
-            <div className={styles['options-container']}>
-                <div>
+        <div className={classnames('ag-styles', styles.toolbar)}>
+            <div className={classnames('page-margin', styles.controlsContainer)}>
+                <div className={styles.controls}>
                     <label htmlFor="data-size">Data Size:</label>
                     <select id="data-size" onChange={onDataSizeChanged} value={dataSize}>
                         {rowCols.map((rowCol) => {
@@ -48,8 +49,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
                             );
                         })}
                     </select>
-                </div>
-                <div>
+
                     <label htmlFor="grid-theme">Theme:</label>
                     <select id="grid-theme" onChange={onThemeChanged} value={gridTheme || ''}>
                         <option value="ag-theme-none">-none-</option>
@@ -59,24 +59,27 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
                         <option value="ag-theme-balham-dark">Balham Dark</option>
                         <option value="ag-theme-material">Material</option>
                     </select>
-                </div>
-                <div>
+
                     <label htmlFor="global-filter">Filter:</label>
                     <input
                         placeholder="Filter any column..."
                         type="text"
-                        className={styles['hide-when-small']}
                         onInput={onFilterChanged}
                         id="global-filter"
                         style={{ flex: 1 }}
                     />
-                </div>
-                <div className={styles['video-tour']}>
-                    <a href="https://youtu.be/29ja0liMuv4" target="_blank" rel="noreferrer">
+
+                    <a
+                        className={styles.videoTour}
+                        href="https://youtu.be/29ja0liMuv4"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
                         Take a video tour
                     </a>
                 </div>
             </div>
+            <div className={styles.scrollIndicator}></div>
         </div>
     );
 };
