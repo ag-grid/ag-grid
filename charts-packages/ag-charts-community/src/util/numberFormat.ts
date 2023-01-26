@@ -102,8 +102,6 @@ export function format(formatter: string | FormatterOptions) {
         suffix = '',
     } = options;
 
-    const signer = signs[sign || '-'];
-
     let formatBody: (n: number, f: number) => string;
     if (!type) {
         formatBody = decimalTypes['g'];
@@ -122,33 +120,12 @@ export function format(formatter: string | FormatterOptions) {
         precision = 6;
     }
 
-    const w = Number(width);
-    const setPadding = isNaN(w)
-        ? undefined
-        : (input: string) => {
-              let result = input;
-              const f = fill || zero || ' ';
-              if (align === '>' || align === undefined) {
-                  result = result.padStart(w, f);
-              } else if (align === '<') {
-                  result = result.padEnd(w, f);
-              } else if (align === '^') {
-                  const padWidth = Math.max(0, w - result.length);
-                  const padLeft = Math.ceil(padWidth / 2);
-                  const padRight = Math.floor(padWidth / 2);
-                  result = result.padStart(padLeft + result.length, f);
-                  result = result.padEnd(padRight + result.length, f);
-              }
-              return result;
-          };
-
     return (n: number) => {
-        const s = signer(n);
-        const t = formatBody(n, precision!);
-        let result = `${s}${t}`;
+        let result = formatBody(n, precision!);
         if (trim) {
             result = removeTrailingZeros(result);
         }
+        result = addSign(n, result, sign);
         if (symbol && symbol !== '#') {
             result = `${symbol}${result}`;
         }
@@ -165,8 +142,8 @@ export function format(formatter: string | FormatterOptions) {
             result = `${result}%`;
         }
         result = `${prefix}${result}${suffix}`;
-        if (setPadding) {
-            result = setPadding(result);
+        if (!isNaN(width!)) {
+            result = addPadding(result, width!, fill || zero, align);
         }
         return result;
     };
@@ -255,31 +232,49 @@ function getSIPrefixPower(n: number) {
 
 const minSIPrefix = -24;
 const maxSIPrefix = 24;
-const siPrefixes = new Map<number, string>();
-siPrefixes.set(minSIPrefix, 'y');
-siPrefixes.set(-21, 'z');
-siPrefixes.set(-18, 'a');
-siPrefixes.set(-15, 'f');
-siPrefixes.set(-12, 'p');
-siPrefixes.set(-9, 'n');
-siPrefixes.set(-6, 'µ');
-siPrefixes.set(-3, 'm');
-siPrefixes.set(0, '');
-siPrefixes.set(3, 'k');
-siPrefixes.set(6, 'M');
-siPrefixes.set(9, 'G');
-siPrefixes.set(12, 'T');
-siPrefixes.set(15, 'P');
-siPrefixes.set(18, 'E');
-siPrefixes.set(21, 'Z');
-siPrefixes.set(maxSIPrefix, 'Y');
+const siPrefixes = new Map<number, string>()
+    .set(minSIPrefix, 'y')
+    .set(-21, 'z')
+    .set(-18, 'a')
+    .set(-15, 'f')
+    .set(-12, 'p')
+    .set(-9, 'n')
+    .set(-6, 'µ')
+    .set(-3, 'm')
+    .set(0, '')
+    .set(3, 'k')
+    .set(6, 'M')
+    .set(9, 'G')
+    .set(12, 'T')
+    .set(15, 'P')
+    .set(18, 'E')
+    .set(21, 'Z')
+    .set(maxSIPrefix, 'Y');
 
 const minusSign = '\u2212';
-const signs: Record<string, (n: number) => string> = {
-    '+': (n) => (n >= 0 ? '+' : minusSign),
-    '-': (n) => (n >= 0 ? '' : minusSign),
-    ' ': (n) => (n >= 0 ? ' ' : minusSign),
-};
+
+function addSign(num: number, numString: string, signType = '') {
+    if (signType === '(') {
+        return num >= 0 ? numString : `(${numString})`;
+    }
+    return `${num >= 0 ? (signType === '+' ? '+' : '') : minusSign}${numString}`;
+}
+
+function addPadding(numString: string, width: number, fill = ' ', align = '>') {
+    let result = numString;
+    if (align === '>' || !align) {
+        result = result.padStart(width, fill);
+    } else if (align === '<') {
+        result = result.padEnd(width, fill);
+    } else if (align === '^') {
+        const padWidth = Math.max(0, width - result.length);
+        const padLeft = Math.ceil(padWidth / 2);
+        const padRight = Math.floor(padWidth / 2);
+        result = result.padStart(padLeft + result.length, fill);
+        result = result.padEnd(padRight + result.length, fill);
+    }
+    return result;
+}
 
 export function tickFormat(
     start: number,

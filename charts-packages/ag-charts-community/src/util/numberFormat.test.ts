@@ -26,9 +26,11 @@ describe('format', () => {
     });
     test('space-filled and signed', () => {
         expect(format('+20')(42)).toBe('                 +42');
+        expect(format('(')(-42)).toBe('(42)');
     });
     test('dot-filled and centered', () => {
         expect(format('.^20')(42)).toBe('.........42.........');
+        expect(format('.^21')(42)).toBe('..........42.........');
     });
     test('prefixed lowercase hexadecimal', () => {
         expect(format('#x')(48879)).toBe('0xbeef');
