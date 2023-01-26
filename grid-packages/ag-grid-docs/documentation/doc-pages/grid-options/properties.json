@@ -315,6 +315,12 @@
                 "url": "/filter-quick/#quick-filter-cache"
             }
         },
+        "excludeHiddenColumnsFromQuickFilter": {
+            "more": {
+                "name": "Exclude Hidden Columns",
+                "url": "/filter-quick/#exclude-hidden-columns"
+            }
+        },
         "isExternalFilterPresent": {
             "more": {
                 "name": "External Filter",

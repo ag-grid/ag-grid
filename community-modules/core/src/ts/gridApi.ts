@@ -669,6 +669,16 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('quickFilterText', newFilter);
     }
 
+    /** 
+     * Updates the `excludeHiddenColumnsFromQuickFilter` grid option.
+     * Set to `true` to exclude hidden columns from being checked by the Quick Filter (or `false` to include them).
+     * This can give a significant performance improvement when there are a large number of hidden columns,
+     * and you are only interested in filtering on what's visible.
+     */
+    public setExcludeHiddenColumnsFromQuickFilter(value: boolean): void {
+        this.gridOptionsService.set('excludeHiddenColumnsFromQuickFilter', value);
+    }
+
     /**
      * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
@@ -1426,7 +1436,7 @@ export class GridApi<TData = any> {
     /** Reset the Quick Filter cache text on every rowNode. */
     public resetQuickFilter(): void {
         if (this.warnIfDestroyed('resetQuickFilter')) { return; }
-        this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
+        this.filterManager.resetQuickFilterCache();
     }
 
     /** Returns the list of selected cell ranges. */
