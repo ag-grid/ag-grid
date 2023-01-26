@@ -3710,58 +3710,21 @@
       "y": "number"
     }
   },
-  "FormatType": {
-    "meta": { "isTypeAlias": true },
-    "type": "'' | '%' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'o' | 'p' | 'r' | 's' | 'X' | 'x'"
-  },
-  "FormatSpecifierOptions": {
+  "FormatterOptions": {
     "meta": {},
     "type": {
+      "prefix?": "string",
       "fill?": "string",
       "align?": "string",
       "sign?": "string",
       "symbol?": "string",
       "zero?": "string",
-      "width?": "string",
+      "width?": "number",
       "comma?": "string",
-      "precision?": "string",
-      "trim?": "string",
-      "type?": "FormatType",
-      "string?": "string"
-    }
-  },
-  "FormatLocaleOptions": {
-    "meta": {},
-    "type": {
-      "decimal": "string",
-      "thousands": "string",
-      "grouping": "number[]",
-      "currency": "[ string, string ]",
-      "numerals?": "string[]",
-      "percent?": "string",
-      "minus?": "string",
-      "nan?": "string"
-    },
-    "docs": {
-      "decimal": "/** The decimal point (e.g., '.')\n     */",
-      "thousands": "/** The group separator (e.g., ','). Note that the thousands property is a misnomer,\n     * as the grouping definition allows groups other than thousands.\n     */",
-      "grouping": "/** The array of group sizes (e.g., [3]), cycled as needed.\n     */",
-      "currency": "/** The currency prefix and suffix (e.g., ['$', '']).\n     */",
-      "numerals?": "/** Array of ten strings to replace the numerals 0-9.\n     */",
-      "percent?": "/** Symbol to replace the `percent` suffix; the percent suffix (defaults to '%').\n     */",
-      "minus?": "/** The minus sign (defaults to '−').\n     */",
-      "nan?": "/** The not-a-number value (defaults 'NaN').\n     */"
-    }
-  },
-  "FormatLocale": {
-    "meta": {},
-    "type": {
-      "format(specifier: string | FormatSpecifier)": "(n: number | { valueOf(): number; }) => string",
-      "formatPrefix(specifier: string | FormatSpecifier, value: number)": "(n: number | { valueOf(): number; }) => string"
-    },
-    "docs": {
-      "format(specifier: string | FormatSpecifier)": "/** Returns a new format function for the given string specifier. The returned function\n     * takes a number as the only argument, and returns a string representing the formatted number.\n     *\n     * @param specifier A Specifier string.\n     * @throws Error on invalid format specifier.\n     */",
-      "formatPrefix(specifier: string | FormatSpecifier, value: number)": "/** Returns a new format function for the given string specifier. The returned function\n     * takes a number as the only argument, and returns a string representing the formatted number.\n     * The returned function will convert values to the units of the appropriate SI prefix for the\n     * specified numeric reference value before formatting in fixed point notation.\n     *\n     * @param specifier A Specifier string.\n     * @param value The reference value to determine the appropriate SI prefix.\n     * @throws Error on invalid format specifier.\n     */"
+      "precision?": "number",
+      "trim?": "boolean",
+      "type?": "string",
+      "suffix?": "string"
     }
   },
   "TypedEvent": { "meta": {}, "type": { "type": "string" } },
