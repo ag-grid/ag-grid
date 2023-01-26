@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import DocumentationLink from 'components/DocumentationLink';
 import React from 'react';
 import footerItems from './footer-items.json';
@@ -27,7 +28,7 @@ const MenuColumns = ({ framework = 'javascript' }) =>
     ));
 
 const Footer = ({ framework }) => (
-    <footer className={`${styles['footer']} ag-styles`}>
+    <footer className={classnames(styles.footer, 'ag-styles')}>
         <div className="page-margin">
             <div className={styles['row']}>
                 <MenuColumns framework={framework} />

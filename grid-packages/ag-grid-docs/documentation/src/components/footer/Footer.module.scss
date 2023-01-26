@@ -4,8 +4,6 @@ $two-column-breakpoint: 480px;
 $four-column-breakpoint: 760px;
 
 .footer {
-    composes: page-margin from global;
-
     padding-top: $size-5;
     padding-bottom: calc($size-5 * 2);
     background-color: var(--dark-cerulean-blue);
