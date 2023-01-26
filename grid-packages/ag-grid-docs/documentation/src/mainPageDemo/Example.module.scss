@@ -1,17 +1,6 @@
 @use "../design-system/" as *;
-@use "../pages/components/assets/common/mixins";
-@use "../pages/components/assets/common/vars";
 
-.options-container select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,\ <svg version='1.1' xmlns='http://www.w3.org/2000/svg' width='14px'\ height='14px' viewBox='0 0 1200 1000' fill='rgb(51,51,51)'>\ <path d='M1100 411l-198 -199l-353 353l-353 -353l-197 199l551 551z'/>\ </svg>");
-    background-repeat: no-repeat;
-    background-position: calc(100% - 7px) 49%;
-}
-
-.example-wrapper {
+.exampleWrapper {
     display: flex;
     flex-direction: column;
     -webkit-font-smoothing: antialiased;
@@ -21,201 +10,21 @@
     width: 100%;
     height: 100%;
     min-height: 90vh;
-
-    &__grid-wrapper {
-        margin-top: $size-2;
-        flex: 1 1 auto;
-        overflow: hidden;
-        display: flex;
-    }
 }
 
-.dark .star {
-    filter: invert(100%);
-}
-
-body:not(.dark) {
-    .good-score {
-        &:not(.ag-cell-range-selected),
-        &.ag-cell-focus:not(.ag-cell-inline-editing) {
-            background-color: rgba(185, 246, 202, 0.4);
-        }
-    }
-    .bad-score {
-        &:not(.ag-cell-range-selected),
-        &.ag-cell-focus:not(.ag-cell-inline-editing) {
-            background-color: rgba(255, 128, 171, 0.4);
-        }
-    }
-    @include mixins.scrollbars(15px, #c2c2c2, #fafafa, #7d7d7d, #e8e8e8);
-}
-
-.dark {
-    background-color: #222;
-    color: white;
-    .good-score {
-        color: lightgreen;
-    }
-    .bad-score {
-        color: #e81079;
-    }
-}
-
-.blue {
-    background-color: darkblue;
-    color: lightblue;
-}
-
-button[disabled] {
-    opacity: 0.5;
-}
-
-.example-toolbar {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
+.gridWrapper {
+    margin-top: $size-2 !important; // !important needed because of .ag-styles specificity
+    flex: 1 1 auto;
     overflow: hidden;
-    background: vars.$blue-4;
-    border-bottom: 1px solid vars.$blue-3;
-
-    margin-bottom: 0;
-    padding: 5px 0;
-    transition: height 1s;
-
-    select,
-    input {
-        height: 35px;
-        width: 180px;
-        border-radius: 5px;
-        border: 1px solid grey;
-        background-color: #f9f9f9;
-        color: #333;
-        outline: none;
-        padding-left: 5px;
-        .dark & {
-            background-color: #636262;
-            color: white;
-        }
-        .dark &::placeholder {
-            color: #e8e8e8;
-        }
-    }
-    .dark & {
-        background-color: #34343c;
-        border-bottom-color: #666;
-        a {
-            color: lightblue;
-            &:hover {
-                color: white;
-            }
-        }
-    }
-
-    .options-container {
-        display: flex;
-        flex-wrap: wrap;
-        flex: 1 0 auto;
-        margin: 5px 0;
-        overflow: hidden;
-
-        max-width: 1400px;
-        width: 100%;
-
-        justify-content: flex-start;
-
-        > div {
-            white-space: nowrap;
-            padding-left: 15px;
-            padding-right: 15px;
-        }
-
-        .video-tour {
-            display: flex;
-            align-items: center;
-            a {
-                display: flex;
-                align-items: center;
-                &:hover {
-                    text-decoration: none;
-                }
-                &::before {
-                    content: '';
-                    display: inline-block;
-                    background: transparent url('../../../src/images/YouTubeSmall.png') no-repeat;
-                    background-size: contain;
-                    width: 26px;
-                    height: 18px;
-                    margin-right: 5px;
-                }
-            }
-        }
-    }
+    display: flex;
 }
 
-.stretch-html {
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    border: 0;
-    margin: 0;
-    padding: 0;
-    body {
-        height: 100%;
-        width: 100%;
-    }
-}
+.messages {
+    padding-top: $size-2;
+    padding-left: $size-2;
+    display: none;
 
-.flag {
-    margin-bottom: 3px;
-    margin-right: 4px;
-}
-
-.arrow {
-    animation: pulse 0.5s infinite;
-    animation-direction: alternate;
-}
-
-@keyframes pulse {
-    0% {
-        transform: translatey(0px);
-    }
-    100% {
-        transform: translatey(20px);
-    }
-}
-
-@keyframes zoom-in {
-    0% {
-        transform: scale(2, 2);
-        opacity: 0.5;
-    }
-    100% {
-        transform: scale(1, 1);
-        opacity: 1;
-    }
-}
-
-@media (max-width: 1024px) {
-    .example-toolbar {
-        padding: 0;
-        height: 124px;
-        .options-container {
-            align-items: center;
-            flex-direction: column;
-            justify-content: center;
-            > div {
-                overflow: hidden;
-                &.video-tour {
-                    display: none;
-                }
-            }
-            label {
-                width: 80px;
-            }
-        }
-        &.collapsed {
-            height: 0;
-        }
+    &.show {
+        display: inline;
     }
 }

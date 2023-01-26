@@ -70,6 +70,7 @@ $abstract-colors: (
     'azure-blue': #007bff,
     'sky-blue': #80bdff,
     'water-blue': #cce5ff,
+    'bright-blue-gray': #eaf0f6,
     'ghost-blue': #f9fcff,
     // Grays
     'black': #000000,
@@ -115,5 +116,7 @@ $semantic-colors: (
     'table-odd-row-background-color': ghost-blue,
     // Site header
     'site-header-background': medium-electric-blue,
-    'site-nav-background': ag-grid-dark-blue
+    'site-nav-background': ag-grid-dark-blue,
+    // Toolbar
+    'toolbar-background': bright-blue-gray
 );

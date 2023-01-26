@@ -6,6 +6,9 @@
 // Expose all sass variables
 @forward "./core";
 
+// Expose page-margin mixin
+@forward "./layout" show page-margin;
+
 @mixin design-system-styles() {
     @include meta.load-css('./src/design-system/base');
     @include meta.load-css('./src/design-system/layout');
