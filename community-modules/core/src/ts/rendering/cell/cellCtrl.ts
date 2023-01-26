@@ -430,7 +430,7 @@ export class CellCtrl extends BeanStub {
         // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
         // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
         this.suppressRefreshCell = true;
-        const valueChanged = this.rowNode.setDataValue(this.column, newValue);
+        const valueChanged = this.rowNode.setDataValue(this.column, newValue, 'edit');
         this.suppressRefreshCell = false;
 
         return valueChanged;
