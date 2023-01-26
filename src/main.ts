@@ -1,5 +1,5 @@
 import {AgChart,AgChartOptions,AgChartInstance } from 'ag-charts-community';
-import {LicenseManager} from '@ag/license';
+import {LicenseManager} from './license/licenseManager';
 
 export * from 'ag-charts-community';
 
