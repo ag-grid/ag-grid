@@ -9,6 +9,7 @@ export class ModuleRegistry {
     private static modulesMap: { [name: string]: Module; } = {};
     private static moduleBased: boolean | undefined;
     private static currentModuleVersion: string;
+    private static isBundled: boolean | undefined;
 
     public static register(module: Module, moduleBased = true): void {
         ModuleRegistry.runVersionChecks(module);
@@ -53,6 +54,13 @@ export class ModuleRegistry {
         }
     }
 
+    /**
+     * INTERNAL - Set if files are being served from a single UMD bundle to provide accurate enterprise upgrade steps.
+     */
+    public static setIsBundled() {
+        ModuleRegistry.isBundled = true;
+    }
+
     // noinspection JSUnusedGlobalSymbols
     public static registerModules(modules: Module[], moduleBased = true): void {
         ModuleRegistry.setModuleBased(moduleBased);
@@ -70,7 +78,18 @@ export class ModuleRegistry {
 
         const warningKey = reason + moduleName;
         let warningMessage: string;
-        if (ModuleRegistry.moduleBased) {
+
+        if (ModuleRegistry.isBundled) {
+            {
+                warningMessage =
+                    `AG Grid: unable to use ${reason} as 'ag-grid-enterprise' has not been loaded. Check you are using the Enterprise bundle:
+        
+        <script src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise@AG_GRID_VERSION/dist/ag-grid-enterprise.min.js"></script>
+        
+For more info see: https://ag-grid.com/javascript-data-grid/getting-started/#getting-started-with-ag-grid-enterprise`;
+            }
+        }
+        else if (ModuleRegistry.moduleBased) {
             let modName = Object.entries(ModuleNames).find(([k, v]) => v === moduleName)?.[0];
             warningMessage =
                 `AG Grid: unable to use ${reason} as the ${modName} is not registered. Check if you have registered the module:
