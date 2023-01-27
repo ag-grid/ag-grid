@@ -46,9 +46,9 @@ const Default = () => {
                 description={`AG Grid is a feature rich datagrid designed for the major JavaScript Frameworks. Version ${agGridVersion} is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source, or take a 2 month trial of AG Grid Enterprise.`}
             />
             <div className="ag-styles">
-                <div className={styles['homepageHero']}>
-                    <section className={classNames(styles['heroInner'], 'page-margin')}>
-                        <section className={styles['heroHeadings']}>
+                <div className={styles.homepageHero}>
+                    <section className={classNames(styles.heroInner, 'page-margin')}>
+                        <section className={styles.heroHeadings}>
                             <h1 className="font-size-extra-large">
                                 The&nbsp;Best&nbsp;JavaScript Grid&nbsp;in&nbsp;the&nbsp;World
                             </h1>
@@ -57,7 +57,7 @@ const Default = () => {
                             </h2>
                         </section>
 
-                        <section className={styles['heroGrid']}>
+                        <section className={styles.heroGrid}>
                             {!IS_SSR && (
                                 <React.Suspense fallback={<></>}>
                                     <HeroGrid />
@@ -67,27 +67,25 @@ const Default = () => {
                     </section>
                 </div>
 
-                <div className={styles['homepageFrameworks']}>
-                    <div className={classNames(styles['frameworksInner'], 'page-margin')}>
-                        <span className={classNames(styles['frameworksLabel'], 'text-secondary')}>
-                            Get&nbsp;started
-                        </span>
+                <div className={styles.homepageFrameworks}>
+                    <div className={classNames(styles.frameworksInner, 'page-margin')}>
+                        <span className={classNames(styles.frameworksLabel, 'text-secondary')}>Get&nbsp;started</span>
 
                         <FrameworkSelector data={frameworksData} isFullWidth />
                     </div>
                 </div>
 
-                <div className={styles['homepageQuotes']}>
+                <div className={styles.homepageQuotes}>
                     <div className="page-margin">
                         <Quotes data={quotesData} />
                     </div>
                 </div>
 
-                <div className={styles['homepageExample']}>
+                <div className={styles.homepageExample}>
                     <section className="page-margin">
                         <h2>Live Streaming Updates</h2>
 
-                        <div className={styles['demo']}>
+                        <div className={styles.demo}>
                             {!IS_SSR && (
                                 <React.Suspense fallback={<div>Loading...</div>}>
                                     <LiveStreamingDemo />
@@ -97,7 +95,7 @@ const Default = () => {
                     </section>
                 </div>
 
-                <div className={styles['homepageDescription']}>
+                <div className={styles.homepageDescription}>
                     <div className="page-margin">
                         <ul className="list-style-none">
                             <li>
@@ -129,11 +127,11 @@ const Default = () => {
                     </div>
                 </div>
 
-                <div className={styles['homepageExample']}>
+                <div className={styles.homepageExample}>
                     <section className="page-margin">
                         <h2>Integrated Charting</h2>
 
-                        <div className={styles['demo']}>
+                        <div className={styles.demo}>
                             {!IS_SSR && (
                                 <React.Suspense fallback={<div>Loading...</div>}>
                                     <ChartingDashboardDemo />
@@ -144,7 +142,7 @@ const Default = () => {
                 </div>
 
                 <div className={styles['homepageSponsorship']}>
-                    <section className={classNames(styles['homepageSponsorship'], 'page-margin')}>
+                    <section className={classNames(styles.homepageSponsorship, 'page-margin')}>
                         <div>
                             <h2>Supporting Open&nbsp;Source</h2>
                             <h3 className="thin-text">We are proud to sponsor the tools we use and love.</h3>
