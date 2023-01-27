@@ -164,7 +164,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         let searchStrings: string[] | undefined;
 
         if (typeof values[0] === 'number' || typeof values[0] === 'string') {
-            searchStrings = values.map(String);
+            searchStrings = values.map(v => this.params.formatValue(v));
         }
 
         if (typeof values[0] === 'object' && this.params.colDef.keyCreator) {
