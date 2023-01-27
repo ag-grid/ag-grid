@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import ChevronButtonCellRenderer from '../grid/ChevronButtonRenderer';
-import DepOrBreakFilterComponent from '../grid/DepOrBreakFilterComponent';
-import DetailCellRenderer from '../grid/DetailCellRendererComponent';
-import Grid from '../grid/Grid';
-import IssueTypeCellRenderer from '../grid/IssueTypeRenderer';
-import PaddingCellRenderer from '../grid/PaddingCellRenderer';
-import VersionDropdownMenu from '../grid/VersionDropdownMenu';
+import ChevronButtonCellRenderer from '../../../components/grid/ChevronButtonRenderer';
+import DepOrBreakFilterComponent from '../../../components/grid/DepOrBreakFilterComponent';
+import DetailCellRenderer from '../../../components/grid/DetailCellRendererComponent';
+import Grid from '../../../components/grid/Grid';
+import IssueTypeCellRenderer from '../../../components/grid/IssueTypeRenderer';
+import PaddingCellRenderer from '../../../components/grid/PaddingCellRenderer';
+import VersionDropdownMenu from '../../../components/grid/VersionDropdownMenu';
 import styles from './Changelog.module.scss';
 import './overrides.css';
 import ReleaseVersionNotes from './ReleaseVersionNotes.jsx';
