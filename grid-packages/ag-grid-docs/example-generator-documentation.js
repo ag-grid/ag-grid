@@ -518,7 +518,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
 
                     // Chart classes that need scoping
-                    const chartImports = typedBindings.imports.find(i => i.module == "'ag-charts-community'");
+                    const chartImports = typedBindings.imports.find(i => i.module.includes('ag-charts-community'));
                     if (chartImports) {
                         chartImports.imports.forEach(i => {
                             const toReplace = `(?<!\\.)${i}([\\s\/.])`
