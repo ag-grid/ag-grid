@@ -195,6 +195,12 @@
                 "url": "/filter-quick/#checking-the-quick-filter"
             }
         },
+        "setExcludeHiddenColumnsFromQuickFilter": {
+            "more": {
+                "name": "Exclude Hidden Columns",
+                "url": "/filter-quick/#exclude-hidden-columns"
+            }
+        },
         "isColumnFilterPresent": {},
         "isAnyFilterPresent": {},
         "getFilterInstance": {
