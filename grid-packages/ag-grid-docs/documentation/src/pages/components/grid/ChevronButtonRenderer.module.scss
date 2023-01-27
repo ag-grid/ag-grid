@@ -1,27 +1,29 @@
-.cell-renderer-container {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  font-size: 16px;
+@use "../../../design-system/" as *;
+
+.container {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    font-size: 16px;
 }
 
-.chevron-container {
-  display: flex;
-  justify-content: center;
-  height: 20px;
-  width: 20px;
-  line-height: 20px;
+.chevronContainer {
+    display: flex;
+    justify-content: center;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
 
-  -moz-border-radius: 32px; /* or 50% */
-  border-radius: 32px; /* or 50% */
+    -moz-border-radius: 32px; /* or 50% */
+    border-radius: 32px; /* or 50% */
 
-  background: #0075ff;
-  color: white;
-  text-align: center;
-  font-size: 2em;
-  margin-right: 8px;
+    background: #0075ff;
+    color: white;
+    text-align: center;
+    font-size: 2em;
+    margin-right: $size-1 !important; // !important for .ag-styles specificity
 }
 
-.chevron-img {
-  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(200deg) brightness(102%) contrast(104%);
+.chevronImage {
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(200deg) brightness(102%) contrast(104%);
 }
