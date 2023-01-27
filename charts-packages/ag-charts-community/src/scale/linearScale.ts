@@ -8,6 +8,8 @@ import { tickFormat } from '../util/numberFormat';
 export class LinearScale extends ContinuousScale {
     readonly type = 'linear';
 
+    interval?: number;
+
     ticks() {
         const count = this.tickCount ?? 10;
         if (!this.domain || this.domain.length < 2 || count < 1) {

@@ -572,6 +572,7 @@ export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
      * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.
      */
     count?: number;
+    interval?: number;
 }
 
 export interface AgAxisTimeTickOptions extends AgAxisBaseTickOptions {
@@ -581,6 +582,7 @@ export interface AgAxisTimeTickOptions extends AgAxisBaseTickOptions {
      * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.
      * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */
     count?: any;
+    interval?: any;
 }
 export interface AgAxisLabelFormatterParams {
     readonly value: any;
