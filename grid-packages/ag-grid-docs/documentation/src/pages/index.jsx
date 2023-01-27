@@ -66,10 +66,15 @@ const Default = () => {
                         </section>
                     </section>
                 </div>
-                <div className={styles['stage-frameworks']}>
-                    <span className={styles['stage-frameworks__label']}>Get&nbsp;started</span>
 
-                    <FrameworkSelector data={frameworksData} isFullWidth />
+                <div className={styles['homepage-frameworks']}>
+                    <div className={classNames(styles['framework-inner'], 'page-margin')}>
+                        <span className={classNames(styles['frameworks-label'], 'text-secondary')}>
+                            Get&nbsp;started
+                        </span>
+
+                        <FrameworkSelector data={frameworksData} isFullWidth />
+                    </div>
                 </div>
 
                 <div className={`${styles['stage-scenarios']} ${styles['stage-quotes']}`}>

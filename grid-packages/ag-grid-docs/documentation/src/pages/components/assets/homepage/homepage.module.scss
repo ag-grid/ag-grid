@@ -1,4 +1,4 @@
-@use '../../../../design-system' as ds;
+@use '../../../../design-system' as ds; // needed to deal with bootstrap conflict
 
 @import '../common/vars.scss';
 @import '../common/bootstrap.scss';
@@ -34,6 +34,7 @@ body {
 
 .media a {
     color: darken($blue-2, 5%);
+
     &:hover {
         text-decoration: none;
         color: $blue-1;
@@ -73,36 +74,6 @@ body {
             @extend .pr-4;
             text-align: justify;
         }
-    }
-}
-
-.stage-frameworks {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 15px 48px;
-    background-color: $ag-site-fw-background;
-
-    @media screen and (min-width: 640px) {
-        padding-top: 48px;
-        flex-direction: row;
-    }
-}
-
-.stage-frameworks__label {
-    opacity: 0.6666;
-    margin-bottom: 8px;
-
-    @media screen and (min-width: 640px) {
-        margin-bottom: 0;
-        margin-right: 8px;
-    }
-
-    @media screen and (min-width: 1020px) {
-        font-size: 22px;
-        margin-right: 16px;
     }
 }
 
@@ -150,96 +121,6 @@ body {
         @extend .btn, .btn-lg, .py-3, .px-4;
         &:last-child {
             @extend .btn-outline-darkblue, .ml-2, .ml-sm-3;
-        }
-    }
-}
-
-.homepage-hero {
-    $breakpoint-medium: 620px;
-    $breakpoint-large: 1020px;
-
-    --text-color: var(--white);
-
-    padding-top: ds.$size-5;
-    background-color: var(--dark-cerulean-blue);
-    color: var(--text-color); // needed to deal with .ag-styles
-
-    @media screen and (min-width: $breakpoint-medium) {
-        padding-top: ds.$size-7;
-    }
-
-    @media screen and (min-width: $breakpoint-large) {
-        padding-top: ds.$size-8;
-    }
-
-    .contents {
-        display: flex;
-        flex-direction: column;
-        gap: 0 ds.$size-4;
-
-        @media screen and (min-width: $breakpoint-large) {
-            flex-direction: row;
-        }
-    }
-
-    .headings {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-
-        h1,
-        h2 {
-            --line-height: #{ds.$line-height-tight} !important; // !important for .ag-styles specificity
-        }
-
-        @media screen and (min-width: $breakpoint-large) {
-            text-align: unset;
-        }
-    }
-
-    h1 {
-        --font-size: 28px;
-        --font-weight: #{ds.$font-weight-bold}; // needed to deal with .ag-styles `
-
-        @media screen and (min-width: $breakpoint-medium) {
-            --font-size: #{ds.$font-size-extra-large} !important; // !important for .ag-styles specificity
-        }
-
-        @media screen and (min-width: $breakpoint-large) {
-            --font-size: min(3.4vw, 54px) !important; // !important for .ag-styles specificity
-
-            margin-top: -0.225em !important; // !important for .ag-styles specificity;
-            margin-bottom: 0.5em !important; // !important for .ag-styles specificity;
-        }
-    }
-
-    h2 {
-        max-width: 18em;
-        margin-right: auto;
-        margin-left: auto;
-        margin-bottom: 1.4em;
-
-        @media screen and (min-width: $breakpoint-medium) {
-            --font-size: 22px !important; // !important for .ag-styles specificity
-        }
-
-        @media screen and (min-width: $breakpoint-large) {
-            --font-size: min(1.9vw, 30px) !important; // !important for .ag-styles specificity
-            --font-weight: 200 !important; // !important for .ag-styles specificity
-
-            max-width: unset;
-        }
-    }
-
-    .hero-grid {
-        display: flex;
-        flex-direction: row-reverse;
-        height: 320px;
-
-        @media screen and (min-width: $breakpoint-large) {
-            width: 860px;
-            height: 416px;
         }
     }
 }
@@ -384,5 +265,131 @@ body {
             padding-left: 30px;
             padding-right: 30px;
         }
+    }
+}
+
+.homepage-hero {
+    $breakpoint-medium: 620px;
+    $breakpoint-large: 1020px;
+
+    --text-color: var(--white);
+
+    padding-top: ds.$size-5;
+    background-color: var(--dark-cerulean-blue);
+    color: var(--text-color); // needed to deal with .ag-styles
+
+    @media screen and (min-width: $breakpoint-medium) {
+        padding-top: ds.$size-7;
+    }
+
+    @media screen and (min-width: $breakpoint-large) {
+        padding-top: ds.$size-8;
+    }
+
+    .contents {
+        display: flex;
+        flex-direction: column;
+        gap: 0 ds.$size-4;
+
+        @media screen and (min-width: $breakpoint-large) {
+            flex-direction: row;
+        }
+    }
+
+    .headings {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+
+        h1,
+        h2 {
+            --line-height: #{ds.$line-height-tight} !important; // !important for .ag-styles specificity
+        }
+
+        @media screen and (min-width: $breakpoint-large) {
+            text-align: unset;
+        }
+    }
+
+    h1 {
+        --font-size: 28px;
+        --font-weight: #{ds.$font-weight-bold}; // needed to deal with .ag-styles `
+
+        @media screen and (min-width: $breakpoint-medium) {
+            --font-size: #{ds.$font-size-extra-large} !important; // !important for .ag-styles specificity
+        }
+
+        @media screen and (min-width: $breakpoint-large) {
+            --font-size: min(3.4vw, 54px) !important; // !important for .ag-styles specificity
+
+            margin-top: -0.225em !important; // !important for .ag-styles specificity;
+            margin-bottom: 0.5em !important; // !important for .ag-styles specificity;
+        }
+    }
+
+    h2 {
+        max-width: 18em;
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 1.4em;
+
+        @media screen and (min-width: $breakpoint-medium) {
+            --font-size: 22px !important; // !important for .ag-styles specificity
+        }
+
+        @media screen and (min-width: $breakpoint-large) {
+            --font-size: min(1.9vw, 30px) !important; // !important for .ag-styles specificity
+            --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
+
+            max-width: unset;
+        }
+    }
+
+    .hero-grid {
+        display: flex;
+        flex-direction: row-reverse;
+        height: 320px;
+
+        @media screen and (min-width: $breakpoint-large) {
+            width: 860px;
+            height: 416px;
+        }
+    }
+}
+
+.homepage-frameworks {
+    background-color: var(--bright-blue-gray);
+    padding-top: ds.$size-3;
+    padding-bottom: ds.$size-6;
+
+    @media screen and (min-width: 640px) {
+        padding-top: ds.$size-6;
+    }
+}
+
+.framework-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: ds.$size-1;
+
+    @media screen and (min-width: 640px) {
+        flex-direction: row;
+    }
+
+    @media screen and (min-width: 1020px) {
+        gap: ds.$size-2;
+    }
+}
+
+.frameworks-label {
+    font-size: var(--font-size); // needed to deal with .ag-styles
+    font-weight: var(--font-weight); // needed to deal with .ag-styles
+
+    @media screen and (min-width: 1020px) {
+        --font-size: #{ds.$font-size-large} !important; // !important for .ag-styles specificity
+        --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
     }
 }
