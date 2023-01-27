@@ -7,6 +7,9 @@
 @import '../common/mixins.scss';
 @import '../pages/license-pricing.scss';
 
+$hero-breakpoint-medium: 620px;
+$hero-breakpoint-large: 1020px;
+
 html,
 body {
     margin: 0;
@@ -50,30 +53,6 @@ body {
     }
     100% {
         opacity: 1;
-    }
-}
-
-.stage-description {
-    @extend %stage;
-    font-weight: 400;
-    font-style: normal;
-
-    section {
-        @extend .justify-content-center;
-        > div {
-            @extend .col-lg, .m-2;
-        }
-        line-height: 1.7;
-        h3 {
-            @extend .mb-2, .pt-0;
-            color: $grey-1;
-            font-weight: 300;
-        }
-
-        p {
-            @extend .pr-4;
-            text-align: justify;
-        }
     }
 }
 
@@ -244,59 +223,46 @@ body {
     }
 }
 
-.homepage-hero {
-    $breakpoint-medium: 620px;
-    $breakpoint-large: 1020px;
-
+.homepageHero {
     --text-color: var(--white);
 
     padding-top: ds.$size-5;
     background-color: var(--dark-cerulean-blue);
     color: var(--text-color); // needed to deal with .ag-styles
 
-    @media screen and (min-width: $breakpoint-medium) {
+    @media screen and (min-width: $hero-breakpoint-medium) {
         padding-top: ds.$size-7;
     }
 
-    @media screen and (min-width: $breakpoint-large) {
+    @media screen and (min-width: $hero-breakpoint-large) {
         padding-top: ds.$size-8;
     }
+}
 
-    .hero-inner {
-        display: flex;
-        flex-direction: column;
-        gap: 0 ds.$size-4;
+.heroHeadings {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
 
-        @media screen and (min-width: $breakpoint-large) {
-            flex-direction: row;
-        }
+    @media screen and (min-width: $hero-breakpoint-large) {
+        text-align: unset;
     }
 
-    .headings {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-
-        h1,
-        h2 {
-            --line-height: #{ds.$line-height-tight} !important; // !important for .ag-styles specificity
-        }
-
-        @media screen and (min-width: $breakpoint-large) {
-            text-align: unset;
-        }
+    h1,
+    h2 {
+        --line-height: #{ds.$line-height-tight} !important; // !important for .ag-styles specificity
     }
 
     h1 {
         --font-size: 28px;
         --font-weight: #{ds.$font-weight-bold}; // needed to deal with .ag-styles `
 
-        @media screen and (min-width: $breakpoint-medium) {
+        @media screen and (min-width: $hero-breakpoint-medium) {
             --font-size: #{ds.$font-size-extra-large} !important; // !important for .ag-styles specificity
         }
 
-        @media screen and (min-width: $breakpoint-large) {
+        @media screen and (min-width: $hero-breakpoint-large) {
             --font-size: min(3.4vw, 54px) !important; // !important for .ag-styles specificity
 
             margin-top: -0.225em !important; // !important for .ag-styles specificity;
@@ -310,31 +276,41 @@ body {
         margin-left: auto;
         margin-bottom: 1.4em;
 
-        @media screen and (min-width: $breakpoint-medium) {
+        @media screen and (min-width: $hero-breakpoint-medium) {
             --font-size: 22px !important; // !important for .ag-styles specificity
         }
 
-        @media screen and (min-width: $breakpoint-large) {
+        @media screen and (min-width: $hero-breakpoint-large) {
             --font-size: min(1.9vw, 30px) !important; // !important for .ag-styles specificity
             --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
 
             max-width: unset;
         }
     }
+}
 
-    .hero-grid {
-        display: flex;
-        flex-direction: row-reverse;
-        height: 320px;
+.heroInner {
+    display: flex;
+    flex-direction: column;
+    gap: 0 ds.$size-4;
 
-        @media screen and (min-width: $breakpoint-large) {
-            width: 860px;
-            height: 416px;
-        }
+    @media screen and (min-width: $hero-breakpoint-large) {
+        flex-direction: row;
     }
 }
 
-.homepage-frameworks {
+.heroGrid {
+    display: flex;
+    flex-direction: row-reverse;
+    height: 320px;
+
+    @media screen and (min-width: $hero-breakpoint-large) {
+        width: 860px;
+        height: 416px;
+    }
+}
+
+.homepageFrameworks {
     background-color: var(--bright-blue-gray);
     padding-top: ds.$size-3;
     padding-bottom: ds.$size-6;
@@ -344,7 +320,7 @@ body {
     }
 }
 
-.framework-inner {
+.frameworksInner {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -360,7 +336,7 @@ body {
     }
 }
 
-.frameworks-label {
+.frameworksLabel {
     font-size: var(--font-size); // needed to deal with .ag-styles
     font-weight: var(--font-weight); // needed to deal with .ag-styles
 
@@ -370,12 +346,32 @@ body {
     }
 }
 
-.homepage-quotes {
+.homepageQuotes {
     padding-top: ds.$size-7;
-    padding-bottom: ds.$size-5;
+    padding-bottom: ds.$size-1;
     background-color: var(--ghost-blue);
 
     @media screen and (min-width: 940px) {
         padding-top: ds.$size-8;
+        padding-bottom: ds.$size-5;
+    }
+}
+
+.homepageDescription {
+    margin-top: ds.$size-6 !important; // !important for .ag-styles specificity
+    margin-bottom: ds.$size-6 !important; // !important for .ag-styles specificity
+
+    li:not(:last-child) {
+        margin-bottom: ds.$size-3 !important; // !important for .ag-styles specificity
+    }
+
+    @media screen and (min-width: 880px) {
+        margin-bottom: ds.$size-8 !important; // !important for .ag-styles specificity
+
+        ul {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: ds.$size-2;
+        }
     }
 }

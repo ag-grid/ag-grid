@@ -10,15 +10,12 @@ $breakpoint-large: 1200px;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 640px;
-    margin: 0 auto !important; // !important for .ag-styles specificity
     padding: 0;
     list-style: none;
 
     @media screen and (min-width: $breakpoint-medium) {
         flex-direction: row;
         align-items: flex-start;
-        max-width: none;
         gap: $size-3;
     }
 
@@ -36,23 +33,10 @@ $breakpoint-large: 1200px;
         padding: $size-2 $size-3;
         background-color: var(--background-color);
         border-radius: var(--border-radius);
-
-        svg {
-            position: absolute;
-            width: 18px;
-            height: 22px;
-            bottom: -$size-2;
-            left: var(--avatar-size);
-            fill: var(--background-color);
-
-            @media screen and (min-width: $breakpoint-large) {
-                bottom: -22px;
-            }
-        }
     }
 
     figure {
-        max-width: 540px;
+        max-width: 40em;
         margin-bottom: $size-6 !important; // !important for .ag-styles specificity
 
         li:last-child & {
@@ -87,7 +71,7 @@ $breakpoint-large: 1200px;
 
     @media screen and (max-width: $breakpoint-large) {
         li:nth-child(even) {
-            blockquote svg {
+            .quoteBubbleTail {
                 transform: scale(-1, 1);
                 left: auto;
                 right: var(--avatar-size);
@@ -105,6 +89,19 @@ $breakpoint-large: 1200px;
                 justify-content: flex-end;
             }
         }
+    }
+}
+
+.quoteBubbleTail {
+    position: absolute;
+    width: 18px;
+    height: 22px;
+    bottom: -$size-2;
+    left: var(--avatar-size);
+    fill: var(--background-color);
+
+    @media screen and (min-width: $breakpoint-large) {
+        bottom: -22px;
     }
 }
 

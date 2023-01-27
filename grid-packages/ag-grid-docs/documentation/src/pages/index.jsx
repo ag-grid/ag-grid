@@ -46,9 +46,9 @@ const Default = () => {
                 description={`AG Grid is a feature rich datagrid designed for the major JavaScript Frameworks. Version ${agGridVersion} is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source, or take a 2 month trial of AG Grid Enterprise.`}
             />
             <div className="ag-styles">
-                <div className={styles['homepage-hero']}>
-                    <section className={classNames(styles['hero-inner'], 'page-margin')}>
-                        <section className={styles['headings']}>
+                <div className={styles['homepageHero']}>
+                    <section className={classNames(styles['heroInner'], 'page-margin')}>
+                        <section className={styles['heroHeadings']}>
                             <h1 className="font-size-extra-large">
                                 The&nbsp;Best&nbsp;JavaScript Grid&nbsp;in&nbsp;the&nbsp;World
                             </h1>
@@ -57,7 +57,7 @@ const Default = () => {
                             </h2>
                         </section>
 
-                        <section className={styles['hero-grid']}>
+                        <section className={styles['heroGrid']}>
                             {!IS_SSR && (
                                 <React.Suspense fallback={<></>}>
                                     <HeroGrid />
@@ -67,9 +67,9 @@ const Default = () => {
                     </section>
                 </div>
 
-                <div className={styles['homepage-frameworks']}>
-                    <div className={classNames(styles['framework-inner'], 'page-margin')}>
-                        <span className={classNames(styles['frameworks-label'], 'text-secondary')}>
+                <div className={styles['homepageFrameworks']}>
+                    <div className={classNames(styles['frameworksInner'], 'page-margin')}>
+                        <span className={classNames(styles['frameworksLabel'], 'text-secondary')}>
                             Get&nbsp;started
                         </span>
 
@@ -77,40 +77,42 @@ const Default = () => {
                     </div>
                 </div>
 
-                <div className={styles['homepage-quotes']}>
+                <div className={styles['homepageQuotes']}>
                     <div className="page-margin">
                         <Quotes data={quotesData} />
                     </div>
                 </div>
 
-                <div className={styles['stage-description']}>
-                    <section>
-                        <div>
-                            <h3>Feature Packed</h3>
-                            <p>
-                                The performance, feature set and quality of AG Grid has not been seen before in a
-                                JavaScript datagrid. Many features in AG Grid are unique to AG Grid, and simply put AG
-                                Grid into a class of its own, without compromising on quality or performance.
-                            </p>
-                        </div>
-                        <div>
-                            <h3>Industry Leading</h3>
-                            <p>
-                                Over 1.2 million monthly downloads of AG Grid Community and over 80% of the Fortune 500
-                                using AG Grid Enterprise. AG Grid has become the JavaScript datagrid of choice for
-                                Enterprise JavaScript developers.
-                            </p>
-                        </div>
-                        <div>
-                            <h3>Community & Enterprise</h3>
-                            <p>
-                                AG Grid Community is free and open-sourced under the MIT license. AG Grid Enterprise
-                                comes with dedicated support and more enterprise style features. AG Grid gives for free
-                                what other grids charge for, then provides AG Grid Enterprise where it goes above and
-                                beyond the competition.
-                            </p>
-                        </div>
-                    </section>
+                <div className={styles['homepageDescription']}>
+                    <div className="page-margin">
+                        <ul className="list-style-none">
+                            <li>
+                                <h3>Feature Packed</h3>
+                                <p>
+                                    The performance, feature set and quality of AG Grid has not been seen before in a
+                                    JavaScript datagrid. Many features in AG Grid are unique to AG Grid, and simply put
+                                    AG Grid into a class of its own, without compromising on quality or performance.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>Industry Leading</h3>
+                                <p>
+                                    Over 1.2 million monthly downloads of AG Grid Community and over 80% of the Fortune
+                                    500 using AG Grid Enterprise. AG Grid has become the JavaScript datagrid of choice
+                                    for Enterprise JavaScript developers.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>Community & Enterprise</h3>
+                                <p>
+                                    AG Grid Community is free and open-sourced under the MIT license. AG Grid Enterprise
+                                    comes with dedicated support and more enterprise style features. AG Grid gives for
+                                    free what other grids charge for, then provides AG Grid Enterprise where it goes
+                                    above and beyond the competition.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div className={styles['stage-scenarios']}>

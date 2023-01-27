@@ -24,7 +24,12 @@ const QuoteItems = ({ quotes }: { quotes: QuotesDataItem[] }) => {
                     <li key={name}>
                         <figure>
                             <blockquote>
-                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 22">
+                                <svg
+                                    className={styles.quoteBubbleTail}
+                                    version="1.1"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 18 22"
+                                >
                                     <path d="M0 21V0h18L1.8 21.6c-.577.769-1.8.361-1.8-.6Z" />
                                 </svg>
 
