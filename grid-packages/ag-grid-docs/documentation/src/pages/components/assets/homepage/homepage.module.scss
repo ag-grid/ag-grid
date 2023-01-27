@@ -16,46 +16,6 @@ body {
     padding: 0;
 }
 
-body {
-    -webkit-font-smoothing: antialiased;
-}
-
-.stretch-contents {
-    background-color: red;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-
-    > .info-page {
-        flex: 1 1 auto;
-
-        > .row {
-            height: 100%;
-        }
-    }
-}
-
-.media a {
-    color: darken($blue-2, 5%);
-
-    &:hover {
-        text-decoration: none;
-        color: $blue-1;
-    }
-}
-
-@keyframes fadein {
-    0% {
-        opacity: 0;
-    }
-    80% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
 .stage-sponsorships {
     @extend %stage;
     background-color: $offwhite;
@@ -90,136 +50,6 @@ body {
             @extend .mr-3;
             height: 4rem;
         }
-    }
-}
-
-.main-buttons {
-    @extend .p-4, .bg-lightgrey, .text-center;
-
-    .get-started-btn {
-        @extend .btn, .btn-lg, .py-3, .px-4;
-        &:last-child {
-            @extend .btn-outline-darkblue, .ml-2, .ml-sm-3;
-        }
-    }
-}
-
-.stage-scenarios {
-    @extend %stage;
-
-    background-color: $offwhite;
-
-    &.main {
-        background-color: $blue-1;
-
-        h1 {
-            font-weight: 500 !important;
-            color: $white;
-        }
-        section {
-            @extend .justify-content-center;
-            position: relative;
-        }
-        .loading {
-            color: $white;
-        }
-    }
-
-    &:not(.main, .stage-quotes) {
-        @include media-breakpoint-down(sm) {
-            display: none;
-        }
-    }
-
-    .view-code {
-        @extend .text-right;
-
-        a {
-            @extend .btn, .btn-link;
-        }
-    }
-
-    .heading-scenarios {
-        @extend .display-4, .text-center, .full-width-row, .mb-4;
-        @include media-breakpoint-down(md) {
-            font-size: 2.5rem;
-        }
-        @include media-breakpoint-down(sm) {
-            font-size: 1.2rem;
-        }
-        span {
-            @extend .display-5, .text-center, .d-block;
-            font-weight: 100 !important;
-        }
-    }
-
-    @keyframes appear {
-        from {
-            opacity: 0.3;
-        }
-
-        to {
-            opacity: 0.8;
-        }
-    }
-    section {
-        @extend .row, .full-width-row;
-
-        .demo {
-            @extend .col-md-12;
-            display: block;
-            width: calc(100% - 30px);
-
-            .loading {
-                animation: appear 500ms linear 0s infinite alternate none running;
-                width: 320px;
-                height: 500px;
-                margin: 0 auto;
-                padding-top: 100px;
-                text-align: center;
-
-                img {
-                    margin-bottom: 1rem;
-                }
-                p {
-                    color: $secondary;
-                    font-size: 0.8rem;
-                }
-            }
-        }
-
-        .view-code {
-            @extend .text-right, .col, .mt-3;
-        }
-
-        #demo-1-header {
-            @extend .row, .mb-3;
-            & > div {
-                @extend .col-md-6;
-            }
-
-            & > div:last-child {
-                text-align: right;
-            }
-
-            input[type='text'] {
-                @extend .form-control;
-            }
-        }
-    }
-    &__bestHtml5Grid {
-        @extend .rounded;
-        border: 1px solid $gray-400;
-        width: 100%;
-        height: 515px;
-    }
-
-    &__bestHtml5Grid.small {
-        height: 460px;
-    }
-
-    &__bestHtml5Grid.small:not(.tall) {
-        height: 320px;
     }
 }
 
@@ -371,7 +201,27 @@ body {
         ul {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: ds.$size-2;
+            gap: ds.$size-3;
         }
+    }
+
+    @media screen and (min-width: 1200px) {
+        ul {
+            gap: ds.$size-5;
+        }
+    }
+}
+
+.homepageExample {
+    margin-bottom: ds.$size-9 !important; // !important for .ag-styles specificity
+
+    h2 {
+        text-align: center;
+        margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity
+    }
+
+    a {
+        margin-top: ds.$size-1 !important; // !important for .ag-styles specificity
+        float: right;
     }
 }

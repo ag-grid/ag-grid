@@ -115,9 +115,10 @@ const Default = () => {
                     </div>
                 </div>
 
-                <div className={styles['stage-scenarios']}>
-                    <h2 className={styles['heading-scenarios']}>Live Streaming Updates</h2>
-                    <section>
+                <div className={styles['homepageExample']}>
+                    <section className="page-margin">
+                        <h2>Live Streaming Updates</h2>
+
                         <div className={styles['demo']}>
                             {!IS_SSR && (
                                 <React.Suspense fallback={<div>Loading...</div>}>
@@ -128,9 +129,10 @@ const Default = () => {
                     </section>
                 </div>
 
-                <div className={styles['stage-scenarios']}>
-                    <h2 className={styles['heading-scenarios']}>Integrated Charting</h2>
-                    <section>
+                <div className={styles['homepageExample']}>
+                    <section className="page-margin">
+                        <h2>Integrated Charting</h2>
+
                         <div className={styles['demo']}>
                             {!IS_SSR && (
                                 <React.Suspense fallback={<div>Loading...</div>}>
