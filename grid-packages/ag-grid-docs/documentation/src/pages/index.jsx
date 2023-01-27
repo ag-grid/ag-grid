@@ -47,7 +47,7 @@ const Default = () => {
             />
             <div className="ag-styles">
                 <div className={styles['homepage-hero']}>
-                    <section className={classNames(styles['contents'], 'page-margin')}>
+                    <section className={classNames(styles['hero-inner'], 'page-margin')}>
                         <section className={styles['headings']}>
                             <h1 className="font-size-extra-large">
                                 The&nbsp;Best&nbsp;JavaScript Grid&nbsp;in&nbsp;the&nbsp;World
@@ -77,10 +77,10 @@ const Default = () => {
                     </div>
                 </div>
 
-                <div className={`${styles['stage-scenarios']} ${styles['stage-quotes']}`}>
-                    <section>
+                <div className={styles['homepage-quotes']}>
+                    <div className="page-margin">
                         <Quotes data={quotesData} />
-                    </section>
+                    </div>
                 </div>
 
                 <div className={styles['stage-description']}>

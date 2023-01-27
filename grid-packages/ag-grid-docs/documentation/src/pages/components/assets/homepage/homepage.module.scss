@@ -244,30 +244,6 @@ body {
     }
 }
 
-.stage-quotes {
-    h2 {
-        margin-top: 45px;
-    }
-
-    section {
-        margin-top: 45px;
-        margin-bottom: 45px;
-    }
-
-    @include media-breakpoint-up(sm) {
-        h2 {
-            margin-top: 0;
-        }
-
-        section {
-            margin-top: 45px;
-            margin-bottom: 0;
-            padding-left: 30px;
-            padding-right: 30px;
-        }
-    }
-}
-
 .homepage-hero {
     $breakpoint-medium: 620px;
     $breakpoint-large: 1020px;
@@ -286,7 +262,7 @@ body {
         padding-top: ds.$size-8;
     }
 
-    .contents {
+    .hero-inner {
         display: flex;
         flex-direction: column;
         gap: 0 ds.$size-4;
@@ -391,5 +367,15 @@ body {
     @media screen and (min-width: 1020px) {
         --font-size: #{ds.$font-size-large} !important; // !important for .ag-styles specificity
         --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
+    }
+}
+
+.homepage-quotes {
+    padding-top: ds.$size-7;
+    padding-bottom: ds.$size-5;
+    background-color: var(--ghost-blue);
+
+    @media screen and (min-width: 940px) {
+        padding-top: ds.$size-8;
     }
 }

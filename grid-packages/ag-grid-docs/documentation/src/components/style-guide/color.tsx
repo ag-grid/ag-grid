@@ -12,7 +12,16 @@ const getAbstractColorOfSemanticColor = (key) => designSystemColors[getSemanticC
 
 const ABSTRACT_COLOR_GROUPS = {
     Brand: ['ag-grid-dark-blue', 'ag-grid-aqua', 'ag-grid-orange', 'ag-grid-red', 'ag-grid-grey'],
-    Blues: ['dark-cerulean-blue', 'medium-electric-blue', 'azure-blue', 'sky-blue', 'water-blue', 'ghost-blue'],
+    Blues: [
+        'dark-cerulean-blue',
+        'medium-electric-blue',
+        'azure-blue',
+        'sky-blue',
+        'water-blue',
+        'light-water-blue',
+        'bright-blue-gray',
+        'ghost-blue',
+    ],
     Grays: [
         'black',
         'dark-gunmetal-gray',
