@@ -121,7 +121,7 @@ export class UndoRedoService extends BeanStub {
 
         if (!undoAction || !undoAction.cellValueChanges) { return; }
 
-        this.processAction(undoAction, (cellValueChange: CellValueChange) => cellValueChange.oldValue);
+        this.processAction(undoAction, (cellValueChange: CellValueChange) => cellValueChange.oldValue, 'undo');
 
         if (undoAction instanceof RangeUndoRedoAction) {
             this.processRange(undoAction.ranges || [undoAction.initialRange]);
@@ -139,7 +139,7 @@ export class UndoRedoService extends BeanStub {
 
         if (!redoAction || !redoAction.cellValueChanges) { return; }
 
-        this.processAction(redoAction, (cellValueChange: CellValueChange) => cellValueChange.newValue);
+        this.processAction(redoAction, (cellValueChange: CellValueChange) => cellValueChange.newValue, 'redo');
 
         if (redoAction instanceof RangeUndoRedoAction) {
             this.processRange(redoAction.ranges || [redoAction.finalRange]);
@@ -150,7 +150,7 @@ export class UndoRedoService extends BeanStub {
         this.undoStack.push(redoAction);
     }
 
-    private processAction(action: UndoRedoAction, valueExtractor: (cellValueChange: CellValueChange) => any) {
+    private processAction(action: UndoRedoAction, valueExtractor: (cellValueChange: CellValueChange) => any, source: string) {
         action.cellValueChanges.forEach(cellValueChange => {
             const { rowIndex, rowPinned, columnId } = cellValueChange;
             const rowPosition: RowPosition = { rowIndex, rowPinned };
@@ -159,7 +159,7 @@ export class UndoRedoService extends BeanStub {
             // checks if the row has been filtered out
             if (!currentRow!.displayed) { return; }
 
-            currentRow!.setDataValue(columnId, valueExtractor(cellValueChange));
+            currentRow!.setDataValue(columnId, valueExtractor(cellValueChange), source);
         });
     }
 
