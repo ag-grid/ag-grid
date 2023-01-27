@@ -1,15 +1,15 @@
 @use "../design-system/" as *;
 
 .container {
-    margin-top: $size-6;
-    margin-bottom: calc($size-6 * 4);
+    margin-top: $size-6 !important; // !important for .ag-styles specificity
+    margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
 }
 
 .header {
     display: flex;
     flex-direction: column;
     gap: $size-5;
-    margin-bottom: $size-2;
+    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
 }
 
 .controls {
