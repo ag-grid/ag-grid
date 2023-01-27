@@ -24,11 +24,11 @@ const ChevronButtonCellRenderer = forwardRef((props, ref) => {
         return null;
     } else {
         return (
-            <div className={styles['cell-renderer-container']}>
-                <div className={styles['chevron-container']}>
+            <div className={styles.container}>
+                <div className={styles.chevronContainer}>
                     <input
                         type="image"
-                        className={styles['chevron-img']}
+                        className={styles.chevronImage}
                         alt={'chevron to toggle showing more information'}
                         ref={ref}
                         src={icon}

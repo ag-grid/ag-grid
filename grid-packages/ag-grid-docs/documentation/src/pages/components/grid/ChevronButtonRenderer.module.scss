@@ -1,11 +1,13 @@
-.cell-renderer-container {
+@use "../../../design-system/" as *;
+
+.container {
     display: flex;
     align-items: center;
     flex-direction: row;
     font-size: 16px;
 }
 
-.chevron-container {
+.chevronContainer {
     display: flex;
     justify-content: center;
     height: 20px;
@@ -19,9 +21,9 @@
     color: white;
     text-align: center;
     font-size: 2em;
-    margin-right: 8px;
+    margin-right: $size-1 !important; // !important for .ag-styles specificity
 }
 
-.chevron-img {
+.chevronImage {
     filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(200deg) brightness(102%) contrast(104%);
 }
