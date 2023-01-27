@@ -1,4 +1,4 @@
-import { cubicSegmentIntersections, segmentIntersection } from './intersection';
+import { cubicSegmentIntersections, segmentIntersection, arcIntersections } from './intersection';
 
 export class Path2D {
     // The methods of this class will likely be called many times per animation frame,
@@ -209,6 +209,22 @@ export class Path2D {
                         params[pi++],
                         params[pi++],
                         params[pi++],
+                        ox,
+                        oy,
+                        x,
+                        y
+                    ).length;
+                    px = params[pi - 2];
+                    py = params[pi - 1];
+                    break;
+                case 'A':
+                    intersectionCount += arcIntersections(
+                        params[pi++],
+                        params[pi++],
+                        params[pi++],
+                        params[pi++],
+                        params[pi++],
+                        Boolean(params[pi++]),
                         ox,
                         oy,
                         x,
