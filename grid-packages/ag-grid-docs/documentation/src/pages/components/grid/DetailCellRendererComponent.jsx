@@ -1,16 +1,9 @@
 import React, { forwardRef } from 'react';
+import styles from './DetailCellRendererComponent.module.scss';
 
 const DetailCellRenderer = forwardRef((props, ref) => {
     return (
-        <div
-            ref={ref}
-            style={{
-                whiteSpace: 'normal',
-                padding: '25px',
-                fontSize: '16px',
-            }}
-            dangerouslySetInnerHTML={{ __html: props.message }}
-        ></div>
+        <div ref={ref} className={styles.detailCellRenderer} dangerouslySetInnerHTML={{ __html: props.message }}></div>
     );
 });
 
