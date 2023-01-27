@@ -842,6 +842,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             );
         }
 
+        if (!title && !content) {
+            return '';
+        }
+
         return toTooltipHtml(defaults);
     }
 
