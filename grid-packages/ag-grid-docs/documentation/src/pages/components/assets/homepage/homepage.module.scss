@@ -191,7 +191,7 @@ body {
     }
 }
 
-.homepageSponsorship {
+.sponsorshipInner {
     margin-bottom: ds.$size-10 !important; // !important for .ag-styles specificity
 
     @media screen and (min-width: $sponsorship-breakpoint-large) {

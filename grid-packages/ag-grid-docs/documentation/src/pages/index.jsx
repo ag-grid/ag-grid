@@ -141,8 +141,8 @@ const Default = () => {
                     </section>
                 </div>
 
-                <div className={styles['homepageSponsorship']}>
-                    <section className={classNames(styles.homepageSponsorship, 'page-margin')}>
+                <div className={styles.homepageSponsorship}>
+                    <section className={classNames(styles.sponsorshipInner, 'page-margin')}>
                         <div>
                             <h2>Supporting Open&nbsp;Source</h2>
                             <h3 className="thin-text">We are proud to sponsor the tools we use and love.</h3>
