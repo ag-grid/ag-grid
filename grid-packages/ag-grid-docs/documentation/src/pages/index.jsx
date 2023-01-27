@@ -83,6 +83,20 @@ const Default = () => {
                     </div>
                 </div>
 
+                <div className={styles['homepageExample']}>
+                    <section className="page-margin">
+                        <h2>Live Streaming Updates</h2>
+
+                        <div className={styles['demo']}>
+                            {!IS_SSR && (
+                                <React.Suspense fallback={<div>Loading...</div>}>
+                                    <LiveStreamingDemo />
+                                </React.Suspense>
+                            )}
+                        </div>
+                    </section>
+                </div>
+
                 <div className={styles['homepageDescription']}>
                     <div className="page-margin">
                         <ul className="list-style-none">
@@ -117,20 +131,6 @@ const Default = () => {
 
                 <div className={styles['homepageExample']}>
                     <section className="page-margin">
-                        <h2>Live Streaming Updates</h2>
-
-                        <div className={styles['demo']}>
-                            {!IS_SSR && (
-                                <React.Suspense fallback={<div>Loading...</div>}>
-                                    <LiveStreamingDemo />
-                                </React.Suspense>
-                            )}
-                        </div>
-                    </section>
-                </div>
-
-                <div className={styles['homepageExample']}>
-                    <section className="page-margin">
                         <h2>Integrated Charting</h2>
 
                         <div className={styles['demo']}>
@@ -143,38 +143,35 @@ const Default = () => {
                     </section>
                 </div>
 
-                <div className={styles['stage-sponsorships']}>
-                    <section className={styles['stage-sponsorships__sponsorships']}>
+                <div className={styles['homepageSponsorship']}>
+                    <section className={classNames(styles['homepageSponsorship'], 'page-margin')}>
                         <div>
-                            <h2>Supporting Open Source</h2>
-                            <h3>We are proud to sponsor the tools we use and love.</h3>
+                            <h2>Supporting Open&nbsp;Source</h2>
+                            <h3 className="thin-text">We are proud to sponsor the tools we use and love.</h3>
                         </div>
-                        <div>
-                            <div className={styles['media']}>
+
+                        <ul className={classNames(styles.projectsList, 'list-style-none')}>
+                            <li className={styles.project}>
                                 <img src="images/fw-logos/webpack.svg" alt="Webpack" />
-                                <div className={styles['media-body']}>
-                                    <h3>Webpack</h3>
-                                    <p>
-                                        <a href="https://medium.com/webpack/ag-grid-partners-with-webpack-24f8cf9d890b">
-                                            Read about our Partnership with webpack.
-                                        </a>
-                                    </p>
-                                </div>
-                            </div>
-                            <div className={styles['media']}>
+
+                                <h3>Webpack</h3>
+                                <a href="https://medium.com/webpack/ag-grid-partners-with-webpack-24f8cf9d890b">
+                                    Read about our Partnership with webpack.
+                                </a>
+                            </li>
+
+                            <li className={styles.project}>
                                 <img src="images/fw-logos/plunker.svg" alt="Plunker" />
-                                <div className={styles['media-body']}>
-                                    <h3>Plunker</h3>
-                                    <p>
-                                        <a href="https://medium.com/ag-grid/plunker-is-now-backed-by-ag-grid-601c17440fca">
-                                            Read about our Backing of Plunker.
-                                        </a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+
+                                <h3>Plunker</h3>
+                                <a href="https://medium.com/ag-grid/plunker-is-now-backed-by-ag-grid-601c17440fca">
+                                    Read about our Backing of Plunker.
+                                </a>
+                            </li>
+                        </ul>
                     </section>
                 </div>
+
                 <Footer />
             </div>
         </>
