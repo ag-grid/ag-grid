@@ -3258,7 +3258,7 @@ export class ColumnModel extends BeanStub {
 
 
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
-        this.setupQuickFilterColumns();
+        this.refreshQuickFilterColumns();
         this.clearDisplayedAndViewportColumns();
 
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
@@ -3366,12 +3366,17 @@ export class ColumnModel extends BeanStub {
     // a) user provides 'field' into autoGroupCol of normal grid, so now because a valid col to filter leafs on
     // b) using tree data and user depends on autoGroupCol for first col, and we also want to filter on this
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
-    private setupQuickFilterColumns(): void {
+    public refreshQuickFilterColumns(): void {
+        let columnsForQuickFilter;
         if (this.groupAutoColumns) {
-            this.columnsForQuickFilter = (this.primaryColumns || []).concat(this.groupAutoColumns);
+            columnsForQuickFilter = (this.primaryColumns ?? []).concat(this.groupAutoColumns);
         } else if (this.primaryColumns) {
-            this.columnsForQuickFilter = this.primaryColumns;
+            columnsForQuickFilter = this.primaryColumns;
         }
+        columnsForQuickFilter = columnsForQuickFilter ?? [];
+        this.columnsForQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')
+            ? columnsForQuickFilter.filter(col => col.isVisible())
+            : columnsForQuickFilter;
     }
 
     private placeLockedColumns(cols: Column[]): Column[] {

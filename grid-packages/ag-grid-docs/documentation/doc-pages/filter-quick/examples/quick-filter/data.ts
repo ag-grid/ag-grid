@@ -12001,5 +12001,5 @@ export function getData(): any[] {
             }
         }
     ];
-    return rowData
+    return rowData.map(row => ({ ...row, hidden: 'hidden' }));
 }

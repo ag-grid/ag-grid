@@ -63,12 +63,26 @@ When the cache is enabled, a 'Quick Filter text' is generated for each node by c
 
 ## Reset Cache Text
 
-When in use, the Quick Filter cache text can be reset in any of the following ways:
+When in use, the Quick Filter cache text can be reset in any of the following ways.
 
-- Each rowNode has a `resetQuickFilterAggregateText()` method on it, which can be called to reset the cache text
-- `rowNode.setDataValue(colKey, newValue)` will also reset the cache text
-- `api.resetQuickFilter()` will reset the cache text on every rowNode.
-- Lastly, if using the grid editing features, when you update a cell, the cache text will be reset
+- Each Row Node has a `resetQuickFilterAggregateText()` method on it, which can be called to reset the cache text.
+- `rowNode.setDataValue(colKey, newValue)` will also reset the cache text on a single Row Node.
+- `api.resetQuickFilter()` will reset the cache text on every Row Node.
+- Updating the option to [Exclude Hidden Columns](#exclude-hidden-columns) will also reset the cache text on every Row Node.
+- Lastly, if using the grid editing features, when you update a cell, the cache text will be reset.
+
+[[note]]
+| The Quick Filter cache will not reset when changing Column Definitions or updating data outside of the methods listed above. You will need to manually reset the cache if required.
+
+## Exclude Hidden Columns
+
+By default the Quick Filter will check all column values, including ones that are currently hidden from the grid. If you have a large number of hidden columns and you're not interested in filtering against them, you can set the grid option `excludeHiddenColumnsFromQuickFilter = true` to provide a performance improvement.
+
+This can also be set via the API method `setExcludeHiddenColumnsFromQuickFilter`.
+
+<api-documentation source='grid-options/properties.json' section='filter' names='["excludeHiddenColumnsFromQuickFilter"]'></api-documentation>
+
+<api-documentation source='grid-api/api.json' section='filter' names='["setExcludeHiddenColumnsFromQuickFilter"]'></api-documentation>
 
 ## Example: Quick Filter
 
@@ -78,6 +92,7 @@ The example below shows the Quick Filter working on different data types. Each c
 - `Age` - Complex object with 'dot' in field, Quick Filter works fine.
 - `Country` - Complex object and value getter used, again Quick Filter works fine.
 - `Results` - Complex object, Quick Filter would call `toString` on the complex object, so `getQuickFilterText` is provided.
+- `Hidden` - A hidden column with all values being the string 'hidden'. Enter `hidden` into the filter and it will match all rows. Click the `Exclude Hidden Columns` button to set `excludeHiddenColumnsFromQuickFilter = true`, and no rows will be matched. Note the Quick Filter cache will be cleared automatically when the option is changed.
 
 The example also demonstrates having the Quick Filter cache turned on. The grid works very fast even when the cache is turned off, so you probably don't need it for small data sets. For large data sets (e.g. over 10,000 rows), turning the cache on will improve Quick Filter speed. Tweaking the `cacheQuickFilter` option in the example allows both modes to be experimented with:
 

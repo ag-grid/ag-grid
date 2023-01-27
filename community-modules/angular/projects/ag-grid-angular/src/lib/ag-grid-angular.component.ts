@@ -425,6 +425,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public quickFilterText: string | undefined = undefined;
     /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false`     */
     @Input() public cacheQuickFilter: boolean | undefined = undefined;
+    /** 
+         * Set to `true` to exclude hidden columns from being checked by the Quick Filter.
+         * This can give a significant performance improvement when there are a large number of hidden columns,
+         * and you are only interested in filtering on what's visible. Default: `false`
+         */
+    @Input() public excludeHiddenColumnsFromQuickFilter: boolean | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
@@ -1195,6 +1201,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressScrollWhenPopupsAreOpen: boolean | null | '';
     static ngAcceptInputType_purgeClosedRowNodes: boolean | null | '';
     static ngAcceptInputType_cacheQuickFilter: boolean | null | '';
+    static ngAcceptInputType_excludeHiddenColumnsFromQuickFilter: boolean | null | '';
     static ngAcceptInputType_ensureDomOrder: boolean | null | '';
     static ngAcceptInputType_accentedSort: boolean | null | '';
     static ngAcceptInputType_suppressChangeDetection: boolean | null | '';
