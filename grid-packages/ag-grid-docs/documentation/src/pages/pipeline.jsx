@@ -1,11 +1,11 @@
 import classnames from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
-import ChevronButtonCellRenderer from './components/grid/ChevronButtonRenderer';
-import DetailCellRenderer from './components/grid/DetailCellRendererComponent';
-import Grid from './components/grid/Grid';
-import IssueTypeCellRenderer from './components/grid/IssueTypeRenderer';
-import PaddingCellRenderer from './components/grid/PaddingCellRenderer';
+import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
+import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
+import Grid from '../components/grid/Grid';
+import IssueTypeCellRenderer from '../components/grid/IssueTypeRenderer';
+import PaddingCellRenderer from '../components/grid/PaddingCellRenderer';
 import styles from './pipeline.module.scss';
 
 const COLUMN_DEFS = [

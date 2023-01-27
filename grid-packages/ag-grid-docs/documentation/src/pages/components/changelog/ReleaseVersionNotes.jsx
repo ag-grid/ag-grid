@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Collapsible from '../grid/Collapsible';
+import Collapsible from '../../../components/grid/Collapsible';
 import styles from './Changelog.module.scss';
 
 const TreeOpen = '/theme-icons/alpine/tree-open.svg';
