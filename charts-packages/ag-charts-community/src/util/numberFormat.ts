@@ -287,7 +287,11 @@ export function tickFormat(
     const options = parseFormatter(formatter || ',f');
     if (isNaN(options.precision!)) {
         if (options.type === 's') {
-            options.precision = step.toExponential().indexOf('e');
+            options.precision = Math.max(
+                ...[start, stop, step, start + step, stop - step].map((x) => {
+                    return x.toExponential().indexOf('e');
+                })
+            );
         } else if (!options.type || options.type in decimalTypes) {
             options.precision = 6;
         }
