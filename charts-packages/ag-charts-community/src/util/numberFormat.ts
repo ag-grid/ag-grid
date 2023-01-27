@@ -289,7 +289,8 @@ export function tickFormat(
         if (options.type === 's') {
             options.precision = Math.max(
                 ...[start, stop, step, start + step, stop - step].map((x) => {
-                    return x.toExponential().indexOf('e');
+                    const exp = x.toExponential();
+                    return exp.substring(0, exp.indexOf('e')).replace('.', '').length;
                 })
             );
         } else if (!options.type || options.type in decimalTypes) {
