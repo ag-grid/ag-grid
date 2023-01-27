@@ -1,3 +1,5 @@
+@use '../../../../design-system' as ds;
+
 @import '../common/vars.scss';
 @import '../common/bootstrap.scss';
 @import '../common/grid.scss';
@@ -156,29 +158,24 @@ body {
     $breakpoint-medium: 620px;
     $breakpoint-large: 1020px;
 
-    background-color: $blue-1;
-    padding-top: 40px;
+    --text-color: var(--white);
 
-    font-family: 'Roboto', sans-serif;
-    color: $white;
+    padding-top: ds.$size-5;
+    background-color: var(--dark-cerulean-blue);
+    color: var(--text-color); // needed to deal with .ag-styles
 
     @media screen and (min-width: $breakpoint-medium) {
-        padding-top: 60px;
+        padding-top: ds.$size-7;
     }
 
     @media screen and (min-width: $breakpoint-large) {
-        padding-top: 100px;
+        padding-top: ds.$size-8;
     }
 
     .contents {
         display: flex;
         flex-direction: column;
-        gap: 0 32px;
-        width: 100%;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding-left: 16px;
-        padding-right: 16px;
+        gap: 0 ds.$size-4;
 
         @media screen and (min-width: $breakpoint-large) {
             flex-direction: row;
@@ -191,45 +188,47 @@ body {
         flex-direction: column;
         text-align: center;
 
+        h1,
+        h2 {
+            --line-height: #{ds.$line-height-tight} !important; // !important for .ag-styles specificity
+        }
+
         @media screen and (min-width: $breakpoint-large) {
             text-align: unset;
         }
     }
 
     h1 {
-        margin-bottom: 0.15em;
-        font-size: 28px;
-        line-height: 1.3;
-        font-weight: 700;
+        --font-size: 28px;
+        --font-weight: #{ds.$font-weight-bold}; // needed to deal with .ag-styles `
 
         @media screen and (min-width: $breakpoint-medium) {
-            font-size: 38px;
+            --font-size: #{ds.$font-size-extra-large} !important; // !important for .ag-styles specificity
         }
 
         @media screen and (min-width: $breakpoint-large) {
-            margin-top: -0.15em;
-            margin-bottom: 0.3em;
-            font-size: min(3.4vw, 54px);
+            --font-size: min(3.4vw, 54px) !important; // !important for .ag-styles specificity
+
+            margin-top: -0.225em !important; // !important for .ag-styles specificity;
+            margin-bottom: 0.5em !important; // !important for .ag-styles specificity;
         }
     }
 
     h2 {
         max-width: 18em;
         margin-right: auto;
-        margin-bottom: 1.4em;
         margin-left: auto;
-        font-size: 16px;
-        line-height: 1.4;
-        font-weight: 200;
+        margin-bottom: 1.4em;
 
         @media screen and (min-width: $breakpoint-medium) {
-            font-size: 22px;
+            --font-size: 22px !important; // !important for .ag-styles specificity
         }
 
         @media screen and (min-width: $breakpoint-large) {
+            --font-size: min(1.9vw, 30px) !important; // !important for .ag-styles specificity
+            --font-weight: 200 !important; // !important for .ag-styles specificity
+
             max-width: unset;
-            margin-bottom: 1em;
-            font-size: min(1.9vw, 32px);
         }
     }
 
