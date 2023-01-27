@@ -1,0 +1,25 @@
+@use "../../design-system/" as *;
+
+.collapsible {
+    --button-text-color: var(--dark-gunmetal-gray);
+    --button-color: var(--platinum-gray);
+    --button-active-color: var(--platinum-gray);
+    --button-hover-color: var(--platinum-gray);
+
+    width: 100%;
+    height: 50px;
+    text-align: left;
+    background: #f8f8f8;
+    font-weight: bold;
+    font-size: 18px;
+    border-width: 1px;
+    display: flex;
+    align-items: center;
+    gap: $size-1;
+    border-color: var(--border-color);
+
+    img {
+        width: 20px;
+        height: 20px;
+    }
+}
