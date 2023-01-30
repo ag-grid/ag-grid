@@ -4,14 +4,13 @@
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import styles from "./HeroGrid.module.scss";
-import { localPrefix } from '../../../utils/consts';
-import isDevelopment from '../../../utils/is-development';
+import {isProductionBuild, localPrefix} from '../../../utils/consts';
 import LogoMark from '../../../components/LogoMark';
 
 import { initGrid } from '../../../components/hero-grid';
 
 const helmet = [];
-if (isDevelopment()) {
+if(!isProductionBuild()) {
     helmet.push(<link key="hero-grid-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/styles/ag-theme-alpine.css`} crossOrigin="anonymous" type="text/css"/>);
     helmet.push(<script key="enterprise-lib" src={`${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`} type="text/javascript"/>);
 } else {

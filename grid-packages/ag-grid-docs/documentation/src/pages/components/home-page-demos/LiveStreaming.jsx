@@ -1,10 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { localPrefix, rootLocalPrefix } from '../../../utils/consts';
-import isDevelopment from '../../../utils/is-development';
+import {isProductionBuild, localPrefix, rootLocalPrefix} from '../../../utils/consts';
 
 const helmet = [];
-if (isDevelopment()) {
+if(!isProductionBuild()) {
     helmet.push(
         <link
             key="live-streaming-theme"
