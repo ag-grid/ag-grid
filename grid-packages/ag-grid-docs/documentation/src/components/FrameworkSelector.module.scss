@@ -1,7 +1,7 @@
 $border-color: #ced4da;
 $selected-color: #3798f9;
 
-.framework-selector {
+.frameworkSelector {
     --height: 38px;
     --icon-size: 26px;
     --font-size: 16px;
@@ -14,7 +14,7 @@ $selected-color: #3798f9;
     background-color: white;
 }
 
-.framework-selector__option {
+.option {
     display: flex;
     position: relative;
     justify-content: center;
@@ -24,14 +24,14 @@ $selected-color: #3798f9;
     outline: none;
 
     &::after {
-        content: "";
+        content: '';
         position: absolute;
         height: 2px;
         bottom: -1px;
         left: 5px;
         right: 5px;
         border-radius: 1px;
-        transition: background-color .25s ease-in-out;
+        transition: background-color 0.25s ease-in-out;
     }
 
     img {
@@ -44,36 +44,36 @@ $selected-color: #3798f9;
         margin-left: 4px;
         font-size: var(--font-size);
         color: #212529;
-        transition: opacity .25s ease-in-out;
+        transition: opacity 0.25s ease-in-out;
     }
 
     &:hover,
     &:focus-visible {
         text-decoration: none;
-        
+
         &::after {
             background-color: rgba($selected-color, 0.5);
         }
     }
 }
 
-.framework-selector--show-selected {
-  border: 1px solid $border-color;
+.frameworkSelector.showSelected {
+    border: 1px solid $border-color;
 }
 
-.framework-selector--show-selected .framework-selector__option {
+.frameworkSelector.showSelected .option {
     width: 25%;
 
     span {
-        opacity: .6666;
+        opacity: 0.6666;
     }
 
     &:hover span,
     &:focus-visible span {
-        opacity: .85;
+        opacity: 0.85;
     }
 
-    &--selected{
+    &.selected {
         &::after,
         &:hover::after,
         &:focus-visible::after {
@@ -85,24 +85,24 @@ $selected-color: #3798f9;
         }
     }
 
-    @media screen and ( min-width: 880px ) {
+    @media screen and (min-width: 880px) {
         width: unset;
         padding: calc((var(--height) - var(--icon-size)) / 2) 10px;
 
         &:first-child {
-          padding-left: calc(var(--x-padding) * 2);
+            padding-left: calc(var(--x-padding) * 2);
 
-          &::after {
-            left: calc(var(--x-padding) * 1.5);
-          }
+            &::after {
+                left: calc(var(--x-padding) * 1.5);
+            }
         }
 
         &:last-child {
-          padding-right: calc(var(--x-padding) * 2);
+            padding-right: calc(var(--x-padding) * 2);
 
-          &::after {
-            right: calc(var(--x-padding) * 1.5);
-          }
+            &::after {
+                right: calc(var(--x-padding) * 1.5);
+            }
         }
 
         span {
@@ -111,17 +111,17 @@ $selected-color: #3798f9;
     }
 }
 
-.framework-selector--full-width {
+.frameworkSelector.fullWidth {
     min-width: 220px;
     max-width: 420px;
     border-radius: 8px;
 
-    @media screen and ( min-width: 740px ) {
+    @media screen and (min-width: 740px) {
         width: unset;
         max-width: unset;
     }
 
-    @media screen and ( min-width: 1020px ) {
+    @media screen and (min-width: 1020px) {
         --height: 62px;
         --icon-size: 36px;
         --font-size: 22px;
@@ -133,31 +133,31 @@ $selected-color: #3798f9;
     }
 }
 
-.framework-selector--full-width .framework-selector__option {
+.frameworkSelector.fullWidth .option {
     width: 20%;
 
     &:hover::after {
-      background-color: $selected-color;
+        background-color: $selected-color;
     }
 
-    @media screen and ( min-width: 740px ) {
+    @media screen and (min-width: 740px) {
         width: unset;
         padding: calc((var(--height) - var(--icon-size)) / 2) var(--x-padding);
 
         &:first-child {
-          padding-left: calc(var(--x-padding) * 2);
+            padding-left: calc(var(--x-padding) * 2);
 
-          &::after {
-            left: calc(var(--x-padding) * 1.5);
-          }
+            &::after {
+                left: calc(var(--x-padding) * 1.5);
+            }
         }
 
         &:last-child {
-          padding-right: calc(var(--x-padding) * 2);
+            padding-right: calc(var(--x-padding) * 2);
 
-          &::after {
-            right: var(--x-padding);
-          }
+            &::after {
+                right: var(--x-padding);
+            }
         }
 
         span {
@@ -165,10 +165,10 @@ $selected-color: #3798f9;
         }
     }
 
-    @media screen and ( min-width: 1020px ) {
-      &::after {
-        height: 3px;
-        border-radius: 1.5px;
-      }
+    @media screen and (min-width: 1020px) {
+        &::after {
+            height: 3px;
+            border-radius: 1.5px;
+        }
     }
 }
