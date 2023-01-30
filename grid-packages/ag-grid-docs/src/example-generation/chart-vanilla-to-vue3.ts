@@ -13,7 +13,7 @@ function getImports(componentFileNames: string[], bindingImports: BindingImport[
         "import { AgChartsVue } from 'ag-charts-vue3';",
     ];
 
-    const chartsImport = bindingImports.find(i => i.module === "'ag-charts-community'");
+    const chartsImport = bindingImports.find(i => i.module.includes('ag-charts-community'));
     if (chartsImport) {
         const extraImports = chartsImport.imports.filter(i => i !== 'AgChart');
         if (extraImports.length > 0) {

@@ -17,7 +17,7 @@ function getImports(componentFilenames: string[], bindingImports: BindingImport[
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
 
-    const chartsImport = bindingImports.find(i => i.module === "'ag-charts-community'");
+    const chartsImport = bindingImports.find(i => i.module.includes('ag-charts-community'));
     if (chartsImport) {
         const extraImports = chartsImport.imports.filter(i => i !== 'AgChart');
         if (extraImports.length > 0) {
