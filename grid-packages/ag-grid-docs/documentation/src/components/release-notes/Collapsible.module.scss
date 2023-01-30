@@ -1,25 +1,49 @@
-@use "../../design-system/" as *;
+@use "../../design-system/" as ds;
 
-.collapsible {
-    --button-text-color: var(--dark-gunmetal-gray);
-    --button-color: var(--platinum-gray);
-    --button-active-color: var(--platinum-gray);
-    --button-hover-color: var(--platinum-gray);
+.showHideButton {
+    --button-text-color: var(--azure-blue);
+    --button-color: var(--bright-blue-gray);
+    --button-active-color: var(--bright-blue-gray);
+    --button-hover-color: var(--bright-blue-gray);
 
-    width: 100%;
-    height: 50px;
-    text-align: left;
-    background: #f8f8f8;
-    font-weight: bold;
-    font-size: 18px;
-    border-width: 1px;
     display: flex;
     align-items: center;
-    gap: $size-1;
-    border-color: var(--border-color);
+    width: 100%;
+    height: ds.$size-6;
+    gap: ds.$size-1;
+    text-align: left;
+    font-weight: ds.$font-weight-bold;
+    border: 1px solid var(--border-color) !important; // !important for .ag-styles specificity
+    transition: color ds.$default-transition-timing !important; // !important for .ag-styles specificity
 
-    img {
+    &:hover {
+        --button-text-color: var(--medium-electric-blue);
+    }
+
+    .isOpen & {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+
+        svg {
+            transform: rotate(90deg);
+        }
+    }
+
+    svg {
         width: 20px;
         height: 20px;
+        fill: var(--button-text-color);
+        transition: fill ds.$default-transition-timing, transform ds.$default-transition-timing;
     }
+}
+
+.content {
+    $border: 1px solid var(--border-color);
+
+    padding: ds.$size-2;
+    border-bottom-right-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+    border-right: $border;
+    border-bottom: $border;
+    border-left: $border;
 }
