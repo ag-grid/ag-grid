@@ -10,6 +10,7 @@ import ReleaseVersionNotes from "./ReleaseVersionNotes.jsx"
 import VersionDropdownMenu from "../grid/VersionDropdownMenu"
 
 import "./overrides.css"
+import {hostPrefix} from "../../../utils/consts";
 
 const COLUMN_DEFS = [
     {
@@ -185,14 +186,14 @@ const Changelog = ({location}) => {
     }, [gridApi, fixVersion, versions]);
 
     useEffect(() => {
-        fetch("/changelog/changelog.json")
+        fetch(`${hostPrefix}/changelog/changelog.json`)
             .then(response => response.json())
             .then(data => {
                 const gridVersions = [ALL_FIX_VERSIONS, ...data.map(row => row.versions[0])]
                 setVersions([...new Set(gridVersions)])
                 setRowData(data)
             })
-        fetch("/changelog/releaseVersionNotes.json")
+        fetch(`${hostPrefix}/changelog/releaseVersionNotes.json`)
             .then(response => response.json())
             .then(data => {
                 setAllReleaseNotes(data)
