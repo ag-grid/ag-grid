@@ -7,11 +7,6 @@
 @import '../common/mixins.scss';
 @import '../pages/license-pricing.scss';
 
-$hero-breakpoint-medium: 620px;
-$hero-breakpoint-large: 1020px;
-
-$sponsorship-breakpoint-large: 840px;
-
 html,
 body {
     margin: 0;
@@ -25,11 +20,11 @@ body {
     background-color: var(--dark-cerulean-blue);
     color: var(--text-color); // needed to deal with .ag-styles
 
-    @media screen and (min-width: $hero-breakpoint-medium) {
+    @media screen and (min-width: ds.$breakpoint-hero-small) {
         padding-top: ds.$size-7;
     }
 
-    @media screen and (min-width: $hero-breakpoint-large) {
+    @media screen and (min-width: ds.$breakpoint-hero-large) {
         padding-top: ds.$size-8;
     }
 }
@@ -40,7 +35,7 @@ body {
     flex-direction: column;
     text-align: center;
 
-    @media screen and (min-width: $hero-breakpoint-large) {
+    @media screen and (min-width: ds.$breakpoint-hero-large) {
         text-align: unset;
     }
 
@@ -53,11 +48,11 @@ body {
         --font-size: 28px;
         --font-weight: #{ds.$font-weight-bold}; // needed to deal with .ag-styles `
 
-        @media screen and (min-width: $hero-breakpoint-medium) {
+        @media screen and (min-width: ds.$breakpoint-hero-small) {
             --font-size: #{ds.$font-size-extra-large} !important; // !important for .ag-styles specificity
         }
 
-        @media screen and (min-width: $hero-breakpoint-large) {
+        @media screen and (min-width: ds.$breakpoint-hero-large) {
             --font-size: min(3.4vw, 54px) !important; // !important for .ag-styles specificity
 
             margin-top: -0.225em !important; // !important for .ag-styles specificity;
@@ -71,11 +66,11 @@ body {
         margin-left: auto;
         margin-bottom: 1.4em;
 
-        @media screen and (min-width: $hero-breakpoint-medium) {
+        @media screen and (min-width: ds.$breakpoint-hero-small) {
             --font-size: 22px !important; // !important for .ag-styles specificity
         }
 
-        @media screen and (min-width: $hero-breakpoint-large) {
+        @media screen and (min-width: ds.$breakpoint-hero-large) {
             --font-size: min(1.9vw, 30px) !important; // !important for .ag-styles specificity
             --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
 
@@ -89,7 +84,7 @@ body {
     flex-direction: column;
     gap: 0 ds.$size-4;
 
-    @media screen and (min-width: $hero-breakpoint-large) {
+    @media screen and (min-width: ds.$breakpoint-hero-large) {
         flex-direction: row;
     }
 }
@@ -99,7 +94,7 @@ body {
     flex-direction: row-reverse;
     height: 320px;
 
-    @media screen and (min-width: $hero-breakpoint-large) {
+    @media screen and (min-width: ds.$breakpoint-hero-large) {
         width: 860px;
         height: 416px;
     }
@@ -194,7 +189,7 @@ body {
 .sponsorshipInner {
     margin-bottom: ds.$size-10 !important; // !important for .ag-styles specificity
 
-    @media screen and (min-width: $sponsorship-breakpoint-large) {
+    @media screen and (min-width: ds.$breakpoint-sponsorship-large) {
         display: flex;
         justify-content: center;
         gap: ds.$size-4;
@@ -206,7 +201,7 @@ body {
         text-align: center;
         margin-bottom: ds.$size-5 !important; // !important for .ag-styles specificity
 
-        @media screen and (min-width: $sponsorship-breakpoint-large) {
+        @media screen and (min-width: ds.$breakpoint-sponsorship-large) {
             text-align: unset;
         }
     }
@@ -216,7 +211,7 @@ body {
         margin-left: auto;
         margin-right: auto;
 
-        @media screen and (min-width: $sponsorship-breakpoint-large) {
+        @media screen and (min-width: ds.$breakpoint-sponsorship-large) {
             margin-left: unset;
             margin-right: unset;
         }

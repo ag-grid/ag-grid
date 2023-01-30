@@ -1,7 +1,6 @@
 @use "sass:map";
 @use "../../design-system/" as *;
 
-$mobile-header-breakpoint: 768px;
 $header-height: 64px;
 
 .header {
@@ -15,12 +14,12 @@ $header-height: 64px;
     display: flex;
     flex-wrap: wrap;
 
-    @media screen and (max-width: $mobile-header-breakpoint) {
+    @media screen and (max-width: $breakpoint-site-header-small) {
         padding-left: 0 !important; // !important needed because of .ag-styles specificity
         padding-right: 0 !important; // !important needed because of .ag-styles specificity
     }
 
-    @media screen and (min-width: $mobile-header-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-header-small) {
         flex-wrap: unset;
     }
 }
@@ -29,7 +28,7 @@ $header-height: 64px;
     display: block;
     padding: $size-1;
 
-    @media screen and (min-width: $mobile-header-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-header-small) {
         margin-left: -$size-2 !important; // !important needed because of .ag-styles specificity
     }
 }
@@ -57,7 +56,7 @@ $header-height: 64px;
         left: 1px;
     }
 
-    @media screen and (min-width: $mobile-header-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-header-small) {
         display: none;
     }
 }
@@ -132,7 +131,7 @@ $header-height: 64px;
         }
     }
 
-    @media screen and (min-width: $mobile-header-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-header-small) {
         display: block !important; // !important needed to override bootstrap
     }
 }
@@ -145,7 +144,7 @@ $header-height: 64px;
     margin-left: auto !important; // !important for .ag-styles specificity
     background-color: var(--site-nav-background);
 
-    @media screen and (min-width: $mobile-header-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-header-small) {
         margin-right: -$size-3 !important; // !important for .ag-styles specificity
         width: unset;
         background-color: unset;
@@ -153,7 +152,7 @@ $header-height: 64px;
 }
 
 .navItemList {
-    @media screen and (min-width: $mobile-header-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-header-small) {
         display: flex;
         height: $header-height;
         align-items: center;
@@ -165,7 +164,7 @@ $header-height: 64px;
         border-bottom: 1px solid var(--site-header-background);
     }
 
-    @media screen and (min-width: $mobile-header-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-header-small) {
         &:hover a::after {
             opacity: 0.25;
             transform: scaleX(1);
@@ -191,7 +190,7 @@ $header-height: 64px;
         color: var(--link-color);
     }
 
-    @media screen and (min-width: $mobile-header-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-header-small) {
         padding-left: $size-3;
         padding-right: $size-3;
 
@@ -210,7 +209,7 @@ $header-height: 64px;
         }
     }
 
-    @media screen and (min-width: 860px) {
+    @media screen and (min-width: $breakpoint-size-header-medium) {
         font-size: 18px;
     }
 }
@@ -231,7 +230,7 @@ $header-height: 64px;
         border-radius: 13px;
     }
 
-    @media screen and (min-width: $mobile-header-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-header-small) {
         padding-left: 24px;
 
         &:hover svg {

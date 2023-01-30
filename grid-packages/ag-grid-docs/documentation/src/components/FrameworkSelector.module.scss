@@ -1,8 +1,5 @@
 @use '../design-system' as *;
 
-$fw-selector-full-width-breakpoint-medium: 740px;
-$fw-selector-full-width-breakpoint-large: 1020px;
-
 .frameworkSelector {
     --height: 36px; // Match input height
     --icon-size: #{$size-3};
@@ -86,7 +83,7 @@ $fw-selector-full-width-breakpoint-large: 1020px;
         }
     }
 
-    @media screen and (min-width: 880px) {
+    @media screen and (min-width: $breakpoint-fw-selector-show-selected-medium) {
         width: unset;
         padding: calc((var(--height) - var(--icon-size)) / 2) 10px;
 
@@ -124,7 +121,7 @@ $fw-selector-full-width-breakpoint-large: 1020px;
         max-width: unset;
     }
 
-    @media screen and (min-width: $fw-selector-full-width-breakpoint-large) {
+    @media screen and (min-width: $breakpoint-fw-selector-full-width-large) {
         --height: #{$size-7};
         --icon-size: #{$size-5};
         --font-size: #{$font-size-large};
@@ -140,7 +137,7 @@ $fw-selector-full-width-breakpoint-large: 1020px;
         opacity: 1;
     }
 
-    @media screen and (min-width: 740px) {
+    @media screen and (min-width: $breakpoint-fw-selector-full-width-medium) {
         width: unset;
         padding: calc((var(--height) - var(--icon-size)) / 2) var(--x-padding);
 
@@ -165,7 +162,7 @@ $fw-selector-full-width-breakpoint-large: 1020px;
         }
     }
 
-    @media screen and (min-width: $fw-selector-full-width-breakpoint-large) {
+    @media screen and (min-width: $breakpoint-fw-selector-full-width-large) {
         &::after {
             height: 3px;
             border-radius: 1.5px;

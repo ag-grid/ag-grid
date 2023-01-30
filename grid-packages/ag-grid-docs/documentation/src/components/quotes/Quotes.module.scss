@@ -1,8 +1,5 @@
 @use '../../design-system' as *;
 
-$breakpoint-medium: 940px;
-$breakpoint-large: 1200px;
-
 .container {
     --avatar-size: #{$size-7};
 
@@ -13,13 +10,13 @@ $breakpoint-large: 1200px;
     padding: 0;
     list-style: none;
 
-    @media screen and (min-width: $breakpoint-medium) {
+    @media screen and (min-width: $breakpoint-quotes-medium) {
         flex-direction: row;
         align-items: flex-start;
         gap: $size-3;
     }
 
-    @media screen and (min-width: $breakpoint-large) {
+    @media screen and (min-width: $breakpoint-quotes-large) {
         --avatar-size: #{$size-8};
 
         gap: $size-5;
@@ -69,7 +66,7 @@ $breakpoint-large: 1200px;
         line-height: 1;
     }
 
-    @media screen and (max-width: $breakpoint-large) {
+    @media screen and (max-width: $breakpoint-quotes-large) {
         li:nth-child(even) {
             .quoteBubbleTail {
                 transform: scale(-1, 1);
@@ -100,7 +97,7 @@ $breakpoint-large: 1200px;
     left: var(--avatar-size);
     fill: var(--background-color);
 
-    @media screen and (min-width: $breakpoint-large) {
+    @media screen and (min-width: $breakpoint-quotes-large) {
         bottom: -22px;
     }
 }

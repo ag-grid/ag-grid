@@ -1,8 +1,5 @@
 @use '../../design-system/core/' as *;
 
-$two-column-breakpoint: 480px;
-$four-column-breakpoint: 760px;
-
 .footer {
     padding-top: $size-5;
     padding-bottom: calc($size-5 * 2);
@@ -26,12 +23,12 @@ $four-column-breakpoint: 760px;
 }
 
 .row {
-    @media screen and (min-width: $two-column-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-footer-two-column) {
         display: flex;
         flex-wrap: wrap;
     }
 
-    @media screen and (min-width: $four-column-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-footer-four-column) {
         justify-content: space-between;
     }
 }
@@ -42,7 +39,7 @@ $four-column-breakpoint: 760px;
         margin-bottom: $size-5;
     }
 
-    @media screen and (min-width: $two-column-breakpoint) and (max-width: $four-column-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-footer-two-column) and (max-width: $breakpoint-site-footer-four-column) {
         width: 50%;
 
         &:nth-child(even) {
@@ -50,7 +47,7 @@ $four-column-breakpoint: 760px;
         }
     }
 
-    @media screen and (min-width: $four-column-breakpoint) {
+    @media screen and (min-width: $breakpoint-site-footer-four-column) {
         &:last-child {
             text-align: right;
         }

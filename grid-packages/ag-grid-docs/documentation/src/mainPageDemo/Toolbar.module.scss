@@ -1,7 +1,7 @@
 @use "sass:map";
 @use "../design-system/" as *;
 
-$mobile-toolbar-breakpoint: 1024px;
+$toolbar-width: 1024px;
 
 .toolbar {
     width: 100%;
@@ -19,7 +19,7 @@ $mobile-toolbar-breakpoint: 1024px;
 .controls {
     display: flex;
     align-items: center;
-    width: $mobile-toolbar-breakpoint;
+    width: $toolbar-width;
 
     select,
     input {
@@ -37,7 +37,7 @@ $mobile-toolbar-breakpoint: 1024px;
     background: linear-gradient(90deg, transparent 0%, var(--toolbar-background) 110%);
     pointer-events: none;
 
-    @media (min-width: $mobile-toolbar-breakpoint) {
+    @media (min-width: $toolbar-width) {
         display: none;
     }
 }
