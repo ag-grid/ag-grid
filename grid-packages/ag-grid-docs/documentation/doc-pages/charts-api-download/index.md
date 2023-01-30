@@ -14,5 +14,5 @@ We expose the API for triggering download via the `AgChart` class:
  - How to obtain a reference to an `AgChartInstance`.
  - How to use `AgChart.download()` to initiate a chart image download.
 
-<!--chart-example title='Download via AgChart API' name='download' type='generated'></chart-example-->
+ <chart-example title='Download via AgChart API' name='download' type='generated'></chart-example>
  
