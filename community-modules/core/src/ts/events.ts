@@ -247,6 +247,30 @@ export interface FillEndEvent<TData = any> extends AgGridEvent<TData> {
     finalRange: CellRange;
 }
 
+export interface UndoStartEvent<TData = any> extends AgGridEvent<TData> {
+    /** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */
+    source: 'api' | 'ui';
+}
+
+export interface UndoEndEvent<TData = any> extends AgGridEvent<TData> {
+    /** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */
+    source: 'api' | 'ui';
+    /** `true` if any undo operations were performed. */
+    operationPerformed: boolean;
+}
+
+export interface RedoStartEvent<TData = any> extends AgGridEvent<TData> {
+    /** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */
+    source: 'api' | 'ui';
+}
+
+export interface RedoEndEvent<TData = any> extends AgGridEvent<TData> {
+    /** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */
+    source: 'api' | 'ui';
+    /** `true` if any redo operations were performed. */
+    operationPerformed: boolean;
+}
+
 export interface ViewportChangedEvent<TData = any> extends AgGridEvent<TData> {
     /** Index of the first rendered row */
     firstRow: number;

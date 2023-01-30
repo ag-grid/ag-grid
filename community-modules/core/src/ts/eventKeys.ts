@@ -92,6 +92,15 @@ export class Events {
     public static EVENT_FILL_START: 'fillStart' = 'fillStart';
     public static EVENT_FILL_END: 'fillEnd' = 'fillEnd';
 
+    /** Undo operation has started. */
+    public static EVENT_UNDO_START: 'undoStart' = 'undoStart';
+    /** Undo operation has ended. */
+    public static EVENT_UNDO_END: 'undoEnd' = 'undoEnd';
+    /** Redo operation has started. */
+    public static EVENT_REDO_START: 'redoStart' = 'redoStart';
+    /** Redo operation has ended. */
+    public static EVENT_REDO_END: 'redoEnd' = 'redoEnd';
+
     public static EVENT_KEY_SHORTCUT_CHANGED_CELL_START: 'keyShortcutChangedCellStart' = 'keyShortcutChangedCellStart';
     public static EVENT_KEY_SHORTCUT_CHANGED_CELL_END: 'keyShortcutChangedCellEnd' = 'keyShortcutChangedCellEnd';
 

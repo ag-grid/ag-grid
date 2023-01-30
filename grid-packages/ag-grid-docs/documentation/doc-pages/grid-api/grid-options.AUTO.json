@@ -1680,6 +1680,70 @@
     },
     "meta": { "isEvent": true, "name": "onRowEditingStopped" }
   },
+  "onUndoStart": {
+    "description": "/** Undo operation has started. */",
+    "type": {
+      "arguments": { "event": "UndoStartEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onUndoStart" }
+  },
+  "undoStart": {
+    "description": "/** Undo operation has started. */",
+    "type": {
+      "arguments": { "event": "UndoStartEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onUndoStart" }
+  },
+  "onUndoEnd": {
+    "description": "/** Undo operation has ended. */",
+    "type": {
+      "arguments": { "event": "UndoEndEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onUndoEnd" }
+  },
+  "undoEnd": {
+    "description": "/** Undo operation has ended. */",
+    "type": {
+      "arguments": { "event": "UndoEndEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onUndoEnd" }
+  },
+  "onRedoStart": {
+    "description": "/** Redo operation has started. */",
+    "type": {
+      "arguments": { "event": "RedoStartEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRedoStart" }
+  },
+  "redoStart": {
+    "description": "/** Redo operation has started. */",
+    "type": {
+      "arguments": { "event": "RedoStartEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRedoStart" }
+  },
+  "onRedoEnd": {
+    "description": "/** Redo operation has ended. */",
+    "type": {
+      "arguments": { "event": "RedoEndEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRedoEnd" }
+  },
+  "redoEnd": {
+    "description": "/** Redo operation has ended. */",
+    "type": {
+      "arguments": { "event": "RedoEndEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRedoEnd" }
+  },
   "onFilterOpened": {
     "description": "/** Filter has been opened. */",
     "type": {

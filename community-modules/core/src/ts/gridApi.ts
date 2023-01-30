@@ -1483,11 +1483,11 @@ export class GridApi<TData = any> {
     }
     /** Reverts the last cell edit. */
     public undoCellEditing(): void {
-        this.undoRedoService.undo();
+        this.undoRedoService.undo('api');
     }
     /** Re-applies the most recently undone cell edit. */
     public redoCellEditing(): void {
-        this.undoRedoService.redo();
+        this.undoRedoService.redo('api');
     }
 
     /** Returns current number of available cell edit undo operations. */

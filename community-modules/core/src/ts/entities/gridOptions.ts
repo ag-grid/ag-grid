@@ -45,6 +45,8 @@ import {
     PasteStartEvent,
     PinnedRowDataChangedEvent,
     RangeSelectionChangedEvent,
+    RedoEndEvent,
+    RedoStartEvent,
     RowClickedEvent,
     RowDataChangedEvent,
     RowDataUpdatedEvent,
@@ -59,6 +61,8 @@ import {
     SortChangedEvent,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
+    UndoEndEvent,
+    UndoStartEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent
@@ -1003,6 +1007,14 @@ export interface GridOptions<TData = any> {
     onRowEditingStarted?(event: RowEditingStartedEvent<TData>): void;
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */
     onRowEditingStopped?(event: RowEditingStoppedEvent<TData>): void;
+    /** Undo operation has started. */
+    onUndoStart?(event: UndoStartEvent<TData>): void;
+    /** Undo operation has ended. */
+    onUndoEnd?(event: UndoEndEvent<TData>): void;
+    /** Redo operation has started. */
+    onRedoStart?(event: RedoStartEvent<TData>): void;
+    /** Redo operation has ended. */
+    onRedoEnd?(event: RedoEndEvent<TData>): void;
 
     // *** Filtering *** //
     /** Filter has been opened. */

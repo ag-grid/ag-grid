@@ -1,6 +1,16 @@
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
-import { CellEditingStartedEvent, CellEditingStoppedEvent, CellValueChangedEvent, FillEndEvent, RowEditingStartedEvent } from "../events";
+import {
+    CellEditingStartedEvent,
+    CellEditingStoppedEvent,
+    CellValueChangedEvent,
+    FillEndEvent,
+    RedoEndEvent,
+    RedoStartEvent,
+    RowEditingStartedEvent,
+    UndoEndEvent,
+    UndoStartEvent,
+} from '../events';
 import { FocusService } from "../focusService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
@@ -14,6 +24,7 @@ import { Column } from '../entities/column';
 import { ColumnModel } from "../columns/columnModel";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 @Bean('undoRedoService')
 export class UndoRedoService extends BeanStub {
@@ -114,40 +125,64 @@ export class UndoRedoService extends BeanStub {
         return this.redoStack ? this.redoStack.getCurrentStackSize() : 0;
     }
 
-    public undo() {
-        if (!this.undoStack) { return; }
-
-        const undoAction: UndoRedoAction | undefined = this.undoStack.pop();
-
-        if (!undoAction || !undoAction.cellValueChanges) { return; }
-
-        this.processAction(undoAction, (cellValueChange: CellValueChange) => cellValueChange.oldValue, 'undo');
-
-        if (undoAction instanceof RangeUndoRedoAction) {
-            this.processRange(undoAction.ranges || [undoAction.initialRange]);
-        } else {
-            this.processCell(undoAction.cellValueChanges);
+    public undo(source: 'api' | 'ui'): void {
+        const startEvent: WithoutGridCommon<UndoStartEvent> = {
+            type: Events.EVENT_UNDO_START,
+            source
         }
+        this.eventService.dispatchEvent(startEvent);
 
-        this.redoStack.push(undoAction);
+        const operationPerformed = this.undoRedo(this.undoStack, this.redoStack, 'initialRange', 'oldValue', 'undo');
+
+        const endEvent: WithoutGridCommon<UndoEndEvent> = {
+            type: Events.EVENT_UNDO_END,
+            source,
+            operationPerformed
+        };
+        this.eventService.dispatchEvent(endEvent);
     }
 
-    public redo() {
-        if (!this.redoStack) { return; }
+    public redo(source: 'api' | 'ui'): void {
+        const startEvent: WithoutGridCommon<RedoStartEvent> = {
+            type: Events.EVENT_REDO_START,
+            source
+        }
+        this.eventService.dispatchEvent(startEvent);
 
-        const redoAction: UndoRedoAction | undefined = this.redoStack.pop();
+        const operationPerformed = this.undoRedo(this.redoStack, this.undoStack, 'finalRange', 'newValue', 'redo');
 
-        if (!redoAction || !redoAction.cellValueChanges) { return; }
+        const endEvent: WithoutGridCommon<RedoEndEvent> = {
+            type: Events.EVENT_REDO_END,
+            source,
+            operationPerformed
+        };
+        this.eventService.dispatchEvent(endEvent);
+    }
 
-        this.processAction(redoAction, (cellValueChange: CellValueChange) => cellValueChange.newValue, 'redo');
+    private undoRedo(
+        undoRedoStack: UndoRedoStack,
+        opposingUndoRedoStack: UndoRedoStack,
+        rangeProperty: 'initialRange' | 'finalRange',
+        cellValueChangeProperty: 'oldValue' | 'newValue',
+        source: 'undo' | 'redo'
+    ): boolean {
+        if (!undoRedoStack) { return false; }
 
-        if (redoAction instanceof RangeUndoRedoAction) {
-            this.processRange(redoAction.ranges || [redoAction.finalRange]);
+        const undoRedoAction: UndoRedoAction | undefined = undoRedoStack.pop();
+
+        if (!undoRedoAction || !undoRedoAction.cellValueChanges) { return false; }
+
+        this.processAction(undoRedoAction, (cellValueChange: CellValueChange) => cellValueChange[cellValueChangeProperty], source);
+
+        if (undoRedoAction instanceof RangeUndoRedoAction) {
+            this.processRange(undoRedoAction.ranges || [undoRedoAction[rangeProperty]]);
         } else {
-            this.processCell(redoAction.cellValueChanges);
+            this.processCell(undoRedoAction.cellValueChanges);
         }
 
-        this.undoStack.push(redoAction);
+        opposingUndoRedoStack.push(undoRedoAction);
+
+        return true;
     }
 
     private processAction(action: UndoRedoAction, valueExtractor: (cellValueChange: CellValueChange) => any, source: string) {

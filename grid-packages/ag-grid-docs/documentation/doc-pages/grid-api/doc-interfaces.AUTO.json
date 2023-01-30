@@ -4175,6 +4175,78 @@
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
     },
+    "onUndoStart": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStart" }
+    },
+    "undoStart": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStart" }
+    },
+    "onUndoEnd": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnd" }
+    },
+    "undoEnd": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnd" }
+    },
+    "onRedoStart": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStart" }
+    },
+    "redoStart": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStart" }
+    },
+    "onRedoEnd": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnd" }
+    },
+    "redoEnd": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnd" }
+    },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
@@ -6297,6 +6369,106 @@
       "type": { "returnType": "CellRange", "optional": false }
     },
     "finalRange": { "type": { "returnType": "CellRange", "optional": false } },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "UndoStartEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "UndoEndEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "operationPerformed": {
+      "description": "/** `true` if any undo operations were performed. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RedoStartEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RedoEndEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "operationPerformed": {
+      "description": "/** `true` if any redo operations were performed. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -22189,6 +22361,78 @@
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
     },
+    "onUndoStart": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStart" }
+    },
+    "undoStart": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStart" }
+    },
+    "onUndoEnd": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnd" }
+    },
+    "undoEnd": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnd" }
+    },
+    "onRedoStart": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStart" }
+    },
+    "redoStart": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStart" }
+    },
+    "onRedoEnd": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnd" }
+    },
+    "redoEnd": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnd" }
+    },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
@@ -24914,6 +25158,78 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
+    },
+    "onUndoStart": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStart" }
+    },
+    "undoStart": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStart" }
+    },
+    "onUndoEnd": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnd" }
+    },
+    "undoEnd": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnd" }
+    },
+    "onRedoStart": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStart" }
+    },
+    "redoStart": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStart" }
+    },
+    "onRedoEnd": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnd" }
+    },
+    "redoEnd": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnd" }
     },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
@@ -27646,6 +27962,78 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
+    },
+    "onUndoStart": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStart" }
+    },
+    "undoStart": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStart" }
+    },
+    "onUndoEnd": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnd" }
+    },
+    "undoEnd": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnd" }
+    },
+    "onRedoStart": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStart" }
+    },
+    "redoStart": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStart" }
+    },
+    "onRedoEnd": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnd" }
+    },
+    "redoEnd": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnd" }
     },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
