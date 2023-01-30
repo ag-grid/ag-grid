@@ -1,5 +1,5 @@
 import { ContinuousScale } from './continuousScale';
-import ticks, { tickStep } from '../util/ticks';
+import ticks, { range, tickStep } from '../util/ticks';
 import { tickFormat } from '../util/numberFormat';
 
 /**
@@ -17,6 +17,12 @@ export class LinearScale extends ContinuousScale {
         }
         this.refresh();
         const [d0, d1] = this.getDomain();
+
+        const { interval } = this;
+
+        if (interval !== undefined) {
+            return range(d0, d1, interval);
+        }
 
         return ticks(d0, d1, count);
     }
@@ -43,7 +49,7 @@ export class LinearScale extends ContinuousScale {
         }
 
         for (let i = 0; i < 2; i++) {
-            const step = tickStep(start, stop, count);
+            const step = this.interval ?? tickStep(start, stop, count);
             if (step >= 1) {
                 start = Math.floor(start / step) * step;
                 stop = Math.ceil(stop / step) * step;

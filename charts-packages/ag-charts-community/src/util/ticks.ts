@@ -40,7 +40,7 @@ export class NumericTicks extends Array<number> {
     }
 }
 
-function range(start: number, stop: number, step: number): NumericTicks {
+export function range(start: number, stop: number, step: number): NumericTicks {
     const isInteger = step >= 1;
     const fractionDigits = isInteger ? 0 : -Math.floor(Math.log10(step));
     const f = Math.pow(10, fractionDigits);

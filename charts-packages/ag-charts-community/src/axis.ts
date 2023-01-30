@@ -422,8 +422,18 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     private setTickInterval<S>(scale: S, interval?: TickType<S>) {
-        if (interval && scale instanceof ContinuousScale) {
+        if (!interval) {
+            return;
+        }
+
+        if (scale instanceof TimeScale && interval instanceof TimeInterval) {
             scale.interval = interval;
+            return;
+        }
+
+        if (scale instanceof ContinuousScale && typeof interval === 'number') {
+            scale.interval = interval;
+            return;
         }
     }
 
@@ -552,6 +562,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
 
+        const checkForOverlap = avoidCollisions && this.tick.interval === undefined;
+
         while (labelOverlap) {
             let unchanged = true;
             while (unchanged) {
@@ -565,9 +577,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 const prevTicks = ticks;
 
                 const filteredTicks =
-                    !avoidCollisions ||
-                    (continuous && this.tick.count === undefined && this.tick.interval === undefined) ||
-                    i === 0
+                    !checkForOverlap || (continuous && this.tick.count === undefined) || i === 0
                         ? undefined
                         : ticks.filter((_, i) => i % 2 === 0);
 
@@ -596,7 +606,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     primaryTickCount = ticks.length;
                 }
 
-                unchanged = avoidCollisions ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
+                unchanged = checkForOverlap ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
                 i++;
             }
 
@@ -618,7 +628,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const labelPadding = minSpacing ?? (rotated ? 0 : 10);
 
             // no need for further iterations if `avoidCollisions` is false
-            labelOverlap = avoidCollisions ? axisLabelsOverlap(labelData, labelPadding) : false;
+            labelOverlap = checkForOverlap ? axisLabelsOverlap(labelData, labelPadding) : false;
         }
 
         this.updateGridLines({
