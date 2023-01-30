@@ -278,7 +278,6 @@ const Pipeline = ({ location }) => {
                                 chevronButtonRenderer: ChevronButtonCellRenderer,
                                 issueTypeCellRenderer: IssueTypeCellRenderer,
                             }}
-                            suppressReactUi={true}
                             defaultColDef={defaultColDef}
                             reactUi={false}
                             enableCellTextSelection={true}
