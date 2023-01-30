@@ -1,24 +1,21 @@
-import { BindingImport, getFunctionName, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
+import { getFunctionName, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
 import { templatePlaceholder } from './chart-vanilla-src-parser';
 import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember } from './vue-utils';
-import { wrapOptionsUpdateCode } from './chart-utils';
+import { getChartImports, wrapOptionsUpdateCode } from './chart-utils';
 
 function processFunction(code: string): string {
     return wrapOptionsUpdateCode(removeFunctionKeyword(code));
 }
 
-function getImports(componentFileNames: string[], bindingImports: BindingImport[]): string[] {
+function getImports(componentFileNames: string[], bindings): string[] {
     const imports = [
         "import { createApp } from 'vue';",
         "import { AgChartsVue } from 'ag-charts-vue3';",
     ];
 
-    const chartsImport = bindingImports.find(i => i.module.includes('ag-charts-community'));
-    if (chartsImport) {
-        const extraImports = chartsImport.imports.filter(i => i !== 'AgChart');
-        if (extraImports.length > 0) {
-            imports.push(`import { ${extraImports.join(', ')} } from 'ag-charts-community';`);
-        }
+    const chartImport = getChartImports(bindings.imports, bindings.usesChartApi)
+    if (chartImport) {
+        imports.push(chartImport);
     }
 
 
@@ -29,7 +26,7 @@ function getImports(componentFileNames: string[], bindingImports: BindingImport[
     return imports;
 }
 
-function getPropertyBindings(bindings: any, componentFileNames: string[]): [string[], string[], string[]] {
+function getPropertyBindings(bindings: any): [string[], string[], string[]] {
     const propertyAssignments = [];
     const propertyVars = [];
     const propertyAttributes = [];
@@ -59,6 +56,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[]): [stri
 
 function getTemplate(bindings: any, attributes: string[]): string {
     const agChartTag = `<ag-charts-vue
+    ${bindings.usesChartApi ? `ref="agChart"` : ''}    
     ${attributes.join('\n    ')}></ag-charts-vue>`;
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agChartTag) : agChartTag;
@@ -86,12 +84,12 @@ function getAllMethods(bindings: any): [string[], string[], string[]] {
 
 export function vanillaToVue3(bindings: any, componentFileNames: string[]): () => string {
     return () => {
-        const imports = getImports(componentFileNames, bindings.imports);
-        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
+        const imports = getImports(componentFileNames, bindings);
+        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings);
         const [externalEventHandlers, instanceMethods, globalMethods] = getAllMethods(bindings);
         const template = getTemplate(bindings, propertyAttributes);
 
-        return `${imports.join('\n')}
+        let mainFile = `${imports.join('\n')}
 
 const ChartExample = {
     template: \`
@@ -120,6 +118,12 @@ ${globalMethods.join('\n\n')}
 
 createApp(ChartExample).mount("#app");
 `;
+
+        if (bindings.usesChartApi) {
+            mainFile = mainFile.replace(/AgChart.(\w*)\((\w*),/g, 'AgChart.$1(this.$refs.agChart.chart,');
+            mainFile = mainFile.replace(/\(this.\$refs.agChart.chart, options/g, '(this.$refs.agChart.chart, this.options');
+        }
+        return mainFile;
     };
 }
 
