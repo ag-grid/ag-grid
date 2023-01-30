@@ -1,6 +1,7 @@
 @use '../core' as *;
 
-button {
+button,
+.button {
     appearance: none;
 
     font-size: var(--font-size);
