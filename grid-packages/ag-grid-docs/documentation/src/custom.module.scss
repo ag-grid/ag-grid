@@ -6,9 +6,9 @@ $container-max-widths: (
 );
 
 // only import Bootstrap that does not output CSS, to avoid bloating our generated CSS
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
 
 $ag-dark-blue: #00407f;
 $ag-blue: #0084e7;
@@ -19,5 +19,3 @@ $ag-light-grey: lighten($ag-grey, 10%);
 $ag-orange: #ff8b00;
 $ag-red: #ff0000;
 $primary: $ag-blue;
-
-$ag-site-fw-background: #eaf0f6;
