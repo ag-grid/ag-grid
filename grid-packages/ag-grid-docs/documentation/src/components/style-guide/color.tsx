@@ -57,6 +57,7 @@ const SEMANTIC_COLOR_GROUPS = {
     ],
     Table: ['table-odd-row-background-color'],
     'Site Header': ['site-header-background', 'site-nav-background'],
+    Toolbar: ['toolbar-background'],
 };
 
 const AbstractColorSwatch = ({ id, hexColor }) => {
