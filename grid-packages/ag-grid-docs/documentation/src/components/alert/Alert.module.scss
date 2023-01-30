@@ -5,8 +5,7 @@ $icon-size: 30px;
 
 .alert {
     padding: $padding-size;
-    background-color: var(--toolbar-background);
-    border: 1px solid var(--border-color);
+    background-color: var(--bright-blue-gray);
     border-radius: var(--border-radius);
 
     &.info {

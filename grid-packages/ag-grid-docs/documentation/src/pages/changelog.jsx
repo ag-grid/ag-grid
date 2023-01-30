@@ -290,7 +290,7 @@ const Changelog = ({ location }) => {
         const { id, label, checked } = checkboxConfig;
         const key = `${id}-checkbox`;
         return (
-            <label key={key}>
+            <label key={key} className={styles.checkboxLabel}>
                 <input
                     id={key}
                     type="checkbox"
@@ -314,9 +314,9 @@ const Changelog = ({ location }) => {
             {!IS_SSR && (
                 <div className="ag-styles">
                     <div className={classnames('page-margin', styles.container)}>
-                        <h1>AG Grid Changelog</h1>
-
                         <section className={styles.header}>
+                            <h1>AG Grid Changelog</h1>
+
                             <Alert type="info">
                                 The AG Grid Changelog lists the feature requests implemented and defects resolved across
                                 AG Grid releases. If you can’t find the item you’re looking for, check the{' '}
@@ -332,18 +332,17 @@ const Changelog = ({ location }) => {
                                     ref={searchBarEl}
                                     onChange={onQuickFilterChange}
                                 ></input>
-                                <div className={styles.filters}>
-                                    {checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}
 
-                                    <label>
-                                        Version:{' '}
-                                        <VersionDropdownMenu
-                                            versions={versions}
-                                            onChange={switchDisplayedFixVersion}
-                                            fixVersion={fixVersion}
-                                        />
-                                    </label>
-                                </div>
+                                {checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}
+
+                                <label>
+                                    Version:{' '}
+                                    <VersionDropdownMenu
+                                        versions={versions}
+                                        onChange={switchDisplayedFixVersion}
+                                        fixVersion={fixVersion}
+                                    />
+                                </label>
                             </div>
 
                             <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />

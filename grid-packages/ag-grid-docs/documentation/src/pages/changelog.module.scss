@@ -12,16 +12,37 @@
 .header {
     display: flex;
     flex-direction: column;
-    gap: $size-5;
+    gap: $size-2;
     margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+
+    h1 {
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
+    }
 }
 
-.controls,
-.filters {
+.controls {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: $size-1 $size-4;
+    margin-top: $size-6 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: 1200px) {
+        flex-wrap: nowrap;
+
+        > input {
+            margin-right: $size-6;
+        }
+    }
+
+    label {
+        flex-shrink: 0;
+    }
+}
+
+.checkboxLabel {
+    position: relative;
+    top: -1px;
 }
 
 .searchBar {
