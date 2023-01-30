@@ -1,8 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
+import CollapsibleChevron from '../../images/inline-svgs/collapsible-chevron.svg';
 import styles from './Collapsible.module.scss';
-
-const TreeOpen = '/theme-icons/alpine/tree-open.svg';
-const TreeClosed = '/theme-icons/alpine/tree-closed.svg';
 
 interface Props {
     title: string;
@@ -10,20 +8,20 @@ interface Props {
 
 const Collapsible: FunctionComponent<Props> = ({ title, children }) => {
     const [showNotes, setShowNotes] = useState(false);
-    const image = showNotes ? TreeOpen : TreeClosed;
 
     const collapsibleHandler = () => {
         setShowNotes((prevShowNotes) => !prevShowNotes);
     };
 
     return (
-        <div>
-            <button className={styles.collapsible} onClick={collapsibleHandler}>
+        <div className={showNotes && styles.isOpen}>
+            <button className={styles.showHideButton} onClick={collapsibleHandler}>
                 {title}
 
-                <img alt={'show/hide toggle'} src={image}></img>
+                <CollapsibleChevron />
             </button>
-            {showNotes && children}
+
+            {showNotes && <div className={styles.content}>{children}</div>}
         </div>
     );
 };
