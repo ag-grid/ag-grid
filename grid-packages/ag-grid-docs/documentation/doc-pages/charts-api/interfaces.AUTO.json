@@ -1067,7 +1067,6 @@
     "meta": {},
     "type": {
       "count?": "number",
-      "interval?": "number",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor"
@@ -1083,7 +1082,6 @@
     "meta": {},
     "type": {
       "count?": "any",
-      "interval?": "any",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor"
