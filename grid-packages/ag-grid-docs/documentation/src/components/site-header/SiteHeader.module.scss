@@ -114,7 +114,6 @@ $header-height: 64px;
     }
 }
 
-// Bootstrap styles for collapsed navbar
 .nav {
     &.collapse:not(.show) {
         display: none;
@@ -178,6 +177,8 @@ $header-height: 64px;
 }
 
 .navLink {
+    --horizontal-padding: #{$size-2};
+
     display: block;
     position: relative;
     padding: 10px 14px 11px;
@@ -191,16 +192,16 @@ $header-height: 64px;
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
-        padding-left: $size-3;
-        padding-right: $size-3;
+        padding-left: var(--horizontal-padding);
+        padding-right: var(--horizontal-padding);
 
         &::after {
             content: '';
             position: absolute;
             height: 3px;
             bottom: 4px;
-            left: $size-3;
-            right: $size-3;
+            left: var(--horizontal-padding);
+            right: var(--horizontal-padding);
             border-radius: 2px;
             background-color: var(--link-color);
             opacity: 0;
@@ -210,6 +211,8 @@ $header-height: 64px;
     }
 
     @media screen and (min-width: $breakpoint-size-header-medium) {
+        --horizontal-padding: #{$size-3};
+
         font-size: 18px;
     }
 }
