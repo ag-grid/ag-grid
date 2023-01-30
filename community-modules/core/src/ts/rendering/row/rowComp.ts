@@ -9,6 +9,7 @@ import { setAriaRole } from "../../utils/aria";
 import { CellCtrl } from "../cell/cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
+import { RowStyle } from "../../entities/gridOptions";
 
 export class RowComp extends Component {
 
@@ -38,7 +39,7 @@ export class RowComp extends Component {
             showFullWidth: compDetails => this.showFullWidth(compDetails),
             getFullWidthCellRenderer: () => this.getFullWidthCellRenderer(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
-            setUserStyles: styles => addStylesToElement(eGui, styles),
+            setUserStyles: (styles: RowStyle) => addStylesToElement(eGui, styles),
             setTop: top => style.top = top,
             setTransform: transform => style.transform = transform,
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),

@@ -1,5 +1,4 @@
-import * as agCharts from "ag-charts-community"
-import { AgChartLegendClickEvent, AgChartOptions } from "ag-charts-community"
+import { AgChart, AgChartLegendClickEvent, AgChartOptions } from "ag-charts-community"
 import { getData } from "./data"
 
 const colors = [
@@ -175,4 +174,4 @@ const options: AgChartOptions = {
   },
 }
 
-agCharts.AgChart.create(options)
+AgChart.create(options)

@@ -1,5 +1,4 @@
-import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, IsServerSideGroupOpenByDefaultParams, ServerSideTransaction } from '@ag-grid-community/core'
-import {  } from 'ag-grid-community';
+import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, IsServerSideGroupOpenByDefaultParams, ServerSideTransaction, ServerSideTransactionResult } from '@ag-grid-community/core'
 
 declare var FakeServer: any;
 declare var deletePortfolioOnServer: any;
@@ -70,6 +69,10 @@ function getServerSideDatasource(server: any) {
   };
 }
 
+function logResults(transaction: ServerSideTransaction, result?: ServerSideTransactionResult) {
+  console.log('[Example] - Applied transaction:', transaction, 'Result:', result);
+}
+
 function deleteAllHybrid() {
   // NOTE: real applications would be better served listening to a stream of changes from the server instead
   const serverResponse: any = deletePortfolioOnServer('Hybrid');
@@ -80,9 +83,11 @@ function deleteAllHybrid() {
 
   if (serverResponse) {
     // apply tranaction to keep grid in sync
-    gridOptions.api!.applyServerSideTransaction({
+    const transaction = {
       remove: [{ portfolio: 'Hybrid' }],
-    });
+    };
+    const result = gridOptions.api!.applyServerSideTransaction(transaction);
+    logResults(transaction, result);
   }
 }
 
@@ -96,16 +101,20 @@ function createOneAggressive() {
 
   if (serverResponse.newGroupCreated) {
     // if a new group had to be created, reflect in the grid
-    gridOptions.api!.applyServerSideTransaction({
+    const transaction = {
       route: [],
       add: [{ portfolio: 'Aggressive' }],
-    });
+    };
+    const result = gridOptions.api!.applyServerSideTransaction(transaction);
+    logResults(transaction, result);
   } else {
     // if the group already existed, add rows to it
-    gridOptions.api!.applyServerSideTransaction({
+    const transaction = {
       route: ['Aggressive'],
       add: [serverResponse.newRecord],
-    });
+    };
+    const result = gridOptions.api!.applyServerSideTransaction(transaction);
+    logResults(transaction, result);
   }
 }
 
@@ -117,23 +126,29 @@ function updateAggressiveToHybrid() {
     return;
   }
 
-  // aggressive group no longer exists, so delete the group
-  gridOptions.api!.applyServerSideTransaction({
+  const transaction = {
     remove: [{ portfolio: 'Aggressive' }],
-  });
+  };
+  // aggressive group no longer exists, so delete the group
+  const result = gridOptions.api!.applyServerSideTransaction(transaction);
+  logResults(transaction, result);
 
   if (serverResponse.newGroupCreated) {
     // hybrid group didn't exist, so just create the new group
-    gridOptions.api!.applyServerSideTransaction({
+    const t = {
       route: [],
       add: [{ portfolio: 'Hybrid' }],
-    });
+    };
+    const r = gridOptions.api!.applyServerSideTransaction(t);
+    logResults(t, r);
   } else {
     // hybrid group already existed, add rows to it
-    gridOptions.api!.applyServerSideTransaction({
+    const t = {
       route: ['Hybrid'],
       add: serverResponse.updatedRecords,
-    });
+    };
+    const r = gridOptions.api!.applyServerSideTransaction(t);
+    logResults(t, r);
   }
 }
 

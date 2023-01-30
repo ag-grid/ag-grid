@@ -71,6 +71,13 @@ export const TextElements = () => {
                 omnis omnis veniam.
             </p>
 
+            <div>
+                <p className="item-label">
+                    Horizontal rule <code>hr</code>
+                </p>
+                <hr />
+            </div>
+
             <div className="grid">
                 <div>
                     <p className="item-label">

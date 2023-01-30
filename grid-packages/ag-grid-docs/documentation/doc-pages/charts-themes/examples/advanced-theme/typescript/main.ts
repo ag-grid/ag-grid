@@ -1,5 +1,4 @@
-import * as agCharts from "ag-charts-community"
-import { AgChartOptions, AgChartTheme } from "ag-charts-community"
+import { AgChart, AgChartOptions, AgChartTheme } from "ag-charts-community"
 
 var myTheme: AgChartTheme = {
   baseTheme: "ag-default-dark",
@@ -137,5 +136,5 @@ var chartOptions2: AgChartOptions = {
   ],
 }
 
-var chart1 = agCharts.AgChart.create(chartOptions1)
-var chart2 = agCharts.AgChart.create(chartOptions2)
+var chart1 = AgChart.create(chartOptions1)
+var chart2 = AgChart.create(chartOptions2)

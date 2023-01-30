@@ -4529,11 +4529,20 @@
   "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
   "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
   "DownloadOptions": {
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "fileName": { "type": { "returnType": "string", "optional": true } },
+    "width": {
+      "description": "/** Width of downloaded chart image in pixels. Defaults to current chart width. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** Height of downloaded chart image in pixels. Defaults to current chart height. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fileName": {
+      "description": "/** Name of downloaded image file. Defaults to `image`.  */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fileFormat": {
-      "description": "/** The standard MIME type for the image format to return. If you do not specify this parameter, the default value is a PNG format image. See `Canvas.toDataURL()` */",
+      "description": "/** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */",
       "type": { "returnType": "string", "optional": true }
     }
   },
@@ -5183,74 +5192,19 @@
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } }
   },
-  "FormatType": {},
-  "FormatSpecifierOptions": {
+  "FormatterOptions": {
+    "prefix": { "type": { "returnType": "string", "optional": true } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "align": { "type": { "returnType": "string", "optional": true } },
     "sign": { "type": { "returnType": "string", "optional": true } },
     "symbol": { "type": { "returnType": "string", "optional": true } },
     "zero": { "type": { "returnType": "string", "optional": true } },
-    "width": { "type": { "returnType": "string", "optional": true } },
+    "width": { "type": { "returnType": "number", "optional": true } },
     "comma": { "type": { "returnType": "string", "optional": true } },
-    "precision": { "type": { "returnType": "string", "optional": true } },
-    "trim": { "type": { "returnType": "string", "optional": true } },
-    "type": { "type": { "returnType": "FormatType", "optional": true } },
-    "string": { "type": { "returnType": "string", "optional": true } }
-  },
-  "FormatLocaleOptions": {
-    "decimal": {
-      "description": "/** The decimal point (e.g., '.')\n     */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "thousands": {
-      "description": "/** The group separator (e.g., ','). Note that the thousands property is a misnomer,\n     * as the grouping definition allows groups other than thousands.\n     */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "grouping": {
-      "description": "/** The array of group sizes (e.g., [3]), cycled as needed.\n     */",
-      "type": { "returnType": "number[]", "optional": false }
-    },
-    "currency": {
-      "description": "/** The currency prefix and suffix (e.g., ['$', '']).\n     */",
-      "type": { "returnType": "[string, string]", "optional": false }
-    },
-    "numerals": {
-      "description": "/** Array of ten strings to replace the numerals 0-9.\n     */",
-      "type": { "returnType": "string[]", "optional": true }
-    },
-    "percent": {
-      "description": "/** Symbol to replace the `percent` suffix; the percent suffix (defaults to '%').\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "minus": {
-      "description": "/** The minus sign (defaults to '−').\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "nan": {
-      "description": "/** The not-a-number value (defaults 'NaN').\n     */",
-      "type": { "returnType": "string", "optional": true }
-    }
-  },
-  "FormatLocale": {
-    "format": {
-      "description": "/** Returns a new format function for the given string specifier. The returned function\n     * takes a number as the only argument, and returns a string representing the formatted number.\n     *\n     * @param specifier A Specifier string.\n     * @throws Error on invalid format specifier.\n     */",
-      "type": {
-        "arguments": { "specifier": "string | FormatSpecifier" },
-        "returnType": "(n: number | { valueOf(): number }) => string",
-        "optional": false
-      }
-    },
-    "formatPrefix": {
-      "description": "/** Returns a new format function for the given string specifier. The returned function\n     * takes a number as the only argument, and returns a string representing the formatted number.\n     * The returned function will convert values to the units of the appropriate SI prefix for the\n     * specified numeric reference value before formatting in fixed point notation.\n     *\n     * @param specifier A Specifier string.\n     * @param value The reference value to determine the appropriate SI prefix.\n     * @throws Error on invalid format specifier.\n     */",
-      "type": {
-        "arguments": {
-          "specifier": "string | FormatSpecifier",
-          "value": "number"
-        },
-        "returnType": "(n: number | { valueOf(): number }) => string",
-        "optional": false
-      }
-    }
+    "precision": { "type": { "returnType": "number", "optional": true } },
+    "trim": { "type": { "returnType": "boolean", "optional": true } },
+    "type": { "type": { "returnType": "string", "optional": true } },
+    "suffix": { "type": { "returnType": "string", "optional": true } }
   },
   "TypedEvent": {
     "type": { "type": { "returnType": "string", "optional": false } }

@@ -16,12 +16,12 @@ const colourMappings = {
     fg: 'Forest Green',
 };
 
-function extractValues(mappings: Record<string, string>) {
+function extractKeys(mappings: Record<string, string>) {
     return Object.keys(mappings)
 }
 
-const carBrands = extractValues(carMappings);
-const colours = extractValues(colourMappings);
+const carCodes = extractKeys(carMappings);
+const colourCodes = extractKeys(colourMappings);
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
             minWidth: 100,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-                values: carBrands,
+                values: carCodes,
             },
             filter: 'agSetColumnFilter',
             refData: carMappings,
@@ -41,7 +41,7 @@ const gridOptions: GridOptions = {
             cellEditor: 'agRichSelectCellEditor',
             cellEditorPopup: true,
             cellEditorParams: {
-                values: colours,
+                values: colourCodes,
                 cellRenderer: ColourCellRenderer,
             },
             filter: 'agSetColumnFilter',
@@ -115,10 +115,6 @@ function numberValueSetter(params: ValueSetterParams) {
     params.data.price = params.newValue
 
     return true
-}
-
-function removeSpaces(str: string) {
-    return str ? str.replace(/\s/g, '') : str
 }
 
 // wait for the document to be loaded, otherwise

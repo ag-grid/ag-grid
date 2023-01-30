@@ -250,6 +250,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         if (keyCode === KeyCode.A) { return this.onCtrlAndA(keyboardEvent); }
         if (keyCode === KeyCode.C) { return this.onCtrlAndC(keyboardEvent); }
+        if (keyCode === KeyCode.X) { return this.onCtrlAndX(keyboardEvent); }
         if (keyCode === KeyCode.V) { return this.onCtrlAndV(); }
         if (keyCode === KeyCode.D) { return this.onCtrlAndD(keyboardEvent); }
         if (keyCode === KeyCode.Z) { return this.onCtrlAndZ(keyboardEvent); }
@@ -294,10 +295,16 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndC(event: KeyboardEvent): void {
-
         if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) { return; }
 
         this.clipboardService.copyToClipboard();
+        event.preventDefault();
+    }
+
+    private onCtrlAndX(event: KeyboardEvent): void {
+        if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) { return; }
+
+        this.clipboardService.cutToClipboard();
         event.preventDefault();
     }
 

@@ -545,7 +545,7 @@ export class GridApi<TData = any> {
         return this.filterManager.isColumnFilterPresent() || this.filterManager.isAggregateFilterPresent();
     }
 
-    /** Returns `true` if the quick filter is set, otherwise `false`. */
+    /** Returns `true` if the Quick Filter is set, otherwise `false`. */
     public isQuickFilterPresent(): boolean {
         return this.filterManager.isQuickFilterPresent();
     }
@@ -659,9 +659,24 @@ export class GridApi<TData = any> {
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
-    /** Pass a quick filter text into the grid for filtering. */
+    /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
+    public getQuickFilter(): string | undefined {
+        return this.gridOptionsService.get('quickFilterText');
+    }
+
+    /** Pass a Quick Filter text into the grid for filtering. */
     public setQuickFilter(newFilter: string): void {
         this.gridOptionsService.set('quickFilterText', newFilter);
+    }
+
+    /** 
+     * Updates the `excludeHiddenColumnsFromQuickFilter` grid option.
+     * Set to `true` to exclude hidden columns from being checked by the Quick Filter (or `false` to include them).
+     * This can give a significant performance improvement when there are a large number of hidden columns,
+     * and you are only interested in filtering on what's visible.
+     */
+    public setExcludeHiddenColumnsFromQuickFilter(value: boolean): void {
+        this.gridOptionsService.set('excludeHiddenColumnsFromQuickFilter', value);
     }
 
     /**
@@ -669,7 +684,7 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
      */
     public selectAll(source: SelectionEventSourceType = 'apiSelectAll') {
-        this.selectionService.selectAllRowNodes(source);
+        this.selectionService.selectAllRowNodes({ source });
     }
 
     /**
@@ -677,7 +692,7 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
      */
     public deselectAll(source: SelectionEventSourceType = 'apiSelectAll') {
-        this.selectionService.deselectAllRowNodes(source);
+        this.selectionService.deselectAllRowNodes({ source });
     }
 
     /**
@@ -685,7 +700,7 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
      */
     public selectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-        this.selectionService.selectAllRowNodes(source, true);
+        this.selectionService.selectAllRowNodes({ source, justFiltered: true });
     }
 
     /**
@@ -693,7 +708,23 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
      */
     public deselectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-        this.selectionService.deselectAllRowNodes(source, true);
+        this.selectionService.deselectAllRowNodes({ source, justFiltered: true });
+    }
+
+    /**
+     * Select all rows on the current page.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     */
+    public selectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
+        this.selectionService.selectAllRowNodes({ source, justCurrentPage: true });
+    }
+
+    /**
+     * Clear all filtered on the current page.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     */
+    public deselectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
+        this.selectionService.deselectAllRowNodes({ source, justCurrentPage: true });
     }
 
     /**
@@ -1418,10 +1449,10 @@ export class GridApi<TData = any> {
         return this.destroyCalled;
     }
 
-    /** Reset the quick filter cache text on every rowNode. */
+    /** Reset the Quick Filter cache text on every rowNode. */
     public resetQuickFilter(): void {
         if (this.warnIfDestroyed('resetQuickFilter')) { return; }
-        this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
+        this.filterManager.resetQuickFilterCache();
     }
 
     /** Returns the list of selected cell ranges. */
@@ -1542,6 +1573,13 @@ export class GridApi<TData = any> {
     public copyToClipboard(params?: IClipboardCopyParams) {
         if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard')) {
             this.clipboardService.copyToClipboard(params);
+        }
+    }
+
+    /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
+    public cutToClipboard(params?: IClipboardCopyParams) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard')) {
+            this.clipboardService.cutToClipboard(params);
         }
     }
 

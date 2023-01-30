@@ -1,0 +1,63 @@
+@use '../design-system' as *;
+
+.about-page {
+    margin-top: $size-6;
+    margin-bottom: calc($size-6 * 4);
+
+    h2 {
+        margin-top: $size-4;
+    }
+}
+
+.team {
+    --line-height: #{$line-height-tight};
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-2;
+    margin-bottom: calc($size-6 * 2) !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: 660px) {
+        gap: $size-4;
+    }
+
+    > div {
+        max-width: calc((100% - $size-2 * 1) / 2);
+
+        @media screen and (min-width: 660px) {
+            max-width: calc((100% - $size-4 * 2) / 3);
+        }
+
+        @media screen and (min-width: 880px) {
+            max-width: calc((100% - $size-4 * 3) / 4);
+        }
+
+        @media screen and (min-width: 1280px) {
+            max-width: calc((100% - $size-4 * 4) / 5);
+        }
+    }
+
+    img {
+        width: 100%;
+        border-radius: var(--border-radius);
+    }
+
+    h3 {
+        margin-top: $size-1 !important; // !important for .ag-styles specificity
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
+    }
+}
+
+.footer {
+    display: flex;
+    gap: $size-4;
+    flex-direction: column;
+
+    @media screen and (min-width: 660px) {
+        flex-direction: row;
+
+        > div {
+            width: 33.3333%;
+        }
+    }
+}

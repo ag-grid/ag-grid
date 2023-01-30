@@ -225,7 +225,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
 
     // *** Columns: Filtering *** //
 
-    /** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */
+    /** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */
     getQuickFilterText?: (params: GetQuickFilterTextParams<TData>) => string;
     /** Function or expression. Gets the value for filtering purposes. */
     filterValueGetter?: string | ValueGetterFunc<TData>;
@@ -265,6 +265,8 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
     headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData>;
     /** If `true`, the header checkbox selection will only select filtered items. */
     headerCheckboxSelectionFilteredOnly?: boolean;
+    /** If `true`, the header checkbox selection will only select nodes on the current page. */
+    headerCheckboxSelectionCurrentPageOnly?: boolean;
 
     // *** Columns: Integrated Charts *** //
 

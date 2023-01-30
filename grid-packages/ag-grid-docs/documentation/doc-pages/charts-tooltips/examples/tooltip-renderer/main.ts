@@ -1,8 +1,8 @@
 import {
   AgCartesianSeriesTooltipRendererParams,
   AgChartOptions,
+  AgChart
 } from "ag-charts-community"
-import * as agCharts from "ag-charts-community"
 
 function renderer(params: AgCartesianSeriesTooltipRendererParams) {
   return (
@@ -56,4 +56,4 @@ const options: AgChartOptions = {
   ],
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

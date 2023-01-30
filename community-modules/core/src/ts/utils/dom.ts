@@ -1,7 +1,7 @@
 import { browserSupportsPreventScroll, isBrowserChrome, isBrowserSafari } from './browser';
 import { exists } from './generic';
-import { isNonNullObject } from './object';
 import { setAriaHidden } from './aria';
+import { CellStyle, RowStyle } from '../main';
 
 let rtlNegativeScroll: boolean;
 
@@ -360,18 +360,20 @@ export function prependDC(parent: HTMLElement, documentFragment: DocumentFragmen
     }
 }
 
-export function addStylesToElement(eElement: any, styles: any) {
+export function addStylesToElement(eElement: any, styles: RowStyle | CellStyle | null | undefined) {
     if (!styles) { return; }
 
-    Object.keys(styles).forEach((key) => {
-        if (!key || !key.length) { return; }
+    for (const [key, value] of Object.entries(styles)) {
+        if (!key || !key.length || value == null) { continue; }
+
         // changes the key from camelCase into a hyphenated-string
         const parsedKey = key.replace(/[A-Z]/g, s => `-${s.toLocaleLowerCase()}`);
-        const value = styles[key].replace(/\s*!important/g, '');
-        const priority = value.length != styles[key].length ? 'important' : undefined;
+        const valueAsString = value.toString();
+        const parsedValue = valueAsString.replace(/\s*!important/g, '');
+        const priority = parsedValue.length != valueAsString.length ? 'important' : undefined;
 
         eElement.style.setProperty(parsedKey, value, priority);
-    });
+    }
 }
 
 export function isHorizontalScrollShowing(element: HTMLElement): boolean {

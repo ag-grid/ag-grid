@@ -99,7 +99,7 @@ export class TimeScale extends ContinuousScale {
         [this.year, 1, durationYear],
     ];
 
-    calculateDefaultTickFormat(ticks?: any[]) {
+    calculateDefaultTickFormat(ticks: any[] | undefined = []) {
         let defaultTimeFormat = DefaultTimeFormats.YEAR as DefaultTimeFormats;
 
         const updateFormat = (format: DefaultTimeFormats) => {
@@ -108,26 +108,27 @@ export class TimeScale extends ContinuousScale {
             }
         };
 
-        for (let value of ticks ?? []) {
+        for (let value of ticks) {
             const format = this.getLowestGranularityFormat(value);
             updateFormat(format);
         }
 
-        return this.buildFormatString(defaultTimeFormat);
+        const firstTick = toNumber(ticks[0]);
+        const lastTick = toNumber(ticks[ticks.length - 1]);
+        const startYear = new Date(firstTick).getFullYear();
+        const stopYear = new Date(lastTick).getFullYear();
+        const yearChange = stopYear - startYear > 0;
+
+        return this.buildFormatString(defaultTimeFormat, yearChange);
     }
 
-    buildFormatString(defaultTimeFormat: DefaultTimeFormats): string {
+    buildFormatString(defaultTimeFormat: DefaultTimeFormats, yearChange: boolean): string {
         let formatStringArray: string[] = [formatStrings[defaultTimeFormat]];
         let timeEndIndex = 0;
 
         const domain = this.getDomain();
         const start = Math.min(...domain.map(toNumber));
         const stop = Math.max(...domain.map(toNumber));
-
-        const startYear = new Date(start).getFullYear();
-        const stopYear = new Date(stop).getFullYear();
-        const yearChange = stopYear - startYear > 0;
-
         const extent = stop - start;
 
         switch (defaultTimeFormat) {

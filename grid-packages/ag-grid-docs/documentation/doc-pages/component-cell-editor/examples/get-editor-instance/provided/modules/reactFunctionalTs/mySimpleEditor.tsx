@@ -2,6 +2,9 @@ import { ICellEditorParams } from '@ag-grid-community/core';
 import { ICellEditorReactComp } from 'ag-grid-react';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
+
 export interface MySimpleInterface extends ICellEditorReactComp {
     myCustomFunction(): { rowIndex: number, colId: string };
 }
@@ -10,7 +13,10 @@ export default forwardRef((props: ICellEditorParams, ref) => {
     const getInitialValue = (props: ICellEditorParams) => {
         let startValue = props.value;
 
-        if (props.charPress) {
+        const isBackspace = props.eventKey === KEY_BACKSPACE;
+        if (isBackspace) {
+            startValue = '';
+        } else if (props.charPress) {
             startValue = props.charPress;
         }
 

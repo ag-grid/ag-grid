@@ -4,7 +4,7 @@ import { UserCompDetails } from "../../components/framework/userComponentFactory
 import { BeanStub } from "../../context/beanStub";
 import { CellPosition } from "../../entities/cellPositionUtils";
 import { Column, ColumnPinnedType } from "../../entities/column";
-import { RowClassParams } from "../../entities/gridOptions";
+import { RowClassParams, RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
 import { DataChangedEvent, RowHighlightPosition } from "../../interfaces/iRowNode";
 import { RowPosition } from "../../entities/rowPositionUtils";
@@ -47,7 +47,7 @@ export interface IRowComp {
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
     setTabIndex(tabIndex: number): void;
-    setUserStyles(styles: any): void;
+    setUserStyles(styles: RowStyle): void;
     setRole(role: string): void;
 }
 

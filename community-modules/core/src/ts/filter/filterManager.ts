@@ -59,6 +59,7 @@ export class FilterManager extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.refreshFiltersForAggregations());
 
         this.addManagedPropertyListener('quickFilterText', (e: PropertyChangedEvent) => this.setQuickFilter(e.currentValue));
+        this.addManagedPropertyListener('excludeHiddenColumnsFromQuickFilter', () => this.onExcludeHiddenColumnsFromQuickFilterChanged());
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsService.get('quickFilterText'));
         this.setQuickFilterParts();
@@ -303,7 +304,7 @@ export class FilterManager extends BeanStub {
         return newFilter.toUpperCase();
     }
 
-    public setQuickFilter(newFilter: string): void {
+    private setQuickFilter(newFilter: string): void {
         if (newFilter != null && typeof newFilter !== 'string') {
             console.warn(`AG Grid - setQuickFilter() only supports string inputs, received: ${typeof newFilter}`);
             return;
@@ -314,6 +315,18 @@ export class FilterManager extends BeanStub {
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
             this.setQuickFilterParts();
+            this.onFilterChanged();
+        }
+    }
+
+    public resetQuickFilterCache(): void {
+        this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
+    }
+
+    private onExcludeHiddenColumnsFromQuickFilterChanged(): void {
+        this.columnModel.refreshQuickFilterColumns();
+        this.resetQuickFilterCache();
+        if (this.isQuickFilterPresent()) {
             this.onFilterChanged();
         }
     }
@@ -687,9 +700,8 @@ export class FilterManager extends BeanStub {
             (filter!.setModel(null) || AgPromise.resolve()).then(() => {
                 this.getContext().destroyBean(filter);
 
-                filterWrapper.column.setFilterActive(false, source);
-
                 this.allColumnFilters.delete(filterWrapper.column.getColId());
+                filterWrapper.column.setFilterActive(false, source);
             });
         });
     }

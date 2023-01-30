@@ -1,5 +1,4 @@
-import { AgChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import { AgChartOptions, AgChart, time } from 'ag-charts-community'
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
@@ -26,7 +25,7 @@ const options: AgChartOptions = {
       nice: false,
       position: 'bottom',
       tick: {
-        count: agCharts.time.month,
+        count: time.month,
       },
       label: {
         format: '%b %Y',
@@ -66,4 +65,4 @@ const options: AgChartOptions = {
   ],
 }
 
-agCharts.AgChart.create(options)
+AgChart.create(options)

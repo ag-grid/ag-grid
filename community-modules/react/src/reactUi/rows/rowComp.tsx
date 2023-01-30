@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
-import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager } from '@ag-grid-community/core';
+import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
+import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager, RowStyle } from '@ag-grid-community/core';
 import { showJsComp } from '../jsComp';
 import { isComponentStateless } from '../utils';
 import { BeansContext } from '../beansContext';
@@ -62,7 +62,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     const [role, setRole] = useState<string>();
     const [rowBusinessKey, setRowBusinessKey] = useState<string>();
     const [tabIndex, setTabIndex] = useState<number>();
-    const [userStyles, setUserStyles] = useState<any>();
+    const [userStyles, setUserStyles] = useState<RowStyle>();
     const [cellCtrls, setCellCtrls] = useState<CellCtrls>({ list: [], instanceIdMap: new Map() });
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
     const [domOrder, setDomOrder] = useState<boolean>(false);
@@ -122,7 +122,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
             setRowId: value => setRowId(value),
             setRowBusinessKey: value => setRowBusinessKey(value),
             setTabIndex: value => setTabIndex(value),
-            setUserStyles: styles => setUserStyles(styles),
+            setUserStyles: (styles: RowStyle) => setUserStyles(styles),
             setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working

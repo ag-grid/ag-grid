@@ -1,14 +1,16 @@
-@import "../common/vars.scss";
-@import "../common/bootstrap.scss";
-@import "../common/grid.scss";
-@import "../common/content.scss";
-@import "../common/mixins.scss";
-@import "./demo.scss";
-@import "../pages/about.scss";
-@import "../pages/example.scss";
-@import "../pages/license-pricing.scss";
-@import "../pages/privacy.scss";
-@import "../pages/cookies";
+@use '../../../../design-system' as ds; // needed to deal with bootstrap conflict
+
+@import '../common/vars.scss';
+@import '../common/bootstrap.scss';
+@import '../common/grid.scss';
+@import '../common/content.scss';
+@import '../common/mixins.scss';
+@import '../pages/license-pricing.scss';
+
+$hero-breakpoint-medium: 620px;
+$hero-breakpoint-large: 1020px;
+
+$sponsorship-breakpoint-large: 840px;
 
 html,
 body {
@@ -16,379 +18,244 @@ body {
     padding: 0;
 }
 
-body {
-    -webkit-font-smoothing: antialiased;
+.homepageHero {
+    --text-color: var(--white);
+
+    padding-top: ds.$size-5;
+    background-color: var(--dark-cerulean-blue);
+    color: var(--text-color); // needed to deal with .ag-styles
+
+    @media screen and (min-width: $hero-breakpoint-medium) {
+        padding-top: ds.$size-7;
+    }
+
+    @media screen and (min-width: $hero-breakpoint-large) {
+        padding-top: ds.$size-8;
+    }
 }
 
-.stretch-contents {
-    background-color: red;
+.heroHeadings {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    text-align: center;
 
-    > .info-page {
-        flex: 1 1 auto;
-
-        > .row {
-            height: 100%;
-        }
-    }
-}
-
-.media a {
-    color: darken($blue-2, 5%);
-    &:hover {
-        text-decoration: none;
-        color: $blue-1;
-    }
-}
-
-@keyframes fadein {
-    0% {
-        opacity: 0;
-    }
-    80% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-.stage-description {
-    @extend %stage;
-    font-weight: 400;
-    font-style: normal;
-
-    section {
-        @extend .justify-content-center;
-        > div {
-            @extend .col-lg, .m-2;
-        }
-        line-height: 1.7;
-        h3 {
-            @extend .mb-2, .pt-0;
-            color: $grey-1;
-            font-weight: 300;
-        }
-
-        p {
-            @extend .pr-4;
-            text-align: justify;
-        }
-    }
-}
-
-.stage-frameworks {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 15px 48px;
-    background-color: $ag-site-fw-background;
-
-    @media screen and ( min-width: 640px ) {
-        padding-top: 48px;
-        flex-direction: row;
-    }
-}
-
-.stage-frameworks__label {
-    opacity: .6666;
-    margin-bottom: 8px;
-
-    @media screen and ( min-width: 640px ) {
-        margin-bottom: 0;
-        margin-right: 8px;
+    @media screen and (min-width: $hero-breakpoint-large) {
+        text-align: unset;
     }
 
-    @media screen and ( min-width: 1020px ) {
-        font-size: 22px;
-        margin-right: 16px;
-    }
-}
-
-.stage-sponsorships {
-    @extend %stage;
-    background-color: $offwhite;
-
-    &__sponsorships {
-        @extend .align-items-center;
-        @extend %card, .py-4;
-
-        & > div:first-child {
-            @extend .col-md-6, .mb-3, .text-right;
-        }
-
-        & > div:nth-child(2) {
-            @extend .col-md-5, .ml-auto;
-
-            & > div {
-                @extend .py-4;
-            }
-        }
-
-        h2 {
-            @extend .display-4;
-            margin: 0;
-            padding: 0;
-        }
-
-        h3 {
-            @extend .display-5;
-        }
-
-        img {
-            @extend .mr-3;
-            height: 4rem;
-        }
-    }
-}
-
-.main-buttons {
-    @extend .p-4, .bg-lightgrey, .text-center;
-
-    .get-started-btn {
-        @extend .btn, .btn-lg, .py-3, .px-4;
-        &:last-child {
-            @extend .btn-outline-darkblue, .ml-2, .ml-sm-3;
-        }
-    }
-}
-
-.homepage-hero {
-    $breakpoint-medium: 620px;
-    $breakpoint-large: 1020px;
-
-    background-color: $blue-1;
-    padding-top: 40px;
-
-    font-family: 'Roboto', sans-serif;
-    color: $white;
-
-    @media screen and ( min-width: $breakpoint-medium ) {
-        padding-top: 60px;
-    }
-
-    @media screen and ( min-width: $breakpoint-large ) {
-        padding-top: 100px;
-    }
-
-    .contents {
-        display: flex;
-        flex-direction: column;
-        gap: 0 32px;
-        width: 100%;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding-left: 16px;
-        padding-right: 16px;
-
-        @media screen and ( min-width: $breakpoint-large ) {
-            flex-direction: row;
-        }
-    }
-
-    .headings {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-
-        @media screen and ( min-width: $breakpoint-large ) {
-          text-align: unset;
-        }
+    h1,
+    h2 {
+        --line-height: #{ds.$line-height-tight} !important; // !important for .ag-styles specificity
     }
 
     h1 {
-        margin-bottom: .15em;
-        font-size: 28px;
-        line-height: 1.3;
-        font-weight: 700;
+        --font-size: 28px;
+        --font-weight: #{ds.$font-weight-bold}; // needed to deal with .ag-styles `
 
-        @media screen and ( min-width: $breakpoint-medium ) {
-            font-size: 38px;
+        @media screen and (min-width: $hero-breakpoint-medium) {
+            --font-size: #{ds.$font-size-extra-large} !important; // !important for .ag-styles specificity
         }
 
-        @media screen and ( min-width: $breakpoint-large ) {
-            margin-top: -0.15em;
-            margin-bottom: .3em;
-            font-size: min(3.4vw, 54px);
+        @media screen and (min-width: $hero-breakpoint-large) {
+            --font-size: min(3.4vw, 54px) !important; // !important for .ag-styles specificity
+
+            margin-top: -0.225em !important; // !important for .ag-styles specificity;
+            margin-bottom: 0.5em !important; // !important for .ag-styles specificity;
         }
     }
 
     h2 {
         max-width: 18em;
         margin-right: auto;
-        margin-bottom: 1.4em;
         margin-left: auto;
-        font-size: 16px;
-        line-height: 1.4;
-        font-weight: 200;
+        margin-bottom: 1.4em;
 
-        @media screen and ( min-width: $breakpoint-medium ) {
-            font-size: 22px;
+        @media screen and (min-width: $hero-breakpoint-medium) {
+            --font-size: 22px !important; // !important for .ag-styles specificity
         }
 
-        @media screen and ( min-width: $breakpoint-large ) {
+        @media screen and (min-width: $hero-breakpoint-large) {
+            --font-size: min(1.9vw, 30px) !important; // !important for .ag-styles specificity
+            --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
+
             max-width: unset;
-            margin-bottom: 1em;
-            font-size: min(1.9vw, 32px);
-        }
-    }
-
-    .hero-grid {
-        display: flex;
-        flex-direction: row-reverse;
-        height: 320px;
-
-        @media screen and ( min-width: $breakpoint-large ) {
-          width: 860px;
-          height: 416px;
         }
     }
 }
 
-.stage-scenarios {
-    @extend %stage;
+.heroInner {
+    display: flex;
+    flex-direction: column;
+    gap: 0 ds.$size-4;
 
-    background-color: $offwhite;
-
-    &.main {
-        background-color: $blue-1;
-
-        h1 {
-            font-weight: 500 !important;
-            color: $white;
-        }
-        section {
-            @extend .justify-content-center;
-            position: relative;
-        }
-        .loading {
-            color: $white;
-        }
-    }
-
-    &:not(.main, .stage-quotes) {
-        @include media-breakpoint-down(sm) {
-            display: none;
-        }
-    }
-
-    .view-code {
-        @extend .text-right;
-
-        a {
-            @extend .btn, .btn-link;
-        }
-    }
-
-    .heading-scenarios {
-        @extend .display-4, .text-center, .full-width-row, .mb-4;
-        @include media-breakpoint-down(md) {
-            font-size: 2.5rem;
-        }
-        @include media-breakpoint-down(sm) {
-            font-size: 1.2rem;
-        }
-        span {
-            @extend .display-5, .text-center, .d-block;
-            font-weight: 100 !important;
-        }
-    }
-
-    @keyframes appear {
-        from {
-            opacity: 0.3;
-        }
-
-        to {
-            opacity: 0.8;
-        }
-    }
-    section {
-        @extend .row, .full-width-row;
-
-        .demo {
-            @extend .col-md-12;
-            display: block;
-            width: calc(100% - 30px);
-
-            .loading {
-                animation: appear 500ms linear 0s infinite alternate none running;
-                width: 320px;
-                height: 500px;
-                margin: 0 auto;
-                padding-top: 100px;
-                text-align: center;
-
-                img {
-                    margin-bottom: 1rem;
-                }
-                p {
-                    color: $secondary;
-                    font-size: 0.8rem;
-                }
-            }
-        }
-
-        .view-code {
-            @extend .text-right, .col, .mt-3;
-        }
-
-        #demo-1-header {
-            @extend .row, .mb-3;
-            & > div {
-                @extend .col-md-6;
-            }
-
-            & > div:last-child {
-                text-align: right;
-            }
-
-            input[type="text"] {
-                @extend .form-control;
-            }
-        }
-    }
-    &__bestHtml5Grid {
-        @extend .rounded;
-        border: 1px solid $gray-400;
-        width: 100%;
-        height: 515px;
-    }
-
-    &__bestHtml5Grid.small {
-        height: 460px;
-    }
-
-    &__bestHtml5Grid.small:not(.tall) {
-        height: 320px;
+    @media screen and (min-width: $hero-breakpoint-large) {
+        flex-direction: row;
     }
 }
 
-.stage-quotes {
+.heroGrid {
+    display: flex;
+    flex-direction: row-reverse;
+    height: 320px;
+
+    @media screen and (min-width: $hero-breakpoint-large) {
+        width: 860px;
+        height: 416px;
+    }
+}
+
+.homepageFrameworks {
+    background-color: var(--bright-blue-gray);
+    padding-top: ds.$size-3;
+    padding-bottom: ds.$size-6;
+
+    @media screen and (min-width: 640px) {
+        padding-top: ds.$size-6;
+    }
+}
+
+.frameworksInner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: ds.$size-1;
+
+    @media screen and (min-width: 640px) {
+        flex-direction: row;
+    }
+
+    @media screen and (min-width: 1020px) {
+        gap: ds.$size-2;
+    }
+}
+
+.frameworksLabel {
+    font-size: var(--font-size); // needed to deal with .ag-styles
+    font-weight: var(--font-weight); // needed to deal with .ag-styles
+
+    @media screen and (min-width: 1020px) {
+        --font-size: #{ds.$font-size-large} !important; // !important for .ag-styles specificity
+        --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
+    }
+}
+
+.homepageQuotes {
+    padding-top: ds.$size-7;
+    padding-bottom: ds.$size-1;
+    background-color: var(--ghost-blue);
+
+    @media screen and (min-width: 940px) {
+        padding-top: ds.$size-8;
+        padding-bottom: ds.$size-5;
+    }
+}
+
+.homepageExample {
+    margin-bottom: ds.$size-9 !important; // !important for .ag-styles specificity
+
     h2 {
-        margin-top: 45px;
+        text-align: center;
+        margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity
     }
 
-    section {
-        margin-top: 45px;
-        margin-bottom: 45px;
+    a {
+        margin-top: ds.$size-1 !important; // !important for .ag-styles specificity
+        float: right;
+    }
+}
+
+.homepageDescription {
+    margin-top: ds.$size-6 !important; // !important for .ag-styles specificity
+    margin-bottom: ds.$size-6 !important; // !important for .ag-styles specificity
+
+    li:not(:last-child) {
+        margin-bottom: ds.$size-3 !important; // !important for .ag-styles specificity
     }
 
-    @include media-breakpoint-up(sm) {
-        h2 {
-            margin-top: 0;
-        }
+    @media screen and (min-width: 880px) {
+        margin-bottom: ds.$size-8 !important; // !important for .ag-styles specificity
 
-        section {
-            margin-top: 45px;
-            margin-bottom: 0;
-            padding-left: 30px;
-            padding-right: 30px;
+        ul {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: ds.$size-3;
         }
+    }
+
+    @media screen and (min-width: 1200px) {
+        ul {
+            gap: ds.$size-5;
+        }
+    }
+}
+
+.sponsorshipInner {
+    margin-bottom: ds.$size-10 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $sponsorship-breakpoint-large) {
+        display: flex;
+        justify-content: center;
+        gap: ds.$size-4;
+    }
+
+    > div {
+        --line-height: #{ds.$line-height-tight} !important; // !important for .ag-styles specificity
+
+        text-align: center;
+        margin-bottom: ds.$size-5 !important; // !important for .ag-styles specificity
+
+        @media screen and (min-width: $sponsorship-breakpoint-large) {
+            text-align: unset;
+        }
+    }
+
+    > div h3 {
+        max-width: 12em;
+        margin-left: auto;
+        margin-right: auto;
+
+        @media screen and (min-width: $sponsorship-breakpoint-large) {
+            margin-left: unset;
+            margin-right: unset;
+        }
+    }
+}
+
+.projectsList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.project {
+    --icon-size: #{ds.$size-7};
+
+    display: grid;
+    grid-template-columns: var(--icon-size) auto;
+    grid-template-rows: ds.$size-4 auto;
+    grid-template-areas:
+        'icon name'
+        'icon link';
+    width: min(100%, 25em);
+    gap: 0 ds.$size-2;
+
+    &:not(:last-child) {
+        margin-bottom: ds.$size-4 !important; // !important for .ag-styles specificity
+    }
+
+    img {
+        grid-area: icon;
+        width: 100%;
+    }
+
+    h3 {
+        grid-area: name;
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
+    }
+
+    a {
+        grid-area: link;
     }
 }

@@ -2,6 +2,7 @@
     <div class="example-header">
         <input type="text" id="filter-text-box" placeholder="Filter..." oninput="onFilterTextBoxChanged()" />
         <button style="margin-left: 20px;" onclick="onPrintQuickFilterTexts()">Print Quick Filter Cache Texts</button>
+        <button id="excludeHiddenColumns" style="margin-left: 20px;" onclick="onExcludeHiddenColumnsToggled()">Exclude Hidden Columns</button>
     </div>
     <div id="myGrid" class="ag-theme-alpine"></div>
 </div>

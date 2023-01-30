@@ -1,5 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
@@ -7,7 +9,10 @@ export default forwardRef((props, ref) => {
     const createInitialState = () => {
         let startValue;
 
-        if (props.charPress) {
+        if (props.eventKey === KEY_BACKSPACE) {
+            // if backspace or delete pressed, we clear the cell
+            startValue = '';
+        } else if (props.charPress) {
             // if a letter was pressed, we start with the letter
             startValue = props.charPress;
         } else {
@@ -49,13 +54,17 @@ export default forwardRef((props, ref) => {
         return isCharNumeric(charStr);
     };
 
+    const isBackspace = event => {
+        return event.key === KEY_BACKSPACE;
+    };
+
     const finishedEditingPressed = event => {
         const key = event.key;
         return key === KEY_ENTER || key === KEY_TAB;
     };
 
     const onKeyDown = event => {
-        if (isLeftOrRight(event)) {
+        if (isLeftOrRight(event) || isBackspace(event)) {
             event.stopPropagation();
             return;
         }

@@ -74,14 +74,14 @@
         }
     }
 
+    .size-examples-list {
+        margin-top: -$size-4;
+    }
+
     .size-example {
-        height: var(--size-example-size);
+        height: $size-4;
         width: var(--size-example-size);
         background-color: var(--ag-grid-dark-blue);
-
-        &:not(.size-half):not(.size-1) {
-            border-radius: var(--border-radius);
-        }
 
         &.size-half {
             --size-example-size: #{$size-half};
@@ -103,6 +103,18 @@
         }
         &.size-6 {
             --size-example-size: #{$size-6};
+        }
+        &.size-7 {
+            --size-example-size: #{$size-7};
+        }
+        &.size-8 {
+            --size-example-size: #{$size-8};
+        }
+        &.size-9 {
+            --size-example-size: #{$size-9};
+        }
+        &.size-10 {
+            --size-example-size: #{$size-10};
         }
     }
 }

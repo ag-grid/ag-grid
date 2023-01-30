@@ -122,9 +122,9 @@ export class EventService implements IEventEmitter {
         if (async && 'event' in event) {
             const browserEvent = (event as any).event;
             if (browserEvent instanceof Event) {
-                // AG-7893 - Patch composedPath so that it still returns the correct value even after being passed to the user asynchronously
-                const composedPath = browserEvent.composedPath();
-                browserEvent.composedPath = () => composedPath;
+                // AG-7893 - Persist composedPath() so that its result can still be accessed by the user asynchronously.
+                // Within an async event handler if they call composedPath() on the event it will always return an empty [].
+                (event as any).eventPath = browserEvent.composedPath();
             }
         }
 

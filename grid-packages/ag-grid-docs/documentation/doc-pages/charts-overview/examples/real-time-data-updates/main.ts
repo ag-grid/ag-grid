@@ -1,5 +1,4 @@
-import { AgCartesianChartOptions } from "ag-charts-community"
-import * as agCharts from "ag-charts-community"
+import { AgCartesianChartOptions, AgChart } from "ag-charts-community"
 
 var systemLoad = 0
 var userLoad = 0
@@ -82,13 +81,13 @@ const options: AgCartesianChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)
 
 /** inScope */
 function updateData() {
   var now = Date.now()
   options.data = getData()
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 //@ts-ignore
 setInterval(this.updateData, refreshRateInMilliseconds)

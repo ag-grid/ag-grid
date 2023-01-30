@@ -52,6 +52,34 @@ export const Sizes = () => {
                     </p>
                     <div className="size-example size-6"></div>
                 </div>
+
+                <div>
+                    <p className="item-label">
+                        Size seven (48px)<code>$size-7</code>
+                    </p>
+                    <div className="size-example size-7"></div>
+                </div>
+
+                <div>
+                    <p className="item-label">
+                        Size eight (64px)<code>$size-8</code>
+                    </p>
+                    <div className="size-example size-8"></div>
+                </div>
+
+                <div>
+                    <p className="item-label">
+                        Size nine (96px)<code>$size-9</code>
+                    </p>
+                    <div className="size-example size-9"></div>
+                </div>
+
+                <div>
+                    <p className="item-label">
+                        Size ten (208px)<code>$size-10</code>
+                    </p>
+                    <div className="size-example size-10"></div>
+                </div>
             </div>
         </>
     );

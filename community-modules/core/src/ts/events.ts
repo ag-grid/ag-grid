@@ -85,6 +85,7 @@ export interface PinnedRowDataChangedEvent<TData = any> extends AgGridEvent<TDat
  * - `api` - from API method
  * - `apiSelectAll` - from API methods `selectAll`/`deselectAll`
  * - `apiSelectAllFiltered` - from API methods `selectAllFiltered`/`deselectAllFiltered`
+ * - `apiSelectAllCurrentPage` - from API methods `selectAllOnCurrentPage`/`deselectAllOnCurrentPage`
  * - `checkboxSelected` - row selection checkbox clicked
  * - `rowClicked` - row clicked when row selection enabled
  * - `rowDataChanged` - row data updated which triggered selection updates
@@ -93,11 +94,13 @@ export interface PinnedRowDataChangedEvent<TData = any> extends AgGridEvent<TDat
  * - `spacePressed` - space key pressed on row
  * - `uiSelectAll` - select all in header clicked
  * - `uiSelectAllFiltered` - select all in header clicked when `headerCheckboxSelectionFilteredOnly = true`
+ * - `uiSelectAllCurrentPage` - select all in header clicked when `headerCheckboxSelectionCurrentPageOnly = true`
  */
 export type SelectionEventSourceType =
     'api' |
     'apiSelectAll' |
     'apiSelectAllFiltered' |
+    'apiSelectAllCurrentPage' |
     'checkboxSelected' |
     'rowClicked' |
     'rowDataChanged' |
@@ -105,7 +108,8 @@ export type SelectionEventSourceType =
     'selectableChanged' |
     'spacePressed' |
     'uiSelectAll' |
-    'uiSelectAllFiltered';
+    'uiSelectAllFiltered' |
+    'uiSelectAllCurrentPage';
 
 export interface SelectionChangedEvent<TData = any> extends AgGridEvent<TData> { 
     source: SelectionEventSourceType;
@@ -203,6 +207,8 @@ export interface RowDragEvent<TData = any> extends AgGridEvent<TData> {
     nodes: IRowNode<TData>[];
     /** The underlying mouse move event associated with the drag. */
     event: MouseEvent;
+    /** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */
+    eventPath?: EventTarget[];
     /** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */
     vDirection: string;
     /** The row index the mouse is dragging over or -1 if over no row. */
@@ -439,6 +445,8 @@ interface BaseRowEvent<TData> extends AgGridEvent<TData> {
     rowPinned: RowPinnedType;
     /** If event was due to browser event (eg click), this is the browser event */
     event?: Event | null;
+    /** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */
+    eventPath?: EventTarget[];
 }
 
 export interface RowEvent<TData = any> extends BaseRowEvent<TData> {

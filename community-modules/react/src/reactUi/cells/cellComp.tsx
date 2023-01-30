@@ -1,5 +1,5 @@
-import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _, ICellEditorComp, CssClassManager } from '@ag-grid-community/core';
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
+import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _, ICellEditorComp, CssClassManager, CellStyle } from '@ag-grid-community/core';
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
 import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
@@ -141,7 +141,7 @@ const CellComp = (props: {
     const [editDetails, setEditDetails ] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
 
-    const [userStyles, setUserStyles] = useState<any>();
+    const [userStyles, setUserStyles] = useState<CellStyle>();
 
     const [tabIndex, setTabIndex] = useState<number>();
     const [ariaDescribedBy, setAriaDescribedBy] = useState<string | undefined>();
@@ -332,7 +332,7 @@ const CellComp = (props: {
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
-            setUserStyles: styles => setUserStyles(styles),
+            setUserStyles: (styles: CellStyle) => setUserStyles(styles),
             getFocusableElement: () => eGui.current!,
             setTabIndex: tabIndex => setTabIndex(tabIndex),
             setRole: role => setRole(role),

@@ -1,10 +1,16 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
+
 export default forwardRef((props, ref) => {
     const getInitialValue = props => {
         let startValue = props.value;
 
-        if (props.charPress) {
+        const isBackspace = props.eventKey === KEY_BACKSPACE;
+        if (isBackspace) {
+            startValue = '';
+        } else if (props.charPress) {
             startValue = props.charPress;
         }
 
