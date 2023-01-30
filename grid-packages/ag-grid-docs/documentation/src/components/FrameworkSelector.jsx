@@ -9,9 +9,9 @@ import styles from './FrameworkSelector.module.scss';
 export default function FrameworkSelector({ data, currentFramework, isFullWidth, showSelectedFramework }) {
     return (
         <div
-            className={classnames('ag-styles', styles['frameworkSelector'], {
-                [styles['fullWidth']]: isFullWidth,
-                [styles['showSelected']]: showSelectedFramework,
+            className={classnames('ag-styles', styles.frameworkSelector, {
+                [styles.fullWidth]: isFullWidth,
+                [styles.showSelected]: showSelectedFramework,
             })}
         >
             {data.map((framework) => {
@@ -23,8 +23,8 @@ export default function FrameworkSelector({ data, currentFramework, isFullWidth,
                     <a
                         href={framework.url}
                         key={framework.name}
-                        className={classnames(styles['option'], {
-                            [styles['selected']]: isSelected,
+                        className={classnames(styles.option, {
+                            [styles.selected]: isSelected,
                         })}
                     >
                         <img src={fwLogos[framework.name]} alt={alt} />

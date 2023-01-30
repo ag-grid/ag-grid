@@ -1,6 +1,6 @@
 @use '../design-system' as *;
 
-.about-page {
+.aboutPage {
     margin-top: $size-6;
     margin-bottom: calc($size-6 * 4);
 
@@ -17,22 +17,22 @@
     gap: $size-2;
     margin-bottom: calc($size-6 * 2) !important; // !important for .ag-styles specificity
 
-    @media screen and (min-width: 660px) {
+    @media screen and (min-width: $breakpoint-about-small) {
         gap: $size-4;
     }
 
     > div {
         max-width: calc((100% - $size-2 * 1) / 2);
 
-        @media screen and (min-width: 660px) {
+        @media screen and (min-width: $breakpoint-about-small) {
             max-width: calc((100% - $size-4 * 2) / 3);
         }
 
-        @media screen and (min-width: 880px) {
+        @media screen and (min-width: $breakpoint-about-four-column) {
             max-width: calc((100% - $size-4 * 3) / 4);
         }
 
-        @media screen and (min-width: 1280px) {
+        @media screen and (min-width: $breakpoint-about-five-column) {
             max-width: calc((100% - $size-4 * 4) / 5);
         }
     }
@@ -53,7 +53,7 @@
     gap: $size-4;
     flex-direction: column;
 
-    @media screen and (min-width: 660px) {
+    @media screen and (min-width: $breakpoint-about-small) {
         flex-direction: row;
 
         > div {
