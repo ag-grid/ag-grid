@@ -1,8 +1,4 @@
-import {
-  AgCartesianSeriesTooltipRendererParams,
-  AgChart,
-  AgChartOptions,
-} from "ag-charts-community"
+import { AgCartesianSeriesTooltipRendererParams, AgChart, AgChartOptions } from "ag-charts-community"
 import { getData } from "./data"
 
 function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
