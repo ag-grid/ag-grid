@@ -1,0 +1,7 @@
+@use "../../design-system/" as *;
+
+.detailCellRenderer {
+    white-space: normal;
+    padding: $size-3;
+    font-size: $font-size-medium;
+}

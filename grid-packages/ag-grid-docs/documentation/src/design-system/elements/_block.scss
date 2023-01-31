@@ -1,0 +1,21 @@
+@use '../core' as *;
+
+ul.list-style-none,
+ol.list-style-none,
+.list-style-none > li ul,
+.list-style-none > li ol {
+    margin-bottom: unset;
+    padding-left: unset;
+    list-style: none;
+}
+
+pre {
+    --font-family: #{$monospace-font-family};
+}
+
+hr {
+    height: 2px;
+    border-radius: 1px;
+    background-color: var(--border-color);
+    border: 0;
+}

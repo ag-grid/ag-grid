@@ -1,0 +1,254 @@
+@use "sass:map";
+@use "../../design-system/" as *;
+
+$header-height: 64px;
+
+.header {
+    display: flex;
+    align-items: center;
+    position: relative;
+    background-color: var(--site-header-background);
+}
+
+.headerInner {
+    display: flex;
+    flex-wrap: wrap;
+
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        padding-left: 0 !important; // !important needed because of .ag-styles specificity
+        padding-right: 0 !important; // !important needed because of .ag-styles specificity
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        flex-wrap: unset;
+    }
+}
+
+.headerLogo {
+    display: block;
+    padding: $size-1;
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        margin-left: -$size-2 !important; // !important needed because of .ag-styles specificity
+    }
+}
+
+.mobileMenuButton {
+    --button-color: transparent;
+    --border-radius: 0;
+    --button-hover-color: #{rgba(map.get($abstract-colors, ag-grid-dark-blue), 0.6666)}; // needed for .ag-styles specificity
+
+    appearance: none;
+    flex-basis: content;
+    width: $header-height;
+    height: $header-height;
+    margin-left: auto !important; // !important for .ag-styles specificity
+    border: none;
+    transition: background-color 0.4s ease-in-out;
+
+    &[aria-expanded='true'],
+    &:hover[aria-expanded='true'] {
+        background-color: var(--site-nav-background);
+    }
+
+    svg {
+        position: relative;
+        left: 1px;
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        display: none;
+    }
+}
+
+.menuIcon {
+    g {
+        transition: transform 0.2s 0.2s;
+    }
+
+    rect {
+        fill: #fff;
+        transition: transform 0.2s;
+    }
+
+    :global(.middle) {
+        transition: opacity 0s 0.2s;
+    }
+
+    :global(.top) rect {
+        transform-origin: center 8px;
+    }
+
+    :global(.bottom) rect {
+        transform-origin: center 28px;
+    }
+
+    .mobileMenuButton[aria-expanded='true'] & {
+        g {
+            transition: transform 0.2s;
+        }
+
+        rect {
+            transition: transform 0.2s 0.2s;
+        }
+
+        :global(.top) {
+            transform: translateY(10px);
+        }
+
+        :global(.top) rect {
+            transform: rotate(45deg);
+        }
+
+        :global(.middle) {
+            opacity: 0;
+        }
+
+        :global(.bottom) {
+            transform: translateY(-10px);
+        }
+
+        :global(.bottom) rect {
+            transform: rotate(-45deg);
+        }
+    }
+}
+
+.nav {
+    &.collapse:not(.show) {
+        display: none;
+    }
+
+    &.collapsing {
+        position: relative;
+        height: 0;
+        overflow: hidden;
+        transition: height 0.35s ease-in-out;
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        display: block !important; // !important needed to override bootstrap
+    }
+}
+
+.nav {
+    --link-color: var(--white);
+    --link-hover-color: var(--white);
+
+    width: 100%;
+    margin-left: auto !important; // !important for .ag-styles specificity
+    background-color: var(--site-nav-background);
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        margin-right: -$size-3 !important; // !important for .ag-styles specificity
+        width: unset;
+        background-color: unset;
+    }
+}
+
+.navItemList {
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        display: flex;
+        height: $header-height;
+        align-items: center;
+    }
+}
+
+.navItem {
+    &:not(:last-child) {
+        border-bottom: 1px solid var(--site-header-background);
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        &:hover a::after {
+            opacity: 0.25;
+            transform: scaleX(1);
+        }
+
+        &.navItemActive a::after {
+            opacity: 0.5;
+            transform: scaleX(1);
+        }
+    }
+}
+
+.navLink {
+    --horizontal-padding: #{$size-2};
+
+    display: block;
+    position: relative;
+    padding: 10px 14px 11px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--link-color);
+
+    &:hover {
+        text-decoration: none;
+        color: var(--link-color);
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        padding-left: var(--horizontal-padding);
+        padding-right: var(--horizontal-padding);
+
+        &::after {
+            content: '';
+            position: absolute;
+            height: 3px;
+            bottom: 4px;
+            left: var(--horizontal-padding);
+            right: var(--horizontal-padding);
+            border-radius: 2px;
+            background-color: var(--link-color);
+            opacity: 0;
+            transform: scaleX(0);
+            transition: transform 0.33s ease-in-out, opacity 0.33s ease-in-out;
+        }
+    }
+
+    @media screen and (min-width: $breakpoint-size-header-medium) {
+        --horizontal-padding: #{$size-3};
+
+        font-size: 18px;
+    }
+}
+
+.github-item a {
+    position: relative;
+    padding-left: 48px;
+
+    &::after {
+        display: none;
+    }
+
+    svg {
+        position: absolute;
+        width: 26px;
+        top: 9px;
+        left: 14px;
+        border-radius: 13px;
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        padding-left: 24px;
+
+        &:hover svg {
+            box-shadow: 0 0 0 3px var(--site-header-background), 0 0 0 6px rgba(white, 0.3);
+        }
+
+        svg {
+            position: relative;
+            top: 0;
+            left: 0;
+            transition: box-shadow 0.25s ease-in-out;
+        }
+
+        span {
+            display: none;
+        }
+    }
+}

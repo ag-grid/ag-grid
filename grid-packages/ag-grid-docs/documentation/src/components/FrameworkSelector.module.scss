@@ -1,24 +1,175 @@
-.framework-selector {
-    composes: d-flex from global;
-    line-height: 3rem;
+@use '../design-system' as *;
 
-    &__icon {
-        height: 30px;
-        cursor: pointer;
+.frameworkSelector {
+    --height: 36px; // Match input height
+    --icon-size: #{$size-3};
+    --x-padding: 10px;
+
+    display: flex;
+    width: 100%;
+    border-radius: var(--border-radius);
+    background-color: var(--input-background-color);
+}
+
+.option {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    min-width: $size-6;
+    padding: calc((var(--height) - var(--icon-size)) / 2) var(--x-padding);
+    text-decoration: none;
+    outline: none;
+
+    &::after {
+        content: '';
+        position: absolute;
+        height: 2px;
+        bottom: -1px;
+        left: 5px;
+        right: 5px;
+        border-radius: 1px;
+        background-color: var(--input-primary-color);
+        opacity: 0;
+        transition: opacity $default-transition-timing;
     }
 
-    &__option {
-        composes: p-2 flex-grow-1 ml-2 from global;
+    img {
+        width: var(--icon-size);
+        height: var(--icon-size);
+    }
 
-        position: relative;
-        border: 1px solid $ag-light-grey;
-        border-radius: 5px;
-        height: 3rem;
-        line-height: 1rem;
+    span {
+        display: none;
+        margin-left: 4px;
+        font-size: var(--font-size);
+        color: #212529;
+        transition: opacity $default-transition-timing;
+    }
 
-        &--selected {
-            background-color: $primary;
-            box-shadow: inset 0 0 5px $ag-blue;
+    &:hover,
+    &:focus-visible {
+        text-decoration: none;
+    }
+}
+
+.frameworkSelector.showSelected {
+    border: 1px solid var(--border-color);
+}
+
+.frameworkSelector.showSelected .option {
+    width: 25%;
+
+    span {
+        opacity: 0.6666;
+    }
+
+    &:hover,
+    &:focus-visible {
+        &::after {
+            opacity: 0.5;
+        }
+
+        span {
+            opacity: 0.85;
+        }
+    }
+
+    &.selected {
+        span,
+        &::after,
+        &:hover::after,
+        &:focus-visible::after {
+            opacity: 1;
+        }
+    }
+
+    @media screen and (min-width: $breakpoint-fw-selector-show-selected-medium) {
+        width: unset;
+        padding: calc((var(--height) - var(--icon-size)) / 2) 10px;
+
+        &:first-child {
+            padding-left: calc(var(--x-padding) * 2);
+
+            &::after {
+                left: calc(var(--x-padding) * 1.5);
+            }
+        }
+
+        &:last-child {
+            padding-right: calc(var(--x-padding) * 2);
+
+            &::after {
+                right: calc(var(--x-padding) * 1.5);
+            }
+        }
+
+        span {
+            display: inline;
+        }
+    }
+}
+
+.frameworkSelector.fullWidth {
+    --height: #{$size-5};
+
+    min-width: 220px;
+    max-width: 420px;
+    border-radius: calc(var(--border-radius) * 2);
+
+    @media screen and (min-width: 740px) {
+        width: unset;
+        max-width: unset;
+    }
+
+    @media screen and (min-width: $breakpoint-fw-selector-full-width-large) {
+        --height: #{$size-7};
+        --icon-size: #{$size-5};
+        --font-size: #{$font-size-large};
+        --x-padding: 20px;
+    }
+}
+
+.frameworkSelector.fullWidth .option {
+    width: 20%;
+
+    &:hover::after,
+    &:focus-visible::after {
+        opacity: 1;
+    }
+
+    @media screen and (min-width: $breakpoint-fw-selector-full-width-medium) {
+        width: unset;
+        padding: calc((var(--height) - var(--icon-size)) / 2) var(--x-padding);
+
+        &:first-child {
+            padding-left: calc(var(--x-padding) * 2);
+
+            &::after {
+                left: calc(var(--x-padding) * 1.5);
+            }
+        }
+
+        &:last-child {
+            padding-right: calc(var(--x-padding) * 2);
+
+            &::after {
+                right: var(--x-padding);
+            }
+        }
+
+        span {
+            display: inline;
+        }
+    }
+
+    @media screen and (min-width: $breakpoint-fw-selector-full-width-large) {
+        &::after {
+            height: 3px;
+            border-radius: 1.5px;
+        }
+
+        span {
+            margin-left: $size-1;
         }
     }
 }

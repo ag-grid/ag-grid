@@ -1,0 +1,123 @@
+@use "sass:math";
+
+// Configuration
+// =============
+$css-variables-root: '.ag-styles' !default; // The root level where CSS variables are applied
+
+// Size constants
+// ==============
+$border-radius: 0.25em;
+
+// Transition contstants
+// =====================
+$default-transition-timing: 0.25s ease-in-out;
+
+// Size constants
+// ==============
+$size-1: 8px;
+$size-2: $size-1 * 2;
+$size-3: $size-1 * 3;
+$size-4: $size-1 * 4;
+$size-5: $size-1 * 5;
+$size-6: $size-1 * 6;
+
+$size-7: $size-1 * 8;
+$size-8: $size-1 * 12;
+$size-9: $size-1 * 18;
+$size-10: $size-1 * 26;
+
+$size-half: math.div($size-1, 2);
+
+// Layout constants
+// ================
+$max-page-width: 1400px;
+
+// Typographic constants
+// =====================
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+$monospace-font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
+
+$font-weight-normal: 400;
+$font-weight-thin: 300;
+$font-weight-bold: 600;
+
+$font-size-extra-small: math.div(12rem, 16); // convert px values to rems
+$font-size-small: math.div(14rem, 16); // convert px values to rems
+$font-size-medium: math.div(16rem, 16); // convert px values to rems
+$font-size-large: math.div(24rem, 16); // convert px values to rems
+$font-size-extra-large: math.div(36rem, 16); // convert px values to rems
+$font-size-massive: math.div(54rem, 16); // convert px values to rems
+$font-size-gigantic: math.div(82rem, 16); // convert px values to rems
+
+$line-height-tight: 1.25;
+$line-height-normal: 1.5;
+$line-height-loose: 1.75;
+
+// Color constants
+// ===========================================
+// Names from color-name.com
+$abstract-colors: (
+    // Brand (from logo)
+    'ag-grid-dark-blue': #003264,
+    'ag-grid-aqua': #55b4c8,
+    'ag-grid-orange': #ff8c00,
+    'ag-grid-red': #ff0000,
+    // Blues
+    'dark-cerulean-blue': #00407f,
+    'medium-electric-blue': #044c93,
+    'azure-blue': #007bff,
+    'sky-blue': #80bdff,
+    'water-blue': #cce5ff,
+    'light-water-blue': #d9f0fa,
+    'bright-blue-gray': #eaf0f6,
+    'ghost-blue': #f9fcff,
+    // Grays
+    'black': #000000,
+    'dark-gunmetal-gray': #212529,
+    'auro-metal': #6c757d,
+    'ag-grid-grey': #b4bebe,
+    'dull-light-gray': #d0d4d6,
+    'light-gray': #ced4da,
+    'platinum-gray': #dee2e6,
+    'ghost-white': #f8f9fa,
+    'white': #ffffff,
+    // Other
+    'cerise-pink': #e83e8c
+);
+
+// Semantic colors based on abstract colors
+$semantic-colors: (
+    // Text
+    'text-color': dark-gunmetal-gray,
+    'secondary-text-color': auro-metal,
+    // Border
+    'border-color': light-gray,
+    // Link
+    'link-color': azure-blue,
+    'link-hover-color': ag-grid-orange,
+    // Button
+    'button-text-color': white,
+    'button-color': azure-blue,
+    'button-hover-color': medium-electric-blue,
+    'button-active-color': dark-cerulean-blue,
+    // Inline
+    'inline-element-background-color': ghost-white,
+    // Code
+    'code-text-color': cerise-pink,
+    // Input
+    'input-background-color': white,
+    'input-secondary-background-color': ag-grid-grey,
+    'input-secondary-border-color': auro-metal,
+    'input-primary-color': azure-blue,
+    'input-focus-border-color': sky-blue,
+    'input-focus-box-shadow-color': water-blue,
+    // Table
+    'table-odd-row-background-color': ghost-blue,
+    // Site header
+    'site-header-background': medium-electric-blue,
+    'site-nav-background': ag-grid-dark-blue,
+    // Toolbar
+    'toolbar-background': bright-blue-gray
+);

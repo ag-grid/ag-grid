@@ -1,5 +1,5 @@
 $red: #e11f22;
-$red-highlight: #EB1C17;
+$red-highlight: #eb1c17;
 
 $blue-1: #00407f;
 $blue-2: #0084e7;
@@ -12,12 +12,11 @@ $grey-2: #a3a4a5;
 $grey-3: #c2c2c2;
 $grey-4: #ebebeb;
 
-
 $offwhite: $blue-5;
 $white: #ffffff;
 
-$yellow: #FFFBD9;
-$teal: #00E7B1;
+$yellow: #fffbd9;
+$teal: #00e7b1;
 
 $max-width: 1400px;
 
@@ -25,13 +24,13 @@ $enable-gradients: true;
 $enable-shadows: true;
 
 $primary: $blue-2;
-$secondary: #A3A4A5;
+$secondary: #a3a4a5;
 
 $theme-colors: (
-    "primary": $primary,
-    "secondary": $secondary,
-    "darkblue": $blue-1,
-    "lightgrey": $grey-4
+    'primary': $primary,
+    'secondary': $secondary,
+    'darkblue': $blue-1,
+    'lightgrey': $grey-4,
 );
 
 $border-color: #dee2e6;
@@ -51,10 +50,4 @@ body {
     background-repeat: no-repeat;
     content: 'e';
     margin-left: 3px;
-}
-
-.enterprise-icon {
-    @include enterprise-icon;
-    vertical-align: baseline;
-    transform: translatey(2px);
 }

@@ -1,0 +1,49 @@
+@use "../../design-system/" as ds;
+
+.showHideButton {
+    --button-text-color: var(--azure-blue);
+    --button-color: var(--bright-blue-gray);
+    --button-active-color: var(--bright-blue-gray);
+    --button-hover-color: var(--bright-blue-gray);
+
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: ds.$size-6;
+    gap: ds.$size-1;
+    text-align: left;
+    font-weight: ds.$font-weight-bold;
+    border: 1px solid var(--border-color) !important; // !important for .ag-styles specificity
+    transition: color ds.$default-transition-timing !important; // !important for .ag-styles specificity
+
+    &:hover {
+        --button-text-color: var(--medium-electric-blue);
+    }
+
+    .isOpen & {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+
+        svg {
+            transform: rotate(90deg);
+        }
+    }
+
+    svg {
+        width: 20px;
+        height: 20px;
+        fill: var(--button-text-color);
+        transition: fill ds.$default-transition-timing, transform ds.$default-transition-timing;
+    }
+}
+
+.content {
+    $border: 1px solid var(--border-color);
+
+    padding: ds.$size-2;
+    border-bottom-right-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+    border-right: $border;
+    border-bottom: $border;
+    border-left: $border;
+}
