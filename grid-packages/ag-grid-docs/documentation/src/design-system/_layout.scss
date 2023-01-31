@@ -1,0 +1,17 @@
+@use './core' as *;
+
+.page-margin {
+    --horizontal-margin: 6vw;
+
+    width: 100%;
+    max-width: calc(var(--max-page-width) + var(--horizontal-margin) * 2);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: $size-2;
+    padding-right: $size-2;
+
+    @media screen and (min-width: $breakpoint-page-margin-padding) {
+        padding-left: var(--horizontal-margin);
+        padding-right: var(--horizontal-margin);
+    }
+}

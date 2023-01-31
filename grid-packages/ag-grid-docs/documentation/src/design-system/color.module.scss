@@ -1,0 +1,12 @@
+@use 'core' as *;
+
+// Export colors for JavaScript
+:export {
+    @each $key, $value in $abstract-colors {
+        abstract-color-#{unquote($key)}: $value;
+    }
+
+    @each $key, $value in $semantic-colors {
+        semantic-color-#{unquote($key)}: $value;
+    }
+}

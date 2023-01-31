@@ -1,27 +1,37 @@
-import React from 'react';
 import classnames from 'classnames';
 import fwLogos from 'images/fw-logos';
-import supportedFrameworks from 'utils/supported-frameworks';
+import React from 'react';
 import styles from './FrameworkSelector.module.scss';
 
-/**
- * This is shown in the header in the top right, and is used to choose which framework the user wishes to see for the
- * documentation.
- */
-export default function FrameworkSelector({ frameworks, path, currentFramework }) {
-    if (!currentFramework) { return null; }
+// This is shown on the homepage, and in the top right of the documentation pages.
+// It is used to allow users to choose which framework they wish to see documentation for.
 
-    return <div className={styles['framework-selector']}>
-        Framework:
-        {supportedFrameworks
-            .filter(f => !frameworks || frameworks.includes(f))
-            .map(framework => {
-                const isSelected = framework === currentFramework;
-                const frameworkCapitalised = framework.charAt(0).toUpperCase() + framework.slice(1);
-                const alt = `${frameworkCapitalised} Data Grid`;
-                return <a href={path.replace(`/${currentFramework}-`, `/${framework}-`)} key={framework} className={classnames(styles['framework-selector__option'], { [styles['framework-selector__option--selected']]: isSelected })}>
-                    <img src={fwLogos[framework]} alt={alt} className={styles['framework-selector__icon']} style={{height: 30, width: 30}} />
-                </a>;
+export default function FrameworkSelector({ data, currentFramework, isFullWidth, showSelectedFramework }) {
+    return (
+        <div
+            className={classnames('ag-styles', styles.frameworkSelector, {
+                [styles.fullWidth]: isFullWidth,
+                [styles.showSelected]: showSelectedFramework,
             })}
-    </div>;
+        >
+            {data.map((framework) => {
+                const isSelected = showSelectedFramework && framework.name === currentFramework;
+                const frameworkCapitalised = framework.name.charAt(0).toUpperCase() + framework.name.slice(1);
+                const alt = `${frameworkCapitalised} Data Grid`;
+
+                return (
+                    <a
+                        href={framework.url}
+                        key={framework.name}
+                        className={classnames(styles.option, {
+                            [styles.selected]: isSelected,
+                        })}
+                    >
+                        <img src={fwLogos[framework.name]} alt={alt} />
+                        <span>{frameworkCapitalised}</span>
+                    </a>
+                );
+            })}
+        </div>
+    );
 }

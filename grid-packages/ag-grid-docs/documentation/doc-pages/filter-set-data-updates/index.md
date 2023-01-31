@@ -3,7 +3,7 @@ title: "Set Filter - Data Updates"
 enterprise: true
 ---
 
-This section describes how changing data through [Cell Editing](/cell-editing/) and the application [Updating Data](/data-update/) impacts the Set Filter's values. This is only applicable when the Set Filter is taking its values form the grid's data.
+This section describes how changing data through [Cell Editing](/cell-editing/) and the application [Updating Data](/data-update/) impacts the Set Filter's values. This is only applicable when the Set Filter is taking its values from the grid's data.
 
 ## Row / Cell Updates
 

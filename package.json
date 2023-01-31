@@ -54,6 +54,7 @@
     "docs": "cd grid-packages/ag-grid-docs && npm start",
     "docs-core-only": "cd grid-packages/ag-grid-docs && npm run serve-core-only",
     "docs-charts-core-only": "cd grid-packages/ag-grid-docs && npm run serve-charts-core-only",
+    "docs-serve-website-only": "cd grid-packages/ag-grid-docs && npm run serve-website-only",
     "docs-clean": "cd grid-packages/ag-grid-docs/documentation && npm run clean",
     "docsWithFormatting": "cd grid-packages/ag-grid-docs && npm run serve-with-formatting",
     "initialUpdateAndRebuild": "npm i && npm run bootstrap-single-thread && npm run build",
