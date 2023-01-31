@@ -421,8 +421,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._title;
     }
 
-    private setTickInterval<S>(scale: S, interval?: TickType<S>) {
+    private setTickInterval<S extends Scale<D, number>, D = any>(scale: S, interval?: any) {
         if (!interval) {
+            return;
+        }
+
+        if (typeof interval === 'number') {
+            scale.interval = interval;
             return;
         }
 
@@ -430,21 +435,20 @@ export class Axis<S extends Scale<D, number>, D = any> {
             scale.interval = interval;
             return;
         }
-
-        if (scale instanceof ContinuousScale && typeof interval === 'number') {
-            scale.interval = interval;
-            return;
-        }
     }
 
-    private setTickCount<S>(scale: S, count?: TickType<S>) {
+    private setTickCount<S extends Scale<D, number>, D = any>(scale: S, count?: any) {
         if (!(count && scale instanceof ContinuousScale)) {
             return;
         }
+
+        if (typeof count === 'number') {
+            scale.tickCount = count;
+            return;
+        }
+
         if (scale instanceof TimeScale && count instanceof TimeInterval) {
             this.setTickInterval(scale, count);
-        } else if (typeof count === 'number') {
-            scale.tickCount = count;
         }
     }
 
@@ -543,10 +547,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const nice = this.nice;
         scale.domain = this.dataDomain;
+
+        this.setTickInterval(scale, this.tick.interval);
+
         if (scale instanceof ContinuousScale) {
             scale.nice = nice;
             this.setTickCount(scale, this.tick.count);
-            this.setTickInterval(scale, this.tick.interval);
             scale.update();
         }
 

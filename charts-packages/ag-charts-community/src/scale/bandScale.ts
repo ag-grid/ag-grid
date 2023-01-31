@@ -10,8 +10,10 @@ function clamp(x: number, min: number, max: number) {
 export class BandScale<D> implements Scale<D, number> {
     readonly type = 'band';
 
+    interval?: number;
+
     private cache: any = null;
-    private cacheProps: string[] = ['_domain', 'range', '_paddingInner', '_paddingOuter', 'round'];
+    private cacheProps: string[] = ['_domain', 'range', '_paddingInner', '_paddingOuter', 'round', 'interval'];
     private didChange() {
         const { cache } = this;
         const didChange = !cache || this.cacheProps.some((p) => this[p as keyof BandScale<any>] !== cache[p]);
@@ -72,7 +74,8 @@ export class BandScale<D> implements Scale<D, number> {
 
     ticks(): D[] {
         this.refresh();
-        return this._domain;
+        const { interval = 1 } = this;
+        return this._domain.filter((_, i) => i % interval === 0);
     }
 
     convert(d: D): number {
