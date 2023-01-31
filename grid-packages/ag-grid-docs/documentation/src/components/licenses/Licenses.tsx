@@ -50,7 +50,7 @@ const LICENSE_DATA: LicenseData[] = [
 ];
 
 const LicensePrice = (props: LicenseData) => {
-    const { className, image, name, subHeading, priceFullDollars, pricePer } = props;
+    const { image, name, subHeading, priceFullDollars, pricePer } = props;
 
     return (
         <>
