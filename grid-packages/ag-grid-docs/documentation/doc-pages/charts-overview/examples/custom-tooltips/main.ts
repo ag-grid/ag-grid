@@ -1,7 +1,5 @@
-import { getData } from "./data";
-
-import { AgCartesianSeriesTooltipRendererParams } from "ag-charts-community"
-import { AgChartOptions, AgChart } from "ag-charts-community"
+import { AgCartesianSeriesTooltipRendererParams, AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
   var formatThousands = function (value: number) {
@@ -11,14 +9,14 @@ function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
   var tooltipHtml = [
     '<div class="my-tooltip">',
     '<span class="my-tooltip__title" style="color: ' +
-    params.color +
-    '">' +
-    params.yName,
+      params.color +
+      '">' +
+      params.yName,
     "(" +
-    params.datum[params.xKey] +
-    "):</span> " +
-    formatThousands(params.datum[params.yKey]) +
-    " tonnes",
+      params.datum[params.xKey] +
+      "):</span> " +
+      formatThousands(params.datum[params.yKey]) +
+      " tonnes",
     "</div>",
   ]
 
@@ -121,7 +119,7 @@ const options: AgChartOptions = {
         text: "Waste collected (tonnes)",
       },
       label: {
-        formatter: (params) => {
+        formatter: params => {
           return params.value / 1000 + "k"
         },
       },

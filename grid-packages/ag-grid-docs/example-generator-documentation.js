@@ -603,7 +603,8 @@ function addPackageJson(type, framework, importType, basePath) {
     };
 
     if (framework === 'angular') {
-        addDependency('@angular/core', "^13");
+        addDependency('@angular/core', "^14");
+        addDependency('@angular/platform-browser', "^14");
     }
 
     if (framework === 'reactFunctionalTs') {
@@ -632,6 +633,9 @@ function addPackageJson(type, framework, importType, basePath) {
         }
         if (type === 'chart') {
             addDependency('ag-charts-community', agChartsVersion);
+            if (framework === 'angular') {
+                addDependency('ag-charts-angular', agChartsAngularVersion);
+            }
         }
     }
 
