@@ -21,6 +21,9 @@ export class LinearScale extends ContinuousScale {
         const { interval } = this;
 
         if (interval !== undefined) {
+            if (this.isDenseInterval({ start: d0, stop: d1, interval })) {
+                return [];
+            }
             return range(d0, d1, interval);
         }
 

@@ -305,11 +305,7 @@ export class TimeScale extends ContinuousScale {
             return interval.range(new Date(start), new Date(stop));
         }
 
-        const domain = stop - start;
-        const range = this.range[1] - this.range[0];
-        const stepCount = domain / Math.max(interval, 1);
-        if (stepCount >= range) {
-            // Add a warning
+        if (this.isDenseInterval({ start, stop, interval })) {
             return [];
         }
 
