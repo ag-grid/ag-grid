@@ -302,7 +302,7 @@ export class TimeScale extends ContinuousScale {
         }
 
         if (interval instanceof TimeInterval) {
-            return interval.range(new Date(start), new Date(stop));
+            return interval.range(new Date(start - 1), new Date(stop + 1));
         }
 
         if (this.isDenseInterval({ start, stop, interval })) {
@@ -314,7 +314,7 @@ export class TimeScale extends ContinuousScale {
         );
 
         if (timeInterval) {
-            return timeInterval[0].range(new Date(start), new Date(stop));
+            return timeInterval[0].range(new Date(start - 1), new Date(stop + 1));
         }
 
         let date = new Date(start);
