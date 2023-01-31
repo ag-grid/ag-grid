@@ -19,7 +19,6 @@ import { createId } from '../util/id';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import {
     BOOLEAN,
-    FUNCTION,
     NUMBER,
     OPT_BOOLEAN,
     OPT_FONT_STYLE,
