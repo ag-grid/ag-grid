@@ -378,7 +378,7 @@ describe('update', () => {
             data: revenueProfitData,
             series: [
                 {
-                    xKey: 'blah',
+                    xKey: 'profit',
                     yKey: 'revenue',
                 },
             ],
@@ -418,7 +418,7 @@ describe('update', () => {
             data: revenueProfitData,
             series: [
                 {
-                    xKey: 'blah',
+                    xKey: 'profit',
                     yKey: 'revenue',
                 },
             ],

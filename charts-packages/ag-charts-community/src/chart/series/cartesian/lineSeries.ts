@@ -187,6 +187,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
             });
         }
 
+        this.validateXYData(data, xAxis, yAxis, xData, yData, 1);
+
         this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData), xAxis) : xData;
         this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData), yAxis) : yData;
     }
