@@ -447,6 +447,10 @@ export function findAllAccessedProperties(node) {
         } else {
             properties.push(exp.getText())
         }
+        if (ts.isCallExpression(node) && node.arguments) {
+            // Check arguments
+            properties = [...properties, ...findAllAccessedProperties(node.arguments)];
+        }
     }
     else if (ts.isBinaryExpression(node)) {
         // In this function we set swimmingHeight but are not dependent on it,
@@ -479,11 +483,21 @@ export function findAllAccessedProperties(node) {
             properties = [...properties, ...findAllAccessedProperties(node.initializer)];
         }
     }
+    else if (ts.isExpressionStatement(node)) {
+        if (node.expression) {
+            properties = [...properties, ...findAllAccessedProperties(node.expression)];
+        }
+    }
     else if (ts.isClassDeclaration(node)) {
         // Do nothing for Class declarations as this is likely a cell renderer setup
     }
     else if (ts.isTypeReferenceNode(node)) {
         // Do nothing for Type references
+    }
+    else if (node instanceof Array) {
+        node.forEach(element => {
+            properties = [...properties, ...findAllAccessedProperties(element)];
+        });
     }
     else {
         // Recurse down the tree looking for more accessed properties

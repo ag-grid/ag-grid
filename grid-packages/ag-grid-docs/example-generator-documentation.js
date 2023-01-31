@@ -4,6 +4,7 @@ const sucrase = require("sucrase");
 
 const agGridVersion = "^" + require('../../community-modules/core/package.json').version;
 const agChartsVersion = "^" + require('../../charts-packages/ag-charts-community/package.json').version;
+const agChartsAngularVersion = "^" + require('../../charts-packages/ag-charts-angular/package.json').version;
 const agGridEnterpriseVersion = "^" + require('../../enterprise-modules/core/package.json').version;
 const agGridReactVersion = "^" + require('../../community-modules/react/package.json').version;
 const agGridAngularVersion = "^" + require('../../community-modules/angular/package.json').version;
@@ -648,8 +649,8 @@ function getGeneratorCode(prefix) {
 
     let vanillaToReactFunctional = null;
     let vanillaToReactFunctionalTs = null;
+    vanillaToReactFunctional = require(`${prefix}vanilla-to-react-functional.ts`).vanillaToReactFunctional;
     if (gridExamples) {
-        vanillaToReactFunctional = require(`${prefix}vanilla-to-react-functional.ts`).vanillaToReactFunctional;
         vanillaToReactFunctionalTs = require(`${prefix}vanilla-to-react-functional-ts.ts`).vanillaToReactFunctionalTs;
     }
 
