@@ -2593,16 +2593,35 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "source": "string | undefined",
-      "key": "string | undefined",
-      "previousKey": "string | undefined",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any",
       "type": "string"
     },
     "docs": {
-      "key": "/** Key for tool panel that is now visible, or `undefined` if hidden  */",
-      "previousKey": "/** Key for tool panel that was previously visible, or `undefined` if was hidden  */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "InternalToolPanelVisibleChangedEvent": {
+    "meta": {
+      "typeParams": ["TData = any"],
+      "doc": "/** \n * This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,\n * and the original ToolPanelVisibleChangedEvent will be dropped\n */"
+    },
+    "type": {
+      "source": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'",
+      "key": "string",
+      "visible": "boolean",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "type": "string"
+    },
+    "docs": {
+      "key": "/** Key of tool panel. */",
+      "visible": "/** True if now visible; false if now hidden. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -8950,9 +8969,9 @@
       "setDisplayed(show: boolean)": "void",
       "setSideBarPosition(position?: 'left' | 'right')": "void",
       "isToolPanelShowing()": "boolean",
-      "openToolPanel(key: string)": "void",
+      "openToolPanel(key: string, source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api')": "void",
       "getToolPanelInstance(key: string)": "IToolPanel | undefined",
-      "close()": "void",
+      "close(source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api')": "void",
       "openedItem()": "string | null",
       "isDisplayed()": "boolean",
       "getDef()": "SideBarDef | undefined"

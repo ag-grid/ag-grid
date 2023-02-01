@@ -5375,13 +5375,38 @@
     "source": {
       "type": { "returnType": "string | undefined", "optional": false }
     },
-    "key": {
-      "description": "/** Key for tool panel that is now visible, or `undefined` if hidden  */",
-      "type": { "returnType": "string | undefined", "optional": false }
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
     },
-    "previousKey": {
-      "description": "/** Key for tool panel that was previously visible, or `undefined` if was hidden  */",
-      "type": { "returnType": "string | undefined", "optional": false }
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "InternalToolPanelVisibleChangedEvent": {
+    "source": {
+      "type": {
+        "returnType": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'",
+        "optional": false
+      }
+    },
+    "key": {
+      "description": "/** Key of tool panel. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "visible": {
+      "description": "/** True if now visible; false if now hidden. */",
+      "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
@@ -16185,7 +16210,10 @@
     },
     "openToolPanel": {
       "type": {
-        "arguments": { "key": "string" },
+        "arguments": {
+          "key": "string",
+          "source?": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'"
+        },
         "returnType": "void",
         "optional": false
       }
@@ -16198,7 +16226,13 @@
       }
     },
     "close": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
+      "type": {
+        "arguments": {
+          "source?": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'"
+        },
+        "returnType": "void",
+        "optional": false
+      }
     },
     "openedItem": {
       "type": {
