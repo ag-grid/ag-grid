@@ -1077,14 +1077,14 @@
     }
   },
   "getChartImageDataURL": {
-    "description": "/** Returns a string containing the requested data URL which contains a representation of the chart image. */",
+    "description": "/** Returns a base64-encoded image data URL for the referenced chartId. */",
     "type": {
       "arguments": { "params": "GetChartImageDataUrlParams" },
       "returnType": "string | undefined"
     }
   },
   "downloadChart": {
-    "description": "/** Downloads the chart image in the browser. */",
+    "description": "/** Starts a browser-based image download for the referenced chartId. */",
     "type": { "arguments": { "params": "ChartDownloadParams" } }
   },
   "openChartToolPanel": {

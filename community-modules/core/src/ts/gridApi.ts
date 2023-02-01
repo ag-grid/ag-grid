@@ -1513,14 +1513,14 @@ export class GridApi<TData = any> {
         }
     }
 
-    /** Returns a string containing the requested data URL which contains a representation of the chart image. */
+    /** Returns a base64-encoded image data URL for the referenced chartId. */
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL')) {
             return this.chartService.getChartImageDataURL(params);
         }
     }
 
-    /** Downloads the chart image in the browser. */
+    /** Starts a browser-based image download for the referenced chartId. */
     public downloadChart(params: ChartDownloadParams) {
         if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart')) {
             return this.chartService.downloadChart(params);
