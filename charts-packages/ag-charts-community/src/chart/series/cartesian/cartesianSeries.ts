@@ -8,7 +8,9 @@ import {
 } from '../series';
 import { ChartAxis, ChartAxisDirection } from '../../chartAxis';
 import { SeriesMarker } from '../seriesMarker';
+import { doOnce } from '../../../util/function';
 import { isContinuous, isDiscrete } from '../../../util/value';
+import { ContinuousScale } from '../../../scale/continuousScale';
 import { Path } from '../../../scene/shape/path';
 import { Selection } from '../../../scene/selection';
 import { Marker } from '../../marker/marker';
@@ -558,6 +560,45 @@ export abstract class CartesianSeries<
 
     getLabelData(): PointLabelDatum[] {
         return [];
+    }
+
+    protected isAnySeriesVisible() {
+        for (const visible of this.seriesItemEnabled.values()) {
+            if (visible) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected validateXYData(
+        data: any[],
+        xAxis: ChartAxis,
+        yAxis: ChartAxis,
+        xData: number[],
+        yData: any[],
+        yDepth = 1
+    ) {
+        if (!xAxis || !yAxis || data.length === 0 || (this.seriesItemEnabled.size > 0 && !this.isAnySeriesVisible())) {
+            return true;
+        }
+
+        const hasNumber = (items: any[], depth = 0, maxDepth = 0): boolean => {
+            return items.some(
+                depth === maxDepth ? (y) => isContinuous(y) : (arr) => hasNumber(arr, depth + 1, maxDepth)
+            );
+        };
+
+        const isContinuousX = xAxis.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis.scale instanceof ContinuousScale;
+        if ((isContinuousX && !hasNumber(xData)) || (isContinuousY && !hasNumber(yData, 0, yDepth - 1))) {
+            doOnce(
+                () => console.warn('AG Charts - The number axis has no numeric data supplied.'),
+                'series has no numeric data on number axis'
+            );
+            return false;
+        }
+        return true;
     }
 
     protected async updatePaths(opts: {
