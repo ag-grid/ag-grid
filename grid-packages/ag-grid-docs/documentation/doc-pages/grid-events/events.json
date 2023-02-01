@@ -116,25 +116,25 @@
                 "url": "/cell-editing-full-row/"
             }
         },
-        "undoStart": {
+        "undoStarted": {
             "more": {
                 "name": "Undo / Redo Events",
                 "url": "/undo-redo-edits/#undo--redo-events"
             }
         },
-        "undoEnd": {
+        "undoEnded": {
             "more": {
                 "name": "Undo / Redo Events",
                 "url": "/undo-redo-edits/#undo--redo-events"
             }
         },
-        "redoStart": {
+        "redoStarted": {
             "more": {
                 "name": "Undo / Redo Events",
                 "url": "/undo-redo-edits/#undo--redo-events"
             }
         },
-        "redoEnd": {
+        "redoEnded": {
             "more": {
                 "name": "Undo / Redo Events",
                 "url": "/undo-redo-edits/#undo--redo-events"

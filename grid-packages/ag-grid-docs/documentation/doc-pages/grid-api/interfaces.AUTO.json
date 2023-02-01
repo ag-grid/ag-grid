@@ -1844,10 +1844,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "void",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "void",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "void",
-      "onUndoStart?(event: UndoStartEvent<TData>)": "void",
-      "onUndoEnd?(event: UndoEndEvent<TData>)": "void",
-      "onRedoStart?(event: RedoStartEvent<TData>)": "void",
-      "onRedoEnd?(event: RedoEndEvent<TData>)": "void",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "void",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -2215,10 +2215,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "/** Editing a cell has stopped. */",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
-      "onUndoStart?(event: UndoStartEvent<TData>)": "/** Undo operation has started. */",
-      "onUndoEnd?(event: UndoEndEvent<TData>)": "/** Undo operation has ended. */",
-      "onRedoStart?(event: RedoStartEvent<TData>)": "/** Redo operation has started. */",
-      "onRedoEnd?(event: RedoEndEvent<TData>)": "/** Redo operation has ended. */",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "/** Undo operation has started. */",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
@@ -3279,7 +3279,7 @@
       "type": "/** Event identifier */"
     }
   },
-  "UndoStartEvent": {
+  "UndoStartedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "source": "'api' | 'ui'",
@@ -3296,7 +3296,7 @@
       "type": "/** Event identifier */"
     }
   },
-  "UndoEndEvent": {
+  "UndoEndedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "source": "'api' | 'ui'",
@@ -3315,7 +3315,7 @@
       "type": "/** Event identifier */"
     }
   },
-  "RedoStartEvent": {
+  "RedoStartedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "source": "'api' | 'ui'",
@@ -3332,7 +3332,7 @@
       "type": "/** Event identifier */"
     }
   },
-  "RedoEndEvent": {
+  "RedoEndedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "source": "'api' | 'ui'",
@@ -11980,10 +11980,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "void",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "void",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "void",
-      "onUndoStart?(event: UndoStartEvent<TData>)": "void",
-      "onUndoEnd?(event: UndoEndEvent<TData>)": "void",
-      "onRedoStart?(event: RedoStartEvent<TData>)": "void",
-      "onRedoEnd?(event: RedoEndEvent<TData>)": "void",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "void",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -12352,10 +12352,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "/** Editing a cell has stopped. */",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
-      "onUndoStart?(event: UndoStartEvent<TData>)": "/** Undo operation has started. */",
-      "onUndoEnd?(event: UndoEndEvent<TData>)": "/** Undo operation has ended. */",
-      "onRedoStart?(event: RedoStartEvent<TData>)": "/** Redo operation has started. */",
-      "onRedoEnd?(event: RedoEndEvent<TData>)": "/** Redo operation has ended. */",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "/** Undo operation has started. */",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
@@ -12735,10 +12735,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "void",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "void",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "void",
-      "onUndoStart?(event: UndoStartEvent<TData>)": "void",
-      "onUndoEnd?(event: UndoEndEvent<TData>)": "void",
-      "onRedoStart?(event: RedoStartEvent<TData>)": "void",
-      "onRedoEnd?(event: RedoEndEvent<TData>)": "void",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "void",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -13107,10 +13107,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "/** Editing a cell has stopped. */",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
-      "onUndoStart?(event: UndoStartEvent<TData>)": "/** Undo operation has started. */",
-      "onUndoEnd?(event: UndoEndEvent<TData>)": "/** Undo operation has ended. */",
-      "onRedoStart?(event: RedoStartEvent<TData>)": "/** Redo operation has started. */",
-      "onRedoEnd?(event: RedoEndEvent<TData>)": "/** Redo operation has ended. */",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "/** Undo operation has started. */",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
@@ -13492,10 +13492,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "void",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "void",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "void",
-      "onUndoStart?(event: UndoStartEvent<TData>)": "void",
-      "onUndoEnd?(event: UndoEndEvent<TData>)": "void",
-      "onRedoStart?(event: RedoStartEvent<TData>)": "void",
-      "onRedoEnd?(event: RedoEndEvent<TData>)": "void",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "void",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -13864,10 +13864,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "/** Editing a cell has stopped. */",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
-      "onUndoStart?(event: UndoStartEvent<TData>)": "/** Undo operation has started. */",
-      "onUndoEnd?(event: UndoEndEvent<TData>)": "/** Undo operation has ended. */",
-      "onRedoStart?(event: RedoStartEvent<TData>)": "/** Redo operation has started. */",
-      "onRedoEnd?(event: RedoEndEvent<TData>)": "/** Redo operation has ended. */",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "/** Undo operation has started. */",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",

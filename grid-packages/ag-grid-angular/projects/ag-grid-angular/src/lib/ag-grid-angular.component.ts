@@ -123,8 +123,8 @@ import {
     ProcessHeaderForExportParams,
     ProcessRowParams,
     RangeSelectionChangedEvent,
-    RedoEndEvent,
-    RedoStartEvent,
+    RedoEndedEvent,
+    RedoStartedEvent,
     RowClassParams,
     RowClassRules,
     RowClickedEvent,
@@ -154,8 +154,8 @@ import {
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
     TreeDataDisplayType,
-    UndoEndEvent,
-    UndoStartEvent,
+    UndoEndedEvent,
+    UndoStartedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent
@@ -1030,13 +1030,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
     @Output() public rowEditingStopped: EventEmitter<RowEditingStoppedEvent<TData>> = new EventEmitter<RowEditingStoppedEvent<TData>>();
     /** Undo operation has started.     */
-    @Output() public undoStart: EventEmitter<UndoStartEvent<TData>> = new EventEmitter<UndoStartEvent<TData>>();
+    @Output() public undoStarted: EventEmitter<UndoStartedEvent<TData>> = new EventEmitter<UndoStartedEvent<TData>>();
     /** Undo operation has ended.     */
-    @Output() public undoEnd: EventEmitter<UndoEndEvent<TData>> = new EventEmitter<UndoEndEvent<TData>>();
+    @Output() public undoEnded: EventEmitter<UndoEndedEvent<TData>> = new EventEmitter<UndoEndedEvent<TData>>();
     /** Redo operation has started.     */
-    @Output() public redoStart: EventEmitter<RedoStartEvent<TData>> = new EventEmitter<RedoStartEvent<TData>>();
+    @Output() public redoStarted: EventEmitter<RedoStartedEvent<TData>> = new EventEmitter<RedoStartedEvent<TData>>();
     /** Redo operation has ended.     */
-    @Output() public redoEnd: EventEmitter<RedoEndEvent<TData>> = new EventEmitter<RedoEndEvent<TData>>();
+    @Output() public redoEnded: EventEmitter<RedoEndedEvent<TData>> = new EventEmitter<RedoEndedEvent<TData>>();
     /** Filter has been opened.     */
     @Output() public filterOpened: EventEmitter<FilterOpenedEvent<TData>> = new EventEmitter<FilterOpenedEvent<TData>>();
     /** Filter has been modified and applied.     */

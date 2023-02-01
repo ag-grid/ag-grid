@@ -5,11 +5,11 @@ import {
     CellEditingStoppedEvent,
     CellValueChangedEvent,
     FillEndEvent,
-    RedoEndEvent,
-    RedoStartEvent,
+    RedoEndedEvent,
+    RedoStartedEvent,
     RowEditingStartedEvent,
-    UndoEndEvent,
-    UndoStartEvent,
+    UndoEndedEvent,
+    UndoStartedEvent,
 } from '../events';
 import { FocusService } from "../focusService";
 import { IRowModel } from "../interfaces/iRowModel";
@@ -126,16 +126,16 @@ export class UndoRedoService extends BeanStub {
     }
 
     public undo(source: 'api' | 'ui'): void {
-        const startEvent: WithoutGridCommon<UndoStartEvent> = {
-            type: Events.EVENT_UNDO_START,
+        const startEvent: WithoutGridCommon<UndoStartedEvent> = {
+            type: Events.EVENT_UNDO_STARTED,
             source
         }
         this.eventService.dispatchEvent(startEvent);
 
         const operationPerformed = this.undoRedo(this.undoStack, this.redoStack, 'initialRange', 'oldValue', 'undo');
 
-        const endEvent: WithoutGridCommon<UndoEndEvent> = {
-            type: Events.EVENT_UNDO_END,
+        const endEvent: WithoutGridCommon<UndoEndedEvent> = {
+            type: Events.EVENT_UNDO_ENDED,
             source,
             operationPerformed
         };
@@ -143,16 +143,16 @@ export class UndoRedoService extends BeanStub {
     }
 
     public redo(source: 'api' | 'ui'): void {
-        const startEvent: WithoutGridCommon<RedoStartEvent> = {
-            type: Events.EVENT_REDO_START,
+        const startEvent: WithoutGridCommon<RedoStartedEvent> = {
+            type: Events.EVENT_REDO_STARTED,
             source
         }
         this.eventService.dispatchEvent(startEvent);
 
         const operationPerformed = this.undoRedo(this.redoStack, this.undoStack, 'finalRange', 'newValue', 'redo');
 
-        const endEvent: WithoutGridCommon<RedoEndEvent> = {
-            type: Events.EVENT_REDO_END,
+        const endEvent: WithoutGridCommon<RedoEndedEvent> = {
+            type: Events.EVENT_REDO_ENDED,
             source,
             operationPerformed
         };

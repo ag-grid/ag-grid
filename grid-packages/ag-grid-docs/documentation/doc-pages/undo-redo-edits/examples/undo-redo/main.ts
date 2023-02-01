@@ -1,4 +1,4 @@
-import { Grid, CellValueChangedEvent, GridOptions, UndoStartEvent, UndoEndEvent, RedoStartEvent, RedoEndEvent } from '@ag-grid-community/core'
+import { Grid, CellValueChangedEvent, GridOptions, UndoStartedEvent, UndoEndedEvent, RedoStartedEvent, RedoEndedEvent } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -23,10 +23,10 @@ const gridOptions: GridOptions = {
   enableCellChangeFlash: true,
   onFirstDataRendered: onFirstDataRendered,
   onCellValueChanged: onCellValueChanged,
-  onUndoStart: onUndoStart,
-  onUndoEnd: onUndoEnd,
-  onRedoStart: onRedoStart,
-  onRedoEnd: onRedoEnd,
+  onUndoStarted: onUndoStarted,
+  onUndoEnded: onUndoEnded,
+  onRedoStarted: onRedoStarted,
+  onRedoEnded: onRedoEnded,
 }
 
 function undo() {
@@ -59,20 +59,20 @@ function onCellValueChanged(params: CellValueChangedEvent) {
   disable('#redoBtn', redoSize < 1)
 }
 
-function onUndoStart(event: UndoStartEvent) {
-  console.log('undoStart', event);
+function onUndoStarted(event: UndoStartedEvent) {
+  console.log('undoStarted', event);
 }
 
-function onUndoEnd(event: UndoEndEvent) {
-  console.log('undoEnd', event);
+function onUndoEnded(event: UndoEndedEvent) {
+  console.log('undoEnded', event);
 }
 
-function onRedoStart(event: RedoStartEvent) {
-  console.log('redoStart', event);
+function onRedoStarted(event: RedoStartedEvent) {
+  console.log('redoStarted', event);
 }
 
-function onRedoEnd(event: RedoEndEvent) {
-  console.log('redoEnd', event);
+function onRedoEnded(event: RedoEndedEvent) {
+  console.log('redoEnded', event);
 }
 
 function disable(id: string, disabled: boolean) {
