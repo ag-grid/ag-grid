@@ -89,6 +89,11 @@ describe('TimeScale', () => {
                     interval: durationYear,
                     domain: [new Date(2021, 0, 1), new Date(2023, 0, 1)],
                 },
+                {
+                    name: 'every year, negative milliseconds',
+                    interval: -durationYear,
+                    domain: [new Date(2021, 0, 1), new Date(2023, 0, 1)],
+                },
             ];
 
             it.each(MILLISECONDS_INTERVALS.map((c) => c.name))(`for %s case`, (caseName) => {
@@ -99,7 +104,6 @@ describe('TimeScale', () => {
                 scale.domain = domain;
                 scale.interval = interval;
 
-                console.log(interval);
                 expect(scale.ticks()).toMatchSnapshot();
             });
         });

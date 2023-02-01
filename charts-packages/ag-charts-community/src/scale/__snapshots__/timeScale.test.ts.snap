@@ -182,6 +182,14 @@ Array [
 ]
 `;
 
+exports[`TimeScale should create ticks with configured milliseconds interval for every year, negative milliseconds case 1`] = `
+Array [
+  2021-01-01T00:00:00.000Z,
+  2022-01-01T00:00:00.000Z,
+  2023-01-01T00:00:00.000Z,
+]
+`;
+
 exports[`TimeScale should create ticks with configured time interval for every 3 days case 1`] = `
 Array [
   2022-01-01T00:00:00.000Z,

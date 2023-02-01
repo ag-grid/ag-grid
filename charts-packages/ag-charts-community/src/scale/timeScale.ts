@@ -305,13 +305,13 @@ export class TimeScale extends ContinuousScale {
             return interval.range(new Date(start - 1), new Date(stop + 1));
         }
 
-        if (this.isDenseInterval({ start, stop, interval })) {
+        const step = Math.abs(interval);
+
+        if (this.isDenseInterval({ start, stop, interval: step })) {
             return [];
         }
 
-        const timeInterval = tickIntervals.find(
-            (tickInterval) => tickInterval[2] === interval && tickInterval[1] === 1
-        );
+        const timeInterval = tickIntervals.find((tickInterval) => tickInterval[2] === step && tickInterval[1] === 1);
 
         if (timeInterval) {
             return timeInterval[0].range(new Date(start - 1), new Date(stop + 1));
@@ -323,7 +323,7 @@ export class TimeScale extends ContinuousScale {
         while (date <= stopDate) {
             ticks.push(date);
             date = new Date(date);
-            date.setMilliseconds(date.getMilliseconds() + interval);
+            date.setMilliseconds(date.getMilliseconds() + step);
         }
 
         return ticks;
