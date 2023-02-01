@@ -570,7 +570,7 @@
     },
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+      "type": { "returnType": "AgAxisCategoryTickOptions", "optional": true }
     },
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -632,7 +632,7 @@
   "AgGroupedCategoryAxisThemeOptions": {
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+      "type": { "returnType": "AgAxisCategoryTickOptions", "optional": true }
     },
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -1641,6 +1641,20 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
+  "AgAxisCategoryTickOptions": {
+    "width": {
+      "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "size": {
+      "description": "/** The length in pixels of the axis ticks. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour of the axis ticks. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    }
+  },
   "AgAxisNumberTickOptions": {
     "count": {
       "description": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     */",
@@ -1994,7 +2008,7 @@
     },
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+      "type": { "returnType": "AgAxisCategoryTickOptions", "optional": true }
     },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
@@ -2032,7 +2046,7 @@
     },
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+      "type": { "returnType": "AgAxisCategoryTickOptions", "optional": true }
     },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
