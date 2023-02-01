@@ -24,7 +24,9 @@ We expose the APIs for triggering download via the `AgChart` class:
 
  This example demonstrates:
  - How to obtain a reference to an `AgChartInstance`.
- - How to use `AgChart.download()` to initiate a chart image download.
+ - How to use `AgChart.download()` to start a chart image download.
+ - How to use `AgChart.getImageDataURL()` to create a base64-encoded image URL, and then open it in
+   a new tab.
 
  <chart-example title='Download via AgChart API' name='download' type='generated'></chart-example>
  

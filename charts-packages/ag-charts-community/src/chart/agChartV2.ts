@@ -152,7 +152,7 @@ export abstract class AgChart {
     }
 
     /**
-     * Initiate a browser-based image download for the given `AgChartInstance`'s rendering.
+     * Starts a browser-based image download for the given `AgChartInstance`.
      */
     public static download(chart: AgChartInstance, options?: DownloadOptions) {
         if (!(chart instanceof AgChartInstanceProxy)) {
@@ -162,7 +162,7 @@ export abstract class AgChart {
     }
 
     /**
-     * Retrieve a URL-encoded image data URL for the given  `AgChartInstance`'s rendering.
+     * Returns a base64-encoded image data URL for the given  `AgChartInstance`.
      */
     public static getImageDataURL(chart: AgChartInstance, options?: ImageDataUrlOptions): Promise<string> {
         if (!(chart instanceof AgChartInstanceProxy)) {

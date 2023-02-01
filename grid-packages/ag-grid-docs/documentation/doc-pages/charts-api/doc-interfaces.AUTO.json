@@ -4592,7 +4592,7 @@
       }
     },
     "download": {
-      "description": "/** Initiate a browser-based image download for the given `AgChartInstance`'s rendering.\n     */",
+      "description": "/** Starts a browser-based image download for the given `AgChartInstance`.\n     */",
       "type": {
         "arguments": {
           "chart": "AgChartInstance",
@@ -4602,7 +4602,7 @@
       }
     },
     "getImageDataURL": {
-      "description": "/** Retrieve a URL-encoded image data URL for the given  `AgChartInstance`'s rendering.\n     */",
+      "description": "/** Returns a base64-encoded image data URL for the given  `AgChartInstance`.\n     */",
       "type": {
         "arguments": {
           "chart": "AgChartInstance",
