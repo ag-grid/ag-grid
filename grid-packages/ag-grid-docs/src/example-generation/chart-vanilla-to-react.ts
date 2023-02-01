@@ -6,7 +6,7 @@ import { wrapOptionsUpdateCode, getChartImports } from './chart-utils';
 export function processFunction(code: string): string {
     return wrapOptionsUpdateCode(
         convertFunctionToProperty(code),
-        'const options = {...this.state.options};',
+        'const options = structuredClone(this.state.options);',
         'this.setState({ options });');
 }
 

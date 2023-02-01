@@ -4,12 +4,14 @@ export function wrapOptionsUpdateCode(
     code: string,
     before = 'const options = {...this.options};',
     after = 'this.options = options;',
+    localVar = 'options'
 ): string {
     if (code.indexOf('options.') < 0) {
         return code;
     }
 
-    return code.replace(/(.*?)\{(.*)\}/s, `$1{\n${before}\n$2\n${after}\n}`);
+    return code.replace(/options\./, localVar + '.')
+        .replace(/(.*?)\{(.*)\}/s, `$1{\n${before}\n$2\n${after}\n}`);
 }
 
 export function getChartImports(imports: BindingImport[], usesChartApi: boolean): string {

@@ -1,19 +1,22 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
 import { isInstanceMethod, convertFunctionToProperty } from './parser-utils';
-import { convertFunctionalTemplate, convertFunctionToConstCallback, convertTemplate, getImport } from './react-utils';
+import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport } from './react-utils';
 import { wrapOptionsUpdateCode, getChartImports } from './chart-utils';
 import { toTitleCase } from './angular-utils';
 
 export function processFunction(code: string): string {
     return wrapOptionsUpdateCode(
         convertFunctionToProperty(code),
-        'const options = {...this.state.options};',
-        'this.setState({ options });');
+        'const clone = structuredClone(options);',
+        'setOptions(clone);', 'clone');
 }
 
 function getImports(componentFilenames: string[], bindings): string[] {
+
+    const useCallback = (bindings.externalEventHandlers?.length + bindings.instanceMethods?.length) > 0;
+
     const imports = [
-        `import React, { useState, useCallback${bindings.usesChartApi ? ', useRef ' : ''}} from 'react';`,
+        `import React, { useState${useCallback ? ', useCallback ' : ''}${bindings.usesChartApi ? ', useRef ' : ''}} from 'react';`,
         "import { render } from 'react-dom';",
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
@@ -69,8 +72,8 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         });
 
         const template = getTemplate(bindings, componentAttributes);
-        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstCallback(handler.body, bindings.callbackDependencies));
-        const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstCallback);
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(convertFunctionToConstCallback(handler.body, bindings.callbackDependencies)));
+        const instanceMethods = bindings.instanceMethods.map(m => processFunction(convertFunctionToConstCallback(m, bindings.callbackDependencies)));
 
         let indexFile = `'use strict';
 
@@ -83,7 +86,7 @@ const ChartExample = () => {
         ${stateProperties.join(',\n            ')}
 
         ${instanceBindings.join(';\n        ')}
-    ${instanceMethods.concat(externalEventHandlers).join('\n\n    ')}
+        ${instanceMethods.concat(externalEventHandlers).join('\n\n    ')}
 
         return ${template};
     }
