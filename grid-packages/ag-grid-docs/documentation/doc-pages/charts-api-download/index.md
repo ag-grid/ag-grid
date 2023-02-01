@@ -6,9 +6,9 @@ Saving chart images by API call.
 
 ## Download API
 
-We expose the API for triggering download via the `AgChart` class:
+We expose the APIs for triggering download via the `AgChart` class:
 
-<api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["download"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
+<api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["download", "getImageDataURL"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
 
 [[only-react]]
 | The `AgChartInstance` can be obtained using a React `Ref` to our `<AgChartsReact />` tag, which

@@ -73,13 +73,16 @@ type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgTreemapSeriesOptions
     : never;
 
-export interface DownloadOptions {
+export interface DownloadOptions extends ImageDataUrlOptions {
+    /** Name of downloaded image file. Defaults to `image`.  */
+    fileName?: string;
+}
+
+export interface ImageDataUrlOptions {
     /** Width of downloaded chart image in pixels. Defaults to current chart width. */
     width?: number;
     /** Height of downloaded chart image in pixels. Defaults to current chart height. */
     height?: number;
-    /** Name of downloaded image file. Defaults to `image`.  */
-    fileName?: string;
     /** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */
     fileFormat?: string;
 }
@@ -156,6 +159,16 @@ export abstract class AgChart {
             throw new Error('AG Charts - invalid chart reference passed');
         }
         return AgChartInternal.download(chart, options);
+    }
+
+    /**
+     * Retrieve a URL-encoded image data URL `AgChartInstance`'s rendering.
+     */
+    public static getImageDataURL(chart: AgChartInstance, options?: ImageDataUrlOptions): Promise<string> {
+        if (!(chart instanceof AgChartInstanceProxy)) {
+            throw new Error('AG Charts - invalid chart reference passed');
+        }
+        return AgChartInternal.getImageDataURL(chart, options);
     }
 }
 
@@ -274,9 +287,40 @@ abstract class AgChartInternal {
      * @param opts The download options including `width` and `height` of the image as well as `fileName` and `fileFormat`.
      */
     static download(proxy: AgChartInstanceProxy, opts?: DownloadOptions) {
+        const asyncDownload = async () => {
+            const maybeClone = await AgChartInternal.prepareResizedChart(proxy, opts);
+
+            const { chart } = maybeClone;
+            chart.scene.download(opts?.fileName, opts?.fileFormat);
+
+            if (maybeClone !== proxy) {
+                maybeClone.destroy();
+            }
+        };
+
+        asyncDownload();
+    }
+
+    static async getImageDataURL(proxy: AgChartInstanceProxy, opts?: ImageDataUrlOptions): Promise<string> {
+        const maybeClone = await AgChartInternal.prepareResizedChart(proxy, opts);
+
+        const { chart } = maybeClone;
+        const result = chart.scene.canvas.getDataURL(opts?.fileFormat);
+
+        if (maybeClone !== proxy) {
+            maybeClone.destroy();
+        }
+
+        return result;
+    }
+
+    private static async prepareResizedChart(
+        proxy: AgChartInstanceProxy,
+        opts?: DownloadOptions | ImageDataUrlOptions
+    ) {
         const { chart } = proxy;
 
-        let { width, height, fileName, fileFormat } = opts || {};
+        let { width, height } = opts || {};
         const currentWidth = chart.width;
         const currentHeight = chart.height;
 
@@ -285,8 +329,7 @@ abstract class AgChartInternal {
             (chart.scene.canvas.pixelRatio === 1 && currentWidth === width && currentHeight === height);
 
         if (unchanged) {
-            chart.scene.download(fileName, fileFormat);
-            return;
+            return proxy;
         }
 
         width = width ?? currentWidth;
@@ -303,10 +346,8 @@ abstract class AgChartInternal {
 
         const clonedChart = AgChartInternal.createOrUpdate(options as any);
 
-        clonedChart.chart.waitForUpdate().then(() => {
-            clonedChart.chart.scene.download(fileName, fileFormat);
-            clonedChart.destroy();
-        });
+        await clonedChart.chart.waitForUpdate();
+        return clonedChart;
     }
 
     private static createChartInstance(

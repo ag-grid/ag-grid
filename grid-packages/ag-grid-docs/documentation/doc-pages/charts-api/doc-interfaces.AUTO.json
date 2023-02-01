@@ -4529,6 +4529,10 @@
   "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
   "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
   "DownloadOptions": {
+    "fileName": {
+      "description": "/** Name of downloaded image file. Defaults to `image`.  */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "width": {
       "description": "/** Width of downloaded chart image in pixels. Defaults to current chart width. */",
       "type": { "returnType": "number", "optional": true }
@@ -4537,9 +4541,19 @@
       "description": "/** Height of downloaded chart image in pixels. Defaults to current chart height. */",
       "type": { "returnType": "number", "optional": true }
     },
-    "fileName": {
-      "description": "/** Name of downloaded image file. Defaults to `image`.  */",
+    "fileFormat": {
+      "description": "/** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */",
       "type": { "returnType": "string", "optional": true }
+    }
+  },
+  "ImageDataUrlOptions": {
+    "width": {
+      "description": "/** Width of downloaded chart image in pixels. Defaults to current chart width. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** Height of downloaded chart image in pixels. Defaults to current chart height. */",
+      "type": { "returnType": "number", "optional": true }
     },
     "fileFormat": {
       "description": "/** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */",
@@ -4584,6 +4598,17 @@
           "chart": "AgChartInstance",
           "options?": "DownloadOptions"
         },
+        "optional": false
+      }
+    },
+    "getImageDataURL": {
+      "description": "/** Retrieve a URL-encoded image data URL `AgChartInstance`'s rendering.\n     */",
+      "type": {
+        "arguments": {
+          "chart": "AgChartInstance",
+          "options?": "ImageDataUrlOptions"
+        },
+        "returnType": "Promise<string>",
         "optional": false
       }
     }
