@@ -123,6 +123,8 @@ import {
     ProcessHeaderForExportParams,
     ProcessRowParams,
     RangeSelectionChangedEvent,
+    RedoEndedEvent,
+    RedoStartedEvent,
     RowClassParams,
     RowClassRules,
     RowClickedEvent,
@@ -152,6 +154,8 @@ import {
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
     TreeDataDisplayType,
+    UndoEndedEvent,
+    UndoStartedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent
@@ -1025,6 +1029,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public rowEditingStarted: EventEmitter<RowEditingStartedEvent<TData>> = new EventEmitter<RowEditingStartedEvent<TData>>();
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
     @Output() public rowEditingStopped: EventEmitter<RowEditingStoppedEvent<TData>> = new EventEmitter<RowEditingStoppedEvent<TData>>();
+    /** Undo operation has started.     */
+    @Output() public undoStarted: EventEmitter<UndoStartedEvent<TData>> = new EventEmitter<UndoStartedEvent<TData>>();
+    /** Undo operation has ended.     */
+    @Output() public undoEnded: EventEmitter<UndoEndedEvent<TData>> = new EventEmitter<UndoEndedEvent<TData>>();
+    /** Redo operation has started.     */
+    @Output() public redoStarted: EventEmitter<RedoStartedEvent<TData>> = new EventEmitter<RedoStartedEvent<TData>>();
+    /** Redo operation has ended.     */
+    @Output() public redoEnded: EventEmitter<RedoEndedEvent<TData>> = new EventEmitter<RedoEndedEvent<TData>>();
     /** Filter has been opened.     */
     @Output() public filterOpened: EventEmitter<FilterOpenedEvent<TData>> = new EventEmitter<FilterOpenedEvent<TData>>();
     /** Filter has been modified and applied.     */

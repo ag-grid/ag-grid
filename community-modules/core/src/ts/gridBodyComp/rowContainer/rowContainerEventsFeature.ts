@@ -326,14 +326,14 @@ export class RowContainerEventsFeature extends BeanStub {
         event.preventDefault();
 
         if (event.shiftKey) {
-            this.undoRedoService.redo();
+            this.undoRedoService.redo('ui');
         } else {
-            this.undoRedoService.undo();
+            this.undoRedoService.undo('ui');
         }
     }
 
     private onCtrlAndY(): void {
-        this.undoRedoService.redo();
+        this.undoRedoService.redo('ui');
     }
 
 }
