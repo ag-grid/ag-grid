@@ -8,6 +8,7 @@ export interface IServerSideStore {
     getDisplayIndexEnd(): number | undefined;
     isDisplayIndexInStore(displayIndex: number): boolean;
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void;
+    forEachStoreDeep(callback: (rowNode: IServerSideStore, index: number) => void, sequence?: NumberSequence): void;
     forEachNodeDeep(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
     forEachNodeDeepAfterFilterAndSort(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
     retryLoads(): void;

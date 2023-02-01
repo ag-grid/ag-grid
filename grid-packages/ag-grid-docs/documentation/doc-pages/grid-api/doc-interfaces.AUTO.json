@@ -15649,6 +15649,9 @@
     "resetRootStore": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
+    "getBlockStates": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
     "getRow": {
       "description": "/** Returns the rowNode at the given index. */",
       "type": {
@@ -15825,6 +15828,16 @@
         "arguments": {
           "displayIndexSeq": "NumberSequence",
           "nextRowTop": "{ value: number; }"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "forEachStoreDeep": {
+      "type": {
+        "arguments": {
+          "callback": "(rowNode: IServerSideStore, index: number) => void",
+          "sequence?": "NumberSequence"
         },
         "returnType": "void",
         "optional": false
