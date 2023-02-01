@@ -206,7 +206,7 @@
         color: var(--ag-secondary-foreground-color);
     }
 
-    .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
+    .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value):not(.ag-fill-handle) {
         // assign internal variables to simplify the `height` value
         --ag-internal-calculated-line-height: var(--ag-line-height, calc(var(--ag-row-height) - var(--ag-row-border-width)));
         --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
