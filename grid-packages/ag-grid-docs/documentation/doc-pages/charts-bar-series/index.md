@@ -104,7 +104,7 @@ To create a bar chart all you need to do is use `type: 'bar'` instead of `type: 
 
 ```js
 series: [{
-    type: 'column',
+    type: 'bar',
     xKey: 'quarter',
     yKey: 'iphone',
     ...
