@@ -119,7 +119,8 @@ export abstract class AgChart {
     /**
      * Update an existing `AgChartInstance`. Options provided should be complete and not
      * partial.
-     *
+     * <br/>
+     * <br/>
      * **NOTE**: As each call could trigger a chart redraw, multiple calls to update options in
      * quick succession could result in undesirable flickering, so callers should batch up and/or
      * debounce changes to avoid unintended partial update renderings.
@@ -133,7 +134,8 @@ export abstract class AgChart {
 
     /**
      * Update an existing `AgChartInstance` by applying a partial set of option changes.
-     *
+     * <br/>
+     * <br/>
      * **NOTE**: As each call could trigger a chart redraw, each individual delta options update
      * should leave the chart in a valid options state. Also, multiple calls to update options in
      * quick succession could result in undesirable flickering, so callers should batch up and/or
@@ -147,7 +149,7 @@ export abstract class AgChart {
     }
 
     /**
-     * Initiate a browser-based image download for the given `AgChartInstance`s rendering.
+     * Initiate a browser-based image download for the given `AgChartInstance`'s rendering.
      */
     public static download(chart: AgChartInstance, options?: DownloadOptions) {
         if (!(chart instanceof AgChartInstanceProxy)) {
@@ -353,19 +355,19 @@ function debug(message?: any, ...optionalParams: any[]): void {
 }
 
 function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOptions>, userOptions: AgChartOptions): void {
+    let skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
     if (isAgCartesianChartOptions(processedOptions)) {
-        applyOptionValues(chart, processedOptions, {
-            skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'],
-        });
+        // Append axes to defaults.
+        skip.push('axes');
     } else if (isAgPolarChartOptions(processedOptions) || isAgHierarchyChartOptions(processedOptions)) {
-        applyOptionValues(chart, processedOptions, {
-            skip: ['type', 'data', 'series', 'autoSize', 'listeners', 'theme'],
-        });
+        // Use defaults.
     } else {
         throw new Error(
             `AG Charts - couldn\'t apply configuration, check type of options and chart: ${processedOptions['type']}`
         );
     }
+
+    applyOptionValues(chart, processedOptions, { skip });
 
     let forceNodeDataRefresh = false;
     if (processedOptions.series && processedOptions.series.length > 0) {
@@ -395,7 +397,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         registerListeners(chart, processedOptions.listeners);
     }
     if (processedOptions.legend?.listeners) {
-        Object.assign(chart.legend.listeners, processedOptions.legend.listeners);
+        Object.assign(chart.legend.listeners, processedOptions.legend.listeners ?? {});
     }
 
     chart.processedOptions = jsonMerge([chart.processedOptions ?? {}, processedOptions], noDataCloneMergeOptions);
@@ -544,7 +546,10 @@ type ObservableLike = {
 function registerListeners<T extends ObservableLike>(source: T, listeners?: {}) {
     source.clearEventListeners();
     for (const property in listeners) {
-        source.addEventListener(property, (listeners as any)[property] as TypedEventListener);
+        const listener = (listeners as any)[property] as TypedEventListener;
+        if (typeof listener !== 'function') continue;
+
+        source.addEventListener(property, listener);
     }
 }
 

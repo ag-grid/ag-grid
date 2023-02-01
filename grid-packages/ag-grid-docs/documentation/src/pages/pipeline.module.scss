@@ -20,7 +20,12 @@
 }
 
 .searchBar {
-    min-width: 45vw;
+    width: 100%;
+
+    @media screen and (min-width: $breakpoint-pipeline-large) {
+        max-width: 845px;
+        width: 45vw;
+    }
 }
 
 .link::after {

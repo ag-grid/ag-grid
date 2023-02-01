@@ -567,6 +567,8 @@ export interface AgAxisBaseTickOptions {
     color?: CssColor;
 }
 
+export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {}
+
 export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
     /** A hint of how many ticks to use across an axis.
      * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.
@@ -753,13 +755,13 @@ export interface AgCategoryAxisOptions extends AgBaseCartesianAxisOptions {
      */
     groupPaddingInner?: Ratio;
     /** Configuration for the axis ticks. */
-    tick?: AgAxisNumberTickOptions;
+    tick?: AgAxisCategoryTickOptions;
 }
 
 export interface AgGroupedCategoryAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'groupedCategory';
     /** Configuration for the axis ticks. */
-    tick?: AgAxisNumberTickOptions;
+    tick?: AgAxisCategoryTickOptions;
 }
 
 export interface AgTimeAxisOptions extends AgBaseCartesianAxisOptions {

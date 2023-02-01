@@ -89,17 +89,14 @@ export class BlockUtils extends BeanStub {
     }
 
     private setTreeGroupInfo(rowNode: RowNode): void {
-        const isGroupFunc = this.gridOptionsService.get('isServerSideGroup');
-        const getKeyFunc = this.gridOptionsService.get('getServerSideGroupKey');
+        rowNode.updateHasChildren();
 
-        if (isGroupFunc != null) {
-            rowNode.setGroup(isGroupFunc(rowNode.data));
-            if (rowNode.group && getKeyFunc != null) {
-                rowNode.key = getKeyFunc(rowNode.data);
-            }
+        const getKeyFunc = this.gridOptionsService.get('getServerSideGroupKey');
+        if (rowNode.hasChildren() && getKeyFunc != null) {
+            rowNode.key = getKeyFunc(rowNode.data);
         }
 
-        if (!rowNode.group && rowNode.childStore != null) {
+        if (!rowNode.hasChildren() && rowNode.childStore != null) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
         }
@@ -204,7 +201,7 @@ export class BlockUtils extends BeanStub {
     public clearDisplayIndex(rowNode: RowNode): void {
         rowNode.clearRowTopAndRowIndex();
 
-        const hasChildStore = rowNode.group && _.exists(rowNode.childStore);
+        const hasChildStore = rowNode.hasChildren() && _.exists(rowNode.childStore);
         if (hasChildStore) {
             const childStore = rowNode.childStore;
             childStore!.clearDisplayIndexes();
@@ -235,7 +232,7 @@ export class BlockUtils extends BeanStub {
         }
 
         // set children for SSRM child rows
-        const hasChildStore = rowNode.group && _.exists(rowNode.childStore);
+        const hasChildStore = rowNode.hasChildren() && _.exists(rowNode.childStore);
         if (hasChildStore) {
             const childStore = rowNode.childStore;
             if (rowNode.expanded) {
@@ -303,7 +300,7 @@ export class BlockUtils extends BeanStub {
             return extractRowBounds(rowNode);
         }
 
-        if (rowNode.group && rowNode.expanded && _.exists(rowNode.childStore)) {
+        if (rowNode.hasChildren() && rowNode.expanded && _.exists(rowNode.childStore)) {
             const childStore = rowNode.childStore;
             if (childStore.isDisplayIndexInStore(index)) {
                 return childStore.getRowBounds(index)!;
@@ -330,7 +327,7 @@ export class BlockUtils extends BeanStub {
         }
 
         // then check if it's a group row with a child cache with pixel in range
-        if (rowNode.group && rowNode.expanded && _.exists(rowNode.childStore)) {
+        if (rowNode.hasChildren() && rowNode.expanded && _.exists(rowNode.childStore)) {
             const childStore = rowNode.childStore;
             if (childStore.isPixelInRange(pixel)) {
                 return childStore.getRowIndexAtPixel(pixel);

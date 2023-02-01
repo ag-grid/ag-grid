@@ -12,17 +12,21 @@ import {
     IClipboardService,
     MenuItemDef,
     ModuleNames, ModuleRegistry,
-    Optional
+    Optional,
+    FocusService,
+    RowPositionUtils
 } from '@ag-grid-community/core';
 
 @Bean('menuItemMapper')
 export class MenuItemMapper extends BeanStub {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Optional('clipboardService') private clipboardService: IClipboardService;
-    @Optional('aggFuncService') private aggFuncService: IAggFuncService;
-    @Optional('chartService') private chartService: IChartService;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Optional('clipboardService') private readonly clipboardService: IClipboardService;
+    @Optional('aggFuncService') private readonly aggFuncService: IAggFuncService;
+    @Optional('chartService') private readonly chartService: IChartService;
+    @Autowired('focusService') private readonly focusService: FocusService;
+    @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
         if (!originalList) {
@@ -172,10 +176,13 @@ export class MenuItemMapper extends BeanStub {
                 }
             case 'cut':
                 if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Cut from Menu')) {
+                    const focusedCell = this.focusService.getFocusedCell();
+                    const rowNode = focusedCell ? this.rowPositionUtils.getRowNode(focusedCell) : null;
+                    const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
                     return {
                         name: localeTextFunc('cut', 'Cut'),
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
-                        icon: _.createIconNoSpan('clipboardCut', this.gridOptionsService, null),
+                        disabled: !isEditable,
                         action: () => this.clipboardService.cutToClipboard()
                     };
                 } else {
@@ -186,7 +193,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
-                        disabled: true,
+                        disabled: false,
                         icon: _.createIconNoSpan('clipboardPaste', this.gridOptionsService, null),
                         action: () => this.clipboardService.pasteFromClipboard()
                     };

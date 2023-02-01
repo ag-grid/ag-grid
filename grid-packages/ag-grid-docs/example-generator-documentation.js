@@ -4,6 +4,7 @@ const sucrase = require("sucrase");
 
 const agGridVersion = "^" + require('../../community-modules/core/package.json').version;
 const agChartsVersion = "^" + require('../../charts-packages/ag-charts-community/package.json').version;
+const agChartsAngularVersion = require('../../charts-packages/ag-charts-angular/package.json').version;
 const agGridEnterpriseVersion = "^" + require('../../enterprise-modules/core/package.json').version;
 const agGridReactVersion = "^" + require('../../community-modules/react/package.json').version;
 const agGridAngularVersion = "^" + require('../../community-modules/angular/package.json').version;
@@ -602,7 +603,8 @@ function addPackageJson(type, framework, importType, basePath) {
     };
 
     if (framework === 'angular') {
-        addDependency('@angular/core', "^13");
+        addDependency('@angular/core', "^14");
+        addDependency('@angular/platform-browser', "^14");
     }
 
     if (framework === 'reactFunctionalTs') {
@@ -631,6 +633,9 @@ function addPackageJson(type, framework, importType, basePath) {
         }
         if (type === 'chart') {
             addDependency('ag-charts-community', agChartsVersion);
+            if (framework === 'angular') {
+                addDependency('ag-charts-angular', agChartsAngularVersion);
+            }
         }
     }
 

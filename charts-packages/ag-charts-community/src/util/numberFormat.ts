@@ -194,10 +194,8 @@ const decimalTypes: Record<string, (n: number, f: number) => string> = {
         return (Math.round(a / x) * x).toFixed();
     },
     s: (n, f) => {
-        const a = Math.abs(n);
-        const power = Math.log10(a);
         const p = getSIPrefixPower(n);
-        return decimalTypes.f(n / Math.pow(10, p), Math.max(0, f - (Math.floor(Math.abs(power)) % 3) - 1));
+        return decimalTypes.r(n / Math.pow(10, p), f);
     },
     '%': (n, f) => `${Math.abs(n * 100).toFixed(f)}`,
 };
@@ -287,9 +285,28 @@ export function tickFormat(
     const options = parseFormatter(formatter || ',f');
     if (isNaN(options.precision!)) {
         if (options.type === 's') {
-            options.precision = step.toExponential().indexOf('e');
+            options.precision = Math.max(
+                ...[start, stop, step, start + step, stop - step].map((x) => {
+                    const exp = x.toExponential(12).replace(/\.?[0]+e/, 'e');
+                    return exp.substring(0, exp.indexOf('e')).replace('.', '').length;
+                })
+            );
         } else if (!options.type || options.type in decimalTypes) {
-            options.precision = 6;
+            options.precision = Math.max(
+                ...[start, stop, step, start + step, stop - step].map((x) => {
+                    if (x === 0) {
+                        return 0;
+                    }
+                    const l = Math.floor(Math.log10(Math.abs(x)));
+                    const exp = x.toExponential(12).replace(/\.?[0]+e/, 'e');
+                    const dotIndex = exp.indexOf('.');
+                    if (dotIndex < 0) {
+                        return l >= 0 ? 0 : -l;
+                    }
+                    const s = exp.indexOf('e') - dotIndex;
+                    return Math.max(0, s - l - 1);
+                })
+            );
         }
     }
     const f = format(options);

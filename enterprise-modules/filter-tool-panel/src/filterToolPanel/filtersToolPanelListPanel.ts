@@ -83,31 +83,26 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private buildTreeFromProvidedColumnDefs(): void {
-        this.destroyFilters();
         const columnTree: IProvidedColumn[] = this.columnModel.getPrimaryColumnTree();
-        this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
-        const len = this.filterGroupComps.length;
-
-        if (len) {
-            // skip the destroy function because this will be managed
-            // by the `destroyFilters` function
-            this.filterGroupComps.forEach(comp => this.appendChild(comp));
-            this.setFirstAndLastVisible(0, len - 1);
-        }
-
-        // perform search if searchFilterText exists
-        if (_.exists(this.searchFilterText)) {
-            this.searchFilters(this.searchFilterText);
-        }
-
-        // notify header of expand
-        this.fireExpandedEvent();
+        this.recreateFilters(columnTree);
     }
 
     public setFiltersLayout(colDefs: AbstractColDef[]): void {
-        this.destroyFilters();
         const columnTree: IProvidedColumn[] = this.toolPanelColDefService.createColumnTree(colDefs);
-        this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
+        this.recreateFilters(columnTree);
+    }
+
+    private recreateFilters(columnTree: IProvidedColumn[]): void {
+        // Underlying filter comp/element won't get recreated if the column still exists (the element just gets detached/re-attached).
+        // We can therefore restore focus if an element in the filter tool panel was focused.
+        const activeElement = this.gridOptionsService.getDocument().activeElement as HTMLElement;
+
+        // Want to restore the expansion state where possible.
+        const expansionState = this.getExpansionState();
+
+        this.destroyFilters();
+
+        this.filterGroupComps = this.recursivelyAddComps(columnTree, 0, expansionState);
 
         const len = this.filterGroupComps.length;
 
@@ -125,12 +120,17 @@ export class FiltersToolPanelListPanel extends Component {
 
         // notify header of expand
         this.fireExpandedEvent();
+
+        // We only care about restoring focus if the originally focused element was in the filter tool panel.
+        if (this.getGui().contains(activeElement)) {
+            activeElement.focus();
+        }
     }
 
-    private recursivelyAddComps(tree: IProvidedColumn[], depth: number): ToolPanelFilterGroupComp[] {
+    private recursivelyAddComps(tree: IProvidedColumn[], depth: number, expansionState: Map<string, boolean>): ToolPanelFilterGroupComp[] {
         return _.flatten(tree.map(child => {
             if (child instanceof ProvidedColumnGroup) {
-                return _.flatten(this.recursivelyAddFilterGroupComps(child, depth)!);
+                return _.flatten(this.recursivelyAddFilterGroupComps(child, depth, expansionState)!);
             }
 
             const column = child as Column;
@@ -142,24 +142,35 @@ export class FiltersToolPanelListPanel extends Component {
             this.createBean(filterComp);
 
             filterComp.setColumn(column);
+            if (expansionState.get(column.getId())) {
+                // Default state on creation and desired state are both collapsed. Expand if expanded before.
+                filterComp.expand();
+            }
 
             if (depth > 0) { return filterComp; }
 
             const filterGroupComp = this.createBean(new ToolPanelFilterGroupComp(column, [filterComp], this.onGroupExpanded.bind(this), depth, true));
             filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
-            filterGroupComp.collapse();
+            if (!expansionState.get(filterGroupComp.getFilterGroupId())) {
+                // Default state on creation is expanded. Desired initial state is collapsed. Always collapse unless expanded before.
+                filterGroupComp.collapse();
+            }
             return filterGroupComp;
         }));
     }
 
-    private recursivelyAddFilterGroupComps(columnGroup: ProvidedColumnGroup, depth: number): ToolPanelFilterGroupComp[] | undefined {
+    private recursivelyAddFilterGroupComps(
+        columnGroup: ProvidedColumnGroup,
+        depth: number,
+        expansionState: Map<string, boolean>
+    ): ToolPanelFilterGroupComp[] | undefined {
         if (!this.filtersExistInChildren(columnGroup.getChildren())) { return; }
 
         const colGroupDef = columnGroup.getColGroupDef();
         if (colGroupDef && colGroupDef.suppressFiltersToolPanel) { return []; }
 
         const newDepth = columnGroup.isPadding() ? depth : depth + 1;
-        const childFilterComps = _.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth));
+        const childFilterComps = _.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth, expansionState));
 
         if (columnGroup.isPadding()) { return childFilterComps; }
 
@@ -168,6 +179,10 @@ export class FiltersToolPanelListPanel extends Component {
 
         this.createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
+        if (expansionState.get(filterGroupComp.getFilterGroupId()) === false) {
+            // Default state on creation is expanded. Desired initial state is expanded. Only collapse if collapsed before.
+            filterGroupComp.collapse();
+        }
         return [filterGroupComp];
     }
 
@@ -184,6 +199,25 @@ export class FiltersToolPanelListPanel extends Component {
     private shouldDisplayFilter(column: Column) {
         const suppressFiltersToolPanel = column.getColDef() && column.getColDef().suppressFiltersToolPanel;
         return column.isFilterAllowed() && !suppressFiltersToolPanel;
+    }
+
+    private getExpansionState(): Map<string, boolean> {
+        const expansionState: Map<string, boolean> = new Map();
+
+        const recursiveGetExpansionState = (filterGroupComp: ToolPanelFilterGroupComp) => {
+            expansionState.set(filterGroupComp.getFilterGroupId(), filterGroupComp.isExpanded());
+            filterGroupComp.getChildren().forEach(child => {
+                if (child instanceof ToolPanelFilterGroupComp) {
+                    recursiveGetExpansionState(child);
+                } else {
+                    expansionState.set(child.getColumn().getId(), child.isExpanded());
+                }
+            });
+        };
+
+        this.filterGroupComps.forEach(recursiveGetExpansionState);
+
+        return expansionState
     }
 
     // we don't support refreshing, but must implement because it's on the tool panel interface

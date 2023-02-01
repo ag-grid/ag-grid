@@ -1,5 +1,8 @@
 export default function (start: number, stop: number, count: number): NumericTicks {
     const step = tickStep(start, stop, count);
+    if (isNaN(step)) {
+        return new NumericTicks(0);
+    }
     start = Math.ceil(start / step) * step;
     stop = Math.floor(stop / step) * step;
     return range(start, stop, step);
@@ -14,7 +17,7 @@ const tickMultiplierErrors = [
 ];
 
 function getTickMultiplier(error: number) {
-    return tickMultiplierErrors.find((m) => error >= m[1])![0];
+    return tickMultiplierErrors.find((m) => error >= m[1])?.[0];
 }
 
 export function tickStep(a: number, b: number, count: number): number {
@@ -23,6 +26,9 @@ export function tickStep(a: number, b: number, count: number): number {
     const step = Math.pow(10, power);
     const error = rawStep / step;
     const m = getTickMultiplier(error);
+    if (!m || isNaN(m)) {
+        return NaN;
+    }
     return m * step;
 }
 

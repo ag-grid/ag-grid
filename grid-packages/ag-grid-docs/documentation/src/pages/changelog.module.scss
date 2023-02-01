@@ -27,7 +27,7 @@
     gap: $size-1 $size-4;
     margin-top: $size-6 !important; // !important for .ag-styles specificity
 
-    @media screen and (min-width: 1200px) {
+    @media screen and (min-width: $breakpoint-changelog-large) {
         flex-wrap: nowrap;
 
         > input {

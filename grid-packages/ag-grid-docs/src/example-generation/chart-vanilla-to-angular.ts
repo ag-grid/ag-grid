@@ -7,8 +7,8 @@ export function processFunction(code: string): string {
     return wrapOptionsUpdateCode(convertFunctionToProperty(code));
 }
 
-function getImports(bindingImports, componentFileNames: string[], { typeParts }): string[] {
-    const bImports = [...(bindingImports || [])];
+function getImports(bindings, componentFileNames: string[], { typeParts }): string[] {
+    const bImports = [...(bindings.imports || [])];
 
     bImports.push({
         module: `'ag-charts-community'`,
@@ -17,8 +17,11 @@ function getImports(bindingImports, componentFileNames: string[], { typeParts })
     })
 
     const imports = [
-        "import { Component } from '@angular/core';",
+        `import { Component${bindings.usesChartApi ? ', ViewChild' : ''} } from '@angular/core';`,
     ];
+    if (bindings.usesChartApi) {
+        imports.push("import { AgChartsAngular } from 'ag-charts-angular';")
+    }
 
     addBindingImports(bImports, imports, true, true);
 
@@ -42,9 +45,9 @@ function getTemplate(bindings: any, attributes: string[]): string {
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): () => string {
     return () => {
-        const { properties, imports: bindingImports, declarations, optionsTypeInfo } = bindings;
+        const { properties, declarations, optionsTypeInfo } = bindings;
         const opsTypeInfo = optionsTypeInfo || { typeParts: ['AgChartOptions'], typeStr: 'AgChartOptions' };
-        const imports = getImports(bindingImports, componentFileNames, opsTypeInfo);
+        const imports = getImports(bindings, componentFileNames, opsTypeInfo);
 
         const propertyAttributes = [];
         const propertyVars = [];
@@ -73,7 +76,8 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         const template = getTemplate(bindings, propertyAttributes);
         const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(handler.body));
 
-        return `${imports.join('\n')}${declarations.length > 0 ? '\n' + declarations.join('\n') : ''}
+        let appComponent =
+            `${imports.join('\n')}${declarations.length > 0 ? '\n' + declarations.join('\n') : ''}
 
 @Component({
     selector: 'my-app',
@@ -83,7 +87,9 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
 export class AppComponent {
     public options: ${opsTypeInfo.typeStr};
     ${propertyVars.filter(p => p.name === 'options').join('\n')}
-
+    ${bindings.usesChartApi ?
+                `\n    @ViewChild(AgChartsAngular)
+    public agChart!: AgChartsAngular;\n` : ''}
     constructor() {
         ${propertyAssignments.join(';\n')}
     }
@@ -96,7 +102,12 @@ export class AppComponent {
 }
 
 ${bindings.globals.join('\n')}
-`;
+`
+        if (bindings.usesChartApi) {
+            appComponent = appComponent.replace(/AgChart.(\w*)\((\w*),/g, 'AgChart.$1(this.agChart.chart!,');
+            appComponent = appComponent.replace(/\(this.agChart.chart!, options/g, '(this.agChart.chart!, this.options');
+        }
+        return appComponent;
     };
 }
 

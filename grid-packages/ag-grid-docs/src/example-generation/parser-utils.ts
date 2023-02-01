@@ -297,6 +297,20 @@ export function getTypes(node: ts.Node) {
     return typesToInclude;
 }
 
+export function usesChartApi(node: ts.Node) {
+    let usesApi = false;
+    if (ts.isCallExpression(node)) {
+        if (node.getText()?.match(/AgChart.(?!create)/)) {
+            return true;
+        }
+    }
+
+    node.forEachChild(ct => {
+        usesApi = usesApi || usesChartApi(ct);
+    })
+    return usesApi;
+}
+
 export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[] {
     let allImports = [];
     srcFile.statements.forEach(node => {

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import {isProductionBuild, localPrefix, rootLocalPrefix} from '../../../utils/consts';
+import { isProductionBuild, localPrefix, rootLocalPrefix } from '../../../utils/consts';
 
 const helmet = [];
-if(!isProductionBuild()) {
+if (!isProductionBuild()) {
     helmet.push(
         <link
             key="charting-dashboard-theme"
@@ -42,7 +42,7 @@ const ChartingDashboardDemo = () => (
         <div id="integrated-charting-grid" style={{ height: 400 }} className="ag-theme-balham-dark"></div>
         <div id="integrated-charting-chart" style={{ height: 400 }} className="ag-theme-balham-dark"></div>
 
-        <a href="/javascript-grid/integrated-charts/">Read more about integrated charting</a>
+        <a href="/javascript-data-grid/integrated-charts/">Read more about integrated charting</a>
     </>
 );
 

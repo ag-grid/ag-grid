@@ -10,7 +10,7 @@ export class LinearScale extends ContinuousScale {
 
     ticks() {
         const count = this.tickCount ?? 10;
-        if (!this.domain || this.domain.length < 2 || count < 1) {
+        if (!this.domain || this.domain.length < 2 || count < 1 || this.domain.some((d) => !isFinite(d))) {
             return [];
         }
         this.refresh();

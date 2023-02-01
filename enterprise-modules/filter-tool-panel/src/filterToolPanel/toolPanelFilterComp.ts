@@ -172,6 +172,11 @@ export class ToolPanelFilterComp extends Component {
         _.clearElement(this.agFilterToolPanelBody);
     }
 
+
+    public isExpanded(): boolean {
+        return this.expanded;
+    }
+
     public refreshFilter(isDisplayed: boolean): void {
         if (!this.expanded) { return; }
 

@@ -360,7 +360,7 @@
       "paddingInner?": "Ratio",
       "paddingOuter?": "Ratio",
       "groupPaddingInner?": "Ratio",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "top?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "right?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "bottom?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
@@ -395,7 +395,7 @@
   "AgGroupedCategoryAxisThemeOptions": {
     "meta": {},
     "type": {
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "top?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "right?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "bottom?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
@@ -1063,6 +1063,19 @@
       "color?": "/** The colour of the axis ticks. */"
     }
   },
+  "AgAxisCategoryTickOptions": {
+    "meta": {},
+    "type": {
+      "width?": "PixelSize",
+      "size?": "PixelSize",
+      "color?": "CssColor"
+    },
+    "docs": {
+      "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "size?": "/** The length in pixels of the axis ticks. */",
+      "color?": "/** The colour of the axis ticks. */"
+    }
+  },
   "AgAxisNumberTickOptions": {
     "meta": {},
     "type": {
@@ -1300,7 +1313,7 @@
       "paddingInner?": "Ratio",
       "paddingOuter?": "Ratio",
       "groupPaddingInner?": "Ratio",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
@@ -1328,7 +1341,7 @@
     "meta": {},
     "type": {
       "type": "'groupedCategory'",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
@@ -2990,9 +3003,9 @@
     },
     "docs": {
       "public static create(options: AgChartOptions): AgChartInstance { return AgChartInternal.createOrUpdate(options as any); }": "/** Create a new `AgChartInstance` based upon the given configuration options.\n     */",
-      "public static update(chart: AgChartInstance, options: AgChartOptions) { if (!AgChartInstanceProxy.isInstance(chart)) { throw new Error('AG Charts - invalid chart reference passed'); } AgChartInternal.createOrUpdate(options as any, chart); }": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     *\n     * **NOTE**: As each call could trigger a chart redraw, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
-      "public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) { if (!AgChartInstanceProxy.isInstance(chart)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.updateUserDelta(chart, deltaOptions as any); }": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     *\n     * **NOTE**: As each call could trigger a chart redraw, each individual delta options update\n     * should leave the chart in a valid options state. Also, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
-      "public static download(chart: AgChartInstance, options?: DownloadOptions) { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.download(chart, options); }": "/** Initiate a browser-based image download for the given `AgChartInstance`s rendering.\n     */"
+      "public static update(chart: AgChartInstance, options: AgChartOptions) { if (!AgChartInstanceProxy.isInstance(chart)) { throw new Error('AG Charts - invalid chart reference passed'); } AgChartInternal.createOrUpdate(options as any, chart); }": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     * <br/>\n     * <br/>\n     * **NOTE**: As each call could trigger a chart redraw, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
+      "public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) { if (!AgChartInstanceProxy.isInstance(chart)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.updateUserDelta(chart, deltaOptions as any); }": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     * <br/>\n     * <br/>\n     * **NOTE**: As each call could trigger a chart redraw, each individual delta options update\n     * should leave the chart in a valid options state. Also, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
+      "public static download(chart: AgChartInstance, options?: DownloadOptions) { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.download(chart, options); }": "/** Initiate a browser-based image download for the given `AgChartInstance`'s rendering.\n     */"
     }
   },
   "ObservableLike": {
