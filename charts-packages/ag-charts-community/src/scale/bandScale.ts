@@ -75,7 +75,8 @@ export class BandScale<D> implements Scale<D, number> {
     ticks(): D[] {
         this.refresh();
         const { interval = 1 } = this;
-        return this._domain.filter((_, i) => i % interval === 0);
+        const step = Math.abs(Math.round(interval));
+        return this._domain.filter((_, i) => i % step === 0);
     }
 
     convert(d: D): number {
