@@ -77,7 +77,10 @@ export class DragService extends BeanStub {
         if (includeTouch && !suppressTouch) {
             touchListener = (touchEvent: TouchEvent) => {
                 if (isFocusableFormField(touchEvent.target as HTMLElement)) { return; }
-                if (touchEvent.cancelable) { touchEvent.preventDefault(); }
+                if (touchEvent.cancelable) { 
+                    touchEvent.preventDefault();
+                    touchEvent.stopPropagation();
+                }
                 this.onTouchStart(params, touchEvent);
             };
             // we set passive=false, as we want to prevent default on this event
