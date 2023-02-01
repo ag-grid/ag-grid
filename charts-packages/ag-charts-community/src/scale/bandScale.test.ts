@@ -1,4 +1,4 @@
-import { expect, test } from '@jest/globals';
+import { expect, test, describe, it } from '@jest/globals';
 import { BandScale } from './bandScale';
 
 test('initial state', () => {
@@ -96,4 +96,61 @@ test('round', () => {
     expect(scale.convert('E')).toBe(396);
 
     expect(scale.bandwidth).toBe(97);
+});
+
+describe('should create ticks', () => {
+    const CASES = [
+        {
+            interval: 0,
+            domain: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+        },
+        {
+            interval: 1,
+            domain: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+        },
+        {
+            interval: 2,
+            domain: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+        },
+        {
+            interval: 3,
+            domain: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+        },
+        {
+            interval: 4,
+            domain: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+        },
+        {
+            interval: -1,
+            domain: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+        },
+        {
+            interval: -2,
+            domain: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+        },
+        {
+            interval: 1.5,
+            domain: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+        },
+        {
+            interval: -1.5,
+            domain: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+        },
+    ];
+
+    const TEST_CASES_MAP = CASES.reduce((map, obj) => {
+        map[`interval: ${obj.interval} domain: [${obj.domain[0]}, ${obj.domain[1]}]`] = obj;
+        return map;
+    }, {});
+
+    it.each(Object.keys(TEST_CASES_MAP))(`for %s case`, (caseName) => {
+        const { interval, domain } = TEST_CASES_MAP[caseName];
+        const scale = new BandScale();
+
+        scale.range = [0, 600];
+        scale.domain = domain;
+        scale.interval = interval;
+
+        expect(scale.ticks()).toMatchSnapshot();
+    });
 });
