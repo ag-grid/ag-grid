@@ -1066,7 +1066,6 @@
   "AgAxisCategoryTickOptions": {
     "meta": {},
     "type": {
-      "count?": "number",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor"

@@ -1,6 +1,6 @@
-import { AgCartesianChartOptions, AgChart } from 'ag-charts-community'
+import { AgCartesianChartOptions, AgChart, AgNumberAxisThemeOptions } from 'ag-charts-community'
 
-const options: AgCartesianChartOptions = {
+const options: AgCartesianChartOptions & { axes: AgNumberAxisThemeOptions[] } = {
   container: document.getElementById('myChart'),
   data: generateSpiralData(),
   series: [
