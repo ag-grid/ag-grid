@@ -1642,6 +1642,7 @@
     }
   },
   "AgAxisCategoryTickOptions": {
+    "count": { "type": { "returnType": "number", "optional": true } },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "type": { "returnType": "PixelSize", "optional": true }

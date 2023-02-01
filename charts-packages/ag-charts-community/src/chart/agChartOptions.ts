@@ -567,7 +567,9 @@ export interface AgAxisBaseTickOptions {
     color?: CssColor;
 }
 
-export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {}
+export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {
+    count?: number;
+}
 
 export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
     /** A hint of how many ticks to use across an axis.
