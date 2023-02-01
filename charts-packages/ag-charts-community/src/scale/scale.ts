@@ -1,4 +1,4 @@
-import { TimeInterval } from 'src/util/time/interval';
+import { TimeInterval } from '../util/time/interval';
 
 export interface ScaleClampParams {
     /**
