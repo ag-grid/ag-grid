@@ -41,7 +41,8 @@ export class MenuItemMapper extends BeanStub {
             if (typeof menuItemOrString === 'string') {
                 result = this.getStockMenuItem(menuItemOrString, column);
             } else {
-                result = menuItemOrString;
+                // Spread to prevent leaking mapped subMenus back into the original menuItem
+                result = { ...menuItemOrString };
             }
             // if no mapping, can happen when module is not loaded but user tries to use module anyway
             if (!result) { return; }
