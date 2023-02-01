@@ -360,7 +360,7 @@
       "paddingInner?": "Ratio",
       "paddingOuter?": "Ratio",
       "groupPaddingInner?": "Ratio",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "top?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "right?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "bottom?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
@@ -395,7 +395,7 @@
   "AgGroupedCategoryAxisThemeOptions": {
     "meta": {},
     "type": {
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "top?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "right?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "bottom?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
@@ -1063,6 +1063,19 @@
       "color?": "/** The colour of the axis ticks. */"
     }
   },
+  "AgAxisCategoryTickOptions": {
+    "meta": {},
+    "type": {
+      "width?": "PixelSize",
+      "size?": "PixelSize",
+      "color?": "CssColor"
+    },
+    "docs": {
+      "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "size?": "/** The length in pixels of the axis ticks. */",
+      "color?": "/** The colour of the axis ticks. */"
+    }
+  },
   "AgAxisNumberTickOptions": {
     "meta": {},
     "type": {
@@ -1300,7 +1313,7 @@
       "paddingInner?": "Ratio",
       "paddingOuter?": "Ratio",
       "groupPaddingInner?": "Ratio",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
@@ -1328,7 +1341,7 @@
     "meta": {},
     "type": {
       "type": "'groupedCategory'",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
