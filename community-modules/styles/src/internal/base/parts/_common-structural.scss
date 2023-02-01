@@ -235,6 +235,10 @@
 
     .ag-center-cols-container {
         display: block;
+        position: sticky;
+        width: 500px !important;
+        top: 0px;
+        left: 0px;
     }
 
     .ag-pinned-right-cols-container {

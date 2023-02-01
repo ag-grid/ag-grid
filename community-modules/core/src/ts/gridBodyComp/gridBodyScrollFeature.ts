@@ -124,6 +124,9 @@ export class GridBodyScrollFeature extends BeanStub {
             this.centerRowContainerCtrl.getViewportElement();
 
         setScrollLeft(partner, Math.abs(scrollLeft), this.enableRtl);
+
+        const eContainer = this.centerRowContainerCtrl.getContainerElement();
+        eContainer.style.transform = `translateX(-${Math.abs(scrollLeft)}px)`;
     }
 
     private isControllingHScroll(eDiv: HTMLElement): boolean {
