@@ -1,7 +1,14 @@
-import { AND, GREATER_THAN, LESS_THAN, NUMBER_OR_NAN, Validate } from '../../util/validation';
+import { AND, GREATER_THAN, LESS_THAN, NUMBER_OR_NAN, predicateWithMessage, Validate } from '../../util/validation';
 import { LogScale } from '../../scale/logScale';
 import { NumberAxis } from './numberAxis';
 import { extent } from '../../util/array';
+
+function NON_ZERO_NUMBER() {
+    // Cannot be 0
+    const message = `expecting a non-zero Number`;
+
+    return predicateWithMessage((v: any) => typeof v === 'number' && v !== 0, message);
+}
 
 export class LogAxis extends NumberAxis {
     static className = 'LogAxis';
@@ -38,10 +45,10 @@ export class LogAxis extends NumberAxis {
         return d;
     }
 
-    @Validate(AND(NUMBER_OR_NAN(1), LESS_THAN('max')))
+    @Validate(AND(NUMBER_OR_NAN(), LESS_THAN('max'), NON_ZERO_NUMBER()))
     min: number = NaN;
 
-    @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('min')))
+    @Validate(AND(NUMBER_OR_NAN(), GREATER_THAN('min'), NON_ZERO_NUMBER()))
     max: number = NaN;
 
     set base(value: number) {
