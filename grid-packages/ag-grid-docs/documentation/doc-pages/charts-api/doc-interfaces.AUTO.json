@@ -4602,7 +4602,7 @@
       }
     },
     "getImageDataURL": {
-      "description": "/** Returns a base64-encoded image data URL for the given  `AgChartInstance`.\n     */",
+      "description": "/** Returns a base64-encoded image data URL for the given `AgChartInstance`.\n     */",
       "type": {
         "arguments": {
           "chart": "AgChartInstance",

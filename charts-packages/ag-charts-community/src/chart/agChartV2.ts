@@ -162,7 +162,7 @@ export abstract class AgChart {
     }
 
     /**
-     * Returns a base64-encoded image data URL for the given  `AgChartInstance`.
+     * Returns a base64-encoded image data URL for the given `AgChartInstance`.
      */
     public static getImageDataURL(chart: AgChartInstance, options?: ImageDataUrlOptions): Promise<string> {
         if (!(chart instanceof AgChartInstanceProxy)) {
