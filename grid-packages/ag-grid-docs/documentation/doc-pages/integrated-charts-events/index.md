@@ -70,15 +70,19 @@ Note in the snippet above, the `chartId` is obtained from the [`ChartCreated`](#
 ## Updating Chart Instance
 
 [[only-javascript]]
-|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - Options Reference](/charts-api/#updating-charts-using-partial-options).
+|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](/charts-api-create-update/#delta-options-update) section.
 
 [[only-frameworks]]
-|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - Options Reference](/charts-api/#updating-charts-using-partial-options-1).
+|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](/charts-api-create-update/#delta-options-update-1) section.
 
 The example below shows how the chart instance can be used, creating a subtitle and updating
 it dynamically as you change the range selection.
 
 <grid-example title='Accessing & Updating Chart Instance' name='accessing-chart-instance' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"], "enableChartApi": true }'></grid-example>
+
+The example below shows how we can subscribe to [Standalone Charts Events](/charts-events/):
+
+<grid-example title='Subscribing to Standalone Charts Events' name='standalone-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"], "enableChartApi": true }'></grid-example>
 
 ## Other Resources
 

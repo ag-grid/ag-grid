@@ -19,7 +19,6 @@ import { createId } from '../util/id';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import {
     BOOLEAN,
-    FUNCTION,
     NUMBER,
     OPT_BOOLEAN,
     OPT_FONT_STYLE,
@@ -147,13 +146,9 @@ class LegendItem {
     toggleSeriesVisible: boolean = true;
 }
 
-const NO_OP_LISTENER = () => {
-    // Default listener that does nothing.
-};
-
-class LegendListeners implements Required<AgChartLegendListeners> {
-    @Validate(FUNCTION)
-    legendItemClick: (event: AgChartLegendClickEvent) => void = NO_OP_LISTENER;
+class LegendListeners implements AgChartLegendListeners {
+    @Validate(OPT_FUNCTION)
+    legendItemClick?: (event: AgChartLegendClickEvent) => void = undefined;
 }
 
 export class Legend {
@@ -775,7 +770,7 @@ export class Legend {
 
         this.chart.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
 
-        legendItemClick({ enabled: newEnabled, itemId, seriesId: series.id });
+        legendItemClick?.({ enabled: newEnabled, itemId, seriesId: series.id });
     }
 
     private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
@@ -822,7 +817,7 @@ export class Legend {
             this.tooltipManager.updateTooltip(this.id);
         }
 
-        if (toggleSeriesVisible || listeners.legendItemClick !== NO_OP_LISTENER) {
+        if (toggleSeriesVisible || listeners.legendItemClick != null) {
             this.cursorManager.updateCursor(this.id, 'pointer');
         }
 

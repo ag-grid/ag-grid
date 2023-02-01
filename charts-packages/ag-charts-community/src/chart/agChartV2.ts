@@ -355,19 +355,19 @@ function debug(message?: any, ...optionalParams: any[]): void {
 }
 
 function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOptions>, userOptions: AgChartOptions): void {
+    let skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
     if (isAgCartesianChartOptions(processedOptions)) {
-        applyOptionValues(chart, processedOptions, {
-            skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'],
-        });
+        // Append axes to defaults.
+        skip.push('axes');
     } else if (isAgPolarChartOptions(processedOptions) || isAgHierarchyChartOptions(processedOptions)) {
-        applyOptionValues(chart, processedOptions, {
-            skip: ['type', 'data', 'series', 'autoSize', 'listeners', 'theme'],
-        });
+        // Use defaults.
     } else {
         throw new Error(
             `AG Charts - couldn\'t apply configuration, check type of options and chart: ${processedOptions['type']}`
         );
     }
+
+    applyOptionValues(chart, processedOptions, { skip });
 
     let forceNodeDataRefresh = false;
     if (processedOptions.series && processedOptions.series.length > 0) {
@@ -397,7 +397,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         registerListeners(chart, processedOptions.listeners);
     }
     if (processedOptions.legend?.listeners) {
-        Object.assign(chart.legend.listeners, processedOptions.legend.listeners);
+        Object.assign(chart.legend.listeners, processedOptions.legend.listeners ?? {});
     }
 
     chart.processedOptions = jsonMerge([chart.processedOptions ?? {}, processedOptions], noDataCloneMergeOptions);
@@ -546,7 +546,10 @@ type ObservableLike = {
 function registerListeners<T extends ObservableLike>(source: T, listeners?: {}) {
     source.clearEventListeners();
     for (const property in listeners) {
-        source.addEventListener(property, (listeners as any)[property] as TypedEventListener);
+        const listener = (listeners as any)[property] as TypedEventListener;
+        if (typeof listener !== 'function') continue;
+
+        source.addEventListener(property, listener);
     }
 }
 

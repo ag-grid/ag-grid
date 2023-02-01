@@ -8,6 +8,10 @@ export class Observable {
     private allEventListeners = new Map<string, Set<TypedEventListener>>();
 
     addEventListener(type: string, listener: TypedEventListener): void {
+        if (typeof listener !== 'function') {
+            throw new Error('AG Charts - listener must be a Function');
+        }
+
         const { allEventListeners } = this;
         let eventListeners = allEventListeners.get(type);
 
