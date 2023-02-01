@@ -20,11 +20,13 @@ export class LinearScale extends ContinuousScale {
 
         const { interval } = this;
 
-        if (interval !== undefined) {
-            if (this.isDenseInterval({ start: d0, stop: d1, interval })) {
+        if (interval) {
+            const step = Math.abs(interval);
+            if (this.isDenseInterval({ start: d0, stop: d1, interval: step })) {
                 return [];
             }
-            return range(d0, d1, interval);
+
+            return range(d0, d1, step);
         }
 
         return ticks(d0, d1, count);

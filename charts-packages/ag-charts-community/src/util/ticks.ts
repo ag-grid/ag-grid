@@ -41,8 +41,8 @@ export class NumericTicks extends Array<number> {
 }
 
 export function range(start: number, stop: number, step: number): NumericTicks {
-    const isInteger = step >= 1;
-    const fractionDigits = isInteger ? 0 : -Math.floor(Math.log10(step));
+    const fractionalRemainder = step % 1;
+    const fractionDigits = fractionalRemainder === 0 ? 0 : -Math.floor(Math.log10(fractionalRemainder));
     const f = Math.pow(10, fractionDigits);
     const n = Math.ceil((stop - start) / step);
     const values = new NumericTicks(fractionDigits);
