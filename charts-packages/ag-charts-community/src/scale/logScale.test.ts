@@ -1,4 +1,4 @@
-import { expect, test } from '@jest/globals';
+import { expect, test, describe, it } from '@jest/globals';
 import { NumericTicks } from '../util/ticks';
 import { LogScale } from './logScale';
 
@@ -28,6 +28,95 @@ test('ticks', () => {
             -1000, -900, -800, -700, -600, -500, -400, -300, -200, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10,
         ]);
     }
+});
+
+describe('should create ticks', () => {
+    const CASES = [
+        {
+            interval: 0,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 1,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: -1,
+            domain: [-10000000, -0.1],
+        },
+        {
+            interval: 1,
+            domain: [-10000000, -0.1],
+        },
+        {
+            interval: 2,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 3,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 4,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 5,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 6,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 7,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 10,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 0.5,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 0.1,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 2,
+            domain: [-10000000, -0.1],
+        },
+        {
+            interval: -2,
+            domain: [-10000000, -0.1],
+        },
+        {
+            interval: 10,
+            domain: [-10000000, -0.1],
+        },
+        {
+            interval: -10,
+            domain: [-10000000, -0.1],
+        },
+    ];
+
+    const TEST_CASES_MAP = CASES.reduce((map, obj) => {
+        map[`interval: ${obj.interval} domain: [${obj.domain[0]}, ${obj.domain[1]}]`] = obj;
+        return map;
+    }, {});
+
+    it.each(Object.keys(TEST_CASES_MAP))(`for %s case`, (caseName) => {
+        const { interval, domain } = TEST_CASES_MAP[caseName];
+        const scale = new LogScale();
+
+        scale.range = [0, 600];
+        scale.domain = domain;
+        scale.interval = interval;
+
+        expect(scale.ticks()).toMatchSnapshot();
+    });
 });
 
 test('convert', () => {
