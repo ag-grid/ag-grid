@@ -12,6 +12,7 @@ import {
     ToolPanelDef,
     GridApi,
     ToolPanelVisibleChangedEvent,
+    InternalToolPanelVisibleChangedEvent,
     Autowired,
     ManagedFocusFeature,
     FocusService,
@@ -129,9 +130,9 @@ export class SideBarComp extends Component implements ISideBar {
 
         // if item was already open, we close it
         if (openedItem === id) {
-            this.openToolPanel(undefined); // passing undefined closes
+            this.openToolPanel(undefined, 'sideBarButtonClicked'); // passing undefined closes
         } else {
-            this.openToolPanel(id);
+            this.openToolPanel(id, 'sideBarButtonClicked');
         }
     }
 
@@ -157,7 +158,7 @@ export class SideBarComp extends Component implements ISideBar {
             this.setSideBarPosition(this.sideBar.position);
 
             if (!this.sideBar.hiddenByDefault) {
-                this.openToolPanel(this.sideBar.defaultToolPanel);
+                this.openToolPanel(this.sideBar.defaultToolPanel, 'sideBarInitializing');
             }
         }
     }
@@ -216,7 +217,7 @@ export class SideBarComp extends Component implements ISideBar {
         this.toolPanelWrappers.forEach(wrapper => wrapper.refresh());
     }
 
-    public openToolPanel(key: string | undefined): void {
+    public openToolPanel(key: string | undefined, source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api' = 'api'): void {
         const currentlyOpenedKey = this.openedItem();
         if (currentlyOpenedKey === key) { return; }
 
@@ -229,7 +230,7 @@ export class SideBarComp extends Component implements ISideBar {
         const openToolPanelChanged = currentlyOpenedKey !== newlyOpenedKey;
         if (openToolPanelChanged) {
             this.sideBarButtonsComp.setActiveButton(key);
-            this.raiseToolPanelVisibleEvent(key);
+            this.raiseToolPanelVisibleEvent(key, currentlyOpenedKey ?? undefined, source);
         }
     }
 
@@ -244,16 +245,36 @@ export class SideBarComp extends Component implements ISideBar {
         return toolPanelWrapper.getToolPanelInstance();
     }
 
-    private raiseToolPanelVisibleEvent(key: string | undefined): void {
-        const event: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
+    private raiseToolPanelVisibleEvent(key: string | undefined, previousKey: string | undefined, source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void {
+        // To be removed in v30
+        const oldEvent: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
             type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            source: key
+            source: key,
         };
-        this.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent(oldEvent);
+
+        if (previousKey) {
+            const event: WithoutGridCommon<InternalToolPanelVisibleChangedEvent> = {
+                type: Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
+                source,
+                key: previousKey,
+                visible: false,
+            };
+            this.eventService.dispatchEvent(event);
+        }
+        if (key) {
+            const event: WithoutGridCommon<InternalToolPanelVisibleChangedEvent> = {
+                type: Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
+                source,
+                key,
+                visible: true,
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
-    public close(): void {
-        this.openToolPanel(undefined);
+    public close(source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api' = 'api'): void {
+        this.openToolPanel(undefined, source);
     }
 
     public isToolPanelShowing(): boolean {

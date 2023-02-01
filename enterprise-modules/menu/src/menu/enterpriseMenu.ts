@@ -304,6 +304,8 @@ export class EnterpriseMenu extends BeanStub {
         if (this.mainMenuList) {
             this.mainMenuList.setParentComponent(this.tabbedLayout);
         }
+
+        this.addDestroyFunc(() => this.destroyBean(this.tabbedLayout));
     }
 
     private getTabsToCreate() {
@@ -529,11 +531,15 @@ export class EnterpriseMenu extends BeanStub {
             });
         };
 
+        // see comment above
+        const afterDetachedCallback = () => filterWrapper?.filterPromise?.then(filter => filter?.afterGuiDetached?.());
+
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsService, this.column)!,
             titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
             bodyPromise: filterWrapper?.guiPromise as AgPromise<HTMLElement>,
             afterAttachedCallback: afterFilterAttachedCallback,
+            afterDetachedCallback,
             name: EnterpriseMenu.TAB_FILTER
         };
 

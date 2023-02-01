@@ -50,6 +50,18 @@ export interface ToolPanelVisibleChangedEvent<TData = any> extends AgGridEvent<T
     source: string | undefined;
 }
 
+/** 
+ * This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,
+ * and the original ToolPanelVisibleChangedEvent will be dropped
+ */
+export interface InternalToolPanelVisibleChangedEvent<TData = any> extends AgGridEvent<TData> {
+    source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api';
+    /** Key of tool panel. */
+    key: string;
+    /** True if now visible; false if now hidden. */
+    visible: boolean
+}
+
 export interface ToolPanelSizeChangedEvent<TData = any> extends AgGridEvent<TData> {
     type: 'toolPanelSizeChanged';
     /** True if this is the first change to the Tool Panel size. */

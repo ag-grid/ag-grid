@@ -1256,14 +1256,14 @@ export class GridApi<TData = any> {
     /** Opens a particular tool panel. Provide the ID of the tool panel to open. */
     public openToolPanel(key: string) {
         if (this.assertSideBarLoaded('openToolPanel')) {
-            this.sideBarComp.openToolPanel(key);
+            this.sideBarComp.openToolPanel(key, 'api');
         }
     }
 
     /** Closes the currently open tool panel (if any). */
     public closeToolPanel() {
         if (this.assertSideBarLoaded('closeToolPanel')) {
-            this.sideBarComp.close();
+            this.sideBarComp.close('api');
         }
     }
 

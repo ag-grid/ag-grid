@@ -164,28 +164,35 @@ export class ToolPanelFilterComp extends Component {
 
         _.setDisplayed(this.eExpandChecked, false);
         _.setDisplayed(this.eExpandUnchecked, true);
+
+        this.underlyingFilter?.afterGuiDetached?.();
     }
 
     private removeFilterElement(): void {
         _.clearElement(this.agFilterToolPanelBody);
     }
 
+
     public isExpanded(): boolean {
         return this.expanded;
     }
 
-    public refreshFilter(): void {
+    public refreshFilter(isDisplayed: boolean): void {
         if (!this.expanded) { return; }
 
         const filter = this.underlyingFilter as any;
 
         if (!filter) { return; }
 
-        // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
-        // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
-        // scroll position in the filter list panel
-        if (typeof filter.refreshVirtualList === 'function') {
-            filter.refreshVirtualList();
+        if (isDisplayed) {
+            // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
+            // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
+            // scroll position in the filter list panel
+            if (typeof filter.refreshVirtualList === 'function') {
+                filter.refreshVirtualList();
+            }
+        } else {
+            filter.afterGuiDetached?.();
         }
     }
 
