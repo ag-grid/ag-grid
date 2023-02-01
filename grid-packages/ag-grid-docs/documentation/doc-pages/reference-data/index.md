@@ -47,7 +47,7 @@ const gridOptions = {
             field: 'make',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-                values: extractValues(carMappings)
+                values: extractKeys(carMappings) 
             },
             // convert code to value
             valueFormatter: params => {
@@ -106,7 +106,7 @@ const gridOptions = {
             field: 'make',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-               values: extractValues(carMappings)
+               values: extractKeys(carMappings)
             },
             refData: carMappings
         }

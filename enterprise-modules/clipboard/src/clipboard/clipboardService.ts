@@ -651,8 +651,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private clearCellsAfterCopy(type: CellClearType) {
+        this.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
         if (type === CellClearType.CellRange) {
-            this.rangeService.clearCellRangeCellValues();
+            this.rangeService.clearCellRangeCellValues(undefined, 'clipboardService');
         } else if (type === CellClearType.SelectedRows) {
             this.clearSelectedRows();
         } else {
@@ -664,6 +665,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 this.clearCellValue(rowNode, focusedCell.column);
             }
         }
+        this.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END });
     }
 
     private clearSelectedRows(): void {

@@ -1,0 +1,55 @@
+@use "../design-system/" as *;
+
+.container {
+    margin-top: $size-6 !important; // !important for .ag-styles specificity
+    margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
+
+    :global(.ag-filter-icon) {
+        display: none;
+    }
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: $size-2;
+    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+
+    h1 {
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
+    }
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $size-1 $size-4;
+    margin-top: $size-6 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: 1200px) {
+        flex-wrap: nowrap;
+
+        > input {
+            margin-right: $size-6;
+        }
+    }
+
+    label {
+        flex-shrink: 0;
+    }
+}
+
+.checkboxLabel {
+    position: relative;
+    top: -1px;
+}
+
+.searchBar {
+    width: 100%;
+}
+
+.link::after {
+    content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+    margin: 0 $size-half 0 $size-half !important; // !important for .ag-styles specificity
+}

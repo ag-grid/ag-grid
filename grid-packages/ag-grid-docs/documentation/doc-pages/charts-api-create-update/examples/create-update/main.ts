@@ -1,5 +1,4 @@
-import * as agCharts from "ag-charts-community";
-import { AgAreaSeriesOptions, AgChartLegendPosition, AgChartOptions } from "ag-charts-community";
+import { AgChart, AgAreaSeriesOptions, AgChartLegendPosition, AgChartOptions } from "ag-charts-community";
 import { getData } from "./data";
 
 
@@ -38,14 +37,14 @@ const options: AgChartOptions = {
   legend,
 };
 
-let chart = agCharts.AgChart.create(options);
+let chart = AgChart.create(options);
 
 function reverseSeries() {
   // Mutate options.
   options.series = series.reverse();
 
   // Apply changes.
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }
 
 function swapTitles() {
@@ -55,7 +54,7 @@ function swapTitles() {
   options.subtitle = oldTitle
 
   // Apply changes.
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }
 
 function rotateLegend() {
@@ -65,5 +64,5 @@ function rotateLegend() {
 
   // Apply changes.
   options.legend = legend;
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }

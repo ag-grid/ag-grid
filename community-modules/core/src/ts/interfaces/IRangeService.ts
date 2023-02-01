@@ -29,7 +29,7 @@ export interface IRangeService {
     getRangeEndRow(cellRange: CellRange): RowPosition;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
     setCellRanges(cellRanges: CellRange[]): void;
-    clearCellRangeCellValues(): void;
+    clearCellRangeCellValues(cellRanges?: CellRange[], source?: string): void;
 }
 
 export interface ISelectionHandle {

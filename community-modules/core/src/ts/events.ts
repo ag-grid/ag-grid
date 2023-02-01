@@ -97,6 +97,7 @@ export interface PinnedRowDataChangedEvent<TData = any> extends AgGridEvent<TDat
  * - `api` - from API method
  * - `apiSelectAll` - from API methods `selectAll`/`deselectAll`
  * - `apiSelectAllFiltered` - from API methods `selectAllFiltered`/`deselectAllFiltered`
+ * - `apiSelectAllCurrentPage` - from API methods `selectAllOnCurrentPage`/`deselectAllOnCurrentPage`
  * - `checkboxSelected` - row selection checkbox clicked
  * - `rowClicked` - row clicked when row selection enabled
  * - `rowDataChanged` - row data updated which triggered selection updates
@@ -105,11 +106,13 @@ export interface PinnedRowDataChangedEvent<TData = any> extends AgGridEvent<TDat
  * - `spacePressed` - space key pressed on row
  * - `uiSelectAll` - select all in header clicked
  * - `uiSelectAllFiltered` - select all in header clicked when `headerCheckboxSelectionFilteredOnly = true`
+ * - `uiSelectAllCurrentPage` - select all in header clicked when `headerCheckboxSelectionCurrentPageOnly = true`
  */
 export type SelectionEventSourceType =
     'api' |
     'apiSelectAll' |
     'apiSelectAllFiltered' |
+    'apiSelectAllCurrentPage' |
     'checkboxSelected' |
     'rowClicked' |
     'rowDataChanged' |
@@ -117,7 +120,8 @@ export type SelectionEventSourceType =
     'selectableChanged' |
     'spacePressed' |
     'uiSelectAll' |
-    'uiSelectAllFiltered';
+    'uiSelectAllFiltered' |
+    'uiSelectAllCurrentPage';
 
 export interface SelectionChangedEvent<TData = any> extends AgGridEvent<TData> { 
     source: SelectionEventSourceType;

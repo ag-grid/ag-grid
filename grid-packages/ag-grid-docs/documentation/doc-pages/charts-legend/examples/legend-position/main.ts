@@ -1,5 +1,4 @@
-import * as agCharts from "ag-charts-community"
-import { AgChartLegendPosition, AgChartOptions } from "ag-charts-community"
+import { AgChart, AgChartLegendPosition, AgChartOptions } from "ag-charts-community"
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -80,14 +79,14 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)
 
 function updateLegendPosition(value: AgChartLegendPosition) {
   options.legend!.position = value
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 
 function setLegendEnabled(enabled: boolean) {
   options.legend!.enabled = enabled
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }

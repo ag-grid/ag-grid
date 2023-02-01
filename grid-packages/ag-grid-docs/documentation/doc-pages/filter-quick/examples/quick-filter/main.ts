@@ -31,6 +31,11 @@ const gridOptions: GridOptions = {
         return getMedalString(params.value);
       },
     },
+    {
+      headerName: 'Hidden',
+      field: 'hidden',
+      hide: true,
+    },
   ],
   defaultColDef: {
     flex: 1,
@@ -40,6 +45,13 @@ const gridOptions: GridOptions = {
   cacheQuickFilter: true,
 }
 
+var excludeHiddenColumns = false;
+
+function onExcludeHiddenColumnsToggled() {
+  excludeHiddenColumns = !excludeHiddenColumns;
+  gridOptions.api!.setExcludeHiddenColumnsFromQuickFilter(excludeHiddenColumns);
+  document.querySelector('#excludeHiddenColumns')!.innerHTML = `${excludeHiddenColumns ? 'Include' : 'Exclude'} Hidden Columns`;
+}
 
 function onFilterTextBoxChanged() {
   gridOptions.api!.setQuickFilter(

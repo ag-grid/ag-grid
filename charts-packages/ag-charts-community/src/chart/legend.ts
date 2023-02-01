@@ -491,7 +491,7 @@ export class Legend {
         this.pagination.translationX = 0;
         this.pagination.translationY = 0;
 
-        const { pages, maxPageHeight, maxPageWidth, paginationBBox, verticalOrientation } = this.calculatePagination(
+        const { pages, maxPageHeight, maxPageWidth, paginationBBox, paginationVertical } = this.calculatePagination(
             bboxes,
             width,
             height
@@ -507,7 +507,7 @@ export class Legend {
 
         let paginationX = 0;
         let paginationY = -paginationBBox.y - this.item.marker.size / 2;
-        if (verticalOrientation) {
+        if (paginationVertical) {
             paginationY += legendItemsHeight + paginationComponentPadding;
         } else {
             paginationX += -paginationBBox.x + legendItemsWidth + paginationComponentPadding;
@@ -530,7 +530,7 @@ export class Legend {
         const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
 
         const orientation = this.getOrientation();
-        const verticalOrientation = orientation === 'vertical';
+        const paginationVertical = ['left', 'right'].includes(this.position);
 
         let paginationBBox: BBox = this.pagination.computeBBox();
         let lastPassPaginationBBox: BBox = new BBox(0, 0, 0, 0);
@@ -553,8 +553,8 @@ export class Legend {
             }
 
             paginationBBox = lastPassPaginationBBox;
-            const maxWidth = width - (verticalOrientation ? 0 : paginationBBox.width);
-            const maxHeight = height - (verticalOrientation ? paginationBBox.height : 0);
+            const maxWidth = width - (paginationVertical ? 0 : paginationBBox.width);
+            const maxHeight = height - (paginationVertical ? paginationBBox.height : 0);
 
             const layout = gridLayout({
                 orientation,
@@ -582,7 +582,7 @@ export class Legend {
             }
         } while (!stableOutput(lastPassPaginationBBox));
 
-        return { maxPageWidth, maxPageHeight, pages, paginationBBox, verticalOrientation };
+        return { maxPageWidth, maxPageHeight, pages, paginationBBox, paginationVertical };
     }
 
     updatePositions(pageNumber: number = 0) {

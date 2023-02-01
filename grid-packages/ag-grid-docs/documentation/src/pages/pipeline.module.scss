@@ -1,0 +1,29 @@
+@use "../design-system/" as *;
+
+.container {
+    margin-top: $size-6 !important; // !important for .ag-styles specificity
+    margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: $size-5;
+    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $size-1 $size-4;
+}
+
+.searchBar {
+    min-width: 45vw;
+}
+
+.link::after {
+    content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+    margin: 0 $size-half 0 $size-half !important; // !important for .ag-styles specificity
+}

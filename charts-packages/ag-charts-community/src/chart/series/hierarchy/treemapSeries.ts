@@ -407,7 +407,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 children: [] as TreemapNodeDatum[],
             };
             if (isLeaf) {
-                nodeDatum.value = sizeKey ? datum[sizeKey] : 1;
+                nodeDatum.value = sizeKey ? datum[sizeKey] ?? 1 : 1;
             } else {
                 datum.children!.forEach((child) => {
                     const childNodeDatum = createTreeNodeDatum(child, depth + 1, nodeDatum);
@@ -840,6 +840,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 }),
                 defaults
             );
+        }
+
+        if (!title && !content) {
+            return '';
         }
 
         return toTooltipHtml(defaults);

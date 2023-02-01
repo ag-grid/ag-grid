@@ -11,33 +11,30 @@ $colorFlowBreakpoint: 1050px;
 .swatches {
     display: flex;
     flex-direction: column;
-    gap: $size-2;
 
-    ul {
-        display: flex;
-        flex-direction: column;
-        gap: $size-1;
+    h4 {
+        margin-bottom: 0;
     }
 
-    p {
+    ul {
+        columns: 2;
+        margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+    }
+
+    li {
+        break-inside: avoid;
+        margin-bottom: $size-2;
     }
 }
 
 .swatch {
     display: grid;
-    grid-template-columns: 100px 1fr 1fr;
+    grid-template-columns: 100px 1fr;
     gap: 0 $size-2;
     grid-template-areas:
-        'color name name'
-        'color sassName sassName'
-        'color hexColor hslColor';
-
-    @media (min-width: $colorFlowBreakpoint) {
-        grid-template-areas:
-            'color name name'
-            'color sassName sassName'
-            'color hexColor hslColor';
-    }
+        'color name'
+        'color sassName'
+        'color colorValue';
 }
 
 .color {
@@ -53,29 +50,30 @@ $colorFlowBreakpoint: 1050px;
     composes: font-size-large bold-text from global;
 
     grid-area: name;
+    margin-top: -$size-half !important; // !important needed because of .ag-styles specificity
     margin-bottom: $size-half !important; // !important needed because of .ag-styles specificity
     text-transform: capitalize;
 }
 
 .cssName {
     grid-area: sassName;
-    margin-bottom: $size-1 !important; // !important needed because of .ag-styles specificity
+    margin-bottom: $size-half !important; // !important needed because of .ag-styles specificity
+
+    code::before {
+        content: 'var(';
+    }
+
+    code::after {
+        content: ')';
+    }
 }
 
-.hexColor,
-.hslColor {
+.colorValue {
     composes: font-size-extra-small monospace-text from global;
-    margin-bottom: $size-1 !important; // !important needed because of .ag-styles specificity
-}
 
-.hexColor {
-    grid-area: hexColor;
-}
+    grid-area: colorValue;
 
-.hslColor {
-    grid-area: hslColor;
-
-    @media (min-width: $colorFlowBreakpoint) {
-        text-align: right;
+    span {
+        opacity: calc(1 / 3);
     }
 }

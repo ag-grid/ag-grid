@@ -13,6 +13,7 @@ const CsvExportModule = require("../../../../../community-modules/csv-export/dis
 require("../../../../../community-modules/infinite-row-model/dist/cjs/es5/infiniteRowModelModule");
 const InfiniteRowModelModule = require("../../../../../community-modules/infinite-row-model/dist/cjs/es5/infiniteRowModelModule").InfiniteRowModelModule;
 
-ModuleRegistry.ModuleRegistry.register(ClientSideRowModelModule, false);
-ModuleRegistry.ModuleRegistry.register(CsvExportModule, false);
-ModuleRegistry.ModuleRegistry.register(InfiniteRowModelModule, false);
+ModuleRegistry.ModuleRegistry.register(ClientSideRowModelModule);
+ModuleRegistry.ModuleRegistry.register(CsvExportModule);
+ModuleRegistry.ModuleRegistry.register(InfiniteRowModelModule);
+ModuleRegistry.ModuleRegistry.setIsBundled();

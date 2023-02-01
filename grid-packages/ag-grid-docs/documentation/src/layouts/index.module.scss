@@ -26,7 +26,7 @@ main {
 .top-bar {
     composes: px-2 px-md-3 from global;
     position: relative;
-    background-color: $ag-site-fw-background;
+    background-color: var(--bright-blue-gray);
     border-bottom: 1px solid $ag-light-grey;
 
     @supports (backdrop-filter: none) {

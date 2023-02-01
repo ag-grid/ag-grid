@@ -13,11 +13,13 @@ import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { iterateObject } from "./utils/object";
 import { exists } from "./utils/generic";
 import { WithoutGridCommon } from "./interfaces/iCommon";
+import { PaginationProxy } from "./pagination/paginationProxy";
 
 @Bean('selectionService')
 export class SelectionService extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private selectedNodes: { [key: string]: RowNode | undefined; };
     private logger: Logger;
@@ -247,17 +249,18 @@ export class SelectionService extends BeanStub {
         return count === 0;
     }
 
-    public deselectAllRowNodes(source: SelectionEventSourceType, justFiltered = false) {
+    public deselectAllRowNodes(params: { source: SelectionEventSourceType, justFiltered?: boolean, justCurrentPage?: boolean }) {
         const callback = (rowNode: RowNode) => rowNode.selectThisNode(false, undefined, source);
         const rowModelClientSide = this.rowModel.getType() === 'clientSide';
 
-        if (justFiltered) {
+        const { source, justFiltered, justCurrentPage } = params;
+
+        if (justCurrentPage || justFiltered) {
             if (!rowModelClientSide) {
                 console.error("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
                 return;
             }
-            const clientSideRowModel = this.rowModel as IClientSideRowModel;
-            clientSideRowModel.forEachNodeAfterFilter(callback);
+            this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
         } else {
             iterateObject(this.selectedNodes, (id: string, rowNode: RowNode) => {
                 // remember the reference can be to null, as we never 'delete' from the map
@@ -282,19 +285,69 @@ export class SelectionService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public selectAllRowNodes(source: SelectionEventSourceType, justFiltered = false) {
+    /**
+     * @param justFiltered whether to just include nodes which have passed the filter
+     * @param justCurrentPage whether to just include nodes on the current page
+     * @returns all nodes including unselectable nodes which are the target of this selection attempt
+     */
+    public getNodesToSelect(justFiltered = false, justCurrentPage = false) {
         if (this.rowModel.getType() !== 'clientSide') {
             throw new Error(`selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`);
         }
 
+        const nodes: RowNode[] = [];
+        if (justCurrentPage) {
+            this.paginationProxy.forEachNodeOnPage((node) => {
+                if (!node.group) {
+                    nodes.push(node);
+                    return;
+                }
+
+                if (!node.expanded) {
+                    // even with groupSelectsChildren, do this recursively as only the filtered children
+                    // are considered as the current page
+                    const recursivelyAddChildren = (child: RowNode) => {
+                        nodes.push(child);
+                        if (child.childrenAfterFilter?.length) {
+                            child.childrenAfterFilter.forEach(recursivelyAddChildren);
+                        }
+                    }
+                    recursivelyAddChildren(node);
+                    return;
+                }
+
+                // if the group node is expanded, the pagination proxy will include the visible nodes to select
+                if (!this.groupSelectsChildren) {
+                    nodes.push(node);
+                }
+            });
+            return nodes;
+        }
+
         const clientSideRowModel = this.rowModel as IClientSideRowModel;
+        if (justFiltered) {
+            clientSideRowModel.forEachNodeAfterFilter(node => {
+                nodes.push(node);
+            });
+            return nodes;
+        }
+
+        clientSideRowModel.forEachNode(node => {
+            nodes.push(node);
+        })
+        return nodes;
+    }
+
+    public selectAllRowNodes(params: { source: SelectionEventSourceType, justFiltered?: boolean, justCurrentPage?: boolean }) {
+        if (this.rowModel.getType() !== 'clientSide') {
+            throw new Error(`selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`);
+        }
+
+        const { source, justFiltered, justCurrentPage } = params;
+
         const callback = (rowNode: RowNode) => rowNode.selectThisNode(true, undefined, source);
 
-        if (justFiltered) {
-            clientSideRowModel.forEachNodeAfterFilter(callback);
-        } else {
-            clientSideRowModel.forEachNode(callback);
-        }
+        this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
 
         // the above does not clean up the parent rows if they are selected
         if (this.rowModel.getType() === 'clientSide' && this.groupSelectsChildren) {

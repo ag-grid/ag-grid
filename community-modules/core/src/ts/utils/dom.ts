@@ -364,7 +364,7 @@ export function addStylesToElement(eElement: any, styles: RowStyle | CellStyle |
     if (!styles) { return; }
 
     for (const [key, value] of Object.entries(styles)) {
-        if (!key || !key.length) { continue; }
+        if (!key || !key.length || value == null) { continue; }
 
         // changes the key from camelCase into a hyphenated-string
         const parsedKey = key.replace(/[A-Z]/g, s => `-${s.toLocaleLowerCase()}`);

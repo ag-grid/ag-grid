@@ -265,6 +265,8 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
     headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData>;
     /** If `true`, the header checkbox selection will only select filtered items. */
     headerCheckboxSelectionFilteredOnly?: boolean;
+    /** If `true`, the header checkbox selection will only select nodes on the current page. */
+    headerCheckboxSelectionCurrentPageOnly?: boolean;
 
     // *** Columns: Integrated Charts *** //
 

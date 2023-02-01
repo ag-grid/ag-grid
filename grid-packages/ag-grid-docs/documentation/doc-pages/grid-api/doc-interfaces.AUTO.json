@@ -1066,6 +1066,10 @@
       "description": "/** If `true`, the header checkbox selection will only select filtered items. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "headerCheckboxSelectionCurrentPageOnly": {
+      "description": "/** If `true`, the header checkbox selection will only select nodes on the current page. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "chartDataType": {
       "description": "/** Defines the chart data type that should be used for a column. */",
       "type": {
@@ -2601,6 +2605,10 @@
     },
     "cacheQuickFilter": {
       "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "excludeHiddenColumnsFromQuickFilter": {
+      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -14478,7 +14486,11 @@
       }
     },
     "clearCellRangeCellValues": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
+      "type": {
+        "arguments": { "cellRanges?": "CellRange[]", "source?": "string" },
+        "returnType": "void",
+        "optional": false
+      }
     }
   },
   "ISelectionHandle": {
@@ -20686,6 +20698,10 @@
       "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "excludeHiddenColumnsFromQuickFilter": {
+      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "excludeChildrenWhenTreeDataFiltering": {
       "description": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -23406,6 +23422,10 @@
     },
     "cacheQuickFilter": {
       "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "excludeHiddenColumnsFromQuickFilter": {
+      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -26134,6 +26154,10 @@
     },
     "cacheQuickFilter": {
       "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "excludeHiddenColumnsFromQuickFilter": {
+      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {

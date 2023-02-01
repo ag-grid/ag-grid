@@ -170,6 +170,17 @@ export class MenuItemMapper extends BeanStub {
                 } else {
                     return null;
                 }
+            case 'cut':
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Cut from Menu')) {
+                    return {
+                        name: localeTextFunc('cut', 'Cut'),
+                        shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
+                        icon: _.createIconNoSpan('clipboardCut', this.gridOptionsService, null),
+                        action: () => this.clipboardService.cutToClipboard()
+                    };
+                } else {
+                    return null;
+                }
             case 'paste':
                 if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Paste from Clipboard')) {
                     return {

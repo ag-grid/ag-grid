@@ -333,8 +333,8 @@
 | For example if you were using `ag-grid-community.min.js` then make the follow change to enable all the Enterprise features. 
 |
 |```diff
-|- <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
-|+ <script src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js"></script>
+|- <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/dist/ag-grid-community.min.js"></script>
+|+ <script src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise@@AG_GRID_VERSION@/dist/ag-grid-enterprise.min.js"></script>
 |```
 |
 | And that is all, you create the grid the same way, except this time it comes installed

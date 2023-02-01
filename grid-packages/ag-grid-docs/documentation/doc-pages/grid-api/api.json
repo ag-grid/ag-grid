@@ -97,6 +97,8 @@
         "deselectAll": {},
         "selectAllFiltered": {},
         "deselectAllFiltered": {},
+        "selectAllOnCurrentPage": {},
+        "deselectAllOnCurrentPage": {},
         "getSelectedNodes": {},
         "getSelectedRows": {},
         "getBestCostNodeSelection": {},
@@ -191,6 +193,12 @@
             "more": {
                 "name": "Checking the Quick Filter",
                 "url": "/filter-quick/#checking-the-quick-filter"
+            }
+        },
+        "setExcludeHiddenColumnsFromQuickFilter": {
+            "more": {
+                "name": "Exclude Hidden Columns",
+                "url": "/filter-quick/#exclude-hidden-columns"
             }
         },
         "isColumnFilterPresent": {},

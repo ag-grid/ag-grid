@@ -11,3 +11,4 @@ const InfiniteRowModelModule = require("../../../../../community-modules/infinit
 ModuleRegistry.register(ClientSideRowModelModule);
 ModuleRegistry.register(CsvExportModule);
 ModuleRegistry.register(InfiniteRowModelModule);
+ModuleRegistry.setIsBundled();

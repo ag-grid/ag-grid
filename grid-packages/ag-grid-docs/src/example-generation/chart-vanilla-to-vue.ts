@@ -1,4 +1,4 @@
-import { getFunctionName, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
+import { BindingImport, getFunctionName, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
 import { templatePlaceholder } from './chart-vanilla-src-parser';
 import { toInput, toConst, toMember, toAssignment, convertTemplate, getImport } from './vue-utils';
 import { wrapOptionsUpdateCode } from './chart-utils';
@@ -7,12 +7,20 @@ function processFunction(code: string): string {
     return wrapOptionsUpdateCode(removeFunctionKeyword(code));
 }
 
-function getImports(componentFileNames: string[]): string[] {
+function getImports(componentFileNames: string[], bindingImports: BindingImport[]): string[] {
     const imports = [
         "import Vue from 'vue';",
-        "import * as agCharts from 'ag-charts-community';",
         "import { AgChartsVue } from 'ag-charts-vue';",
     ];
+
+    const chartsImport = bindingImports.find(i => i.module.includes('ag-charts-community'));
+    if (chartsImport) {
+        const extraImports = chartsImport.imports.filter(i => i !== 'AgChart');
+        if (extraImports.length > 0) {
+            imports.push(`import { ${extraImports.join(', ')} } from 'ag-charts-community';`);
+        }
+    }
+
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
@@ -78,7 +86,7 @@ function getAllMethods(bindings: any): [string[], string[], string[]] {
 
 export function vanillaToVue(bindings: any, componentFileNames: string[]): () => string {
     return () => {
-        const imports = getImports(componentFileNames);
+        const imports = getImports(componentFileNames, bindings.imports);
         const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
         const [externalEventHandlers, instanceMethods, globalMethods] = getAllMethods(bindings);
         const template = getTemplate(bindings, propertyAttributes);
