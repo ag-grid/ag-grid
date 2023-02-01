@@ -11,7 +11,7 @@ import { Caption } from './caption';
 import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
 import { doOnce } from './util/function';
-import { CountableTimeInterval, TimeInterval } from './util/time/interval';
+import { TimeInterval } from './util/time/interval';
 import { CrossLine } from './chart/crossline/crossLine';
 import {
     Validate,
@@ -69,10 +69,10 @@ interface AxisNodeDatum {
     readonly translationY: number;
 }
 
-type TimeTickCount = number | CountableTimeInterval;
-type NumberTickCount = number;
+type TimeTick = number | TimeInterval;
+type NumberTick = number;
 
-type TickCountType<S> = S extends TimeScale ? TimeTickCount : NumberTickCount;
+type TickType<S> = S extends TimeScale ? TimeTick : NumberTick;
 
 export class AxisLine {
     @Validate(NUMBER(0))
@@ -112,7 +112,10 @@ class AxisTick<S extends Scale<D, number>, D = any> {
      *     axis.tick.count = month.every(6);
      */
     @Validate(OPT_TICK_COUNT)
-    count?: TickCountType<S> = undefined;
+    count?: TickType<S> = undefined;
+
+    @Validate(OPT_TICK_COUNT)
+    interval?: TickType<S> = undefined;
 }
 
 export class AxisLabel {
@@ -410,6 +413,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
             // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
             this.setTickCount(this.scale, this.tick.count);
+            this.setTickInterval(this.scale, this.tick.interval);
             this.updateTitle({ ticks: this.scale.ticks!() });
         }
     }
@@ -417,11 +421,34 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._title;
     }
 
-    private setTickCount(scale: Scale<any, any>, count: any) {
-        if (scale instanceof TimeScale && count && count instanceof TimeInterval) {
-            scale.tickInterval = count as any;
-        } else {
+    private setTickInterval<S extends Scale<D, number>, D = any>(scale: S, interval?: any) {
+        if (!interval) {
+            return;
+        }
+
+        if (typeof interval === 'number') {
+            scale.interval = interval;
+            return;
+        }
+
+        if (scale instanceof TimeScale && interval instanceof TimeInterval) {
+            scale.interval = interval;
+            return;
+        }
+    }
+
+    private setTickCount<S extends Scale<D, number>, D = any>(scale: S, count?: any) {
+        if (!(count && scale instanceof ContinuousScale)) {
+            return;
+        }
+
+        if (typeof count === 'number') {
             scale.tickCount = count;
+            return;
+        }
+
+        if (scale instanceof TimeScale && count instanceof TimeInterval) {
+            this.setTickInterval(scale, count);
         }
     }
 
@@ -520,6 +547,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const nice = this.nice;
         scale.domain = this.dataDomain;
+
+        this.setTickInterval(scale, this.tick.interval);
+
         if (scale instanceof ContinuousScale) {
             scale.nice = nice;
             this.setTickCount(scale, this.tick.count);
@@ -538,6 +568,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
 
+        const checkForOverlap = avoidCollisions && this.tick.interval === undefined;
+
         while (labelOverlap) {
             let unchanged = true;
             while (unchanged) {
@@ -551,7 +583,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 const prevTicks = ticks;
 
                 const filteredTicks =
-                    !avoidCollisions || (continuous && this.tick.count === undefined) || i === 0
+                    !checkForOverlap || (continuous && this.tick.count === undefined) || i === 0
                         ? undefined
                         : ticks.filter((_, i) => i % 2 === 0);
 
@@ -580,7 +612,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     primaryTickCount = ticks.length;
                 }
 
-                unchanged = avoidCollisions ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
+                unchanged = checkForOverlap ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
                 i++;
             }
 
@@ -602,7 +634,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const labelPadding = minSpacing ?? (rotated ? 0 : 10);
 
             // no need for further iterations if `avoidCollisions` is false
-            labelOverlap = avoidCollisions ? axisLabelsOverlap(labelData, labelPadding) : false;
+            labelOverlap = checkForOverlap ? axisLabelsOverlap(labelData, labelPadding) : false;
         }
 
         this.updateGridLines({

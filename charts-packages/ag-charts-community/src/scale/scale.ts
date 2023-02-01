@@ -1,3 +1,5 @@
+import { TimeInterval } from 'src/util/time/interval';
+
 export interface ScaleClampParams {
     /**
      * If `true` the values outside of the domain will become `NaN`.
@@ -17,6 +19,7 @@ export interface Scale<D, R> {
     range: R[];
     nice?: boolean;
     tickCount?: number;
+    interval?: number | TimeInterval;
     convert(value: D, params?: ScaleClampParams): R;
     invert?(value: R): D;
     ticks?(): D[];

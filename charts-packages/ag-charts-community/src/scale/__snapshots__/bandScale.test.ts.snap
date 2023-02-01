@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should create ticks for interval: -1 domain: [A, B] case 1`] = `
+Array [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+]
+`;
+
+exports[`should create ticks for interval: -1.5 domain: [A, B] case 1`] = `
+Array [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+]
+`;
+
+exports[`should create ticks for interval: -2 domain: [A, B] case 1`] = `
+Array [
+  "A",
+  "C",
+  "E",
+  "G",
+  "I",
+]
+`;
+
+exports[`should create ticks for interval: 0 domain: [A, B] case 1`] = `Array []`;
+
+exports[`should create ticks for interval: 1 domain: [A, B] case 1`] = `
+Array [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+]
+`;
+
+exports[`should create ticks for interval: 1.5 domain: [A, B] case 1`] = `
+Array [
+  "A",
+  "C",
+  "E",
+  "G",
+  "I",
+]
+`;
+
+exports[`should create ticks for interval: 2 domain: [A, B] case 1`] = `
+Array [
+  "A",
+  "C",
+  "E",
+  "G",
+  "I",
+]
+`;
+
+exports[`should create ticks for interval: 3 domain: [A, B] case 1`] = `
+Array [
+  "A",
+  "D",
+  "G",
+]
+`;
+
+exports[`should create ticks for interval: 4 domain: [A, B] case 1`] = `
+Array [
+  "A",
+  "E",
+  "I",
+]
+`;

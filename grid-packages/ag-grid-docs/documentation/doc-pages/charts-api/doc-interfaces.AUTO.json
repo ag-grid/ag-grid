@@ -5,9 +5,9 @@
     "tick": { "type": { "returnType": "any", "optional": false } },
     "translationY": { "type": { "returnType": "number", "optional": false } }
   },
-  "TimeTickCount": {},
-  "NumberTickCount": {},
-  "TickCountType": { "meta": { "typeParams": ["S"] } },
+  "TimeTick": {},
+  "NumberTick": {},
+  "TickType": { "meta": { "typeParams": ["S"] } },
   "Size": {},
   "OffscreenCanvasRenderingContext2D": {},
   "OffscreenCanvas": {},
@@ -5092,6 +5092,9 @@
     "range": { "type": { "returnType": "R[]", "optional": false } },
     "nice": { "type": { "returnType": "boolean", "optional": true } },
     "tickCount": { "type": { "returnType": "number", "optional": true } },
+    "interval": {
+      "type": { "returnType": "number | TimeInterval", "optional": true }
+    },
     "convert": {
       "type": {
         "arguments": { "value": "D", "params?": "ScaleClampParams" },
