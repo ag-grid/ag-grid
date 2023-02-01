@@ -564,7 +564,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let i = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
-        const defaultTickCount = 10;
+        const defaultTickCount = ContinuousScale.defaultTickCount;
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
 

@@ -20,7 +20,7 @@ describe('TimeScale', () => {
         scale.domain = [new Date(new Date(2022, 1, 13)), new Date(new Date(2022, 10, 30))];
         scale.nice = true;
         scale.update();
-        expect(scale.niceDomain).toEqual([new Date(2022, 1, 1), new Date(2022, 11, 1)]);
+        expect(scale.niceDomain).toEqual([new Date(2022, 0, 1), new Date(2023, 0, 1)]);
     });
 
     it('should create nice ticks', () => {

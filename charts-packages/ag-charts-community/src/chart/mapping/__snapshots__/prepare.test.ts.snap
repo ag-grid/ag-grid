@@ -10064,6 +10064,7 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
+        "count": 10,
         "size": 6,
         "width": 1,
       },

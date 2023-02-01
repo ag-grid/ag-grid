@@ -218,9 +218,10 @@ export class TimeScale extends ContinuousScale {
     }
 
     /**
-     * @param start The start time (timestamp).
-     * @param stop The end time (timestamp).
-     * @param step Number of intervals between ticks.
+     * @param options Tick interval options.
+     * @param options.start The start time (timestamp).
+     * @param options.stop The end time (timestamp).
+     * @param options.count Number of intervals between ticks.
      */
     private getTickInterval({
         start,
@@ -236,7 +237,7 @@ export class TimeScale extends ContinuousScale {
         let countableTimeInterval;
         let step;
 
-        const tickCount = count ?? 10;
+        const tickCount = count ?? ContinuousScale.defaultTickCount;
         const target = Math.abs(stop - start) / Math.max(tickCount - 1, 1);
         let i = 0;
         while (i < tickIntervals.length && target > tickIntervals[i][2]) {
@@ -364,7 +365,7 @@ export class TimeScale extends ContinuousScale {
         if (interval instanceof TimeInterval) {
             i = interval;
         } else {
-            const tickCount = typeof interval === 'number' ? stop - start / Math.max(interval, 1) : this.tickCount;
+            const tickCount = typeof interval === 'number' ? (stop - start) / Math.max(interval, 1) : this.tickCount;
             i = this.getTickInterval({ start, stop, count: tickCount });
         }
 
