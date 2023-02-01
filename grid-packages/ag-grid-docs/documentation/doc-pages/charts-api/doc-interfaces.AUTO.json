@@ -4602,7 +4602,7 @@
       }
     },
     "getImageDataURL": {
-      "description": "/** Retrieve a URL-encoded image data URL `AgChartInstance`'s rendering.\n     */",
+      "description": "/** Retrieve a URL-encoded image data URL for the given  `AgChartInstance`'s rendering.\n     */",
       "type": {
         "arguments": {
           "chart": "AgChartInstance",
