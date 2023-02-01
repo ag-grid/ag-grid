@@ -1334,7 +1334,7 @@
     "type": { "arguments": {}, "returnType": "boolean | undefined" }
   },
   "getCacheBlockState": {
-    "description": "/** Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.\n     * @deprecated v29\n     */",
+    "description": "/** Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.\n     */",
     "type": { "arguments": {}, "returnType": "any" }
   },
   "getFirstDisplayedRow": {

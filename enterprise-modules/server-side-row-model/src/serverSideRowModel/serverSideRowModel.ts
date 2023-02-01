@@ -32,6 +32,8 @@ import {
 import { NodeManager } from "./nodeManager";
 import { SortListener } from "./listeners/sortListener";
 import { StoreFactory } from "./stores/storeFactory";
+import { FullStore } from "./stores/fullStore";
+import { LazyStore } from "./stores/lazy/lazyStore";
 
 export interface SSRMParams {
     sortModel: SortModelItem[];
@@ -393,6 +395,28 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             };
         }
         return rootStore.getRowBounds(index)!;
+    }
+
+    public getBlockStates() {
+        const root = this.getRootStore();
+        if (!root) {
+            return undefined;
+        }
+        
+        const states: any = {};
+        root.forEachStoreDeep(store => {
+            if (store instanceof FullStore) {
+                const { id, state } = store.getBlockStateJson();
+                states[id] = state;
+            } else if (store instanceof LazyStore) {
+                Object.entries(store.getBlockStates()).forEach(([block, state]) => {
+                    states[block] = state;
+                });
+            } else {
+                throw new Error('AG Grid: Unsupported store type');
+            }
+        });
+        return states;
     }
 
     public getRowIndexAtPixel(pixel: number): number {
