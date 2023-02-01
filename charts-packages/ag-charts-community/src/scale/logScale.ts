@@ -99,7 +99,11 @@ export class LogScale extends ContinuousScale {
         let p1 = this.log(d1);
 
         if (this.interval) {
-            return range(p0, p1, Math.min(p1 - p0, this.interval)).map((x) => this.pow(x));
+            const step = Math.abs(this.interval);
+            const absDiff = Math.abs(p1 - p0);
+            return range(p0, p1, Math.min(absDiff, step))
+                .map((x) => this.pow(x))
+                .filter((t) => t >= d0 && t <= d1);
         }
 
         const isBaseInteger = base % 1 === 0;
