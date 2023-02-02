@@ -732,9 +732,9 @@ export interface AgLogAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'log';
     /** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */
     nice?: boolean;
-    /** User override for the automatically determined min value (based on series data). */
+    /** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */
     min?: number;
-    /** User override for the automatically determined max value (based on series data). */
+    /** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */
     max?: number;
     /** The base of the logarithm used. */
     base?: number;

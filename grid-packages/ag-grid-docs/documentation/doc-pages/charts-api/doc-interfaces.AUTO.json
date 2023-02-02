@@ -483,11 +483,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "min": {
-      "description": "/** User override for the automatically determined min value (based on series data). */",
+      "description": "/** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */",
       "type": { "returnType": "number", "optional": true }
     },
     "max": {
-      "description": "/** User override for the automatically determined max value (based on series data). */",
+      "description": "/** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */",
       "type": { "returnType": "number", "optional": true }
     },
     "base": {
@@ -1948,11 +1948,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "min": {
-      "description": "/** User override for the automatically determined min value (based on series data). */",
+      "description": "/** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */",
       "type": { "returnType": "number", "optional": true }
     },
     "max": {
-      "description": "/** User override for the automatically determined max value (based on series data). */",
+      "description": "/** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */",
       "type": { "returnType": "number", "optional": true }
     },
     "base": {

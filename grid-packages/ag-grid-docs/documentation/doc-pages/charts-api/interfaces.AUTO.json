@@ -337,8 +337,8 @@
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
-      "min?": "/** User override for the automatically determined min value (based on series data). */",
-      "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "min?": "/** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */",
+      "max?": "/** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */",
       "base?": "/** The base of the logarithm used. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -1294,8 +1294,8 @@
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
-      "min?": "/** User override for the automatically determined min value (based on series data). */",
-      "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "min?": "/** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */",
+      "max?": "/** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */",
       "base?": "/** The base of the logarithm used. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "position?": "/** The position on the chart where the axis should be rendered. */",
