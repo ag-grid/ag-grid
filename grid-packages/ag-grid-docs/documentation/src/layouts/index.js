@@ -11,6 +11,8 @@ import favIcons from '../images/favicons';
 import styles from './index.module.scss';
 import './mailchimp.css';
 
+const IS_SSR = typeof window === "undefined"
+
 const FULL_SCREEN_PAGES = ['example'];
 
 const FULL_SCREEN_WITH_FOOTER_PAGES = [
@@ -74,7 +76,7 @@ const TopBar = ({ frameworks, currentFramework, path }) => {
 export const Layout = ({
     children,
     pageContext: { frameworks, framework = 'javascript', layout, pageName },
-    location: { href },
+    location: { pathname: path, href },
 }) => {
     if (layout === 'bare') {
         // only for on the fly example runner
@@ -82,7 +84,7 @@ export const Layout = ({
     }
 
     // takes account of current archives as well as new testing/archives
-    const processedPath = href.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, '').replace(/.*(testing|archives).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, '');
+    const processedPath = (IS_SSR ? path : href).replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, '').replace(/.*(testing|archives).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, '');
 
     const fullScreenPage = processedPath === '/' || getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
 
