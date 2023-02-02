@@ -8,6 +8,7 @@ import { AggFuncService } from "./rowGrouping/aggFuncService";
 import { GridHeaderDropZones } from "./rowGrouping/columnDropZones/gridHeaderDropZones";
 import { FilterAggregatesStage } from "./rowGrouping/filterAggregatesStage";
 import { VERSION } from "./version";
+import { GroupFilter } from "./rowGrouping/groupFilter/groupFilter";
 
 export const RowGroupingModule: Module = {
     version: VERSION,
@@ -15,6 +16,9 @@ export const RowGroupingModule: Module = {
     beans: [AggregationStage, FilterAggregatesStage, GroupStage, PivotColDefService, PivotStage, AggFuncService],
     agStackComponents: [
         { componentName: 'AgGridHeaderDropZones', componentClass: GridHeaderDropZones }
+    ],
+    userComponents: [
+        { componentName: 'agGroupColumnFilter', componentClass: GroupFilter },
     ],
     dependantModules: [
         EnterpriseCoreModule

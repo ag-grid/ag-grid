@@ -80,6 +80,7 @@ export class UserComponentRegistry extends BeanStub {
         agSetColumnFloatingFilter: ModuleNames.SetFilterModule,
         agMultiColumnFilter: ModuleNames.MultiFilterModule,
         agMultiColumnFloatingFilter: ModuleNames.MultiFilterModule,
+        agGroupColumnFilter: ModuleNames.RowGroupingModule,
         agRichSelect: ModuleNames.RichSelectModule,
         agRichSelectCellEditor: ModuleNames.RichSelectModule,
         agDetailCellRenderer: ModuleNames.MasterDetailModule,

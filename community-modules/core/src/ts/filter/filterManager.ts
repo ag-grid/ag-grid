@@ -356,6 +356,7 @@ export class FilterManager extends BeanStub {
     public onFilterChanged(params: { filterInstance?: IFilterComp, additionalEventAttributes?: any, columns?: Column[] } = {}): void {
         const { filterInstance, additionalEventAttributes, columns } = params;
 
+        this.updateDependantFilters();
         this.updateActiveFilters();
         this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes);
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
@@ -682,7 +683,17 @@ export class FilterManager extends BeanStub {
 
         if (columns.length > 0) {
             this.onFilterChanged({ columns });
+        } else {
+            // onFilterChanged does this already
+            this.updateDependantFilters();
         }
+    }
+
+    private updateDependantFilters(): void {
+        // Group column filters can be dependant on underlying column filters, but don't normally get created until they're used for the first time.
+        // Instead, create them by default when any filter changes.
+        const groupColumns = this.columnModel.getGroupAutoColumns();
+        groupColumns?.forEach(groupColumn => this.getOrCreateFilterWrapper(groupColumn, 'NO_UI'));
     }
 
     // destroys the filter, so it not longer takes part

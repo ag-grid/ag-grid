@@ -427,7 +427,8 @@ export type ColumnEventType =
     "rowDataUpdated" |
     "api" |
     "flex" |
-    "pivotChart";
+    "pivotChart" |
+    "columnRowGroupChanged";
 
 export interface ColumnEvent<TData = any> extends AgGridEvent<TData> {
     /** The impacted column, only set if action was on one column */

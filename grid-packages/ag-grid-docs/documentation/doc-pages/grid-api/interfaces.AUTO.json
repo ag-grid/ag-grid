@@ -3708,7 +3708,7 @@
   },
   "ColumnEventType": {
     "meta": { "isTypeAlias": true },
-    "type": "\"sizeColumnsToFit\" | \"autosizeColumns\" | \"autosizeColumnHeaderHeight\" | \"alignedGridChanged\" | \"filterChanged\" | \"filterDestroyed\" | \"gridOptionsChanged\" | \"gridInitializing\" | \"toolPanelDragAndDrop\" | \"toolPanelUi\" | \"uiColumnMoved\" | \"uiColumnResized\" | \"uiColumnDragged\" | \"uiColumnExpanded\" | \"uiColumnSorted\" | \"contextMenu\" | \"columnMenu\" | \"rowModelUpdated\" | \"rowDataUpdated\" | \"api\" | \"flex\" | \"pivotChart\""
+    "type": "\"sizeColumnsToFit\" | \"autosizeColumns\" | \"autosizeColumnHeaderHeight\" | \"alignedGridChanged\" | \"filterChanged\" | \"filterDestroyed\" | \"gridOptionsChanged\" | \"gridInitializing\" | \"toolPanelDragAndDrop\" | \"toolPanelUi\" | \"uiColumnMoved\" | \"uiColumnResized\" | \"uiColumnDragged\" | \"uiColumnExpanded\" | \"uiColumnSorted\" | \"contextMenu\" | \"columnMenu\" | \"rowModelUpdated\" | \"rowDataUpdated\" | \"api\" | \"flex\" | \"pivotChart\" | \"columnRowGroupChanged\""
   },
   "ColumnEvent": {
     "meta": { "typeParams": ["TData = any"] },
