@@ -84,7 +84,9 @@ export const Layout = ({
     }
 
     // takes account of current archives as well as new testing/archives
-    const processedPath = (IS_SSR ? path : href).replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, '').replace(/.*(testing|archives).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, '');
+    const processedPath = (IS_SSR ? path : href).replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, '')
+        .replace(/.*(testing|archives|build).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, '')
+        .replace(/.*build.ag-grid.com/, '');
 
     const fullScreenPage = processedPath === '/' || getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
 
