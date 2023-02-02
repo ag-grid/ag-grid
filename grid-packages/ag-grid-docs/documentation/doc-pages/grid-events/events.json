@@ -115,6 +115,30 @@
                 "name": "Full Row Editing",
                 "url": "/cell-editing-full-row/"
             }
+        },
+        "undoStarted": {
+            "more": {
+                "name": "Undo / Redo Events",
+                "url": "/undo-redo-edits/#undo--redo-events"
+            }
+        },
+        "undoEnded": {
+            "more": {
+                "name": "Undo / Redo Events",
+                "url": "/undo-redo-edits/#undo--redo-events"
+            }
+        },
+        "redoStarted": {
+            "more": {
+                "name": "Undo / Redo Events",
+                "url": "/undo-redo-edits/#undo--redo-events"
+            }
+        },
+        "redoEnded": {
+            "more": {
+                "name": "Undo / Redo Events",
+                "url": "/undo-redo-edits/#undo--redo-events"
+            }
         }
     },
     "filter": {

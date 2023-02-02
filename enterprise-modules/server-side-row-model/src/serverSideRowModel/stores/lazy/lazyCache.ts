@@ -132,10 +132,20 @@ export class LazyCache extends BeanStub {
         return newNode;
     }
 
+    /**
+     * @param index The row index relative to this store
+     * @returns A rowNode at the given store index
+     */
     public getRowByStoreIndex(index: number) {
         return this.nodeIndexMap[index];
     }
 
+    /**
+     * Given a number of rows, skips through the given sequence & row top reference (using default row height)
+     * @param numberOfRowsToSkip number of rows to skip over in the given sequence
+     * @param displayIndexSeq the sequence in which to skip
+     * @param nextRowTop the row top reference in which to skip
+     */
     private skipDisplayIndexes(numberOfRowsToSkip: number, displayIndexSeq: NumberSequence, nextRowTop: { value: number; }) {
         const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         displayIndexSeq.skip(numberOfRowsToSkip);
@@ -306,6 +316,70 @@ export class LazyCache extends BeanStub {
         }
 
         return newNode;
+    }
+
+    public getBlockStates() {
+        const blockCounts: { [key: string]: number } = {};
+        const blockStates: { [key: string]: Set<string> } = {};
+
+        this.getNodeMapEntries().forEach(([stringIndex, node]) => {
+            const index = Number(stringIndex);
+            const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
+
+            blockCounts[blockStart] = (blockCounts[blockStart] ?? 0) + 1;
+
+            let rowState = 'loaded';
+            if (node.failedLoad) {
+                rowState = 'failed';
+            } else if (this.rowLoader.isRowLoading(blockStart)) {
+                rowState = 'loading';
+            } else if (node.__needsRefresh) {
+                rowState = 'needsLoading';
+            } else if (node.__needsRefreshWhenVisible || node.stub) {
+                rowState = 'needsLoadingWhenVisible';
+            }
+
+            if (!blockStates[blockStart]) {
+                blockStates[blockStart] = new Set<string>();
+            }
+            blockStates[blockStart].add(rowState);
+        });
+
+        const statePriorityMap: { [key: string]: number } = {
+            loading: 5,
+            failed: 4,
+            needsLoading: 3,
+            needsLoadingWhenVisible: 2,
+            loaded: 1,
+        };
+
+        const isLastBlockKnown = this.isLastRowIndexKnown();
+        const lastBlockStart =  this.rowLoader.getBlockStartIndexForIndex(this.getRowCount());
+
+        const blockPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
+
+        const results: { [key: string]: any } = {};
+        Object.entries(blockStates).forEach(([blockStart, uniqueStates]) => {
+            const sortedStates = [...uniqueStates].sort((a, b) => (statePriorityMap[a] ?? 0) - (statePriorityMap[b] ?? 0));
+            const priorityState = sortedStates[0];
+
+            const statePriority = statePriorityMap[priorityState];
+            const isAssumedLoaded = statePriority === statePriorityMap.loaded;
+            const isLastBlock = isLastBlockKnown && lastBlockStart === Number(blockStart);
+
+            const isBlockIncomplete = isAssumedLoaded && blockCounts[blockStart] < this.rowLoader.getBlockSize() && !isLastBlock;
+
+            const blockNumber = Number(blockStart) / this.rowLoader.getBlockSize();
+
+            const blockId = blockPrefix ? `${blockPrefix}-${blockNumber}` : String(blockNumber);
+            results[blockId] = {
+                blockNumber,
+                startRow: Number(blockStart),
+                endRow: Number(blockStart) + this.rowLoader.getBlockSize(),
+                pageStatus: isBlockIncomplete ? 'needsLoadingWhenVisible' : priorityState,
+            };
+        });
+        return results;
     }
 
     public destroyRowAtIndex(atStoreIndex: number) {

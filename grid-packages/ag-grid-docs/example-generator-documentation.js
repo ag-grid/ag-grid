@@ -713,6 +713,6 @@ module.exports.generateDocumentationExamples = async (chartsOnly, scope, trigger
 
     return new Promise(resolve => {
         module.exports.generateChartExamples(scope, trigger, chartsOnly ? () => resolve() :
-            () => module.exports.generateGridExamples(scope, trigger, () => resolve() , true), true)
+            () => module.exports.generateGridExamples(scope, trigger, () => resolve(), true), true)
     });
 };

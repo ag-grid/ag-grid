@@ -88,6 +88,13 @@ export interface IFilter {
      * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
      */
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
+
+    /**
+     * A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.
+     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.
+     * This is useful for any logic to reset the UI state back to the model before the component is reopened.
+     */
+    afterGuiDetached?(): void;
 }
 
 export interface ProvidedFilterModel {

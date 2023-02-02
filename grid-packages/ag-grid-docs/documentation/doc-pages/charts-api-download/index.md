@@ -6,9 +6,9 @@ Saving chart images by API call.
 
 ## Download API
 
-We expose the API for triggering download via the `AgChart` class:
+We expose the APIs for triggering download via the `AgChart` class:
 
-<api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["download"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
+<api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["download", "getImageDataURL"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
 
 [[only-react]]
 | The `AgChartInstance` can be obtained using a React `Ref` to our `<AgChartsReact />` tag, which
@@ -24,7 +24,9 @@ We expose the API for triggering download via the `AgChart` class:
 
  This example demonstrates:
  - How to obtain a reference to an `AgChartInstance`.
- - How to use `AgChart.download()` to initiate a chart image download.
+ - How to use `AgChart.download()` to start a chart image download.
+ - How to use `AgChart.getImageDataURL()` to create a base64-encoded image URL, and then open it in
+   a new tab.
 
  <chart-example title='Download via AgChart API' name='download' type='generated'></chart-example>
  

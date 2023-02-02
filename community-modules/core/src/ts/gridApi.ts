@@ -1256,14 +1256,14 @@ export class GridApi<TData = any> {
     /** Opens a particular tool panel. Provide the ID of the tool panel to open. */
     public openToolPanel(key: string) {
         if (this.assertSideBarLoaded('openToolPanel')) {
-            this.sideBarComp.openToolPanel(key);
+            this.sideBarComp.openToolPanel(key, 'api');
         }
     }
 
     /** Closes the currently open tool panel (if any). */
     public closeToolPanel() {
         if (this.assertSideBarLoaded('closeToolPanel')) {
-            this.sideBarComp.close();
+            this.sideBarComp.close('api');
         }
     }
 
@@ -1483,11 +1483,11 @@ export class GridApi<TData = any> {
     }
     /** Reverts the last cell edit. */
     public undoCellEditing(): void {
-        this.undoRedoService.undo();
+        this.undoRedoService.undo('api');
     }
     /** Re-applies the most recently undone cell edit. */
     public redoCellEditing(): void {
-        this.undoRedoService.redo();
+        this.undoRedoService.redo('api');
     }
 
     /** Returns current number of available cell edit undo operations. */
@@ -1513,14 +1513,14 @@ export class GridApi<TData = any> {
         }
     }
 
-    /** Returns a string containing the requested data URL which contains a representation of the chart image. */
+    /** Returns a base64-encoded image data URL for the referenced chartId. */
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL')) {
             return this.chartService.getChartImageDataURL(params);
         }
     }
 
-    /** Downloads the chart image in the browser. */
+    /** Starts a browser-based image download for the referenced chartId. */
     public downloadChart(params: ChartDownloadParams) {
         if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart')) {
             return this.chartService.downloadChart(params);
@@ -1880,10 +1880,8 @@ export class GridApi<TData = any> {
 
     /**
      * Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.
-     * @deprecated v29
      */
     public getCacheBlockState(): any {
-        logDeprecation<GridApi>('28.0', 'getCacheBlockState');
         return this.rowNodeBlockLoader.getBlockState();
     }
 

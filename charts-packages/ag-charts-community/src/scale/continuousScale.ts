@@ -1,9 +1,11 @@
+import { TimeInterval } from '../util/time/interval';
 import { Scale } from './scale';
 
 export abstract class ContinuousScale implements Scale<any, any> {
     domain: any[] = [0, 1];
     range: any[] = [0, 1];
     nice = false;
+    interval?: number | TimeInterval;
     tickCount = 10;
     niceDomain: any[] = null as any;
 
@@ -104,5 +106,24 @@ export abstract class ContinuousScale implements Scale<any, any> {
         if (this.didChange()) {
             this.update();
         }
+    }
+
+    protected isDenseInterval({ start, stop, interval }: { start: number; stop: number; interval: number }): boolean {
+        const { range } = this;
+        const domain = stop - start;
+
+        const min = Math.min(range[0], range[1]);
+        const max = Math.max(range[0], range[1]);
+
+        const availableRange = max - min;
+        const stepCount = domain / interval;
+        if (stepCount >= availableRange) {
+            console.warn(
+                `AG Charts - the configured tick interval, ${interval}, results in more than 1 tick per pixel, no ticks will be displayed. Supply a larger tick interval or omit this configuration.`
+            );
+            return true;
+        }
+
+        return false;
     }
 }

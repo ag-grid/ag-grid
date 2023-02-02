@@ -8,7 +8,9 @@ import {
 } from '../series';
 import { ChartAxis, ChartAxisDirection } from '../../chartAxis';
 import { SeriesMarker } from '../seriesMarker';
+import { doOnce } from '../../../util/function';
 import { isContinuous, isDiscrete } from '../../../util/value';
+import { ContinuousScale } from '../../../scale/continuousScale';
 import { Path } from '../../../scene/shape/path';
 import { Selection } from '../../../scene/selection';
 import { Marker } from '../../marker/marker';
@@ -558,6 +560,62 @@ export abstract class CartesianSeries<
 
     getLabelData(): PointLabelDatum[] {
         return [];
+    }
+
+    protected isAnySeriesVisible() {
+        for (const visible of this.seriesItemEnabled.values()) {
+            if (visible) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected validateXYData(
+        xKey: string,
+        yKey: string,
+        data: any[],
+        xAxis: ChartAxis,
+        yAxis: ChartAxis,
+        xData: number[],
+        yData: any[],
+        yDepth = 1
+    ) {
+        if (this.chart?.mode === 'integrated') {
+            // Integrated Charts use-cases do not require this validation.
+            return true;
+        }
+
+        if (!xAxis || !yAxis || data.length === 0 || (this.seriesItemEnabled.size > 0 && !this.isAnySeriesVisible())) {
+            return true;
+        }
+
+        const hasNumber = (items: any[], depth = 0, maxDepth = 0): boolean => {
+            return items.some(
+                depth === maxDepth ? (y) => isContinuous(y) : (arr) => hasNumber(arr, depth + 1, maxDepth)
+            );
+        };
+
+        const isContinuousX = xAxis.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis.scale instanceof ContinuousScale;
+
+        let validationResult = true;
+        if (isContinuousX && !hasNumber(xData)) {
+            doOnce(
+                () => console.warn(`AG Charts - The number axis has no numeric data supplied for xKey: [${xKey}].`),
+                'series has no numeric data on number axis - ' + xKey
+            );
+            validationResult = false;
+        }
+        if (isContinuousY && !hasNumber(yData, 0, yDepth - 1)) {
+            doOnce(
+                () => console.warn(`AG Charts - The number axis has no numeric data supplied for yKey: [${yKey}].`),
+                'series has no numeric data on number axis - ' + yKey
+            );
+            validationResult = false;
+        }
+
+        return validationResult;
     }
 
     protected async updatePaths(opts: {

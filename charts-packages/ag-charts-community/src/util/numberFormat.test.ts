@@ -129,7 +129,6 @@ describe('format', () => {
                 '4.3m',
                 '4.4m',
             ];
-            console.log(Array.from(scale.ticks()));
             scale.ticks().forEach((t, i) => expect(f(t)).toBe(expectedTicks[i]));
         }
         {

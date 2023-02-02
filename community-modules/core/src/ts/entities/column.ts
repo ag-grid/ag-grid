@@ -396,10 +396,8 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public isCellEditable(rowNode: IRowNode): boolean {
-        const isTreeData = this.gridOptionsService.is('treeData');
-
         // only allow editing of groups if the user has this option enabled
-        if (!isTreeData && rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
+        if (rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
             return false;
         }
 

@@ -111,6 +111,31 @@ describe('json module', () => {
                 expect(diff).toMatchSnapshot();
                 expect(diff).toHaveProperty(['foo', '0', 'fn'], target.foo[0].fn);
             });
+
+            it('should correctly diff dictionary of functions (added)', () => {
+                const source = { listeners: {} };
+                const target = { listeners: { seriesNodeClick: (t) => console.log(t) } };
+
+                const diff = jsonDiff(source, target as any) as any;
+                expect(diff).toStrictEqual(target);
+            });
+
+            it('should correctly diff dictionary of functions (removed)', () => {
+                const source = { listeners: { seriesNodeClick: (t) => console.log(t) } };
+                const target = { listeners: { seriesNodeClick: undefined } };
+
+                const diff = jsonDiff(source, target as any) as any;
+                expect(diff).toStrictEqual(target);
+            });
+
+            it('should correctly diff dictionary of functions when no difference', () => {
+                const seriesNodeClick = (t) => console.log(t);
+                const source = { legend: { listeners: { seriesNodeClick } } };
+                const target = { legend: { listeners: { seriesNodeClick } } };
+
+                const diff = jsonDiff(source, target as any);
+                expect(diff).toEqual(null);
+            });
         });
     });
 
@@ -251,6 +276,27 @@ describe('json module', () => {
                 expect(merge.a[0]).toHaveProperty('x', 1);
                 expect(merge.b[0]).toBe(mergee.b[0]);
                 expect(merge.b[0]).toHaveProperty('y', 2);
+            });
+
+            it('should correctly merge dictionary of functions', () => {
+                const source = {};
+                const target = { seriesNodeClick: (t) => console.log(t) };
+
+                const merge = jsonMerge([source, target]) as any;
+                expect(merge).toHaveProperty('seriesNodeClick');
+                expect(merge.seriesNodeClick).toBeInstanceOf(Function);
+            });
+
+            it('should correctly merge dictionary of functions when no difference', () => {
+                const seriesNodeClick = (t) => console.log(t);
+                const source = { legend: { listeners: { seriesNodeClick } } };
+                const target = { listeners: { seriesNodeClick } };
+
+                const merge = jsonMerge([source, target]) as any;
+                expect(merge).toHaveProperty('legend.listeners.seriesNodeClick');
+                expect(merge).toHaveProperty('listeners.seriesNodeClick');
+                expect(merge.legend?.listeners?.seriesNodeClick).toBeInstanceOf(Function);
+                expect(merge.listeners?.seriesNodeClick).toBeInstanceOf(Function);
             });
         });
     });

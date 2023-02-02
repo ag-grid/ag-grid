@@ -216,6 +216,11 @@ export const OPT_STRING_ARRAY = predicateWithMessage(
     (v: any, ctx) => OPTIONAL(v, ctx, STRING_ARRAY),
     'expecting an optional Array of strings'
 );
+export function STRING_UNION(...values: string[]) {
+    const message = `expecting one of: ${values.join(', ')}`;
+
+    return predicateWithMessage((v: any) => typeof v === 'string' && values.indexOf(v) >= 0, message);
+}
 
 export const BOOLEAN_ARRAY = predicateWithMessage(ARRAY(undefined, BOOLEAN), 'expecting an Array of boolean values');
 export const OPT_BOOLEAN_ARRAY = predicateWithMessage(

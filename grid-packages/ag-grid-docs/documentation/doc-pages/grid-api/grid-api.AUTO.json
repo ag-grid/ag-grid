@@ -1077,14 +1077,14 @@
     }
   },
   "getChartImageDataURL": {
-    "description": "/** Returns a string containing the requested data URL which contains a representation of the chart image. */",
+    "description": "/** Returns a base64-encoded image data URL for the referenced chartId. */",
     "type": {
       "arguments": { "params": "GetChartImageDataUrlParams" },
       "returnType": "string | undefined"
     }
   },
   "downloadChart": {
-    "description": "/** Downloads the chart image in the browser. */",
+    "description": "/** Starts a browser-based image download for the referenced chartId. */",
     "type": { "arguments": { "params": "ChartDownloadParams" } }
   },
   "openChartToolPanel": {
@@ -1334,7 +1334,7 @@
     "type": { "arguments": {}, "returnType": "boolean | undefined" }
   },
   "getCacheBlockState": {
-    "description": "/** Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.\n     * @deprecated v29\n     */",
+    "description": "/** Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.\n     */",
     "type": { "arguments": {}, "returnType": "any" }
   },
   "getFirstDisplayedRow": {

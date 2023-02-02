@@ -375,6 +375,23 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             })
         );
 
+        const xyValid = this.validateXYData(
+            this.xKey,
+            this.yKeys.join(', '),
+            data,
+            xAxis,
+            yAxis,
+            this.xData,
+            this.yData,
+            3
+        );
+        if (!xyValid) {
+            this.xData = [];
+            this.yData = [];
+            this.yDomain = [];
+            return;
+        }
+
         // Contains min/max values for each stack in each group,
         // where min is zero and max is a positive total of all values in the stack
         // or min is a negative total of all values in the stack and max is zero.

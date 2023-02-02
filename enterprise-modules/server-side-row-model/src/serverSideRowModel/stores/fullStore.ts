@@ -358,6 +358,16 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.heightPx = nextRowTop.value - this.topPx;
     }
 
+    public forEachStoreDeep(callback: (store: IServerSideStore, index: number) => void, sequence = new NumberSequence()): void {
+        callback(this, sequence.next());
+        this.allRowNodes.forEach(rowNode => {
+            const childCache = rowNode.childStore;
+            if (childCache) {
+                childCache.forEachStoreDeep(callback, sequence);
+            }
+        });
+    }
+
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
         this.allRowNodes.forEach(rowNode => {
             callback(rowNode, sequence.next());

@@ -2,7 +2,7 @@ import { ChartTheme } from './chartTheme';
 import { AgChartThemeOptions } from '../agChartOptions';
 
 export class DarkTheme extends ChartTheme {
-    protected getDefaults(): typeof ChartTheme['defaults'] {
+    protected getDefaults(): (typeof ChartTheme)['defaults'] {
         const fontColor = 'rgb(200, 200, 200)';
         const mutedFontColor = 'rgb(150, 150, 150)';
 

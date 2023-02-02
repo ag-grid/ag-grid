@@ -1,5 +1,5 @@
 import { ContinuousScale } from './continuousScale';
-import generateTicks from '../util/ticks';
+import generateTicks, { range } from '../util/ticks';
 import { format } from '../util/numberFormat';
 import { NUMBER, Validate } from '../util/validation';
 
@@ -9,6 +9,7 @@ export class LogScale extends ContinuousScale {
     readonly type = 'log';
 
     domain = [1, 10];
+    interval?: number;
 
     @Validate(NUMBER(0))
     base = 10;
@@ -96,6 +97,15 @@ export class LogScale extends ContinuousScale {
 
         let p0 = this.log(d0);
         let p1 = this.log(d1);
+
+        if (this.interval) {
+            const step = Math.abs(this.interval);
+            const absDiff = Math.abs(p1 - p0);
+            return range(p0, p1, Math.min(absDiff, step))
+                .map((x) => this.pow(x))
+                .filter((t) => t >= d0 && t <= d1);
+        }
+
         const isBaseInteger = base % 1 === 0;
         const isDiffLarge = p1 - p0 >= count;
 

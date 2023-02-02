@@ -51,7 +51,8 @@ const gridOptions = {
 
 The example below shows a subset of the provided chart groups with the chart types reordered. Note the following:
 
-* Only the **Pie**, **Columns** and **Bar** chart groups are shown and chart types have been reordered.
+* Only the **Pie**, **Columns** and **Bar** chart groups are shown in the settings panel and chart types have been reordered.
+* Only the **Pie**, **Columns** and **Bar** chart groups are shown in the Context Menu when you right click the grid.
 * The Settings Panel is configured to be open by default via `defaultToolPanel: 'settings'`.
 
 <grid-example title='Settings Tool Panel Customisation' name='settings-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>

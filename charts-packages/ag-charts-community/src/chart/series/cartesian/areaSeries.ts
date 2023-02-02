@@ -306,6 +306,23 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             );
         }
 
+        const xyValid = this.validateXYData(
+            this.xKey,
+            this.yKeys.join(', '),
+            data,
+            xAxis,
+            yAxis,
+            xData.map((x) => x.xDatum),
+            yData,
+            2
+        );
+        if (!xyValid) {
+            this.xData = [];
+            this.yData = [];
+            this.yDomain = [];
+            return;
+        }
+
         this.yData = yData;
         this.xData = xData;
 

@@ -1,0 +1,153 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should create ticks for interval: -1 domain: [-10, 0] case 1`] = `
+NumericTicks [
+  -10,
+  -9,
+  -8,
+  -7,
+  -6,
+  -5,
+  -4,
+  -3,
+  -2,
+  -1,
+  0,
+]
+`;
+
+exports[`should create ticks for interval: -1 domain: [0, 10] case 1`] = `
+NumericTicks [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+]
+`;
+
+exports[`should create ticks for interval: -7.5 domain: [-37.5, -7.5] case 1`] = `
+NumericTicks [
+  -37.5,
+  -30,
+  -22.5,
+  -15,
+  -7.5,
+]
+`;
+
+exports[`should create ticks for interval: 0 domain: [-1, 1] case 1`] = `
+NumericTicks [
+  -1,
+  -0.8,
+  -0.6,
+  -0.4,
+  -0.2,
+  0,
+  0.2,
+  0.4,
+  0.6,
+  0.8,
+  1,
+]
+`;
+
+exports[`should create ticks for interval: 0.005 domain: [0.01, 0.02] case 1`] = `
+NumericTicks [
+  0.01,
+  0.015,
+  0.02,
+]
+`;
+
+exports[`should create ticks for interval: 0.01 domain: [0.1, 0.2] case 1`] = `
+NumericTicks [
+  0.1,
+  0.11,
+  0.12,
+  0.13,
+  0.14,
+  0.15,
+  0.16,
+  0.17,
+  0.18,
+  0.19,
+  0.2,
+]
+`;
+
+exports[`should create ticks for interval: 0.1 domain: [0, 1] case 1`] = `
+NumericTicks [
+  0,
+  0.1,
+  0.2,
+  0.3,
+  0.4,
+  0.5,
+  0.6,
+  0.7,
+  0.8,
+  0.9,
+  1,
+]
+`;
+
+exports[`should create ticks for interval: 1 domain: [0, 10] case 1`] = `
+NumericTicks [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+]
+`;
+
+exports[`should create ticks for interval: 3 domain: [-3, 12] case 1`] = `
+NumericTicks [
+  -3,
+  0,
+  3,
+  6,
+  9,
+  12,
+]
+`;
+
+exports[`should create ticks for interval: 10.5 domain: [0, 102] case 1`] = `
+NumericTicks [
+  0,
+  10.5,
+  21,
+  31.5,
+  42,
+  52.5,
+  63,
+  73.5,
+  84,
+  94.5,
+  105,
+]
+`;
+
+exports[`should create ticks for interval: 133 domain: [0, 665] case 1`] = `
+NumericTicks [
+  0,
+  133,
+  266,
+  399,
+  532,
+  665,
+]
+`;

@@ -8,14 +8,14 @@
     "meta": {},
     "type": { "tick": "any", "translationY": "number" }
   },
-  "TimeTickCount": {
+  "TimeTick": {
     "meta": { "isTypeAlias": true },
-    "type": "number | CountableTimeInterval"
+    "type": "number | TimeInterval"
   },
-  "NumberTickCount": { "meta": { "isTypeAlias": true }, "type": "number" },
-  "TickCountType": {
+  "NumberTick": { "meta": { "isTypeAlias": true }, "type": "number" },
+  "TickType": {
     "meta": { "isTypeAlias": true, "typeParams": ["S"] },
-    "type": "S extends TimeScale ? TimeTickCount : NumberTickCount"
+    "type": "S extends TimeScale ? TimeTick : NumberTick"
   },
   "Size": {
     "meta": { "isTypeAlias": true },
@@ -337,8 +337,8 @@
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
-      "min?": "/** User override for the automatically determined min value (based on series data). */",
-      "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "min?": "/** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */",
+      "max?": "/** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */",
       "base?": "/** The base of the logarithm used. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -360,7 +360,7 @@
       "paddingInner?": "Ratio",
       "paddingOuter?": "Ratio",
       "groupPaddingInner?": "Ratio",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "top?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "right?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "bottom?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
@@ -395,7 +395,7 @@
   "AgGroupedCategoryAxisThemeOptions": {
     "meta": {},
     "type": {
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "top?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "right?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "bottom?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
@@ -1063,6 +1063,19 @@
       "color?": "/** The colour of the axis ticks. */"
     }
   },
+  "AgAxisCategoryTickOptions": {
+    "meta": {},
+    "type": {
+      "width?": "PixelSize",
+      "size?": "PixelSize",
+      "color?": "CssColor"
+    },
+    "docs": {
+      "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "size?": "/** The length in pixels of the axis ticks. */",
+      "color?": "/** The colour of the axis ticks. */"
+    }
+  },
   "AgAxisNumberTickOptions": {
     "meta": {},
     "type": {
@@ -1280,8 +1293,8 @@
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
-      "min?": "/** User override for the automatically determined min value (based on series data). */",
-      "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "min?": "/** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */",
+      "max?": "/** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */",
       "base?": "/** The base of the logarithm used. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "position?": "/** The position on the chart where the axis should be rendered. */",
@@ -1300,7 +1313,7 @@
       "paddingInner?": "Ratio",
       "paddingOuter?": "Ratio",
       "groupPaddingInner?": "Ratio",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
@@ -1328,7 +1341,7 @@
     "meta": {},
     "type": {
       "type": "'groupedCategory'",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
@@ -2961,15 +2974,28 @@
   "DownloadOptions": {
     "meta": {},
     "type": {
+      "fileName?": "string",
       "width?": "number",
       "height?": "number",
-      "fileName?": "string",
+      "fileFormat?": "string"
+    },
+    "docs": {
+      "fileName?": "/** Name of downloaded image file. Defaults to `image`.  */",
+      "width?": "/** Width of downloaded chart image in pixels. Defaults to current chart width. */",
+      "height?": "/** Height of downloaded chart image in pixels. Defaults to current chart height. */",
+      "fileFormat?": "/** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */"
+    }
+  },
+  "ImageDataUrlOptions": {
+    "meta": {},
+    "type": {
+      "width?": "number",
+      "height?": "number",
       "fileFormat?": "string"
     },
     "docs": {
       "width?": "/** Width of downloaded chart image in pixels. Defaults to current chart width. */",
       "height?": "/** Height of downloaded chart image in pixels. Defaults to current chart height. */",
-      "fileName?": "/** Name of downloaded image file. Defaults to `image`.  */",
       "fileFormat?": "/** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */"
     }
   },
@@ -2986,13 +3012,15 @@
       "doc": "/** Factory for creating and updating instances of AgChartInstance.\n *\n * @docsInterface\n */"
     },
     "type": {
-      "public static create(options: AgChartOptions): AgChartInstance { return AgChartInternal.createOrUpdate(options as any); }": "AgChartInstance"
+      "public static create(options: AgChartOptions): AgChartInstance { return AgChartInternal.createOrUpdate(options as any); }": "AgChartInstance",
+      "public static getImageDataURL(chart: AgChartInstance, options?: ImageDataUrlOptions): Promise<string> { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.getImageDataURL(chart, options); }": "Promise<string>"
     },
     "docs": {
       "public static create(options: AgChartOptions): AgChartInstance { return AgChartInternal.createOrUpdate(options as any); }": "/** Create a new `AgChartInstance` based upon the given configuration options.\n     */",
       "public static update(chart: AgChartInstance, options: AgChartOptions) { if (!AgChartInstanceProxy.isInstance(chart)) { throw new Error('AG Charts - invalid chart reference passed'); } AgChartInternal.createOrUpdate(options as any, chart); }": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     * <br/>\n     * <br/>\n     * **NOTE**: As each call could trigger a chart redraw, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
       "public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) { if (!AgChartInstanceProxy.isInstance(chart)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.updateUserDelta(chart, deltaOptions as any); }": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     * <br/>\n     * <br/>\n     * **NOTE**: As each call could trigger a chart redraw, each individual delta options update\n     * should leave the chart in a valid options state. Also, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
-      "public static download(chart: AgChartInstance, options?: DownloadOptions) { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.download(chart, options); }": "/** Initiate a browser-based image download for the given `AgChartInstance`'s rendering.\n     */"
+      "public static download(chart: AgChartInstance, options?: DownloadOptions) { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.download(chart, options); }": "/** Starts a browser-based image download for the given `AgChartInstance`.\n     */",
+      "public static getImageDataURL(chart: AgChartInstance, options?: ImageDataUrlOptions): Promise<string> { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.getImageDataURL(chart, options); }": "/** Returns a base64-encoded image data URL for the given `AgChartInstance`.\n     */"
     }
   },
   "ObservableLike": {
@@ -3551,6 +3579,7 @@
       "range": "R[]",
       "nice?": "boolean",
       "tickCount?": "number",
+      "interval?": "number | TimeInterval",
       "convert(value: D, params?: ScaleClampParams)": "R",
       "invert?(value: R)": "D",
       "ticks?()": "D[]",

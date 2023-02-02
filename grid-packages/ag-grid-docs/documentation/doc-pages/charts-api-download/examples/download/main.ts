@@ -39,3 +39,15 @@ function download() {
 function downloadFixedSize() {
   AgChart.download(chart, { width: 600, height: 300 });
 }
+
+function openImage() {
+  AgChart.getImageDataURL(chart, { width: 600, height: 300 })
+    .then((imageDataURL) => {
+      const image = new Image();
+      image.src = imageDataURL;
+  
+      const tab = window.open(imageDataURL);
+      tab?.document.write(image.outerHTML);
+      tab?.document.close();
+    });
+}

@@ -42,6 +42,8 @@ export class TabbedLayout extends Component {
                 handleKeyDown: this.handleKeyDown.bind(this)
             }
         ));
+
+        this.addDestroyFunc(() => this.activeItem?.tabbedItem?.afterDetachedCallback?.());
     }
 
     private static getTemplate(cssClass?: string) {
@@ -192,6 +194,7 @@ export class TabbedLayout extends Component {
 
         if (this.activeItem) {
             this.activeItem.eHeaderButton.classList.remove('ag-tab-selected');
+            this.activeItem.tabbedItem.afterDetachedCallback?.();
         }
 
         eHeaderButton.classList.add('ag-tab-selected');
@@ -215,6 +218,7 @@ export interface TabbedItem {
     name: string;
     getScrollableContainer?: () => HTMLElement;
     afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;
+    afterDetachedCallback?: () => void;
 }
 
 interface TabbedItemWrapper {

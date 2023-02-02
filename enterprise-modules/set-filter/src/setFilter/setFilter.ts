@@ -539,11 +539,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         super.afterGuiAttached(params);
 
-        if (this.setFilterParams.excelMode) {
-            this.resetUiToActiveModel();
-            this.showOrHideResults();
-        }
-
         // collapse all tree list items (if tree list)
         this.resetExpansion();
 
@@ -572,6 +567,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         } else {
             this.positionableFeature.removeSizeFromEl();
             this.positionableFeature.setResizable(false);
+        }
+    }
+
+    public afterGuiDetached(): void {
+        // discard any unapplied UI state (reset to model)
+        if (this.setFilterParams?.excelMode) {
+            this.resetUiToActiveModel();
+            this.showOrHideResults();
         }
     }
 

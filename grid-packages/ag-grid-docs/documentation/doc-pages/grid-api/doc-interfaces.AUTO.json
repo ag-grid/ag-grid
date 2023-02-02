@@ -4175,6 +4175,78 @@
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
     },
+    "onUndoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "undoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "onUndoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "undoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "onRedoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "redoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "onRedoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
+    "redoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
@@ -5401,6 +5473,39 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "InternalToolPanelVisibleChangedEvent": {
+    "source": {
+      "type": {
+        "returnType": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'",
+        "optional": false
+      }
+    },
+    "key": {
+      "description": "/** Key of tool panel. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "visible": {
+      "description": "/** True if now visible; false if now hidden. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "ToolPanelSizeChangedEvent": {
     "type": {
       "type": { "returnType": "'toolPanelSizeChanged'", "optional": false }
@@ -6297,6 +6402,106 @@
       "type": { "returnType": "CellRange", "optional": false }
     },
     "finalRange": { "type": { "returnType": "CellRange", "optional": false } },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "UndoStartedEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "UndoEndedEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "operationPerformed": {
+      "description": "/** `true` if any undo operations were performed. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RedoStartedEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RedoEndedEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "operationPerformed": {
+      "description": "/** `true` if any redo operations were performed. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -9026,6 +9231,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "ScalarFilterParams": { "meta": { "typeParams": ["TData = any"] } },
@@ -9159,6 +9368,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onFloatingFilterChanged": {
       "description": "/** Notification that a new floating-filter value was input by the user.\n     *\n     * @param type operation type selected.\n     * @param value model-typed value entered.\n     */",
@@ -13472,6 +13685,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "ProvidedFilterModel": {
@@ -13546,6 +13763,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "IDoesFilterPassParams": {
@@ -14125,6 +14346,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "IMultiFilterDef": {
@@ -15424,6 +15649,9 @@
     "resetRootStore": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
+    "getBlockStates": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
     "getRow": {
       "description": "/** Returns the rowNode at the given index. */",
       "type": {
@@ -15600,6 +15828,16 @@
         "arguments": {
           "displayIndexSeq": "NumberSequence",
           "nextRowTop": "{ value: number; }"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "forEachStoreDeep": {
+      "type": {
+        "arguments": {
+          "callback": "(rowNode: IServerSideStore, index: number) => void",
+          "sequence?": "NumberSequence"
         },
         "returnType": "void",
         "optional": false
@@ -15925,6 +16163,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "SetFilterValuesFuncParams": {
@@ -16165,7 +16407,10 @@
     },
     "openToolPanel": {
       "type": {
-        "arguments": { "key": "string" },
+        "arguments": {
+          "key": "string",
+          "source?": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'"
+        },
         "returnType": "void",
         "optional": false
       }
@@ -16178,7 +16423,13 @@
       }
     },
     "close": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
+      "type": {
+        "arguments": {
+          "source?": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'"
+        },
+        "returnType": "void",
+        "optional": false
+      }
     },
     "openedItem": {
       "type": {
@@ -17649,6 +17900,9 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterDetachedCallback": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "TabbedItemWrapper": {
@@ -20059,6 +20313,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "ICellRendererAngularComp": {
@@ -20247,6 +20505,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "AgFloatingFilterComponent": {
@@ -22188,6 +22450,78 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
+    },
+    "onUndoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "undoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "onUndoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "undoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "onRedoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "redoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "onRedoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
+    "redoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
     },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
@@ -24914,6 +25248,78 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
+    },
+    "onUndoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "undoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "onUndoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "undoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "onRedoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "redoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "onRedoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
+    "redoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
     },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
@@ -27647,6 +28053,78 @@
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
     },
+    "onUndoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "undoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "onUndoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "undoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "onRedoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "redoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "onRedoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
+    "redoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
@@ -28656,6 +29134,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "getReactContainerStyle": {
       "type": { "arguments": {}, "returnType": "{}", "optional": true }

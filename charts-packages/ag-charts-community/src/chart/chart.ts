@@ -15,7 +15,7 @@ import { AgChartOptions, AgChartClickEvent, AgChartInstance } from './agChartOpt
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
-import { BOOLEAN, Validate } from '../util/validation';
+import { BOOLEAN, Validate, STRING_UNION } from '../util/validation';
 import { sleep } from '../util/async';
 import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
@@ -185,6 +185,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
     get subtitle() {
         return this._subtitle;
     }
+
+    @Validate(STRING_UNION('standalone', 'integrated'))
+    mode: 'standalone' | 'integrated' = 'standalone';
 
     private _destroyed: boolean = false;
     get destroyed() {

@@ -75,7 +75,7 @@ const options: AgChartOptions = {
     {
       type: "line",
       xKey: "year",
-      yKey: "Small cale Hydro",
+      yKey: "Small scale Hydro",
       yName: "Small Scale Hydro",
     },
     {
