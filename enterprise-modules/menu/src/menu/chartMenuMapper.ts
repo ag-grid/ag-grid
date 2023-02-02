@@ -46,12 +46,15 @@ export type ChartMenuOptionName =
     'rangeAreaColumnCombo' |
     'rangeCombinationChart';
 
-const chartGroupsDefToMenu: {
+type ChartDefToMenuItems = {
     [K in keyof ChartGroupsDef]-?: ChartGroupsDef[K] extends ((infer P)[] | undefined) ?
     [P] extends [ChartType] ?
-    { [T in P]-?: ChartMenuOptionName[] } : never
+    { [T in P]-?: ChartMenuOptionName[] }
     : never
-} = {
+    : never
+}
+
+const chartGroupsDefToMenu: ChartDefToMenuItems = {
     columnGroup: {
         column: ['pivotGroupedColumn', 'rangeGroupedColumn'],
         stackedColumn: ['pivotStackedColumn', 'rangeStackedColumn'],
