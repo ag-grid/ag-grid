@@ -581,6 +581,11 @@ export abstract class CartesianSeries<
         yData: any[],
         yDepth = 1
     ) {
+        if (this.chart?.mode === 'integrated') {
+            // Integrated Charts use-cases do not require this validation.
+            return true;
+        }
+
         if (!xAxis || !yAxis || data.length === 0 || (this.seriesItemEnabled.size > 0 && !this.isAnySeriesVisible())) {
             return true;
         }
