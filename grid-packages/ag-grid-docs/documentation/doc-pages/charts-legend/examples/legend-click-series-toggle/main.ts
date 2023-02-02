@@ -86,8 +86,8 @@ const options: AgChartOptions = {
     {
       type: "scatter",
       xKey: "year",
-      yKey: "Small cale Hydro",
-      sizeKey: "Small cale Hydro percent",
+      yKey: "Small scale Hydro",
+      sizeKey: "Small scale Hydro percent",
       yName: "Small Scale Hydro",
     },
     {

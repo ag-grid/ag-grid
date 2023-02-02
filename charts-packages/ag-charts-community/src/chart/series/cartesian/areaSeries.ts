@@ -307,6 +307,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
 
         const xyValid = this.validateXYData(
+            this.xKey,
+            this.yKeys.join(', '),
             data,
             xAxis,
             yAxis,

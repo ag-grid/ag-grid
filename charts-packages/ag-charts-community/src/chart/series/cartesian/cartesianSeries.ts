@@ -572,6 +572,8 @@ export abstract class CartesianSeries<
     }
 
     protected validateXYData(
+        xKey: string,
+        yKey: string,
         data: any[],
         xAxis: ChartAxis,
         yAxis: ChartAxis,
@@ -591,14 +593,24 @@ export abstract class CartesianSeries<
 
         const isContinuousX = xAxis.scale instanceof ContinuousScale;
         const isContinuousY = yAxis.scale instanceof ContinuousScale;
-        if ((isContinuousX && !hasNumber(xData)) || (isContinuousY && !hasNumber(yData, 0, yDepth - 1))) {
+
+        let validationResult = true;
+        if (isContinuousX && !hasNumber(xData)) {
             doOnce(
-                () => console.warn('AG Charts - The number axis has no numeric data supplied.'),
-                'series has no numeric data on number axis'
+                () => console.warn(`AG Charts - The number axis has no numeric data supplied for xKey: [${xKey}].`),
+                'series has no numeric data on number axis - ' + xKey
             );
-            return false;
+            validationResult = false;
         }
-        return true;
+        if (isContinuousY && !hasNumber(yData, 0, yDepth - 1)) {
+            doOnce(
+                () => console.warn(`AG Charts - The number axis has no numeric data supplied for yKey: [${yKey}].`),
+                'series has no numeric data on number axis - ' + yKey
+            );
+            validationResult = false;
+        }
+
+        return validationResult;
     }
 
     protected async updatePaths(opts: {

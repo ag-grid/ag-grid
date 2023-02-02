@@ -148,7 +148,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         );
         this.xData = this.validData.map((d) => d[xKey]);
         this.yData = this.validData.map((d) => d[yKey]);
-        this.validateXYData(data, xAxis, yAxis, this.xData, this.yData, 1);
+        this.validateXYData(this.xKey, this.yKey, data, xAxis, yAxis, this.xData, this.yData, 1);
 
         this.sizeData = sizeKey ? this.validData.map((d) => d[sizeKey]) : [];
 

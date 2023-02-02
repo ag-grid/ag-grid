@@ -375,7 +375,16 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             })
         );
 
-        const xyValid = this.validateXYData(data, xAxis, yAxis, this.xData, this.yData, 3);
+        const xyValid = this.validateXYData(
+            this.xKey,
+            this.yKeys.join(', '),
+            data,
+            xAxis,
+            yAxis,
+            this.xData,
+            this.yData,
+            3
+        );
         if (!xyValid) {
             this.xData = [];
             this.yData = [];
