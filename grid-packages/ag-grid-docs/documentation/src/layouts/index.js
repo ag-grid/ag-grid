@@ -81,8 +81,9 @@ export const Layout = ({
         return children;
     }
 
-    // takes account of archives too
-    const processedPath = path.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, '');
+    // takes account of current archives as well as new testing/archives
+    const processedPath = path.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, '')
+        .replace(/.*(testing|archives).ag-grid.com/, '');
 
     const fullScreenPage = processedPath === '/' || getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
 
