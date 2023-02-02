@@ -5,16 +5,16 @@
     margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
 }
 
-.pageHeader {
+.licencesHeader {
     --font-size: #{$font-size-large} !important; // !important for .ag-styles specificity
     --line-height: #{$line-height-tight} !important; // !important for .ag-styles specificity
 
-    margin-bottom: $size-3 !important; // !important for .ag-styles specificity
+    margin-top: $size-6 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+    text-align: center;
 
     @media screen and (min-width: 780px) {
         --font-size: #{$font-size-massive} !important; // !important for .ag-styles specificity
-
-        margin-bottom: $size-5 !important; // !important for .ag-styles specificity
     }
 }
 

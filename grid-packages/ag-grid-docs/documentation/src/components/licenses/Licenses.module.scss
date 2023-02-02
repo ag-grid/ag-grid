@@ -1,112 +1,275 @@
 @use "../../design-system/" as *;
 
-$single-application-color: rgb(0, 158, 222);
-$single-application-light-color: mix($single-application-color, $white, 10%);
-$multiple-applications-color: rgb(0, 157, 112);
-$multiple-applications-light-color: mix($multiple-applications-color, $white, 10%);
-$deployment-license-color: rgb(251, 173, 24);
-$deployment-license-light-color: mix($deployment-license-color, $white, 10%);
+// Might well be extracted out into component later
+.card {
+    --card-color: var(--border-color);
+    --primary-tint: 0.9;
+    --secondary-tint: 0.95;
+
+    border-radius: calc(var(--border-radius) * 2);
+    border: 3px solid var(--card-color);
+    background-color: var(--card-color);
+    overflow: hidden;
+
+    .primaryContent,
+    .secondaryContent {
+        padding: $size-4 $size-3;
+    }
+
+    .primaryContent {
+        background-color: rgba(255, 255, 255, var(--primary-tint));
+    }
+
+    .secondaryContent {
+        background-color: rgba(255, 255, 255, var(--secondary-tint));
+    }
+}
+
+.card.singleApplicationLicense {
+    --card-color: #0f5bce;
+    --primary-tint: 0.9;
+    --secondary-tint: 0.95;
+}
+
+.card.multipleApplicationsLicense {
+    --card-color: #2aaa33;
+    --primary-tint: 0.92;
+    --secondary-tint: 0.96;
+}
 
 .licenses {
     display: flex;
-    flex-direction: column;
     gap: $size-3;
-    margin-bottom: $size-5 !important; // !important for .ag-styles specificity
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        flex-direction: row;
-    }
 }
 
 .license {
-    --border-color: var(--license-color);
-
     display: flex;
     flex-direction: column;
-    gap: $size-4;
-    flex-grow: 1;
-    padding: $size-3;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    background-color: var(--ghost-white);
+    width: 50%;
 
-    img {
-        width: 4.5rem;
-        margin: 0 auto;
+    .primaryContent,
+    .secondaryContent {
+        padding: $size-3;
+    }
+
+    .primaryContent {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto auto;
+        gap: $size-7 0;
+        height: 100%; // bit of a hack?
+    }
+
+    .secondaryContent {
+        display: grid;
+        grid-template-columns: auto auto;
     }
 }
 
-.singleApplicationLicense {
-    --license-color: #{$single-application-color};
-    --license-hover-color: #{$single-application-light-color};
-}
-
-.multipleApplicationsLicense {
-    --license-color: #{$multiple-applications-color};
-    --license-hover-color: #{$multiple-applications-light-color};
-}
-
-.deploymentLicense {
-    --license-color: #{$deployment-license-color};
-    --license-hover-color: #{$deployment-license-light-color};
-}
-
-.licenseHeader {
-    display: flex;
-    flex-direction: column;
-    gap: $size-half;
-    text-align: center;
-
-    span {
-        color: var(--auro-metal); // Can be a CSS var when .ag-styles is removed
-    }
-
-    h2 {
-        --font-size: #{$font-size-large} !important; // !important for .ag-styles specificity
-
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
-    }
-}
-
-.licensePrice {
-    composes: font-size-small from global;
-
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    color: var(--auro-metal);
-    text-align: center;
+.price,
+.primaryContent .licenceMeta {
+    display: grid;
+    grid-template-rows: 16px 58px 16px;
 
     p {
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin: 0 !important; // !important for .ag-styles specificity
+        line-height: 1 !important; // !important for .ag-styles specificity
     }
 }
 
-.licenseFooter {
-    border-top: 1px solid var(--platinum-gray);
-    padding-top: $size-2;
-    text-align: center;
-}
-
-.buyButton {
-    --button-color: #{$white};
-    --button-text-color: var(--license-color);
-    --button-hover-color: var(--license-hover-color);
-    --button-active-color: var(--license-color);
-    --link-hover-color: var(--license-color);
-
-    text-transform: uppercase;
-    text-align: center;
-    border: 1px solid var(--license-color) !important; // !important for .ag-styles specificity
-    font-weight: var(--font-weight-bold);
-}
-
-.buyText {
-    font-weight: var(--font-weight-bold);
+.name {
+    align-self: center;
 }
 
 .price {
-    composes: font-size-large from global;
+    justify-self: end;
 
-    color: var(--dark-gunmetal-gray); // Can be a CSS var when .ag-styles is removed
+    p:last-child {
+        max-width: 160px;
+        line-height: 1.25 !important; // !important for .ag-styles specificity
+    }
 }
+
+.priceFullDollars {
+    .primaryContent & {
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+    }
+
+    &::before {
+        content: '$';
+    }
+
+    &::after {
+        content: '.00';
+        font-size: $font-size-large;
+        font-weight: 400 !important; // !important for .ag-styles specificity
+        color: var(--secondary-text-color);
+    }
+}
+
+.secondaryContent .licenceMeta {
+    display: grid;
+
+    p {
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+        line-height: 1 !important; // !important for .ag-styles specificity
+    }
+
+    p:last-child {
+        align-self: end;
+    }
+}
+
+.licenceBenifits {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    li {
+        position: relative;
+
+        &::before {
+            content: '•';
+            position: absolute;
+            left: -0.6666em;
+            color: var(--secondary-text-color);
+        }
+    }
+
+    a {
+        margin-top: $size-2 !important; // !important for .ag-styles specificity
+    }
+}
+
+.licenceActions {
+    display: flex;
+    flex-direction: column;
+    justify-self: end;
+    align-self: end;
+    align-items: flex-end;
+    gap: $size-1;
+}
+
+.learnMoreLink {
+    &:hover::after {
+        transform: translateY(0.125em);
+    }
+
+    &::after {
+        content: '↓';
+        position: absolute;
+        padding-left: 0.25em;
+        transition: transform $default-transition-timing;
+    }
+}
+
+// $single-application-color: rgb(0, 158, 222);
+// $single-application-light-color: mix($single-application-color, $white, 10%);
+// $multiple-applications-color: rgb(0, 157, 112);
+// $multiple-applications-light-color: mix($multiple-applications-color, $white, 10%);
+// $deployment-license-color: rgb(251, 173, 24);
+// $deployment-license-light-color: mix($deployment-license-color, $white, 10%);
+
+// .licenses {
+//     display: flex;
+//     flex-direction: column;
+//     gap: $size-3;
+//     margin-bottom: $size-5 !important; // !important for .ag-styles specificity
+
+//     @media screen and (min-width: $breakpoint-pricing-medium) {
+//         flex-direction: row;
+//     }
+// }
+
+// .license {
+//     --border-color: var(--license-color);
+
+//     display: flex;
+//     flex-direction: column;
+//     gap: $size-4;
+//     flex-grow: 1;
+//     padding: $size-3;
+//     border: 1px solid var(--border-color);
+//     border-radius: var(--border-radius);
+//     background-color: var(--ghost-white);
+
+//     img {
+//         width: 4.5rem;
+//         margin: 0 auto;
+//     }
+// }
+
+// .singleApplicationLicense {
+//     --license-color: #{$single-application-color};
+//     --license-hover-color: #{$single-application-light-color};
+// }
+
+// .multipleApplicationsLicense {
+//     --license-color: #{$multiple-applications-color};
+//     --license-hover-color: #{$multiple-applications-light-color};
+// }
+
+// .deploymentLicense {
+//     --license-color: #{$deployment-license-color};
+//     --license-hover-color: #{$deployment-license-light-color};
+// }
+
+// .licenseHeader {
+//     display: flex;
+//     flex-direction: column;
+//     gap: $size-half;
+//     text-align: center;
+
+//     span {
+//         color: var(--auro-metal); // Can be a CSS var when .ag-styles is removed
+//     }
+
+//     h2 {
+//         --font-size: #{$font-size-large} !important; // !important for .ag-styles specificity
+
+//         margin-bottom: 0 !important; // !important for .ag-styles specificity
+//     }
+// }
+
+// .licensePrice {
+//     composes: font-size-small from global;
+
+//     display: flex;
+//     flex-direction: column;
+//     gap: 0;
+//     color: var(--auro-metal);
+//     text-align: center;
+
+//     p {
+//         margin-bottom: 0 !important; // !important for .ag-styles specificity
+//     }
+// }
+
+// .licenseFooter {
+//     border-top: 1px solid var(--platinum-gray);
+//     padding-top: $size-2;
+//     text-align: center;
+// }
+
+// .buyButton {
+//     --button-color: #{$white};
+//     --button-text-color: var(--license-color);
+//     --button-hover-color: var(--license-hover-color);
+//     --button-active-color: var(--license-color);
+//     --link-hover-color: var(--license-color);
+
+//     text-transform: uppercase;
+//     text-align: center;
+//     border: 1px solid var(--license-color) !important; // !important for .ag-styles specificity
+//     font-weight: var(--font-weight-bold);
+// }
+
+// .buyText {
+//     font-weight: var(--font-weight-bold);
+// }
+
+// .price {
+//     composes: font-size-large from global;
+
+//     color: var(--dark-gunmetal-gray); // Can be a CSS var when .ag-styles is removed
+// }
