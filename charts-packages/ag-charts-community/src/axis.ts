@@ -119,7 +119,7 @@ class AxisTick<S extends Scale<D, number>, D = any> {
     interval?: TickType<S> = undefined;
 
     @Validate(OPT_ARRAY())
-    values?: TickType<S>[] = undefined;
+    values?: any[] = undefined;
 }
 
 export class AxisLabel {
