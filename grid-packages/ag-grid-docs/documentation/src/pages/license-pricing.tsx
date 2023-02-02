@@ -1,6 +1,7 @@
 import classnames from 'classnames';
+import ukraineFlagSVG from 'images/ukraine-flag.svg';
 import React from 'react';
-import { Licenses } from '../components/licenses/Licenses';
+import { Alert } from '../components/alert/Alert';
 import SEO from './components/SEO';
 // @ts-ignore
 import styles from './license-pricing.module.scss';
@@ -9,8 +10,20 @@ const LicensePricing = () => {
     return (
         <div className="ag-styles">
             <div className={classnames('page-margin', styles.container)}>
-                <h1>AG Grid Licensing &amp; Pricing</h1>
-                <section className={styles.info}>
+                <h1 className={styles.pageHeader}>AG Grid Licensing&nbsp;&amp;&nbsp;Pricing</h1>
+
+                <Alert type="flag">
+                    <img src={ukraineFlagSVG} alt="flag of Ukraine" />
+
+                    <p>
+                        In light of current events in Ukraine we are choosing to express our disappointment in the
+                        breakdown of diplomacy, and its effects on the people of Ukraine, the global economy and
+                        community by not licensing software to companies or individuals registered or residing in the
+                        Russian Federation.
+                    </p>
+                </Alert>
+
+                {/* <section className={styles.info}>
                     <div className={styles.infoItem}>
                         <div className={styles.ukraineFlag}>
                             <div className={styles.top}></div>
@@ -212,7 +225,7 @@ const LicensePricing = () => {
                             </p>
                         </dd>
                     </dl>
-                </section>
+                </section> */}
             </div>
         </div>
     );

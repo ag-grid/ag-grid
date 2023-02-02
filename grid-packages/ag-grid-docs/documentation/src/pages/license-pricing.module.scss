@@ -5,98 +5,111 @@
     margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
 }
 
-.info {
-    display: flex;
-    flex-direction: column;
-    gap: $size-3;
+.pageHeader {
+    --font-size: #{$font-size-large} !important; // !important for .ag-styles specificity
+    --line-height: #{$line-height-tight} !important; // !important for .ag-styles specificity
+
     margin-bottom: $size-3 !important; // !important for .ag-styles specificity
-}
 
-.infoItem {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: $size-3;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: $size-3;
+    @media screen and (min-width: 780px) {
+        --font-size: #{$font-size-massive} !important; // !important for .ag-styles specificity
 
-    @media screen and (min-width: $breakpoint-pricing-small) {
-        flex-direction: row;
-        align-items: flex-start;
+        margin-bottom: $size-5 !important; // !important for .ag-styles specificity
     }
 }
 
-.mitLogo,
-.enterpriseLogo {
-    width: 80px;
-}
+// .info {
+//     display: flex;
+//     flex-direction: column;
+//     gap: $size-3;
+//     margin-bottom: $size-3 !important; // !important for .ag-styles specificity
+// }
 
-.ukraineFlag {
-    min-width: 75px;
+// .infoItem {
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     gap: $size-3;
+//     border: 1px solid var(--border-color);
+//     border-radius: var(--border-radius);
+//     padding: $size-3;
 
-    .top {
-        height: 25px;
-        background-color: #0057b7;
-    }
+//     @media screen and (min-width: $breakpoint-pricing-small) {
+//         flex-direction: row;
+//         align-items: flex-start;
+//     }
+// }
 
-    .bottom {
-        height: 25px;
-        background-color: #ffd700;
-    }
-}
+// .mitLogo,
+// .enterpriseLogo {
+//     width: 80px;
+// }
 
-.enterpriseContent {
-    display: flex;
-    flex-direction: column;
-    gap: $size-3;
+// .ukraineFlag {
+//     min-width: 75px;
 
-    iframe {
-        width: 100%;
-        min-height: 240px;
-        border: none;
+//     .top {
+//         height: 25px;
+//         background-color: #0057b7;
+//     }
 
-        @media screen and (min-width: $breakpoint-pricing-small) {
-            width: 400px;
-            height: 226px;
-        }
+//     .bottom {
+//         height: 25px;
+//         background-color: #ffd700;
+//     }
+// }
 
-        @media screen and (min-width: $breakpoint-pricing-medium) {
-            min-width: 400px;
-            min-height: 226px;
-        }
-    }
+// .enterpriseContent {
+//     display: flex;
+//     flex-direction: column;
+//     gap: $size-3;
 
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        flex-direction: row;
-    }
-}
+//     iframe {
+//         width: 100%;
+//         min-height: 240px;
+//         border: none;
 
-.bulkDiscount {
-    margin-bottom: $size-5 !important; // !important for .ag-styles specificity
-    text-align: center;
+//         @media screen and (min-width: $breakpoint-pricing-small) {
+//             width: 400px;
+//             height: 226px;
+//         }
 
-    p {
-        max-width: 800px;
-        display: inline-block;
-    }
-}
+//         @media screen and (min-width: $breakpoint-pricing-medium) {
+//             min-width: 400px;
+//             min-height: 226px;
+//         }
+//     }
 
-.definitions {
-    img {
-        width: 40px;
-    }
+//     @media screen and (min-width: $breakpoint-pricing-medium) {
+//         flex-direction: row;
+//     }
+// }
 
-    dd {
-        margin-left: $size-7;
-        margin-bottom: $size-3;
-    }
-}
+// .bulkDiscount {
+//     margin-bottom: $size-5 !important; // !important for .ag-styles specificity
+//     text-align: center;
 
-.definitionTerm {
-    composes: font-size-large from global;
+//     p {
+//         max-width: 800px;
+//         display: inline-block;
+//     }
+// }
 
-    display: flex;
-    flex-direction: row;
-    gap: $size-3;
-}
+// .definitions {
+//     img {
+//         width: 40px;
+//     }
+
+//     dd {
+//         margin-left: $size-7;
+//         margin-bottom: $size-3;
+//     }
+// }
+
+// .definitionTerm {
+//     composes: font-size-large from global;
+
+//     display: flex;
+//     flex-direction: row;
+//     gap: $size-3;
+// }
