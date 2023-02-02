@@ -149,6 +149,47 @@ export const NUMBER_AXIS_NO_SERIES: AgChartOptions = {
     legend: { enabled: false },
 };
 
+export const NUMBER_AXIS_TICK_VALUES: AgChartOptions = {
+    ...examples.SIMPLE_SCATTER_CHART_EXAMPLE,
+    axes: [
+        { type: 'number', position: 'bottom', tick: { values: [142, 153, 203, 220, 290] } },
+        { type: 'number', position: 'left' },
+    ],
+};
+
+export const TIME_AXIS_TICK_VALUES: AgChartOptions = {
+    ...examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,
+    axes: [
+        {
+            type: 'time',
+            position: 'bottom',
+            tick: {
+                values: [new Date(2020, 0, 1), new Date(2020, 0, 4), new Date(2020, 0, 17), new Date(2020, 0, 28)],
+            },
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+};
+
+export const LOG_AXIS_TICK_VALUES: AgChartOptions = {
+    ...NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
+    axes: [
+        { type: 'number', position: 'bottom' },
+        { type: 'log', position: 'left', tick: { values: [2, 4, 8, 16, 12, 20, 200, 400, 800] } },
+    ],
+};
+
+export const CATEGORY_AXIS_TICK_VALUES: AgChartOptions = {
+    ...examples.GROUPED_COLUMN_EXAMPLE,
+    axes: [
+        { type: 'category', position: 'bottom', tick: { values: ['2016', '2018'] } },
+        { type: 'number', position: 'left' },
+    ],
+};
+
 export const NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN: AgChartOptions = {
     ...NUMBER_AXIS_NO_SERIES,
     axes: NUMBER_AXIS_NO_SERIES.axes?.map((a) => {
