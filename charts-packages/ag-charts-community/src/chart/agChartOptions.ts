@@ -565,6 +565,9 @@ export interface AgAxisBaseTickOptions {
     size?: PixelSize;
     /** The colour of the axis ticks. */
     color?: CssColor;
+    /** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.
+     */
+    // values?: any[];
 }
 
 export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {}
