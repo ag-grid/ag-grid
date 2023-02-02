@@ -109,10 +109,15 @@ export abstract class ContinuousScale implements Scale<any, any> {
     }
 
     protected isDenseInterval({ start, stop, interval }: { start: number; stop: number; interval: number }): boolean {
+        const { range } = this;
         const domain = stop - start;
-        const range = this.range[1] - this.range[0];
+
+        const min = Math.min(range[0], range[1]);
+        const max = Math.max(range[0], range[1]);
+
+        const availableRange = max - min;
         const stepCount = domain / interval;
-        if (stepCount >= range) {
+        if (stepCount >= availableRange) {
             console.warn(
                 `AG Charts - the configured tick interval, ${interval}, results in more than 1 tick per pixel, no ticks will be displayed. Supply a larger tick interval or omit this configuration.`
             );

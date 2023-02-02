@@ -364,7 +364,7 @@ export class TimeScale extends ContinuousScale {
         if (interval instanceof TimeInterval) {
             i = interval;
         } else {
-            const tickCount = typeof interval === 'number' ? stop - start / Math.max(interval, 1) : this.tickCount;
+            const tickCount = typeof interval === 'number' ? (stop - start) / Math.max(interval, 1) : this.tickCount;
             i = this.getTickInterval({ start, stop, count: tickCount });
         }
 
