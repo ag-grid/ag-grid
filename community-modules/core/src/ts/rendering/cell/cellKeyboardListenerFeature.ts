@@ -97,7 +97,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             if (rangeService && gridOptionsService.isEnableRangeSelection()) {
                 rangeService.clearCellRangeCellValues();
             } else if (cellCtrl.isCellEditable()) {
-                rowNode.setDataValue(cellCtrl.getColumn(), null, 'cellKeyboardListenerFeature');
+                rowNode.setDataValue(cellCtrl.getColumn(), null, 'deleteKey');
             }
         } else {
             cellCtrl.startRowOrCellEdit(key, undefined, event);
