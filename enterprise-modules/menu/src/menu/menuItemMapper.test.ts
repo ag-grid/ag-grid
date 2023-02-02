@@ -1,16 +1,29 @@
 import { ChartGroupsDef, DEFAULT_CHART_GROUPS, MenuItemDef, ModuleRegistry } from "@ag-grid-community/core";
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, fit } from '@jest/globals';
 import { ChartMenuOptionName } from './chartMenuMapper';
 import { MenuItemMapper } from './menuItemMapper';
 describe('isValidChartType', () => {
 
-    ModuleRegistry.registerModules([])
+    const cleanMenuItems = (menuItems: (MenuItemDef | string)[] | undefined) => {
+        return menuItems?.map(cleanMenuItem)
+    }
+    const cleanMenuItem = (menuItem: MenuItemDef | string) => {
+        if (typeof menuItem === 'string') {
+            return menuItem;
+        }
+        return { name: menuItem.name, subMenu: cleanMenuItems(menuItem.subMenu) };
+    }
+
     const menuItemMapper = new MenuItemMapper();
     (menuItemMapper as any).localeService = { getLocaleTextFunc: () => (d) => d }
 
     it('Dont include parent menu item if all children not valid', () => {
-        const pivotChart = (menuItemMapper as any).getChartItems('pivotChart', { combinationGroup: ['areaColumnCombo'] });
-        expect(pivotChart).toBeUndefined()
+        (menuItemMapper as any).gridOptionsService = {
+            is: () => true,
+            get: () => ({ settingsPanel: { chartGroupsDef: { combinationGroup: ['areaColumnCombo'] } } })
+        }
+        const pivotChart = menuItemMapper.mapWithStockItems(['pivotChart'], null);
+        expect(pivotChart).toEqual([])
     });
 
     it('Include if one valid subMenu', () => {
@@ -22,7 +35,7 @@ describe('isValidChartType', () => {
         expect(pivotChart).toBeDefined();
         expect(pivotXYChart).toBeDefined();
         expect(pivotScatter).toBeDefined();
-        expect(pivotBubble).toBeUndefined();
+        expect(pivotBubble).toBeNull();
     });
 
     it('Test selection of options', () => {
@@ -34,15 +47,7 @@ describe('isValidChartType', () => {
         const pivotChart = (menuItemMapper).mapWithStockItems(['expandAll', { name: 'top' }, { name: 'custom', subMenu: [{ name: 'sub' }] }, 'pivotChart'], null);
         const rangeChart = (menuItemMapper).mapWithStockItems(['chartRange'], null);
 
-        const cleanMenuItems = (menuItems: (MenuItemDef | string)[] | undefined) => {
-            return menuItems?.map(cleanMenuItem)
-        }
-        const cleanMenuItem = (menuItem: MenuItemDef | string) => {
-            if (typeof menuItem === 'string') {
-                return menuItem;
-            }
-            return { name: menuItem.name, subMenu: cleanMenuItems(menuItem.subMenu) };
-        }
+
         const expectedPivot = [
             { name: 'expandAll' },
             { name: "top", },
