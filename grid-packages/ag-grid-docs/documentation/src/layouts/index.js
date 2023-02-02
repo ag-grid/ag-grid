@@ -74,7 +74,7 @@ const TopBar = ({ frameworks, currentFramework, path }) => {
 export const Layout = ({
     children,
     pageContext: { frameworks, framework = 'javascript', layout, pageName },
-    location: { pathname: path },
+    location: { href },
 }) => {
     if (layout === 'bare') {
         // only for on the fly example runner
@@ -82,8 +82,7 @@ export const Layout = ({
     }
 
     // takes account of current archives as well as new testing/archives
-    const processedPath = path.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, '')
-        .replace(/.*(testing|archives).ag-grid.com/, '');
+    const processedPath = href.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, '').replace(/.*(testing|archives).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, '');
 
     const fullScreenPage = processedPath === '/' || getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
 
