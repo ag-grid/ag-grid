@@ -38,7 +38,19 @@ if (!isProductionBuild()) {
 
 const HeroGrid = () => {
     useEffect(() => {
-        initGrid('#heroGrid');
+        let gridParams = {
+            selector: '#heroGrid',
+        };
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.get('isCI') === 'true') {
+            gridParams = {
+                ...gridParams,
+                suppressUpdates: true,
+                useStaticData: true,
+            };
+        }
+
+        initGrid(gridParams);
     }, []);
 
     return (

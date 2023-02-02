@@ -8,6 +8,7 @@ import { GetRowIdParams, GridOptions, GridSizeChangedEvent, ISetFilter } from 'a
 import { COLUMN_ID_PRIORITIES, FILTER_ROWS_BREAKPOINT, UPDATE_INTERVAL } from './constants';
 import { columnDefs, generateStocks, generateStockUpdate } from './data';
 import { createGenerator } from './generator-utils';
+import { fixtureData } from './rowDataFixture';
 
 const rowData = generateStocks();
 const generator = createGenerator({
@@ -40,9 +41,6 @@ const gridOptions: GridOptions = {
     domLayout: 'autoHeight',
     getRowId: ({ data }: GetRowIdParams) => {
         return data.stock;
-    },
-    onGridReady() {
-        generator.start();
     },
     onGridSizeChanged(params: GridSizeChangedEvent) {
         const columnsToShow: string[] = [];
@@ -86,9 +84,28 @@ const gridOptions: GridOptions = {
 /*
  * Initialise the grid using plain JavaScript, so grid can be dynamically loaded.
  */
-export function initGrid(selector: string) {
+export function initGrid({
+    selector,
+    suppressUpdates,
+    useStaticData,
+}: {
+    selector: string;
+    suppressUpdates?: boolean;
+    useStaticData?: boolean;
+}) {
     const init = () => {
         const gridDiv = document.querySelector(selector);
+
+        if (useStaticData) {
+            gridOptions.rowData = fixtureData;
+        }
+        gridOptions.onGridReady = () => {
+            if (suppressUpdates) {
+                return;
+            }
+
+            generator.start();
+        };
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
 
         gridDiv?.classList.add('loaded');
