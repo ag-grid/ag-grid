@@ -1639,6 +1639,10 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
     }
   },
   "AgAxisCategoryTickOptions": {
@@ -1653,6 +1657,10 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
     }
   },
   "AgAxisNumberTickOptions": {
@@ -1671,6 +1679,10 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
     }
   },
   "AgAxisTimeTickOptions": {
@@ -1689,6 +1701,10 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
     }
   },
   "AgAxisLabelFormatterParams": {
