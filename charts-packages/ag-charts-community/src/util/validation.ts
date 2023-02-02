@@ -217,7 +217,7 @@ export const OPT_STRING_ARRAY = predicateWithMessage(
     'expecting an optional Array of strings'
 );
 export function STRING_UNION(...values: string[]) {
-    const message = `expecting a one of: ${values.join(', ')}`;
+    const message = `expecting one of: ${values.join(', ')}`;
 
     return predicateWithMessage((v: any) => typeof v === 'string' && values.indexOf(v) >= 0, message);
 }
