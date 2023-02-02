@@ -14,8 +14,10 @@ import {
     ModuleNames, ModuleRegistry,
     Optional,
     FocusService,
-    RowPositionUtils
+    RowPositionUtils,
+    ChartGroupsDef
 } from '@ag-grid-community/core';
+import { ChartMenuOptionName, getValidChartMenuItems } from './chartMenuMapper';
 
 @Bean('menuItemMapper')
 export class MenuItemMapper extends BeanStub {
@@ -51,7 +53,13 @@ export class MenuItemMapper extends BeanStub {
             const { subMenu } = resultDef;
 
             if (subMenu && subMenu instanceof Array) {
-                resultDef.subMenu = this.mapWithStockItems(resultDef.subMenu as (MenuItemDef | string)[], column);
+                const subMenus = this.mapWithStockItems(subMenu as (MenuItemDef | string)[], column);
+                if (subMenus.length > 0) {
+                    resultDef.subMenu = subMenus
+                } else {
+                    // All the subMenus were filtered out so do not include this menuItem
+                    return;
+                }
             }
 
             if (result != null) {
@@ -233,17 +241,15 @@ export class MenuItemMapper extends BeanStub {
             case 'separator':
                 return 'separator';
             default:
-                const chartMenuItem = this.getChartItems(key);
-                if (chartMenuItem) {
+                {
+                    const chartGroupsDef = this.gridOptionsService.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
+                    const chartMenuItem = this.getChartItems(key as ChartMenuOptionName, chartGroupsDef);
                     return chartMenuItem;
-                } else {
-                    console.warn(`AG Grid: unknown menu item type ${key}`);
-                    return null;
                 }
         }
     }
 
-    private getChartItems(key: string) {
+    private getChartItems(key: ChartMenuOptionName, chartGroupsDef: ChartGroupsDef | undefined): MenuItemDef | null {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         const pivotChartMenuItem = (localeKey: string, defaultText: string, chartType: ChartType) => {
@@ -260,9 +266,10 @@ export class MenuItemMapper extends BeanStub {
             };
         };
 
+        let chartMenuItem: MenuItemDef;
         switch (key) {
             case 'pivotChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('pivotChart', 'Pivot Chart'),
                     subMenu: [
                         'pivotColumnChart',
@@ -274,9 +281,9 @@ export class MenuItemMapper extends BeanStub {
                     ],
                     icon: _.createIconNoSpan('chart', this.gridOptionsService, null),
                 };
-
+                break;
             case 'chartRange':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('chartRange', 'Chart Range'),
                     subMenu: [
                         'rangeColumnChart',
@@ -290,162 +297,183 @@ export class MenuItemMapper extends BeanStub {
                     ],
                     icon: _.createIconNoSpan('chart', this.gridOptionsService, null),
                 };
-
+                break;
             case 'pivotColumnChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('columnChart', 'Column'),
                     subMenu: ['pivotGroupedColumn', 'pivotStackedColumn', 'pivotNormalizedColumn']
                 };
-
+                break;
             case 'pivotGroupedColumn':
-                return pivotChartMenuItem('groupedColumn', 'Grouped&lrm;', 'groupedColumn');
-
+                chartMenuItem = pivotChartMenuItem('groupedColumn', 'Grouped&lrm;', 'groupedColumn');
+                break;
             case 'pivotStackedColumn':
-                return pivotChartMenuItem('stackedColumn', 'Stacked&lrm;', 'stackedColumn');
-
+                chartMenuItem = pivotChartMenuItem('stackedColumn', 'Stacked&lrm;', 'stackedColumn');
+                break;
             case 'pivotNormalizedColumn':
-                return pivotChartMenuItem('normalizedColumn', '100% Stacked&lrm;', 'normalizedColumn');
-
+                chartMenuItem = pivotChartMenuItem('normalizedColumn', '100% Stacked&lrm;', 'normalizedColumn');
+                break;
             case 'rangeColumnChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('columnChart', 'Column'),
                     subMenu: ['rangeGroupedColumn', 'rangeStackedColumn', 'rangeNormalizedColumn']
                 };
-
+                break;
             case 'rangeGroupedColumn':
-                return rangeChartMenuItem('groupedColumn', 'Grouped&lrm;', 'groupedColumn');
-
+                chartMenuItem = rangeChartMenuItem('groupedColumn', 'Grouped&lrm;', 'groupedColumn');
+                break;
             case 'rangeStackedColumn':
-                return rangeChartMenuItem('stackedColumn', 'Stacked&lrm;', 'stackedColumn');
-
+                chartMenuItem = rangeChartMenuItem('stackedColumn', 'Stacked&lrm;', 'stackedColumn');
+                break;
             case 'rangeNormalizedColumn':
-                return rangeChartMenuItem('normalizedColumn', '100% Stacked&lrm;', 'normalizedColumn');
-
+                chartMenuItem = rangeChartMenuItem('normalizedColumn', '100% Stacked&lrm;', 'normalizedColumn');
+                break;
             case 'pivotBarChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('barChart', 'Bar'),
                     subMenu: ['pivotGroupedBar', 'pivotStackedBar', 'pivotNormalizedBar']
                 };
-
+                break;
             case 'pivotGroupedBar':
-                return pivotChartMenuItem('groupedBar', 'Grouped&lrm;', 'groupedBar');
-
+                chartMenuItem = pivotChartMenuItem('groupedBar', 'Grouped&lrm;', 'groupedBar');
+                break;
             case 'pivotStackedBar':
-                return pivotChartMenuItem('stackedBar', 'Stacked&lrm;', 'stackedBar');
-
+                chartMenuItem = pivotChartMenuItem('stackedBar', 'Stacked&lrm;', 'stackedBar');
+                break;
             case 'pivotNormalizedBar':
-                return pivotChartMenuItem('normalizedBar', '100% Stacked&lrm;', 'normalizedBar');
-
+                chartMenuItem = pivotChartMenuItem('normalizedBar', '100% Stacked&lrm;', 'normalizedBar');
+                break;
             case 'rangeBarChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('barChart', 'Bar'),
                     subMenu: ['rangeGroupedBar', 'rangeStackedBar', 'rangeNormalizedBar']
                 };
-
+                break;
             case 'rangeGroupedBar':
-                return rangeChartMenuItem('groupedBar', 'Grouped&lrm;', 'groupedBar');
-
+                chartMenuItem = rangeChartMenuItem('groupedBar', 'Grouped&lrm;', 'groupedBar');
+                break;
             case 'rangeStackedBar':
-                return rangeChartMenuItem('stackedBar', 'Stacked&lrm;', 'stackedBar');
-
+                chartMenuItem = rangeChartMenuItem('stackedBar', 'Stacked&lrm;', 'stackedBar');
+                break;
             case 'rangeNormalizedBar':
-                return rangeChartMenuItem('normalizedBar', '100% Stacked&lrm;', 'normalizedBar');
-
+                chartMenuItem = rangeChartMenuItem('normalizedBar', '100% Stacked&lrm;', 'normalizedBar');
+                break;
             case 'pivotPieChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: ['pivotPie', 'pivotDoughnut']
                 };
+                break;
             case 'pivotPie':
-                return pivotChartMenuItem('pie', 'Pie&lrm;', 'pie');
-
+                chartMenuItem = pivotChartMenuItem('pie', 'Pie&lrm;', 'pie');
+                break;
             case 'pivotDoughnut':
-                return pivotChartMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut');
-
+                chartMenuItem = pivotChartMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut');
+                break;
             case 'rangePieChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: ['rangePie', 'rangeDoughnut']
                 };
+                break;
             case 'rangePie':
-                return rangeChartMenuItem('pie', 'Pie&lrm;', 'pie');
-
+                chartMenuItem = rangeChartMenuItem('pie', 'Pie&lrm;', 'pie');
+                break;
             case 'rangeDoughnut':
-                return rangeChartMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut');
-
+                chartMenuItem = rangeChartMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut');
+                break;
             case 'pivotLineChart':
-                return pivotChartMenuItem('line', 'Line&lrm;', 'line');
-
+                chartMenuItem = pivotChartMenuItem('line', 'Line&lrm;', 'line');
+                break;
             case 'rangeLineChart':
-                return rangeChartMenuItem('line', 'Line&lrm;', 'line');
-
+                chartMenuItem = rangeChartMenuItem('line', 'Line&lrm;', 'line');
+                break;
             case 'pivotXYChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('xyChart', 'X Y (Scatter)'),
                     subMenu: ['pivotScatter', 'pivotBubble']
                 };
+                break;
             case 'pivotScatter':
-                return pivotChartMenuItem('scatter', 'Scatter&lrm;', 'scatter');
+                chartMenuItem = pivotChartMenuItem('scatter', 'Scatter&lrm;', 'scatter');
+                break;
             case 'pivotBubble':
-                return pivotChartMenuItem('bubble', 'Bubble&lrm;', 'bubble');
-
+                chartMenuItem = pivotChartMenuItem('bubble', 'Bubble&lrm;', 'bubble');
+                break;
             case 'rangeXYChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('xyChart', 'X Y (Scatter)'),
                     subMenu: ['rangeScatter', 'rangeBubble']
                 };
+                break;
             case 'rangeScatter':
-                return rangeChartMenuItem('scatter', 'Scatter&lrm;', 'scatter');
+                chartMenuItem = rangeChartMenuItem('scatter', 'Scatter&lrm;', 'scatter');
+                break;
             case 'rangeBubble':
-                return rangeChartMenuItem('bubble', 'Bubble&lrm;', 'bubble');
-
+                chartMenuItem = rangeChartMenuItem('bubble', 'Bubble&lrm;', 'bubble');
+                break;
             case 'pivotAreaChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('areaChart', 'Area'),
                     subMenu: ['pivotArea', 'pivotStackedArea', 'pivotNormalizedArea']
                 };
+                break;
             case 'pivotArea':
-                return pivotChartMenuItem('area', 'Area&lrm;', 'area');
-
+                chartMenuItem = pivotChartMenuItem('area', 'Area&lrm;', 'area');
+                break;
             case 'pivotStackedArea':
-                return pivotChartMenuItem('stackedArea', 'Stacked&lrm;', 'stackedArea');
-
+                chartMenuItem = pivotChartMenuItem('stackedArea', 'Stacked&lrm;', 'stackedArea');
+                break;
             case 'pivotNormalizedArea':
-                return pivotChartMenuItem('normalizedArea', '100% Stacked&lrm;', 'normalizedArea');
-
+                chartMenuItem = pivotChartMenuItem('normalizedArea', '100% Stacked&lrm;', 'normalizedArea');
+                break;
             case 'rangeAreaChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('areaChart', 'Area'),
                     subMenu: ['rangeArea', 'rangeStackedArea', 'rangeNormalizedArea']
                 };
-
+                break;
             case 'rangeArea':
-                return rangeChartMenuItem('area', 'Area&lrm;', 'area');
-
+                chartMenuItem = rangeChartMenuItem('area', 'Area&lrm;', 'area');
+                break;
             case 'rangeStackedArea':
-                return rangeChartMenuItem('stackedArea', 'Stacked&lrm;', 'stackedArea');
-
+                chartMenuItem = rangeChartMenuItem('stackedArea', 'Stacked&lrm;', 'stackedArea');
+                break;
             case 'rangeNormalizedArea':
-                return rangeChartMenuItem('normalizedArea', '100% Stacked&lrm;', 'normalizedArea');
-
+                chartMenuItem = rangeChartMenuItem('normalizedArea', '100% Stacked&lrm;', 'normalizedArea');
+                break;
             case 'rangeHistogramChart':
-                return rangeChartMenuItem('histogramChart', 'Histogram&lrm;', 'histogram');
-
+                chartMenuItem = rangeChartMenuItem('histogramChart', 'Histogram&lrm;', 'histogram');
+                break;
             case 'rangeColumnLineCombo':
-                return rangeChartMenuItem('columnLineCombo', 'Column & Line&lrm;', 'columnLineCombo');
-
+                chartMenuItem = rangeChartMenuItem('columnLineCombo', 'Column & Line&lrm;', 'columnLineCombo');
+                break;
             case 'rangeAreaColumnCombo':
-                return rangeChartMenuItem('AreaColumnCombo', 'Area & Column&lrm;', 'areaColumnCombo');
-
+                chartMenuItem = rangeChartMenuItem('AreaColumnCombo', 'Area & Column&lrm;', 'areaColumnCombo');
+                break;
             case 'rangeCombinationChart':
-                return {
+                chartMenuItem = {
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: ['rangeColumnLineCombo', 'rangeAreaColumnCombo']
                 };
-
+                break;
             default:
+                console.warn(`AG Grid: unknown menu item type ${key}`);
                 return null;
         }
+
+        return this.getMenuItemIfValid(chartGroupsDef, key, chartMenuItem);
+    }
+
+    getMenuItemIfValid(chartGroupsDef: ChartGroupsDef | undefined, key: string, menuItem: MenuItemDef): MenuItemDef | null {
+        if (chartGroupsDef == undefined || menuItem.subMenu) {
+            // If chartGroupsDef not provided every option is valid.
+            // We do not filter items with subMenu directly but via their children
+            return menuItem;
+        }
+
+        const validItems = getValidChartMenuItems(chartGroupsDef);
+        return validItems.includes(key) ? menuItem : null;
     }
 
     private createAggregationSubMenu(column: Column): MenuItemDef[] {
