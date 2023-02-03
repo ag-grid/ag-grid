@@ -321,12 +321,15 @@ export class LazyCache extends BeanStub {
     public getBlockStates() {
         const blockCounts: { [key: string]: number } = {};
         const blockStates: { [key: string]: Set<string> } = {};
+        const dirtyBlocks = new Set<number>();
 
         this.getNodeMapEntries().forEach(([stringIndex, node]) => {
             const index = Number(stringIndex);
             const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
 
-            blockCounts[blockStart] = (blockCounts[blockStart] ?? 0) + 1;
+            if (!node.stub && !node.failedLoad) {
+                blockCounts[blockStart] = (blockCounts[blockStart] ?? 0) + 1;
+            }
 
             let rowState = 'loaded';
             if (node.failedLoad) {
@@ -335,8 +338,10 @@ export class LazyCache extends BeanStub {
                 rowState = 'loading';
             } else if (node.__needsRefresh) {
                 rowState = 'needsLoading';
-            } else if (node.__needsRefreshWhenVisible || node.stub) {
-                rowState = 'needsLoadingWhenVisible';
+            }
+            
+            if (node.__needsRefreshWhenVisible || node.stub) {
+                dirtyBlocks.add(blockStart);
             }
 
             if (!blockStates[blockStart]) {
@@ -346,10 +351,9 @@ export class LazyCache extends BeanStub {
         });
 
         const statePriorityMap: { [key: string]: number } = {
-            loading: 5,
-            failed: 4,
-            needsLoading: 3,
-            needsLoadingWhenVisible: 2,
+            loading: 4,
+            failed: 3,
+            needsLoading: 2,
             loaded: 1,
         };
 
@@ -376,7 +380,9 @@ export class LazyCache extends BeanStub {
                 blockNumber,
                 startRow: Number(blockStart),
                 endRow: Number(blockStart) + this.rowLoader.getBlockSize(),
-                pageStatus: isBlockIncomplete ? 'needsLoadingWhenVisible' : priorityState,
+                pageStatus: priorityState,
+                needsVerified: isBlockIncomplete || dirtyBlocks.has(Number(blockStart)),
+                loadedRowCount: blockCounts[blockStart],
             };
         });
         return results;
