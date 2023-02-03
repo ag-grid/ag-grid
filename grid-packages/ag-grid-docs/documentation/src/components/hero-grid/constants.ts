@@ -14,7 +14,7 @@ export const STOCK_NAMES = [
     'DT PI',
     'ESTA-MID',
     'Capra ibex',
-    'NY composte index',
+    'NY composite index',
 ];
 
 /**
