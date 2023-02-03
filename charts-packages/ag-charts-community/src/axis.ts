@@ -28,6 +28,10 @@ import {
     predicateWithMessage,
     OPT_STRING,
     OPT_ARRAY,
+    LESS_THAN,
+    NUMBER_OR_NAN,
+    AND,
+    GREATER_THAN,
 } from './util/validation';
 import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
@@ -120,6 +124,12 @@ class AxisTick<S extends Scale<D, number>, D = any> {
 
     @Validate(OPT_ARRAY())
     values?: any[] = undefined;
+
+    @Validate(AND(NUMBER_OR_NAN(1), LESS_THAN('maxSpacing')))
+    minSpacing: number = NaN;
+
+    @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
+    maxSpacing: number = NaN;
 }
 
 export class AxisLabel {
@@ -568,7 +578,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let i = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
-        const defaultTickCount = ContinuousScale.defaultTickCount;
+        const { maxTickCount, minTickCount } = this.estimateTickCount({
+            minSpacing: this.tick.minSpacing,
+            maxSpacing: this.tick.maxSpacing,
+        });
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
 
@@ -577,7 +590,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         while (labelOverlap) {
             let unchanged = true;
             while (unchanged) {
-                if (i >= defaultTickCount) {
+                if (i > maxTickCount) {
                     // The iteration count `i` is used to reduce the default tick count until all labels fit without overlapping
                     // `i` cannot exceed `defaultTickCount` as it would lead to negative tick count values.
                     // Break out of the while loops when then iteration count reaches `defaultTickCount`
@@ -586,10 +599,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
                 const prevTicks = ticks;
 
+                const keepEvery = Math.ceil(ticks.length / maxTickCount);
                 const filteredTicks =
                     !checkForOverlap || (continuous && this.tick.count === undefined) || i === 0
                         ? undefined
-                        : ticks.filter((_, i) => i % 2 === 0);
+                        : ticks.filter((_, i) => i % keepEvery === 0);
 
                 let secondaryAxisTicks;
                 if (secondaryAxis) {
@@ -599,12 +613,15 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
                 if (this.tick.values) {
                     ticks = this.tick.values;
+                } else if (maxTickCount === 0) {
+                    ticks = [];
                 } else if (filteredTicks) {
                     ticks = filteredTicks;
                 } else if (secondaryAxisTicks) {
                     ticks = secondaryAxisTicks;
                 } else {
-                    scale.tickCount = this.tick.count ?? defaultTickCount - i;
+                    const tickCount = Math.max(maxTickCount - i, minTickCount);
+                    this.setTickCount(scale, this.tick.count ?? tickCount);
                     ticks = scale.ticks!();
                 }
 
@@ -704,6 +721,25 @@ export class Axis<S extends Scale<D, number>, D = any> {
             .attr('y2', 0);
 
         return primaryTickCount;
+    }
+
+    private estimateTickCount({ minSpacing, maxSpacing }: { minSpacing: number; maxSpacing: number }): {
+        minTickCount: number;
+        maxTickCount: number;
+    } {
+        const { requestedRange } = this;
+
+        const min = Math.min(...requestedRange);
+        const max = Math.max(...requestedRange);
+
+        const availableRange = max - min;
+
+        minSpacing = isNaN(minSpacing) ? 70 : minSpacing;
+
+        const maxTickCount = Math.floor(availableRange / minSpacing);
+        const minTickCount = isNaN(maxSpacing) ? 0 : Math.ceil(availableRange / maxSpacing);
+
+        return { minTickCount, maxTickCount };
     }
 
     protected calculateDomain() {
