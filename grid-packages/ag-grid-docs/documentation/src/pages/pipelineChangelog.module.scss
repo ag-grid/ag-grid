@@ -46,6 +46,10 @@
     top: -1px;
 }
 
+.fontClass {
+    font-size: 16px !important;
+}
+
 .link::after {
     content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
     margin: 0 $size-half 0 $size-half !important; // !important for .ag-styles specificity

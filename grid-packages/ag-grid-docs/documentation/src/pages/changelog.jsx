@@ -87,6 +87,8 @@ const defaultColDef = {
     sortable: true,
     resizable: true,
     suppressMenu: true,
+    cellClass: styles.fontClass,
+    headerClass: styles.fontClass,
     suppressKeyboardEvent: (params) => {
         if (params.event.key === 'Enter' && params.node.master && params.event.type === 'keydown') {
             params.api.getCellRendererInstances({ rowNodes: [params.node] })[0].clickHandlerFunc();
