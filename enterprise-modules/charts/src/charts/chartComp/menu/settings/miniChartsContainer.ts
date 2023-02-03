@@ -1,4 +1,4 @@
-import { AgGroupComponent, Autowired, ChartType, Component, PostConstruct, DEFAULT_CHART_GROUPS, ChartGroupsDef } from "@ag-grid-community/core";
+import { AgGroupComponent, Autowired, ChartType, Component, PostConstruct, DEFAULT_CHART_GROUPS, ChartGroupsDef, _ } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import {
@@ -102,9 +102,9 @@ export class MiniChartsContainer extends Component {
             }));
 
             chartGroupValues!.forEach((chartType: keyof ChartGroupsDef[typeof group]) => {
-                const MiniClass = miniChartMapping[group][chartType] as any;
+                const MiniClass = miniChartMapping[group]?.[chartType] as any;
                 if (!MiniClass) {
-                    console.warn(`AG Grid - invalid chart type '${chartType}' in group '${group}'`);
+                    _.doOnce(() => console.warn(`AG Grid - invalid chartGroupsDef config '${group}.${chartType}'`), `invalidMiniChart_${chartType}_${group}`);
                     return;
                 }
 
