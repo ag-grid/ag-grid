@@ -24,15 +24,24 @@ main {
 }
 
 .top-bar {
-    composes: px-2 px-md-3 from global;
+    // bootstrap px-2 styles
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+
+    // bootstrap px-md-3 styles
+    @media (min-width: 768px) {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
     position: relative;
     background-color: var(--bright-blue-gray);
     border-bottom: 1px solid $ag-light-grey;
 
-    //@supports (backdrop-filter: none) {
-    //    background-color: rgba(#dbe5f0, 0.7);
-    //    backdrop-filter: blur(20px);
-    //}
+    @supports (backdrop-filter: none) {
+        background-color: rgba(#dbe5f0, 0.7);
+        backdrop-filter: blur(20px);
+    }
 
     @include media-breakpoint-up(lg) {
         @supports (position: sticky) {
