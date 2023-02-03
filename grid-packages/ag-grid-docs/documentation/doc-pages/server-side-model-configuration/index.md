@@ -60,6 +60,16 @@ This is demonstrated in the example below, note the following:
 
 <grid-example title='Initial Scroll Position' name='initial-scroll-position' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
 
+## Debug Info
+
+When using the server-side row model it can be helpful to gather the state of each block. This can be gathered by using `api.getCacheBlockState()` or alternatively you can enable `debug: true` in the grid properties to see this output logged to the console whenever blocks are loaded. 
+
+In the example below, note the following:
+- The grid option `debug: true` has been enabled
+- When scrolling through the grid, block information is logged to the console
+
+<grid-example title='Cache Block State' name='cache-block-state' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
+
 ## Next Up
 
 Continue to the next section to learn about [SSRM Sorting](/server-side-model-sorting/).
