@@ -14,63 +14,17 @@ main {
 }
 
 .main-container {
-    // bootstrap container-fluid styles
-    width: 100%;
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-
-    // bootstrap p0 styles
-    padding: 0 !important;
-
-    // bootstrap d-flex styles
-    display: flex !important;
-
-    // bootstrap flex-column styles
-    flex-direction: column !important;
-
+    composes: container-fluid p-0 d-flex flex-column from global;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
 }
 
-.between-main-container-viewport-class {
-    grid-area: test-main-viewport-class;
-}
-
 .content-viewport {
-    // bootstrap d-flex styles
-    display: flex !important;
-
-    // bootstrap flex-column styles
-    flex-direction: column !important;
-
-    // bootstrap flex-grow-1 styles
-    flex-grow: 1 !important;
-
-    // bootstrap flex-lg-row styles
-    @media (min-width: 992px) {
-        .flex-lg-row {
-            flex-direction: row !important;
-        }
-    }
-}
-
-.between-viewport-top-bar-class {
-    grid-area: test-viewport-top-bar-class;
+    composes: d-flex flex-column flex-lg-row flex-grow-1 from global;
 }
 
 .top-bar {
-    // bootstrap px-2 styles
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
-
-    // bootstrap px-md-3 styles
-    @media (min-width: 768px) {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-
+    composes: px-2 px-md-3 from global;
     position: relative;
     background-color: var(--bright-blue-gray);
     border-bottom: 1px solid $ag-light-grey;
