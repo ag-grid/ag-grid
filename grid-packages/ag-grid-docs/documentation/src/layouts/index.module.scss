@@ -14,13 +14,50 @@ main {
 }
 
 .main-container {
-    composes: container-fluid p-0 d-flex flex-column from global;
+    // bootstrap container-fluid styles
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+
+    // bootstrap p0 styles
+    padding: 0 !important;
+
+    // bootstrap d-flex styles
+    display: flex !important;
+
+    // bootstrap flex-column styles
+    flex-direction: column !important;
+
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
 }
 
+.between-main-container-viewport-class {
+    grid-area: test-main-viewport-class;
+}
+
 .content-viewport {
-    composes: d-flex flex-column flex-lg-row flex-grow-1 from global;
+    // bootstrap d-flex styles
+    display: flex !important;
+
+    // bootstrap flex-column styles
+    flex-direction: column !important;
+
+    // bootstrap flex-grow-1 styles
+    flex-grow: 1 !important;
+
+    // bootstrap flex-lg-row styles
+    @media (min-width: 992px) {
+        .flex-lg-row {
+            flex-direction: row !important;
+        }
+    }
+}
+
+.between-viewport-top-bar-class {
+    grid-area: test-viewport-top-bar-class;
 }
 
 .top-bar {
