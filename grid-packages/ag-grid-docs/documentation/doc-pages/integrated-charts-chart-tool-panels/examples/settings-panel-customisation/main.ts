@@ -30,8 +30,8 @@ const gridOptions: GridOptions = {
         settingsPanel: {
             chartGroupsDef: {
                 pieGroup: [
+                    'doughnut',
                     'pie',
-                    'doughnut'
                 ],
                 columnGroup: [
                     'stackedColumn',
