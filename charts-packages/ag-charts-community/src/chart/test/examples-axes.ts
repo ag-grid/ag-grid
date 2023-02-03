@@ -1,5 +1,11 @@
 import day from '../../util/time/day';
-import { AgChartOptions, AgCartesianChartOptions } from '../agChartOptions';
+import {
+    AgChartOptions,
+    AgCartesianChartOptions,
+    AgAxisNumberTickOptions,
+    AgAxisTimeTickOptions,
+    AgAxisCategoryTickOptions,
+} from '../agChartOptions';
 import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY_EXTENDED } from './data';
 import * as data from './data-axes';
 import * as examples from './examples';
@@ -149,14 +155,20 @@ export const NUMBER_AXIS_NO_SERIES: AgChartOptions = {
     legend: { enabled: false },
 };
 
+/**
+ * @todo(AG-7909) cleanup once options changes are made.
+ */
 export const NUMBER_AXIS_TICK_VALUES: AgChartOptions = {
     ...examples.SIMPLE_SCATTER_CHART_EXAMPLE,
     axes: [
-        { type: 'number', position: 'bottom', tick: { values: [142, 153, 203, 220, 290] } },
+        { type: 'number', position: 'bottom', tick: { values: [142, 153, 203, 220, 290] } as AgAxisNumberTickOptions },
         { type: 'number', position: 'left' },
     ],
 };
 
+/**
+ * @todo(AG-7909) cleanup once options changes are made.
+ */
 export const TIME_AXIS_TICK_VALUES: AgChartOptions = {
     ...examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,
     axes: [
@@ -165,7 +177,7 @@ export const TIME_AXIS_TICK_VALUES: AgChartOptions = {
             position: 'bottom',
             tick: {
                 values: [new Date(2020, 0, 1), new Date(2020, 0, 4), new Date(2020, 0, 17), new Date(2020, 0, 28)],
-            },
+            } as AgAxisTimeTickOptions,
         },
         {
             type: 'number',
@@ -174,18 +186,28 @@ export const TIME_AXIS_TICK_VALUES: AgChartOptions = {
     ],
 };
 
+/**
+ * @todo(AG-7909) cleanup once options changes are made.
+ */
 export const LOG_AXIS_TICK_VALUES: AgChartOptions = {
     ...NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
     axes: [
         { type: 'number', position: 'bottom' },
-        { type: 'log', position: 'left', tick: { values: [2, 4, 8, 16, 12, 20, 200, 400, 800] } },
+        {
+            type: 'log',
+            position: 'left',
+            tick: { values: [2, 4, 8, 16, 12, 20, 200, 400, 800] } as AgAxisNumberTickOptions,
+        },
     ],
 };
 
+/**
+ * @todo(AG-7909) cleanup once options changes are made.
+ */
 export const CATEGORY_AXIS_TICK_VALUES: AgChartOptions = {
     ...examples.GROUPED_COLUMN_EXAMPLE,
     axes: [
-        { type: 'category', position: 'bottom', tick: { values: ['2016', '2018'] } },
+        { type: 'category', position: 'bottom', tick: { values: ['2016', '2018'] } as AgAxisCategoryTickOptions },
         { type: 'number', position: 'left' },
     ],
 };
