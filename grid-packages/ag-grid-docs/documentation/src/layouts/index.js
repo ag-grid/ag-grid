@@ -86,7 +86,8 @@ export const Layout = ({
     // takes account of current archives as well as new testing/archives
     const processedPath = (IS_SSR ? path : href).replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, '')
         .replace(/.*(testing|archives|build).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, '')
-        .replace(/.*build.ag-grid.com/, '');
+        .replace(/.*build.ag-grid.com/, '')
+        .replace(/.*localhost:8000/, '');
 
     const fullScreenPage = processedPath === '/' || getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
 
@@ -106,7 +107,7 @@ export const Layout = ({
                     <TopBar frameworks={frameworks} currentFramework={framework} path={path} />
                 )}
                 <div className={styles['content-viewport']}>
-                    {!fullScreenPage && !fullScreenWithFooter && (
+                    {!IS_SSR && !fullScreenPage && !fullScreenWithFooter && (
                         <aside className={`${styles['main-menu']}`}>
                             <Menu currentFramework={framework} currentPage={pageName} />
                         </aside>
