@@ -1,9 +1,8 @@
-import { Chart, TransferableResources } from './chart';
+import { Chart, LayoutStage, TransferableResources } from './chart';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
 import { ChartAxis, ChartAxisDirection } from './chartAxis';
 import { BBox } from '../scene/bbox';
-import { Navigator } from './navigator/navigator';
 import { AgCartesianAxisPosition } from './agChartOptions';
 
 type VisibilityMap = { crossLines: boolean; series: boolean };
@@ -20,16 +19,12 @@ export class CartesianChart extends Chart {
 
         const root = this.scene.root!;
         this.legend.attachLegend(root);
-
-        this.navigator.enabled = false;
     }
-
-    readonly navigator = new Navigator(this, this.interactionManager, this.cursorManager);
 
     async performLayout() {
         this.scene.root!.visible = true;
 
-        const { width, height, legend, navigator, padding } = this;
+        const { width, height, legend, padding } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
         shrinkRect.x += padding.left;
@@ -45,21 +40,13 @@ export class CartesianChart extends Chart {
             shrinkRect.shrink(legendPadding, legend.position);
         }
 
-        if (navigator.enabled) {
-            const navigatorTotalHeight = navigator.height + navigator.margin;
-            shrinkRect.shrink(navigatorTotalHeight, 'bottom');
-            navigator.y = shrinkRect.y + shrinkRect.height + navigator.margin;
-        }
-
+        shrinkRect = this.layoutModules('before-series', shrinkRect);
+        
         const { seriesRect, visibility } = this.updateAxes(shrinkRect);
 
-        if (navigator.enabled && visibility.series) {
-            navigator.x = seriesRect.x;
-            navigator.width = seriesRect.width;
-        }
+        this.updateModulesSeriesLayout(visibility.series, seriesRect);
 
         this.seriesRoot.visible = visibility.series;
-        navigator.visible = visibility.series;
 
         this.seriesRect = seriesRect;
         this.series.forEach((series) => {
@@ -72,6 +59,23 @@ export class CartesianChart extends Chart {
         seriesRoot.y = seriesRect.y;
         seriesRoot.width = seriesRect.width;
         seriesRoot.height = seriesRect.height;
+    }
+
+    private layoutModules(stage: LayoutStage, shrinkRect: BBox): BBox {
+        for (const [_, module] of Object.entries(this.modules)) {
+            if (module.layout === stage) {
+                const moduleLayoutResult = module.instance.layout({ rect: shrinkRect });
+                shrinkRect = moduleLayoutResult.rect;
+            }
+        }
+
+        return shrinkRect;
+    }
+
+    private updateModulesSeriesLayout(seriesVisible: boolean, seriesRect: BBox) {
+        for (const [_, module] of Object.entries(this.modules)) {
+            module.instance.seriesLayout?.(seriesVisible,seriesRect);
+        }
     }
 
     private _lastAxisWidths: Partial<Record<AgCartesianAxisPosition, number>> = {
@@ -307,7 +311,6 @@ export class CartesianChart extends Chart {
     }) {
         const { axis, seriesRect, axisWidths, newAxisWidths, primaryTickCounts, addInterAxisPadding } = opts;
         let { clipSeries } = opts;
-        const { navigator } = this;
         const { position, direction } = axis;
 
         const axisLeftRightRange = (axis: ChartAxis<any>) => {
@@ -333,14 +336,10 @@ export class CartesianChart extends Chart {
                 break;
         }
 
-        if (axis.direction === ChartAxisDirection.X) {
-            let { min, max, enabled } = navigator;
-            if (enabled) {
-                axis.visibleRange = [min, max];
-            } else {
-                axis.visibleRange = [0, 1];
-            }
-        }
+        const zoom = this.zoomManager.getZoom()?.[axis.direction];
+        let { min = 0, max = 1 } = zoom ?? {};
+        axis.visibleRange = [min, max];
+
         if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
             clipSeries = true;
         }

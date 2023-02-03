@@ -281,6 +281,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('leave', () => this.disablePointer());
         this.interactionManager.addListener('page-left', () => this.destroy());
 
+        this.zoomManager.addListener('zoom-change', (_) => this.update(ChartUpdateType.PROCESS_DATA));
+
         this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
     }
 
