@@ -200,15 +200,21 @@ export class RowRenderer extends BeanStub {
         this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
     }
 
+    private onCellFocusChanged(event?: CellFocusedEvent) {
+        this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellFocused(event));
+        this.getFullWidthRowCtrls().forEach(rowCtrl => rowCtrl.onFullWidthRowFocused(event));
+    }
+
     // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
-            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellFocused(event));
-            this.getFullWidthRowCtrls().forEach(rowCtrl => {
-                rowCtrl.onFullWidthRowFocused(event);
-            });
+            this.onCellFocusChanged(event);
+        });
+
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUS_CLEARED, () => {
+            this.onCellFocusChanged();
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {

@@ -1,7 +1,7 @@
 import { Autowired, Bean, Optional, PostConstruct } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
-import { CellFocusedParams, CellFocusedEvent, Events } from "./events";
+import { CellFocusedParams, CellFocusedEvent, Events, CellFocusClearedEvent, CommonCellFocusParams } from "./events";
 import { ColumnModel } from "./columns/columnModel";
 import { CellPosition } from "./entities/cellPositionUtils";
 import { RowNode } from "./entities/rowNode";
@@ -219,13 +219,40 @@ export class FocusService extends BeanStub {
         return true;
     }
 
-    public clearFocusedCell(): void {
-        this.focusedCellPosition = null;
-        this.onCellFocused(false, false);
-    }
-
     public getFocusedCell(): CellPosition | null {
         return this.focusedCellPosition;
+    }
+
+    private getFocusEventParams(): CommonCellFocusParams {
+        const { rowIndex, rowPinned, column } = this.focusedCellPosition!;
+
+        const params: CommonCellFocusParams = {
+            rowIndex: rowIndex,
+            rowPinned:rowPinned,
+            column: column,
+            isFullWidthCell: false
+        };
+
+        const rowCtrl = this.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
+
+        if (rowCtrl) {
+            params.isFullWidthCell = rowCtrl.isFullWidth();
+        }
+
+        return params;
+    }
+
+    public clearFocusedCell(): void {
+        if (this.focusedCellPosition == null) { return; }
+
+        const event: WithoutGridCommon<CellFocusClearedEvent> = {
+            type: Events.EVENT_CELL_FOCUS_CLEARED,
+            ... this.getFocusEventParams(),
+        }
+
+        this.focusedCellPosition = null;
+
+        this.eventService.dispatchEvent(event);
     }
 
     public setFocusedCell(params: CellFocusedParams): void {
@@ -253,7 +280,15 @@ export class FocusService extends BeanStub {
             column: gridColumn
         } : null;
 
-        this.onCellFocused(forceBrowserFocus, preventScrollOnBrowserFocus);
+        const event: WithoutGridCommon<CellFocusedEvent> = {
+            type: Events.EVENT_CELL_FOCUSED,
+            ... this.getFocusEventParams(),
+            forceBrowserFocus,
+            preventScrollOnBrowserFocus,
+            floating: null
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
@@ -463,34 +498,6 @@ export class FocusService extends BeanStub {
         if (getTabIndex(node) === null) { return null; }
 
         return node;
-    }
-
-    private onCellFocused(forceBrowserFocus: boolean, preventScrollOnBrowserFocus: boolean): void {
-        const event: WithoutGridCommon<CellFocusedEvent> = {
-            type: Events.EVENT_CELL_FOCUSED,
-            forceBrowserFocus: forceBrowserFocus,
-            preventScrollOnBrowserFocus: preventScrollOnBrowserFocus,
-            rowIndex: null,
-            column: null,
-            floating: null,
-            rowPinned: null,
-            isFullWidthCell: false
-        };
-
-        if (this.focusedCellPosition) {
-            const rowIndex = event.rowIndex = this.focusedCellPosition.rowIndex;
-            const rowPinned = event.rowPinned = this.focusedCellPosition.rowPinned;
-
-            event.column = this.focusedCellPosition.column;
-
-            const rowCtrl = this.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
-
-            if (rowCtrl) {
-                event.isFullWidthCell = rowCtrl.isFullWidth();
-            }
-        }
-
-        this.eventService.dispatchEvent(event);
     }
 
     public focusGridView(column?: Column, backwards?: boolean): boolean {
