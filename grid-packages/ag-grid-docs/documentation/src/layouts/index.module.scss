@@ -29,10 +29,10 @@ main {
     background-color: var(--bright-blue-gray);
     border-bottom: 1px solid $ag-light-grey;
 
-    @supports (backdrop-filter: none) {
-        background-color: rgba(#dbe5f0, 0.7);
-        backdrop-filter: blur(20px);
-    }
+    //@supports (backdrop-filter: none) {
+    //    background-color: rgba(#dbe5f0, 0.7);
+    //    backdrop-filter: blur(20px);
+    //}
 
     @include media-breakpoint-up(lg) {
         @supports (position: sticky) {
