@@ -6,7 +6,7 @@ import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
 import IssueTypeCellRenderer from '../components/grid/IssueTypeRenderer';
 import PaddingCellRenderer from '../components/grid/PaddingCellRenderer';
-import styles from './pipeline.module.scss';
+import styles from './pipelineChangelog.module.scss';
 
 const COLUMN_DEFS = [
     {
@@ -256,6 +256,7 @@ const Pipeline = ({ location }) => {
                                     list of completed items.
                                 </p>
                             </Alert>
+
                             <div className={styles.controls}>
                                 <input
                                     type="text"
@@ -264,9 +265,11 @@ const Pipeline = ({ location }) => {
                                     ref={searchBarEl}
                                     onChange={onQuickFilterChange}
                                 ></input>
-                                {checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}
+
+                                <div>{checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}</div>
                             </div>
                         </section>
+
                         <Grid
                             gridHeight={'63vh'}
                             columnDefs={COLUMN_DEFS}

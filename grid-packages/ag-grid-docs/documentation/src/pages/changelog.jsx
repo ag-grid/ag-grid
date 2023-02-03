@@ -9,7 +9,7 @@ import IssueTypeCellRenderer from '../components/grid/IssueTypeRenderer';
 import PaddingCellRenderer from '../components/grid/PaddingCellRenderer';
 import VersionDropdownMenu from '../components/grid/VersionDropdownMenu';
 import ReleaseVersionNotes from '../components/release-notes/ReleaseVersionNotes.jsx';
-import styles from './changelog.module.scss';
+import styles from './pipelineChangelog.module.scss';
 
 const COLUMN_DEFS = [
     {
@@ -314,9 +314,9 @@ const Changelog = ({ location }) => {
             {!IS_SSR && (
                 <div className="ag-styles">
                     <div className={classnames('page-margin', styles.container)}>
-                        <section className={styles.header}>
-                            <h1>AG Grid Changelog</h1>
+                        <h1>AG Grid Changelog</h1>
 
+                        <section className={styles.header}>
                             <Alert type="info">
                                 The AG Grid Changelog lists the feature requests implemented and defects resolved across
                                 AG Grid releases. If you can’t find the item you’re looking for, check the{' '}
@@ -333,20 +333,23 @@ const Changelog = ({ location }) => {
                                     onChange={onQuickFilterChange}
                                 ></input>
 
-                                {checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}
+                                <div>
+                                    {checkboxes.map((checkboxConfig) => createLabeledCheckbox(checkboxConfig))}
 
-                                <label>
-                                    Version:{' '}
-                                    <VersionDropdownMenu
-                                        versions={versions}
-                                        onChange={switchDisplayedFixVersion}
-                                        fixVersion={fixVersion}
-                                    />
-                                </label>
+                                    <label>
+                                        Version:{' '}
+                                        <VersionDropdownMenu
+                                            versions={versions}
+                                            onChange={switchDisplayedFixVersion}
+                                            fixVersion={fixVersion}
+                                        />
+                                    </label>
+                                </div>
                             </div>
 
                             <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
                         </section>
+
                         <Grid
                             gridHeight={'66vh'}
                             columnDefs={COLUMN_DEFS}
