@@ -36,6 +36,20 @@ export class Navigator extends _ModuleSupport.BaseModuleInstance implements _Mod
         return this._enabled;
     }
 
+    set width(value: number) {
+        this.rs.width = value;
+    }
+    get width(): number {
+        return this.rs.width;
+    }
+
+    set height(value: number) {
+        this.rs.height = value;
+    }
+    get height(): number {
+        return this.rs.height;
+    }
+
     @Validate(NUMBER(0))
     margin = 10;
 
