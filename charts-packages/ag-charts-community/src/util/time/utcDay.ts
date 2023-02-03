@@ -1,14 +1,18 @@
 import { CountableTimeInterval } from './interval';
+import { durationDay } from './duration';
 
-function floor(date: Date) {
-    date.setUTCHours(0, 0, 0, 0);
-}
-function offset(date: Date, days: number) {
-    date.setUTCDate(date.getUTCDate() + days);
-}
-function stepTest(date: Date, days: number) {
-    return (date.getUTCDate() - 1) % days === 0;
+const base = Date.UTC(2020, 0, 1);
+
+function encode(date: Date) {
+    return Math.floor((date.getTime() - base) / durationDay);
 }
 
-export const utcDay = new CountableTimeInterval(floor, offset, stepTest);
+function decode(encoded: number) {
+    const d = new Date(base);
+    d.setUTCDate(d.getUTCDate() + encoded);
+    d.setUTCHours(0, 0, 0, 0);
+    return d;
+}
+
+export const utcDay = new CountableTimeInterval(encode, decode);
 export default utcDay;

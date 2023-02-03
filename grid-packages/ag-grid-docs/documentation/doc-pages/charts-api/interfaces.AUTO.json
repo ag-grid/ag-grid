@@ -3782,17 +3782,17 @@
     "meta": { "isTypeAlias": true },
     "type": "NumberFormat | DateFormat"
   },
-  "FloorFn": {
+  "EncodeFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(date: Date) => void"
+    "type": "(date: Date) => number"
   },
-  "OffsetFn": {
+  "DecodeFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(date: Date, step: number) => void"
+    "type": "(encoded: number) => Date"
   },
-  "StepTestFn": {
-    "meta": { "isTypeAlias": true },
-    "type": "(date: Date, step: number) => boolean"
+  "CountableTimeIntervalOptions": {
+    "meta": {},
+    "type": { "stickTo?": "Date | number | 'start' | 'end'" }
   },
   "FormattingFn": {
     "meta": { "isTypeAlias": true },

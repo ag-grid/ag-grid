@@ -1,15 +1,15 @@
 import { CountableTimeInterval } from './interval';
 import { durationMinute } from './duration';
 
-function floor(date: Date) {
-    date.setSeconds(0, 0);
-}
-function offset(date: Date, minutes: number) {
-    date.setMinutes(date.getMinutes() + minutes);
-}
-function stepTest(date: Date, minutes: number) {
-    return Math.floor(date.getTime() / durationMinute) % minutes === 0;
+const base = new Date(2020, 0, 1).getTime();
+
+function encode(date: Date) {
+    return Math.floor((date.getTime() - base) / durationMinute);
 }
 
-export const minute = new CountableTimeInterval(floor, offset, stepTest);
+function decode(encoded: number) {
+    return new Date(base + encoded * durationMinute);
+}
+
+export const minute = new CountableTimeInterval(encode, decode);
 export default minute;

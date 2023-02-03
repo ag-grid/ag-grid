@@ -1,13 +1,14 @@
 import { CountableTimeInterval } from './interval';
+import { durationMinute } from './duration';
 
-function floor(date: Date) {
-    date.setUTCSeconds(0, 0);
-}
-function offset(date: Date, minutes: number) {
-    date.setUTCMinutes(date.getUTCMinutes() + minutes);
-}
-function stepTest(date: Date, minutes: number) {
-    return date.getUTCMinutes() % minutes === 0;
+const base = Date.UTC(2020, 0, 1);
+
+function encode(date: Date) {
+    return Math.floor((date.getTime() - base) / durationMinute);
 }
 
-export const utcMinute = new CountableTimeInterval(floor, offset, stepTest);
+function decode(encoded: number) {
+    return new Date(base + encoded * durationMinute);
+}
+
+export const utcMinute = new CountableTimeInterval(encode, decode);

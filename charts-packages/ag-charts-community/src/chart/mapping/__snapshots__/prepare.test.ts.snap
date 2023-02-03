@@ -43,8 +43,8 @@ Object {
       "tick": Object {
         "color": "#3f7cbf",
         "count": TimeInterval {
-          "_floor": [Function],
-          "_offset": [Function],
+          "_decode": [Function],
+          "_encode": [Function],
         },
         "size": 6,
         "width": 3,
@@ -9279,8 +9279,8 @@ Object {
       "tick": Object {
         "color": "rgb(195, 195, 195)",
         "count": TimeInterval {
-          "_floor": [Function],
-          "_offset": [Function],
+          "_decode": [Function],
+          "_encode": [Function],
         },
         "size": 6,
         "width": 1,
