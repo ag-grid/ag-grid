@@ -1,5 +1,5 @@
 import { isNumber } from '../../util/value';
-import { BaseManager, Listener } from './baseManager';
+import { BaseManager } from './baseManager';
 
 type InteractionTypes = 'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left';
 
@@ -124,18 +124,8 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         }
 
         for (const type of types) {
-            const listeners = this.registeredListeners[type] ?? [];
             const interactionEvent = this.buildEvent({ event, ...coords, type });
-
-            listeners.forEach((listener: Listener<any>) => {
-                try {
-                    if (!interactionEvent.consumed) {
-                        listener.handler(interactionEvent);
-                    }
-                } catch (e) {
-                    console.error(e);
-                }
-            });
+            this.listeners.cancellableDispatch(type, () => interactionEvent.consumed, interactionEvent);
         }
     }
 
@@ -267,7 +257,7 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         offsetY?: number;
         pageX?: number;
         pageY?: number;
-    }) {
+    }): InteractionEvent<(typeof opts)['type']> & { consumed: boolean } {
         let { type, event, clientX, clientY, offsetX, offsetY, pageX, pageY } = opts;
 
         if (!isNumber(offsetX) || !isNumber(offsetY)) {
@@ -283,10 +273,10 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
 
         const builtEvent = {
             type,
-            offsetX,
-            offsetY,
-            pageX,
-            pageY,
+            offsetX: offsetX!,
+            offsetY: offsetY!,
+            pageX: pageX!,
+            pageY: pageY!,
             sourceEvent: event,
             consumed: false,
             consume: () => (builtEvent.consumed = true),

@@ -28,6 +28,7 @@ import { HighlightChangeEvent, HighlightManager } from './interaction/highlightM
 import { TooltipManager } from './interaction/tooltipManager';
 import { Module, ModuleInstanceMeta } from '../module-support';
 import { ZoomManager } from './interaction/zoomManager';
+import { LayoutService } from './layout/layoutService';
 
 /** Types of chart-update, in pipeline execution order. */
 export enum ChartUpdateType {
@@ -42,8 +43,6 @@ export enum ChartUpdateType {
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
 export type TransferableResources = { container?: OptionalHTMLElement; scene: Scene; element: HTMLElement };
-
-export type LayoutStage = 'before-series';
 
 export abstract class Chart extends Observable implements AgChartInstance {
     readonly id = createId(this);
@@ -200,6 +199,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected readonly highlightManager: HighlightManager;
     protected readonly tooltipManager: TooltipManager;
     protected readonly zoomManager: ZoomManager;
+    protected readonly layoutService: LayoutService;
     protected readonly axisGroup: Group;
     protected readonly modules: Record<string, ModuleInstanceMeta> = {};
 
@@ -241,6 +241,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.cursorManager = new CursorManager(element);
         this.highlightManager = new HighlightManager();
         this.zoomManager = new ZoomManager();
+        this.layoutService = new LayoutService();
 
         background.width = this.scene.width;
         background.height = this.scene.height;
@@ -281,7 +282,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('leave', () => this.disablePointer());
         this.interactionManager.addListener('page-left', () => this.destroy());
 
-        this.zoomManager.addListener('zoom-change', (_) => this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true }));
+        this.zoomManager.addListener('zoom-change', (_) =>
+            this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true })
+        );
 
         this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
     }
@@ -291,10 +294,23 @@ export abstract class Chart extends Observable implements AgChartInstance {
             throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
         }
 
-        const { scene, interactionManager, zoomManager, cursorManager, highlightManager, tooltipManager } = this;
+        const {
+            scene,
+            interactionManager,
+            zoomManager,
+            cursorManager,
+            highlightManager,
+            tooltipManager,
+            layoutService,
+        } = this;
         const moduleMeta = module.initialiseModule({
             scene,
-            interactionManager, zoomManager, cursorManager, highlightManager, tooltipManager,
+            interactionManager,
+            zoomManager,
+            cursorManager,
+            highlightManager,
+            tooltipManager,
+            layoutService,
         });
         this.modules[module.optionsKey] = moduleMeta;
 

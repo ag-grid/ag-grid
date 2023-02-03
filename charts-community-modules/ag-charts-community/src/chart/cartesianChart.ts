@@ -1,4 +1,4 @@
-import { Chart, LayoutStage, TransferableResources } from './chart';
+import { Chart, TransferableResources } from './chart';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
 import { ChartAxis, ChartAxisDirection } from './chartAxis';
@@ -40,42 +40,23 @@ export class CartesianChart extends Chart {
             shrinkRect.shrink(legendPadding, legend.position);
         }
 
-        shrinkRect = this.layoutModules('before-series', shrinkRect);
+        ({ shrinkRect } = this.layoutService.dispatchPerformLayout('before-series', { shrinkRect }));
         
         const { seriesRect, visibility } = this.updateAxes(shrinkRect);
-
-        this.updateModulesSeriesLayout(visibility.series, seriesRect);
-
         this.seriesRoot.visible = visibility.series;
-
         this.seriesRect = seriesRect;
         this.series.forEach((series) => {
             series.rootGroup.translationX = Math.floor(seriesRect.x);
             series.rootGroup.translationY = Math.floor(seriesRect.y);
         });
 
+        this.layoutService.dispatchLayoutComplete({ type: 'layout-complete', series: { rect: seriesRect, visible: visibility.series }});
+
         const { seriesRoot } = this;
         seriesRoot.x = seriesRect.x;
         seriesRoot.y = seriesRect.y;
         seriesRoot.width = seriesRect.width;
         seriesRoot.height = seriesRect.height;
-    }
-
-    private layoutModules(stage: LayoutStage, shrinkRect: BBox): BBox {
-        for (const [_, module] of Object.entries(this.modules)) {
-            if (module.layout === stage) {
-                const moduleLayoutResult = module.instance.layout({ rect: shrinkRect });
-                shrinkRect = moduleLayoutResult.rect;
-            }
-        }
-
-        return shrinkRect;
-    }
-
-    private updateModulesSeriesLayout(seriesVisible: boolean, seriesRect: BBox) {
-        for (const [_, module] of Object.entries(this.modules)) {
-            module.instance.seriesLayout?.(seriesVisible,seriesRect);
-        }
     }
 
     private _lastAxisWidths: Partial<Record<AgCartesianAxisPosition, number>> = {

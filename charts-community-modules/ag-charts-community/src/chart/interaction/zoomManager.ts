@@ -67,11 +67,10 @@ export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
             return;
 
         }
-        this.registeredListeners['zoom-change']?.forEach((listener) => {
-            listener.handler({
-                type: 'zoom-change',
-                ...(currentZoom ?? {}),
-            });
-        });
+        const event: ZoomChangeEvent = {
+            type: 'zoom-change',
+            ...(currentZoom ?? {}),
+        };
+        this.listeners.dispatch('zoom-change', event);
     }
 }

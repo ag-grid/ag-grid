@@ -6,7 +6,6 @@ export const CHART_NAVIGATOR_MODULE: _ModuleSupport.Module = {
     initialiseModule(ctx) {
         return {
             instance: new Navigator(ctx),
-            layout: 'before-series',
         };
     },
 };

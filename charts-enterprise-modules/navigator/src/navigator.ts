@@ -79,26 +79,28 @@ export class Navigator extends _ModuleSupport.BaseModuleInstance implements _Mod
             ctx.interactionManager.addListener('drag', (event) => this.onDrag(event)),
             ctx.interactionManager.addListener('hover', (event) => this.onDrag(event)),
             ctx.interactionManager.addListener('drag-end', () => this.onDragStop()),
+            ctx.layoutService.addListener('before-series', (event) => this.layout(event)),
+            ctx.layoutService.addListener('layout-complete', (event) => this.layoutComplete(event)),
         ];
         this.destroyFns.push(() => cleanupSymbols.forEach((s) => ctx.interactionManager.removeListener(s)));
     }
 
-    public layout({ rect: shrinkRect }: _ModuleSupport.LayoutContext) {
+    private layout({ shrinkRect }: _ModuleSupport.LayoutContext) {
         if (this.enabled) {
             const navigatorTotalHeight = this.rs.height + this.margin;
             shrinkRect.shrink(navigatorTotalHeight, 'bottom');
             this.rs.y = shrinkRect.y + shrinkRect.height + this.margin;
         }
 
-        return { rect: shrinkRect };
+        return { shrinkRect };
     }
 
-    public seriesLayout(seriesVisible: boolean, seriesRect: _Scene.BBox) {
-        if (this.enabled && seriesVisible) {
-            this.rs.x = seriesRect.x;
-            this.rs.width = seriesRect.width;
+    private layoutComplete({ series: { rect, visible }}: _ModuleSupport.LayoutCompleteEvent) {
+        if (this.enabled && visible) {
+            this.rs.x = rect.x;
+            this.rs.width = rect.width;
         }
-        this.visible = seriesVisible;
+        this.visible = visible;
     }
 
     public update(): void {

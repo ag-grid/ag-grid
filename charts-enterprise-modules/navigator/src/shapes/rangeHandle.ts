@@ -1,6 +1,6 @@
 import { _Scene, _ModuleSupport } from 'ag-charts-community';
 
-const { Path, BBox } = _Scene;
+const { BBox } = _Scene;
 const { LINE_CAP, NUMBER, COLOR_STRING, Validate } = _ModuleSupport;
 
 export class RangeHandle extends _Scene.Path {
