@@ -12,3 +12,6 @@ export * as _Scene from './integrated-charts-scene';
 export * as _Theme from './integrated-charts-theme';
 export * as _Scale from './sparklines-scale';
 export * as _Util from './sparklines-util';
+
+// Undocumented APIs used by Enterprise Modules.
+export * as _ModuleSupport from './module-support';
