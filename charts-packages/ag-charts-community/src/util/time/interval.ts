@@ -88,31 +88,30 @@ export class CountableTimeInterval extends TimeInterval {
      * @param step
      */
     every(step: number, options: CountableTimeIntervalOptions = {}): TimeInterval {
-        const { stickTo } = options;
+        const encode = (date: Date) => {
+            const e = this._encode(date);
+            return Math.floor((e - offset) / step);
+        };
+        const decode = (encoded: number) => {
+            return this._decode(encoded * step + offset);
+        };
+        const interval = new TimeInterval(encode, decode);
 
         let offset = 0;
+        const { stickTo } = options;
         if (typeof stickTo === 'string') {
             const initialOffset = offset;
-            this._beforeRange = (start, stop) => {
+            interval['_beforeRange'] = (start, stop) => {
                 const s = stickTo === 'start' ? start : stop;
                 offset = this._getEncodedOffset(s, step);
             };
-            this._afterRange = () => (offset = initialOffset);
+            interval['_afterRange'] = () => (offset = initialOffset);
         } else if (typeof stickTo === 'number') {
             offset = this._getEncodedOffset(new Date(stickTo), step);
         } else if (stickTo instanceof Date) {
             offset = this._getEncodedOffset(stickTo, step);
         }
 
-        const encode = (date: Date) => {
-            const e = this._encode(date);
-            return Math.floor((e - offset) / step);
-        };
-
-        const decode = (encoded: number) => {
-            return this._decode(encoded * step + offset);
-        };
-
-        return new TimeInterval(encode, decode);
+        return interval;
     }
 }
