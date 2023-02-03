@@ -18,7 +18,7 @@ const MenuColumns = ({ framework = 'javascript' }) =>
                             </DocumentationLink>
                         ) : (
                             <a href={url} {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}>
-                                {iconUrl && <img src={`${hostPrefix}/${iconUrl}`} alt={name} />}
+                                {iconUrl && <img src={`${hostPrefix}${iconUrl}`} alt={name} />}
                                 {name}
                             </a>
                         )}
