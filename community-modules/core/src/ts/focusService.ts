@@ -24,6 +24,7 @@ import { last } from "./utils/array";
 import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./interfaces/iCallbackParams";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR } from "./utils/dom";
+import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
 
 
 @Bean('focusService')
@@ -452,6 +453,27 @@ export class FocusService extends BeanStub {
         return false;
     }
 
+    public findFocusableElementBeforeTabGuard(rootNode: HTMLElement, referenceElement?: HTMLElement): HTMLElement | null {
+        if (!referenceElement) { return null; }
+
+        const focusableElements = this.findFocusableElements(rootNode);
+        const referenceIndex = focusableElements.indexOf(referenceElement);
+
+        if (referenceIndex === -1) { return null; }
+
+        let lastTabGuardIndex = -1;
+        for (let i = referenceIndex - 1; i >= 0; i--) {
+            if (focusableElements[i].classList.contains(TabGuardClassNames.TAB_GUARD_TOP)) {
+                lastTabGuardIndex = i;
+                break;
+            }
+        }
+
+        if (lastTabGuardIndex <= 0) { return null; }
+
+        return focusableElements[lastTabGuardIndex - 1];
+    }
+
     public findNextFocusableElement(rootNode: HTMLElement = this.eGridDiv, onlyManaged?: boolean | null, backwards?: boolean): HTMLElement | null {
         const focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
         const eDocument = this.gridOptionsService.getDocument();
@@ -473,14 +495,15 @@ export class FocusService extends BeanStub {
         return focusable[nextIndex];
     }
 
-    public isFocusUnderManagedComponent(rootNode: HTMLElement): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
+    public isTargetUnderManagedComponent(rootNode: HTMLElement, target?: HTMLElement): boolean {
+        if (!target) { return false; }
+
         const managedContainers = rootNode.querySelectorAll(`.${ManagedFocusFeature.FOCUS_MANAGED_CLASS}`);
 
         if (!managedContainers.length) { return false; }
 
         for (let i = 0; i < managedContainers.length; i++) {
-            if (managedContainers[i].contains(eDocument.activeElement)) {
+            if (managedContainers[i].contains(target)) {
                 return true;
             }
         }

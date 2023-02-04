@@ -19852,6 +19852,7 @@
       "type": { "returnType": "AgPromise<Function>", "optional": false }
     }
   },
+  "TabGuardClassNames": {},
   "ITabGuard": {
     "setTabIndex": {
       "type": {

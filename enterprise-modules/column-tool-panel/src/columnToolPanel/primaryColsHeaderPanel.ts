@@ -35,7 +35,7 @@ export class PrimaryColsHeaderPanel extends Component {
     private params: ToolPanelColumnCompParams;
 
     private static TEMPLATE = /* html */
-        `<div class="ag-column-select-header" role="presentation" tabindex="-1">
+        `<div class="ag-column-select-header" role="presentation">
             <div ref="eExpand" class="ag-column-select-header-icon" tabindex="0"></div>
             <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
             <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
