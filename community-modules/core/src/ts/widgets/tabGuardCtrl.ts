@@ -134,6 +134,9 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     private onFocusIn(e: FocusEvent): void {
+        // when the element that has focus is the tabGuards, we shouldn't deactivate them
+        // as the focus isn't within the component and this could happen as a result of 
+        // `forceFocusOutOfContainer()`.
         if ((e.target as HTMLElement)?.classList.contains(TabGuardClassNames.TAB_GUARD)) { return; }
         if (this.providedFocusIn && this.providedFocusIn(e)) { return; }
 
