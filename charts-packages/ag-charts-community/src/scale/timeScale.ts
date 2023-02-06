@@ -302,7 +302,7 @@ export class TimeScale extends ContinuousScale {
         }
 
         if (interval instanceof TimeInterval) {
-            return interval.range(new Date(start - 1), new Date(stop + 1));
+            return interval.range(new Date(start), new Date(stop));
         }
 
         const absInterval = Math.abs(interval);
@@ -315,7 +315,7 @@ export class TimeScale extends ContinuousScale {
 
         if (timeInterval) {
             const i = timeInterval[0].every(absInterval / (timeInterval[2] / timeInterval[1]));
-            return i.range(new Date(start - 1), new Date(stop + 1));
+            return i.range(new Date(start), new Date(stop));
         }
 
         let date = new Date(start);
@@ -369,8 +369,9 @@ export class TimeScale extends ContinuousScale {
         }
 
         if (i) {
-            const n0 = i.floor(d0);
-            const n1 = i.ceil(d1);
+            const intervalRange = i.range(d0, d1, true);
+            const n0 = intervalRange[0];
+            const n1 = intervalRange[intervalRange.length - 1];
             this.niceDomain = [n0, n1];
         }
     }

@@ -51,14 +51,15 @@ export class TimeInterval {
 
     /**
      * Returns an array of dates representing every interval boundary after or equal to start (inclusive) and before stop (exclusive).
-     * @param start
-     * @param stop
+     * @param start Range start.
+     * @param stop Range end.
+     * @param extend If specified, the requested range will be extended to the closest "nice" values.
      */
-    range(start: Date, stop: Date): Date[] {
+    range(start: Date, stop: Date, extend?: boolean): Date[] {
         const rangeCallback = this._rangeCallback?.(start, stop);
 
-        const e0 = this._encode(this.ceil(start));
-        const e1 = this._encode(this.floor(stop));
+        const e0 = this._encode(extend ? this.floor(start) : this.ceil(start));
+        const e1 = this._encode(extend ? this.ceil(stop) : this.floor(stop));
         if (e1 < e0) {
             return [];
         }
