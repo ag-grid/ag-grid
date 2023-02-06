@@ -560,8 +560,11 @@ export class GridApi<TData = any> {
     }
 
     /** Expand or collapse a specific row node. */
-    public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean): void {
+    public setRowNodeExpanded(rowNode: IRowNode | null, expanded: boolean, expandParents?: boolean): void {
         if (rowNode) {
+            if (expandParents) {
+                this.setRowNodeExpanded(rowNode.parent, expanded, expandParents);
+            }
             rowNode.setExpanded(expanded);
         }
     }
