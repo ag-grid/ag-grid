@@ -992,7 +992,8 @@ export interface GridOptions<TData = any> {
     // *** Editing *** //
     /**
      * Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
-     *  if cell value has changed as a result of paste operation.
+     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
+     * fill handle, copy range down, undo and redo.
     */
     onCellValueChanged?(event: CellValueChangedEvent<TData>): void;
     /** Value has changed after editing. Only fires when `readOnlyEdit=true`. */
