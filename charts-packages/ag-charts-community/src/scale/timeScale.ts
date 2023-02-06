@@ -291,7 +291,7 @@ export class TimeScale extends ContinuousScale {
         }
 
         const t = this.getTickInterval({ start: t0, stop: t1, count: this.tickCount });
-        return t ? t.range(new Date(t0 - 1), new Date(t1 + 1)) : []; // inclusive stop
+        return t ? t.range(new Date(t0), new Date(t1)) : []; // inclusive stop
     }
 
     getTicks({ start, stop }: { start: number; stop: number }): Date[] {
