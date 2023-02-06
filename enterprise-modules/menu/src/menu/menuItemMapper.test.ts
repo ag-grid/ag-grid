@@ -50,19 +50,19 @@ describe('isValidChartType', () => {
                 name: 'pivotChart',
                 subMenu: [
                     {
-                        name: "barChart",
+                        name: "xyChart",
                         subMenu: [
-                            { name: "groupedBar", },
-                            { name: "normalizedBar", },
+                            { name: "scatter", }
                         ],
                     },
                     {
                         name: "line",
                     },
                     {
-                        name: "xyChart",
+                        name: "barChart",
                         subMenu: [
-                            { name: "scatter", }
+                            { name: "groupedBar", },
+                            { name: "normalizedBar", },
                         ],
                     },
                 ]

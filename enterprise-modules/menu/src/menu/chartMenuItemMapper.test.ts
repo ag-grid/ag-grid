@@ -1,19 +1,20 @@
 import { ChartGroupsDef, DEFAULT_CHART_GROUPS, MenuItemDef } from "@ag-grid-community/core";
-import { describe, xdescribe, expect, it, fit } from '@jest/globals';
-import { ChartMenuItemMapper, ChartMenuOptionName } from './chartMenuItemMapper';
+import { describe, xdescribe, expect, it, xit, fit } from '@jest/globals';
+import { ChartMenuItemMapper, } from './chartMenuItemMapper';
 describe('isValidChartType', () => {
 
     const cleanMenuItems = (menuItems: (MenuItemDef | string)[] | undefined) => {
         return menuItems?.map(cleanMenuItem)
     }
-    const cleanMenuItem = (menuItem: MenuItemDef | string | undefined) => {
+    const cleanMenuItem = (menuItem: MenuItemDef | string) => {
         if (typeof menuItem === 'string') {
             return menuItem;
         }
-        if (menuItem == undefined) {
-            return undefined;
+        let clean: MenuItemDef = { name: menuItem.name };
+        if (menuItem.subMenu && menuItem.subMenu.length > 0) {
+            clean.subMenu = cleanMenuItems(menuItem.subMenu)
         }
-        return { name: menuItem.name, subMenu: cleanMenuItems(menuItem.subMenu) };
+        return clean;
     }
 
     function getChartMenuMapper(defs: ChartGroupsDef | undefined) {
@@ -26,6 +27,13 @@ describe('isValidChartType', () => {
         return chartMenuItemMapper;
     }
 
+    it('Ensure internals do not leak', () => {
+        const chartMenuItemMapper = getChartMenuMapper(undefined);
+        const pivotChart = chartMenuItemMapper.getChartItems('pivotChart');
+        expect((pivotChart)).toBeDefined();
+        expect(pivotChart.key).toBeUndefined();
+        expect(pivotChart.subMenu[0].key).toBeUndefined();
+    });
 
     it('Dont include parent menu item if all children not valid', () => {
         const chartMenuItemMapper = getChartMenuMapper({ combinationGroup: ['customCombo'] });
@@ -57,14 +65,19 @@ describe('isValidChartType', () => {
     it('Test selection of options', () => {
         const mixedCharts: ChartGroupsDef = { scatterGroup: ['scatter'], lineGroup: ['line'], barGroup: ['bar', 'normalizedBar'], combinationGroup: ['areaColumnCombo'] };
         const chartMenuItemMapper = getChartMenuMapper(mixedCharts);
-        const pivotChart = chartMenuItemMapper.getChartItems('pivotChart');
-        const rangeChart = chartMenuItemMapper.getChartItems('chartRange');
+        const pivotChartItems = chartMenuItemMapper.getChartItems('pivotChart').subMenu;
+        const rangeChartItems = chartMenuItemMapper.getChartItems('chartRange').subMenu;
 
-
-        const expectedPivot =
-        {
-            name: 'pivotChart',
-            subMenu: [
+        const expected = [
+            {
+                name: "xyChart",
+                subMenu: [
+                    { name: "scatter", }
+                    ],
+                },
+                {
+                    name: "line",
+                },
                 {
                     name: "barChart",
                     subMenu: [
@@ -73,88 +86,68 @@ describe('isValidChartType', () => {
                     ],
                 },
                 {
-                    name: "line",
-                },
-                {
-                    name: "xyChart",
-                    subMenu: [
-                        { name: "scatter", }
-                    ],
-                },
-                {
                     name: 'combinationChart',
                     subMenu: [
                         { name: 'AreaColumnCombo' }
                     ]
                 }
-            ]
-        };
-        // Range chart supports combination charts but pivot does not
-        const expectedRange =
-        {
-            ...expectedPivot, name: 'chartRange',
-        }
+        ];
 
-        expect(cleanMenuItem(pivotChart)).toEqual(expectedPivot);
-        expect(cleanMenuItem(rangeChart)).toEqual(expectedRange);
+        expect(cleanMenuItems(pivotChartItems)).toEqual(expected);
+        expect(cleanMenuItems(rangeChartItems)).toEqual(expected);
 
     });
 
-    (['pivotChart',
-        'chartRange',
-        'pivotColumnChart',
-        'pivotGroupedColumn',
-        'pivotStackedColumn',
-        'pivotNormalizedColumn',
-        'rangeColumnChart',
-        'rangeGroupedColumn',
-        'rangeStackedColumn',
-        'rangeNormalizedColumn',
-        'pivotBarChart',
-        'pivotGroupedBar',
-        'pivotStackedBar',
-        'pivotNormalizedBar',
-        'rangeBarChart',
-        'rangeGroupedBar',
-        'rangeStackedBar',
-        'rangeNormalizedBar',
-        'pivotPieChart',
-        'pivotPie',
-        'pivotDoughnut',
-        'rangePieChart',
-        'rangePie',
-        'rangeDoughnut',
-        'pivotLineChart',
-        'rangeLineChart',
-        'pivotXYChart',
-        'pivotScatter',
-        'pivotBubble',
-        'rangeXYChart',
-        'rangeScatter',
-        'rangeBubble',
-        'pivotAreaChart',
-        'pivotArea',
-        'pivotStackedArea',
-        'pivotNormalizedArea',
-        'rangeAreaChart',
-        'rangeArea',
-        'rangeStackedArea',
-        'rangeNormalizedArea',
-        'rangeHistogramChart',
-        'rangeColumnLineCombo',
-        'rangeAreaColumnCombo',
-        'rangeCombinationChart'] as ChartMenuOptionName[]).forEach(subMenu => {
+    describe('No filtering', () => {
+        const expected = [
+            {
+                name: "columnChart",
+                subMenu: [{ name: "groupedColumn" }, { name: "stackedColumn" }, { name: "normalizedColumn" }],
+            },
+            {
+                name: "barChart",
+                subMenu: [{ name: "groupedBar" }, { name: "stackedBar" }, { name: "normalizedBar" }]
+            },
+            {
+                name: "pieChart",
+                subMenu: [{ name: "pie" }, { name: "doughnut" }]
+            },
+            {
+                name: "line",
+            },
+            {
+                name: "xyChart",
+                subMenu: [{ name: "scatter" }, { name: "bubble" }]
+            },
+            {
+                name: "areaChart",
+                subMenu: [{ name: "area" }, { name: "stackedArea" }, { name: "normalizedArea" }]
+            },
+            {
+                name: "histogramChart",
+            },
+            {
+                name: "combinationChart",
+                subMenu: [{ name: "columnLineCombo" }, { name: "AreaColumnCombo" }]
+            }
+        ];
 
-            it(`should pass with default ${subMenu}`, () => {
-                const chartMenuItemMapper = getChartMenuMapper(DEFAULT_CHART_GROUPS);
-                const menuItem = chartMenuItemMapper.getChartItems(subMenu);
-                expect(menuItem).toBeDefined();
-            })
+        it(`should pass with default`, () => {
+            const chartMenuItemMapper = getChartMenuMapper(DEFAULT_CHART_GROUPS);
+            const rangeItems = chartMenuItemMapper.getChartItems('chartRange').subMenu;
+            const pivotItems = chartMenuItemMapper.getChartItems('pivotRange').subMenu;
 
-            it(`should pass with undefined ${subMenu}`, () => {
-                const chartMenuItemMapper = getChartMenuMapper(undefined);
-                const menuItem = chartMenuItemMapper.getChartItems(subMenu);
-                expect(menuItem).toBeDefined();
-            })
-        })
+            expect(cleanMenuItems(rangeItems)).toEqual(expected);
+            expect(cleanMenuItems(pivotItems)).toEqual(expected);
+        });
+
+        it(`should pass with undefined`, () => {
+            const chartMenuItemMapper = getChartMenuMapper(undefined);
+            const rangeItems = chartMenuItemMapper.getChartItems('chartRange').subMenu;
+            const pivotItems = chartMenuItemMapper.getChartItems('pivotRange').subMenu;
+
+            expect(cleanMenuItems(rangeItems)).toEqual(expected);
+            expect(cleanMenuItems(pivotItems)).toEqual(expected);
+        });
+    })
 })

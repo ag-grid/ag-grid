@@ -14,7 +14,7 @@ import {
     FocusService,
     RowPositionUtils,
 } from '@ag-grid-community/core';
-import { ChartMenuItemMapper, ChartMenuOptionName } from './chartMenuItemMapper';
+import { ChartMenuItemMapper } from './chartMenuItemMapper';
 
 @Bean('menuItemMapper')
 export class MenuItemMapper extends BeanStub {
@@ -231,8 +231,13 @@ export class MenuItemMapper extends BeanStub {
                 };
             case 'separator':
                 return 'separator';
-            default:
-                return this.chartMenuItemMapper.getChartItems(key as ChartMenuOptionName) ?? null;
+            case 'pivotChart':
+            case 'chartRange':
+                return this.chartMenuItemMapper.getChartItems(key) ?? null;
+            default: {
+                console.warn(`AG Grid: unknown menu item type ${key}`);
+                return null;
+            }
         }
     }
 
