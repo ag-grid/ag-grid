@@ -89,7 +89,8 @@ export const Layout = ({
         .replace(/.*build.ag-grid.com/, "")
         .replace(/.*ag-grid.com/, "")
         .replace(/.*localhost:8000/, "")
-        .replace(/\?searchQuery.*/,"");
+        .replace(/\?searchQuery.*/,"")
+        .replace(/\?fixVersion.*/,"");
 
     const fullScreenPage = processedPath === '/' || getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
 
