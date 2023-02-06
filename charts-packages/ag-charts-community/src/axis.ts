@@ -239,6 +239,8 @@ export class AxisLabel {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 export class Axis<S extends Scale<D, number>, D = any> {
+    static defaultTickMinSpacing = 80;
+
     readonly id = createId(this);
 
     @Validate(BOOLEAN)
@@ -734,7 +736,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const availableRange = max - min;
 
-        minSpacing = isNaN(minSpacing) ? 70 : minSpacing;
+        const defaultMinSpacing = Math.max(
+            Axis.defaultTickMinSpacing,
+            availableRange / ContinuousScale.defaultTickCount
+        );
+
+        minSpacing = isNaN(minSpacing) ? defaultMinSpacing : minSpacing;
 
         const maxTickCount = Math.floor(availableRange / minSpacing);
         const minTickCount = isNaN(maxSpacing) ? 0 : Math.ceil(availableRange / maxSpacing);
