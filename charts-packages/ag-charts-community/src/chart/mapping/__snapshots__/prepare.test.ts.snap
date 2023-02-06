@@ -45,6 +45,7 @@ Object {
         "count": TimeInterval {
           "_decode": [Function],
           "_encode": [Function],
+          "_rangeCallback": undefined,
         },
         "size": 6,
         "width": 3,
@@ -9281,6 +9282,7 @@ Object {
         "count": TimeInterval {
           "_decode": [Function],
           "_encode": [Function],
+          "_rangeCallback": undefined,
         },
         "size": 6,
         "width": 1,

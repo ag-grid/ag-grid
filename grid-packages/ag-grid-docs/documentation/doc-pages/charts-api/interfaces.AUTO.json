@@ -3790,6 +3790,10 @@
     "meta": { "isTypeAlias": true },
     "type": "(encoded: number) => Date"
   },
+  "RangeFn": {
+    "meta": { "isTypeAlias": true },
+    "type": "(start: Date, end: Date) => () => void"
+  },
   "CountableTimeIntervalOptions": {
     "meta": {},
     "type": { "snapTo?": "Date | number | 'start' | 'end'" }

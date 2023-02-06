@@ -5257,6 +5257,7 @@
   "ValueFormat": {},
   "EncodeFn": {},
   "DecodeFn": {},
+  "RangeFn": {},
   "CountableTimeIntervalOptions": {
     "snapTo": {
       "type": {
