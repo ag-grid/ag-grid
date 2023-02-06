@@ -15,6 +15,7 @@
     "package": "node ../../module-build/rollup/build.js",
     "clean": "npx rimraf dist typings .hash",
     "check-grid-options": "npx ts-node scripts/check-gridOptions-propertyKeys.ts",
+    "check-grid-api-exports": "node scripts/check-gridApi-interfaces-exported.js",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
