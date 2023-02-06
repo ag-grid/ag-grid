@@ -15,10 +15,19 @@ type DecodeFn = (encoded: number) => Date;
 export class TimeInterval {
     protected readonly _encode: EncodeFn;
     protected readonly _decode: DecodeFn;
+    protected readonly _beforeRangeCallbacks?: (start: Date, stop: Date) => void;
+    protected readonly _afterRangeCallbacks?: () => void;
 
-    constructor(encode: EncodeFn, decode: DecodeFn) {
+    constructor(
+        encode: EncodeFn,
+        decode: DecodeFn,
+        beforeRangeCallbacks?: (start: Date, stop: Date) => void,
+        afterRangeCallbacks?: () => void
+    ) {
         this._encode = encode;
         this._decode = decode;
+        this._beforeRangeCallbacks = beforeRangeCallbacks;
+        this._afterRangeCallbacks = afterRangeCallbacks;
     }
 
     /**
@@ -48,7 +57,7 @@ export class TimeInterval {
      * @param stop
      */
     range(start: Date, stop: Date): Date[] {
-        beforeRangeCallbacks.get(this)?.(start, stop);
+        this._beforeRangeCallbacks?.(start, stop);
 
         const e0 = this._encode(this.ceil(start));
         const e1 = this._encode(this.floor(stop));
@@ -62,14 +71,11 @@ export class TimeInterval {
             range.push(d);
         }
 
-        afterRangeCallbacks.get(this)?.();
+        this._afterRangeCallbacks?.();
 
         return range;
     }
 }
-
-const beforeRangeCallbacks = new WeakMap<TimeInterval, (start: Date, stop: Date) => void>();
-const afterRangeCallbacks = new WeakMap<TimeInterval, () => void>();
 
 interface CountableTimeIntervalOptions {
     snapTo?: Date | number | 'start' | 'end';
@@ -88,6 +94,24 @@ export class CountableTimeInterval extends TimeInterval {
      * @param step
      */
     every(step: number, options: CountableTimeIntervalOptions = {}): TimeInterval {
+        const { snapTo } = options;
+
+        let offset = 0;
+        let beforeRangeCallback;
+        let afterRangeCallback;
+        if (typeof snapTo === 'string') {
+            const initialOffset = offset;
+            beforeRangeCallback = (start: Date, stop: Date) => {
+                const s = snapTo === 'start' ? start : stop;
+                offset = this.getOffset(s, step);
+            };
+            afterRangeCallback = () => (offset = initialOffset);
+        } else if (typeof snapTo === 'number') {
+            offset = this.getOffset(new Date(snapTo), step);
+        } else if (snapTo instanceof Date) {
+            offset = this.getOffset(snapTo, step);
+        }
+
         const encode = (date: Date) => {
             const e = this._encode(date);
             return Math.floor((e - offset) / step);
@@ -95,22 +119,7 @@ export class CountableTimeInterval extends TimeInterval {
         const decode = (encoded: number) => {
             return this._decode(encoded * step + offset);
         };
-        const interval = new TimeInterval(encode, decode);
-
-        let offset = 0;
-        const { snapTo } = options;
-        if (typeof snapTo === 'string') {
-            const initialOffset = offset;
-            beforeRangeCallbacks.set(interval, (start, stop) => {
-                const s = snapTo === 'start' ? start : stop;
-                offset = this.getOffset(s, step);
-            });
-            afterRangeCallbacks.set(interval, () => (offset = initialOffset));
-        } else if (typeof snapTo === 'number') {
-            offset = this.getOffset(new Date(snapTo), step);
-        } else if (snapTo instanceof Date) {
-            offset = this.getOffset(snapTo, step);
-        }
+        const interval = new TimeInterval(encode, decode, beforeRangeCallback, afterRangeCallback);
 
         return interval;
     }
