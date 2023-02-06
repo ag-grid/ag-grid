@@ -290,6 +290,7 @@ const Pipeline = ({ location }) => {
                             detailCellRenderer={'myDetailCellRenderer'}
                             masterDetail={true}
                             rowData={rowData}
+                            suppressReactUi
                             onGridReady={gridReady}
                         ></Grid>
                     </div>
