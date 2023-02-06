@@ -1,5 +1,45 @@
 @use "../design-system/" as *;
 
+// Might well be extracted out into component later
+.card {
+    --card-color: var(--border-color);
+    --primary-tint: 0.9;
+    --secondary-tint: 0.95;
+
+    display: flex;
+    flex-direction: column;
+    border-radius: calc(var(--border-radius) * 2);
+    border: 3px solid var(--card-color);
+    background-color: var(--card-color);
+    overflow: hidden;
+
+    .primaryContent,
+    .secondaryContent {
+        padding: $size-4 $size-3;
+    }
+
+    .primaryContent {
+        background-color: rgba(255, 255, 255, var(--primary-tint));
+    }
+
+    .secondaryContent {
+        flex-grow: 1;
+        background-color: rgba(255, 255, 255, var(--secondary-tint));
+    }
+}
+
+.card.singleApplicationLicense {
+    --card-color: #0f5bce;
+    --primary-tint: 0.9;
+    --secondary-tint: 0.95;
+}
+
+.card.multipleApplicationsLicense {
+    --card-color: #2aaa33;
+    --primary-tint: 0.92;
+    --secondary-tint: 0.96;
+}
+
 .container {
     margin-top: $size-6 !important; // !important for .ag-styles specificity
     margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
@@ -15,6 +55,115 @@
 
     @media screen and (min-width: 780px) {
         --font-size: #{$font-size-massive} !important; // !important for .ag-styles specificity
+    }
+}
+
+.bulkLicences {
+    margin-top: $size-5 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
+
+    p {
+        max-width: 740px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    div {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: $size-3;
+    }
+
+    a:first-child {
+        justify-self: end;
+    }
+
+    a:last-child {
+        justify-self: start;
+    }
+}
+
+.communityEnterprise {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: $size-3;
+    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
+
+    :global(.button) {
+        display: inline-block;
+
+        &:not(:last-child) {
+            margin-bottom: $size-1;
+        }
+    }
+}
+
+.videoExplainer {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: $size-3;
+    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
+
+    h3 {
+        margin-top: -$size-1 !important; // !important for .ag-styles specificity
+        line-height: $line-height-tight !important; // !important for .ag-styles specificity
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+    }
+
+    iframe {
+        width: 100%;
+        aspect-ratio: 16/9;
+        border-radius: var(--border-radius);
+        border: none;
+    }
+}
+
+.licencesInDetail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-3;
+    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
+
+    > h3 {
+        width: 100%;
+        text-align: center;
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+    }
+
+    ul {
+        line-height: $line-height-tight;
+    }
+
+    li:not(:last-child) {
+        margin-bottom: $size-half !important; // !important for .ag-styles specificity
+    }
+
+    .singleApplicationLicense,
+    .multipleApplicationsLicense {
+        width: calc(50% - $size-3 / 2);
+    }
+
+    // Needs review after <ul> styling
+    .deploymentLicence ul {
+        columns: 2;
+        gap: $size-3;
+    }
+}
+
+.contactSales {
+    margin-bottom: $size-10 !important; // !important for .ag-styles specificity
+    text-align: center;
+
+    p {
+        max-width: 740px;
+        margin-right: auto;
+        margin-bottom: $size-2;
+        margin-left: auto;
+    }
+
+    a {
+        display: inline-block;
     }
 }
 
