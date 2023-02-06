@@ -1,14 +1,14 @@
 import { CountableTimeInterval } from './interval';
-import { durationSecond } from './duration';
+import { durationSecond, durationMinute } from './duration';
 
-const base = new Date(2020, 0, 1).getTime();
+const offset = new Date().getTimezoneOffset() * durationMinute;
 
 function encode(date: Date) {
-    return Math.floor((date.getTime() - base) / durationSecond);
+    return Math.floor((date.getTime() - offset) / durationSecond);
 }
 
 function decode(encoded: number) {
-    return new Date(base + encoded * durationSecond);
+    return new Date(offset + encoded * durationSecond);
 }
 
 export const second = new CountableTimeInterval(encode, decode);

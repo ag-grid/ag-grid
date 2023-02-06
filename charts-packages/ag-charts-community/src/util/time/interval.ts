@@ -42,16 +42,13 @@ export class TimeInterval {
         return this._decode(e + 1);
     }
 
-    protected _beforeRange?: (start: Date, stop: Date) => void;
-    protected _afterRange?: () => void;
-
     /**
      * Returns an array of dates representing every interval boundary after or equal to start (inclusive) and before stop (exclusive).
      * @param start
      * @param stop
      */
     range(start: Date, stop: Date): Date[] {
-        this._beforeRange?.(start, stop);
+        beforeRangeCallbacks.get(this)?.(start, stop);
 
         const e0 = this._encode(this.ceil(start));
         const e1 = this._encode(this.floor(stop));
@@ -65,19 +62,22 @@ export class TimeInterval {
             range.push(d);
         }
 
-        this._afterRange?.();
+        afterRangeCallbacks.get(this)?.();
 
         return range;
     }
 }
 
+const beforeRangeCallbacks = new WeakMap<TimeInterval, (start: Date, stop: Date) => void>();
+const afterRangeCallbacks = new WeakMap<TimeInterval, () => void>();
+
 interface CountableTimeIntervalOptions {
-    stickTo?: Date | number | 'start' | 'end';
+    snapTo?: Date | number | 'start' | 'end';
 }
 
 export class CountableTimeInterval extends TimeInterval {
-    private _getEncodedOffset(stickTo: Date, step: number) {
-        const s = typeof stickTo === 'number' || stickTo instanceof Date ? this._encode(new Date(stickTo)) : 0;
+    private getOffset(snapTo: Date, step: number) {
+        const s = typeof snapTo === 'number' || snapTo instanceof Date ? this._encode(new Date(snapTo)) : 0;
         return Math.floor(s) % step;
     }
 
@@ -98,18 +98,18 @@ export class CountableTimeInterval extends TimeInterval {
         const interval = new TimeInterval(encode, decode);
 
         let offset = 0;
-        const { stickTo } = options;
-        if (typeof stickTo === 'string') {
+        const { snapTo } = options;
+        if (typeof snapTo === 'string') {
             const initialOffset = offset;
-            interval['_beforeRange'] = (start, stop) => {
-                const s = stickTo === 'start' ? start : stop;
-                offset = this._getEncodedOffset(s, step);
-            };
-            interval['_afterRange'] = () => (offset = initialOffset);
-        } else if (typeof stickTo === 'number') {
-            offset = this._getEncodedOffset(new Date(stickTo), step);
-        } else if (stickTo instanceof Date) {
-            offset = this._getEncodedOffset(stickTo, step);
+            beforeRangeCallbacks.set(interval, (start, stop) => {
+                const s = snapTo === 'start' ? start : stop;
+                offset = this.getOffset(s, step);
+            });
+            afterRangeCallbacks.set(interval, () => (offset = initialOffset));
+        } else if (typeof snapTo === 'number') {
+            offset = this.getOffset(new Date(snapTo), step);
+        } else if (snapTo instanceof Date) {
+            offset = this.getOffset(snapTo, step);
         }
 
         return interval;

@@ -5258,7 +5258,7 @@
   "EncodeFn": {},
   "DecodeFn": {},
   "CountableTimeIntervalOptions": {
-    "stickTo": {
+    "snapTo": {
       "type": {
         "returnType": "Date | number | 'start' | 'end'",
         "optional": true

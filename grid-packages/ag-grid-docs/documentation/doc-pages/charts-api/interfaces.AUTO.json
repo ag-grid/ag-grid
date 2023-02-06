@@ -3792,7 +3792,7 @@
   },
   "CountableTimeIntervalOptions": {
     "meta": {},
-    "type": { "stickTo?": "Date | number | 'start' | 'end'" }
+    "type": { "snapTo?": "Date | number | 'start' | 'end'" }
   },
   "FormattingFn": {
     "meta": { "isTypeAlias": true },

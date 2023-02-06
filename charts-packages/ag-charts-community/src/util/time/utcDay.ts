@@ -1,14 +1,12 @@
 import { CountableTimeInterval } from './interval';
 import { durationDay } from './duration';
 
-const base = Date.UTC(2020, 0, 1);
-
 function encode(date: Date) {
-    return Math.floor((date.getTime() - base) / durationDay);
+    return Math.floor(date.getTime() / durationDay);
 }
 
 function decode(encoded: number) {
-    const d = new Date(base);
+    const d = new Date(0);
     d.setUTCDate(d.getUTCDate() + encoded);
     d.setUTCHours(0, 0, 0, 0);
     return d;
