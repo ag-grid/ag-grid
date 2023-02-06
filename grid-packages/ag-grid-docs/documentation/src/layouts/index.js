@@ -88,7 +88,8 @@ export const Layout = ({
         .replace(/.*(testing|archives|build).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, "")
         .replace(/.*build.ag-grid.com/, "")
         .replace(/.*ag-grid.com/, "")
-        .replace(/.*localhost:8000/, "");
+        .replace(/.*localhost:8000/, "")
+        .replace(/\?searchQuery.*/,"");
 
     const fullScreenPage = processedPath === '/' || getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
 
