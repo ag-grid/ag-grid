@@ -99,8 +99,8 @@ const License = (props: LicenseData) => {
 
                 <div className={styles.licenceBenifits}>
                     <ul className="font-size-small">
-                        {licenceBenifits.map((benifit) => {
-                            return <li>{benifit}</li>;
+                        {licenceBenifits.forEach((benifit, i) => {
+                            return <li key={i}>{benifit}</li>;
                         })}
                     </ul>
 
