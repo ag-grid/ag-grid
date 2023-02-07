@@ -275,6 +275,12 @@ export class TimeScale extends ContinuousScale {
         }
         this.refresh();
 
+        const [t0, t1] = this.getDomain().map(toNumber);
+
+        if (this.interval !== undefined) {
+            return this.getTicksForInterval({ start: t0, stop: t1 });
+        }
+
         if (this.nice) {
             const { tickCount } = this;
             if (tickCount === 2) {
@@ -285,17 +291,11 @@ export class TimeScale extends ContinuousScale {
             }
         }
 
-        const [t0, t1] = this.getDomain().map(toNumber);
-
-        if (this.interval !== undefined) {
-            return this.getTicks({ start: t0, stop: t1 });
-        }
-
         const t = this.getTickInterval({ start: t0, stop: t1, count: this.tickCount });
         return t ? t.range(new Date(t0 - 1), new Date(t1 + 1)) : []; // inclusive stop
     }
 
-    getTicks({ start, stop }: { start: number; stop: number }): Date[] {
+    private getTicksForInterval({ start, stop }: { start: number; stop: number }): Date[] {
         const { interval, tickIntervals } = this;
 
         if (!interval) {
