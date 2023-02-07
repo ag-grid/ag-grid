@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import React from 'react';
+import EnterpriseIcon from '../../images/inline-svgs/enterprise.svg';
 // @ts-ignore
 import styles from './Licenses.module.scss';
 
@@ -90,7 +91,12 @@ const License = (props: LicenseData) => {
         <>
             <div className="top">
                 <div className={styles.licenceMeta}>
-                    <p className="font-size-small text-secondary">AG Grid Enterprise</p>
+                    <p className="font-size-small text-secondary">
+                        AG Grid Enterprise{' '}
+                        <span>
+                            <EnterpriseIcon />
+                        </span>
+                    </p>
                     <p className={classnames(styles.name, 'font-size-extra-large', 'bold-text')}>{name}</p>
                     <p className="font-size-small text-secondary">{subHeading}</p>
                 </div>

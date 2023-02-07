@@ -3,6 +3,7 @@ import ukraineFlagSVG from 'images/ukraine-flag.svg';
 import React from 'react';
 import { Alert } from '../components/alert/Alert';
 import { Licenses } from '../components/licenses/Licenses';
+import EnterpriseIcon from '../images/inline-svgs/enterprise.svg';
 import SEO from './components/SEO';
 // @ts-ignore
 import styles from './license-pricing.module.scss';
@@ -63,7 +64,9 @@ const LicensePricing = () => {
                     </div>
 
                     <div className={styles.enterprise}>
-                        <h3>AG Grid Enterprise</h3>
+                        <h3>
+                            AG Grid Enterprise <EnterpriseIcon />
+                        </h3>
                         <p>
                             <b>AG Grid Enterprise</b> offers advanced functionality like{' '}
                             <a href="/javascript-data-grid/grouping/">Row Grouping</a>,{' '}
