@@ -1,6 +1,6 @@
 import { Component } from '../../../widgets/component';
 import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
-import { IFilterOptionDef, ProvidedFilterModel } from '../../../interfaces/iFilter';
+import { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { ICombinedSimpleModel, ISimpleFilter, ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
 import { ScalarFilterParams } from '../../provided/scalarFilter';
@@ -13,8 +13,6 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     // define it as an abstract method. it gets implemented in sub classes.
     public abstract onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void;
 
-    // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
-    protected abstract conditionToString(condition: ProvidedFilterModel, opts?: IFilterOptionDef): string;
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract setEditable(editable: boolean): void;
 
@@ -32,42 +30,6 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     // so we need to override destroy() just to make the method public.
     public destroy(): void {
         super.destroy();
-    }
-
-    // used by:
-    // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
-    // 2) DateFloatingFilter: Only when read only (as we show text rather than a date picker when read only)
-    protected getTextFromModel(model: ISimpleFilterModel): string | null {
-        if (!model) { return null; }
-
-        const isCombined = (model as any).operator != null;
-        if (isCombined) {
-            const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
-            const { condition1, condition2 } = combinedModel || {};
-            const customOption1 = this.getTextFromModel(condition1);
-            const customOption2 = this.getTextFromModel(condition2);
-
-            return [
-                customOption1,
-                combinedModel.operator,
-                customOption2,
-            ].join(' ');
-        } else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
-            const translate = this.localeService.getLocaleTextFunc();
-            return translate(model.type, model.type);
-        } else {
-            const condition = model as ISimpleFilterModel;
-            const customOption = this.optionsFactory.getCustomOption(condition.type);
-
-            // For custom filter options we display the Name of the filter instead
-            // of displaying the `from` value, as it wouldn't be relevant
-            const { displayKey, displayName, numberOfInputs } = customOption || {};
-            if (displayKey && displayName && numberOfInputs === 0) {
-                this.localeService.getLocaleTextFunc()(displayKey, displayName);
-                return displayName;
-            }
-            return this.conditionToString(condition, customOption);
-        }
     }
 
     protected isEventFromFloatingFilter(event: FilterChangedEvent): boolean | undefined {

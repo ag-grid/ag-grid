@@ -1,10 +1,10 @@
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { ConditionPosition, ISimpleFilterModel, Tuple } from '../simpleFilter';
+import { ConditionPosition, ISimpleFilterModel, SimpleFilter, Tuple } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isBrowserChrome } from '../../../utils/browser';
-import { IFilterParams } from '../../../interfaces/iFilter';
+import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'number'` */
@@ -200,5 +200,21 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         }
 
         return null;
+    }
+
+    protected conditionToString(condition: NumberFilterModel, options?: IFilterOptionDef): string {
+        const { numberOfInputs } = options || {};
+        const isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
+
+        if (isRange) {
+            return `${condition.filter}-${condition.filterTo}`;
+        }
+
+        // cater for when the type doesn't need a value
+        if (condition.filter != null) {
+            return `${condition.filter}`;
+        }
+
+        return `${condition.type}`;
     }
 }

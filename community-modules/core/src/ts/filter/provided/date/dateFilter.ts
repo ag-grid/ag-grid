@@ -2,11 +2,11 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { DateCompWrapper } from './dateCompWrapper';
-import { ConditionPosition, ISimpleFilterModel, Tuple } from '../simpleFilter';
+import { ConditionPosition, ISimpleFilterModel, SimpleFilter, Tuple } from '../simpleFilter';
 import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
-import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
+import { serialiseDate, parseDateTimeFromString, dateToFormattedString } from '../../../utils/date';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { IFilterParams } from '../../../interfaces/iFilter';
+import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -281,5 +281,28 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         });
 
         return result;
+    }
+
+    protected conditionToString(condition: DateFilterModel, options?: IFilterOptionDef): string {
+        const { type } = condition;
+        const { numberOfInputs } = options || {};
+        const isRange = type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
+
+        const dateFrom = parseDateTimeFromString(condition.dateFrom);
+        const dateTo = parseDateTimeFromString(condition.dateTo);
+
+        const format = this.dateFilterParams.inRangeFloatingFilterDateFormat;
+        if (isRange) {
+            const formattedFrom = dateFrom !== null ? dateToFormattedString(dateFrom, format) : 'null';
+            const formattedTo = dateTo !== null ? dateToFormattedString(dateTo, format) : 'null';
+            return `${formattedFrom}-${formattedTo}`;
+        }
+
+        if (dateFrom != null) {
+            return dateToFormattedString(dateFrom, format);
+        }
+
+        // cater for when the type doesn't need a value
+        return `${type}`;
     }
 }

@@ -11,7 +11,7 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
 import { _ } from '../../../utils';
 import { BaseColDefParams } from '../../../entities/colDef';
-import { IDoesFilterPassParams, IFilterParams } from '../../../interfaces/iFilter';
+import { IDoesFilterPassParams, IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 
 export interface TextFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'text'` */
@@ -263,5 +263,21 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         };
 
         return formattedValues.some(v => this.matcher({ ...matcherParams, filterText: v }));
+    }
+
+    protected conditionToString(condition: TextFilterModel, options?: IFilterOptionDef): string {
+        const { numberOfInputs } = options || {};
+        const isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
+
+        if (isRange) {
+            return `${condition.filter}-${condition.filterTo}`;
+        }
+
+        // cater for when the type doesn't need a value
+        if (condition.filter != null) {
+            return `${condition.filter}`;
+        }
+
+        return `${condition.type}`;
     }
 }

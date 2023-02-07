@@ -1,19 +1,18 @@
-import { DateFilter, DateFilterModel, DateFilterParams } from './dateFilter';
+import { DateFilter, DateFilterModel } from './dateFilter';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { IDateParams } from '../../../rendering/dateComponent';
 import { IFloatingFilterParams } from '../../floating/floatingFilter';
 import { DateCompWrapper } from './dateCompWrapper';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { SimpleFilter, ISimpleFilterModel } from '../simpleFilter';
+import { ISimpleFilterModel } from '../simpleFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import { FilterChangedEvent } from '../../../events';
 import { ProvidedFilter } from '../providedFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { setDisplayed } from '../../../utils/dom';
-import { dateToFormattedString, parseDateTimeFromString, serialiseDate } from '../../../utils/date';
+import { parseDateTimeFromString, serialiseDate } from '../../../utils/date';
 import { debounce } from '../../../utils/function';
-import { IFilterOptionDef } from '../../../interfaces/iFilter';
 import { WithoutGridCommon } from '../../../interfaces/iCommon';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
@@ -23,8 +22,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     @RefSelector('eDateWrapper') private readonly eDateWrapper: HTMLInputElement;
 
     private dateComp: DateCompWrapper;
-    private params: IFloatingFilterParams;
-    private filterParams: DateFilterParams;
+    private params: IFloatingFilterParams<DateFilter>;
 
     constructor() {
         super(/* html */`
@@ -38,33 +36,9 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         return DateFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected conditionToString(condition: DateFilterModel, options?: IFilterOptionDef): string {
-        const { type } = condition;
-        const { numberOfInputs } = options || {};
-        const isRange = type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
-
-        const dateFrom = parseDateTimeFromString(condition.dateFrom);
-        const dateTo = parseDateTimeFromString(condition.dateTo);
-
-        const format = this.filterParams.inRangeFloatingFilterDateFormat;
-        if (isRange) {
-            const formattedFrom = dateFrom !== null ? dateToFormattedString(dateFrom, format) : 'null';
-            const formattedTo = dateTo !== null ? dateToFormattedString(dateTo, format) : 'null';
-            return `${formattedFrom}-${formattedTo}`;
-        }
-
-        if (dateFrom != null) {
-            return dateToFormattedString(dateFrom, format);
-        }
-
-        // cater for when the type doesn't need a value
-        return `${type}`;
-    }
-
-    public init(params: IFloatingFilterParams): void {
+    public init(params: IFloatingFilterParams<DateFilter>): void {
         super.init(params);
         this.params = params;
-        this.filterParams = params.filterParams;
         this.createDateComponent();
         const translate = this.localeService.getLocaleTextFunc();
         this.eReadOnlyText
@@ -102,8 +76,10 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
             this.eReadOnlyText.setValue('');
         } else {
-            this.eReadOnlyText.setValue(this.getTextFromModel(model));
-            this.dateComp.setDate(null);
+            this.params.parentFilterInstance(filterInstance => {
+                this.eReadOnlyText.setValue(model ? filterInstance.getModelAsString(model) : null);
+                this.dateComp.setDate(null);
+            });
         }
     }
 

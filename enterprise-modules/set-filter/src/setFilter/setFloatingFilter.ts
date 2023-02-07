@@ -86,22 +86,8 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         }
 
         this.parentSetFilterInstance((setFilter) => {
-            const { values } = parentModel || setFilter.getModel() || {};
-            const valueModel = setFilter.getValueModel();
-
-            if (values == null || valueModel == null) {
-                this.eFloatingFilterText.setValue('');
-                return;
-            }
-
-            const availableKeys = values.filter(v => valueModel.isKeyAvailable(v));
-            const numValues = availableKeys.length;
-
-            const formattedValues = availableKeys.slice(0, 10).map(key => setFilter.getFormattedValue(key));
-
-            const valuesString = `(${numValues}) ${formattedValues.join(',')}${numValues > 10 ? ',...' : ''}`;
-
-            this.eFloatingFilterText.setValue(valuesString);
+            const model = parentModel ?? setFilter.getModel();
+            this.eFloatingFilterText.setValue(model ? setFilter.getModelAsString(model) : '');
         });
     }
 }

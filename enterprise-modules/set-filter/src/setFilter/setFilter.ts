@@ -288,7 +288,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
     }
 
-    public getFormattedValue(key: string | null): string | null {
+    private getFormattedValue(key: string | null): string | null {
         let value: V | string | null = this.valueModel!.getValue(key);
         // essentially get back the cell value
         if ((this.treeDataTreeList || this.groupingTreeList) && Array.isArray(value)) {
@@ -1079,6 +1079,21 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             recursiveCollapse(selectAllItem);
             this.valueModel!.updateDisplayedValues('expansion');
         }
+    }
+
+    public getModelAsString(model: SetFilterModel): string {
+        const { values } = model || {};
+
+        if (values == null || !this.valueModel == null) {
+            return '';
+        }
+
+        const availableKeys = values.filter(v => this.valueModel!.isKeyAvailable(v));
+        const numValues = availableKeys.length;
+
+        const formattedValues = availableKeys.slice(0, 10).map(key => this.getFormattedValue(key));
+
+        return `(${numValues}) ${formattedValues.join(',')}${numValues > 10 ? ',...' : ''}`;
     }
 }
 
