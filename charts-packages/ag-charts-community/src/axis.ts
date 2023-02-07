@@ -588,11 +588,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const secondaryAxis = primaryTickCount !== undefined;
 
         const checkForOverlap = avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
+        const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
+        const maxIterations = this.tick.count ? 10 : maxTickCount;
 
         while (labelOverlap) {
             let unchanged = true;
             while (unchanged) {
-                if (i > maxTickCount) {
+                if (i > maxIterations) {
                     // The iteration count `i` is used to reduce the default tick count until all labels fit without overlapping
                     // `i` cannot exceed `defaultTickCount` as it would lead to negative tick count values.
                     // Break out of the while loops when then iteration count reaches `defaultTickCount`
@@ -600,31 +602,32 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 }
 
                 const prevTicks = ticks;
-
-                const keepEvery = Math.ceil(ticks.length / maxTickCount);
-                const filteredTicks =
-                    !checkForOverlap || (continuous && this.tick.count === undefined) || i === 0
-                        ? undefined
-                        : ticks.filter((_, i) => i % keepEvery === 0);
-
-                let secondaryAxisTicks;
-                if (secondaryAxis) {
-                    // `updateSecondaryAxisTicks` mutates `scale.domain` based on `primaryTickCount`
-                    secondaryAxisTicks = this.updateSecondaryAxisTicks(primaryTickCount);
-                }
+                const tickCount = Math.max(maxTickCount - i, minTickCount);
 
                 if (this.tick.values) {
                     ticks = this.tick.values;
                 } else if (maxTickCount === 0) {
                     ticks = [];
-                } else if (filteredTicks) {
-                    ticks = filteredTicks;
-                } else if (secondaryAxisTicks) {
-                    ticks = secondaryAxisTicks;
-                } else {
-                    const tickCount = Math.max(maxTickCount - i, minTickCount);
+                } else if (!secondaryAxis) {
                     this.setTickCount(scale, this.tick.count ?? tickCount);
                     ticks = scale.ticks!();
+                }
+
+                const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : i + 1;
+                const filteredTicks =
+                    !checkForOverlap || (continuous && this.tick.count === undefined)
+                        ? undefined
+                        : ticks.filter((_, i) => i % keepEvery === 0);
+
+                if (filteredTicks) {
+                    ticks = filteredTicks;
+                }
+
+                let secondaryAxisTicks;
+                if (secondaryAxis) {
+                    // `updateSecondaryAxisTicks` mutates `scale.domain` based on `primaryTickCount`
+                    secondaryAxisTicks = this.updateSecondaryAxisTicks(primaryTickCount);
+                    ticks = secondaryAxisTicks;
                 }
 
                 this.updateSelections({
@@ -741,10 +744,32 @@ export class Axis<S extends Scale<D, number>, D = any> {
             availableRange / ContinuousScale.defaultTickCount
         );
 
-        minSpacing = isNaN(minSpacing) ? defaultMinSpacing : minSpacing;
+        if (isNaN(minSpacing) && isNaN(maxSpacing)) {
+            minSpacing = defaultMinSpacing;
+            maxSpacing = availableRange;
 
-        const maxTickCount = Math.floor(availableRange / minSpacing);
-        const minTickCount = isNaN(maxSpacing) ? 0 : Math.ceil(availableRange / maxSpacing);
+            if (minSpacing > maxSpacing) {
+                // Take automatic minSpacing if there is a conflict.
+                maxSpacing = minSpacing;
+            }
+        } else if (isNaN(minSpacing)) {
+            minSpacing = defaultMinSpacing;
+
+            if (minSpacing > maxSpacing) {
+                // Take user-suplied maxSpacing if there is a conflict.
+                minSpacing = maxSpacing;
+            }
+        } else if (isNaN(maxSpacing)) {
+            maxSpacing = availableRange;
+
+            if (minSpacing > maxSpacing) {
+                // Take user-suplied minSpacing if there is a conflict.
+                maxSpacing = minSpacing;
+            }
+        }
+
+        const maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
+        const minTickCount = Math.ceil(availableRange / maxSpacing);
 
         return { minTickCount, maxTickCount };
     }
