@@ -8,9 +8,11 @@ It is possible to add and remove columns to the Server-Side Row Model without ha
 [Changing columns](/column-updating-definitions/) allows you to specify new column definitions to the grid and
 the grid will work out which columns are new and which are old, keeping the state of the old columns.
 
-For the Server-Side Row Model this means adding and removing columns will reload the data if the
-changed column has row group, pivot, value, sort or filter active. This is because a change to
-row group, pivot, value, sort or filter will impact the row data that comes back.
+For the Server-Side Row Model, this means a refresh will occur in the event of one of the following:
+ - A row group column is added, removed or changed
+ - A pivot column is added, removed or changed
+ - While row grouping is active, a new column has an aggregation applied or changed.
+ - Any change is applied to a columns sort direction
 
 ## Example Changing Columns
 
