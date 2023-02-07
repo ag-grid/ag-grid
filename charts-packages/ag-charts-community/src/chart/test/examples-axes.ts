@@ -155,20 +155,14 @@ export const NUMBER_AXIS_NO_SERIES: AgChartOptions = {
     legend: { enabled: false },
 };
 
-/**
- * @todo(AG-7909) cleanup once options changes are made.
- */
 export const NUMBER_AXIS_TICK_VALUES: AgChartOptions = {
     ...examples.SIMPLE_SCATTER_CHART_EXAMPLE,
     axes: [
-        { type: 'number', position: 'bottom', tick: { values: [142, 153, 203, 220, 290] } as AgAxisNumberTickOptions },
+        { type: 'number', position: 'bottom', tick: { values: [142, 153, 203, 220, 290] } },
         { type: 'number', position: 'left' },
     ],
 };
 
-/**
- * @todo(AG-7909) cleanup once options changes are made.
- */
 export const TIME_AXIS_TICK_VALUES: AgChartOptions = {
     ...examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,
     axes: [
@@ -186,9 +180,6 @@ export const TIME_AXIS_TICK_VALUES: AgChartOptions = {
     ],
 };
 
-/**
- * @todo(AG-7909) cleanup once options changes are made.
- */
 export const LOG_AXIS_TICK_VALUES: AgChartOptions = {
     ...NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
     axes: [
@@ -196,14 +187,11 @@ export const LOG_AXIS_TICK_VALUES: AgChartOptions = {
         {
             type: 'log',
             position: 'left',
-            tick: { values: [2, 4, 8, 16, 12, 20, 200, 400, 800] } as AgAxisNumberTickOptions,
+            tick: { values: [2, 4, 8, 16, 12, 20, 200, 400, 800] },
         },
     ],
 };
 
-/**
- * @todo(AG-7909) cleanup once options changes are made.
- */
 export const CATEGORY_AXIS_TICK_VALUES: AgChartOptions = {
     ...examples.GROUPED_COLUMN_EXAMPLE,
     axes: [
@@ -212,9 +200,6 @@ export const CATEGORY_AXIS_TICK_VALUES: AgChartOptions = {
     ],
 };
 
-/**
- * @todo(AG-7909) cleanup once options changes are made.
- */
 export const AXIS_TICK_MIN_SPACING: AgChartOptions = {
     ...examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,
     axes: [
@@ -231,25 +216,19 @@ export const AXIS_TICK_MIN_SPACING: AgChartOptions = {
     ],
 };
 
-/**
- * @todo(AG-7909) cleanup once options changes are made.
- */
 export const AXIS_TICK_MAX_SPACING: AgChartOptions = {
     ...examples.SIMPLE_SCATTER_CHART_EXAMPLE,
     axes: [
-        { type: 'number', position: 'left', tick: { maxSpacing: 30 } as AgAxisNumberTickOptions },
-        { type: 'number', position: 'bottom', tick: { maxSpacing: 30 } as AgAxisNumberTickOptions },
+        { type: 'number', position: 'left', tick: { maxSpacing: 30 } },
+        { type: 'number', position: 'bottom', tick: { maxSpacing: 30 } },
     ],
 };
 
-/**
- * @todo(AG-7909) cleanup once options changes are made.
- */
 export const AXIS_TICK_MIN_MAX_SPACING: AgChartOptions = {
     ...examples.GROUPED_COLUMN_EXAMPLE,
     axes: [
-        { type: 'category', position: 'bottom', tick: { minSpacing: 150, maxSpacing: 250 } as AgAxisNumberTickOptions },
-        { type: 'number', position: 'left', tick: { minSpacing: 50, maxSpacing: 100 } as AgAxisNumberTickOptions },
+        { type: 'category', position: 'bottom', tick: { minSpacing: 150, maxSpacing: 250 } },
+        { type: 'number', position: 'left', tick: { minSpacing: 50, maxSpacing: 100 } },
     ],
 };
 
