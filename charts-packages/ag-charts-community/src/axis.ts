@@ -239,7 +239,7 @@ export class AxisLabel {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 export class Axis<S extends Scale<D, number>, D = any> {
-    static defaultTickMinSpacing = 80;
+    static readonly defaultTickMinSpacing = 80;
 
     readonly id = createId(this);
 
