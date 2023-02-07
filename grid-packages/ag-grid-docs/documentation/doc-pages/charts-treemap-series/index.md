@@ -255,11 +255,11 @@ There are several ways to display a tooltip.
 
 ### Default tooltip
 
-The value of the property specified in `labelKey` will be displayed as a label for a tooltip. The value specified in the `labels.value.key` will be displayed as a tooltip value. `labels.value.name` can be used as a description for the value. The `formatter` function will format the number in a desired way.
+The value of the property specified in `labelKey` will be displayed as a label (title) for a tooltip. In order to specify a numeric value use the `labels.value.key`. It should have a property name to get a value from the datum. `labels.value.name` can be used as a description for the value. The `labels.value.formatter` function will format the number in a desired way.
 
 ### Custom tooltip
 
-For creating a custom tooltip, please use the `tooltip renderer` function. It accepts an object containing several useful properties like `datum`, `color` etc., and returns a custom HTML string, or an object containing `title`, `content` and `color` properties.
+For creating a custom tooltip, please use the `tooltip.renderer` function. It accepts an object containing several useful properties like `datum`, `color` etc., and returns a custom HTML string, or an object containing `title`, `content` and `color` properties.
 
 Please see the API reference for more Tooltip Renderer capabilities.
 
