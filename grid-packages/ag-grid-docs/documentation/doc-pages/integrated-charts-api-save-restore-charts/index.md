@@ -9,9 +9,8 @@ This section shows how the Grid API can be used to save and restore charts.
 
 The example below demonstrates how you can save and then later restore a chart. You can make changes to the chart type, theme, data and formatting options and note how the restored chart looks the same as the chart that was saved.
 
-- Create a range chart from the grid, which will be shown in a container below the grid.
 - Change the chart type, theme, data and/or formatting in order to see the changes restored later.
-- Click "Save chart" to persist a model of the visible chart into a local variable. An alert will be shown to confirm that this has happened.
+- Click "Save chart" to persist a model of the visible chart into a local variable.
 - Click "Clear chart" to destroy the existing chart.
 - Click "Restore chart" to restore the previously saved chart.
 

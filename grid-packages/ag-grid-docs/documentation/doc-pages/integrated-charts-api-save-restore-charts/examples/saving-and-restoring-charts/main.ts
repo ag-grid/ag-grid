@@ -22,6 +22,20 @@ const gridOptions: GridOptions = {
   popupParent: document.body,
   enableCharts: true,
   createChartContainer,
+  onFirstDataRendered: onFirstDataRendered,
+}
+
+function onFirstDataRendered(params: FirstDataRenderedEvent) {
+  currentChartRef = params.api!.createRangeChart({
+    chartType: 'groupedColumn',
+    cellRange: {
+      columns: ['country', 'sugar', 'fat', 'weight'],
+      rowStartIndex: 0,
+      rowEndIndex: 2
+    },
+       
+    chartContainer: document.querySelector('#myChart') as any,
+  });
 }
 
 let chartModel: ChartModel | null;
