@@ -6,6 +6,9 @@ export class FloatingFilterMapper {
         multi: 'agMultiColumnFloatingFilter',
         agMultiColumnFilter: 'agMultiColumnFloatingFilter',
 
+        group: 'agGroupColumnFloatingFilter',
+        agGroupColumnFilter: 'agGroupColumnFloatingFilter',
+
         number: 'agNumberColumnFloatingFilter',
         agNumberColumnFilter: 'agNumberColumnFloatingFilter',
 

@@ -9,6 +9,7 @@ import { GridHeaderDropZones } from "./rowGrouping/columnDropZones/gridHeaderDro
 import { FilterAggregatesStage } from "./rowGrouping/filterAggregatesStage";
 import { VERSION } from "./version";
 import { GroupFilter } from "./rowGrouping/groupFilter/groupFilter";
+import { GroupFloatingFilterComp } from "./rowGrouping/groupFilter/groupFloatingFilter";
 
 export const RowGroupingModule: Module = {
     version: VERSION,
@@ -19,6 +20,7 @@ export const RowGroupingModule: Module = {
     ],
     userComponents: [
         { componentName: 'agGroupColumnFilter', componentClass: GroupFilter },
+        { componentName: 'agGroupColumnFloatingFilter', componentClass: GroupFloatingFilterComp },
     ],
     dependantModules: [
         EnterpriseCoreModule
