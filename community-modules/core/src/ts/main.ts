@@ -24,6 +24,7 @@ export { AgStackComponentsRegistry } from "./components/agStackComponentsRegistr
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";
 export { ComponentType } from "./components/framework/componentTypes";
+export { ColDefUtil } from "./components/colDefUtil";
 
 // context
 export { BeanStub } from "./context/beanStub";
