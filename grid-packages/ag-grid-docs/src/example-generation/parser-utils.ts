@@ -15,11 +15,11 @@ const moduleMapping = require('../../documentation/doc-pages/modules/modules.jso
 export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
     const tsFile = srcFile
         // Remove imports that are not required in javascript
-        .replace((options?.includeImports ? '' : /import.*from.*\n/g), '')
+        .replace((options?.includeImports ? '' : /import ((.|\n)*?)from.*\n/g), '')
         // Remove export statement
         .replace(/export /g, "")
 
-    let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"] }).code;
+    let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"], disableESTransforms: true  }).code;
 
     return jsFile;
 }

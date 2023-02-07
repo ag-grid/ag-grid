@@ -211,7 +211,7 @@ function readAsJsFile(tsFilePath) {
         // Remove export statement
         .replace(/export /g, "")
 
-    let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"] }).code;
+    let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"], disableESTransforms: true }).code;
 
     return jsFile;
 }
