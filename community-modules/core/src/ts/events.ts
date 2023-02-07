@@ -369,7 +369,7 @@ export interface FlashCellsEvent<TData = any> extends AgGridEvent<TData> {
 export interface PaginationPixelOffsetChangedEvent<TData = any> extends AgGridEvent<TData> {
 }
 
-export interface CellFocusedParams {
+export interface CommonCellFocusParams {
     /** Row index of the focused cell */
     rowIndex: number | null;
     /** Column of the focused cell */
@@ -378,16 +378,23 @@ export interface CellFocusedParams {
     rowPinned: RowPinnedType;
     /** Whether the cell a full width cell or a regular cell */
     isFullWidthCell?: boolean;
-    /** Whether browser focus is also set (false when editing) */
-    forceBrowserFocus?: boolean;
-    /** When `forceBrowserFocus` is `true`, should scroll be prevented */
-    preventScrollOnBrowserFocus?: boolean;
-    // floating is for backwards compatibility, this is the same as rowPinned.
-    // this is because the focus service doesn't keep references to rowNodes
-    // as focused cell is identified by rowIndex - thus when the user re-orders
-    // or filters, the focused cell stays with the index, but the node can change.
-    floating?: string | null;
 }
+
+export interface CellFocusClearedParams extends CommonCellFocusParams {}
+
+export interface CellFocusedParams extends CommonCellFocusParams {
+   /** Whether browser focus is also set (false when editing) */
+   forceBrowserFocus?: boolean;
+   /** When `forceBrowserFocus` is `true`, should scroll be prevented */
+   preventScrollOnBrowserFocus?: boolean;
+   // floating is for backwards compatibility, this is the same as rowPinned.
+   // this is because the focus service doesn't keep references to rowNodes
+   // as focused cell is identified by rowIndex - thus when the user re-orders
+   // or filters, the focused cell stays with the index, but the node can change.
+   floating?: string | null;
+}
+
+export interface CellFocusClearedEvent<TData = any> extends AgGridEvent<TData>, CellFocusClearedParams {}
 
 // this does not extent CellEvent as the focus service doesn't keep a reference to
 // the rowNode.

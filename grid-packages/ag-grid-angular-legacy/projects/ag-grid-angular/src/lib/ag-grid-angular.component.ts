@@ -1014,7 +1014,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent<TData>> = new EventEmitter<ComponentStateChangedEvent<TData>>();
     /** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
-         *  if cell value has changed as a result of paste operation.
+         *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
+         * fill handle, copy range down, undo and redo.
         */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
     /** Value has changed after editing. Only fires when `readOnlyEdit=true`.     */

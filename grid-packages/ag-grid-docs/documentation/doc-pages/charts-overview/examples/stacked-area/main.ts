@@ -82,6 +82,9 @@ const options: AgChartOptions = {
       label: {
         format: "%b",
       },
+      tick: {
+        count: 10,
+      },
     },
     {
       type: "number",

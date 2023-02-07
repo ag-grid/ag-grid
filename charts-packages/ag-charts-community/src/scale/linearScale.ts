@@ -11,7 +11,7 @@ export class LinearScale extends ContinuousScale {
     interval?: number;
 
     ticks() {
-        const count = this.tickCount ?? 10;
+        const count = this.tickCount ?? ContinuousScale.defaultTickCount;
         if (!this.domain || this.domain.length < 2 || count < 1 || this.domain.some((d) => !isFinite(d))) {
             return [];
         }
@@ -46,7 +46,7 @@ export class LinearScale extends ContinuousScale {
      * @param count Tick count.
      */
     protected updateNiceDomain() {
-        const count = this.tickCount ?? 10;
+        const count = this.tickCount ?? ContinuousScale.defaultTickCount;
         let [start, stop] = this.domain;
         if (count < 1) {
             this.niceDomain = [start, stop];
@@ -70,6 +70,6 @@ export class LinearScale extends ContinuousScale {
 
     tickFormat({ count, specifier }: { count?: number; ticks?: any[]; specifier?: string }) {
         const [d0, d1] = this.getDomain();
-        return tickFormat(d0, d1, count ?? 10, specifier);
+        return tickFormat(d0, d1, count ?? ContinuousScale.defaultTickCount, specifier);
     }
 }

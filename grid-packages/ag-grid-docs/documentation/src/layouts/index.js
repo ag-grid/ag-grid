@@ -11,6 +11,8 @@ import favIcons from '../images/favicons';
 import styles from './index.module.scss';
 import './mailchimp.css';
 
+const IS_SSR = typeof window === "undefined"
+
 const FULL_SCREEN_PAGES = ['example'];
 
 const FULL_SCREEN_WITH_FOOTER_PAGES = [
@@ -74,15 +76,21 @@ const TopBar = ({ frameworks, currentFramework, path }) => {
 export const Layout = ({
     children,
     pageContext: { frameworks, framework = 'javascript', layout, pageName },
-    location: { pathname: path },
+    location: { pathname: path, href },
 }) => {
     if (layout === 'bare') {
         // only for on the fly example runner
         return children;
     }
 
-    // takes account of archives too
-    const processedPath = path.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, '');
+    // takes account of current archives as well as new testing/archives
+    const processedPath = (IS_SSR ? path : href).replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, "")
+        .replace(/.*(testing|archives|build).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, "")
+        .replace(/.*build.ag-grid.com/, "")
+        .replace(/.*ag-grid.com/, "")
+        .replace(/.*localhost:8000/, "")
+        .replace(/\?searchQuery.*/,"")
+        .replace(/\?fixVersion.*/,"");
 
     const fullScreenPage = processedPath === '/' || getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
 
@@ -98,11 +106,11 @@ export const Layout = ({
                 <Helmet htmlAttributes={{ lang: 'en' }} />
                 <SiteHeader path={path} />
 
-                {!fullScreenPage && !fullScreenWithFooter && (
+                {!IS_SSR && !fullScreenPage && !fullScreenWithFooter && (
                     <TopBar frameworks={frameworks} currentFramework={framework} path={path} />
                 )}
                 <div className={styles['content-viewport']}>
-                    {!fullScreenPage && !fullScreenWithFooter && (
+                    {!IS_SSR && !fullScreenPage && !fullScreenWithFooter && (
                         <aside className={`${styles['main-menu']}`}>
                             <Menu currentFramework={framework} currentPage={pageName} />
                         </aside>

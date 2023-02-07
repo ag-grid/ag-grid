@@ -82,6 +82,11 @@ it dynamically as you change the range selection.
 
 The example below shows how we can subscribe to [Standalone Charts Events](/charts-events/):
 
+- Click on the bars in the series and observe that the `seriesNodeClick` listener emits a console message.
+- Click on a legend item and observe that the `legendItemClick` listener emits a console message.
+- Change chart type from the Settings panel, and observe that the `seriesNodeClick` and `legendItemClick`
+  listeners are working as before.
+
 <grid-example title='Subscribing to Standalone Charts Events' name='standalone-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"], "enableChartApi": true }'></grid-example>
 
 ## Other Resources

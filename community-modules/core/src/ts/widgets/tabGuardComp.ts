@@ -1,6 +1,6 @@
 import { Component } from "./component";
 import { isNodeOrElement, clearElement } from "../utils/dom";
-import { TabGuardCtrl, ITabGuard } from "./tabGuardCtrl";
+import { TabGuardCtrl, ITabGuard, TabGuardClassNames } from "./tabGuardCtrl";
 import { setAriaRole } from "../utils/aria";
 
 export class TabGuardComp extends Component {
@@ -55,8 +55,9 @@ export class TabGuardComp extends Component {
 
     private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
         const tabGuard = document.createElement('div');
+        const cls = side === 'top' ? TabGuardClassNames.TAB_GUARD_TOP : TabGuardClassNames.TAB_GUARD_BOTTOM;
 
-        tabGuard.classList.add('ag-tab-guard', `ag-tab-guard-${side}`);
+        tabGuard.classList.add(TabGuardClassNames.TAB_GUARD, cls);
         setAriaRole(tabGuard, 'presentation');
 
         return tabGuard;

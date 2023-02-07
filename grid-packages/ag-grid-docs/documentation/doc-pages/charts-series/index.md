@@ -8,13 +8,16 @@ series-specific options, but there are some common options between them.
 
 ## Type
 
-Every series configuration requires a `type` to declare how the data set should be rendered:
+Every series configuration can specify a `type` to declare how the data set should be rendered:
 
 ```js
 series: [{
     type: 'pie',
 }]
 ```
+
+If unspecified, we default to `'line'` for cartesian charts, unless the chart `type` overrides this
+default.
 
 Cartesian series types can be [combined on the same chart](/charts-combination-series/).
 See the [Options Reference](/charts-api/) for the complete list of available series types.

@@ -4050,7 +4050,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -4059,7 +4059,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -6846,7 +6846,7 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "CellFocusedParams": {
+  "CommonCellFocusParams": {
     "rowIndex": {
       "description": "/** Row index of the focused cell */",
       "type": { "returnType": "number | null", "optional": false }
@@ -6862,7 +6862,27 @@
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
       "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CellFocusClearedParams": {
+    "rowIndex": {
+      "description": "/** Row index of the focused cell */",
+      "type": { "returnType": "number | null", "optional": false }
     },
+    "column": {
+      "description": "/** Column of the focused cell */",
+      "type": { "returnType": "Column | string | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
+    },
+    "isFullWidthCell": {
+      "description": "/** Whether the cell a full width cell or a regular cell */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CellFocusedParams": {
     "forceBrowserFocus": {
       "description": "/** Whether browser focus is also set (false when editing) */",
       "type": { "returnType": "boolean", "optional": true }
@@ -6871,9 +6891,25 @@
       "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "floating": { "type": { "returnType": "string | null", "optional": true } }
+    "floating": { "type": { "returnType": "string | null", "optional": true } },
+    "rowIndex": {
+      "description": "/** Row index of the focused cell */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Column of the focused cell */",
+      "type": { "returnType": "Column | string | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
+    },
+    "isFullWidthCell": {
+      "description": "/** Whether the cell a full width cell or a regular cell */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
-  "CellFocusedEvent": {
+  "CellFocusClearedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -6906,6 +6942,25 @@
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
       "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CellFocusedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
     },
     "forceBrowserFocus": {
       "description": "/** Whether browser focus is also set (false when editing) */",
@@ -6915,7 +6970,23 @@
       "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "floating": { "type": { "returnType": "string | null", "optional": true } }
+    "floating": { "type": { "returnType": "string | null", "optional": true } },
+    "rowIndex": {
+      "description": "/** Row index of the focused cell */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Column of the focused cell */",
+      "type": { "returnType": "Column | string | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
+    },
+    "isFullWidthCell": {
+      "description": "/** Whether the cell a full width cell or a regular cell */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "FullWidthRowFocusedEvent": {
     "fromBelow": { "type": { "returnType": "boolean", "optional": false } },
@@ -6936,6 +7007,15 @@
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
     },
+    "forceBrowserFocus": {
+      "description": "/** Whether browser focus is also set (false when editing) */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "preventScrollOnBrowserFocus": {
+      "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "floating": { "type": { "returnType": "string | null", "optional": true } },
     "rowIndex": {
       "description": "/** Row index of the focused cell */",
       "type": { "returnType": "number | null", "optional": false }
@@ -6951,16 +7031,7 @@
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "forceBrowserFocus": {
-      "description": "/** Whether browser focus is also set (false when editing) */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "preventScrollOnBrowserFocus": {
-      "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "floating": { "type": { "returnType": "string | null", "optional": true } }
+    }
   },
   "ExpandCollapseAllEvent": {
     "source": { "type": { "returnType": "string", "optional": false } },
@@ -19781,6 +19852,7 @@
       "type": { "returnType": "AgPromise<Function>", "optional": false }
     }
   },
+  "TabGuardClassNames": {},
   "ITabGuard": {
     "setTabIndex": {
       "type": {
@@ -22326,7 +22398,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -22335,7 +22407,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -25124,7 +25196,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -25133,7 +25205,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -27928,7 +28000,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -27937,7 +28009,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",

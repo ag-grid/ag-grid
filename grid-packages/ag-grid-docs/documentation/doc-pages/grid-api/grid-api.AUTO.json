@@ -249,7 +249,11 @@
   "setRowNodeExpanded": {
     "description": "/** Expand or collapse a specific row node. */",
     "type": {
-      "arguments": { "rowNode": "IRowNode", "expanded": "boolean" },
+      "arguments": {
+        "rowNode": "IRowNode | null",
+        "expanded": "boolean",
+        "expandParents?": "boolean"
+      },
       "returnType": "void"
     }
   },

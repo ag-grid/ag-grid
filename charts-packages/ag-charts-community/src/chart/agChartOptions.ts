@@ -565,6 +565,9 @@ export interface AgAxisBaseTickOptions {
     size?: PixelSize;
     /** The colour of the axis ticks. */
     color?: CssColor;
+    /** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.
+     */
+    // values?: any[];
 }
 
 export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {}
@@ -1695,8 +1698,11 @@ export type AgPolarSeriesOptions = AgPieSeriesOptions;
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
 export interface AgCartesianChartOptions extends AgBaseChartOptions {
-    /** Type of chart to render. Inherited from the first declared series if unspecified. */
-    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram';
+    /**
+     * If specified and matching a known series type, overrides the default series type. Otherwise
+     * the default series type is `'line'`.
+     */
+    type?: 'cartesian' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram';
     /** Axis configurations. */
     axes?: AgCartesianAxisOptions[];
     /** Series configurations. */
@@ -1706,14 +1712,20 @@ export interface AgCartesianChartOptions extends AgBaseChartOptions {
 }
 
 export interface AgPolarChartOptions extends AgBaseChartOptions {
-    /** Type of chart to render. Inherited from the first declared series if unspecified. */
+    /**
+     * If specified and matching a known series type, overrides the default series type. Otherwise
+     * the default series type is `'pie'`.
+     */
     type?: 'polar' | 'pie';
     /** Series configurations. */
     series?: AgPolarSeriesOptions[];
 }
 
 export interface AgHierarchyChartOptions extends AgBaseChartOptions {
-    /** Type of chart to render. Inherited from the first declared series if unspecified. */
+    /**
+     * If specified and matching a known series type, overrides the default series type. Otherwise
+     * the default series type is `'treemap'`.
+     */
     type?: 'hierarchy' | 'treemap';
     data?: any;
     /** Series configurations. */

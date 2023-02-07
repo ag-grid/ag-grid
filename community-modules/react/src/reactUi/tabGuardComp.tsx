@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, ForwardRefRenderFunction, memo, useContext } from 'react';
 
 import {
-    TabGuardCtrl, ITabGuard, GridCtrl
+    TabGuardCtrl, ITabGuard, GridCtrl, TabGuardClassNames
 } from '@ag-grid-community/core';
 import { BeansContext } from './beansContext';
 import { useEffectOnce } from './useEffectOnce';
@@ -57,14 +57,19 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
 
     });
 
-    const createTabGuard = (side: 'top' | 'bottom') => (
-        <div 
-            className={ `ag-tab-guard ag-tab-guard-${side}` }
-            role="presentation"
-            tabIndex={ tabIndex }
-            ref={ side === 'top' ? topTabGuardRef : bottomTabGuardRef }
-        ></div>
-    )
+    const createTabGuard = (side: 'top' | 'bottom') => {
+        const className = side === 'top' ? TabGuardClassNames.TAB_GUARD_TOP : TabGuardClassNames.TAB_GUARD_BOTTOM;
+
+        return (
+            <div 
+                className={ `${TabGuardClassNames.TAB_GUARD} ${className}` }
+                role="presentation"
+                tabIndex={ tabIndex }
+                ref={ side === 'top' ? topTabGuardRef : bottomTabGuardRef }
+            ></div>
+        );
+    }
+
     return (
         <>
             {createTabGuard('top')}

@@ -27,6 +27,7 @@ import {
     ARRAY,
     predicateWithMessage,
     OPT_STRING,
+    OPT_ARRAY,
 } from './util/validation';
 import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
@@ -116,6 +117,9 @@ class AxisTick<S extends Scale<D, number>, D = any> {
 
     @Validate(OPT_TICK_COUNT)
     interval?: TickType<S> = undefined;
+
+    @Validate(OPT_ARRAY())
+    values?: any[] = undefined;
 }
 
 export class AxisLabel {
@@ -564,11 +568,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let i = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
-        const defaultTickCount = 10;
+        const defaultTickCount = ContinuousScale.defaultTickCount;
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
 
-        const checkForOverlap = avoidCollisions && this.tick.interval === undefined;
+        const checkForOverlap = avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
 
         while (labelOverlap) {
             let unchanged = true;
@@ -593,7 +597,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     secondaryAxisTicks = this.updateSecondaryAxisTicks(primaryTickCount);
                 }
 
-                if (filteredTicks) {
+                if (this.tick.values) {
+                    ticks = this.tick.values;
+                } else if (filteredTicks) {
                     ticks = filteredTicks;
                 } else if (secondaryAxisTicks) {
                     ticks = secondaryAxisTicks;

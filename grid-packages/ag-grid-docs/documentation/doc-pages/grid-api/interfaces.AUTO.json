@@ -2208,7 +2208,7 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.\n     */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",
@@ -3613,27 +3613,57 @@
       "type": "/** Event identifier */"
     }
   },
-  "CellFocusedParams": {
+  "CommonCellFocusParams": {
     "meta": {},
     "type": {
       "rowIndex": "number | null",
       "column": "Column | string | null",
       "rowPinned": "RowPinnedType",
-      "isFullWidthCell?": "boolean",
-      "forceBrowserFocus?": "boolean",
-      "preventScrollOnBrowserFocus?": "boolean",
-      "floating?": "string | null"
+      "isFullWidthCell?": "boolean"
     },
     "docs": {
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
       "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
-      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
-      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
-      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
     }
   },
-  "CellFocusedEvent": {
+  "CellFocusClearedParams": {
+    "meta": {},
+    "type": {
+      "rowIndex": "number | null",
+      "column": "Column | string | null",
+      "rowPinned": "RowPinnedType",
+      "isFullWidthCell?": "boolean"
+    },
+    "docs": {
+      "rowIndex": "/** Row index of the focused cell */",
+      "column": "/** Column of the focused cell */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
+    }
+  },
+  "CellFocusedParams": {
+    "meta": {},
+    "type": {
+      "forceBrowserFocus?": "boolean",
+      "preventScrollOnBrowserFocus?": "boolean",
+      "floating?": "string | null",
+      "rowIndex": "number | null",
+      "column": "Column | string | null",
+      "rowPinned": "RowPinnedType",
+      "isFullWidthCell?": "boolean"
+    },
+    "docs": {
+      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
+      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
+      "rowIndex": "/** Row index of the focused cell */",
+      "column": "/** Column of the focused cell */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
+    }
+  },
+  "CellFocusClearedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
       "api": "GridApi<TData>",
@@ -3643,10 +3673,7 @@
       "rowIndex": "number | null",
       "column": "Column | string | null",
       "rowPinned": "RowPinnedType",
-      "isFullWidthCell?": "boolean",
-      "forceBrowserFocus?": "boolean",
-      "preventScrollOnBrowserFocus?": "boolean",
-      "floating?": "string | null"
+      "isFullWidthCell?": "boolean"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -3656,9 +3683,35 @@
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
       "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
-      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
+    }
+  },
+  "CellFocusedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "type": "string",
+      "forceBrowserFocus?": "boolean",
+      "preventScrollOnBrowserFocus?": "boolean",
+      "floating?": "string | null",
+      "rowIndex": "number | null",
+      "column": "Column | string | null",
+      "rowPinned": "RowPinnedType",
+      "isFullWidthCell?": "boolean"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */",
       "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
-      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
+      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
+      "rowIndex": "/** Row index of the focused cell */",
+      "column": "/** Column of the focused cell */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
     }
   },
   "FullWidthRowFocusedEvent": {
@@ -3669,25 +3722,25 @@
       "columnApi": "ColumnApi",
       "context": "any",
       "type": "string",
+      "forceBrowserFocus?": "boolean",
+      "preventScrollOnBrowserFocus?": "boolean",
+      "floating?": "string | null",
       "rowIndex": "number | null",
       "column": "Column | string | null",
       "rowPinned": "RowPinnedType",
-      "isFullWidthCell?": "boolean",
-      "forceBrowserFocus?": "boolean",
-      "preventScrollOnBrowserFocus?": "boolean",
-      "floating?": "string | null"
+      "isFullWidthCell?": "boolean"
     },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */",
+      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
+      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
       "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
-      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
-      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
-      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
     }
   },
   "ExpandCollapseAllEvent": {
@@ -11270,6 +11323,15 @@
       "stopAnchoringPromise": "AgPromise<Function>"
     }
   },
+  "TabGuardClassNames": {
+    "meta": { "isEnum": true },
+    "type": [
+      "TAB_GUARD = 'ag-tab-guard'",
+      "TAB_GUARD_TOP = 'ag-tab-guard-top'",
+      "TAB_GUARD_BOTTOM = 'ag-tab-guard-bottom'"
+    ],
+    "docs": [null, null, null]
+  },
   "ITabGuard": {
     "meta": {},
     "type": { "setTabIndex(tabIndex?: string)": "void" }
@@ -12387,7 +12449,7 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.\n     */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",
@@ -13142,7 +13204,7 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.\n     */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",
@@ -13899,7 +13961,7 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.\n     */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",

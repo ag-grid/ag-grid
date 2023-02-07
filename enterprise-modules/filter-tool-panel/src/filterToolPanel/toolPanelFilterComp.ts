@@ -104,8 +104,13 @@ export class ToolPanelFilterComp extends Component {
 
     private onFilterChanged(event: ColumnEvent): void {
         _.setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
-        if (this.expanded && event.source === 'filterDestroyed' && event.columns?.some(col => col.getId() === this.column.getId())) {
-            // filter destroyed, need to recreate UI component
+        if (
+            this.expanded &&
+            event.source === 'filterDestroyed' &&
+            event.columns?.some((col) => col.getId() === this.column.getId()) &&
+            this.columnModel.getPrimaryColumn(this.column)
+        ) {
+            // filter was visible and is now destroyed. If the column still exists, need to recreate UI component
             this.removeFilterElement();
             this.addFilterElement();
         }

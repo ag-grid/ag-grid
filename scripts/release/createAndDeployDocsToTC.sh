@@ -15,10 +15,10 @@ zip -qr ../../../$FILENAME *
 
 cd ../../../
 
-cp -R /var/www/html/branch-builds /var/www/branch-builds
+cp -R /var/www/html/branch-builds /var/www/
 
 rm -rf /var/www/html/*
 mv $FILENAME /var/www/html/
 unzip -q /var/www/html/$FILENAME -d /var/www/html/
 
-cp -R /var/www/branch-builds /var/www/html/branch-builds
+cp -R /var/www/branch-builds /var/www/html/
