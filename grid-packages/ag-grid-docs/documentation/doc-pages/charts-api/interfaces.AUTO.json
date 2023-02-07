@@ -3105,10 +3105,6 @@
       "padding": "number"
     }
   },
-  "Listener": {
-    "meta": { "isTypeAlias": true, "typeParams": ["E"] },
-    "type": "{ symbol?: Symbol; handler: (event: E) => void; }"
-  },
   "CursorState": { "meta": {}, "type": { "style": "string" } },
   "HighlightState": {
     "meta": {},
@@ -3155,6 +3151,15 @@
   "TooltipState": {
     "meta": {},
     "type": { "content": "string", "meta": "TooltipMeta" }
+  },
+  "ZoomState": { "meta": {}, "type": { "min": "number", "max": "number" } },
+  "AxisZoomState": {
+    "meta": {},
+    "type": { "x?": "ZoomState", "y?": "ZoomState" }
+  },
+  "ZoomChangeEvent": {
+    "meta": {},
+    "type": { "type": "'zoom-change'", "x?": "ZoomState", "y?": "ZoomState" }
   },
   "Layers": {
     "meta": { "isEnum": true },
@@ -3737,6 +3742,37 @@
       "height": "number",
       "x": "number",
       "y": "number"
+    }
+  },
+  "Listener": {
+    "meta": { "isTypeAlias": true, "typeParams": ["H extends Function"] },
+    "type": "{ symbol?: Symbol; handler: H; }"
+  },
+  "ModuleContext": {
+    "meta": {},
+    "type": {
+      "scene": "Scene",
+      "interactionManager": "InteractionManager",
+      "highlightManager": "HighlightManager",
+      "cursorManager": "CursorManager",
+      "zoomManager": "ZoomManager",
+      "tooltipManager": "TooltipManager",
+      "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>"
+    }
+  },
+  "ModuleInstance": {
+    "meta": {},
+    "type": { "update()": "void", "destroy()": "void" }
+  },
+  "ModuleInstanceMeta": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": { "instance": "M" }
+  },
+  "Module": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "optionsKey": "string",
+      "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>"
     }
   },
   "FormatterOptions": {
