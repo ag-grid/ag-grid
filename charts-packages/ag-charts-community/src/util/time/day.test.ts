@@ -36,3 +36,54 @@ test('day.every', () => {
         new Date(2023, 0, 23, 0, 0, 0, 0),
     ]);
 });
+
+test('day.every stick to start', () => {
+    const interval = day.every(5, { snapTo: 'start' });
+    const ticks = interval.range(new Date(2023, 1, 1), new Date(2023, 1, 28));
+    expect(ticks).toEqual([
+        new Date(2023, 1, 1),
+        new Date(2023, 1, 6),
+        new Date(2023, 1, 11),
+        new Date(2023, 1, 16),
+        new Date(2023, 1, 21),
+        new Date(2023, 1, 26),
+    ]);
+});
+
+test('day.every stick to end', () => {
+    const interval = day.every(5, { snapTo: 'end' });
+    const ticks = interval.range(new Date(2023, 1, 1), new Date(2023, 1, 28));
+    expect(ticks).toEqual([
+        new Date(2023, 1, 3),
+        new Date(2023, 1, 8),
+        new Date(2023, 1, 13),
+        new Date(2023, 1, 18),
+        new Date(2023, 1, 23),
+        new Date(2023, 1, 28),
+    ]);
+});
+
+test('day.every stick to a date', () => {
+    const interval = day.every(5, { snapTo: new Date(2023, 1, 2) });
+    const ticks = interval.range(new Date(2023, 1, 1), new Date(2023, 1, 28));
+    expect(ticks).toEqual([
+        new Date(2023, 1, 2),
+        new Date(2023, 1, 7),
+        new Date(2023, 1, 12),
+        new Date(2023, 1, 17),
+        new Date(2023, 1, 22),
+        new Date(2023, 1, 27),
+    ]);
+});
+
+test('day.every stick to a different date', () => {
+    const interval = day.every(5, { snapTo: new Date(2023, 1, 4) });
+    const ticks = interval.range(new Date(2023, 1, 1), new Date(2023, 1, 28));
+    expect(ticks).toEqual([
+        new Date(2023, 1, 4),
+        new Date(2023, 1, 9),
+        new Date(2023, 1, 14),
+        new Date(2023, 1, 19),
+        new Date(2023, 1, 24),
+    ]);
+});

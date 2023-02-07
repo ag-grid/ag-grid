@@ -5255,9 +5255,17 @@
   "NumberFormat": {},
   "DateFormat": {},
   "ValueFormat": {},
-  "FloorFn": {},
-  "OffsetFn": {},
-  "StepTestFn": {},
+  "EncodeFn": {},
+  "DecodeFn": {},
+  "RangeFn": {},
+  "CountableTimeIntervalOptions": {
+    "snapTo": {
+      "type": {
+        "returnType": "Date | number | 'start' | 'end'",
+        "optional": true
+      }
+    }
+  },
   "FormattingFn": {},
   "PaddingString": {},
   "FormattingString": {},

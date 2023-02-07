@@ -23,7 +23,7 @@ test('UTC hour', () => {
 });
 
 test('UTC hour.every', () => {
-    const interval = utcHour.every(5);
+    const interval = utcHour.every(5, { snapTo: new Date(2023, 0, 18) });
     const date = new Date(Date.UTC(2023, 0, 18, 8, 31, 5, 100));
 
     const floor = interval.floor(date);
