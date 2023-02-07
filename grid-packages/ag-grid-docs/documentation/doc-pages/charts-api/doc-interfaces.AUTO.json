@@ -4332,9 +4332,9 @@
   "AgHierarchySeriesOptions": {},
   "AgCartesianChartOptions": {
     "type": {
-      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "description": "/** If specified and matching a known series type, overrides the default series type. Otherwise\n     * the default series type is `'line'`.\n     */",
       "type": {
-        "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
+        "returnType": "'cartesian' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
         "optional": true
       }
     },
@@ -4405,7 +4405,7 @@
   },
   "AgPolarChartOptions": {
     "type": {
-      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "description": "/** If specified and matching a known series type, overrides the default series type. Otherwise\n     * the default series type is `'pie'`.\n     */",
       "type": { "returnType": "'polar' | 'pie'", "optional": true }
     },
     "series": {
@@ -4467,7 +4467,7 @@
   },
   "AgHierarchyChartOptions": {
     "type": {
-      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "description": "/** If specified and matching a known series type, overrides the default series type. Otherwise\n     * the default series type is `'treemap'`.\n     */",
       "type": { "returnType": "'hierarchy' | 'treemap'", "optional": true }
     },
     "data": { "type": { "returnType": "any", "optional": true } },
