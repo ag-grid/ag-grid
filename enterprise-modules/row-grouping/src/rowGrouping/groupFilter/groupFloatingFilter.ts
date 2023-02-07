@@ -2,6 +2,8 @@ import {
     _,
     AgInputTextField,
     AgPromise,
+    Autowired,
+    ColumnModel,
     Component,
     IFloatingFilterComp,
     IFloatingFilterParams,
@@ -10,7 +12,9 @@ import {
 import { GroupFilter } from './groupFilter';
 
 export class GroupFloatingFilterComp extends Component implements IFloatingFilterComp<GroupFilter> {
-    @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+
+    @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
 
     private params: IFloatingFilterParams<GroupFilter>;
     private parentFilterInstance: GroupFilter;
@@ -25,7 +29,15 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
 
     public init(params: IFloatingFilterParams<GroupFilter>): AgPromise<void> {
         this.params = params;
-        this.eFloatingFilterText.setDisabled(true);
+
+        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const translate = this.localeService.getLocaleTextFunc();
+
+        this.eFloatingFilterText
+            .setDisabled(true)
+            .setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`)
+            .addGuiEventListener('click', () => this.params.showParentFilter());
+
         return new AgPromise(resolve => {
             this.params.parentFilterInstance(parentFilterInstance => {
                 this.parentFilterInstance = parentFilterInstance;
@@ -44,10 +56,16 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         if (!this.parentFilterInstance) {
             return;
         }
-        const activeFilter = this.parentFilterInstance.getActiveFilter();
-        if (activeFilter?.getModelAsString) {
-            const filterModel = activeFilter.getModel();
-            this.eFloatingFilterText.setValue(filterModel == null ? '' : activeFilter.getModelAsString(filterModel));
+        const selectedFilter = this.parentFilterInstance.getSelectedFilter();
+        if (!selectedFilter) {
+            this.eFloatingFilterText.setValue('');
+            this.eFloatingFilterText.setDisplayed(false);
+            return;
+        }
+        this.eFloatingFilterText.setDisplayed(true);
+        if (selectedFilter.getModelAsString) {
+            const filterModel = selectedFilter.getModel();
+            this.eFloatingFilterText.setValue(filterModel == null ? '' : selectedFilter.getModelAsString(filterModel));
         } else {
             this.eFloatingFilterText.setValue('');
         }

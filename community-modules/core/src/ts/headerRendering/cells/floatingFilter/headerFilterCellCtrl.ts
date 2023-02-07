@@ -71,6 +71,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.setupUi();
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+        if (this.active) {
+            this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.updateFilterButton.bind(this));
+        }
     }
 
     private setupUi(): void {
@@ -311,4 +314,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         listener();
     }
 
+    private updateFilterButton(): void {
+        if (!this.suppressFilterButton && this.comp) {
+            this.comp.setButtonWrapperDisplayed(this.filterManager.isFilterAllowed(this.column));
+        }
+    }
 }

@@ -696,6 +696,22 @@ export class FilterManager extends BeanStub {
         groupColumns?.forEach(groupColumn => this.getOrCreateFilterWrapper(groupColumn, 'NO_UI'));
     }
 
+    // for group filters, can change dynamically whether they are allowed or not
+    public isFilterAllowed(column: Column): boolean {
+        const isFilterAllowed = column.isFilterAllowed();
+        if (!isFilterAllowed) {
+            return false;
+        }
+        const filterWrapper = this.allColumnFilters.get(column.getColId());
+        return filterWrapper?.filterPromise?.resolveNow(
+            true,
+            // defer to filter component isFilterAllowed if it exists
+            filter => (typeof (filter as any)?.isFilterAllowed === 'function')
+                ? (filter as any)?.isFilterAllowed()
+                : true
+        ) ?? true;
+    }
+
     // destroys the filter, so it not longer takes part
     public destroyFilter(column: Column, source: ColumnEventType = 'api'): void {
         const filterWrapper = this.allColumnFilters.get(column.getColId());
