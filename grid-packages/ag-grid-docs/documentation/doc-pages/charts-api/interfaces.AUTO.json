@@ -3175,6 +3175,32 @@
     ],
     "docs": [null, null, null, null, null, null, null, null]
   },
+  "LayoutStage": { "meta": { "isTypeAlias": true }, "type": "'before-series'" },
+  "LayoutCompleteEvent": {
+    "meta": {},
+    "type": {
+      "type": "'layout-complete'",
+      "series": "{ rect: BBox; visible: boolean; }"
+    }
+  },
+  "LayoutContext": { "meta": {}, "type": { "shrinkRect": "BBox" } },
+  "LayoutResult": { "meta": {}, "type": { "shrinkRect": "BBox" } },
+  "EventTypes": {
+    "meta": { "isTypeAlias": true },
+    "type": "LayoutStage | 'layout-complete'"
+  },
+  "LayoutListener": {
+    "meta": { "isTypeAlias": true },
+    "type": "(event: LayoutCompleteEvent) => void"
+  },
+  "LayoutProcessor": {
+    "meta": { "isTypeAlias": true },
+    "type": "(ctx: LayoutContext) => LayoutResult"
+  },
+  "Handler": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends EventTypes"] },
+    "type": "T extends LayoutStage ? LayoutProcessor : LayoutListener"
+  },
   "LegendDatum": {
     "meta": {},
     "type": {

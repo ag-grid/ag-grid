@@ -4706,6 +4706,28 @@
     "y": { "type": { "returnType": "ZoomState", "optional": true } }
   },
   "Layers": {},
+  "LayoutStage": {},
+  "LayoutCompleteEvent": {
+    "type": {
+      "type": { "returnType": "'layout-complete'", "optional": false }
+    },
+    "series": {
+      "type": {
+        "returnType": "{ rect: BBox; visible: boolean }",
+        "optional": false
+      }
+    }
+  },
+  "LayoutContext": {
+    "shrinkRect": { "type": { "returnType": "BBox", "optional": false } }
+  },
+  "LayoutResult": {
+    "shrinkRect": { "type": { "returnType": "BBox", "optional": false } }
+  },
+  "EventTypes": {},
+  "LayoutListener": {},
+  "LayoutProcessor": {},
+  "Handler": { "meta": { "typeParams": ["T extends EventTypes"] } },
   "LegendDatum": {
     "id": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
