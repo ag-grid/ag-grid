@@ -19,7 +19,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   autoGroupColumnDef: {
     // supplies 'country' values to the filter
-    filterValueGetter: (params: ValueGetterParams<IOlympicData>) => params.data?.country,
+    filterValueGetter: (params: ValueGetterParams<IOlympicData>) => params.data ? params.data.country : undefined,
   },
   groupDisplayType: 'singleColumn',
   animateRows: true,

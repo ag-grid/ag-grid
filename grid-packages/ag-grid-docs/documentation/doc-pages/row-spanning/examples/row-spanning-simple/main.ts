@@ -1,7 +1,7 @@
 import { Grid, ColDef, GridOptions, RowSpanParams } from '@ag-grid-community/core'
 
 function rowSpan(params: RowSpanParams<IOlympicData>) {
-  var athlete = params.data?.athlete
+  var athlete = params.data ? params.data.athlete : undefined;
   if (athlete === 'Aleksey Nemov') {
     // have all Russia age columns width 2
     return 2
