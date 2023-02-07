@@ -13,9 +13,9 @@ import './mailchimp.css';
 
 const IS_SSR = typeof window === "undefined"
 
-const FULL_SCREEN_PAGES = ['example'];
+export const FULL_SCREEN_PAGES = ['example'];
 
-const FULL_SCREEN_WITH_FOOTER_PAGES = [
+export const FULL_SCREEN_WITH_FOOTER_PAGES = [
     'license-pricing',
     'about',
     'cookies',
@@ -25,9 +25,11 @@ const FULL_SCREEN_WITH_FOOTER_PAGES = [
     'style-guide',
 ];
 
-const getAllPageUrls = (pages) => {
-    return pages.map((page) => `/${page}`).concat(pages.map((page) => `/${page}/`));
-};
+const getAllPageUrls = (pages) => pages.map((page) => `/${page}`).concat(pages.map((page) => `/${page}/`));
+
+const isFullScreenPage = processedPath =>  processedPath === '/' || getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
+
+const isFullScreenPageWithFooter = processedPath => getAllPageUrls(FULL_SCREEN_WITH_FOOTER_PAGES).includes(processedPath);
 
 const TopBar = ({ frameworks, currentFramework, path }) => {
     const frameworksData = supportedFrameworks
@@ -70,6 +72,19 @@ const TopBar = ({ frameworks, currentFramework, path }) => {
     );
 };
 
+export const getScreenLayout = path => {
+    // order is important here
+    const processedPath = path.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, "") // legacy archives
+        .replace(/.*(testing|archives).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, "") // branch builds/new archives
+        .replace(/.*ag-grid.com/, "") // prod
+        .replace(/.*localhost:8000/, "") // localhost
+        .replace(/\?.*/, ""); // query params
+
+    const fullScreenPage = isFullScreenPage(processedPath);
+    const fullScreenWithFooter = isFullScreenPageWithFooter(processedPath);
+    return {fullScreenPage, fullScreenWithFooter};
+}
+
 /**
  * This controls the layout template for all pages.
  */
@@ -83,18 +98,7 @@ export const Layout = ({
         return children;
     }
 
-    // takes account of current archives as well as new testing/archives
-    const processedPath = (IS_SSR ? path : href).replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, "")
-        .replace(/.*(testing|archives|build).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, "")
-        .replace(/.*build.ag-grid.com/, "")
-        .replace(/.*ag-grid.com/, "")
-        .replace(/.*localhost:8000/, "")
-        .replace(/\?searchQuery.*/,"")
-        .replace(/\?fixVersion.*/,"");
-
-    const fullScreenPage = processedPath === '/' || getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
-
-    const fullScreenWithFooter = getAllPageUrls(FULL_SCREEN_WITH_FOOTER_PAGES).includes(processedPath);
+    const {fullScreenPage, fullScreenWithFooter} = getScreenLayout((IS_SSR ? path : href));
 
     return (
         <GlobalContextProvider>

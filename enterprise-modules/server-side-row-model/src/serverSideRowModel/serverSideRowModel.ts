@@ -178,7 +178,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             oldCols: this.storeParams.pivotCols,
             newCols: pivotColumnVos,
         });
-        const valuesDifferent = !areColsSame({
+        const valuesDifferent = !!rowGroupColumnVos?.length && !areColsSame({
             oldCols: this.storeParams.valueCols,
             newCols: valueColumnVos,
             allowRemovedColumns: true,

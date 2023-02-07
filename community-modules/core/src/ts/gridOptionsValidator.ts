@@ -205,7 +205,7 @@ export class GridOptionsValidator {
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
 
-        Object.entries(this.deprecatedProperties).map(([oldProp, details]) => {
+        Object.entries(this.deprecatedProperties).forEach(([oldProp, details]) => {
             const oldPropValue = (options as any)[oldProp];
             if (oldPropValue) {
                 logDeprecation(details.version, oldProp, details.newProp, details.message);
