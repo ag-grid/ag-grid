@@ -212,6 +212,47 @@ export const CATEGORY_AXIS_TICK_VALUES: AgChartOptions = {
     ],
 };
 
+/**
+ * @todo(AG-7909) cleanup once options changes are made.
+ */
+export const AXIS_TICK_MIN_SPACING: AgChartOptions = {
+    ...examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,
+    axes: [
+        {
+            type: 'time',
+            position: 'bottom',
+            tick: { minSpacing: 200 } as AgAxisTimeTickOptions,
+        },
+        {
+            type: 'number',
+            position: 'left',
+            tick: { minSpacing: 100 } as AgAxisTimeTickOptions,
+        },
+    ],
+};
+
+/**
+ * @todo(AG-7909) cleanup once options changes are made.
+ */
+export const AXIS_TICK_MAX_SPACING: AgChartOptions = {
+    ...examples.SIMPLE_SCATTER_CHART_EXAMPLE,
+    axes: [
+        { type: 'number', position: 'left', tick: { maxSpacing: 30 } as AgAxisNumberTickOptions },
+        { type: 'number', position: 'bottom', tick: { maxSpacing: 30 } as AgAxisNumberTickOptions },
+    ],
+};
+
+/**
+ * @todo(AG-7909) cleanup once options changes are made.
+ */
+export const AXIS_TICK_MIN_MAX_SPACING: AgChartOptions = {
+    ...examples.GROUPED_COLUMN_EXAMPLE,
+    axes: [
+        { type: 'category', position: 'bottom', tick: { minSpacing: 150, maxSpacing: 250 } as AgAxisNumberTickOptions },
+        { type: 'number', position: 'left', tick: { minSpacing: 50, maxSpacing: 100 } as AgAxisNumberTickOptions },
+    ],
+};
+
 export const NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN: AgChartOptions = {
     ...NUMBER_AXIS_NO_SERIES,
     axes: NUMBER_AXIS_NO_SERIES.axes?.map((a) => {

@@ -568,6 +568,12 @@ export interface AgAxisBaseTickOptions {
     /** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.
      */
     // values?: any[];
+    /** Minimum gap in pixels between tick lines.
+     */
+    // minSpacing?: number;
+    /** Maximum gap in pixels between tick lines.
+     */
+    // maxSpacing?: number;
 }
 
 export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {}
