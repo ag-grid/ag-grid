@@ -26,7 +26,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         name: 'Single Application',
         subHeading: 'Development License',
         priceFullDollars: '999',
-        licenceBenifits: ['Perpetual licence', '1 year of dedicated support', '1 year of updates'],
+        licenceBenifits: ['Perpetual licence', '1 year of support', '1 year of updates'],
         pricePer: 'Developer',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=single',
     },
@@ -34,12 +34,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         className: styles.multipleApplicationsLicense,
         name: 'Multiple Applications',
         subHeading: 'Development License',
-        licenceBenifits: [
-            'Unlimited applications',
-            'Perpetual licence',
-            '1 year of dedicated support',
-            '1 year of updates',
-        ],
+        licenceBenifits: ['Unlimited applications', 'Perpetual licence', '1 year of support', '1 year of updates'],
         priceFullDollars: '1,499',
         pricePer: 'Developer',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=multi',
@@ -58,7 +53,7 @@ const Price = ({ priceFullDollars, pricePer }) => {
     return (
         <div className={styles.price}>
             <p className="font-size-small text-secondary">Starting at</p>
-            <p className={classnames(styles.priceFullDollars, 'font-size-massive')}>{priceFullDollars}</p>
+            <p className={styles.priceFullDollars}>{priceFullDollars}</p>
             <p className="font-size-small text-secondary">Per {pricePer}</p>
         </div>
     );
@@ -68,18 +63,18 @@ const DevelopmentLicence = () => {
     return (
         <div className="bottom">
             <div className={styles.licenceMeta}>
-                <p className={classnames(styles.name, 'font-size-extra-large')}>{DEPLOY_LICENSE_DATA.name}</p>
+                <p className={styles.name}>{DEPLOY_LICENSE_DATA.name}</p>
                 <p className="font-size-small text-secondary">{DEPLOY_LICENSE_DATA.subHeading}</p>
-
-                <p className="font-size-small">
-                    Required to deploy for external users{' '}
-                    <a className={styles.learnMoreLink} href="#">
-                        Learn more
-                    </a>
-                </p>
             </div>
 
             <Price priceFullDollars={DEPLOY_LICENSE_DATA.priceFullDollars} pricePer={DEPLOY_LICENSE_DATA.pricePer} />
+
+            <p className={classnames(styles.devLicenceRequired, 'font-size-extra-small')}>
+                Required to deploy for external users{' '}
+                <a className={styles.learnMoreLink} href="#">
+                    Learn more
+                </a>
+            </p>
         </div>
     );
 };
@@ -110,7 +105,7 @@ const License = (props: LicenseData) => {
                         })}
                     </ul>
 
-                    <a className={styles.learnMoreLink} href="#">
+                    <a className={classnames(styles.learnMoreLink, 'font-size-small')} href="#">
                         Learn more
                     </a>
                 </div>

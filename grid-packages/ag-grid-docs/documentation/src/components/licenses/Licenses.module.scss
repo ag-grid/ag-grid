@@ -27,41 +27,60 @@
         width: calc(50% - $size-3 / 2);
     }
 
+    p {
+        margin: 0 !important; // !important for .ag-styles specificity
+    }
+
     :global(.top),
     :global(.bottom) {
-        padding: $size-3 !important; // !important for .ag-styles specificity
+        padding-left: $size-2 !important; // !important for .ag-styles specificity
+        padding-right: $size-2 !important; // !important for .ag-styles specificity
     }
 
     :global(.top) {
         display: grid;
         grid-template-columns: auto auto;
-        grid-template-rows: auto auto;
-        gap: $size-7 0;
-        height: 100%; // bit of a hack?
+        grid-template-rows: auto auto auto;
+        grid-template-areas: 'meta meta' 'benifits price' 'actions actions';
+        padding-top: $size-3 !important; // !important for .ag-styles specificity
+        padding-bottom: $size-2 !important; // !important for .ag-styles specificity
+        // gap: $size-7 0;
+        // height: 100%; // bit of a hack?
     }
 
     :global(.bottom) {
         display: grid;
-        grid-template-columns: auto auto;
+        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 'meta price' 'required required';
+        padding-top: $size-2 !important; // !important for .ag-styles specificity
+        padding-bottom: $size-2 !important; // !important for .ag-styles specificity
+
+        p {
+            font-size: 12px !important;
+        }
+    }
+}
+
+.licenceMeta {
+    grid-area: meta;
+
+    :global(.top) & {
+        margin-bottom: $size-5 !important; // !important for .ag-styles specificity
+        text-align: center;
     }
 }
 
 .price,
 :global(.top) .licenceMeta {
-    display: grid;
-    grid-template-rows: 16px 58px 16px;
-
-    p {
-        margin: 0 !important; // !important for .ag-styles specificity
-        line-height: 1 !important; // !important for .ag-styles specificity
-    }
+    //     display: grid;
+    //     grid-template-rows: 16px 58px 16px;
 }
 
 .licenceMeta svg {
     position: relative;
     top: -1px;
-    left: -2px;
-    width: 20px;
+    width: 16px;
     opacity: 0.6666;
 
     * {
@@ -69,77 +88,109 @@
     }
 }
 
-.name {
+:global(.top) .name {
+    font-size: 46px !important; // !important for .ag-styles specificity
+    line-height: 1 !important; // !important for .ag-styles specificity
     align-self: center;
+    margin-top: $size-half !important; // !important for .ag-styles specificity
+    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+}
+
+:global(.bottom) p.name {
+    font-size: 24px !important; // !important for .ag-styles specificity
+    line-height: 1 !important; // !important for .ag-styles specificity
+    // margin-top: $size-half !important; // !important for .ag-styles specificity
+    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    // align-self: center;
+    // margin-top: $size-half !important; // !important for .ag-styles specificity
+    // margin-bottom: $size-1 !important; // !important for .ag-styles specificity
 }
 
 .price {
+    grid-area: price;
     justify-self: end;
+    align-self: end;
+    text-align: right;
 
-    p:last-child {
-        max-width: 160px;
-        line-height: 1.25 !important; // !important for .ag-styles specificity
+    :global(.bottom) & p:last-child {
+        max-width: 140px;
     }
+
+    // p:last-child {
+    //     max-width: 160px;
+    //     line-height: 1.25 !important; // !important for .ag-styles specificity
+    // }
 }
 
-.priceFullDollars {
+p.priceFullDollars {
+    line-height: 1.25 !important; // !important for .ag-styles specificity
+    letter-spacing: -0.05em;
+
     :global(.top) & {
+        font-size: 46px !important; // !important for .ag-styles specificity
         font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+    }
+
+    :global(.bottom) & {
+        font-size: 36px !important; // !important for .ag-styles specificity
     }
 
     &::before {
         content: '$';
     }
 
-    &::after {
-        content: '.00';
-        font-size: $font-size-large;
-        font-weight: 400 !important; // !important for .ag-styles specificity
-        color: var(--secondary-text-color);
-    }
+    // &::after {
+    //     content: '.00';
+    //     font-size: $font-size-large;
+    //     font-weight: 400 !important; // !important for .ag-styles specificity
+    //     color: var(--secondary-text-color);
+    // }
 }
 
 :global(.bottom) .licenceMeta {
-    display: grid;
+    // display: grid;
 
-    p {
-        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
-        line-height: 1 !important; // !important for .ag-styles specificity
-    }
+    // p {
+    //     margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    //     line-height: 1 !important; // !important for .ag-styles specificity
+    // }
 
-    p:last-child {
-        align-self: end;
-    }
+    // p:last-child {
+    //     align-self: end;
+    // }
 }
 
 .licenceBenifits {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: flex-end;
+    align-self: end;
 
-    li {
-        position: relative;
+    // li {
+    //     position: relative;
 
-        &::before {
-            content: '•';
-            position: absolute;
-            left: -0.6666em;
-            color: var(--secondary-text-color);
-        }
-    }
+    //     &::before {
+    //         content: '•';
+    //         position: absolute;
+    //         left: -0.6666em;
+    //         color: var(--secondary-text-color);
+    //     }
+    // }
 
     a {
-        margin-top: $size-2 !important; // !important for .ag-styles specificity
+        margin-top: $size-half !important; // !important for .ag-styles specificity
     }
 }
 
 .licenceActions {
-    display: flex;
-    flex-direction: column;
-    justify-self: end;
-    align-self: end;
-    align-items: flex-end;
-    gap: $size-1;
+    grid-area: actions;
+    margin-top: $size-5 !important; // !important for .ag-styles specificity
+
+    a {
+        width: 100%;
+        text-align: center;
+        margin-bottom: $size-half;
+    }
 }
 
 .learnMoreLink {
@@ -149,8 +200,13 @@
 
     &::after {
         content: '↓';
-        position: absolute;
+        // position: absolute;
         padding-left: 0.25em;
         transition: transform $default-transition-timing;
     }
+}
+
+.devLicenceRequired {
+    padding-top: $size-2 !important; // !important for .ag-styles specificity
+    grid-area: required;
 }

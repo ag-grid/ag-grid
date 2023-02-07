@@ -18,7 +18,7 @@ const LicensePricing = () => {
                     <p>
                         In light of current events in Ukraine we are choosing to express our disappointment in the
                         breakdown of diplomacy, and its effects on the people of Ukraine, the global economy and
-                        community by not licensing software to companies or individuals regist§ered or residing in the
+                        community by not licensing software to companies or individuals registered or residing in the
                         Russian Federation.
                     </p>
                 </Alert>
