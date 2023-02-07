@@ -38,7 +38,6 @@ export function isAgCartesianChartOptions(input: AgChartOptions): input is AgCar
         case 'area':
         case 'bar':
         case 'column':
-        case 'groupedCategory':
         case 'histogram':
         case 'line':
         case 'scatter':
