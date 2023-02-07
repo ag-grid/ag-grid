@@ -11,7 +11,7 @@
     "precheck": "npx tsc -p tsconfig-precheck.json",
     "build": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npm run precheck && npx gulp && npx tsc -p tsconfig.typings.json && npm run hash",
     "build-prod": "npm run precheck && npx gulp prod && npx tsc -p tsconfig.typings.json --sourceMap false && npm run hash",
-    "test": "npx jest && npm run check-grid-options",
+    "test": "npx jest && npm run check-grid-options && npm run check-grid-api-exports",
     "package": "node ../../module-build/rollup/build.js",
     "clean": "npx rimraf dist typings .hash",
     "check-grid-options": "npx ts-node scripts/check-gridOptions-propertyKeys.ts",
