@@ -36,7 +36,7 @@ const LicensePricing = () => {
                         <a className="button font-size-large" href="#">
                             Request a quote
                         </a>
-                        <a className="button secondary-button font-size-large" href="#">
+                        <a className="button-secondary font-size-large" href="#">
                             Contact sales
                         </a>
                     </div>
@@ -53,11 +53,11 @@ const LicensePricing = () => {
                             use in production environments.
                         </p>
 
-                        <a href="" className="button secondary-button">
+                        <a href="" className="button-secondary">
                             Get AG Grid Community at NPM
                         </a>
                         <br />
-                        <a href="" className="button secondary-button">
+                        <a href="" className="button-secondary">
                             Get AG Grid Charts at NPM
                         </a>
                     </div>
@@ -94,10 +94,7 @@ const LicensePricing = () => {
                             <a href="">get in contact</a>.
                         </p>
 
-                        <a
-                            href="/javascript-data-grid/licensing/#feature-comparison"
-                            className="button secondary-button"
-                        >
+                        <a href="/javascript-data-grid/licensing/#feature-comparison" className="button-secondary">
                             See all AG Grid Enterprise features
                         </a>
                     </div>
@@ -249,7 +246,7 @@ const LicensePricing = () => {
                         licence related questions please contact our friendly sales team.{' '}
                     </p>
                     <div>
-                        <a className="button secondary-button font-size-large" href="#">
+                        <a className="button-secondary font-size-large" href="#">
                             Contact sales
                         </a>
                     </div>

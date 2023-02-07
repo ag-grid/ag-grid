@@ -1,17 +1,24 @@
 @use '../core' as *;
 
 button,
-.button {
+.button,
+.button-secondary {
     appearance: none;
 
+    display: inline-block;
     font-size: var(--font-size);
-    padding: 0.5em 1em;
+    font-weight: $font-weight-bold;
+    padding: 0.375em 1em 0.5em;
     letter-spacing: 0.025em;
+    white-space: nowrap;
     border-radius: var(--border-radius);
     background-color: var(--button-color);
     color: var(--button-text-color);
-    border: none;
-    transition: background-color $default-transition-timing;
+    outline: none;
+    border: 2px solid transparent;
+    box-shadow: 0 0 0 4px transparent;
+    transition: background-color $default-transition-timing, border $default-transition-timing,
+        box-shadow $default-transition-timing;
 
     &:not(:disabled) {
         cursor: pointer;
@@ -19,10 +26,25 @@ button,
 
     &:hover {
         background-color: var(--button-hover-color);
+        color: var(--button-text-color);
     }
 
     &:active {
         background-color: var(--button-active-color);
         transition: background-color 0.125s ease-in-out;
     }
+
+    &:focus,
+    &:focus-visible {
+        border-color: var(--button-hover-color);
+        box-shadow: 0 0 0 4px var(--button-focus-box-shadow-color);
+    }
+}
+
+.button-secondary {
+    --button-color: var(--water-blue);
+    --button-hover-color: var(--sky-blue);
+    --button-active-color: var(--azure-blue);
+    --button-text-color: var(--ag-grid-dark-blue);
+    --button-focus-box-shadow-color: var(--light-water-blue);
 }
