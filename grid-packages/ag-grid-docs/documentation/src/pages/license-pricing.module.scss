@@ -30,57 +30,100 @@
     }
 }
 
+.bulkLicences,
+.communityEnterprise,
+.videoExplainer,
+.licencesInDetail {
+    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        margin-bottom: $size-9 !important; // !important for .ag-styles specificity
+    }
+}
+
 .bulkLicences {
     margin-top: $size-5 !important; // !important for .ag-styles specificity
-    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
+    text-align: center;
 
     p {
         max-width: 740px;
         margin-left: auto;
         margin-right: auto;
-        text-align: center;
     }
 
-    div {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: $size-3;
+    a {
+        margin-bottom: $size-1;
+        margin-left: $size-1;
+        margin-right: $size-1;
     }
 
-    a:first-child {
-        justify-self: end;
-    }
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        div {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: $size-3;
+        }
 
-    a:last-child {
-        justify-self: start;
+        a {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        a:first-child {
+            justify-self: end;
+        }
+
+        a:last-child {
+            justify-self: start;
+        }
     }
 }
 
 .communityEnterprise {
-    display: grid;
     grid-template-columns: 1fr 2fr;
     gap: $size-3;
-    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
 
-    :global(.button) {
-        display: inline-block;
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        display: grid;
+    }
 
-        &:not(:last-child) {
-            margin-bottom: $size-1;
-        }
+    :global(.button-secondary):not(:last-child) {
+        margin-bottom: $size-1;
+    }
+}
+
+.community {
+    margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
     }
 }
 
 .videoExplainer {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: $size-3;
-    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        grid-template-columns: 2fr 1fr;
+        grid-auto-flow: dense;
+        gap: $size-3;
+    }
+
+    div {
+        margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            grid-column: 2;
+        }
+    }
 
     h3 {
-        margin-top: -$size-1 !important; // !important for .ag-styles specificity
         line-height: $line-height-tight !important; // !important for .ag-styles specificity
         font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            margin-top: -$size-1 !important; // !important for .ag-styles specificity
+        }
     }
 
     iframe {
@@ -93,9 +136,13 @@
 
 .licencesInDetail {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: $size-3;
-    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        flex-direction: row;
+    }
 
     > h3 {
         width: 100%;
@@ -113,13 +160,17 @@
 
     .singleApplicationLicense,
     .multipleApplicationsLicense {
-        width: calc(50% - $size-3 / 2);
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            width: calc(50% - $size-3 / 2);
+        }
     }
 
     // Needs review after <ul> styling
     .deploymentLicence ul {
-        columns: 2;
-        gap: $size-3;
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            columns: 2;
+            gap: $size-3;
+        }
     }
 }
 

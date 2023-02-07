@@ -14,13 +14,18 @@
 
 .licenses {
     display: flex;
+    flex-wrap: wrap;
     gap: $size-3;
 }
 
 .license {
     display: flex;
     flex-direction: column;
-    width: 50%;
+    width: 100%;
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        width: calc(50% - $size-3 / 2);
+    }
 
     :global(.top),
     :global(.bottom) {

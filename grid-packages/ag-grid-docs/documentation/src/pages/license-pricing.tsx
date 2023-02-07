@@ -101,13 +101,6 @@ const LicensePricing = () => {
                 </div>
 
                 <div className={styles.videoExplainer}>
-                    <iframe
-                        src="https://www.youtube.com/embed/20SLdu4wLtI"
-                        title="YouTube video player"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                    ></iframe>
-
                     <div>
                         <h3 className="font-size-extra-large">Questions about our licences? </h3>
                         <p>
@@ -120,6 +113,13 @@ const LicensePricing = () => {
                             <a href="mailto:info@ag-grid.com">get in contact</a>.
                         </p>
                     </div>
+
+                    <iframe
+                        src="https://www.youtube.com/embed/20SLdu4wLtI"
+                        title="YouTube video player"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    ></iframe>
                 </div>
 
                 <div className={styles.licencesInDetail}>
