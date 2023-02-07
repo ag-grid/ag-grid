@@ -1,43 +1,15 @@
 @use "../design-system/" as *;
 
-// Might well be extracted out into component later
-.card {
-    --card-color: var(--border-color);
-    --primary-tint: 0.9;
-    --secondary-tint: 0.95;
-
-    display: flex;
-    flex-direction: column;
-    border-radius: calc(var(--border-radius) * 2);
-    border: 3px solid var(--card-color);
-    background-color: var(--card-color);
-    overflow: hidden;
-
-    .primaryContent,
-    .secondaryContent {
-        padding: $size-4 $size-3;
-    }
-
-    .primaryContent {
-        background-color: rgba(255, 255, 255, var(--primary-tint));
-    }
-
-    .secondaryContent {
-        flex-grow: 1;
-        background-color: rgba(255, 255, 255, var(--secondary-tint));
-    }
+:global(.ag-card).singleApplicationLicense {
+    --card-color: #0f5bce !important; // !important for .ag-styles specificity
+    --header-tint: 0.93 !important; // !important for .ag-styles specificity
+    --content-tint: 0.95 !important; // !important for .ag-styles specificity
 }
 
-.card.singleApplicationLicense {
-    --card-color: #0f5bce;
-    --primary-tint: 0.9;
-    --secondary-tint: 0.95;
-}
-
-.card.multipleApplicationsLicense {
-    --card-color: #2aaa33;
-    --primary-tint: 0.92;
-    --secondary-tint: 0.96;
+:global(.ag-card).multipleApplicationsLicense {
+    --card-color: #2aaa33 !important; // !important for .ag-styles specificity
+    --header-tint: 0.94 !important; // !important for .ag-styles specificity
+    --content-tint: 0.96 !important; // !important for .ag-styles specificity
 }
 
 .container {

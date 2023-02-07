@@ -65,7 +65,7 @@ const Price = ({ priceFullDollars, pricePer }) => {
 
 const DevelopmentLicence = () => {
     return (
-        <div className={styles.secondaryContent}>
+        <div className="bottom">
             <div className={styles.licenceMeta}>
                 <p className={classnames(styles.name, 'font-size-extra-large')}>{DEPLOY_LICENSE_DATA.name}</p>
                 <p className="font-size-small text-secondary">{DEPLOY_LICENSE_DATA.subHeading}</p>
@@ -88,7 +88,7 @@ const License = (props: LicenseData) => {
 
     return (
         <>
-            <div className={styles.primaryContent}>
+            <div className="top">
                 <div className={styles.licenceMeta}>
                     <p className="font-size-small text-secondary">AG Grid Enterprise</p>
                     <p className={classnames(styles.name, 'font-size-extra-large', 'bold-text')}>{name}</p>
@@ -99,7 +99,7 @@ const License = (props: LicenseData) => {
 
                 <div className={styles.licenceBenifits}>
                     <ul className="font-size-small">
-                        {licenceBenifits.forEach((benifit, i) => {
+                        {licenceBenifits.map((benifit, i) => {
                             return <li key={i}>{benifit}</li>;
                         })}
                     </ul>
@@ -110,7 +110,7 @@ const License = (props: LicenseData) => {
                 </div>
 
                 <div className={styles.licenceActions}>
-                    <a className="button secondary-button" href="#">
+                    <a className="button button-secondary" href="#">
                         Pay with card
                     </a>
                     <a className="button" href="#">
@@ -129,7 +129,7 @@ export const Licenses = () => {
         <ul className={classnames('list-style-none', styles.licenses)}>
             {DEV_LICENSE_DATA.map((data) => {
                 return (
-                    <li key={data.name} className={classnames(styles.card, styles.license, data.className)}>
+                    <li key={data.name} className={classnames(styles.license, data.className, 'ag-card')}>
                         <License {...data} />
                     </li>
                 );

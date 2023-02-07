@@ -18,7 +18,7 @@
         'sidebar header'
         'sidebar main';
 
-    header {
+    > header {
         grid-area: header;
         margin-bottom: 2rem;
     }

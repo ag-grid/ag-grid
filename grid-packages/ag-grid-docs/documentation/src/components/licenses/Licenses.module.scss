@@ -1,40 +1,15 @@
 @use "../../design-system/" as *;
 
-// Might well be extracted out into component later
-.card {
-    --card-color: var(--border-color);
-    --primary-tint: 0.9;
-    --secondary-tint: 0.95;
-
-    border-radius: calc(var(--border-radius) * 2);
-    border: 3px solid var(--card-color);
-    background-color: var(--card-color);
-    overflow: hidden;
-
-    .primaryContent,
-    .secondaryContent {
-        padding: $size-4 $size-3;
-    }
-
-    .primaryContent {
-        background-color: rgba(255, 255, 255, var(--primary-tint));
-    }
-
-    .secondaryContent {
-        background-color: rgba(255, 255, 255, var(--secondary-tint));
-    }
+:global(.ag-card).singleApplicationLicense {
+    --card-color: #0f5bce !important; // !important for .ag-styles specificity
+    --header-tint: 0.93 !important; // !important for .ag-styles specificity
+    --content-tint: 0.95 !important; // !important for .ag-styles specificity
 }
 
-.card.singleApplicationLicense {
-    --card-color: #0f5bce;
-    --primary-tint: 0.9;
-    --secondary-tint: 0.95;
-}
-
-.card.multipleApplicationsLicense {
-    --card-color: #2aaa33;
-    --primary-tint: 0.92;
-    --secondary-tint: 0.96;
+:global(.ag-card).multipleApplicationsLicense {
+    --card-color: #2aaa33 !important; // !important for .ag-styles specificity
+    --header-tint: 0.94 !important; // !important for .ag-styles specificity
+    --content-tint: 0.96 !important; // !important for .ag-styles specificity
 }
 
 .licenses {
@@ -47,12 +22,12 @@
     flex-direction: column;
     width: 50%;
 
-    .primaryContent,
-    .secondaryContent {
-        padding: $size-3;
+    :global(.top),
+    :global(.bottom) {
+        padding: $size-3 !important; // !important for .ag-styles specificity
     }
 
-    .primaryContent {
+    :global(.top) {
         display: grid;
         grid-template-columns: auto auto;
         grid-template-rows: auto auto;
@@ -60,14 +35,14 @@
         height: 100%; // bit of a hack?
     }
 
-    .secondaryContent {
+    :global(.bottom) {
         display: grid;
         grid-template-columns: auto auto;
     }
 }
 
 .price,
-.primaryContent .licenceMeta {
+:global(.top) .licenceMeta {
     display: grid;
     grid-template-rows: 16px 58px 16px;
 
@@ -91,7 +66,7 @@
 }
 
 .priceFullDollars {
-    .primaryContent & {
+    :global(.top) & {
         font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
     }
 
@@ -107,7 +82,7 @@
     }
 }
 
-.secondaryContent .licenceMeta {
+:global(.bottom) .licenceMeta {
     display: grid;
 
     p {

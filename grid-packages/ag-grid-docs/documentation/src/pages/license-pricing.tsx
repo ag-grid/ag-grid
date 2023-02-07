@@ -125,11 +125,11 @@ const LicensePricing = () => {
                 <div className={styles.licencesInDetail}>
                     <h3 className="font-size-extra-large">Our Licenses in Depth</h3>
 
-                    <div className={classnames(styles.singleApplicationLicense, styles.card)}>
-                        <div className={styles.primaryContent}>
+                    <div className={classnames(styles.singleApplicationLicense, 'ag-card')}>
+                        <header>
                             <h3>Single Application Development License</h3>
-                        </div>
-                        <div className={styles.secondaryContent}>
+                        </header>
+                        <div className="content">
                             <p>
                                 Licenses one application, developed for internal use, to embed AG Grid Enterprise in
                                 perpetuity.
@@ -155,11 +155,11 @@ const LicensePricing = () => {
                         </div>
                     </div>
 
-                    <div className={classnames(styles.multipleApplicationsLicense, styles.card)}>
-                        <div className={styles.primaryContent}>
+                    <div className={classnames(styles.multipleApplicationsLicense, 'ag-card')}>
+                        <header>
                             <h3>Multiple Application Development License</h3>
-                        </div>
-                        <div className={styles.secondaryContent}>
+                        </header>
+                        <div className="content">
                             <p>
                                 Licenses unlimited number of applications, developed for internal use, to embed AG Grid
                                 Enterprise in perpetuity.
@@ -182,11 +182,11 @@ const LicensePricing = () => {
                         </div>
                     </div>
 
-                    <div className={classnames(styles.deploymentLicence, styles.card)}>
-                        <div className={styles.primaryContent}>
+                    <div className={classnames(styles.deploymentLicence, 'ag-card')}>
+                        <header>
                             <h3>Deployment License Add-on</h3>
-                        </div>
-                        <div className={styles.secondaryContent}>
+                        </header>
+                        <div className="content">
                             <p>
                                 Allows licensed developers to sub-license AG Grid for one application on one production
                                 environment in perpetuity. Includes a 1-year subscription to new versions, support and
