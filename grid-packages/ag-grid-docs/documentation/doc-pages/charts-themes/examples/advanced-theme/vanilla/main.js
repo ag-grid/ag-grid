@@ -78,7 +78,6 @@ var data = [
 ]
 
 var chartOptions1 = {
-  type: "cartesian",
   theme: myTheme,
   container: document.getElementById("chart1"),
   autoSize: true,

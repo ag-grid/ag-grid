@@ -25,7 +25,6 @@ Since treemaps are used to render tree data, to create a basic treemap, we need 
 A basic treemap configuration would look like this:
 
 ```js
-type: 'hierarchy',
 data, // the root node of the hierarchy
 series: [{
     type: 'treemap',

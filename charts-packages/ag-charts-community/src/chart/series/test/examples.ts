@@ -571,7 +571,6 @@ export const GROUPED_DOUGHNUT_SERIES_LABELS: AgPolarChartOptions = {
 };
 
 export const TREEMAP_SERIES_LABELS: AgHierarchyChartOptions = {
-    type: 'hierarchy',
     data: DATA_TREEMAP,
     series: [
         {

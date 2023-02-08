@@ -7024,7 +7024,7 @@ Object {
     "enabled": true,
     "tracking": true,
   },
-  "type": "hierarchy",
+  "type": "treemap",
 }
 `;
 
