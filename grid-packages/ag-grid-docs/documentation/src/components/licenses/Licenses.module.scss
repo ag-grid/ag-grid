@@ -1,5 +1,13 @@
 @use "../../design-system/" as *;
 
+// Wrap in media query to show wide licence layouts for specifci screen sizes
+@mixin wide-layout {
+    @media screen and (min-width: $breakpoint-pricing-small) and (max-width: $breakpoint-pricing-medium),
+        (min-width: $breakpoint-pricing-large) {
+        @content;
+    }
+}
+
 :global(.ag-card).singleApplicationLicense {
     --card-color: #0f5bce !important; // !important for .ag-styles specificity
     --header-tint: 0.93 !important; // !important for .ag-styles specificity
@@ -23,7 +31,7 @@
     flex-direction: column;
     width: 100%;
 
-    @media screen and (min-width: $breakpoint-pricing-large) {
+    @media screen and (min-width: $breakpoint-pricing-medium) {
         width: calc(50% - $size-3 / 2);
     }
 
@@ -44,8 +52,14 @@
         grid-template-areas: 'meta meta' 'benifits price' 'actions actions';
         padding-top: $size-3 !important; // !important for .ag-styles specificity
         padding-bottom: $size-2 !important; // !important for .ag-styles specificity
-        // gap: $size-7 0;
-        // height: 100%; // bit of a hack?
+
+        @include wide-layout {
+            grid-template-columns: auto auto;
+            grid-template-rows: auto auto;
+            grid-template-areas: 'meta price' 'benifits actions';
+            gap: $size-7 $size-4;
+            height: 100%;
+        }
     }
 
     :global(.bottom) {
@@ -64,46 +78,56 @@
 
 .licenceMeta {
     grid-area: meta;
+    display: flex;
+    flex-direction: column;
+
+    svg {
+        position: relative;
+        top: -1px;
+        width: 16px;
+        opacity: 0.6666;
+
+        * {
+            fill: var(--secondary-text-color) !important;
+        }
+    }
 
     :global(.top) & {
         margin-bottom: $size-5 !important; // !important for .ag-styles specificity
         text-align: center;
+
+        @include wide-layout {
+            margin-bottom: 0 !important; // !important for .ag-styles specificity
+            text-align: left;
+        }
     }
 }
 
-.price,
-:global(.top) .licenceMeta {
-    //     display: grid;
-    //     grid-template-rows: 16px 58px 16px;
-}
+p.name {
+    :global(.top) & {
+        font-size: 46px !important; // !important for .ag-styles specificity
+        line-height: 1 !important; // !important for .ag-styles specificity
+        margin-top: $size-half !important; // !important for .ag-styles specificity
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
 
-.licenceMeta svg {
-    position: relative;
-    top: -1px;
-    width: 16px;
-    opacity: 0.6666;
-
-    * {
-        fill: var(--secondary-text-color) !important;
+        @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
+            max-width: 340px;
+            margin-left: auto !important; // !important for .ag-styles specificity
+            margin-right: auto !important; // !important for .ag-styles specificity
+        }
     }
-}
 
-:global(.top) .name {
-    font-size: 46px !important; // !important for .ag-styles specificity
-    line-height: 1 !important; // !important for .ag-styles specificity
-    align-self: center;
-    margin-top: $size-half !important; // !important for .ag-styles specificity
-    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
-}
+    :global(.bottom) & {
+        font-size: $font-size-large !important; // !important for .ag-styles specificity
+        line-height: 1 !important; // !important for .ag-styles specificity
+        margin-top: $size-2 !important; // !important for .ag-styles specificity
+        margin-bottom: auto !important; // !important for .ag-styles specificity
 
-:global(.bottom) p.name {
-    font-size: 24px !important; // !important for .ag-styles specificity
-    line-height: 1 !important; // !important for .ag-styles specificity
-    // margin-top: $size-half !important; // !important for .ag-styles specificity
-    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
-    // align-self: center;
-    // margin-top: $size-half !important; // !important for .ag-styles specificity
-    // margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+        @include wide-layout {
+            margin-top: $size-1 !important; // !important for .ag-styles specificity
+            font-size: 30px !important; // !important for .ag-styles specificity
+        }
+    }
 }
 
 .price {
@@ -116,66 +140,45 @@
         max-width: 140px;
     }
 
-    // p:last-child {
-    //     max-width: 160px;
-    //     line-height: 1.25 !important; // !important for .ag-styles specificity
-    // }
+    @media screen and (min-width: $breakpoint-pricing-small) and (max-width: $breakpoint-pricing-medium),
+        (min-width: $breakpoint-pricing-large) {
+        align-self: start;
+    }
 }
 
 p.priceFullDollars {
     line-height: 1.25 !important; // !important for .ag-styles specificity
     letter-spacing: -0.05em;
 
+    &::before {
+        content: '$';
+    }
+
+    &::after {
+        @include wide-layout {
+            content: '.00';
+            font-size: $font-size-large;
+            font-weight: 400 !important; // !important for .ag-styles specificity
+            color: var(--secondary-text-color);
+        }
+    }
+
     :global(.top) & {
         font-size: 46px !important; // !important for .ag-styles specificity
         font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+
+        @include wide-layout {
+            font-size: $font-size-massive !important; // !important for .ag-styles specificity
+        }
     }
 
     :global(.bottom) & {
         font-size: 36px !important; // !important for .ag-styles specificity
     }
-
-    &::before {
-        content: '$';
-    }
-
-    // &::after {
-    //     content: '.00';
-    //     font-size: $font-size-large;
-    //     font-weight: 400 !important; // !important for .ag-styles specificity
-    //     color: var(--secondary-text-color);
-    // }
-}
-
-:global(.bottom) .licenceMeta {
-    // display: grid;
-
-    // p {
-    //     margin-bottom: $size-1 !important; // !important for .ag-styles specificity
-    //     line-height: 1 !important; // !important for .ag-styles specificity
-    // }
-
-    // p:last-child {
-    //     align-self: end;
-    // }
 }
 
 .licenceBenifits {
-    // display: flex;
-    // flex-direction: column;
-    // justify-content: flex-end;
     align-self: end;
-
-    // li {
-    //     position: relative;
-
-    //     &::before {
-    //         content: '•';
-    //         position: absolute;
-    //         left: -0.6666em;
-    //         color: var(--secondary-text-color);
-    //     }
-    // }
 
     a {
         margin-top: $size-half !important; // !important for .ag-styles specificity
@@ -186,10 +189,26 @@ p.priceFullDollars {
     grid-area: actions;
     margin-top: $size-5 !important; // !important for .ag-styles specificity
 
+    @media screen and (min-width: $breakpoint-pricing-small) and (max-width: $breakpoint-pricing-medium),
+        (min-width: $breakpoint-pricing-large) {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-top: 0 !important; // !important for .ag-styles specificity
+    }
+
     a {
         width: 100%;
         text-align: center;
-        margin-bottom: $size-half;
+
+        &:not(:last-child) {
+            margin-bottom: $size-half;
+        }
+
+        @include wide-layout {
+            width: unset;
+            text-align: unset;
+        }
     }
 }
 
@@ -200,7 +219,6 @@ p.priceFullDollars {
 
     &::after {
         content: '↓';
-        // position: absolute;
         padding-left: 0.25em;
         transition: transform $default-transition-timing;
     }
