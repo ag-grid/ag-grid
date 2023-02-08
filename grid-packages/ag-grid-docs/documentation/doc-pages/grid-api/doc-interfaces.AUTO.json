@@ -12058,7 +12058,7 @@
   },
   "ChartToolPanelsDef": {
     "settingsPanel": {
-      "description": "/** Customisations for the settings panel */",
+      "description": "/** Customisations for the settings panel and chart menu items in the Context Menu. */",
       "type": { "returnType": "ChartSettingsPanel", "optional": true }
     },
     "formatPanel": {

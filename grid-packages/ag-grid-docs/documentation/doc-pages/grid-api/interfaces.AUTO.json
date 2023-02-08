@@ -6937,7 +6937,7 @@
       "defaultToolPanel?": "ChartToolPanelName"
     },
     "docs": {
-      "settingsPanel?": "/** Customisations for the settings panel */",
+      "settingsPanel?": "/** Customisations for the settings panel and chart menu items in the Context Menu. */",
       "formatPanel?": "/** Customisations for the format panel */",
       "dataPanel?": "/** Customisations for the data panel */",
       "panels?": "/** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */",

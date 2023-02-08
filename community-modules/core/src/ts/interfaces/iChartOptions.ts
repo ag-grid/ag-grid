@@ -75,7 +75,7 @@ export interface ChartDataPanel {
 }
 
 export interface ChartToolPanelsDef {
-    /** Customisations for the settings panel */
+    /** Customisations for the settings panel and chart menu items in the Context Menu. */
     settingsPanel?: ChartSettingsPanel,
     /** Customisations for the format panel */
     formatPanel?: ChartFormatPanel,
