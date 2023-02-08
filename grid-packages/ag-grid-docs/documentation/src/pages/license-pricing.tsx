@@ -35,10 +35,16 @@ const LicensePricing = () => {
                     </p>
 
                     <div>
-                        <a className="button" href="#">
+                        <a
+                            className="button"
+                            href="mailto:info@ag-grid.com?subject=AG Grid - Development Licenses quote"
+                        >
                             Request a quote
                         </a>
-                        <a className="button-secondary" href="#">
+                        <a
+                            className="button-secondary"
+                            href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
+                        >
                             Contact sales
                         </a>
                     </div>
@@ -91,7 +97,11 @@ const LicensePricing = () => {
                             <a href="/eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
                             technical staff. To evaluate <b>AG Grid Enterprise</b> you don't need our permission – all
                             features are unlocked. To temporarily hide the watermark and browser console errors e-mail
-                            us to <a href="">get a temporary evaluation key</a>.
+                            us to{' '}
+                            <a href="mailto:info@ag-grid.com?subject=AG Grid - Development License Temporary Evaluation Key">
+                                get a temporary evaluation key
+                            </a>
+                            .
                         </p>
 
                         <p>
@@ -101,7 +111,10 @@ const LicensePricing = () => {
 
                         <p>
                             Expanded definitions are available further down the page. For any other questions please{' '}
-                            <a href="">get in contact</a>.
+                            <a href="mailto:info@ag-grid.com?subject=AG Grid - Development License question">
+                                get in contact
+                            </a>
+                            .
                         </p>
 
                         <a href="/javascript-data-grid/licensing/#feature-comparison" className="button-secondary">
@@ -259,7 +272,7 @@ const LicensePricing = () => {
                         licence related questions please contact our friendly sales team.{' '}
                     </p>
                     <div>
-                        <a className="button-secondary" href="#">
+                        <a className="button-secondary" href="mailto:info@ag-grid.com">
                             Contact sales
                         </a>
                     </div>

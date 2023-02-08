@@ -4,7 +4,7 @@ import EnterpriseIcon from '../../images/inline-svgs/enterprise.svg';
 // @ts-ignore
 import styles from './Licenses.module.scss';
 
-type LicenseDataBase = {
+type LicenseData = {
     className: string;
     name: string;
     id: string;
@@ -12,14 +12,8 @@ type LicenseDataBase = {
     licenceBenifits: string[];
     priceFullDollars: string;
     pricePer: string;
-};
-type LicenseBuyButton = LicenseDataBase & {
     buyLink: string;
 };
-type LicenseBuyText = LicenseDataBase & {
-    buyText: string;
-};
-type LicenseData = LicenseBuyButton | LicenseBuyText;
 
 const DEV_LICENSE_DATA: LicenseData[] = [
     {
@@ -50,7 +44,6 @@ const DEPLOY_LICENSE_DATA = {
     subHeading: 'Add-on',
     priceFullDollars: '750',
     pricePer: 'Application Production Environment',
-    buyText: 'Buy with a Development License',
 };
 
 const Price = ({ priceFullDollars, pricePer }) => {
@@ -84,7 +77,7 @@ const DevelopmentLicence = () => {
 };
 
 const License = (props: LicenseData) => {
-    const { name, id, subHeading, licenceBenifits, priceFullDollars, pricePer } = props;
+    const { name, id, subHeading, licenceBenifits, priceFullDollars, pricePer, buyLink } = props;
 
     return (
         <>
@@ -115,10 +108,10 @@ const License = (props: LicenseData) => {
                 </div>
 
                 <div className={styles.licenceActions}>
-                    <a className="button button-secondary" href="#">
+                    <a className="button button-secondary" href={buyLink}>
                         Pay with card
                     </a>
-                    <a className="button" href="#">
+                    <a className="button" href={`mailto:info@ag-grid.com?subject=AG Grid - ${name} Licence Quote`}>
                         Request a quote
                     </a>
                 </div>
