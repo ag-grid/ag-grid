@@ -4655,7 +4655,6 @@
     },
     "padding": { "type": { "returnType": "number", "optional": false } }
   },
-  "Listener": { "meta": { "typeParams": ["E"] } },
   "CursorState": {
     "style": { "type": { "returnType": "string", "optional": false } }
   },
@@ -4693,7 +4692,42 @@
     "content": { "type": { "returnType": "string", "optional": false } },
     "meta": { "type": { "returnType": "TooltipMeta", "optional": false } }
   },
+  "ZoomState": {
+    "min": { "type": { "returnType": "number", "optional": false } },
+    "max": { "type": { "returnType": "number", "optional": false } }
+  },
+  "AxisZoomState": {
+    "x": { "type": { "returnType": "ZoomState", "optional": true } },
+    "y": { "type": { "returnType": "ZoomState", "optional": true } }
+  },
+  "ZoomChangeEvent": {
+    "type": { "type": { "returnType": "'zoom-change'", "optional": false } },
+    "x": { "type": { "returnType": "ZoomState", "optional": true } },
+    "y": { "type": { "returnType": "ZoomState", "optional": true } }
+  },
   "Layers": {},
+  "LayoutStage": {},
+  "LayoutCompleteEvent": {
+    "type": {
+      "type": { "returnType": "'layout-complete'", "optional": false }
+    },
+    "series": {
+      "type": {
+        "returnType": "{ rect: BBox; visible: boolean }",
+        "optional": false
+      }
+    }
+  },
+  "LayoutContext": {
+    "shrinkRect": { "type": { "returnType": "BBox", "optional": false } }
+  },
+  "LayoutResult": {
+    "shrinkRect": { "type": { "returnType": "BBox", "optional": false } }
+  },
+  "EventTypes": {},
+  "LayoutListener": {},
+  "LayoutProcessor": {},
+  "Handler": { "meta": { "typeParams": ["T extends EventTypes"] } },
   "LegendDatum": {
     "id": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
@@ -5230,6 +5264,54 @@
     "height": { "type": { "returnType": "number", "optional": false } },
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } }
+  },
+  "Listener": { "meta": { "typeParams": ["H extends Function"] } },
+  "ModuleContext": {
+    "scene": { "type": { "returnType": "Scene", "optional": false } },
+    "interactionManager": {
+      "type": { "returnType": "InteractionManager", "optional": false }
+    },
+    "highlightManager": {
+      "type": { "returnType": "HighlightManager", "optional": false }
+    },
+    "cursorManager": {
+      "type": { "returnType": "CursorManager", "optional": false }
+    },
+    "zoomManager": {
+      "type": { "returnType": "ZoomManager", "optional": false }
+    },
+    "tooltipManager": {
+      "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "layoutService": {
+      "type": {
+        "returnType": "Pick<LayoutService, 'addListener' | 'removeListener'>",
+        "optional": false
+      }
+    }
+  },
+  "ModuleInstance": {
+    "update": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "destroy": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    }
+  },
+  "ModuleInstanceMeta": {
+    "instance": { "type": { "returnType": "M", "optional": false } },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] }
+  },
+  "Module": {
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "initialiseModule": {
+      "type": {
+        "arguments": { "ctx": "ModuleContext" },
+        "returnType": "ModuleInstanceMeta<M>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] }
   },
   "FormatterOptions": {
     "prefix": { "type": { "returnType": "string", "optional": true } },

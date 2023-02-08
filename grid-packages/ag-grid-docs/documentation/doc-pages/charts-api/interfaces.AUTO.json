@@ -3105,10 +3105,6 @@
       "padding": "number"
     }
   },
-  "Listener": {
-    "meta": { "isTypeAlias": true, "typeParams": ["E"] },
-    "type": "{ symbol?: Symbol; handler: (event: E) => void; }"
-  },
   "CursorState": { "meta": {}, "type": { "style": "string" } },
   "HighlightState": {
     "meta": {},
@@ -3156,6 +3152,15 @@
     "meta": {},
     "type": { "content": "string", "meta": "TooltipMeta" }
   },
+  "ZoomState": { "meta": {}, "type": { "min": "number", "max": "number" } },
+  "AxisZoomState": {
+    "meta": {},
+    "type": { "x?": "ZoomState", "y?": "ZoomState" }
+  },
+  "ZoomChangeEvent": {
+    "meta": {},
+    "type": { "type": "'zoom-change'", "x?": "ZoomState", "y?": "ZoomState" }
+  },
   "Layers": {
     "meta": { "isEnum": true },
     "type": [
@@ -3169,6 +3174,32 @@
       "LEGEND_ZINDEX = 3000"
     ],
     "docs": [null, null, null, null, null, null, null, null]
+  },
+  "LayoutStage": { "meta": { "isTypeAlias": true }, "type": "'before-series'" },
+  "LayoutCompleteEvent": {
+    "meta": {},
+    "type": {
+      "type": "'layout-complete'",
+      "series": "{ rect: BBox; visible: boolean; }"
+    }
+  },
+  "LayoutContext": { "meta": {}, "type": { "shrinkRect": "BBox" } },
+  "LayoutResult": { "meta": {}, "type": { "shrinkRect": "BBox" } },
+  "EventTypes": {
+    "meta": { "isTypeAlias": true },
+    "type": "LayoutStage | 'layout-complete'"
+  },
+  "LayoutListener": {
+    "meta": { "isTypeAlias": true },
+    "type": "(event: LayoutCompleteEvent) => void"
+  },
+  "LayoutProcessor": {
+    "meta": { "isTypeAlias": true },
+    "type": "(ctx: LayoutContext) => LayoutResult"
+  },
+  "Handler": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends EventTypes"] },
+    "type": "T extends LayoutStage ? LayoutProcessor : LayoutListener"
   },
   "LegendDatum": {
     "meta": {},
@@ -3737,6 +3768,37 @@
       "height": "number",
       "x": "number",
       "y": "number"
+    }
+  },
+  "Listener": {
+    "meta": { "isTypeAlias": true, "typeParams": ["H extends Function"] },
+    "type": "{ symbol?: Symbol; handler: H; }"
+  },
+  "ModuleContext": {
+    "meta": {},
+    "type": {
+      "scene": "Scene",
+      "interactionManager": "InteractionManager",
+      "highlightManager": "HighlightManager",
+      "cursorManager": "CursorManager",
+      "zoomManager": "ZoomManager",
+      "tooltipManager": "TooltipManager",
+      "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>"
+    }
+  },
+  "ModuleInstance": {
+    "meta": {},
+    "type": { "update()": "void", "destroy()": "void" }
+  },
+  "ModuleInstanceMeta": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": { "instance": "M" }
+  },
+  "Module": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "optionsKey": "string",
+      "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>"
     }
   },
   "FormatterOptions": {

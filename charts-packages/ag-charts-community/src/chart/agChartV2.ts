@@ -46,6 +46,7 @@ import {
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
+import { REGISTERED_MODULES } from '../module-support';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -396,6 +397,8 @@ function debug(message?: any, ...optionalParams: any[]): void {
 }
 
 function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOptions>, userOptions: AgChartOptions): void {
+    applyModules(chart, userOptions);
+
     const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
     if (isAgCartesianChartOptions(processedOptions)) {
         // Append axes to defaults.
@@ -447,6 +450,21 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     const updateType = forceNodeDataRefresh ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
     debug('chart update type', { updateType: ChartUpdateType[updateType] });
     chart.update(updateType, { forceNodeDataRefresh });
+}
+
+function applyModules(chart: Chart, options: AgChartOptions) {
+    for (const module of REGISTERED_MODULES) {
+        const shouldBeEnabled = (options as any)[module.optionsKey] != null;
+        const isEnabled = chart.isModuleEnabled(module);
+
+        if (shouldBeEnabled === isEnabled) continue;
+
+        if (shouldBeEnabled) {
+            chart.addModule(module);
+        } else {
+            chart.removeModule(module);
+        }
+    }
 }
 
 function applySeries(chart: Chart, options: AgChartOptions) {
