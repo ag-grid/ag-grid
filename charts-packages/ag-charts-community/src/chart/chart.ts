@@ -347,7 +347,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         for (const [key, module] of Object.entries(this.modules)) {
             module.instance.destroy();
             delete this.modules[key];
-            (this as any)[key];
+            delete (this as any)[key];
         }
 
         this.interactionManager.destroy();
