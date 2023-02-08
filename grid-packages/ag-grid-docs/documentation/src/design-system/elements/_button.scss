@@ -20,10 +20,6 @@ button,
     transition: background-color $default-transition-timing, border $default-transition-timing,
         box-shadow $default-transition-timing;
 
-    // &:not(:disabled):not(.disabled) {
-    //     cursor: pointer;
-    // }
-
     &:hover {
         background-color: var(--button-hover-color);
         color: var(--button-text-color);

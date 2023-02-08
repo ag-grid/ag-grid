@@ -128,7 +128,7 @@ const LicensePricing = () => {
                 <div className={styles.licencesInDetail}>
                     <h3 className="font-size-extra-large">Our Licenses in Depth</h3>
 
-                    <div className={classnames(styles.singleApplicationLicense, 'ag-card')}>
+                    <div className={classnames(styles.singleApplicationLicense, 'ag-card')} id="single-application">
                         <header>
                             <h3>Single Application Development License</h3>
                         </header>
@@ -158,7 +158,10 @@ const LicensePricing = () => {
                         </div>
                     </div>
 
-                    <div className={classnames(styles.multipleApplicationsLicense, 'ag-card')}>
+                    <div
+                        className={classnames(styles.multipleApplicationsLicense, 'ag-card')}
+                        id="multiple-applications"
+                    >
                         <header>
                             <h3>Multiple Application Development License</h3>
                         </header>
@@ -185,7 +188,7 @@ const LicensePricing = () => {
                         </div>
                     </div>
 
-                    <div className={classnames(styles.deploymentLicence, 'ag-card')}>
+                    <div className={classnames(styles.deploymentLicence, 'ag-card')} id="deployment">
                         <header>
                             <h3>Deployment License Add-on</h3>
                         </header>

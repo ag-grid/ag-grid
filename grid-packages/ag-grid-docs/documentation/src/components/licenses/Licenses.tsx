@@ -7,6 +7,7 @@ import styles from './Licenses.module.scss';
 type LicenseDataBase = {
     className: string;
     name: string;
+    id: string;
     subHeading: string;
     licenceBenifits: string[];
     priceFullDollars: string;
@@ -24,6 +25,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.singleApplicationLicense,
         name: 'Single Application',
+        id: 'single-application',
         subHeading: 'Development License',
         priceFullDollars: '999',
         licenceBenifits: ['Perpetual licence', '1 year of support', '1 year of updates'],
@@ -33,6 +35,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.multipleApplicationsLicense,
         name: 'Multiple Applications',
+        id: 'multiple-applications',
         subHeading: 'Development License',
         licenceBenifits: ['Unlimited applications', 'Perpetual licence', '1 year of support', '1 year of updates'],
         priceFullDollars: '1,499',
@@ -43,6 +46,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
 
 const DEPLOY_LICENSE_DATA = {
     name: 'Deployment License',
+    id: 'deployment',
     subHeading: 'Add-on',
     priceFullDollars: '750',
     pricePer: 'Application Production Environment',
@@ -71,7 +75,7 @@ const DevelopmentLicence = () => {
 
             <p className={classnames(styles.devLicenceRequired, 'font-size-extra-small')}>
                 Required to deploy for external users{' '}
-                <a className={styles.learnMoreLink} href="#">
+                <a className={styles.learnMoreLink} href={`#${DEPLOY_LICENSE_DATA.id}`}>
                     Learn more
                 </a>
             </p>
@@ -80,7 +84,7 @@ const DevelopmentLicence = () => {
 };
 
 const License = (props: LicenseData) => {
-    const { name, subHeading, licenceBenifits, priceFullDollars, pricePer } = props;
+    const { name, id, subHeading, licenceBenifits, priceFullDollars, pricePer } = props;
 
     return (
         <>
@@ -105,7 +109,7 @@ const License = (props: LicenseData) => {
                         })}
                     </ul>
 
-                    <a className={classnames(styles.learnMoreLink, 'font-size-small')} href="#">
+                    <a className={classnames(styles.learnMoreLink, 'font-size-small')} href={`#${id}`}>
                         Learn more
                     </a>
                 </div>

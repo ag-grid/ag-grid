@@ -57,7 +57,7 @@
             grid-template-columns: auto auto;
             grid-template-rows: auto auto;
             grid-template-areas: 'meta price' 'benifits actions';
-            gap: $size-7 $size-4;
+            gap: $size-7 $size-3;
             height: 100%;
         }
     }
@@ -140,8 +140,7 @@ p.name {
         max-width: 140px;
     }
 
-    @media screen and (min-width: $breakpoint-pricing-small) and (max-width: $breakpoint-pricing-medium),
-        (min-width: $breakpoint-pricing-large) {
+    @include wide-layout {
         align-self: start;
     }
 }
@@ -178,10 +177,21 @@ p.priceFullDollars {
 }
 
 .licenceBenifits {
-    align-self: end;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
+        min-height: 130px;
+    }
 
     a {
+        display: block;
         margin-top: $size-half !important; // !important for .ag-styles specificity
+
+        @include wide-layout {
+            margin-top: $size-2 !important; // !important for .ag-styles specificity
+        }
     }
 }
 
@@ -189,11 +199,11 @@ p.priceFullDollars {
     grid-area: actions;
     margin-top: $size-5 !important; // !important for .ag-styles specificity
 
-    @media screen and (min-width: $breakpoint-pricing-small) and (max-width: $breakpoint-pricing-medium),
-        (min-width: $breakpoint-pricing-large) {
+    @include wide-layout {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
+        justify-content: flex-end;
         margin-top: 0 !important; // !important for .ag-styles specificity
     }
 
