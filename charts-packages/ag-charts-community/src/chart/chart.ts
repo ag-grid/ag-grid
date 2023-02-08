@@ -29,6 +29,7 @@ import { TooltipManager } from './interaction/tooltipManager';
 import { Module, ModuleInstanceMeta } from '../module-support';
 import { ZoomManager } from './interaction/zoomManager';
 import { LayoutService } from './layout/layoutService';
+import { Navigator } from './navigator/navigator';
 
 /** Types of chart-update, in pipeline execution order. */
 export enum ChartUpdateType {
@@ -205,6 +206,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected readonly layoutService: LayoutService;
     protected readonly axisGroup: Group;
     protected readonly modules: Record<string, ModuleInstanceMeta> = {};
+    protected readonly navigator: Navigator;
 
     protected constructor(
         document = window.document,
@@ -290,6 +292,19 @@ export abstract class Chart extends Observable implements AgChartInstance {
         );
 
         this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
+
+        const { interactionManager, zoomManager, cursorManager, highlightManager, tooltipManager, layoutService } =
+            this;
+
+        this.navigator = new Navigator({
+            scene: this.scene,
+            interactionManager,
+            zoomManager,
+            cursorManager,
+            highlightManager,
+            tooltipManager,
+            layoutService,
+        });
     }
 
     addModule(module: Module) {
