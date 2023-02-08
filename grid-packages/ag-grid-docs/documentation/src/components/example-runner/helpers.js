@@ -199,14 +199,6 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
         isFramework: false,
     };
 
-    if (forPlunker && library === 'charts' && internalFramework === 'reactFunctionalTs') {
-        files['types.d.ts'] = {
-            source: `// Local type required in Plunker until this issue is resolved https://github.com/plnkr/feedback/issues/584
-declare function structuredClone(value: any, options?: any): any;`,
-            isFramework: true
-        }
-    }
-
     return Promise.all(promises).then(() => files);
 };
 

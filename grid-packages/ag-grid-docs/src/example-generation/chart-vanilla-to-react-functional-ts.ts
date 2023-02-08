@@ -7,7 +7,7 @@ import { toTitleCase } from './angular-utils';
 export function processFunction(code: string): string {
     return wrapOptionsUpdateCode(
         convertFunctionToProperty(code),
-        'const clone = structuredClone(options);',
+        'const clone = {...options};',
         'setOptions(clone);', 'clone');
 }
 
