@@ -33,7 +33,7 @@ const options: AgChartOptions = {
 let chart = AgChart.create(options);
 
 function download() {
-  AgChart.download(chart);
+  AgChart.download(chart, undefined);
 }
 
 function downloadFixedSize() {
