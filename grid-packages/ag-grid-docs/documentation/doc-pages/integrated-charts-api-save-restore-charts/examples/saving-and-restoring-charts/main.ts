@@ -1,4 +1,4 @@
-import { ChartModel, ChartRef, Grid, GridOptions } from '@ag-grid-community/core';
+import { ChartModel, ChartRef, Grid, GridOptions, FirstDataRenderedEvent } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -22,10 +22,24 @@ const gridOptions: GridOptions = {
   popupParent: document.body,
   enableCharts: true,
   createChartContainer,
+  onFirstDataRendered: onFirstDataRendered,
+}
+let chartModel: ChartModel | undefined;
+let currentChartRef: ChartRef | undefined;
+
+function onFirstDataRendered(params: FirstDataRenderedEvent) {
+  currentChartRef = params.api!.createRangeChart({
+    chartType: 'groupedColumn',
+    cellRange: {
+      columns: ['country', 'sugar', 'fat', 'weight'],
+      rowStartIndex: 0,
+      rowEndIndex: 2
+    },
+       
+    chartContainer: document.querySelector('#myChart') as any,
+  });
 }
 
-let chartModel: ChartModel | null;
-let currentChartRef: ChartRef | null;
 
 function saveChart() {
   const chartModels = gridOptions.api!.getChartModels() || []
@@ -37,7 +51,7 @@ function saveChart() {
 function clearChart() {
   if (currentChartRef) {
     currentChartRef.destroyChart()
-    currentChartRef = null
+    currentChartRef = undefined
   }
 }
 

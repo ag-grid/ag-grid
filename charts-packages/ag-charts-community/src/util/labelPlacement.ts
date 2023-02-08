@@ -23,8 +23,8 @@ interface Bounds extends Readonly<Point> {
 
 function circleRectOverlap(c: SizedPoint, x: number, y: number, w: number, h: number): boolean {
     // Find closest horizontal and vertical edges.
-    let edgeX = c.x < x ? x : c.x > x + w ? x + w : c.x;
-    let edgeY = c.y < y ? y : c.y > y + h ? y + h : c.y;
+    const edgeX = c.x < x ? x : c.x > x + w ? x + w : c.x;
+    const edgeY = c.y < y ? y : c.y > y + h ? y + h : c.y;
     // Find distance to closest edges.
     const dx = c.x - edgeX;
     const dy = c.y - edgeY;
@@ -106,7 +106,7 @@ export function placeLabels(
 }
 
 export function axisLabelsOverlap(data: readonly PointLabelDatum[], padding?: number): boolean {
-    let result: PlacedLabel[] = [];
+    const result: PlacedLabel[] = [];
 
     for (let i = 0; i < data.length; i++) {
         const datum = data[i];

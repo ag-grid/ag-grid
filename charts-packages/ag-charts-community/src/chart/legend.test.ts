@@ -60,7 +60,7 @@ describe('Legend', () => {
         expect(console.warn).not.toBeCalled();
     });
 
-    let ctx = setupMockCanvas();
+    const ctx = setupMockCanvas();
 
     const compare = async (chart: Chart) => {
         await waitForChartStability(chart);

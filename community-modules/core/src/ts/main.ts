@@ -24,6 +24,7 @@ export { AgStackComponentsRegistry } from "./components/agStackComponentsRegistr
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";
 export { ComponentType } from "./components/framework/componentTypes";
+export { ColDefUtil } from "./components/colDefUtil";
 
 // context
 export { BeanStub } from "./context/beanStub";
@@ -87,7 +88,7 @@ export {
     DragSource,
     DraggingEvent
 } from "./dragAndDrop/dragAndDropService";
-export { RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
+export { RowDropZoneParams, RowDropZoneEvents } from "./gridBodyComp/rowDragFeature";
 export { DragService, DragListenerParams } from "./dragAndDrop/dragService";
 export { IRowDragItem } from "./rendering/row/rowDragComp";
 
@@ -195,7 +196,7 @@ export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionCompone
 export { CellComp } from "./rendering/cell/cellComp";
 export { CellCtrl, ICellComp } from "./rendering/cell/cellCtrl";
 export { RowCtrl, IRowComp } from "./rendering/row/rowCtrl";
-export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams } from "./rendering/rowRenderer";
+export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams, RedrawRowsParams, GetCellEditorInstancesParams } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 export { CssClassManager } from "./rendering/cssClassManager";

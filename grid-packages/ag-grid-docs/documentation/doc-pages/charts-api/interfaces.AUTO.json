@@ -2835,7 +2835,7 @@
   "AgCartesianChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
+      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
       "axes?": "AgCartesianAxisOptions[]",
       "series?": "AgCartesianSeriesOptions[]",
       "navigator?": "AgNavigatorOptions",
@@ -2854,7 +2854,7 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "type?": "/** If specified overrides the default series type. */",
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
       "navigator?": "/** Configuration for the chart navigator. */",
@@ -2876,7 +2876,7 @@
   "AgPolarChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'polar' | 'pie'",
+      "type?": "'pie'",
       "series?": "AgPolarSeriesOptions[]",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -2893,7 +2893,7 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -2913,7 +2913,7 @@
   "AgHierarchyChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'hierarchy' | 'treemap'",
+      "type?": "'treemap'",
       "data?": "any",
       "series?": "AgHierarchySeriesOptions[]",
       "container?": "HTMLElement | null",
@@ -2930,7 +2930,7 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -3844,17 +3844,21 @@
     "meta": { "isTypeAlias": true },
     "type": "NumberFormat | DateFormat"
   },
-  "FloorFn": {
+  "EncodeFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(date: Date) => void"
+    "type": "(date: Date) => number"
   },
-  "OffsetFn": {
+  "DecodeFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(date: Date, step: number) => void"
+    "type": "(encoded: number) => Date"
   },
-  "StepTestFn": {
+  "RangeFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(date: Date, step: number) => boolean"
+    "type": "(start: Date, end: Date) => () => void"
+  },
+  "CountableTimeIntervalOptions": {
+    "meta": {},
+    "type": { "snapTo?": "Date | number | 'start' | 'end'" }
   },
   "FormattingFn": {
     "meta": { "isTypeAlias": true },

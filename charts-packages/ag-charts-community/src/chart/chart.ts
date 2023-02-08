@@ -685,7 +685,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 continue;
             }
 
-            let labelData: PointLabelDatum[] = series.getLabelData();
+            const labelData: PointLabelDatum[] = series.getLabelData();
 
             if (!(labelData && isPointLabelDatum(labelData[0]))) {
                 continue;
@@ -908,7 +908,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             if (!series.visible || !series.rootGroup.visible) {
                 continue;
             }
-            let { match, distance } = series.pickNode(point, pickModes) ?? {};
+            const { match, distance } = series.pickNode(point, pickModes) ?? {};
             if (!match || distance == null) {
                 continue;
             }
@@ -1089,7 +1089,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.lastPick = event.currentHighlight ? { datum: event.currentHighlight } : undefined;
 
-        let updateAll = newSeries == null || lastSeries == null;
+        const updateAll = newSeries == null || lastSeries == null;
         if (updateAll) {
             this.update(ChartUpdateType.SERIES_UPDATE);
         } else {

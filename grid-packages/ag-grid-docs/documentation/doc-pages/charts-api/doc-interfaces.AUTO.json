@@ -4332,9 +4332,9 @@
   "AgHierarchySeriesOptions": {},
   "AgCartesianChartOptions": {
     "type": {
-      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "description": "/** If specified overrides the default series type. */",
       "type": {
-        "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
+        "returnType": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
         "optional": true
       }
     },
@@ -4405,8 +4405,8 @@
   },
   "AgPolarChartOptions": {
     "type": {
-      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
-      "type": { "returnType": "'polar' | 'pie'", "optional": true }
+      "description": "/** If specified overrides the default series type. */",
+      "type": { "returnType": "'pie'", "optional": true }
     },
     "series": {
       "description": "/** Series configurations. */",
@@ -4467,8 +4467,8 @@
   },
   "AgHierarchyChartOptions": {
     "type": {
-      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
-      "type": { "returnType": "'hierarchy' | 'treemap'", "optional": true }
+      "description": "/** If specified overrides the default series type. */",
+      "type": { "returnType": "'treemap'", "optional": true }
     },
     "data": { "type": { "returnType": "any", "optional": true } },
     "series": {
@@ -5337,9 +5337,17 @@
   "NumberFormat": {},
   "DateFormat": {},
   "ValueFormat": {},
-  "FloorFn": {},
-  "OffsetFn": {},
-  "StepTestFn": {},
+  "EncodeFn": {},
+  "DecodeFn": {},
+  "RangeFn": {},
+  "CountableTimeIntervalOptions": {
+    "snapTo": {
+      "type": {
+        "returnType": "Date | number | 'start' | 'end'",
+        "optional": true
+      }
+    }
+  },
   "FormattingFn": {},
   "PaddingString": {},
   "FormattingString": {},

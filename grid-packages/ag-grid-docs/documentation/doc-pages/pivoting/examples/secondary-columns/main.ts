@@ -31,15 +31,15 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   // this is a callback that gets called on each column definition
   processPivotResultColDef: (colDef: ColDef) => {
-    if (colDef.pivotValueColumn?.getId() === 'gold') {
-      colDef.headerName = colDef.headerName?.toUpperCase();
+    if (colDef.pivotValueColumn && colDef.pivotValueColumn.getId() === 'gold') {
+      colDef.headerName = colDef.headerName ? colDef.headerName.toUpperCase() : undefined;
     }
   },
 
   // this is a callback that gets called on each group definition
   processPivotResultColGroupDef: (colGroupDef: ColGroupDef) => {
     // for fun, add a css class for 2010
-    if (colGroupDef.pivotKeys?.length && colGroupDef.pivotKeys[0] === '2010') {
+    if (colGroupDef.pivotKeys && colGroupDef.pivotKeys.length && colGroupDef.pivotKeys[0] === '2010') {
       colGroupDef.headerClass = 'color-background'
     }
     // put 'year' in front of each group

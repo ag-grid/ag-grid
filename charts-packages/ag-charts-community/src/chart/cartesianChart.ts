@@ -9,7 +9,7 @@ type VisibilityMap = { crossLines: boolean; series: boolean };
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
-    static type: 'cartesian' | 'groupedCategory' = 'cartesian';
+    static type = 'cartesian';
 
     /** Integrated Charts feature state - not used in Standalone Charts. */
     public readonly paired: boolean = true;
@@ -169,7 +169,7 @@ export class CartesianChart extends Chart {
         };
 
         let clipSeries = false;
-        let primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
+        const primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
 
         const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(lastPassSeriesRect, axisWidths) : {};
         const axisBound = this.buildAxisBound(bounds, axisWidths, crossLinePadding, visibility);
@@ -181,7 +181,7 @@ export class CartesianChart extends Chart {
         axes.forEach((axis) => {
             const { position } = axis;
 
-            let {
+            const {
                 clipSeries: newClipSeries,
                 axisThickness,
                 axisOffset,
@@ -261,7 +261,7 @@ export class CartesianChart extends Chart {
     }
 
     private buildSeriesRect(axisBound: BBox, axisWidths: Partial<Record<AgCartesianAxisPosition, number>>) {
-        let result = axisBound.clone();
+        const result = axisBound.clone();
         const { top, bottom, left, right } = axisWidths;
         result.x += left ?? 0;
         result.y += top ?? 0;

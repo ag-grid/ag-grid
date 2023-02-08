@@ -60,7 +60,7 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
     const dataFileContent = dataFileExists ? cleanTs(fs.readFileSync(dataFile)) : [];
     const exampleFileLines = cleanTs(fs.readFileSync(exampleFile));
 
-    let evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
+    const evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
     // @ts-ignore - used in the eval() call.
     const { AgChart, time, Marker } = require('../../main');
     try {

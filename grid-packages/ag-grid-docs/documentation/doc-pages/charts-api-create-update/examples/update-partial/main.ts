@@ -58,7 +58,7 @@ function swapTitles() {
 
 function rotateLegend() {
   // Mutate legend.
-  const position  = chart.getOptions().legend?.position
+  const position  = chart.getOptions().legend!.position
 
   const currentIdx = positions.indexOf(position || "top")
   const newPosition = positions[(currentIdx + 1) % positions.length]

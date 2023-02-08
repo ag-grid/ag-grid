@@ -182,6 +182,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('cut', 'Cut'),
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
+                        icon: _.createIconNoSpan('clipboardCut', this.gridOptionsService, null),
                         disabled: !isEditable,
                         action: () => this.clipboardService.cutToClipboard()
                     };
@@ -193,7 +194,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
-                        disabled: false,
+                        disabled: true,
                         icon: _.createIconNoSpan('clipboardPaste', this.gridOptionsService, null),
                         action: () => this.clipboardService.pasteFromClipboard()
                     };

@@ -22,7 +22,6 @@ const ChartExample = {
   data: function () {
     return {
       chartOptions1: {
-        type: "cartesian",
         theme: myTheme,
         autoSize: true,
         title: {
