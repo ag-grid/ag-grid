@@ -428,7 +428,9 @@ export class GridBodyCtrl extends BeanStub {
     ) {
         const removeScrollWidth = this.isVerticalScrollShowing();
         const scrollWidthToRemove = removeScrollWidth ? this.gridOptionsService.getScrollbarWidth() : 0;
-        const bodyViewportWidth = getInnerWidth(this.eBodyViewport);
+        // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
+        // because we change the width of the bodyViewport to hide the real browser scrollbar
+        const bodyViewportWidth = getInnerWidth(this.eGridBody);
         const availableWidth = bodyViewportWidth - scrollWidthToRemove;
 
         if (availableWidth > 0) {
