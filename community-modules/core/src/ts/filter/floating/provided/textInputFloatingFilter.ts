@@ -46,10 +46,8 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         }
 
         this.setLastTypeFromModel(model);
-        this.params.parentFilterInstance(filterInstance => {
-            this.eFloatingFilterInput.setValue(model ? filterInstance.getModelAsString(model) : null);
-            this.setEditable(this.canWeEditAfterModelFromParentFilter(model));
-        });
+        this.eFloatingFilterInput.setValue(this.getFilterModelFormatter().getModelAsString(model));
+        this.setEditable(this.canWeEditAfterModelFromParentFilter(model));
     }
 
     public init(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {

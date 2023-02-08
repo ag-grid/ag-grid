@@ -2,11 +2,13 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { DateCompWrapper } from './dateCompWrapper';
-import { ConditionPosition, ISimpleFilterModel, SimpleFilter, Tuple } from '../simpleFilter';
+import { ConditionPosition, ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
 import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
 import { serialiseDate, parseDateTimeFromString, dateToFormattedString } from '../../../utils/date';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
+import { LocaleService } from '../../../localeService';
+import { OptionsFactory } from '../optionsFactory';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -63,6 +65,39 @@ export interface IDateComparatorFunc {
 const DEFAULT_MIN_YEAR = 1000;
 const DEFAULT_MAX_YEAR = Infinity;
 
+export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
+    constructor(
+        private readonly dateFilterParams: DateFilterParams,
+        localeService: LocaleService,
+        optionsFactory: OptionsFactory
+    ) {
+        super(localeService, optionsFactory);
+    }
+
+    protected conditionToString(condition: DateFilterModel, options?: IFilterOptionDef): string {
+        const { type } = condition;
+        const { numberOfInputs } = options || {};
+        const isRange = type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
+
+        const dateFrom = parseDateTimeFromString(condition.dateFrom);
+        const dateTo = parseDateTimeFromString(condition.dateTo);
+
+        const format = this.dateFilterParams.inRangeFloatingFilterDateFormat;
+        if (isRange) {
+            const formattedFrom = dateFrom !== null ? dateToFormattedString(dateFrom, format) : 'null';
+            const formattedTo = dateTo !== null ? dateToFormattedString(dateTo, format) : 'null';
+            return `${formattedFrom}-${formattedTo}`;
+        }
+
+        if (dateFrom != null) {
+            return dateToFormattedString(dateFrom, format);
+        }
+
+        // cater for when the type doesn't need a value
+        return `${type}`;
+    }
+}
+
 export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrapper> {
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
@@ -89,6 +124,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     private dateFilterParams: DateFilterParams;
     private minValidYear: number = DEFAULT_MIN_YEAR;
     private maxValidYear: number = DEFAULT_MAX_YEAR;
+    private filterModelFormatter: DateFilterModelFormatter;
 
     constructor() {
         super('dateFilter');
@@ -154,6 +190,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         }
 
         this.createDateComponents();
+        this.filterModelFormatter = new DateFilterModelFormatter(this.dateFilterParams, this.localeService, this.optionsFactory);
     }
 
     private createDateComponents(): void {
@@ -283,26 +320,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return result;
     }
 
-    protected conditionToString(condition: DateFilterModel, options?: IFilterOptionDef): string {
-        const { type } = condition;
-        const { numberOfInputs } = options || {};
-        const isRange = type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
-
-        const dateFrom = parseDateTimeFromString(condition.dateFrom);
-        const dateTo = parseDateTimeFromString(condition.dateTo);
-
-        const format = this.dateFilterParams.inRangeFloatingFilterDateFormat;
-        if (isRange) {
-            const formattedFrom = dateFrom !== null ? dateToFormattedString(dateFrom, format) : 'null';
-            const formattedTo = dateTo !== null ? dateToFormattedString(dateTo, format) : 'null';
-            return `${formattedFrom}-${formattedTo}`;
-        }
-
-        if (dateFrom != null) {
-            return dateToFormattedString(dateFrom, format);
-        }
-
-        // cater for when the type doesn't need a value
-        return `${type}`;
+    public getModelAsString(model: ISimpleFilterModel): string {
+        return this.filterModelFormatter.getModelAsString(model) ?? '';
     }
 }

@@ -1,7 +1,7 @@
 import { Component } from '../../../widgets/component';
 import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 import { ProvidedFilterModel } from '../../../interfaces/iFilter';
-import { ICombinedSimpleModel, ISimpleFilter, ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
+import { ICombinedSimpleModel, ISimpleFilter, ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter } from '../../provided/simpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
 import { ScalarFilterParams } from '../../provided/scalarFilter';
 import { FilterChangedEvent } from '../../../events';
@@ -16,9 +16,11 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract setEditable(editable: boolean): void;
 
+    protected abstract getFilterModelFormatter(): SimpleFilterModelFormatter;
+
     private lastType: string | null | undefined;
 
-    private optionsFactory: OptionsFactory;
+    protected optionsFactory: OptionsFactory;
 
     private readOnly: boolean;
 

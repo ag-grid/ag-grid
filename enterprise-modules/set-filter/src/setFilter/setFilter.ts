@@ -31,6 +31,7 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 import { SetFilterDisplayValue, SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import { SetFilterModelFormatter } from './setFilterModelFormatter';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
@@ -61,6 +62,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private createKey: (value: V | null, node?: IRowNode | null) => string | null;
 
     private valueFormatter?: (params: ValueFormatterParams) => string;
+    private readonly filterModelFormatter = new SetFilterModelFormatter();
 
     constructor() {
         super('setFilter');
@@ -288,7 +290,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
     }
 
-    private getFormattedValue(key: string | null): string | null {
+    public getFormattedValue(key: string | null): string | null {
         let value: V | string | null = this.valueModel!.getValue(key);
         // essentially get back the cell value
         if ((this.treeDataTreeList || this.groupingTreeList) && Array.isArray(value)) {
@@ -1082,18 +1084,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     public getModelAsString(model: SetFilterModel): string {
-        const { values } = model || {};
-
-        if (values == null || !this.valueModel == null) {
-            return '';
-        }
-
-        const availableKeys = values.filter(v => this.valueModel!.isKeyAvailable(v));
-        const numValues = availableKeys.length;
-
-        const formattedValues = availableKeys.slice(0, 10).map(key => this.getFormattedValue(key));
-
-        return `(${numValues}) ${formattedValues.join(',')}${numValues > 10 ? ',...' : ''}`;
+        return this.filterModelFormatter.getModelAsString(model, this);
     }
 }
 

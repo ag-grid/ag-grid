@@ -1,11 +1,11 @@
-import { DateFilter, DateFilterModel } from './dateFilter';
+import { DateFilter, DateFilterModel, DateFilterModelFormatter, DateFilterParams } from './dateFilter';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { IDateParams } from '../../../rendering/dateComponent';
 import { IFloatingFilterParams } from '../../floating/floatingFilter';
 import { DateCompWrapper } from './dateCompWrapper';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { ISimpleFilterModel } from '../simpleFilter';
+import { ISimpleFilterModel, SimpleFilterModelFormatter } from '../simpleFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import { FilterChangedEvent } from '../../../events';
 import { ProvidedFilter } from '../providedFilter';
@@ -23,6 +23,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private dateComp: DateCompWrapper;
     private params: IFloatingFilterParams<DateFilter>;
+    private filterParams: DateFilterParams;
+    private filterModelFormatter: SimpleFilterModelFormatter;
 
     constructor() {
         super(/* html */`
@@ -39,11 +41,13 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     public init(params: IFloatingFilterParams<DateFilter>): void {
         super.init(params);
         this.params = params;
+        this.filterParams = params.filterParams;
         this.createDateComponent();
         const translate = this.localeService.getLocaleTextFunc();
         this.eReadOnlyText
             .setDisabled(true)
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
+        this.filterModelFormatter = new DateFilterModelFormatter(this.filterParams, this.localeService, this.optionsFactory);
     }
 
     protected setEditable(editable: boolean): void {
@@ -76,10 +80,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
             this.eReadOnlyText.setValue('');
         } else {
-            this.params.parentFilterInstance(filterInstance => {
-                this.eReadOnlyText.setValue(model ? filterInstance.getModelAsString(model) : null);
-                this.dateComp.setDate(null);
-            });
+            this.eReadOnlyText.setValue(this.filterModelFormatter.getModelAsString(model));
+            this.dateComp.setDate(null);
         }
     }
 
@@ -105,5 +107,9 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         this.dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eDateWrapper);
 
         this.addDestroyFunc(() => this.dateComp.destroy());
+    }
+
+    protected getFilterModelFormatter(): SimpleFilterModelFormatter {
+        return this.filterModelFormatter;
     }
 }

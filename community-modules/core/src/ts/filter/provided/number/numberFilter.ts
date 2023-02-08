@@ -1,5 +1,5 @@
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { ConditionPosition, ISimpleFilterModel, SimpleFilter, Tuple } from '../simpleFilter';
+import { ConditionPosition, ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
@@ -42,6 +42,24 @@ export interface INumberFilterParams extends IScalarFilterParams {
     numberParser?: (text: string | null) => number | null;
 }
 
+export class NumberFilterModelFormatter extends SimpleFilterModelFormatter {
+    protected conditionToString(condition: NumberFilterModel, options?: IFilterOptionDef): string {
+        const { numberOfInputs } = options || {};
+        const isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
+
+        if (isRange) {
+            return `${condition.filter}-${condition.filterTo}`;
+        }
+
+        // cater for when the type doesn't need a value
+        if (condition.filter != null) {
+            return `${condition.filter}`;
+        }
+
+        return `${condition.type}`;
+    }
+}
+
 export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
@@ -62,6 +80,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     @RefSelector('eValue-index1-2') private readonly eValueTo2: AgInputTextField;
 
     private numberFilterParams: NumberFilterParams;
+    private filterModelFormatter: SimpleFilterModelFormatter;
 
     constructor() {
         super('numberFilter');
@@ -104,6 +123,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         }
 
         super.setParams(params);
+        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory);
     }
 
     protected getDefaultFilterOptions(): string[] {
@@ -202,19 +222,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return null;
     }
 
-    protected conditionToString(condition: NumberFilterModel, options?: IFilterOptionDef): string {
-        const { numberOfInputs } = options || {};
-        const isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
-
-        if (isRange) {
-            return `${condition.filter}-${condition.filterTo}`;
-        }
-
-        // cater for when the type doesn't need a value
-        if (condition.filter != null) {
-            return `${condition.filter}`;
-        }
-
-        return `${condition.type}`;
+    public getModelAsString(model: ISimpleFilterModel): string {
+        return this.filterModelFormatter.getModelAsString(model) ?? '';
     }
 }

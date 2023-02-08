@@ -5,7 +5,8 @@ import {
     ISimpleFilterParams,
     ISimpleFilterModel,
     ISimpleFilterModelType,
-    Tuple
+    Tuple,
+    SimpleFilterModelFormatter
 } from '../simpleFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
@@ -76,6 +77,24 @@ export interface ITextFilterParams extends ISimpleFilterParams {
     trimInput?: boolean;
 }
 
+export class TextFilterModelFormatter extends SimpleFilterModelFormatter {
+    protected conditionToString(condition: TextFilterModel, options?: IFilterOptionDef): string {
+        const { numberOfInputs } = options || {};
+        const isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
+
+        if (isRange) {
+            return `${condition.filter}-${condition.filterTo}`;
+        }
+
+        // cater for when the type doesn't need a value
+        if (condition.filter != null) {
+            return `${condition.filter}`;
+        }
+
+        return `${condition.type}`;
+    }
+}
+
 export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     public static DEFAULT_FILTER_OPTIONS = [
         SimpleFilter.CONTAINS,
@@ -124,6 +143,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     private formatter: TextFormatter;
 
     private textFilterParams: TextFilterParams;
+    private filterModelFormatter: TextFilterModelFormatter;
 
     constructor() {
         super('textFilter');
@@ -147,6 +167,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         this.matcher = this.getTextMatcher();
         this.formatter = this.textFilterParams.textFormatter ||
             (this.textFilterParams.caseSensitive ? TextFilter.DEFAULT_FORMATTER : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
+        this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
 
     private getTextMatcher(): TextMatcher {
@@ -265,19 +286,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return formattedValues.some(v => this.matcher({ ...matcherParams, filterText: v }));
     }
 
-    protected conditionToString(condition: TextFilterModel, options?: IFilterOptionDef): string {
-        const { numberOfInputs } = options || {};
-        const isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
-
-        if (isRange) {
-            return `${condition.filter}-${condition.filterTo}`;
-        }
-
-        // cater for when the type doesn't need a value
-        if (condition.filter != null) {
-            return `${condition.filter}`;
-        }
-
-        return `${condition.type}`;
+    public getModelAsString(model: ISimpleFilterModel): string {
+        return this.filterModelFormatter.getModelAsString(model) ?? '';
     }
 }
