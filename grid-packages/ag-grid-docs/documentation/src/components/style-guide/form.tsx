@@ -39,7 +39,7 @@ export const Form = () => {
             <div className="grid">
                 <div>
                     <p className="item-label">
-                        Checkboxes <code>input type="checkbox"</code>
+                        Checkbox <code>input type="checkbox"</code>
                     </p>
                     <div>
                         <label htmlFor="checkbox-1">
@@ -55,7 +55,7 @@ export const Form = () => {
 
                 <div>
                     <p className="item-label">
-                        Range <code>input type="radio"</code>
+                        Radio <code>input type="radio"</code>
                     </p>
                     <div>
                         <label htmlFor="radio-1">
