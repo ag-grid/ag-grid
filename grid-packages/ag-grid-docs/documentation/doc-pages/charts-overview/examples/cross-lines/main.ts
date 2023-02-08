@@ -18,7 +18,6 @@ const options: AgChartOptions = {
           },
           number: {
             tick: {
-              count: 5,
             },
           },
         },

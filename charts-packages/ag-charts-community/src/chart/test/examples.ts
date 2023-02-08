@@ -782,7 +782,7 @@ export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS_LABELS: AgCartesianChartOptions = {
             type: 'number',
             position: 'left',
             tick: {
-                count: 100,
+                maxSpacing: 20,
             },
         },
     ],
@@ -814,7 +814,7 @@ export const LINE_TIME_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS: AgCartesianChar
             type: 'number',
             position: 'left',
             tick: {
-                count: 100,
+                maxSpacing: 20,
             },
         },
     ],
@@ -846,7 +846,7 @@ export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS: AgCartesianCh
             type: 'number',
             position: 'right',
             tick: {
-                count: 100,
+                maxSpacing: 20,
             },
         },
     ],

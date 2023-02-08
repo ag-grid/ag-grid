@@ -32,7 +32,7 @@ const options: AgChartOptions = {
       position: 'bottom',
       nice: false,
       tick: {
-        count: time.second.every(5),
+        interval: time.second.every(5),
       },
       label: {
         format: '%H:%M:%S',

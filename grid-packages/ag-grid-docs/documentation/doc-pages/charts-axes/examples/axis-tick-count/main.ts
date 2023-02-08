@@ -18,14 +18,12 @@ const options: AgCartesianChartOptions & { axes: AgNumberAxisThemeOptions[] } = 
       type: 'number',
       position: 'bottom',
       tick: {
-        count: 10,
       },
     },
     {
       type: 'number',
       position: 'left',
       tick: {
-        count: 10,
       },
     },
   ],

@@ -2,7 +2,6 @@ import day from '../../util/time/day';
 import {
     AgChartOptions,
     AgCartesianChartOptions,
-    AgAxisNumberTickOptions,
     AgAxisTimeTickOptions,
     AgAxisCategoryTickOptions,
 } from '../agChartOptions';
@@ -66,7 +65,7 @@ export const CATEGORY_AXIS_UNIFORM_BASIC_EXAMPLE: AgChartOptions = {
 export const TIME_AXIS_BASIC_EXAMPLE: AgChartOptions = {
     data: data.DATA_YOUTUBE_VIDEOS_STATS_BY_DATE,
     axes: [
-        { type: 'time', position: 'bottom', tick: { count: day } },
+        { type: 'time', position: 'bottom', tick: { interval: day.every(7, { snapTo: 'start' }) } },
         { type: 'number', position: 'left' },
     ],
     series: [
@@ -88,7 +87,7 @@ export const TIME_AXIS_MIN_MAX_DATE_EXAMPLE: AgCartesianChartOptions = {
             position: 'bottom',
             min: new Date(2022, 1, 15, 0, 0, 0),
             max: new Date(2022, 2, 15, 0, 0, 0),
-            tick: { count: day },
+            tick: { interval: day.every(3, { snapTo: 'start' }) },
         },
         { type: 'number', position: 'left' },
     ],
@@ -102,7 +101,7 @@ export const TIME_AXIS_MIN_MAX_NUMBER_EXAMPLE: AgCartesianChartOptions = {
             position: 'bottom',
             min: new Date(2022, 1, 15, 0, 0, 0).getTime(),
             max: new Date(2022, 2, 15, 0, 0, 0).getTime(),
-            tick: { count: day },
+            tick: { interval: day.every(3, { snapTo: 'start' }) },
         },
         { type: 'number', position: 'left' },
     ],
@@ -131,7 +130,7 @@ export const NUMBER_AXIS_LOG10_EXAMPLE: AgCartesianChartOptions = {
     data: data.DATA_YOUTUBE_VIDEOS_STATS_BY_DAY_OF_YEAR_LARGE_SCALE,
     axes: [
         { type: 'number', position: 'bottom' },
-        { type: 'log', position: 'left', base: 10, label: { format: '.0f' }, tick: { count: 4 } },
+        { type: 'log', position: 'left', base: 10, label: { format: '.0f' } },
     ],
 };
 
@@ -140,7 +139,7 @@ export const NUMBER_AXIS_LOG2_EXAMPLE: AgCartesianChartOptions = {
     data: data.DATA_YOUTUBE_VIDEOS_STATS_BY_DAY_OF_YEAR_LARGE_SCALE,
     axes: [
         { type: 'number', position: 'bottom' },
-        { type: 'log', position: 'left', base: 2, label: { format: '.0f' }, tick: { count: 4 } },
+        { type: 'log', position: 'left', base: 2, label: { format: '.0f' } },
     ],
 };
 
