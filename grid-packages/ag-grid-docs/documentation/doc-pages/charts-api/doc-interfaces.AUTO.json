@@ -5304,6 +5304,12 @@
   },
   "Module": {
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    },
     "initialiseModule": {
       "type": {
         "arguments": { "ctx": "ModuleContext" },

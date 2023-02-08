@@ -47,6 +47,7 @@ import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
 import { REGISTERED_MODULES } from '../module-support';
+import { Module } from '../util/module';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -397,7 +398,7 @@ function debug(message?: any, ...optionalParams: any[]): void {
 }
 
 function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOptions>, userOptions: AgChartOptions): void {
-    applyModules(chart, userOptions);
+    applyModules(chart, processedOptions);
 
     const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
     if (isAgCartesianChartOptions(processedOptions)) {
@@ -453,16 +454,24 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
 }
 
 function applyModules(chart: Chart, options: AgChartOptions) {
-    for (const module of REGISTERED_MODULES) {
-        const shouldBeEnabled = (options as any)[module.optionsKey] != null;
-        const isEnabled = chart.isModuleEnabled(module);
+    const matchingChartType = (module: Module) => {
+        return (
+            (chart instanceof CartesianChart && module.chartTypes.includes('cartesian')) ||
+            (chart instanceof PolarChart && module.chartTypes.includes('polar')) ||
+            (chart instanceof HierarchyChart && module.chartTypes.includes('hierarchy'))
+        );
+    };
+
+    for (const next of REGISTERED_MODULES) {
+        const shouldBeEnabled = matchingChartType(next) && (options as any)[next.optionsKey] != null;
+        const isEnabled = chart.isModuleEnabled(next);
 
         if (shouldBeEnabled === isEnabled) continue;
 
         if (shouldBeEnabled) {
-            chart.addModule(module);
+            chart.addModule(next);
         } else {
-            chart.removeModule(module);
+            chart.removeModule(next);
         }
     }
 }

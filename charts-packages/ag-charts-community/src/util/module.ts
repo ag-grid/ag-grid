@@ -29,6 +29,7 @@ export interface ModuleInstanceMeta<M extends ModuleInstance = ModuleInstance> {
 export interface Module<M extends ModuleInstance = ModuleInstance> {
     // Determines which sub-path of the options structure activates this module.
     optionsKey: string;
+    chartTypes: ('cartesian' | 'polar' | 'hierarchy')[];
     initialiseModule(ctx: ModuleContext): ModuleInstanceMeta<M>;
 }
 
@@ -53,6 +54,7 @@ import { Navigator } from '../chart/navigator/navigator';
 
 export const CHART_NAVIGATOR_MODULE: Module = {
     optionsKey: 'navigator',
+    chartTypes: ['cartesian'],
     initialiseModule(ctx) {
         return {
             instance: new Navigator(ctx),

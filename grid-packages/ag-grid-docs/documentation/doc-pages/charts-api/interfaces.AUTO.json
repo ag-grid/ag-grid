@@ -3798,6 +3798,7 @@
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": {
       "optionsKey": "string",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
       "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>"
     }
   },
