@@ -7,7 +7,7 @@ export function processFunction(code: string): string {
     return wrapOptionsUpdateCode(
         convertFunctionToProperty(code),
         'const clone = {...options};',
-        'this.setState({ options });', 'clone');
+        'this.setState({ clone });', 'clone');
 }
 
 function getImports(componentFilenames: string[], bindings): string[] {
