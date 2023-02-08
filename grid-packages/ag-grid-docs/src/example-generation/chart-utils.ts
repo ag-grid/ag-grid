@@ -10,7 +10,7 @@ export function wrapOptionsUpdateCode(
         return code;
     }
 
-    return code.replace(/options\./, localVar + '.')
+    return code.replace(/(?<!= )options\./g, localVar + '.')
         .replace(/(.*?)\{(.*)\}/s, `$1{\n${before}\n$2\n${after}\n}`);
 }
 

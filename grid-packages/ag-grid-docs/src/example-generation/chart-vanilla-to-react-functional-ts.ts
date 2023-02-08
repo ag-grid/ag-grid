@@ -24,10 +24,6 @@ function getImports(componentFilenames: string[], bindings): string[] {
     if (bindings.imports.length > 0) {
         addBindingImports(bindings.imports, imports, false, true);
     }
-    // const chartImport = getChartImports(bindings.imports, bindings.usesChartApi)
-    //if (chartImport) {
-    //imports.push(chartImport);
-    //}
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
