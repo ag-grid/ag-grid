@@ -319,7 +319,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             // Calculate positions of label separators for all nodes except the root.
             // Each separator is placed to the top of the current label.
             if (datum.parent && isLabelTree) {
-                let y = !datum.children.length
+                const y = !datum.children.length
                     ? datum.screenX - bandwidth / 2
                     : datum.screenX - (datum.leafCount * bandwidth) / 2;
 

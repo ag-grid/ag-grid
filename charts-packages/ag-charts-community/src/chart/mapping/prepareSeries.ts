@@ -111,7 +111,7 @@ const REDUCE_CONFIG: Record<string, ReduceConfig<any>> = {
  * Takes an array of bar or area series options objects and returns a single object with the combined area series options.
  */
 export function reduceSeries(series: any[]) {
-    let options: any = {};
+    const options: any = {};
 
     series.forEach((s, idx) => {
         Object.keys(s).forEach((prop) => {

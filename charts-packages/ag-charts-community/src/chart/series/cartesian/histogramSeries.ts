@@ -251,7 +251,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
     private calculateNiceBins(domain: number[], binCount: number): [number, number][] {
         let start = Math.floor(domain[0]);
-        let stop = domain[1];
+        const stop = domain[1];
         let binSize;
 
         const segments = binCount || 1;
@@ -264,7 +264,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         const bins: [number, number][] = [];
 
         for (let i = 0; i < count; i++) {
-            let a = Math.round((start + i * step) * 10) / 10;
+            const a = Math.round((start + i * step) * 10) / 10;
             let b = Math.round((start + (i + 1) * step) * 10) / 10;
             if (i === count - 1) {
                 b = Math.max(b, stop);

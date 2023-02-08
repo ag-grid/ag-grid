@@ -403,7 +403,7 @@ export abstract class CartesianSeries<
     }
 
     protected pickNodeExactShape(point: Point): SeriesNodePickMatch | undefined {
-        let result = super.pickNodeExactShape(point);
+        const result = super.pickNodeExactShape(point);
 
         if (result) {
             return result;
@@ -485,7 +485,7 @@ export abstract class CartesianSeries<
         const hitPointCoords =
             primaryDirection === ChartAxisDirection.X ? [hitPoint.x, hitPoint.y] : [hitPoint.y, hitPoint.x];
 
-        let minDistance = [Infinity, Infinity];
+        const minDistance = [Infinity, Infinity];
         let closestDatum: SeriesNodeDatum | undefined = undefined;
 
         for (const context of contextNodeData) {

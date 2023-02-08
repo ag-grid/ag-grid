@@ -231,7 +231,7 @@ abstract class AgChartInternal {
         const { overrideDevicePixelRatio } = userOptions;
         delete userOptions['overrideDevicePixelRatio'];
 
-        let processedOptions = prepareOptions(userOptions, mixinOpts);
+        const processedOptions = prepareOptions(userOptions, mixinOpts);
         let chart = proxy?.chart;
         if (chart == null || chartType(userOptions as any) !== chartType(chart.processedOptions as any)) {
             chart = AgChartInternal.createChartInstance(processedOptions, overrideDevicePixelRatio, chart);
@@ -365,7 +365,7 @@ abstract class AgChartInternal {
             return new PolarChart(document, overrideDevicePixelRatio, transferableResource);
         }
 
-        throw new Error(`AG Charts - couldn\'t apply configuration, check type of options: ${options['type']}`);
+        throw new Error(`AG Charts - couldn't apply configuration, check type of options: ${options['type']}`);
     }
 
     private static async updateDelta(
@@ -396,7 +396,7 @@ function debug(message?: any, ...optionalParams: any[]): void {
 }
 
 function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOptions>, userOptions: AgChartOptions): void {
-    let skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
+    const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
     if (isAgCartesianChartOptions(processedOptions)) {
         // Append axes to defaults.
         skip.push('axes');
@@ -522,7 +522,8 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
                 series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path }));
                 break;
             case 'bar':
-            // fall-through - bar and column are synonyms.
+                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path }));
+                break;
             case 'column':
                 series.push(applySeriesValues(new BarSeries(), seriesOptions, { path }));
                 break;

@@ -623,7 +623,7 @@ export class Legend {
             }
 
             markerLabel.visible = true;
-            let column = columns[columnIndex];
+            const column = columns[columnIndex];
 
             if (!column) {
                 return;

@@ -181,7 +181,7 @@ export class CartesianChart extends Chart {
         };
 
         let clipSeries = false;
-        let primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
+        const primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
 
         const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(lastPassSeriesRect, axisWidths) : {};
         const axisBound = this.buildAxisBound(bounds, axisWidths, crossLinePadding, visibility);
@@ -193,7 +193,7 @@ export class CartesianChart extends Chart {
         axes.forEach((axis) => {
             const { position } = axis;
 
-            let {
+            const {
                 clipSeries: newClipSeries,
                 axisThickness,
                 axisOffset,
@@ -273,7 +273,7 @@ export class CartesianChart extends Chart {
     }
 
     private buildSeriesRect(axisBound: BBox, axisWidths: Partial<Record<AgCartesianAxisPosition, number>>) {
-        let result = axisBound.clone();
+        const result = axisBound.clone();
         const { top, bottom, left, right } = axisWidths;
         result.x += left ?? 0;
         result.y += top ?? 0;
@@ -334,7 +334,7 @@ export class CartesianChart extends Chart {
         }
 
         if (axis.direction === ChartAxisDirection.X) {
-            let { min, max, enabled } = navigator;
+            const { min, max, enabled } = navigator;
             if (enabled) {
                 axis.visibleRange = [min, max];
             } else {

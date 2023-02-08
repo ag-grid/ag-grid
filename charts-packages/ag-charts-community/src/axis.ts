@@ -54,7 +54,7 @@ const OPT_TICK_COUNT = predicateWithMessage(
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
 const GRID_STYLE = predicateWithMessage(
     ARRAY(undefined, (o) => {
-        for (let key in o) {
+        for (const key in o) {
             if (!GRID_STYLE_KEYS.includes(key)) {
                 return false;
             }

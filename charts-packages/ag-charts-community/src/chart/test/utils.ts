@@ -196,7 +196,7 @@ export function extractImageData({
 }
 
 export function setupMockCanvas(): { nodeCanvas?: Canvas } {
-    let mockCtx: mockCanvas.MockContext = new mockCanvas.MockContext();
+    const mockCtx: mockCanvas.MockContext = new mockCanvas.MockContext();
 
     beforeEach(() => {
         resetIds();

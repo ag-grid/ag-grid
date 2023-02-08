@@ -91,7 +91,7 @@ const baseCrossLineOptions: AgCrossLineOptions = {
 };
 
 const createChartOptions = (rangeConfig: CrossLinesRangeConfig): Record<string, AgCartesianChartOptions> => {
-    let result: Record<string, AgCartesianChartOptions> = {};
+    const result: Record<string, AgCartesianChartOptions> = {};
 
     for (const name in rangeConfig) {
         result[name] = {
