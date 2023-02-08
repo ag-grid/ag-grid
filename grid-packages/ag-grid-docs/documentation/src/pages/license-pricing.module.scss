@@ -67,6 +67,7 @@
         a {
             margin-left: 0;
             margin-right: 0;
+            font-size: $font-size-large !important; // !important for .ag-styles specificity
         }
 
         a:first-child {
@@ -193,6 +194,7 @@
     }
 
     a {
+        font-size: $font-size-large !important; // !important for .ag-styles specificity
         display: inline-block;
     }
 }

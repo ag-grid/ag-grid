@@ -34,10 +34,10 @@ const LicensePricing = () => {
                     </p>
 
                     <div>
-                        <a className="button font-size-large" href="#">
+                        <a className="button" href="#">
                             Request a quote
                         </a>
-                        <a className="button-secondary font-size-large" href="#">
+                        <a className="button-secondary" href="#">
                             Contact sales
                         </a>
                     </div>
@@ -249,7 +249,7 @@ const LicensePricing = () => {
                         licence related questions please contact our friendly sales team.{' '}
                     </p>
                     <div>
-                        <a className="button-secondary font-size-large" href="#">
+                        <a className="button-secondary" href="#">
                             Contact sales
                         </a>
                     </div>
