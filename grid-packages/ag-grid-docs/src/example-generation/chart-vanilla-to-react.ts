@@ -6,8 +6,8 @@ import { wrapOptionsUpdateCode, getChartImports } from './chart-utils';
 export function processFunction(code: string): string {
     return wrapOptionsUpdateCode(
         convertFunctionToProperty(code),
-        'const clone = {...options};',
-        'this.setState({ clone });', 'clone');
+        'const options = {...this.state.options};',
+        'this.setState({ options });');
 }
 
 function getImports(componentFilenames: string[], bindings): string[] {
