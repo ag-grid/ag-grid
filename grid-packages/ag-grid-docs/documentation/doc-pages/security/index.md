@@ -49,8 +49,6 @@ The `style-src` policy requires the `unsafe-inline` due to the [DOM Row and Colu
 | The reason is that AG Grid doesn’t require `unsafe-inline` for scripts, but only for styles. The inline-style injection is only a problem if you allow users to upload their own content to your servers and then they can use injected styles to show that content over your page.
 |
 | Also, as styles aren't executed, a user would need to upload their own content to your servers and then reference it from an injected style. In order to fully prevent this scenario from occurring, we recommend sanitising user-uploaded content in your application to ensure that only valid content gets uploaded and fully prevent this risk.
-|
-| We hope this important context of the use of `unsafe-inline` allows you to better understand the low risk of its usage to your application.
 
 ### img-src
 
