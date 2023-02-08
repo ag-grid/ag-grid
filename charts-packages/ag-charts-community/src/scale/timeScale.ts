@@ -275,6 +275,12 @@ export class TimeScale extends ContinuousScale {
         }
         this.refresh();
 
+        const [t0, t1] = this.getDomain().map(toNumber);
+
+        if (this.interval !== undefined) {
+            return this.getTicksForInterval({ start: t0, stop: t1 });
+        }
+
         if (this.nice) {
             const { tickCount } = this;
             if (tickCount === 2) {
@@ -285,17 +291,11 @@ export class TimeScale extends ContinuousScale {
             }
         }
 
-        const [t0, t1] = this.getDomain().map(toNumber);
-
-        if (this.interval !== undefined) {
-            return this.getTicks({ start: t0, stop: t1 });
-        }
-
         const t = this.getTickInterval({ start: t0, stop: t1, count: this.tickCount });
-        return t ? t.range(new Date(t0 - 1), new Date(t1 + 1)) : []; // inclusive stop
+        return t ? t.range(new Date(t0), new Date(t1)) : []; // inclusive stop
     }
 
-    getTicks({ start, stop }: { start: number; stop: number }): Date[] {
+    private getTicksForInterval({ start, stop }: { start: number; stop: number }): Date[] {
         const { interval, tickIntervals } = this;
 
         if (!interval) {
@@ -303,7 +303,7 @@ export class TimeScale extends ContinuousScale {
         }
 
         if (interval instanceof TimeInterval) {
-            return interval.range(new Date(start - 1), new Date(stop + 1));
+            return interval.range(new Date(start), new Date(stop));
         }
 
         const absInterval = Math.abs(interval);
@@ -316,7 +316,7 @@ export class TimeScale extends ContinuousScale {
 
         if (timeInterval) {
             const i = timeInterval[0].every(absInterval / (timeInterval[2] / timeInterval[1]));
-            return i.range(new Date(start - 1), new Date(stop + 1));
+            return i.range(new Date(start), new Date(stop));
         }
 
         let date = new Date(start);
@@ -370,8 +370,9 @@ export class TimeScale extends ContinuousScale {
         }
 
         if (i) {
-            const n0 = i.floor(d0);
-            const n1 = i.ceil(d1);
+            const intervalRange = i.range(d0, d1, true);
+            const n0 = intervalRange[0];
+            const n1 = intervalRange[intervalRange.length - 1];
             this.niceDomain = [n0, n1];
         }
     }

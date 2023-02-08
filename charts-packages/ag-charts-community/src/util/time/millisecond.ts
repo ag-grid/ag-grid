@@ -1,14 +1,12 @@
 import { CountableTimeInterval } from './interval';
 
-function floor(date: Date) {
-    return date;
-}
-function offset(date: Date, milliseconds: number) {
-    date.setMilliseconds(date.getMilliseconds() + milliseconds);
-}
-function stepTest(date: Date, milliseconds: number) {
-    return Math.floor(date.getTime()) % milliseconds === 0;
+function encode(date: Date) {
+    return date.getTime();
 }
 
-export const millisecond = new CountableTimeInterval(floor, offset, stepTest);
+function decode(encoded: number) {
+    return new Date(encoded);
+}
+
+export const millisecond = new CountableTimeInterval(encode, decode);
 export default millisecond;

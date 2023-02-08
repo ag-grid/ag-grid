@@ -568,6 +568,12 @@ export interface AgAxisBaseTickOptions {
     /** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.
      */
     // values?: any[];
+    /** Minimum gap in pixels between tick lines.
+     */
+    // minSpacing?: number;
+    /** Maximum gap in pixels between tick lines.
+     */
+    // maxSpacing?: number;
 }
 
 export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {}
@@ -1698,11 +1704,8 @@ export type AgPolarSeriesOptions = AgPieSeriesOptions;
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
 export interface AgCartesianChartOptions extends AgBaseChartOptions {
-    /**
-     * If specified and matching a known series type, overrides the default series type. Otherwise
-     * the default series type is `'line'`.
-     */
-    type?: 'cartesian' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram';
+    /** If specified overrides the default series type. */
+    type?: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram';
     /** Axis configurations. */
     axes?: AgCartesianAxisOptions[];
     /** Series configurations. */
@@ -1712,21 +1715,15 @@ export interface AgCartesianChartOptions extends AgBaseChartOptions {
 }
 
 export interface AgPolarChartOptions extends AgBaseChartOptions {
-    /**
-     * If specified and matching a known series type, overrides the default series type. Otherwise
-     * the default series type is `'pie'`.
-     */
-    type?: 'polar' | 'pie';
+    /** If specified overrides the default series type. */
+    type?: 'pie';
     /** Series configurations. */
     series?: AgPolarSeriesOptions[];
 }
 
 export interface AgHierarchyChartOptions extends AgBaseChartOptions {
-    /**
-     * If specified and matching a known series type, overrides the default series type. Otherwise
-     * the default series type is `'treemap'`.
-     */
-    type?: 'hierarchy' | 'treemap';
+    /** If specified overrides the default series type. */
+    type?: 'treemap';
     data?: any;
     /** Series configurations. */
     series?: AgHierarchySeriesOptions[];

@@ -2,7 +2,6 @@ import { AgChartOptions, AgChart } from 'ag-charts-community'
 import { data } from './data'
 
 const options: AgChartOptions = {
-  type: 'hierarchy',
   container: document.getElementById('myChart'),
   data,
   series: [

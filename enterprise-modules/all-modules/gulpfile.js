@@ -91,8 +91,8 @@ const webpackTask = (minify, styles, libraryTarget) => {
             output: {
                 path: path.join(__dirname, "dist"),
                 filename: fileName,
-                library: "agGrid",
-                libraryTarget
+                library: libraryTarget === 'umd' ? undefined : "agGrid",
+                libraryTarget: libraryTarget === 'umd' ? 'window' : libraryTarget
             },
             module: {
                 rules: [

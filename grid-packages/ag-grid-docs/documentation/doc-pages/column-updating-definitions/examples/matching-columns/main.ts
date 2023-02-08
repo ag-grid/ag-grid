@@ -3,7 +3,7 @@ import { Grid, GridOptions, ValueGetterParams } from '@ag-grid-community/core'
 const athleteColumn = {
   headerName: 'Athlete',
   valueGetter: (params: ValueGetterParams<IOlympicData>) => {
-    return params.data?.athlete
+    return params.data ? params.data.athlete : undefined;
   },
 }
 
@@ -14,14 +14,14 @@ function getColDefsMedalsIncluded() {
       colId: 'myAgeCol',
       headerName: 'Age',
       valueGetter: (params: ValueGetterParams<IOlympicData>) => {
-        return params.data?.age
+        return params.data ? params.data.age : undefined;
       },
     },
     {
       headerName: 'Country',
       headerClass: 'country-header',
       valueGetter: (params: ValueGetterParams<IOlympicData>) => {
-        return params.data?.country
+        return params.data ? params.data.country : undefined;
       },
     },
     { field: 'sport' },
@@ -41,14 +41,14 @@ function getColDefsMedalsExcluded() {
       colId: 'myAgeCol',
       headerName: 'Age',
       valueGetter: (params: ValueGetterParams<IOlympicData>) => {
-        return params.data?.age
+        return params.data ? params.data.age : undefined;
       },
     },
     {
       headerName: 'Country',
       headerClass: 'country-header',
       valueGetter: (params: ValueGetterParams<IOlympicData>) => {
-        return params.data?.country
+        return params.data ? params.data.country : undefined;
       },
     },
     { field: 'sport' },

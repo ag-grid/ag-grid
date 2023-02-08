@@ -10,7 +10,7 @@ type VisibilityMap = { crossLines: boolean; series: boolean };
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
-    static type: 'cartesian' | 'groupedCategory' = 'cartesian';
+    static type = 'cartesian';
 
     /** Integrated Charts feature state - not used in Standalone Charts. */
     public readonly paired: boolean = true;

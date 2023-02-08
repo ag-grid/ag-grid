@@ -1247,8 +1247,11 @@ export class RowCtrl extends BeanStub {
         this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, () => {
             // if hover turned off, we don't add the class. we do this here so that if the application
             // toggles this property mid way, we remove the hover form the last row, but we stop
-            // adding hovers from that point onwards.
-            if (!this.beans.gridOptionsService.is('suppressRowHoverHighlight')) {
+            // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
+            if (
+                !this.beans.dragService.isDragging() &&
+                !this.beans.gridOptionsService.is('suppressRowHoverHighlight')
+            ) {
                 eRow.classList.add('ag-row-hover');
             }
         });

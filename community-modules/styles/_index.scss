@@ -545,6 +545,7 @@ $-non-variable-param-types: (
             $expected-type: map.get($param-types, $name);
             @if $expected-type {
                 $is-valid: -validate-value($value, $expected-type);
+
                 @if not $is-valid {
                     $expected: map.get($-param-type-descriptions, $expected-type);
                     $expected: $expected-type !default;
@@ -633,12 +634,14 @@ $border-styles: (none, hidden, dotted, dashed, solid, double, groove, ridge, ins
 }
 
 @function -validate-two-in-any-order($value, $type-a, $type-b) {
-    @if meta.type-of($value) != "list" {
+    @if meta.type-of($value) == "string" and $value == "none" {
+        @return true;
+    }
+
+    @if meta.type-of($value) != "list" or list.length($value) != 2 {
         @return false;
     }
-    @if list.length($value) != 2 {
-        @return false;
-    }
+
     $value-1: list.nth($value, 1);
     $value-2: list.nth($value, 2);
     @return (

@@ -28,6 +28,10 @@ import {
     predicateWithMessage,
     OPT_STRING,
     OPT_ARRAY,
+    LESS_THAN,
+    NUMBER_OR_NAN,
+    AND,
+    GREATER_THAN,
 } from './util/validation';
 import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
@@ -120,6 +124,12 @@ class AxisTick<S extends Scale<D, number>, D = any> {
 
     @Validate(OPT_ARRAY())
     values?: any[] = undefined;
+
+    @Validate(AND(NUMBER_OR_NAN(1), LESS_THAN('maxSpacing')))
+    minSpacing: number = NaN;
+
+    @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
+    maxSpacing: number = NaN;
 }
 
 export class AxisLabel {
@@ -229,6 +239,8 @@ export class AxisLabel {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 export class Axis<S extends Scale<D, number>, D = any> {
+    static readonly defaultTickMinSpacing = 80;
+
     readonly id = createId(this);
 
     @Validate(BOOLEAN)
@@ -568,16 +580,21 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let i = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
-        const defaultTickCount = ContinuousScale.defaultTickCount;
+        const { maxTickCount, minTickCount } = this.estimateTickCount({
+            minSpacing: this.tick.minSpacing,
+            maxSpacing: this.tick.maxSpacing,
+        });
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
 
         const checkForOverlap = avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
+        const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
+        const maxIterations = this.tick.count ? 10 : maxTickCount;
 
         while (labelOverlap) {
             let unchanged = true;
             while (unchanged) {
-                if (i >= defaultTickCount) {
+                if (i > maxIterations) {
                     // The iteration count `i` is used to reduce the default tick count until all labels fit without overlapping
                     // `i` cannot exceed `defaultTickCount` as it would lead to negative tick count values.
                     // Break out of the while loops when then iteration count reaches `defaultTickCount`
@@ -585,27 +602,32 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 }
 
                 const prevTicks = ticks;
+                const tickCount = Math.max(maxTickCount - i, minTickCount);
 
+                if (this.tick.values) {
+                    ticks = this.tick.values;
+                } else if (maxTickCount === 0) {
+                    ticks = [];
+                } else if (!secondaryAxis) {
+                    this.setTickCount(scale, this.tick.count ?? tickCount);
+                    ticks = scale.ticks!();
+                }
+
+                const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : i + 1;
                 const filteredTicks =
-                    !checkForOverlap || (continuous && this.tick.count === undefined) || i === 0
+                    !checkForOverlap || (continuous && this.tick.count === undefined)
                         ? undefined
-                        : ticks.filter((_, i) => i % 2 === 0);
+                        : ticks.filter((_, i) => i % keepEvery === 0);
+
+                if (filteredTicks) {
+                    ticks = filteredTicks;
+                }
 
                 let secondaryAxisTicks;
                 if (secondaryAxis) {
                     // `updateSecondaryAxisTicks` mutates `scale.domain` based on `primaryTickCount`
                     secondaryAxisTicks = this.updateSecondaryAxisTicks(primaryTickCount);
-                }
-
-                if (this.tick.values) {
-                    ticks = this.tick.values;
-                } else if (filteredTicks) {
-                    ticks = filteredTicks;
-                } else if (secondaryAxisTicks) {
                     ticks = secondaryAxisTicks;
-                } else {
-                    scale.tickCount = this.tick.count ?? defaultTickCount - i;
-                    ticks = scale.ticks!();
                 }
 
                 this.updateSelections({
@@ -704,6 +726,52 @@ export class Axis<S extends Scale<D, number>, D = any> {
             .attr('y2', 0);
 
         return primaryTickCount;
+    }
+
+    private estimateTickCount({ minSpacing, maxSpacing }: { minSpacing: number; maxSpacing: number }): {
+        minTickCount: number;
+        maxTickCount: number;
+    } {
+        const { requestedRange } = this;
+
+        const min = Math.min(...requestedRange);
+        const max = Math.max(...requestedRange);
+
+        const availableRange = max - min;
+
+        const defaultMinSpacing = Math.max(
+            Axis.defaultTickMinSpacing,
+            availableRange / ContinuousScale.defaultTickCount
+        );
+
+        if (isNaN(minSpacing) && isNaN(maxSpacing)) {
+            minSpacing = defaultMinSpacing;
+            maxSpacing = availableRange;
+
+            if (minSpacing > maxSpacing) {
+                // Take automatic minSpacing if there is a conflict.
+                maxSpacing = minSpacing;
+            }
+        } else if (isNaN(minSpacing)) {
+            minSpacing = defaultMinSpacing;
+
+            if (minSpacing > maxSpacing) {
+                // Take user-suplied maxSpacing if there is a conflict.
+                minSpacing = maxSpacing;
+            }
+        } else if (isNaN(maxSpacing)) {
+            maxSpacing = availableRange;
+
+            if (minSpacing > maxSpacing) {
+                // Take user-suplied minSpacing if there is a conflict.
+                maxSpacing = minSpacing;
+            }
+        }
+
+        const maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
+        const minTickCount = Math.ceil(availableRange / maxSpacing);
+
+        return { minTickCount, maxTickCount };
     }
 
     protected calculateDomain() {

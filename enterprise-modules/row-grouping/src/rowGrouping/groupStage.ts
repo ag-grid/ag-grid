@@ -88,13 +88,13 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             this.shotgunResetEverything(details, afterColsChanged);
         }
 
-        this.positionLeafsAboveGroups(params.changedPath!);
+        this.positionLeafsAndGroups(params.changedPath!);
         this.orderGroups(details.rootNode);
 
         this.selectableService.updateSelectableAfterGrouping(details.rootNode);
     }
 
-    private positionLeafsAboveGroups(changedPath: ChangedPath) {
+    private positionLeafsAndGroups(changedPath: ChangedPath) {
         // we don't do group sorting for tree data
         if (this.usingTreeData) { return; }
         
@@ -102,14 +102,24 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             if (group.childrenAfterGroup) {
                 const leafNodes: RowNode[] = [];
                 const groupNodes: RowNode[] = [];
+                let unbalancedNode: RowNode | undefined;
 
                 group.childrenAfterGroup.forEach(row => {
                     if (!row.childrenAfterGroup?.length) {
                         leafNodes.push(row);
                     } else {
-                        groupNodes.push(row);
+                        if (row.key === '' && !unbalancedNode) {
+                            unbalancedNode = row;
+                        } else {
+                            groupNodes.push(row);
+                        }
                     }
                 });
+
+                if (unbalancedNode) {
+                    groupNodes.push(unbalancedNode);
+                }
+                
                 group.childrenAfterGroup = [...leafNodes, ...groupNodes];
             }
         }, false);

@@ -19,6 +19,7 @@ import { ColumnHoverService } from "./columnHoverService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
+import { DragService } from "../dragAndDrop/dragService";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
@@ -77,6 +78,7 @@ export class Beans {
     @Autowired('userComponentFactory') public userComponentFactory: UserComponentFactory;
     @Autowired('userComponentRegistry') public userComponentRegistry: UserComponentRegistry;
     @Autowired('animationFrameService') public animationFrameService: AnimationFrameService;
+    @Autowired('dragService') public dragService: DragService;
     @Autowired('dragAndDropService') public dragAndDropService: DragAndDropService;
     @Autowired('sortController') public sortController: SortController;
     @Autowired('filterManager') public filterManager: FilterManager;
