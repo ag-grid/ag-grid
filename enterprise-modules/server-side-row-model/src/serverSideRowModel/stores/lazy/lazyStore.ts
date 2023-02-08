@@ -207,6 +207,13 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         return this.cache.getRowCount();
     }
 
+    /** 
+     * Sets the current row count of the store, and whether the last row index is known
+     */
+    setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void {
+        this.cache.setRowCount(rowCount, isLastRowIndexKnown);
+    }
+
     /**
      * Given a display index, returns whether that row is within this store or a child store of this store
      * 

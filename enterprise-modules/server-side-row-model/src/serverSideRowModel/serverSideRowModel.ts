@@ -503,4 +503,15 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const foundRowNode = this.getRowNode(rowNode.id!);
         return !!foundRowNode;
     }
+
+    public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {
+        const rootStore = this.getRootStore();
+        if (rootStore) {
+            if (rootStore instanceof LazyStore) {
+                rootStore.setRowCount(rowCount, lastRowIndexKnown);
+                return;
+            }
+            console.error('AG Grid: Infinite scrolling must be enabled in order to set the row count.');
+        }
+    }
 }
