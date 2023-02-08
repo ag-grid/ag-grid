@@ -20,9 +20,9 @@ button,
     transition: background-color $default-transition-timing, border $default-transition-timing,
         box-shadow $default-transition-timing;
 
-    &:not(:disabled) {
-        cursor: pointer;
-    }
+    // &:not(:disabled):not(.disabled) {
+    //     cursor: pointer;
+    // }
 
     &:hover {
         background-color: var(--button-hover-color);
@@ -38,6 +38,18 @@ button,
     &:focus-visible {
         border-color: var(--button-hover-color);
         box-shadow: 0 0 0 4px var(--button-focus-box-shadow-color);
+    }
+
+    &:disabled,
+    &[disabled],
+    &.disabled {
+        --button-color: var(--platinum-gray);
+        --button-hover-color: var(--platinum-gray);
+        --button-active-color: var(--platinum-gray);
+        --button-text-color: var(--auro-metal);
+        --button-focus-box-shadow-color: var(--platinum-gray);
+
+        cursor: default;
     }
 }
 

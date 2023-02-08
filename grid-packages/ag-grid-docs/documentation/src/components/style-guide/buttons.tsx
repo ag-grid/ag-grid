@@ -17,7 +17,7 @@ export const Buttons = () => {
 
             <div>
                 <p className="item-label">
-                    <span>Primary:</span>
+                    <span>Secondary:</span>
                     <code>.button-secondary</code>
                 </p>
 
@@ -25,6 +25,18 @@ export const Buttons = () => {
                 <a className="button-secondary" href="">
                     Secondary (link as button)
                 </a>
+            </div>
+
+            <div>
+                <p className="item-label">
+                    <span>Disabled:</span>
+                    <code>&lt;button disabled&gt;</code> / <code>.button.disabled</code>
+                </p>
+
+                <button className="button" disabled>
+                    Disabled (attr)
+                </button>
+                <button className="button disabled">Disabled (.disabled)</button>
             </div>
 
             <div>

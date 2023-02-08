@@ -1,6 +1,6 @@
 @use "../../design-system/" as *;
 
-// Wrap in media query to show wide licence layouts for specifci screen sizes
+// Wrap in media query to show wide licence layouts for specific screen sizes
 @mixin wide-layout {
     @media screen and (min-width: $breakpoint-pricing-small) and (max-width: $breakpoint-pricing-medium),
         (min-width: $breakpoint-pricing-large) {
