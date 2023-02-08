@@ -4,6 +4,7 @@ import React from 'react';
 import { Alert } from '../components/alert/Alert';
 import { Licenses } from '../components/licenses/Licenses';
 import EnterpriseIcon from '../images/inline-svgs/enterprise.svg';
+import NPMIcon from '../images/inline-svgs/npm.svg';
 import SEO from './components/SEO';
 // @ts-ignore
 import styles from './license-pricing.module.scss';
@@ -54,12 +55,18 @@ const LicensePricing = () => {
                             use in production environments.
                         </p>
 
-                        <a href="" className="button-secondary">
-                            Get AG Grid Community at NPM
+                        <a
+                            href="https://www.npmjs.com/package/ag-grid-community"
+                            className={classnames(styles.NpmButton, 'button-secondary')}
+                        >
+                            <NPMIcon /> Get AG Grid Community at NPM
                         </a>
                         <br />
-                        <a href="" className="button-secondary">
-                            Get AG Grid Charts at NPM
+                        <a
+                            href="https://www.npmjs.com/package/ag-charts-community"
+                            className={classnames(styles.NpmButton, 'button-secondary')}
+                        >
+                            <NPMIcon /> Get AG Grid Charts at NPM
                         </a>
                     </div>
 

@@ -108,6 +108,13 @@
     left: 2px;
 }
 
+.NpmButton svg {
+    display: inline-block;
+    height: 2.5em;
+    margin: -1.15em 0.33em -1em 0;
+    fill: var(--button-text-color);
+}
+
 .videoExplainer {
     display: grid;
 
