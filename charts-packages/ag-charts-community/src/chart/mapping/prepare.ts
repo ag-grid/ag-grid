@@ -33,8 +33,15 @@ export function isAgCartesianChartOptions(input: AgChartOptions): input is AgCar
         return true;
     }
 
+    if ((specifiedType as string) === 'cartesian') {
+        doOnce(
+            () => console.warn(`AG Charts - type '${specifiedType}' is deprecated, use a series type instead`),
+            `factory options type ${specifiedType}`
+        );
+        return true;
+    }
+
     switch (specifiedType) {
-        case 'cartesian':
         case 'area':
         case 'bar':
         case 'column':
@@ -54,9 +61,15 @@ export function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHie
         return false;
     }
 
+    if ((specifiedType as string) === 'hierarchy') {
+        doOnce(
+            () => console.warn(`AG Charts - type '${specifiedType}' is deprecated, use a series type instead`),
+            `factory options type ${specifiedType}`
+        );
+        return true;
+    }
+
     switch (specifiedType) {
-        case 'hierarchy':
-        // fall-through - hierarchy and treemap are synonyms.
         case 'treemap':
             return true;
 
@@ -71,9 +84,15 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
         return false;
     }
 
+    if ((specifiedType as string) === 'polar') {
+        doOnce(
+            () => console.warn(`AG Charts - type '${specifiedType}' is deprecated, use a series type instead`),
+            `factory options type ${specifiedType}`
+        );
+        return true;
+    }
+
     switch (specifiedType) {
-        case 'polar':
-        // fall-through - polar and pie are synonyms.
         case 'pie':
             return true;
 

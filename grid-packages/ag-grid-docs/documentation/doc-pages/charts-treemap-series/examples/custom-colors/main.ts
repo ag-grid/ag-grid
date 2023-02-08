@@ -2,7 +2,6 @@ import { AgChartOptions, AgTreemapSeriesOptions, AgChart } from 'ag-charts-commu
 import { getData } from './data';
 
 const options: AgChartOptions = {
-    type: 'hierarchy',
     container: document.getElementById('myChart'),
     data: getData(),
     series: [
