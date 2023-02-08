@@ -139,6 +139,21 @@ const saveChartIndexHtmlPermutations = (nodes, library, pageName, name, title, t
 
             writeIndexHtmlFile(vue3PackagesExampleInfo);
         }
+
+        // 3. For React, the different styles
+        if (framework === 'react') {
+
+            const alternativeStylePackagesExampleInfo =
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, false, 'packages');
+            writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
+
+            // Add the typescript versions for functional
+            if (useFunctionalReact) {
+                const reactTsStylePackages = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, true, 'packages');
+                writeIndexHtmlFile(reactTsStylePackages);
+            }
+        }
+
     } else if (type === 'multi' && framework === 'vue') {
         const vue3ExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, false, true, false);
 
@@ -190,7 +205,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
             <div></div>
             <div className={`anchor ${styles['example-runner__options']}`}>
                 {/* perversely we don't show the hook/class when the type is react as the example provided will be displayed "as is" */}
-                {library === 'grid' && exampleInfo.framework === 'react' && exampleInfo.type !== 'react' &&
+                {exampleInfo.framework === 'react' && exampleInfo.type !== 'react' &&
                     <ReactStyleSelector
                         useFunctionalReact={useFunctionalReact}
                         useTypescript={useTypescript}

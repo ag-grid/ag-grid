@@ -5,7 +5,7 @@ import { AgChartInstance, AgChart, AgChartOptions } from "ag-charts-community";
 export interface AgChartProps {
     options: AgChartOptions;
     onChartReady?: (chart: AgChartInstance) => void;
-    containerStyle: {};
+    containerStyle?: any;
 }
 
 interface AgChartState {
@@ -14,7 +14,7 @@ interface AgChartState {
 export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     static propTypes: any;
 
-    public chart?: AgChartInstance;
+    public chart!: AgChartInstance;
 
     protected chartRef: RefObject<HTMLElement>;
 
@@ -33,7 +33,7 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     createStyleForDiv() {
         return {
             height: "100%",
-            ...this.props.containerStyle
+            ...(this.props.containerStyle ?? {})
         };
     }
 
@@ -73,7 +73,7 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     componentWillUnmount() {
         if (this.chart) {
             this.chart.destroy();
-            this.chart = undefined;
+            this.chart = undefined as any;
         }
     }
 }

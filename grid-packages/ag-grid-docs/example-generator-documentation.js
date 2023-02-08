@@ -5,6 +5,7 @@ const sucrase = require("sucrase");
 const agGridVersion = "^" + require('../../community-modules/core/package.json').version;
 const agChartsVersion = "^" + require('../../charts-packages/ag-charts-community/package.json').version;
 const agChartsAngularVersion = "^" + require('../../charts-packages/ag-charts-angular/package.json').version;
+const agChartsReactVersion = "^" + require('../../charts-packages/ag-charts-react/package.json').version;
 const agGridEnterpriseVersion = "^" + require('../../enterprise-modules/core/package.json').version;
 const agGridReactVersion = "^" + require('../../community-modules/react/package.json').version;
 const agGridAngularVersion = "^" + require('../../community-modules/angular/package.json').version;
@@ -636,6 +637,9 @@ function addPackageJson(type, framework, importType, basePath) {
             if (framework === 'angular') {
                 addDependency('ag-charts-angular', agChartsAngularVersion);
             }
+            if (framework === 'reactFunctionalTs') {
+                addDependency('ag-charts-react', agChartsReactVersion);
+            }
         }
     }
 
@@ -643,21 +647,13 @@ function addPackageJson(type, framework, importType, basePath) {
 }
 
 function getGeneratorCode(prefix) {
-    const gridExamples = prefix === './src/example-generation/grid-' || false;
-
     const { parser } = require(`${prefix}vanilla-src-parser.ts`);
     const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
     const { vanillaToTypescript } = require(`${prefix}vanilla-to-typescript.ts`);
     const { vanillaToReact } = require(`${prefix}vanilla-to-react.ts`);
     const { vanillaToVue3 } = require(`${prefix}vanilla-to-vue3.ts`);
-
-    let vanillaToReactFunctional = null;
-    let vanillaToReactFunctionalTs = null;
-    vanillaToReactFunctional = require(`${prefix}vanilla-to-react-functional.ts`).vanillaToReactFunctional;
-    if (gridExamples) {
-        vanillaToReactFunctionalTs = require(`${prefix}vanilla-to-react-functional-ts.ts`).vanillaToReactFunctionalTs;
-    }
-
+    const { vanillaToReactFunctional } = require(`${prefix}vanilla-to-react-functional.ts`);
+    const { vanillaToReactFunctionalTs } = require(`${prefix}vanilla-to-react-functional-ts.ts`);
     const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
 
     return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript];

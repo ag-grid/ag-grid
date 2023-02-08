@@ -104,7 +104,7 @@ export class AppComponent {
 ${bindings.globals.join('\n')}
 `
         if (bindings.usesChartApi) {
-            appComponent = appComponent.replace(/AgChart.(\w*)\((\w*),/g, 'AgChart.$1(this.agChart.chart!,');
+            appComponent = appComponent.replace(/AgChart.(\w*)\((\w*)(,|\))/g, 'AgChart.$1(this.agChart.chart!$3');
             appComponent = appComponent.replace(/\(this.agChart.chart!, options/g, '(this.agChart.chart!, this.options');
         }
         return appComponent;

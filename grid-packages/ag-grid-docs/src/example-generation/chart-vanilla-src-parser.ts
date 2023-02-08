@@ -129,7 +129,7 @@ export function internalParser(js, html) {
     });
 
     // For React we need to identify the external dependencies for callbacks to prevent stale closures
-    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'AgChart', 'chart'])
+    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'AgChart', 'chart', 'window', 'Image'])
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelFunction(node),
         apply: (bindings, node: SignatureDeclaration) => {
