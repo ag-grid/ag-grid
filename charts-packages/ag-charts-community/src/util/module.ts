@@ -47,19 +47,3 @@ export const REGISTERED_MODULES: Module[] = [];
 export function registerModule(module: Module) {
     REGISTERED_MODULES.push(module);
 }
-
-// TODO: Move the following into related modules.
-
-import { Navigator } from '../chart/navigator/navigator';
-
-export const CHART_NAVIGATOR_MODULE: Module = {
-    optionsKey: 'navigator',
-    chartTypes: ['cartesian'],
-    initialiseModule(ctx) {
-        return {
-            instance: new Navigator(ctx),
-        };
-    },
-};
-
-registerModule(CHART_NAVIGATOR_MODULE);
