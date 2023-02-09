@@ -24,7 +24,7 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     }
 
     render() {
-        return createElement<any>("div", {
+        return createElement("div", {
             style: this.createStyleForDiv(),
             ref: this.chartRef
         });
