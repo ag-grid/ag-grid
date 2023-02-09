@@ -54,14 +54,9 @@ input[type='submit'],
     .icon {
         display: inline-block;
         position: relative;
-        width: 2em;
-        height: 2em;
         bottom: 0.05em;
         margin: -1em 0.125em -1em 0;
-
-        svg {
-            fill: var(--button-text-color);
-        }
+        fill: var(--button-text-color);
     }
 }
 

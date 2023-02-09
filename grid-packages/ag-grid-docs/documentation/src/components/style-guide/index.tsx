@@ -3,6 +3,7 @@ import { Buttons } from './buttons';
 import { Color } from './color';
 import { Containers } from './containers';
 import { Form } from './form';
+import { Icons } from './icons';
 import { Sizes } from './sizes';
 import './style-guide.scss';
 import { Tables } from './tables';
@@ -38,6 +39,11 @@ const SECTIONS: SectionGroup[] = [
                 id: 'sizes',
                 name: 'Sizes',
                 content: <Sizes />,
+            },
+            {
+                id: 'icons',
+                name: 'Icons',
+                content: <Icons />,
             },
         ],
     },

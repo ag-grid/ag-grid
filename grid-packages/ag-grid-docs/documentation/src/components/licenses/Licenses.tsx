@@ -1,8 +1,6 @@
 import classnames from 'classnames';
 import React from 'react';
-import EmailIcon from '../../images/inline-svgs/email.svg';
-import EnterpriseIcon from '../../images/inline-svgs/enterprise.svg';
-import PurchaseIcon from '../../images/inline-svgs/purchase.svg';
+import { Icon } from '../../components/Icon';
 // @ts-ignore
 import styles from './Licenses.module.scss';
 
@@ -93,10 +91,7 @@ const License = (props: LicenseData) => {
             <div className={classnames(styles.top, 'top')}>
                 <div className={styles.licenseMeta}>
                     <p className="font-size-small text-secondary">
-                        AG Grid Enterprise{' '}
-                        <span>
-                            <EnterpriseIcon />
-                        </span>
+                        AG Grid Enterprise <Icon name="enterprise" />
                     </p>
                     <p className={classnames(styles.name, 'font-size-extra-large', 'bold-text')}>{name}</p>
                     <p className="font-size-small text-secondary">{subHeading}</p>
@@ -118,9 +113,7 @@ const License = (props: LicenseData) => {
 
                 <div className={styles.licenseActions}>
                     <a className="button button-secondary" href={buyLink}>
-                        <span className="icon">
-                            <PurchaseIcon />
-                        </span>{' '}
+                        <Icon name="creditCard" />
                         Pay with card
                     </a>
                     <a className="button" href={`mailto:info@ag-grid.com?subject=${name} licence quote request`}>

@@ -2,9 +2,8 @@ import classnames from 'classnames';
 import ukraineFlagSVG from 'images/ukraine-flag.svg';
 import React from 'react';
 import { Alert } from '../components/alert/Alert';
+import { Icon } from '../components/Icon';
 import { Licenses } from '../components/licenses/Licenses';
-import EmailIcon from '../images/inline-svgs/email.svg';
-import EnterpriseIcon from '../images/inline-svgs/enterprise.svg';
 import NPMIcon from '../images/inline-svgs/npm.svg';
 import { hostPrefix } from '../utils/consts';
 import SEO from './components/SEO';
@@ -121,7 +120,7 @@ const LicensePricing = () => {
 
                     <div className={styles.enterprise}>
                         <h3>
-                            AG Grid Enterprise <EnterpriseIcon />
+                            AG Grid Enterprise <Icon name="enterprise" />
                         </h3>
                         <p>
                             <b>AG Grid Enterprise</b> offers advanced functionality like{' '}

@@ -46,6 +46,7 @@
     "@ag-grid-enterprise/sparklines": "~29.0.0",
     "@ag-grid-enterprise/status-bar": "~29.0.0",
     "@ag-grid-enterprise/viewport-row-model": "~29.0.0",
+    "@carbon/icons-react": "^11.16.0",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
     "@fortawesome/free-solid-svg-icons": "5.15.2",
     "@fortawesome/react-fontawesome": "0.1.14",
