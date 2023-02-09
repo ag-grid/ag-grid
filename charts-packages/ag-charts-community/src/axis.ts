@@ -42,6 +42,7 @@ import { TimeScale } from './scale/timeScale';
 import { AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight } from './chart/agChartOptions';
 import { LogScale } from './scale/logScale';
 import { Default } from './util/default';
+import { Deprecated } from './util/deprecation';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -118,6 +119,7 @@ class AxisTick<S extends Scale<D, number>, D = any> {
      *     axis.tick.count = month.every(6);
      */
     @Validate(OPT_TICK_COUNT)
+    @Deprecated('Use tick.interval or tick.minSpacing and tick.maxSpacing instead')
     count?: TickType<S> = undefined;
 
     @Validate(OPT_TICK_COUNT)
@@ -441,11 +443,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     private setTickInterval<S extends Scale<D, number>, D = any>(scale: S, interval?: any) {
-        if (!interval) {
-            return;
-        }
-
-        if (typeof interval === 'number') {
+        if (!interval || typeof interval === 'number') {
             scale.interval = interval;
             return;
         }

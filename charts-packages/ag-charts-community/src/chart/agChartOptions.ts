@@ -567,13 +567,13 @@ export interface AgAxisBaseTickOptions {
     color?: CssColor;
     /** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.
      */
-    // values?: any[];
+    values?: any[];
     /** Minimum gap in pixels between tick lines.
      */
-    // minSpacing?: number;
+    minSpacing?: number;
     /** Maximum gap in pixels between tick lines.
      */
-    // maxSpacing?: number;
+    maxSpacing?: number;
 }
 
 export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {}
@@ -581,11 +581,12 @@ export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {}
 export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
     /** A hint of how many ticks to use across an axis.
      * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.
+     * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.
      */
     count?: number;
     /** The step value between ticks specified as a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.
      */
-    // interval?: number;
+    interval?: number;
 }
 
 export interface AgAxisTimeTickOptions extends AgAxisBaseTickOptions {
@@ -597,7 +598,7 @@ export interface AgAxisTimeTickOptions extends AgAxisBaseTickOptions {
     count?: any;
     /** The step value between ticks specified as a number or a TimeInterval. If the configured interval results in dense ticks given the data domain, the ticks will be removed.
      */
-    // interval?: any;
+    interval?: any;
 }
 export interface AgAxisLabelFormatterParams {
     readonly value: any;

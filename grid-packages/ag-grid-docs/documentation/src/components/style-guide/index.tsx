@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Buttons } from './buttons';
 import { Color } from './color';
+import { Containers } from './containers';
 import { Form } from './form';
 import { Sizes } from './sizes';
 import './style-guide.scss';
@@ -69,9 +70,9 @@ const SECTIONS: SectionGroup[] = [
         groupName: 'Components',
         children: [
             {
-                id: 'example-components',
-                name: 'Example components',
-                content: <></>,
+                id: 'containers',
+                name: 'Containers',
+                content: <Containers />,
             },
         ],
     },

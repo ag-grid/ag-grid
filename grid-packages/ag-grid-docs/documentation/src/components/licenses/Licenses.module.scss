@@ -1,112 +1,228 @@
 @use "../../design-system/" as *;
 
-$single-application-color: rgb(0, 158, 222);
-$single-application-light-color: mix($single-application-color, $white, 10%);
-$multiple-applications-color: rgb(0, 157, 112);
-$multiple-applications-light-color: mix($multiple-applications-color, $white, 10%);
-$deployment-license-color: rgb(251, 173, 24);
-$deployment-license-light-color: mix($deployment-license-color, $white, 10%);
+// Wrap in media query to show wide license layouts for specific screen sizes
+@mixin wide-layout {
+    @media screen and (min-width: $breakpoint-pricing-small) and (max-width: $breakpoint-pricing-medium),
+        (min-width: $breakpoint-pricing-large) {
+        @content;
+    }
+}
 
 .licenses {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: $size-3;
-    margin-bottom: $size-5 !important; // !important for .ag-styles specificity
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        flex-direction: row;
-    }
 }
 
 .license {
-    --border-color: var(--license-color);
-
     display: flex;
     flex-direction: column;
-    gap: $size-4;
-    flex-grow: 1;
-    padding: $size-3;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    background-color: var(--ghost-white);
+    width: 100%;
 
-    img {
-        width: 4.5rem;
-        margin: 0 auto;
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        width: calc(50% - $size-3 / 2);
     }
-}
-
-.singleApplicationLicense {
-    --license-color: #{$single-application-color};
-    --license-hover-color: #{$single-application-light-color};
-}
-
-.multipleApplicationsLicense {
-    --license-color: #{$multiple-applications-color};
-    --license-hover-color: #{$multiple-applications-light-color};
-}
-
-.deploymentLicense {
-    --license-color: #{$deployment-license-color};
-    --license-hover-color: #{$deployment-license-light-color};
-}
-
-.licenseHeader {
-    display: flex;
-    flex-direction: column;
-    gap: $size-half;
-    text-align: center;
-
-    span {
-        color: var(--auro-metal); // Can be a CSS var when .ag-styles is removed
-    }
-
-    h2 {
-        --font-size: #{$font-size-large} !important; // !important for .ag-styles specificity
-
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
-    }
-}
-
-.licensePrice {
-    composes: font-size-small from global;
-
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    color: var(--auro-metal);
-    text-align: center;
 
     p {
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin: 0 !important; // !important for .ag-styles specificity
+    }
+
+    :global(.top),
+    :global(.bottom) {
+        padding-left: $size-2 !important; // !important for .ag-styles specificity
+        padding-right: $size-2 !important; // !important for .ag-styles specificity
+    }
+
+    :global(.top) {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto auto auto;
+        grid-template-areas: 'meta meta' 'benefits price' 'actions actions';
+        padding-top: $size-3 !important; // !important for .ag-styles specificity
+        padding-bottom: $size-2 !important; // !important for .ag-styles specificity
+
+        @include wide-layout {
+            grid-template-columns: auto auto;
+            grid-template-rows: auto auto;
+            grid-template-areas: 'meta price' 'benefits actions';
+            gap: $size-7 $size-3;
+            height: 100%;
+        }
+    }
+
+    :global(.bottom) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 'meta price' 'required required';
+        padding-top: $size-2 !important; // !important for .ag-styles specificity
+        padding-bottom: $size-2 !important; // !important for .ag-styles specificity
+
+        p {
+            font-size: 12px !important;
+        }
     }
 }
 
-.licenseFooter {
-    border-top: 1px solid var(--platinum-gray);
-    padding-top: $size-2;
-    text-align: center;
+.licenseMeta {
+    grid-area: meta;
+    display: flex;
+    flex-direction: column;
+
+    svg {
+        position: relative;
+        top: -1px;
+        width: 16px;
+        opacity: 0.6666;
+
+        * {
+            fill: var(--secondary-text-color) !important;
+        }
+    }
+
+    :global(.top) & {
+        margin-bottom: $size-5 !important; // !important for .ag-styles specificity
+        text-align: center;
+
+        @include wide-layout {
+            margin-bottom: 0 !important; // !important for .ag-styles specificity
+            text-align: left;
+        }
+    }
 }
 
-.buyButton {
-    --button-color: #{$white};
-    --button-text-color: var(--license-color);
-    --button-hover-color: var(--license-hover-color);
-    --button-active-color: var(--license-color);
-    --link-hover-color: var(--license-color);
+p.name {
+    :global(.top) & {
+        font-size: 46px !important; // !important for .ag-styles specificity
+        line-height: 1 !important; // !important for .ag-styles specificity
+        margin-top: $size-half !important; // !important for .ag-styles specificity
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
 
-    text-transform: uppercase;
-    text-align: center;
-    border: 1px solid var(--license-color) !important; // !important for .ag-styles specificity
-    font-weight: var(--font-weight-bold);
-}
+        @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
+            max-width: 340px;
+            margin-left: auto !important; // !important for .ag-styles specificity
+            margin-right: auto !important; // !important for .ag-styles specificity
+        }
+    }
 
-.buyText {
-    font-weight: var(--font-weight-bold);
+    :global(.bottom) & {
+        font-size: $font-size-large !important; // !important for .ag-styles specificity
+        line-height: 1 !important; // !important for .ag-styles specificity
+        margin-top: $size-2 !important; // !important for .ag-styles specificity
+        margin-bottom: auto !important; // !important for .ag-styles specificity
+
+        @include wide-layout {
+            margin-top: $size-1 !important; // !important for .ag-styles specificity
+            font-size: 30px !important; // !important for .ag-styles specificity
+        }
+    }
 }
 
 .price {
-    composes: font-size-large from global;
+    grid-area: price;
+    justify-self: end;
+    align-self: end;
+    text-align: right;
 
-    color: var(--dark-gunmetal-gray); // Can be a CSS var when .ag-styles is removed
+    :global(.bottom) & p:last-child {
+        max-width: 140px;
+    }
+
+    @include wide-layout {
+        align-self: start;
+    }
+}
+
+p.priceFullDollars {
+    line-height: 1.25 !important; // !important for .ag-styles specificity
+    letter-spacing: -0.05em;
+
+    &::before {
+        content: '$';
+    }
+
+    &::after {
+        @include wide-layout {
+            content: '.00';
+            font-size: $font-size-large;
+            font-weight: 400 !important; // !important for .ag-styles specificity
+            color: var(--secondary-text-color);
+        }
+    }
+
+    :global(.top) & {
+        font-size: 46px !important; // !important for .ag-styles specificity
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+
+        @include wide-layout {
+            font-size: $font-size-massive !important; // !important for .ag-styles specificity
+        }
+    }
+
+    :global(.bottom) & {
+        font-size: 36px !important; // !important for .ag-styles specificity
+    }
+}
+
+.licenseBenefits {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
+        min-height: 130px;
+    }
+
+    a {
+        display: block;
+        margin-top: $size-half !important; // !important for .ag-styles specificity
+
+        @include wide-layout {
+            margin-top: $size-2 !important; // !important for .ag-styles specificity
+        }
+    }
+}
+
+.licenseActions {
+    grid-area: actions;
+    margin-top: $size-5 !important; // !important for .ag-styles specificity
+
+    @include wide-layout {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: flex-end;
+        margin-top: 0 !important; // !important for .ag-styles specificity
+    }
+
+    a {
+        width: 100%;
+        text-align: center;
+
+        &:not(:last-child) {
+            margin-bottom: $size-half;
+        }
+
+        @include wide-layout {
+            width: unset;
+            text-align: unset;
+        }
+    }
+}
+
+.learnMoreLink {
+    &:hover::after {
+        transform: translateY(0.125em);
+    }
+
+    &::after {
+        content: '↓';
+        padding-left: 0.25em;
+        transition: transform $default-transition-timing;
+    }
+}
+
+.devLicenseRequired {
+    padding-top: $size-2 !important; // !important for .ag-styles specificity
+    grid-area: required;
 }

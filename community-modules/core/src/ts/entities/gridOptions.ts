@@ -201,7 +201,7 @@ export interface GridOptions<TData = any> {
     /**
      * Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
      * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
-     * Default: `4`
+     * Default: `20`
      */
     autoSizePadding?: number;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */
@@ -681,11 +681,11 @@ export interface GridOptions<TData = any> {
      * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * Default: `false`
      */
-     serverSideSortOnServer?: boolean;
-     /**
-     * When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
-      * Default: `false`
-      */
+    serverSideSortOnServer?: boolean;
+    /**
+    * When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
+     * Default: `false`
+     */
     serverSideFilterOnServer?: boolean;
     /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */
     serverSideSortingAlwaysResets?: boolean;
@@ -1279,7 +1279,7 @@ export interface ServerSideGroupLevelParams {
 }
 
 /** @deprecated use ServerSideGroupLevelParams instead */
-export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
+export interface ServerSideStoreParams extends ServerSideGroupLevelParams { }
 
 export interface LoadingCellRendererSelectorFunc<TData = any> {
     (params: ILoadingCellRendererParams<TData>): LoadingCellRendererSelectorResult | undefined;

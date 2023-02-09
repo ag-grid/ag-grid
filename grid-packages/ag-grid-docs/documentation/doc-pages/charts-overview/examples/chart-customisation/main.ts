@@ -60,7 +60,7 @@ const options: AgChartOptions = {
       position: "top",
       type: "time",
       tick: {
-        count: time.year.every(10),
+        interval: time.year.every(10),
         width: 3,
         color: "#3f7cbf",
       },
@@ -84,7 +84,6 @@ const options: AgChartOptions = {
       position: "right",
       type: "number",
       tick: {
-        count: 20,
         size: 10,
       },
       nice: false,

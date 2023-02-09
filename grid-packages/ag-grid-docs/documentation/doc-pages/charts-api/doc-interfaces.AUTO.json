@@ -1639,6 +1639,18 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "minSpacing": {
+      "description": "/** Minimum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxSpacing": {
+      "description": "/** Maximum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgAxisCategoryTickOptions": {
@@ -1653,11 +1665,27 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "minSpacing": {
+      "description": "/** Minimum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxSpacing": {
+      "description": "/** Maximum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgAxisNumberTickOptions": {
     "count": {
-      "description": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     */",
+      "description": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.\n     */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "interval": {
+      "description": "/** The step value between ticks specified as a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "width": {
@@ -1671,11 +1699,27 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "minSpacing": {
+      "description": "/** Minimum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxSpacing": {
+      "description": "/** Maximum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgAxisTimeTickOptions": {
     "count": {
       "description": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * The following intervals from the `agCharts.time` namespace can be used:\n     * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.\n     * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "interval": {
+      "description": "/** The step value between ticks specified as a number or a TimeInterval. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
       "type": { "returnType": "any", "optional": true }
     },
     "width": {
@@ -1689,6 +1733,18 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "minSpacing": {
+      "description": "/** Minimum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxSpacing": {
+      "description": "/** Maximum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgAxisLabelFormatterParams": {

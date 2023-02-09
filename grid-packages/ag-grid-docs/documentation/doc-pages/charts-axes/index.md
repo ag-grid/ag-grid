@@ -68,14 +68,14 @@ return on an investment stays consistent over time, the investment value chart w
 
 By default, the `log` axis attempts to render 10 ticks (and grid lines) per order of magnitude, depending
 on available space. If your range is wide enough, you may start getting too many ticks, in which case
-using a smaller value for the `tick: { count: xxx }` config might be necessary:
+using a larger value for the `tick: { minSpacing: xxx }` config might be necessary:
 
 ```js
 {
     type: 'log',
     position: 'left',
     tick: {
-      count: 3
+      minSpacing: 200,
     }
 }
 ```
@@ -133,13 +133,33 @@ Category axes show a tick for every category. Number and time axes try to segmen
 
 The `width`, `size` and `color` of chart axis ticks can be configured as explained in the [API reference](#reference-AgNumberAxisOptions-tick) below. These configs apply to all axis types.
 
-With number and time axes you can additionally set the `count` property - this will override the dynamic
-calculation based upon available rendering space:
+There are three main ways to control the density of the axis ticks. Configuring these properties will override the dynamic calculation based upon available rendering space:
 
-- In number axes the `count` means the desired number of ticks for the axis to use. Note that this value only serves as a hint and doesn't guarantee that this number of ticks is going to be used.
-- In time axes the `count` property can be set to a time interval, for example `agCharts.time.month`, to make an axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `agCharts.time.month.every(3)`.
+### Tick Min and Max Spacing
+`tick.minSpacing` amd `tick.maxSpaxing` configure the minimum and maximum gap which should be present between ticks.
+An appropriate number of ticks will be generated to satisfy the `tick.minSpacing` and `tick.maxSpacing` constraints.
 
-The example below demonstrates how the `count` property of the number axis can be used to reduce or increase the amount of ticks.
+### Tick Interval
+
+`tick.interval` is the step value between ticks specified in the units of the axis.
+
+For number axes, the `interval` property should be set to a `number` to show a tick every `interval` value.
+
+For time axes the `interval` property can be set to a time interval such as `agCharts.time.month`, which makes the axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `agCharts.time.month.every(3)`.
+
+Additionally, the time axes tick `interval` can be set to a `number` value representing milliseconds.
+
+If the configured `interval` results in dense ticks given the data domain, the ticks will be removed.
+
+### Tick Values
+
+`tick.values` can be used to configure the exact array of ticks to display. This should be an array of `number`, `date`, `string` or `object` values where ticks will be placed along the axis.
+
+These values will also be used as the tick labels unless a `label.format` or `label.formatter` is configured.
+
+
+The example below demonstrates how the above tick properties can be used to reduce or increase the amount of ticks.
+
 
 <chart-example title='Axis Tick Styling' name='axis-tick-count' type='generated'></chart-example>
 

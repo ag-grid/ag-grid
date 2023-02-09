@@ -54,7 +54,7 @@ const options: AgChartOptions = {
       position: 'bottom',
       type: 'time',
       tick: {
-        count: time.month.every(2),
+        interval: time.month.every(2),
       },
       title: {
         text: 'Date',
