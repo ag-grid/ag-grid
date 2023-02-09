@@ -9,7 +9,7 @@ type LicenseData = {
     name: string;
     id: string;
     subHeading: string;
-    licenceBenifits: string[];
+    licenseBenifits: string[];
     priceFullDollars: string;
     pricePer: string;
     buyLink: string;
@@ -22,7 +22,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         id: 'single-application',
         subHeading: 'Development License',
         priceFullDollars: '999',
-        licenceBenifits: ['Perpetual licence', '1 year of support', '1 year of updates'],
+        licenseBenifits: ['Perpetual license', '1 year of support', '1 year of updates'],
         pricePer: 'Developer',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=single',
     },
@@ -31,7 +31,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         name: 'Multiple Applications',
         id: 'multiple-applications',
         subHeading: 'Development License',
-        licenceBenifits: ['Unlimited applications', 'Perpetual licence', '1 year of support', '1 year of updates'],
+        licenseBenifits: ['Unlimited applications', 'Perpetual license', '1 year of support', '1 year of updates'],
         priceFullDollars: '1,499',
         pricePer: 'Developer',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=multi',
@@ -56,17 +56,17 @@ const Price = ({ priceFullDollars, pricePer }) => {
     );
 };
 
-const DevelopmentLicence = () => {
+const DevelopmentLicense = () => {
     return (
         <div className="bottom">
-            <div className={styles.licenceMeta}>
+            <div className={styles.licenseMeta}>
                 <p className={styles.name}>{DEPLOY_LICENSE_DATA.name}</p>
                 <p className="font-size-small text-secondary">{DEPLOY_LICENSE_DATA.subHeading}</p>
             </div>
 
             <Price priceFullDollars={DEPLOY_LICENSE_DATA.priceFullDollars} pricePer={DEPLOY_LICENSE_DATA.pricePer} />
 
-            <p className={classnames(styles.devLicenceRequired, 'font-size-extra-small')}>
+            <p className={classnames(styles.devLicenseRequired, 'font-size-extra-small')}>
                 Required to deploy for external users{' '}
                 <a className={styles.learnMoreLink} href={`#${DEPLOY_LICENSE_DATA.id}`}>
                     Learn more
@@ -77,12 +77,12 @@ const DevelopmentLicence = () => {
 };
 
 const License = (props: LicenseData) => {
-    const { name, id, subHeading, licenceBenifits, priceFullDollars, pricePer, buyLink } = props;
+    const { name, id, subHeading, licenseBenifits, priceFullDollars, pricePer, buyLink } = props;
 
     return (
         <>
             <div className="top">
-                <div className={styles.licenceMeta}>
+                <div className={styles.licenseMeta}>
                     <p className="font-size-small text-secondary">
                         AG Grid Enterprise{' '}
                         <span>
@@ -95,9 +95,9 @@ const License = (props: LicenseData) => {
 
                 <Price priceFullDollars={priceFullDollars} pricePer={pricePer} />
 
-                <div className={styles.licenceBenifits}>
+                <div className={styles.licenseBenifits}>
                     <ul className="font-size-small">
-                        {licenceBenifits.map((benifit, i) => {
+                        {licenseBenifits.map((benifit, i) => {
                             return <li key={i}>{benifit}</li>;
                         })}
                     </ul>
@@ -107,17 +107,17 @@ const License = (props: LicenseData) => {
                     </a>
                 </div>
 
-                <div className={styles.licenceActions}>
+                <div className={styles.licenseActions}>
                     <a className="button button-secondary" href={buyLink}>
                         Pay with card
                     </a>
-                    <a className="button" href={`mailto:info@ag-grid.com?subject=AG Grid - ${name} Licence Quote`}>
+                    <a className="button" href={`mailto:info@ag-grid.com?subject=AG Grid - ${name} License Quote`}>
                         Request a quote
                     </a>
                 </div>
             </div>
 
-            <DevelopmentLicence />
+            <DevelopmentLicense />
         </>
     );
 };

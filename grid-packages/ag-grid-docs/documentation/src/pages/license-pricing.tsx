@@ -24,11 +24,11 @@ const LicensePricing = () => {
                     </p>
                 </Alert>
 
-                <h1 className={styles.licencesHeader}>AG Grid Enterprise</h1>
+                <h1 className={styles.licensesHeader}>AG Grid Enterprise</h1>
 
                 <Licenses />
 
-                <div className={styles.bulkLicences}>
+                <div className={styles.bulkLicenses}>
                     <p className="text-secondary">
                         Bulk pricing discounts available. Use the pay with card buttons above to see pricing for up to
                         10 developers. For more than 10 developers or any questions with regards your purchase...
@@ -125,11 +125,11 @@ const LicensePricing = () => {
 
                 <div className={styles.videoExplainer}>
                     <div>
-                        <h3 className="font-size-extra-large">Questions about our licences? </h3>
+                        <h3 className="font-size-extra-large">Questions about our licenses? </h3>
                         <p>
-                            Watch our short video for an in-depth look at exactly how each AG Grid licence works. Learn
-                            which licence is right for you, how many licences you need for you team, and exactly when
-                            you need a deployment licence.
+                            Watch our short video for an in-depth look at exactly how each AG Grid license works. Learn
+                            which license is right for you, how many licenses you need for you team, and exactly when
+                            you need a deployment license.
                         </p>
                         <p>
                             If you have any other questions, or want to investigate volume pricing please{' '}
@@ -145,7 +145,7 @@ const LicensePricing = () => {
                     ></iframe>
                 </div>
 
-                <div className={styles.licencesInDetail}>
+                <div className={styles.licensesInDetail}>
                     <h3 className="font-size-extra-large">Our Licenses in Depth</h3>
 
                     <div className={classnames(styles.singleApplicationLicense, 'ag-card')} id="single-application">
@@ -208,7 +208,7 @@ const LicensePricing = () => {
                         </div>
                     </div>
 
-                    <div className={classnames(styles.deploymentLicence, 'ag-card')} id="deployment">
+                    <div className={classnames(styles.deploymentLicense, 'ag-card')} id="deployment">
                         <header>
                             <h3>Deployment License Add-on</h3>
                         </header>
@@ -268,8 +268,8 @@ const LicensePricing = () => {
 
                 <div className={styles.contactSales}>
                     <p className="text-secondary">
-                        For any enquires about bulk pricing, questions on which licence is right for you, or any other
-                        licence related questions please contact our friendly sales team.{' '}
+                        For any enquires about bulk pricing, questions on which license is right for you, or any other
+                        license related questions please contact our friendly sales team.{' '}
                     </p>
                     <div>
                         <a className="button-secondary" href="mailto:info@ag-grid.com">

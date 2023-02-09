@@ -17,7 +17,7 @@
     margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
 }
 
-.licencesHeader {
+.licensesHeader {
     --font-size: #{$font-size-large} !important; // !important for .ag-styles specificity
     --line-height: #{$line-height-tight} !important; // !important for .ag-styles specificity
 
@@ -30,10 +30,10 @@
     }
 }
 
-.bulkLicences,
+.bulkLicenses,
 .communityEnterprise,
 .videoExplainer,
-.licencesInDetail {
+.licensesInDetail {
     margin-bottom: $size-8 !important; // !important for .ag-styles specificity
 
     @media screen and (min-width: $breakpoint-pricing-large) {
@@ -41,7 +41,7 @@
     }
 }
 
-.bulkLicences {
+.bulkLicenses {
     margin-top: $size-5 !important; // !important for .ag-styles specificity
     text-align: center;
 
@@ -149,7 +149,7 @@
     }
 }
 
-.licencesInDetail {
+.licensesInDetail {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -181,7 +181,7 @@
     }
 
     // Needs review after <ul> styling
-    .deploymentLicence ul {
+    .deploymentLicense ul {
         @media screen and (min-width: $breakpoint-pricing-large) {
             columns: 2;
             gap: $size-3;

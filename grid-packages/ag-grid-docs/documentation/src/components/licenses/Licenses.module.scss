@@ -1,6 +1,6 @@
 @use "../../design-system/" as *;
 
-// Wrap in media query to show wide licence layouts for specific screen sizes
+// Wrap in media query to show wide license layouts for specific screen sizes
 @mixin wide-layout {
     @media screen and (min-width: $breakpoint-pricing-small) and (max-width: $breakpoint-pricing-medium),
         (min-width: $breakpoint-pricing-large) {
@@ -76,7 +76,7 @@
     }
 }
 
-.licenceMeta {
+.licenseMeta {
     grid-area: meta;
     display: flex;
     flex-direction: column;
@@ -176,7 +176,7 @@ p.priceFullDollars {
     }
 }
 
-.licenceBenifits {
+.licenseBenifits {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -195,7 +195,7 @@ p.priceFullDollars {
     }
 }
 
-.licenceActions {
+.licenseActions {
     grid-area: actions;
     margin-top: $size-5 !important; // !important for .ag-styles specificity
 
@@ -234,7 +234,7 @@ p.priceFullDollars {
     }
 }
 
-.devLicenceRequired {
+.devLicenseRequired {
     padding-top: $size-2 !important; // !important for .ag-styles specificity
     grid-area: required;
 }
