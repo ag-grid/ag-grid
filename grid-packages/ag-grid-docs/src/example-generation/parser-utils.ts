@@ -19,7 +19,7 @@ export function readAsJsFile(srcFile, options: { includeImports: boolean } = und
         // Remove export statement
         .replace(/export /g, "")
 
-    let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"], disableESTransforms: true  }).code;
+    let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"] }).code;
 
     return jsFile;
 }
