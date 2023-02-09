@@ -1,5 +1,5 @@
 import { Color } from './color';
-import { SceneChangeDetection, SceneChangeDetectionOptions } from '../scene/changeDetectable';
+import { addTransformToInstanceProperty, BREAK_TRANSFORM_CHAIN } from './decorator';
 type ValidationContext = { target: any };
 
 export type ValidatePredicate = {
@@ -8,54 +8,34 @@ export type ValidatePredicate = {
 };
 
 export function Validate(predicate: ValidatePredicate) {
-    return function (target: any, key: any) {
-        // `target` is either a constructor (static member) or prototype (instance member)
-        const privateKey = `__${key}`;
+    return addTransformToInstanceProperty((target, prop, v: any) => {
+        if (predicate(v, { target })) {
+            return v;
+        }
 
-        let prevSet: ((v: any) => void) | undefined;
-        const descriptor = Object.getOwnPropertyDescriptor(target, key);
-        prevSet = descriptor?.set;
+        const cleanKey = prop.toString().replace(/^_*/, '');
 
-        const setter = function (this: any, v: any) {
-            if (predicate(v, { target: this })) {
-                if (prevSet) {
-                    prevSet.call(this, v);
-                } else {
-                    this[privateKey] = v;
-                }
-                return;
-            }
+        let targetClass = target.constructor?.className ?? target.constructor?.name;
+        if (targetClass?.length < 3) {
+            targetClass = null;
+        }
 
-            const cleanKey = key.replace(/^_*/, '');
-            let targetClass = target.constructor?.className ?? target.constructor?.name;
-            if (targetClass?.length < 3) {
-                targetClass = null;
-            }
-            if (predicate.message) {
-                console.warn(
-                    `AG Charts - Property [${cleanKey}] ${
-                        targetClass ? `of [${targetClass}] ` : ''
-                    }cannot be set to [${JSON.stringify(v)}]; ${predicate.message}, ignoring.`
-                );
-            } else {
-                console.warn(
-                    `AG Charts - Property [${cleanKey}] ${
-                        targetClass ? `of [${targetClass}] ` : ''
-                    }cannot be set to [${JSON.stringify(v)}], ignoring.`
-                );
-            }
-        };
-        const getter = function (this: any) {
-            return this[privateKey];
-        };
+        if (predicate.message) {
+            console.warn(
+                `AG Charts - Property [${cleanKey}] ${
+                    targetClass ? `of [${targetClass}] ` : ''
+                }cannot be set to [${JSON.stringify(v)}]; ${predicate.message}, ignoring.`
+            );
+        } else {
+            console.warn(
+                `AG Charts - Property [${cleanKey}] ${
+                    targetClass ? `of [${targetClass}] ` : ''
+                }cannot be set to [${JSON.stringify(v)}], ignoring.`
+            );
+        }
 
-        Object.defineProperty(target, key, {
-            set: setter,
-            get: getter,
-            enumerable: true,
-            configurable: false,
-        });
-    };
+        return BREAK_TRANSFORM_CHAIN;
+    });
 }
 
 export function predicateWithMessage(predicate: ValidatePredicate, message: string): ValidatePredicate {
@@ -296,17 +276,3 @@ export const POSITION = predicateWithMessage(
     (v: any) => POSITIONS.includes(v),
     `expecting a position keyword such as 'top', 'right', 'bottom' or 'left`
 );
-
-export const ValidateAndChangeDetection = (opts: {
-    validatePredicate: ValidatePredicate;
-    sceneChangeDetectionOpts?: SceneChangeDetectionOptions;
-}) => {
-    const { sceneChangeDetectionOpts, validatePredicate } = opts;
-    const sceneChangeDetectionFn = SceneChangeDetection(sceneChangeDetectionOpts);
-    const validateFn = Validate(validatePredicate);
-
-    return function (target: any, key: any) {
-        sceneChangeDetectionFn(target, key);
-        validateFn(target, key);
-    };
-};

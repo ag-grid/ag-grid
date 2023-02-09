@@ -17,12 +17,12 @@ import { Marker } from '../../marker/marker';
 import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
 import { Node } from '../../../scene/node';
-import { RedrawType } from '../../../scene/changeDetectable';
+import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
 import { CategoryAxis } from '../../axis/categoryAxis';
 import { PointLabelDatum } from '../../../util/labelPlacement';
 import { Layers } from '../../layers';
 import { Point } from '../../../scene/point';
-import { OPT_FUNCTION, ValidateAndChangeDetection } from '../../../util/validation';
+import { OPT_FUNCTION, Validate } from '../../../util/validation';
 import { jsonDiff } from '../../../util/json';
 import { BBox } from '../../../scene/bbox';
 import { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
@@ -713,9 +713,7 @@ export abstract class CartesianSeries<
 }
 
 export class CartesianSeriesMarker extends SeriesMarker {
-    @ValidateAndChangeDetection({
-        validatePredicate: OPT_FUNCTION,
-        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
-    })
+    @Validate(OPT_FUNCTION)
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
     formatter?: (params: AgCartesianSeriesMarkerFormatterParams<any>) => AgCartesianSeriesMarkerFormat = undefined;
 }

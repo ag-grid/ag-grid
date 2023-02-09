@@ -4,6 +4,7 @@ import { extent } from '../../util/array';
 import { ChartAxis } from '../chartAxis';
 import { doOnce } from '../../util/function';
 import { Validate, GREATER_THAN, AND, LESS_THAN, NUMBER_OR_NAN } from '../../util/validation';
+import { Default } from '../../util/default';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 
 export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
@@ -35,9 +36,11 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
     }
 
     @Validate(AND(NUMBER_OR_NAN(), LESS_THAN('max')))
+    @Default(NaN)
     min: number = NaN;
 
     @Validate(AND(NUMBER_OR_NAN(), GREATER_THAN('min')))
+    @Default(NaN)
     max: number = NaN;
 
     formatDatum(datum: number): string {
