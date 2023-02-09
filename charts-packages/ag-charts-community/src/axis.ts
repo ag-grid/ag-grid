@@ -440,11 +440,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     private setTickInterval<S extends Scale<D, number>, D = any>(scale: S, interval?: any) {
-        if (!interval) {
-            return;
-        }
-
-        if (typeof interval === 'number') {
+        if (!interval || typeof interval === 'number') {
             scale.interval = interval;
             return;
         }
