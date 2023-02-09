@@ -5281,6 +5281,8 @@
   "ShapeLineCap": {},
   "ShapeLineJoin": {},
   "Comparator": { "meta": { "typeParams": ["T"] } },
+  "TransformFn": {},
+  "TransformConfig": {},
   "LiteralProperties": {},
   "SkippableProperties": {},
   "IsLiteralProperty": { "meta": { "typeParams": ["T", "K extends keyof T"] } },
