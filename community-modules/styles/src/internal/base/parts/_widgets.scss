@@ -131,7 +131,7 @@
             box-shadow: none;
         }
 
-        &:not(.ag-cell-editor) {
+        &:not(.ag-cell-editor, .ag-label-align-top) {
             height: var(--ag-list-item-height);
         }
         .ag-picker-field-display {

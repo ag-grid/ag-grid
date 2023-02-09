@@ -3,7 +3,6 @@ import {
     Component,
     IFloatingFilter,
     RefSelector,
-    ValueFormatterService,
     IFloatingFilterParams,
     AgInputTextField,
     ColumnModel,
@@ -11,16 +10,16 @@ import {
 } from '@ag-grid-community/core';
 
 import { SetFilter } from './setFilter';
+import { SetFilterModelFormatter } from './setFilterModelFormatter';
 import { SetValueModel } from './setValueModel';
-import { DEFAULT_LOCALE_TEXT } from './localeText';
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
     @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
-    @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     private params: IFloatingFilterParams;
     private availableValuesListenerAdded = false;
+    private readonly filterModelFormatter = new SetFilterModelFormatter();
 
     constructor() {
         super(/* html */`
@@ -86,22 +85,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         }
 
         this.parentSetFilterInstance((setFilter) => {
-            const { values } = parentModel || setFilter.getModel() || {};
-            const valueModel = setFilter.getValueModel();
-
-            if (values == null || valueModel == null) {
-                this.eFloatingFilterText.setValue('');
-                return;
-            }
-
-            const availableKeys = values.filter(v => valueModel.isKeyAvailable(v));
-            const numValues = availableKeys.length;
-
-            const formattedValues = availableKeys.slice(0, 10).map(key => setFilter.getFormattedValue(key));
-
-            const valuesString = `(${numValues}) ${formattedValues.join(',')}${numValues > 10 ? ',...' : ''}`;
-
-            this.eFloatingFilterText.setValue(valuesString);
+            this.eFloatingFilterText.setValue(this.filterModelFormatter.getModelAsString(parentModel, setFilter));
         });
     }
 }

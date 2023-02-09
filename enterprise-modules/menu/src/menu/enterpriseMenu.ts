@@ -283,7 +283,7 @@ export class EnterpriseMenu extends BeanStub {
         this.tabFactories[EnterpriseMenu.TAB_COLUMNS] = this.createColumnsPanel.bind(this);
 
         this.includeChecks[EnterpriseMenu.TAB_GENERAL] = () => true;
-        this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => column.isFilterAllowed();
+        this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => this.filterManager.isFilterAllowed(column);
         this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = () => true;
         this.restrictTo = restrictTo;
     }

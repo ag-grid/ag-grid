@@ -50,6 +50,9 @@ const AG_GRID_LOCALE_EN = {
     dateFilter: 'Date Filter',
     setFilter: 'Set Filter',
 
+    // Group Filter
+    groupFilterSelect: 'Select field:',
+
     // Side Bar
     columns: 'Columns',
     filters: 'Filters',

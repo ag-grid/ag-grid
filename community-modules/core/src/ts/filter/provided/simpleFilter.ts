@@ -15,6 +15,7 @@ import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParam
 import { ListOption } from '../../widgets/agList';
 import { IFloatingFilterParent } from '../floating/floatingFilter';
 import { isFunction } from '../../utils/function';
+import { LocaleService } from '../../localeService';
 
 export type JoinOperator = 'AND' | 'OR';
 
@@ -108,6 +109,53 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
 export enum ConditionPosition { One, Two }
 
 export type Tuple<T> = (T | null)[];
+
+export abstract class SimpleFilterModelFormatter {
+    constructor(
+        private readonly localeService: LocaleService,
+        private readonly optionsFactory: OptionsFactory
+    ) {}
+
+    // used by:
+    // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
+    // 2) DateFloatingFilter: Only when read only (as we show text rather than a date picker when read only)
+    public getModelAsString(model: ISimpleFilterModel | null): string | null {
+        if (!model) {
+            return null;
+        }
+        const isCombined = (model as any).operator != null;
+        if (isCombined) {
+            const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
+            const { condition1, condition2 } = combinedModel || {};
+            const customOption1 = this.getModelAsString(condition1);
+            const customOption2 = this.getModelAsString(condition2);
+
+            return [
+                customOption1,
+                combinedModel.operator,
+                customOption2,
+            ].join(' ');
+        } else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
+            const translate = this.localeService.getLocaleTextFunc();
+            return translate(model.type, model.type);
+        } else {
+            const condition = model as ISimpleFilterModel;
+            const customOption = this.optionsFactory.getCustomOption(condition.type);
+
+            // For custom filter options we display the Name of the filter instead
+            // of displaying the `from` value, as it wouldn't be relevant
+            const { displayKey, displayName, numberOfInputs } = customOption || {};
+            if (displayKey && displayName && numberOfInputs === 0) {
+                this.localeService.getLocaleTextFunc()(displayKey, displayName);
+                return displayName;
+            }
+            return this.conditionToString(condition, customOption);
+        }
+    }
+
+    // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
+    protected abstract conditionToString(condition: ProvidedFilterModel, opts?: IFilterOptionDef): string;
+}
 
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values.

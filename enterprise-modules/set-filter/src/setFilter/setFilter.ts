@@ -31,6 +31,7 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 import { SetFilterDisplayValue, SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import { SetFilterModelFormatter } from './setFilterModelFormatter';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
@@ -61,6 +62,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private createKey: (value: V | null, node?: IRowNode | null) => string | null;
 
     private valueFormatter?: (params: ValueFormatterParams) => string;
+    private readonly filterModelFormatter = new SetFilterModelFormatter();
 
     constructor() {
         super('setFilter');
@@ -1079,6 +1081,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             recursiveCollapse(selectAllItem);
             this.valueModel!.updateDisplayedValues('expansion');
         }
+    }
+
+    public getModelAsString(model: SetFilterModel): string {
+        return this.filterModelFormatter.getModelAsString(model, this);
     }
 }
 

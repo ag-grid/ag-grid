@@ -61,7 +61,11 @@ export class AutoGroupColService extends BeanStub {
         if (!this.gridOptionsService.isTreeData()) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
-            const noFieldOrValueGetter = missing(defaultAutoColDef.field) && missing(defaultAutoColDef.valueGetter) && missing(defaultAutoColDef.filterValueGetter);
+            const noFieldOrValueGetter =
+                missing(defaultAutoColDef.field) &&
+                missing(defaultAutoColDef.valueGetter) &&
+                missing(defaultAutoColDef.filterValueGetter) &&
+                defaultAutoColDef.filter !== 'agGroupColumnFilter';
             if (noFieldOrValueGetter) {
                 defaultAutoColDef.filter = false;
             }

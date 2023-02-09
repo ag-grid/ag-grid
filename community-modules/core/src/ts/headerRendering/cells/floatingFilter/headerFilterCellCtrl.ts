@@ -71,6 +71,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.setupUi();
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+        if (this.active) {
+            this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.updateFilterButton.bind(this));
+        }
     }
 
     private setupUi(): void {
@@ -223,53 +226,18 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         if (!this.active) { return; }
 
         const colDef = this.column.getColDef();
-        const filterParams = this.filterManager.createFilterParams(this.column, colDef);
-        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
-
-        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef);
-
-        if (defaultFloatingFilterType == null) {
-            defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
-        }
-
-        const params: WithoutGridCommon<IFloatingFilterParams> = {
-            column: this.column,
-            filterParams: finalFilterParams,
-            currentParentModel: () => this.currentParentModel(),
-            parentFilterInstance: (cb) => this.parentFilterInstance(cb),
-            showParentFilter: () => this.showParentFilter(),
-            suppressFilterButton: false // This one might be overridden from the colDef
-        };
-
         // this is unusual - we need a params value OUTSIDE the component the params are for.
         // the params are for the floating filter component, but this property is actually for the wrapper.
         this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
 
-        const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
+        const compDetails = this.filterManager.getFloatingFilterCompDetails(
+            this.column,
+            () => this.showParentFilter()
+        );
 
         if (compDetails) {
             this.comp.setCompDetails(compDetails);
         }
-    }
-
-    private currentParentModel(): any {
-        const filterComponent = this.getFilterComponent(false);
-
-        return filterComponent ? filterComponent.resolveNow(null, filter => filter && filter.getModel()) : null;
-    }
-
-    private getFilterComponent(createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
-        return this.filterManager.getFilterComponent(this.column, 'NO_UI', createIfDoesNotExist);
-    }
-
-    private parentFilterInstance(callback: IFloatingFilterParentCallback<IFilter>): void {
-        const filterComponent = this.getFilterComponent();
-
-        if (filterComponent == null) { return; }
-
-        filterComponent.then(instance => {
-            callback(unwrapUserComp(instance!));
-        });
     }
 
     private showParentFilter() {
@@ -285,7 +253,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
             if (!compPromise) { return; }
 
-            const parentModel = this.currentParentModel();
+            const parentModel = this.filterManager.getCurrentFloatingFilterParentModel(this.column);
 
             compPromise.then(comp => {
                 if (comp) {
@@ -311,4 +279,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         listener();
     }
 
+    private updateFilterButton(): void {
+        if (!this.suppressFilterButton && this.comp) {
+            this.comp.setButtonWrapperDisplayed(this.filterManager.isFilterAllowed(this.column));
+        }
+    }
 }
