@@ -1,8 +1,8 @@
 import {
   ChartCreated,
-  ChartDestroyed,
   ChartOptionsChanged,
   ColDef,
+  FirstDataRenderedEvent,
   Grid,
   GridApi,
   GridOptions,
@@ -30,6 +30,7 @@ const gridOptions: GridOptions = {
   enableCharts: true,
   onChartCreated: onChartCreated,
   onChartOptionsChanged: onChartOptionsChanged,
+  onFirstDataRendered: onFirstDataRendered,
 }
 
 function onChartCreated(event: ChartCreated) {
@@ -42,6 +43,13 @@ function onChartOptionsChanged(event: ChartOptionsChanged) {
   update(gridOptions.api!, event)
 
   console.log("Options change of chart with ID " + event.chartId)
+}
+
+function onFirstDataRendered(event: FirstDataRenderedEvent<any>) {
+  gridOptions.api!.createRangeChart({
+    chartType: "column",
+    cellRange: { columns: ["Month", "Sunshine (hours)", "Rainfall (mm)"] },
+  });
 }
 
 function update(api: GridApi, event: { chartId: string }) {
@@ -69,9 +77,5 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(response => response.json())
     .then(function (data) {
       gridOptions.api!.setRowData(data)
-      gridOptions.api!.createRangeChart({
-        chartType: "column",
-        cellRange: { columns: ["Month", "Sunshine (hours)", "Rainfall (mm)"] },
-      })
     })
 })
