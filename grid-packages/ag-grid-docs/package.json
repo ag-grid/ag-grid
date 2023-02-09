@@ -120,8 +120,6 @@
     "ag-charts-community": "~7.0.0",
     "ag-charts-angular": "~7.0.0",
     "ag-charts-react": "~7.0.0",
-    "ag-charts-vue": "~7.0.0",
-    "ag-charts-vue3": "~7.0.0",
     "ag-grid-angular": "~29.0.0",
     "ag-grid-community": "~29.0.0",
     "ag-grid-enterprise": "~29.0.0",
