@@ -587,7 +587,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const checkForOverlap = avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
         const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
-        const maxIterations = this.tick.count ? 10 : maxTickCount;
+        const maxIterations = this.tick.count || !continuous ? 10 : maxTickCount;
 
         while (labelOverlap) {
             let unchanged = true;
@@ -602,23 +602,21 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 const prevTicks = ticks;
                 const tickCount = Math.max(maxTickCount - i, minTickCount);
 
-                if (this.tick.values) {
-                    ticks = this.tick.values;
-                } else if (maxTickCount === 0) {
-                    ticks = [];
-                } else if (!secondaryAxis) {
-                    this.setTickCount(scale, this.tick.count ?? tickCount);
-                    ticks = scale.ticks!();
-                }
-
-                const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : i + 1;
+                const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : 2;
                 const filteredTicks =
                     !checkForOverlap || (continuous && this.tick.count === undefined)
                         ? undefined
                         : ticks.filter((_, i) => i % keepEvery === 0);
 
-                if (filteredTicks) {
+                if (this.tick.values) {
+                    ticks = this.tick.values;
+                } else if (maxTickCount === 0) {
+                    ticks = [];
+                } else if (filteredTicks && filteredTicks.length > 0) {
                     ticks = filteredTicks;
+                } else if (!secondaryAxis) {
+                    this.setTickCount(scale, this.tick.count ?? tickCount);
+                    ticks = scale.ticks!();
                 }
 
                 let secondaryAxisTicks;
