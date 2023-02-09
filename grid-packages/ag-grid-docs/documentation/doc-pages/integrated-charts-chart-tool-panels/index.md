@@ -32,6 +32,9 @@ The full list of chart groups with the corresponding chart types are shown below
 
 <interface-documentation interfaceName="ChartGroupsDef" config='{"description":"", "asCode":true, "lineBetweenProps": false}'></interface-documentation>
 
+[[note]]
+| The contents and order of chart menu items in the [Context Menu](/context-menu/) will match the `ChartGroupsDef` configuration.
+
 The example below shows a subset of the provided chart groups with the chart types reordered. Note the following:
 
 * Only the **Pie**, **Columns** and **Bar** chart groups are shown in the settings panel.

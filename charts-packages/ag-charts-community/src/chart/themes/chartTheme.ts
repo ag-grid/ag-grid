@@ -618,7 +618,7 @@ export class ChartTheme {
         options = deepMerge({}, options || {}) as AgChartThemeOptions;
         const { overrides = null, palette = null } = options;
 
-        let defaults = this.createChartConfigPerChartType(this.getDefaults());
+        const defaults = this.createChartConfigPerChartType(this.getDefaults());
 
         if (overrides) {
             const { common, cartesian, polar, hierarchy } = overrides;

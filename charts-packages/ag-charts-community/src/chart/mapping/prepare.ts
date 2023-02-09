@@ -260,7 +260,7 @@ function prepareSeries<T extends SeriesOptionsTypes>(context: PreparationContext
 }
 
 function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: PreparationContext, input: T): T {
-    let paletteOptions: {
+    const paletteOptions: {
         stroke?: string;
         fill?: string;
         fills?: string[];

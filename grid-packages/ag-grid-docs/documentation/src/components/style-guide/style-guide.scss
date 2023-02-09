@@ -50,6 +50,12 @@
         gap: $size-6;
     }
 
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: $size-2;
+    }
+
     .item-label {
         margin-top: $size-4;
         margin-bottom: $size-half;

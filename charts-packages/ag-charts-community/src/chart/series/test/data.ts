@@ -1,4 +1,4 @@
-let rowData: any[] = [
+const rowData: any[] = [
     {
         orgHierarchy: ['Erica Rogers'],
         jobTitle: 'CEO',

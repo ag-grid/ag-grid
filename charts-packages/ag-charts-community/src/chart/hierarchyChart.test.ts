@@ -28,7 +28,7 @@ describe('HierarchyChart', () => {
         }
     });
 
-    let ctx = setupMockCanvas();
+    const ctx = setupMockCanvas();
 
     const compare = async (chart: Chart) => {
         await waitForChartStability(chart);
@@ -76,7 +76,7 @@ describe('HierarchyChart', () => {
 
             const seriesImpl = chart.series[0] as TreemapSeries;
             let node = seriesImpl['dataRoot'];
-            let childIndexes = [...childAtDepth];
+            const childIndexes = [...childAtDepth];
             while (depth > 0) {
                 node = node?.children![childIndexes.shift() ?? 0];
                 depth--;

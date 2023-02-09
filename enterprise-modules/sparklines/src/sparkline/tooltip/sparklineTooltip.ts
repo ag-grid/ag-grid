@@ -96,7 +96,7 @@ export class SparklineTooltip {
         }
 
         let left = meta.pageX + this.xOffset;
-        const top = meta.pageY + this.yOffset;
+        let top = meta.pageY + this.yOffset;
 
         const tooltipRect = element.getBoundingClientRect();
 
@@ -110,6 +110,13 @@ export class SparklineTooltip {
 
         if (left > maxLeft) {
             left = meta.pageX - element.clientWidth - this.xOffset;
+        }
+
+        if (typeof scrollX !== 'undefined') {
+            left += scrollX;
+        }
+        if (typeof scrollY !== 'undefined') {
+            top += scrollY;
         }
 
         element.style.left = `${Math.round(left)}px`;

@@ -1,7 +1,10 @@
 import { ChartModel } from '@ag-grid-community/core';
 import { AgChartThemeName } from 'ag-charts-community';
+// @ts-ignore
 import { getSeriesType } from './chartComp/utils/seriesTypeMapper';
+// @ts-ignore
 import { getLegacyAxisType, ALL_AXIS_TYPES } from './chartComp/utils/axisTypeMapper';
+// @ts-ignore
 import { VERSION } from '../version';
 
 const DEBUG = false;

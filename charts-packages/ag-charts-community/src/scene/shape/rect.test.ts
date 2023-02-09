@@ -9,7 +9,7 @@ expect.extend({ toMatchImageSnapshot });
 
 describe('Rect', () => {
     describe('rendering', () => {
-        let canvasCtx = setupMockCanvas();
+        const canvasCtx = setupMockCanvas();
 
         const shadowFn = (offset: number) => Object.assign(new DropShadow(), { xOffset: offset, yOffset: offset });
 

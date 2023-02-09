@@ -1164,7 +1164,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
             const titleText = this.title && this.title.showInLegend && this.title.text;
             data.forEach((datum, index) => {
-                let labelParts = [];
+                const labelParts = [];
                 titleText && labelParts.push(titleText);
                 labelParts.push(String(datum[calloutLabelKey]));
 
