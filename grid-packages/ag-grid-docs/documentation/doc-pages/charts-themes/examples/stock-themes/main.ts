@@ -30,7 +30,7 @@ const options: AgChartOptions = {
 
 var chart = AgChart.create(options)
 
-function applyTheme(theme: AgChartTheme) {
+function applyTheme(theme: string | AgChartTheme) {
   options.theme = theme
   AgChart.update(chart, options)
 }

@@ -45,18 +45,13 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
 
 export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: string[]): () => string {
     return () => {
-        const { properties, } = bindings;
+        const { properties, optionsTypeInfo } = bindings;
         const imports = getImports(componentFilenames, bindings);
         const stateProperties = [];
         const componentAttributes = [];
         const instanceBindings = [];
 
-        let optionsType = undefined;
-        (bindings.imports as BindingImport[]).forEach(i => {
-            if(i.module.includes('ag-charts-community')){
-                optionsType = i.imports.find(n => n.endsWith('ChartOptions'));
-            }
-        })
+        const opsTypeInfo = optionsTypeInfo || { typeParts: ['AgChartOptions'], typeStr: 'AgChartOptions' };
 
         properties.forEach(property => {
 
@@ -71,7 +66,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
                 if (isInstanceMethod(bindings.instanceMethods, property)) {
                     instanceBindings.push(`this.${property.name}=${property.value}`);
                 } else {
-                    stateProperties.push(`const [${property.name}, set${toTitleCase(property.name)}] = useState${property.name === 'options' ? `<${optionsType}>` : ''}(${property.value});`);
+                    stateProperties.push(`const [${property.name}, set${toTitleCase(property.name)}] = useState${property.name === 'options' ? `<${opsTypeInfo.typeStr}>` : ''}(${property.value});`);
                     componentAttributes.push(`${property.name}={${property.name}}`);
                 }
             }
