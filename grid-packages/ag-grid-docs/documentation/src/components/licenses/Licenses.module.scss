@@ -49,14 +49,14 @@
         display: grid;
         grid-template-columns: auto auto;
         grid-template-rows: auto auto auto;
-        grid-template-areas: 'meta meta' 'benifits price' 'actions actions';
+        grid-template-areas: 'meta meta' 'benefits price' 'actions actions';
         padding-top: $size-3 !important; // !important for .ag-styles specificity
         padding-bottom: $size-2 !important; // !important for .ag-styles specificity
 
         @include wide-layout {
             grid-template-columns: auto auto;
             grid-template-rows: auto auto;
-            grid-template-areas: 'meta price' 'benifits actions';
+            grid-template-areas: 'meta price' 'benefits actions';
             gap: $size-7 $size-3;
             height: 100%;
         }
@@ -176,7 +176,7 @@ p.priceFullDollars {
     }
 }
 
-.licenseBenifits {
+.licenseBenefits {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;

@@ -9,7 +9,7 @@ type LicenseData = {
     name: string;
     id: string;
     subHeading: string;
-    licenseBenifits: string[];
+    licenseBenefits: string[];
     priceFullDollars: string;
     pricePer: string;
     buyLink: string;
@@ -22,7 +22,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         id: 'single-application',
         subHeading: 'Development License',
         priceFullDollars: '999',
-        licenseBenifits: ['Perpetual license', '1 year of support', '1 year of updates'],
+        licenseBenefits: ['Perpetual license', '1 year of support', '1 year of updates'],
         pricePer: 'Developer',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=single',
     },
@@ -31,7 +31,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         name: 'Multiple Applications',
         id: 'multiple-applications',
         subHeading: 'Development License',
-        licenseBenifits: ['Unlimited applications', 'Perpetual license', '1 year of support', '1 year of updates'],
+        licenseBenefits: ['Unlimited applications', 'Perpetual license', '1 year of support', '1 year of updates'],
         priceFullDollars: '1,499',
         pricePer: 'Developer',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=multi',
@@ -77,7 +77,7 @@ const DevelopmentLicense = () => {
 };
 
 const License = (props: LicenseData) => {
-    const { name, id, subHeading, licenseBenifits, priceFullDollars, pricePer, buyLink } = props;
+    const { name, id, subHeading, licenseBenefits, priceFullDollars, pricePer, buyLink } = props;
 
     return (
         <>
@@ -95,10 +95,10 @@ const License = (props: LicenseData) => {
 
                 <Price priceFullDollars={priceFullDollars} pricePer={pricePer} />
 
-                <div className={styles.licenseBenifits}>
+                <div className={styles.licenseBenefits}>
                     <ul className="font-size-small">
-                        {licenseBenifits.map((benifit, i) => {
-                            return <li key={i}>{benifit}</li>;
+                        {licenseBenefits.map((benefit, i) => {
+                            return <li key={i}>{benefit}</li>;
                         })}
                     </ul>
 
