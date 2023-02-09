@@ -148,7 +148,10 @@ const LicensePricing = () => {
                 <div className={styles.licensesInDetail}>
                     <h3 className="font-size-extra-large">Our Licenses in Depth</h3>
 
-                    <div className={classnames(styles.singleApplicationLicense, 'ag-card')} id="single-application">
+                    <div
+                        className={classnames(styles.singleApplicationLicense, 'ag-card', 'single-application')}
+                        id="single-application"
+                    >
                         <header>
                             <h3>Single Application Development License</h3>
                         </header>
@@ -179,7 +182,7 @@ const LicensePricing = () => {
                     </div>
 
                     <div
-                        className={classnames(styles.multipleApplicationsLicense, 'ag-card')}
+                        className={classnames(styles.multipleApplicationsLicense, 'ag-card', 'multiple-applications')}
                         id="multiple-applications"
                     >
                         <header>

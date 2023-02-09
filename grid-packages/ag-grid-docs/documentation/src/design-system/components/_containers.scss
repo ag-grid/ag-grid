@@ -25,4 +25,16 @@
         padding: $size-2;
         background-color: rgba(255, 255, 255, var(--content-tint));
     }
+
+    &.single-application {
+        --card-color: #0f5bce !important; // !important for .ag-styles specificity
+        --header-tint: 0.93 !important; // !important for .ag-styles specificity
+        --content-tint: 0.95 !important; // !important for .ag-styles specificity
+    }
+
+    &.multiple-applications {
+        --card-color: #2aaa33 !important; // !important for .ag-styles specificity
+        --header-tint: 0.94 !important; // !important for .ag-styles specificity
+        --content-tint: 0.96 !important; // !important for .ag-styles specificity
+    }
 }

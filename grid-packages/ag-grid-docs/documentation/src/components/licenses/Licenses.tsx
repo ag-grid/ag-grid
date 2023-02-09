@@ -127,7 +127,7 @@ export const Licenses = () => {
         <ul className={classnames('list-style-none', styles.licenses)}>
             {DEV_LICENSE_DATA.map((data) => {
                 return (
-                    <li key={data.name} className={classnames(styles.license, data.className, 'ag-card')}>
+                    <li key={data.name} className={classnames(styles.license, data.className, 'ag-card', data.id)}>
                         <License {...data} />
                     </li>
                 );
