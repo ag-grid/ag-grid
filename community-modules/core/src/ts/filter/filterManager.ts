@@ -8,7 +8,7 @@ import { IRowModel } from '../interfaces/iRowModel';
 import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent } from '../events';
 import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
-import { UserComponentFactory } from '../components/framework/userComponentFactory';
+import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { BeanStub } from '../context/beanStub';
@@ -19,6 +19,9 @@ import { loadTemplate } from '../utils/dom';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyChangedEvent } from '../gridOptionsService';
+import { FilterComponent } from '../components/framework/componentTypes';
+import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
+import { unwrapUserComp } from '../gridApi';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -710,6 +713,45 @@ export class FilterManager extends BeanStub {
                 ? (filter as any)?.isFilterAllowed()
                 : true
         ) ?? true;
+    }
+
+    public getFloatingFilterCompDetails(column: Column, showParentFilter: () => void): UserCompDetails | undefined {
+        const colDef = column.getColDef();
+        const filterParams = this.createFilterParams(column, colDef);
+        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
+
+        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef);
+
+        if (defaultFloatingFilterType == null) {
+            defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
+        }
+
+        const parentFilterInstance = (callback: IFloatingFilterParentCallback<IFilter>) => {
+            const filterComponent = this.getFilterComponent(column, 'NO_UI');
+    
+            if (filterComponent == null) { return; }
+    
+            filterComponent.then(instance => {
+                callback(unwrapUserComp(instance!));
+            });
+        }
+
+        const params: WithoutGridCommon<IFloatingFilterParams<IFilter>> = {
+            column: column,
+            filterParams: finalFilterParams,
+            currentParentModel: () => this.getCurrentFloatingFilterParentModel(column),
+            parentFilterInstance,
+            showParentFilter,
+            suppressFilterButton: false // This one might be overridden from the colDef
+        };
+
+        return this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
+    }
+
+    public getCurrentFloatingFilterParentModel(column: Column): any {
+        const filterComponent = this.getFilterComponent(column, 'NO_UI', false);
+
+        return filterComponent ? filterComponent.resolveNow(null, filter => filter && filter.getModel()) : null;
     }
 
     // destroys the filter, so it not longer takes part

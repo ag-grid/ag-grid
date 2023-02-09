@@ -264,6 +264,10 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         return this.selectedFilter;
     }
 
+    public getSelectedColumn(): Column | undefined {
+        return this.selectedColumn;
+    }
+
     public isFilterAllowed(): boolean {
         return !!this.selectedColumn;
     }
