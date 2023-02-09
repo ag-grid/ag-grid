@@ -12058,7 +12058,7 @@
   },
   "ChartToolPanelsDef": {
     "settingsPanel": {
-      "description": "/** Customisations for the settings panel */",
+      "description": "/** Customisations for the settings panel and chart menu items in the Context Menu. */",
       "type": { "returnType": "ChartSettingsPanel", "optional": true }
     },
     "formatPanel": {
@@ -15722,6 +15722,16 @@
     },
     "getBlockStates": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "setRowCount": {
+      "type": {
+        "arguments": {
+          "rowCount": "number",
+          "isLastRowIndexKnown?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
     },
     "getRow": {
       "description": "/** Returns the rowNode at the given index. */",

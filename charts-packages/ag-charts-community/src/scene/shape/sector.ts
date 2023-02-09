@@ -41,8 +41,8 @@ export class Sector extends Path {
         const innerRadius = Math.min(this.innerRadius, this.outerRadius);
         const outerRadius = Math.max(this.innerRadius, this.outerRadius);
         const fullPie = isEqual(normalizeAngle360(this.startAngle), normalizeAngle360(this.endAngle));
-        let centerX = this.centerX;
-        let centerY = this.centerY;
+        const centerX = this.centerX;
+        const centerY = this.centerY;
 
         path.clear();
 

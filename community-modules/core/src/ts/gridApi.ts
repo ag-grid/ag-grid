@@ -1357,11 +1357,21 @@ export class GridApi<TData = any> {
      * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode.
      */
     public setRowCount(rowCount: number, maxRowFound?: boolean): void {
+        if (this.serverSideRowModel) {
+            if (this.columnModel.isRowGroupEmpty()) {
+                this.serverSideRowModel.setRowCount(rowCount, maxRowFound);
+                return;
+            }
+            console.error('AG Grid: setRowCount cannot be used while using row grouping.');
+            return;
+        }
+        
         if (this.infiniteRowModel) {
             this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
-        } else {
-            this.logMissingRowModel('setRowCount', 'infinite');
+            return;
         }
+
+        this.logMissingRowModel('setRowCount', 'infinite', 'serverSide');
     }
 
     /** Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`. */

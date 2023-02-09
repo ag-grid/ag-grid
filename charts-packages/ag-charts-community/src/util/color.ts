@@ -118,7 +118,7 @@ export class Color {
     }
 
     static fromHexString(str: string): Color {
-        let values = Color.parseHex(str);
+        const values = Color.parseHex(str);
         if (values) {
             const [r, g, b, a] = values;
             return new Color(r / 255, g / 255, b / 255, a / 255);

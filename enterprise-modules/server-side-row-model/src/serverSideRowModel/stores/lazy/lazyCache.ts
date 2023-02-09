@@ -184,6 +184,20 @@ export class LazyCache extends BeanStub {
     public getRowCount(): number {
         return this.numberOfRows;
     }
+    
+    setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void {
+        if (rowCount < 0) {
+            throw new Error('AG Grid: setRowCount can only accept a positive row count.');
+        }
+
+        this.numberOfRows = rowCount;
+
+        if (isLastRowIndexKnown != null) {
+            this.isLastRowKnown = isLastRowIndexKnown;
+        }
+
+        this.fireStoreUpdatedEvent();
+    }
 
     public getNodeMapEntries(): [string, RowNode][] {
         return Object.entries(this.nodeIndexMap);
@@ -753,7 +767,7 @@ export class LazyCache extends BeanStub {
             const newIndex = numericStoreIndex + numberOfInserts;
             if (this.getRowByStoreIndex(newIndex)) {
                 // this shouldn't happen, why would a row already exist here
-                throw new Error('Ag Grid: Something went wrong, node in wrong place.');
+                throw new Error('AG Grid: Something went wrong, node in wrong place.');
             } else {
                 this.nodeIndexMap[numericStoreIndex + numberOfInserts] = node;
                 delete this.nodeIndexMap[numericStoreIndex];

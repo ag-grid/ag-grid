@@ -91,7 +91,7 @@ export class RangeHandle extends Path {
         return this._height;
     }
 
-    computeBBox(): BBox {
+    computeBBox() {
         const { centerX, centerY, width, height } = this;
         const x = centerX - width / 2;
         const y = centerY - height / 2;

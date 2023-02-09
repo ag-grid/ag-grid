@@ -84,7 +84,8 @@ $abstract-colors: (
     'ghost-white': #f8f9fa,
     'white': #ffffff,
     // Other
-    'cerise-pink': #e83e8c
+    'cerise-pink': #e83e8c,
+    'danger-red': #dc3545
 );
 
 // Semantic colors based on abstract colors
@@ -113,6 +114,7 @@ $semantic-colors: (
     'input-primary-color': azure-blue,
     'input-focus-border-color': sky-blue,
     'input-focus-box-shadow-color': water-blue,
+    'input-error-color': danger-red,
     // Table
     'table-odd-row-background-color': ghost-blue,
     // Site header

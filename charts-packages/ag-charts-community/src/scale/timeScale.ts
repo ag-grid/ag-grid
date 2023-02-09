@@ -108,7 +108,7 @@ export class TimeScale extends ContinuousScale {
             }
         };
 
-        for (let value of ticks) {
+        for (const value of ticks) {
             const format = this.getLowestGranularityFormat(value);
             updateFormat(format);
         }

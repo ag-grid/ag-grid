@@ -125,7 +125,7 @@ function calculatePage(
     let currentMaxSecondary = 0;
 
     let currentPrimaryIndices: number[] = [];
-    let maxPrimaryValues: number[] = [];
+    const maxPrimaryValues: number[] = [];
     for (let bboxIndex = 0; bboxIndex < bboxes.length; bboxIndex++) {
         const primaryValueIdx = (bboxIndex + primaryCount) % primaryCount;
         if (primaryValueIdx === 0) {

@@ -16,7 +16,7 @@ series: [{
 }]
 ```
 
-If unspecified, we default to the optional chart `type` specified for the chart. Failing that we 
+If unspecified, we default to the optional `type` specified for the chart. Failing that we 
 default to `'line'`.
 
 Cartesian series types can be [combined on the same chart](/charts-combination-series/).

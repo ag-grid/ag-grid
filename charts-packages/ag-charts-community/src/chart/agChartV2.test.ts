@@ -26,7 +26,7 @@ const EXAMPLES: Record<string, TestCase> = {
 };
 
 describe('AgChartV2', () => {
-    let ctx = setupMockCanvas();
+    const ctx = setupMockCanvas();
     let chart: AgChartInstance;
     let container: HTMLElement;
 

@@ -210,7 +210,7 @@ function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, 
 }
 
 function calculateAxisBBox(axis: ChartAxis<any>): { x: number; y: number; width: number; height: number } {
-    let bbox = axis.computeBBox();
+    const bbox = axis.computeBBox();
 
     const { x, y, width, height } = bbox;
     return { x, y, width, height };
@@ -226,7 +226,7 @@ describe('Axis Examples', () => {
         }
     });
 
-    let ctx = setupMockCanvas();
+    const ctx = setupMockCanvas();
 
     beforeEach(() => {
         console.warn = jest.fn();

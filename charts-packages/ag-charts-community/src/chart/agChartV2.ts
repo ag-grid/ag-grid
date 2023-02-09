@@ -46,6 +46,8 @@ import {
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
+import { REGISTERED_MODULES } from '../module-support';
+import { Module } from '../util/module';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -231,7 +233,7 @@ abstract class AgChartInternal {
         const { overrideDevicePixelRatio } = userOptions;
         delete userOptions['overrideDevicePixelRatio'];
 
-        let processedOptions = prepareOptions(userOptions, mixinOpts);
+        const processedOptions = prepareOptions(userOptions, mixinOpts);
         let chart = proxy?.chart;
         if (chart == null || chartType(userOptions as any) !== chartType(chart.processedOptions as any)) {
             chart = AgChartInternal.createChartInstance(processedOptions, overrideDevicePixelRatio, chart);
@@ -365,7 +367,7 @@ abstract class AgChartInternal {
             return new PolarChart(document, overrideDevicePixelRatio, transferableResource);
         }
 
-        throw new Error(`AG Charts - couldn\'t apply configuration, check type of options: ${options['type']}`);
+        throw new Error(`AG Charts - couldn't apply configuration, check type of options: ${options['type']}`);
     }
 
     private static async updateDelta(
@@ -396,7 +398,9 @@ function debug(message?: any, ...optionalParams: any[]): void {
 }
 
 function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOptions>, userOptions: AgChartOptions): void {
-    let skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
+    applyModules(chart, processedOptions);
+
+    const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
     if (isAgCartesianChartOptions(processedOptions)) {
         // Append axes to defaults.
         skip.push('axes');
@@ -447,6 +451,29 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     const updateType = forceNodeDataRefresh ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
     debug('chart update type', { updateType: ChartUpdateType[updateType] });
     chart.update(updateType, { forceNodeDataRefresh });
+}
+
+function applyModules(chart: Chart, options: AgChartOptions) {
+    const matchingChartType = (module: Module) => {
+        return (
+            (chart instanceof CartesianChart && module.chartTypes.includes('cartesian')) ||
+            (chart instanceof PolarChart && module.chartTypes.includes('polar')) ||
+            (chart instanceof HierarchyChart && module.chartTypes.includes('hierarchy'))
+        );
+    };
+
+    for (const next of REGISTERED_MODULES) {
+        const shouldBeEnabled = matchingChartType(next) && (options as any)[next.optionsKey] != null;
+        const isEnabled = chart.isModuleEnabled(next);
+
+        if (shouldBeEnabled === isEnabled) continue;
+
+        if (shouldBeEnabled) {
+            chart.addModule(next);
+        } else {
+            chart.removeModule(next);
+        }
+    }
 }
 
 function applySeries(chart: Chart, options: AgChartOptions) {
@@ -522,7 +549,8 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
                 series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path }));
                 break;
             case 'bar':
-            // fall-through - bar and column are synonyms.
+                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path }));
+                break;
             case 'column':
                 series.push(applySeriesValues(new BarSeries(), seriesOptions, { path }));
                 break;

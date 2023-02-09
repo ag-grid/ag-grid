@@ -197,7 +197,7 @@ export class Group extends Node {
             return;
         }
 
-        let groupVisible = this.visible;
+        const groupVisible = this.visible;
         if (layer) {
             // Switch context to the canvas layer we use for this group.
             ctx = layer.context;

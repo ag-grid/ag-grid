@@ -3,7 +3,6 @@ import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
 import { ChartAxis, ChartAxisDirection } from './chartAxis';
 import { BBox } from '../scene/bbox';
-import { Navigator } from './navigator/navigator';
 import { AgCartesianAxisPosition } from './agChartOptions';
 
 type VisibilityMap = { crossLines: boolean; series: boolean };
@@ -20,16 +19,12 @@ export class CartesianChart extends Chart {
 
         const root = this.scene.root!;
         this.legend.attachLegend(root);
-
-        this.navigator.enabled = false;
     }
-
-    readonly navigator = new Navigator(this, this.interactionManager, this.cursorManager);
 
     async performLayout() {
         this.scene.root!.visible = true;
 
-        const { width, height, legend, navigator, padding } = this;
+        const { width, height, legend, padding } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
         shrinkRect.x += padding.left;
@@ -45,26 +40,19 @@ export class CartesianChart extends Chart {
             shrinkRect.shrink(legendPadding, legend.position);
         }
 
-        if (navigator.enabled) {
-            const navigatorTotalHeight = navigator.height + navigator.margin;
-            shrinkRect.shrink(navigatorTotalHeight, 'bottom');
-            navigator.y = shrinkRect.y + shrinkRect.height + navigator.margin;
-        }
+        ({ shrinkRect } = this.layoutService.dispatchPerformLayout('before-series', { shrinkRect }));
 
         const { seriesRect, visibility } = this.updateAxes(shrinkRect);
-
-        if (navigator.enabled && visibility.series) {
-            navigator.x = seriesRect.x;
-            navigator.width = seriesRect.width;
-        }
-
         this.seriesRoot.visible = visibility.series;
-        navigator.visible = visibility.series;
-
         this.seriesRect = seriesRect;
         this.series.forEach((series) => {
             series.rootGroup.translationX = Math.floor(seriesRect.x);
             series.rootGroup.translationY = Math.floor(seriesRect.y);
+        });
+
+        this.layoutService.dispatchLayoutComplete({
+            type: 'layout-complete',
+            series: { rect: seriesRect, visible: visibility.series },
         });
 
         const { seriesRoot } = this;
@@ -181,7 +169,7 @@ export class CartesianChart extends Chart {
         };
 
         let clipSeries = false;
-        let primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
+        const primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
 
         const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(lastPassSeriesRect, axisWidths) : {};
         const axisBound = this.buildAxisBound(bounds, axisWidths, crossLinePadding, visibility);
@@ -193,7 +181,7 @@ export class CartesianChart extends Chart {
         axes.forEach((axis) => {
             const { position } = axis;
 
-            let {
+            const {
                 clipSeries: newClipSeries,
                 axisThickness,
                 axisOffset,
@@ -273,7 +261,7 @@ export class CartesianChart extends Chart {
     }
 
     private buildSeriesRect(axisBound: BBox, axisWidths: Partial<Record<AgCartesianAxisPosition, number>>) {
-        let result = axisBound.clone();
+        const result = axisBound.clone();
         const { top, bottom, left, right } = axisWidths;
         result.x += left ?? 0;
         result.y += top ?? 0;
@@ -307,7 +295,6 @@ export class CartesianChart extends Chart {
     }) {
         const { axis, seriesRect, axisWidths, newAxisWidths, primaryTickCounts, addInterAxisPadding } = opts;
         let { clipSeries } = opts;
-        const { navigator } = this;
         const { position, direction } = axis;
 
         const axisLeftRightRange = (axis: ChartAxis<any>) => {
@@ -333,14 +320,10 @@ export class CartesianChart extends Chart {
                 break;
         }
 
-        if (axis.direction === ChartAxisDirection.X) {
-            let { min, max, enabled } = navigator;
-            if (enabled) {
-                axis.visibleRange = [min, max];
-            } else {
-                axis.visibleRange = [0, 1];
-            }
-        }
+        const zoom = this.zoomManager.getZoom()?.[axis.direction];
+        let { min = 0, max = 1 } = zoom ?? {};
+        axis.visibleRange = [min, max];
+
         if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
             clipSeries = true;
         }
