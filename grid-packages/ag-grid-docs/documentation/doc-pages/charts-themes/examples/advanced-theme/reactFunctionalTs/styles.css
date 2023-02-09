@@ -1,0 +1,17 @@
+.wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#charts {
+    height: 100%;
+}
+
+#chart1 {
+    height: 50%;
+}
+
+#chart2 {
+    height: 50%;
+}

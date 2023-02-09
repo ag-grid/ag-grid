@@ -1,5 +1,5 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
-import { isInstanceMethod, convertFunctionToProperty, addBindingImports } from './parser-utils';
+import { isInstanceMethod, convertFunctionToProperty, addBindingImports, BindingImport } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport } from './react-utils';
 import { wrapOptionsUpdateCode } from './chart-utils';
 import { toTitleCase } from './angular-utils';
@@ -51,6 +51,13 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         const componentAttributes = [];
         const instanceBindings = [];
 
+        let optionsType = undefined;
+        (bindings.imports as BindingImport[]).forEach(i => {
+            if(i.module.includes('ag-charts-community')){
+                optionsType = i.imports.find(n => n.endsWith('ChartOptions'));
+            }
+        })
+
         properties.forEach(property => {
 
             if (property.value === 'true' || property.value === 'false') {
@@ -64,7 +71,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
                 if (isInstanceMethod(bindings.instanceMethods, property)) {
                     instanceBindings.push(`this.${property.name}=${property.value}`);
                 } else {
-                    stateProperties.push(`const [${property.name}, set${toTitleCase(property.name)}] = useState${property.name === 'options' ? '<AgChartOptions>' : ''}(${property.value});`);
+                    stateProperties.push(`const [${property.name}, set${toTitleCase(property.name)}] = useState${property.name === 'options' ? `<${optionsType}>` : ''}(${property.value});`);
                     componentAttributes.push(`${property.name}={${property.name}}`);
                 }
             }

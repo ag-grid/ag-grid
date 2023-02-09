@@ -1,6 +1,5 @@
 import { AgCartesianChartOptions, AgChart } from 'ag-charts-community';
-declare var maleHeightWeight: any[];
-declare var femaleHeightWeight: any[];
+import {maleHeightWeight, femaleHeightWeight} from './height-weight-data'
 
 const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
