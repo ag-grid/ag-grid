@@ -9035,7 +9035,7 @@
       "convertValuesToStrings?": "boolean",
       "treeList?": "boolean",
       "treeListPathGetter?": "(value: V | null) => string[] | null",
-      "treeListFormatter?": "(pathKey: string | null, level: number) => string",
+      "treeListFormatter?": "(pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -9062,7 +9062,7 @@
       "convertValuesToStrings?": "/** @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,\n     * as well as maintaining the type of primitives (e.g. number, boolean) when not used as keys.\n     * \n     * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.\n     * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.\n     */",
       "treeList?": "/** If `true`, the Set Filter List will be displayed in a tree format. If enabled, one of the following must be true:\n     * \n     * - A `treeListPathGetter` is provided to get the tree path for the column values.\n     * - The column values are of type `Date`, in which case the tree will be year -> month -> day.\n     * - Tree Data mode is enabled and the column is the group column. The Filter List will match the tree structure. A Key Creator must be supplied.\n     * - Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied.\n     */",
       "treeListPathGetter?": "/** Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.\n     */",
-      "treeListFormatter?": "/** Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.\n     * `level` refers to the level of the tree (starting at 0).\n     */",
+      "treeListFormatter?": "/** Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.\n     * @param pathKey - The key for the current node in the tree.\n     * @param level - The level of the current node in the tree (starting at 0).\n     * @param parentPathKeys - The keys of the parent nodes up until the current node (exclusive).\n     * This will be an empty array if the node is at the root level.\n     */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n     * The options are:\n     * \n     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.\n     */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n     * or Reset button is clicked if this is set to `true`.\n     * \n     * Default: `false`\n     */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n     * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n     * - `DateFilter` and `SetFilter`: 0ms\n     */",
@@ -11404,7 +11404,8 @@
       "available": "boolean",
       "expanded?": "boolean",
       "children?": "SetFilterModelTreeItem[]",
-      "key?": "string | null"
+      "key?": "string | null",
+      "parentTreeKeys": "(string | null)[]"
     }
   },
   "ISetFilterLocaleText": {

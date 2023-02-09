@@ -16386,9 +16386,13 @@
       }
     },
     "treeListFormatter": {
-      "description": "/** Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.\n     * `level` refers to the level of the tree (starting at 0).\n     */",
+      "description": "/** Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.\n     * @param pathKey - The key for the current node in the tree.\n     * @param level - The level of the current node in the tree (starting at 0).\n     * @param parentPathKeys - The keys of the parent nodes up until the current node (exclusive).\n     * This will be an empty array if the node is at the root level.\n     */",
       "type": {
-        "arguments": { "pathKey": "string | null", "level": "number" },
+        "arguments": {
+          "pathKey": "string | null",
+          "level": "number",
+          "parentPathKeys": "(string | null)[]"
+        },
         "returnType": "string",
         "optional": true
       }
@@ -20043,7 +20047,10 @@
     "children": {
       "type": { "returnType": "SetFilterModelTreeItem[]", "optional": true }
     },
-    "key": { "type": { "returnType": "string | null", "optional": true } }
+    "key": { "type": { "returnType": "string | null", "optional": true } },
+    "parentTreeKeys": {
+      "type": { "returnType": "(string | null)[]", "optional": false }
+    }
   },
   "ISetFilterLocaleText": {
     "loadingOoo": { "type": { "returnType": "string", "optional": false } },
