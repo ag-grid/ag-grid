@@ -32,7 +32,7 @@ export function Deprecated(message?: string, opts?: { default?: any }) {
                 this[symbol] = value;
             },
             enumerable: true,
-            configurable: false,
+            configurable: true,
         });
     };
 }

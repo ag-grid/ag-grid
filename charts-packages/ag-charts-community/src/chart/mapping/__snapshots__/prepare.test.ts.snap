@@ -42,7 +42,7 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "#3f7cbf",
-        "count": TimeInterval {
+        "interval": TimeInterval {
           "_decode": [Function],
           "_encode": [Function],
           "_rangeCallback": undefined,
@@ -92,7 +92,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 20,
         "size": 10,
         "width": 1,
       },
@@ -9279,7 +9278,7 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": TimeInterval {
+        "interval": TimeInterval {
           "_decode": [Function],
           "_encode": [Function],
           "_rangeCallback": undefined,
@@ -10066,7 +10065,7 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
+        "maxSpacing": 70,
         "size": 6,
         "width": 1,
       },

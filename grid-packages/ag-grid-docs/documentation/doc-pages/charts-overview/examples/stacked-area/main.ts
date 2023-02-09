@@ -83,7 +83,7 @@ const options: AgChartOptions = {
         format: "%b",
       },
       tick: {
-        count: 10,
+        maxSpacing: 70
       },
     },
     {

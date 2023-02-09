@@ -127,9 +127,6 @@ const options: AgChartOptions = {
       line: {
         width: 0,
       },
-      tick: {
-        count: 5,
-      },
     },
   ],
   legend: {
