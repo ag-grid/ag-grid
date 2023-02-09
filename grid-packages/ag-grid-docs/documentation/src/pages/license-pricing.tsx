@@ -3,6 +3,7 @@ import ukraineFlagSVG from 'images/ukraine-flag.svg';
 import React from 'react';
 import { Alert } from '../components/alert/Alert';
 import { Licenses } from '../components/licenses/Licenses';
+import EmailIcon from '../images/inline-svgs/email.svg';
 import EnterpriseIcon from '../images/inline-svgs/enterprise.svg';
 import NPMIcon from '../images/inline-svgs/npm.svg';
 import { hostPrefix } from '../utils/consts';
@@ -40,12 +41,18 @@ const LicensePricing = () => {
                             className="button"
                             href="mailto:info@ag-grid.com?subject=AG Grid - Development Licenses quote"
                         >
+                            <span className="icon">
+                                <EmailIcon />
+                            </span>{' '}
                             Request a quote
                         </a>
                         <a
                             className="button-secondary"
                             href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
                         >
+                            <span className="icon">
+                                <EmailIcon />
+                            </span>{' '}
                             Contact sales
                         </a>
                     </div>
@@ -283,6 +290,9 @@ const LicensePricing = () => {
                     </p>
                     <div>
                         <a className="button-secondary" href="mailto:info@ag-grid.com">
+                            <span className="icon">
+                                <EmailIcon />
+                            </span>{' '}
                             Contact sales
                         </a>
                     </div>

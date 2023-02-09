@@ -1,6 +1,8 @@
 import classnames from 'classnames';
 import React from 'react';
+import EmailIcon from '../../images/inline-svgs/email.svg';
 import EnterpriseIcon from '../../images/inline-svgs/enterprise.svg';
+import PurchaseIcon from '../../images/inline-svgs/purchase.svg';
 // @ts-ignore
 import styles from './Licenses.module.scss';
 
@@ -109,9 +111,15 @@ const License = (props: LicenseData) => {
 
                 <div className={styles.licenseActions}>
                     <a className="button button-secondary" href={buyLink}>
+                        <span className="icon">
+                            <PurchaseIcon />
+                        </span>{' '}
                         Pay with card
                     </a>
                     <a className="button" href={`mailto:info@ag-grid.com?subject=AG Grid - ${name} License Quote`}>
+                        <span className="icon">
+                            <EmailIcon />
+                        </span>{' '}
                         Request a quote
                     </a>
                 </div>
