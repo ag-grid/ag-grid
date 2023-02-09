@@ -54,6 +54,7 @@ const SEMANTIC_COLOR_GROUPS = {
         'input-primary-color',
         'input-focus-border-color',
         'input-focus-box-shadow-color',
+        'input-error-color',
     ],
     Table: ['table-odd-row-background-color'],
     'Site Header': ['site-header-background', 'site-nav-background'],
