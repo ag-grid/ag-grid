@@ -2513,7 +2513,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -3161,7 +3161,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -20861,7 +20861,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -21509,7 +21509,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -23659,7 +23659,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -24307,7 +24307,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -26463,7 +26463,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -27111,7 +27111,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
