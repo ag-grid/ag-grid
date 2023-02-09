@@ -46,7 +46,7 @@ The following is a list of all the default built in menu items with the rules ab
 - `csvExport`: Export to CSV using all default export values. Shown by default.
 - `excelExport`: Export to Excel (.xlsx) using all default export values. Shown by default.
 - `chartRange`: Chart a range of selected cells. Only shown if charting is enabled. Configured via [chartToolPanelsDef](/integrated-charts-chart-tool-panels/#settings-tool-panel).
-- `pivotChart`: Chart a range of selected cells. Only shown if charting is enabled and in pivot mode. Configured via [chartToolPanelsDef](/integrated-charts-chart-tool-panels/#settings-tool-panel).
+- `pivotChart`: Chart all grouped and pivoted data from the grid. Only shown if charting is enabled and in [pivot mode](/integrated-charts-pivot-chart/). Configured via [chartToolPanelsDef](/integrated-charts-chart-tool-panels/#settings-tool-panel).
 
 ## Default Context Menu
 
