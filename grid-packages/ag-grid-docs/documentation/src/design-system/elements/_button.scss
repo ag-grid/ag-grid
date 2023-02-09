@@ -1,6 +1,8 @@
 @use '../core' as *;
 
 button,
+input[type='reset'],
+input[type='submit'],
 .button,
 .button-secondary {
     appearance: none;
