@@ -43,7 +43,7 @@
     counter-reset: policy-count;
 
     list-style: none;
-    padding-left: 0;
+    padding-left: 0 !important; // !important needed because of .ag-styles specificity
 
     > li {
         counter-increment: policy-count;

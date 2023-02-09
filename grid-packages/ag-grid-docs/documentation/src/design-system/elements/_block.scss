@@ -1,11 +1,21 @@
 @use '../core' as *;
 
+ul,
+ol {
+    padding-left: 1.125em;
+}
+
+li > ol,
+li > ul {
+    padding-left: 1.5em;
+}
+
 ul.list-style-none,
 ol.list-style-none,
 .list-style-none > li ul,
 .list-style-none > li ol {
-    margin-bottom: unset;
-    padding-left: unset;
+    margin-bottom: 0;
+    padding-left: 0;
     list-style: none;
 }
 
