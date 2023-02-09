@@ -103,7 +103,7 @@ function useLogAxisWithFewerTicks() {
         format: '.0f',
       },
       tick: {
-        minSpacing: 200, // a hint that we want a smaller tick count
+        minSpacing: 200,
       },
     },
   ]

@@ -136,20 +136,15 @@ The `width`, `size` and `color` of chart axis ticks can be configured as explain
 There are three main ways to control the density of the axis ticks. Configuring these properties will override the dynamic calculation based upon available rendering space:
 
 ### Tick Min and Max Spacing
-`tick.minSpacing` amd `tick.maxSpaxing` configure the minimum and maximum gap which should be present between ticks.
+`tick.minSpacing` and `tick.maxSpaxing` configure the minimum and maximum gap which should be present between ticks.
 An appropriate number of ticks will be generated to satisfy the `tick.minSpacing` and `tick.maxSpacing` constraints.
 
-### Tick Interval
-
-`tick.interval` is the step value between ticks specified in the units of the axis.
-
-For number axes, the `interval` property should be set to a `number` to show a tick every `interval` value.
-
-For time axes the `interval` property can be set to a time interval such as `agCharts.time.month`, which makes the axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `agCharts.time.month.every(3)`.
-
-Additionally, the time axes tick `interval` can be set to a `number` value representing milliseconds.
-
-If the configured `interval` results in dense ticks given the data domain, the ticks will be removed.
+```js
+tick: {
+    minSpacing: 50,
+    maxSpacing: 200,
+}
+```
 
 ### Tick Values
 
@@ -157,13 +152,37 @@ If the configured `interval` results in dense ticks given the data domain, the t
 
 These values will also be used as the tick labels unless a `label.format` or `label.formatter` is configured.
 
+```js
+tick: {
+    values: [-50, -25, 0, 25, 50],
+}
+```
 
-The example below demonstrates how the above tick properties can be used to reduce or increase the amount of ticks.
+### Tick Interval
 
+`tick.interval` is the step value between ticks specified in the units of the axis.
 
-<chart-example title='Axis Tick Styling' name='axis-tick-count' type='generated'></chart-example>
+For number axes, the `interval` property should be set to a `number` to show a tick every `interval` value.
 
-Please see the documentation for the numeric axis ticks in the [API reference](#number-axis-1) to learn about other available properties.
+```js
+tick: {
+    interval: 30,
+}
+```
+
+For time axes the `interval` property can be set to a time interval such as `agCharts.time.month`, which makes the axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `agCharts.time.month.every(3)`.
+
+```js
+tick: {
+    interval: agCharts.time.month,
+}
+```
+
+Additionally, the time axes tick `interval` can be set to a `number` value representing milliseconds.
+
+[[note]]
+| If the configured `interval` results in dense ticks given the data domain, the ticks will be removed.
+
 
 The example below demonstrates the usage of time intervals:
 - `agCharts.time.month` will produce monthly ticks.
@@ -173,7 +192,7 @@ The example below demonstrates the usage of time intervals:
 {
     type: 'time',
     tick: {
-        count: agCharts.time.month.every(2)
+        interval: agCharts.time.month.every(2)
     }
 }
 ```
@@ -181,6 +200,12 @@ The example below demonstrates the usage of time intervals:
 <chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
 
 Other available time intervals are: `year`, `month`, `day`, `hour`, `minute`, `second`, `millisecond`. There are some UTC time intervals: `utcYear`, `utcMonth`, `utcDay`, `utcYear`, `utcMinute`.
+
+### Example: Axis Tick Density
+
+The example below demonstrates how `tick.minSpacing`, `tick.maxSpacing` and `tick.interval` propeties can be used to control the density of the ticks.
+
+<chart-example title='Axis Tick Density' name='axis-tick-density' type='generated'></chart-example>
 
 ## Axis Labels
 
@@ -233,7 +258,7 @@ The following example demonstrates label rotation and skipping:
 
 ### Label Formatting
 
-A label formatter function can be used to change the value displayed in the label. It's a handy feature when you need to show units next to values or format number values to a certain precision, for example.
+A label formatter function can be used to change the value displayed in the label. It's a handy feature when you need to show units next to values or format number values to a certain precision.
 
 A label formatter function receives a single `params` object which contains:
 
@@ -382,9 +407,9 @@ If no padding modifier is specified, the default is `0` for all directives excep
 
 The `label` config of the bottom axis in the example below uses the `'%b&nbsp;%Y'` specifier string for the `format` property to format dates as the abbreviated name of the month followed by the full year.
 
-Notice that the `label.format` property only affects label formatting but not segmentation. The fact that axis labels were configured to show the name of the month and the year doesn't mean that the axis will show a tick every month. To ensure that it does, we also set the `tick.count` config to use the `agCharts.time.month` interval.
+Notice that the `label.format` property only affects label formatting but not segmentation. The fact that axis labels were configured to show the name of the month and the year doesn't mean that the axis will show a tick every month. To ensure that it does, we also set the `tick.interval` config to use the `agCharts.time.month` interval.
 
-Please see the [Axis Ticks](#axis-ticks) section to learn more about tick count and tick intervals.
+Please see the [Axis Ticks](#axis-ticks) section to learn more about tick intervals.
 
 ## Axis Grid Lines
 
