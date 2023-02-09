@@ -53,7 +53,6 @@ function setTickMinMaxSpacing() {
 }
 
 function setTickInterval() {
-  resetTickConfig()
   options.axes![0].tick = {
     interval: 30,
   }
@@ -64,7 +63,6 @@ function setTickInterval() {
 }
 
 function setTickValues() {
-  resetTickConfig()
   options.axes![0].tick = {
     values: [-50, -25, 0, 25, 50],
   }
