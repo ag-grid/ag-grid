@@ -81,19 +81,24 @@ export class Navigator extends BaseModuleInstance implements ModuleInstance {
     constructor(private readonly ctx: ModuleContext) {
         super();
 
-        ctx.scene.root!.append(this.rs);
         this.rs.onRangeChange = () =>
             this.ctx.zoomManager.updateZoom('navigator', { x: { min: this.rs.min, max: this.rs.max } });
 
-        const cleanupSymbols = [
+        [
             ctx.interactionManager.addListener('drag-start', (event) => this.onDragStart(event)),
             ctx.interactionManager.addListener('drag', (event) => this.onDrag(event)),
             ctx.interactionManager.addListener('hover', (event) => this.onDrag(event)),
             ctx.interactionManager.addListener('drag-end', () => this.onDragStop()),
+        ].forEach((s) => this.destroyFns.push(() => ctx.interactionManager.removeListener(s)));
+        [
             ctx.layoutService.addListener('before-series', (event) => this.layout(event)),
             ctx.layoutService.addListener('layout-complete', (event) => this.layoutComplete(event)),
-        ];
-        this.destroyFns.push(() => cleanupSymbols.forEach((s) => ctx.interactionManager.removeListener(s)));
+        ].forEach((s) => this.destroyFns.push(() => ctx.layoutService.removeListener(s)));
+
+        ctx.scene.root!.appendChild(this.rs);
+        this.destroyFns.push(() => ctx.scene.root?.removeChild(this.rs));
+
+        this.updateGroupVisibility();
     }
 
     private layout({ shrinkRect }: LayoutContext) {
