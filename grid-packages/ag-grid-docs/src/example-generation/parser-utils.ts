@@ -390,8 +390,16 @@ export function tsNodeIsTopLevelFunction(node: any): boolean {
  */
 export function findAllVariables(node) {
     let allVariables = [];
-    if (ts.isVariableDeclaration(node) || ts.isClassDeclaration(node)) {
+    if (ts.isClassDeclaration(node)) {
         allVariables.push(node.name.getText());
+    }
+    if (ts.isVariableDeclaration(node)) {
+        if(ts.isObjectBindingPattern(node.name)){
+            // Code like this:  const { pageSetup, margins } = getSheetConfig();
+            node.name.elements.forEach(n => allVariables.push(n.getText()))
+        }else{
+            allVariables.push(node.name.getText());
+        }
     }
     if (ts.isFunctionDeclaration(node)) {
         // catch locally defined functions within the main function body

@@ -1,7 +1,7 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
 import { isInstanceMethod, convertFunctionToProperty, addBindingImports } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport } from './react-utils';
-import { wrapOptionsUpdateCode, getChartImports } from './chart-utils';
+import { wrapOptionsUpdateCode } from './chart-utils';
 import { toTitleCase } from './angular-utils';
 
 export function processFunction(code: string): string {
