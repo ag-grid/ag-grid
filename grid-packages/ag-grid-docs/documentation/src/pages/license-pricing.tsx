@@ -5,6 +5,7 @@ import { Alert } from '../components/alert/Alert';
 import { Licenses } from '../components/licenses/Licenses';
 import EnterpriseIcon from '../images/inline-svgs/enterprise.svg';
 import NPMIcon from '../images/inline-svgs/npm.svg';
+import { hostPrefix } from '../utils/consts';
 import SEO from './components/SEO';
 // @ts-ignore
 import styles from './license-pricing.module.scss';
@@ -55,10 +56,10 @@ const LicensePricing = () => {
                         <h3>AG Grid Community</h3>
                         <p>
                             <b>AG Grid Community</b> and <b>AG Charts Community</b> (a.k.a.{' '}
-                            <a href="/javascript-charts/overview/">Standalone Charts</a>) are free and open source
-                            products distributed under the{' '}
-                            <a href="/eula/AG-Grid-Community-License.html">MIT License</a>. These versions are free to
-                            use in production environments.
+                            <a href={`${hostPrefix}/javascript-charts/overview/`}>Standalone Charts</a>) are free and
+                            open source products distributed under the{' '}
+                            <a href={`${hostPrefix}/eula/AG-Grid-Community-License.html`}>MIT License</a>. These
+                            versions are free to use in production environments.
                         </p>
 
                         <a
@@ -82,22 +83,25 @@ const LicensePricing = () => {
                         </h3>
                         <p>
                             <b>AG Grid Enterprise</b> offers advanced functionality like{' '}
-                            <a href="/javascript-data-grid/grouping/">Row Grouping</a>,{' '}
-                            <a href="/javascript-data-grid/range-selection/">Range Selection</a>,{' '}
-                            <a href="/javascript-data-grid/master-detail/">Master / Detail</a>,{' '}
-                            <a href="/javascript-data-grid/server-side-model/">Server Side Row Model</a> and{' '}
-                            <a href="/javascript-data-grid/licensing/#feature-comparison">much much more</a>.{' '}
-                            <b>AG Grid Enterprise</b> also comes with{' '}
-                            <a href="/javascript-data-grid/integrated-charts/">Integrated Charts</a>, allowing your
-                            users to create charts using the grid's UI.
+                            <a href={`${hostPrefix}/javascript-data-grid/grouping/`}>Row Grouping</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/range-selection/`}>Range Selection</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/master-detail/`}>Master / Detail</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/server-side-model/`}>Server Side Row Model</a>{' '}
+                            and{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/licensing/#feature-comparison`}>
+                                much much more
+                            </a>
+                            . <b>AG Grid Enterprise</b> also comes with{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/integrated-charts/`}>Integrated Charts</a>,
+                            allowing your users to create charts using the grid's UI.
                         </p>
 
                         <p>
                             <b>AG Grid Enterprise</b> is a commercial product distributed under our{' '}
-                            <a href="/eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
-                            technical staff. To evaluate <b>AG Grid Enterprise</b> you don't need our permission – all
-                            features are unlocked. To temporarily hide the watermark and browser console errors e-mail
-                            us to{' '}
+                            <a href={`${hostPrefix}/eula/AG-Grid-Enterprise-License-Latest.html`}>EULA</a> and supported
+                            by our technical staff. To evaluate <b>AG Grid Enterprise</b> you don't need our permission
+                            – all features are unlocked. To temporarily hide the watermark and browser console errors
+                            e-mail us to{' '}
                             <a href="mailto:info@ag-grid.com?subject=AG Grid - Development License Temporary Evaluation Key">
                                 get a temporary evaluation key
                             </a>
@@ -117,7 +121,10 @@ const LicensePricing = () => {
                             .
                         </p>
 
-                        <a href="/javascript-data-grid/licensing/#feature-comparison" className="button-secondary">
+                        <a
+                            href={`${hostPrefix}/javascript-data-grid/licensing/#feature-comparison`}
+                            className="button-secondary"
+                        >
                             See all AG Grid Enterprise features
                         </a>
                     </div>
