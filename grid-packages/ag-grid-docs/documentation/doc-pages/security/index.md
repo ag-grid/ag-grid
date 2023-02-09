@@ -43,6 +43,13 @@ const gridOptions = {
 
 The `style-src` policy requires the `unsafe-inline` due to the [DOM Row and Column Virtualisation](/dom-virtualisation/). The technique the grid uses to display position rows requires explicit positioning of the rows and columns. This positioning is only possible using CSS style attributes to set explicit X and Y positions. This is a feature that all data grids have. Without it, the data grid would have a very low limit on the amount of data that could be displayed.
 
+[[note]]
+| Even though the `style-src` policy requires `unsafe-inline`, the specific way AG Grid uses it causes no actual security vulnerability.
+|
+| The reason is that AG Grid doesn’t require `unsafe-inline` for scripts, but only for styles. The inline-style injection is only a problem if you allow users to upload their own content to your servers and then they can use injected styles to show that content over your page.
+|
+| Also, as styles aren't executed, a user would need to upload their own content to your servers and then reference it from an injected style. In order to fully prevent this scenario from occurring, we recommend sanitising user-uploaded content in your application to ensure that only valid content gets uploaded and fully prevent this risk.
+
 ### img-src
 
 The `img-src` policy requires the `data:` rule. This is because the grid pre-loads SVG images as data strings. One example of such an image is the filter menu section divider. If the image was not preloaded, the grid would flicker when the menu shows, while the image is getting loaded.

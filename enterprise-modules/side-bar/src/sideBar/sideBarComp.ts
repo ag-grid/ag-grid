@@ -70,6 +70,7 @@ export class SideBarComp extends Component implements ISideBar {
         const eDocument = this.gridOptionsService.getDocument();
         const activeElement = eDocument.activeElement as HTMLElement;
         const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
+        const target = e.target as HTMLElement;
 
         if (!openPanel) { return; }
 
@@ -77,20 +78,28 @@ export class SideBarComp extends Component implements ISideBar {
             if (focusService.focusInto(openPanel, e.shiftKey)) {
                 e.preventDefault();
             }
-        } else {
-            if (!focusService.isFocusUnderManagedComponent(openPanel) && e.shiftKey) {
-                const firstFocusableEl = focusService.findFocusableElements(openPanel)[0];
-                const eDocument = this.gridOptionsService.getDocument();
-                if (eDocument.activeElement === firstFocusableEl) {
-                    const selectedButton = sideBarGui.querySelector('.ag-selected button') as HTMLElement;
+            return;
+        }
 
-                    if (selectedButton) {
-                        e.preventDefault();
-                        selectedButton.focus();
+        // only handle backwards focus to target the sideBar buttons
+        if (!e.shiftKey) { return; }
 
-                    }
-                }
-            }
+        let nextEl: HTMLElement | null = null;
+
+
+        if (openPanel.contains(activeElement)) {
+            nextEl = this.focusService.findNextFocusableElement(openPanel, undefined, true);
+        } else if (focusService.isTargetUnderManagedComponent(openPanel, target) && e.shiftKey) {
+            nextEl = this.focusService.findFocusableElementBeforeTabGuard(openPanel, target);
+        }
+
+        if (!nextEl) {
+            nextEl = sideBarGui.querySelector('.ag-selected button') as HTMLElement;
+        }
+
+        if (nextEl) {
+            e.preventDefault();
+            nextEl.focus();
         }
     }
 

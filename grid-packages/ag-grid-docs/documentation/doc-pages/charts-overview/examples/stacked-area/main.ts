@@ -82,6 +82,9 @@ const options: AgChartOptions = {
       label: {
         format: "%b",
       },
+      tick: {
+        maxSpacing: 70
+      },
     },
     {
       type: "number",

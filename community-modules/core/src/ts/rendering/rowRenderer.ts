@@ -2,6 +2,7 @@ import { RowCtrl } from "./row/rowCtrl";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import {
+    BodyScrollEvent,
     CellFocusedEvent,
     DisplayedRowsChangedEvent,
     Events,
@@ -132,7 +133,7 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.redrawAfterScroll.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
 
         this.addManagedPropertyListener('domLayout', this.onDomLayoutChanged.bind(this));
@@ -200,15 +201,21 @@ export class RowRenderer extends BeanStub {
         this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
     }
 
+    private onCellFocusChanged(event?: CellFocusedEvent) {
+        this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellFocused(event));
+        this.getFullWidthRowCtrls().forEach(rowCtrl => rowCtrl.onFullWidthRowFocused(event));
+    }
+
     // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
-            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellFocused(event));
-            this.getFullWidthRowCtrls().forEach(rowCtrl => {
-                rowCtrl.onFullWidthRowFocused(event);
-            });
+            this.onCellFocusChanged(event);
+        });
+
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUS_CLEARED, () => {
+            this.onCellFocusChanged();
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
@@ -838,6 +845,11 @@ export class RowRenderer extends BeanStub {
             }
             delete this.rowCtrlsByRowIndex[indexToRemove];
         });
+    }
+
+    private onBodyScroll(e: BodyScrollEvent) {
+        if (e.direction !== 'vertical') { return; }
+        this.redrawAfterScroll();
     }
 
     // gets called when rows don't change, but viewport does, so after:

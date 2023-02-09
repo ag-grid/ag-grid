@@ -24,34 +24,22 @@ The Settings Panel can be used to change the chart type and chart theme.
     <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Settings Panel</figcaption>
 </figure>
 
-It is possible to configure which chart groups and chart types are included via the `chartToolPanelsDef` grid option: 
+It is possible to configure which chart groups and chart types are included and in which order via the `chartToolPanelsDef` grid option: 
 
 <api-documentation source='grid-options/properties.json' section='charts' names='["chartToolPanelsDef"]' ></api-documentation>
 
 The full list of chart groups with the corresponding chart types are shown below:
 
-<snippet>
-const gridOptions = {
-    chartToolPanelsDef: {
-        settingsPanel: {
-            chartGroupsDef: {
-                columnGroup: ['column', 'stackedColumn', 'normalizedColumn'],
-                barGroup: ['bar', 'stackedBar', 'normalizedBar'],
-                pieGroup: ['pie', 'doughnut'],
-                lineGroup: ['line'],
-                scatterGroup: ['scatter', 'bubble'],
-                areaGroup: ['area', 'stackedArea', 'normalizedArea'],
-                histogramGroup: ['histogram'],
-                combinationGroup: ['columnLineCombo', 'areaColumnCombo', 'customCombo'],
-            }
-        }
-    }
-}
-</snippet>
+<interface-documentation interfaceName="ChartGroupsDef" config='{"description":"", "asCode":true, "lineBetweenProps": false}'></interface-documentation>
+
+[[note]]
+| The contents and order of chart menu items in the [Context Menu](/context-menu/) will match the `ChartGroupsDef` configuration.
 
 The example below shows a subset of the provided chart groups with the chart types reordered. Note the following:
 
-* Only the **Pie**, **Columns** and **Bar** chart groups are shown and chart types have been reordered.
+* Only the **Pie**, **Columns** and **Bar** chart groups are shown in the settings panel.
+* Only the **Pie**, **Columns** and **Bar** chart groups are shown in the Context Menu when you right click the grid.
+* Note the order of the chart groups and their chart types matches the order they are specified in `chartGroupsDef`.
 * The Settings Panel is configured to be open by default via `defaultToolPanel: 'settings'`.
 
 <grid-example title='Settings Tool Panel Customisation' name='settings-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>

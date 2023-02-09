@@ -60,7 +60,7 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
     const dataFileContent = dataFileExists ? cleanTs(fs.readFileSync(dataFile)) : [];
     const exampleFileLines = cleanTs(fs.readFileSync(exampleFile));
 
-    let evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
+    const evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
     // @ts-ignore - used in the eval() call.
     const { AgChart, time, Marker } = require('../../main');
     try {
@@ -782,7 +782,7 @@ export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS_LABELS: AgCartesianChartOptions = {
             type: 'number',
             position: 'left',
             tick: {
-                count: 100,
+                maxSpacing: 20,
             },
         },
     ],
@@ -814,7 +814,7 @@ export const LINE_TIME_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS: AgCartesianChar
             type: 'number',
             position: 'left',
             tick: {
-                count: 100,
+                maxSpacing: 20,
             },
         },
     ],
@@ -846,7 +846,7 @@ export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS: AgCartesianCh
             type: 'number',
             position: 'right',
             tick: {
-                count: 100,
+                maxSpacing: 20,
             },
         },
     ],

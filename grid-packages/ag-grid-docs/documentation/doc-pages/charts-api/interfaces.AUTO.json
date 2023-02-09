@@ -1055,12 +1055,18 @@
     "type": {
       "width?": "PixelSize",
       "size?": "PixelSize",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "values?": "any[]",
+      "minSpacing?": "number",
+      "maxSpacing?": "number"
     },
     "docs": {
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
-      "color?": "/** The colour of the axis ticks. */"
+      "color?": "/** The colour of the axis ticks. */",
+      "values?": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "minSpacing?": "/** Minimum gap in pixels between tick lines.\n     */",
+      "maxSpacing?": "/** Maximum gap in pixels between tick lines.\n     */"
     }
   },
   "AgAxisCategoryTickOptions": {
@@ -1068,42 +1074,64 @@
     "type": {
       "width?": "PixelSize",
       "size?": "PixelSize",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "values?": "any[]",
+      "minSpacing?": "number",
+      "maxSpacing?": "number"
     },
     "docs": {
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
-      "color?": "/** The colour of the axis ticks. */"
+      "color?": "/** The colour of the axis ticks. */",
+      "values?": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "minSpacing?": "/** Minimum gap in pixels between tick lines.\n     */",
+      "maxSpacing?": "/** Maximum gap in pixels between tick lines.\n     */"
     }
   },
   "AgAxisNumberTickOptions": {
     "meta": {},
     "type": {
       "count?": "number",
+      "interval?": "number",
       "width?": "PixelSize",
       "size?": "PixelSize",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "values?": "any[]",
+      "minSpacing?": "number",
+      "maxSpacing?": "number"
     },
     "docs": {
-      "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     */",
+      "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.\n     */",
+      "interval?": "/** The step value between ticks specified as a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
-      "color?": "/** The colour of the axis ticks. */"
+      "color?": "/** The colour of the axis ticks. */",
+      "values?": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "minSpacing?": "/** Minimum gap in pixels between tick lines.\n     */",
+      "maxSpacing?": "/** Maximum gap in pixels between tick lines.\n     */"
     }
   },
   "AgAxisTimeTickOptions": {
     "meta": {},
     "type": {
       "count?": "any",
+      "interval?": "any",
       "width?": "PixelSize",
       "size?": "PixelSize",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "values?": "any[]",
+      "minSpacing?": "number",
+      "maxSpacing?": "number"
     },
     "docs": {
       "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * The following intervals from the `agCharts.time` namespace can be used:\n     * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.\n     * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */",
+      "interval?": "/** The step value between ticks specified as a number or a TimeInterval. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
-      "color?": "/** The colour of the axis ticks. */"
+      "color?": "/** The colour of the axis ticks. */",
+      "values?": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "minSpacing?": "/** Minimum gap in pixels between tick lines.\n     */",
+      "maxSpacing?": "/** Maximum gap in pixels between tick lines.\n     */"
     }
   },
   "AgAxisLabelFormatterParams": {
@@ -2835,7 +2863,7 @@
   "AgCartesianChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
+      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
       "axes?": "AgCartesianAxisOptions[]",
       "series?": "AgCartesianSeriesOptions[]",
       "navigator?": "AgNavigatorOptions",
@@ -2854,7 +2882,7 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "type?": "/** If specified overrides the default series type. */",
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
       "navigator?": "/** Configuration for the chart navigator. */",
@@ -2876,7 +2904,7 @@
   "AgPolarChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'polar' | 'pie'",
+      "type?": "'pie'",
       "series?": "AgPolarSeriesOptions[]",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -2893,7 +2921,7 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -2913,7 +2941,7 @@
   "AgHierarchyChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'hierarchy' | 'treemap'",
+      "type?": "'treemap'",
       "data?": "any",
       "series?": "AgHierarchySeriesOptions[]",
       "container?": "HTMLElement | null",
@@ -2930,7 +2958,7 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -3105,10 +3133,6 @@
       "padding": "number"
     }
   },
-  "Listener": {
-    "meta": { "isTypeAlias": true, "typeParams": ["E"] },
-    "type": "{ symbol?: Symbol; handler: (event: E) => void; }"
-  },
   "CursorState": { "meta": {}, "type": { "style": "string" } },
   "HighlightState": {
     "meta": {},
@@ -3156,6 +3180,15 @@
     "meta": {},
     "type": { "content": "string", "meta": "TooltipMeta" }
   },
+  "ZoomState": { "meta": {}, "type": { "min": "number", "max": "number" } },
+  "AxisZoomState": {
+    "meta": {},
+    "type": { "x?": "ZoomState", "y?": "ZoomState" }
+  },
+  "ZoomChangeEvent": {
+    "meta": {},
+    "type": { "type": "'zoom-change'", "x?": "ZoomState", "y?": "ZoomState" }
+  },
   "Layers": {
     "meta": { "isEnum": true },
     "type": [
@@ -3169,6 +3202,32 @@
       "LEGEND_ZINDEX = 3000"
     ],
     "docs": [null, null, null, null, null, null, null, null]
+  },
+  "LayoutStage": { "meta": { "isTypeAlias": true }, "type": "'before-series'" },
+  "LayoutCompleteEvent": {
+    "meta": {},
+    "type": {
+      "type": "'layout-complete'",
+      "series": "{ rect: BBox; visible: boolean; }"
+    }
+  },
+  "LayoutContext": { "meta": {}, "type": { "shrinkRect": "BBox" } },
+  "LayoutResult": { "meta": {}, "type": { "shrinkRect": "BBox" } },
+  "EventTypes": {
+    "meta": { "isTypeAlias": true },
+    "type": "LayoutStage | 'layout-complete'"
+  },
+  "LayoutListener": {
+    "meta": { "isTypeAlias": true },
+    "type": "(event: LayoutCompleteEvent) => void"
+  },
+  "LayoutProcessor": {
+    "meta": { "isTypeAlias": true },
+    "type": "(ctx: LayoutContext) => LayoutResult"
+  },
+  "Handler": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends EventTypes"] },
+    "type": "T extends LayoutStage ? LayoutProcessor : LayoutListener"
   },
   "LegendDatum": {
     "meta": {},
@@ -3739,6 +3798,38 @@
       "y": "number"
     }
   },
+  "Listener": {
+    "meta": { "isTypeAlias": true, "typeParams": ["H extends Function"] },
+    "type": "{ symbol?: Symbol; handler: H; }"
+  },
+  "ModuleContext": {
+    "meta": {},
+    "type": {
+      "scene": "Scene",
+      "interactionManager": "InteractionManager",
+      "highlightManager": "HighlightManager",
+      "cursorManager": "CursorManager",
+      "zoomManager": "ZoomManager",
+      "tooltipManager": "TooltipManager",
+      "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>"
+    }
+  },
+  "ModuleInstance": {
+    "meta": {},
+    "type": { "update()": "void", "destroy()": "void" }
+  },
+  "ModuleInstanceMeta": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": { "instance": "M" }
+  },
+  "Module": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "optionsKey": "string",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>"
+    }
+  },
   "FormatterOptions": {
     "meta": {},
     "type": {
@@ -3782,17 +3873,21 @@
     "meta": { "isTypeAlias": true },
     "type": "NumberFormat | DateFormat"
   },
-  "FloorFn": {
+  "EncodeFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(date: Date) => void"
+    "type": "(date: Date) => number"
   },
-  "OffsetFn": {
+  "DecodeFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(date: Date, step: number) => void"
+    "type": "(encoded: number) => Date"
   },
-  "StepTestFn": {
+  "RangeFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(date: Date, step: number) => boolean"
+    "type": "(start: Date, end: Date) => () => void"
+  },
+  "CountableTimeIntervalOptions": {
+    "meta": {},
+    "type": { "snapTo?": "Date | number | 'start' | 'end'" }
   },
   "FormattingFn": {
     "meta": { "isTypeAlias": true },

@@ -321,6 +321,10 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         }
     }
 
+    public afterGuiDetached(): void {
+        this.executeFunctionIfExists('afterGuiDetached');
+    }
+
     public onAnyFilterChanged(): void {
         this.executeFunctionIfExists('onAnyFilterChanged');
     }

@@ -42,28 +42,32 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private scrollTimer: number | undefined;
 
-    private readonly resetLastHScrollDebounced: () => void;
-    private readonly resetLastVScrollDebounced: () => void;
-
     private centerRowContainerCtrl: RowContainerCtrl;
 
     constructor(eBodyViewport: HTMLElement) {
         super();
         this.eBodyViewport = eBodyViewport;
-        this.resetLastHScrollDebounced = debounce( ()=> this.eLastHScroll = null, 500);
-        this.resetLastVScrollDebounced = debounce( ()=> this.eLastVScroll = null, 500);
     }
 
     @PostConstruct
     private postConstruct(): void {
         this.enableRtl = this.gridOptionsService.is('enableRtl');
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, (e: BodyScrollEndEvent) => this.onBodyScrollEnd(e));
 
         this.ctrlsService.whenReady(p => {
             this.centerRowContainerCtrl = p.centerRowContainerCtrl;
             this.onDisplayedColumnsWidthChanged();
             this.addScrollListener();
         });
+    }
+
+    private onBodyScrollEnd(e: BodyScrollEndEvent) {
+        if (e.direction === 'horizontal') {
+            this.eLastHScroll = null;
+        } else {
+            this.eLastVScroll = null;
+        }
     }
 
     private addScrollListener() {
@@ -171,7 +175,6 @@ export class GridBodyScrollFeature extends BeanStub {
         // as the scroll would move 1px at at time bouncing from one grid to the next (eg one grid would cause
         // scroll to 200px, the next to 199px, then the first back to 198px and so on).
         this.doHorizontalScroll(Math.round(getScrollLeft(eSource, this.enableRtl)));
-        this.resetLastHScrollDebounced();
     }
 
     private onFakeVScroll(): void {
@@ -192,21 +195,21 @@ export class GridBodyScrollFeature extends BeanStub {
         this.animationFrameService.setScrollTop(scrollTop);
         this.nextScrollTop = scrollTop;
 
-        if (this.gridOptionsService.is('suppressAnimationFrame')) {
-            this.scrollTop = this.nextScrollTop;
-            this.redrawRowsAfterScroll();
-        } else {
-            this.animationFrameService.schedule();
-        }
-
-        if (eSource===this.eBodyViewport) {
+        if (eSource === this.eBodyViewport) {
             const fakeVScrollViewport = this.ctrlsService.getFakeVScrollComp().getViewport();
             fakeVScrollViewport.scrollTop = scrollTop;
         } else {
             this.eBodyViewport.scrollTop = scrollTop;
         }
 
-        this.resetLastVScrollDebounced();
+        // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
+        // so it should only be called after `eBodyViewport` has been scrolled to the correct
+        // position, otherwise the `first` and `last` row could be miscalculated.
+        if (this.gridOptionsService.is('suppressAnimationFrame')) {
+            this.scrollGridIfNeeded();
+        } else {
+            this.animationFrameService.schedule();
+        }
     }
 
     private doHorizontalScroll(scrollLeft: number): void {
@@ -236,9 +239,11 @@ export class GridBodyScrollFeature extends BeanStub {
         this.scrollTimer = undefined;
 
         this.scrollTimer = window.setTimeout(() => {
-            const bodyScrollEndEvent: WithoutGridCommon<BodyScrollEndEvent> = Object.assign({}, bodyScrollEvent, {
+            const bodyScrollEndEvent: WithoutGridCommon<BodyScrollEndEvent> = {
+                ...bodyScrollEvent,
                 type: Events.EVENT_BODY_SCROLL_END
-            });
+            };
+
             this.eventService.dispatchEvent(bodyScrollEndEvent);
         }, 100);
     }
@@ -301,7 +306,7 @@ export class GridBodyScrollFeature extends BeanStub {
         }
     }
 
-    public executeAnimationFrameScroll(): boolean {
+    public scrollGridIfNeeded(): boolean {
         const frameNeeded = this.scrollTop != this.nextScrollTop;
 
         if (frameNeeded) {

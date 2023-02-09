@@ -1,4 +1,4 @@
-import { GridCtrl, ITabGuard, TabGuardCtrl } from '@ag-grid-community/core';
+import { GridCtrl, ITabGuard, TabGuardClassNames, TabGuardCtrl } from '@ag-grid-community/core';
 import { createSignal, JSX, onCleanup, onMount, useContext } from "solid-js";
 import { BeansContext } from "./core/beansContext";
 
@@ -52,14 +52,14 @@ const TabGuardComp = (props: TabGuardProps)=> {
 
     return (
         <>
-            <div class={ `ag-tab-guard ag-tab-guard-top` }
+            <div class={ `${TabGuardClassNames.TAB_GUARD} ${TabGuardClassNames.TAB_GUARD_TOP}` }
                 role="presentation"
                 tabIndex={ tabIndex() }
                 ref={ eTopGuard! }></div>
 
             { children }
 
-            <div class={ `ag-tab-guard ag-tab-guard-bottom` }
+            <div class={ `${TabGuardClassNames.TAB_GUARD} ${TabGuardClassNames.TAB_GUARD_BOTTOM}` }
                 role="presentation"
                 tabIndex={ tabIndex() }
                 ref={ eBottomGuard! }></div>

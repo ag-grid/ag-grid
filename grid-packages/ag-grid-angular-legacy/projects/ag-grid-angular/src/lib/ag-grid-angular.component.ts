@@ -377,7 +377,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressAutoSize: boolean | undefined = undefined;
     /** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
          * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
-         * Default: `4`
+         * Default: `20`
          */
     @Input() public autoSizePadding: number | undefined = undefined;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false`     */
@@ -767,8 +767,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
     /** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
-          * Default: `false`
-          */
+         * Default: `false`
+         */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead.     */
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
@@ -1014,7 +1014,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent<TData>> = new EventEmitter<ComponentStateChangedEvent<TData>>();
     /** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
-         *  if cell value has changed as a result of paste operation.
+         *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
+         * fill handle, copy range down, undo and redo.
         */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
     /** Value has changed after editing. Only fires when `readOnlyEdit=true`.     */

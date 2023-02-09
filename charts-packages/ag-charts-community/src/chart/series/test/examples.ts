@@ -410,7 +410,7 @@ export const BUBBLE_SERIES_LABELS: AgCartesianChartOptions = {
                 text: 'Longitude',
             },
             tick: {
-                count: 2,
+                minSpacing: 300,
             },
             line: {
                 color: undefined,
@@ -430,7 +430,7 @@ export const BUBBLE_SERIES_LABELS: AgCartesianChartOptions = {
                 text: 'Latitude',
             },
             tick: {
-                count: 2,
+                minSpacing: 200,
             },
             line: {
                 color: undefined,
@@ -512,9 +512,6 @@ export const GROUPED_BUBBLE_SERIES_LABELS: AgCartesianChartOptions = {
             title: {
                 text: 'Weight',
             },
-            tick: {
-                count: 10,
-            },
             line: {
                 color: undefined,
             },
@@ -571,7 +568,6 @@ export const GROUPED_DOUGHNUT_SERIES_LABELS: AgPolarChartOptions = {
 };
 
 export const TREEMAP_SERIES_LABELS: AgHierarchyChartOptions = {
-    type: 'hierarchy',
     data: DATA_TREEMAP,
     series: [
         {

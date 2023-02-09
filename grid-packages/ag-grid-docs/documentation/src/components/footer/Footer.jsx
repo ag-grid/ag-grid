@@ -3,6 +3,7 @@ import DocumentationLink from 'components/DocumentationLink';
 import React from 'react';
 import footerItems from './footer-items.json';
 import styles from './Footer.module.scss';
+import {hostPrefix} from "../../utils/consts";
 
 const MenuColumns = ({ framework = 'javascript' }) =>
     footerItems.map(({ title, links }) => (
@@ -17,7 +18,7 @@ const MenuColumns = ({ framework = 'javascript' }) =>
                             </DocumentationLink>
                         ) : (
                             <a href={url} {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}>
-                                {iconUrl && <img src={iconUrl} alt={name} />}
+                                {iconUrl && <img src={`${hostPrefix}${iconUrl}`} alt={name} />}
                                 {name}
                             </a>
                         )}

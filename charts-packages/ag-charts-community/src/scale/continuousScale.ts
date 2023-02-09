@@ -2,11 +2,13 @@ import { TimeInterval } from '../util/time/interval';
 import { Scale } from './scale';
 
 export abstract class ContinuousScale implements Scale<any, any> {
+    static readonly defaultTickCount = 5;
+
     domain: any[] = [0, 1];
     range: any[] = [0, 1];
     nice = false;
     interval?: number | TimeInterval;
-    tickCount = 10;
+    tickCount = ContinuousScale.defaultTickCount;
     niceDomain: any[] = null as any;
 
     protected transform(x: any) {

@@ -15,6 +15,7 @@ export interface IServerSideRowModel extends IRowModel {
     forEachNodeAfterFilterAndSort(callback: (node: IRowNode, index: number) => void): void;
     resetRootStore(): void;
     getBlockStates(): void;
+    setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
 }
 
 export interface IServerSideTransactionManager {

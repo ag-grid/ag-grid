@@ -220,8 +220,8 @@ export class Matrix {
         const yx = elements[2];
         const yy = elements[3];
 
-        let h_w = bbox.width * 0.5;
-        let h_h = bbox.height * 0.5;
+        const h_w = bbox.width * 0.5;
+        const h_h = bbox.height * 0.5;
         const cx = bbox.x + h_w;
         const cy = bbox.y + h_h;
 

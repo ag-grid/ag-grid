@@ -32,6 +32,10 @@ label {
     &[for*='switch'] {
         cursor: pointer;
     }
+
+    .req {
+        color: var(--input-error-color);
+    }
 }
 
 input {
@@ -151,7 +155,7 @@ input[type='radio'] {
 
 input[type='reset'],
 input[type='submit'] {
-    @extend button;
+    @extend .button;
 }
 
 select {
@@ -199,4 +203,57 @@ input[type='range'] {
         border-radius: 50%;
         background-color: var(--input-primary-color);
     }
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+
+    label {
+        font-weight: var(--font-weight-bold);
+        margin-bottom: $size-half;
+    }
+
+    input,
+    select {
+        margin-left: 0;
+    }
+
+    select {
+        align-self: flex-start;
+    }
+
+    &.inline {
+        display: inline-block;
+
+        label {
+            margin-bottom: inherit;
+        }
+
+        input,
+        select {
+            margin-left: $size-half;
+        }
+    }
+}
+
+.input-error {
+    label {
+        color: var(--input-error-color);
+    }
+
+    input,
+    select {
+        border-color: var(--input-error-color);
+    }
+
+    .error {
+        margin-top: $size-half;
+        color: var(--input-error-color);
+    }
+}
+
+.extra-info {
+    margin-top: $size-half;
+    color: var(--secondary-text-color);
 }

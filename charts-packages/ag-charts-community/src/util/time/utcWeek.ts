@@ -1,31 +1,24 @@
-import { durationWeek } from './duration';
 import { CountableTimeInterval } from './interval';
+import { durationWeek, durationDay } from './duration';
+
+const baseSunday = Date.UTC(2023, 0, 1);
 
 // Set date to n-th day of the week.
 function weekday(n: number): CountableTimeInterval {
-    // Sets the `date` to the start of the `n`-th day of the current week.
-    // n == 0 is Sunday.
-    function floor(date: Date) {
-        date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 7 - n) % 7));
-        date.setUTCHours(0, 0, 0, 0);
-    }
-    // Offset the date by the given number of weeks.
-    function offset(date: Date, weeks: number) {
-        date.setUTCDate(date.getUTCDate() + weeks * 7);
+    const base = new Date(baseSunday + n * durationDay).getTime();
+
+    function encode(date: Date) {
+        return Math.floor((date.getTime() - base) / durationWeek);
     }
 
-    function stepTest(date: Date, weeks: number) {
-        const start = new Date(0);
-        floor(start);
-
-        const end = new Date(date.getTime() + 1);
-        floor(end);
-        offset(end, 1);
-
-        return Math.floor((end.getTime() - start.getTime()) / durationWeek) % weeks === 0;
+    function decode(encoded: number) {
+        const d = new Date(base);
+        d.setUTCDate(d.getUTCDate() + encoded * 7);
+        d.setUTCHours(0, 0, 0, 0);
+        return d;
     }
 
-    return new CountableTimeInterval(floor, offset, stepTest);
+    return new CountableTimeInterval(encode, decode);
 }
 
 export const utcSunday = weekday(0);

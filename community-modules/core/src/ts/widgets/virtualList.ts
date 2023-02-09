@@ -106,8 +106,7 @@ export class VirtualList extends TabGuardComp {
         if (this.navigate(e.shiftKey)) {
             e.preventDefault();
         } else {
-            // focus on the first or last focusable element to ensure that any other handlers start from there
-            this.focusService.focusInto(this.getGui(), !e.shiftKey);
+            this.forceFocusOutOfContainer(e.shiftKey);
         }
     }
 

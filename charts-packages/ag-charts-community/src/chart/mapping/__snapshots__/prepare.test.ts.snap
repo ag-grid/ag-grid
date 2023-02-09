@@ -42,9 +42,10 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "#3f7cbf",
-        "count": TimeInterval {
-          "_floor": [Function],
-          "_offset": [Function],
+        "interval": TimeInterval {
+          "_decode": [Function],
+          "_encode": [Function],
+          "_rangeCallback": undefined,
         },
         "size": 6,
         "width": 3,
@@ -91,7 +92,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 20,
         "size": 10,
         "width": 1,
       },
@@ -7023,7 +7023,7 @@ Object {
     "enabled": true,
     "tracking": true,
   },
-  "type": "hierarchy",
+  "type": "treemap",
 }
 `;
 
@@ -9278,9 +9278,10 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": TimeInterval {
-          "_floor": [Function],
-          "_offset": [Function],
+        "interval": TimeInterval {
+          "_decode": [Function],
+          "_encode": [Function],
+          "_rangeCallback": undefined,
         },
         "size": 6,
         "width": 1,
@@ -10064,6 +10065,7 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
+        "maxSpacing": 70,
         "size": 6,
         "width": 1,
       },

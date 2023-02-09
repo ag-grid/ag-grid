@@ -626,7 +626,8 @@ export class RowCtrl extends BeanStub {
         this.addManagedListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUS_CLEARED, this.onCellFocusCleared.bind(this));
         this.addManagedListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
 
@@ -773,9 +774,9 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    public onFullWidthRowFocused(event: CellFocusedEvent) {
+    public onFullWidthRowFocused(event?: CellFocusedEvent) {
         const node = this.rowNode;
-        const isFocused = this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
+        const isFocused = !event ? false : this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
         const element = this.fullWidthGui ? this.fullWidthGui.element : this.centerGui?.element;
         if (!element) { return; } // can happen with react ui, comp not yet ready
@@ -1246,8 +1247,11 @@ export class RowCtrl extends BeanStub {
         this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, () => {
             // if hover turned off, we don't add the class. we do this here so that if the application
             // toggles this property mid way, we remove the hover form the last row, but we stop
-            // adding hovers from that point onwards.
-            if (!this.beans.gridOptionsService.is('suppressRowHoverHighlight')) {
+            // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
+            if (
+                !this.beans.dragService.isDragging() &&
+                !this.beans.gridOptionsService.is('suppressRowHoverHighlight')
+            ) {
                 eRow.classList.add('ag-row-hover');
             }
         });
@@ -1370,6 +1374,14 @@ export class RowCtrl extends BeanStub {
             gui.rowComp.addOrRemoveCssClass('ag-row-focus', this.rowFocused);
             gui.rowComp.addOrRemoveCssClass('ag-row-no-focus', !this.rowFocused);
         });
+    }
+
+    private onCellFocused(): void {
+        this.onCellFocusChanged();
+    }
+
+    private onCellFocusCleared(): void {
+        this.onCellFocusChanged();
     }
 
     private onCellFocusChanged(): void {

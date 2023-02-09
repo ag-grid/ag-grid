@@ -29,7 +29,7 @@ const gridOptions: GridOptions<IAccount> = {
       params.successCallback(params.data.callRecords)
     },
     template: (params) => {
-      var personName = params.data?.name
+      var personName = params.data ? params.data.name : undefined
       return (
         '<div style="height: 100%; background-color: #EDF6FF; padding: 20px; box-sizing: border-box;">' +
         '  <div style="height: 10%; padding: 2px; font-weight: bold;">###### Name: ' +

@@ -91,7 +91,7 @@ describe('LineSeries', () => {
         }
     });
 
-    let ctx = setupMockCanvas();
+    const ctx = setupMockCanvas();
 
     describe('#create', () => {
         beforeEach(() => {

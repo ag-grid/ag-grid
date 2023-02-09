@@ -1,7 +1,7 @@
 // Sample random data
 export const fixtureData = [
     {
-        stock: 'Cow Moans',
+        stock: 'SID capital',
         current: 132.97259159928635,
         time: '2023-02-02T12:00:30.486Z',
         timeline: [
@@ -88,7 +88,7 @@ export const fixtureData = [
         ],
     },
     {
-        stock: 'Nasraq 500',
+        stock: 'Uptick 500',
         current: 31.306198239258197,
         time: '2023-02-02T12:00:30.486Z',
         timeline: [
@@ -175,7 +175,7 @@ export const fixtureData = [
         ],
     },
     {
-        stock: 'Fang Peng',
+        stock: 'Xingyun BA',
         current: 11.661330682053661,
         time: '2023-02-02T12:00:30.486Z',
         timeline: [
@@ -436,7 +436,7 @@ export const fixtureData = [
         ],
     },
     {
-        stock: 'Footsie MID',
+        stock: 'ESTA-MID',
         current: 146.7882491352121,
         time: '2023-02-02T12:00:30.486Z',
         timeline: [
@@ -610,7 +610,7 @@ export const fixtureData = [
         ],
     },
     {
-        stock: 'NY composte index',
+        stock: 'NY composite index',
         current: 31.55602427773325,
         time: '2023-02-02T12:00:30.486Z',
         timeline: [

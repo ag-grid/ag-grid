@@ -22,10 +22,10 @@ const gridOptions: GridOptions<IOlympicData> = {
     filterValueGetter: (params: ValueGetterParams<IOlympicData>) => {
       const colId = params.column.getColId()
       if (colId.includes('country')) {
-        return params.data?.country
+        return params.data ? params.data.country : undefined
       }
       if (colId.includes('year')) {
-        return params.data?.year
+        return params.data ? params.data.year : undefined
       }
     },
   },

@@ -457,7 +457,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         for (const group of groups) {
             for (const stack of group) {
-                let { min = Infinity, max = -Infinity } = stack;
+                const { min = Infinity, max = -Infinity } = stack;
                 if (min < tallestStackMin) {
                     tallestStackMin = min;
                 }
@@ -515,8 +515,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         // calculate step
-        let domainLength = xAxis.dataDomain[1] - xAxis.dataDomain[0];
-        let intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
+        const domainLength = xAxis.dataDomain[1] - xAxis.dataDomain[0];
+        const intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
 
         // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
         // Allow a maximum number of bands to ensure the step does not fall below 1 pixel.

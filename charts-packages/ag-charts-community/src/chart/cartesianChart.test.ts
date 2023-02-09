@@ -200,7 +200,7 @@ describe('CartesianChart', () => {
         expect(console.warn).not.toBeCalled();
     });
 
-    let ctx = setupMockCanvas();
+    const ctx = setupMockCanvas();
 
     const compare = async (chart: Chart) => {
         await waitForChartStability(chart);
@@ -284,6 +284,25 @@ describe('CartesianChart', () => {
         it.each([80, 160, 240, 320, 400])('should render chart correctly at width [%s]', async (width) => {
             const options: AgCartesianChartOptions = {
                 ...examples.SIMPLE_LINE_CHART_EXAMPLE,
+                axes: [
+                    {
+                        position: 'bottom',
+                        type: 'time',
+                        title: {
+                            text: 'Date',
+                        },
+                        tick: {
+                            maxSpacing: 80,
+                        },
+                    },
+                    {
+                        position: 'left',
+                        type: 'number',
+                        title: {
+                            text: 'Price in pence',
+                        },
+                    },
+                ],
                 legend: {
                     position: 'right',
                 },

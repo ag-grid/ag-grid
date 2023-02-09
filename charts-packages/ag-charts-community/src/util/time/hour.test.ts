@@ -20,7 +20,7 @@ test('hour', () => {
 });
 
 test('hour.every', () => {
-    const interval = hour.every(5);
+    const interval = hour.every(5, { snapTo: new Date(2023, 0, 18) });
     const date = new Date(2023, 0, 18, 8, 31, 5, 100);
 
     const floor = interval.floor(date);

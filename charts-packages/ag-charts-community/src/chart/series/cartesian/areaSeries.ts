@@ -260,7 +260,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const xValues = [];
         const missingYKeys = new Set(yKeys);
 
-        for (let datum of data) {
+        for (const datum of data) {
             // X datum
             if (!(xKey in datum)) {
                 doOnce(
@@ -341,7 +341,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
         for (let i = 0; i < xData.length; i++) {
             const total = { sum: 0, absSum: 0 };
-            for (let seriesYs of yData) {
+            for (const seriesYs of yData) {
                 if (seriesYs[i] === undefined || isNaN(seriesYs[i])) {
                     continue;
                 }
@@ -364,7 +364,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
             let normalizedTotal = undefined;
             // normalize y values using the absolute sum of y values in the stack
-            for (let seriesYs of yData) {
+            for (const seriesYs of yData) {
                 const normalizedY = (+seriesYs[i] / total.absSum) * normalizedTo;
                 seriesYs[i] = normalizedY;
 

@@ -2513,7 +2513,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -3161,7 +3161,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -4050,7 +4050,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -4059,7 +4059,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -6846,7 +6846,7 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "CellFocusedParams": {
+  "CommonCellFocusParams": {
     "rowIndex": {
       "description": "/** Row index of the focused cell */",
       "type": { "returnType": "number | null", "optional": false }
@@ -6862,7 +6862,27 @@
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
       "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CellFocusClearedParams": {
+    "rowIndex": {
+      "description": "/** Row index of the focused cell */",
+      "type": { "returnType": "number | null", "optional": false }
     },
+    "column": {
+      "description": "/** Column of the focused cell */",
+      "type": { "returnType": "Column | string | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
+    },
+    "isFullWidthCell": {
+      "description": "/** Whether the cell a full width cell or a regular cell */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CellFocusedParams": {
     "forceBrowserFocus": {
       "description": "/** Whether browser focus is also set (false when editing) */",
       "type": { "returnType": "boolean", "optional": true }
@@ -6871,9 +6891,25 @@
       "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "floating": { "type": { "returnType": "string | null", "optional": true } }
+    "floating": { "type": { "returnType": "string | null", "optional": true } },
+    "rowIndex": {
+      "description": "/** Row index of the focused cell */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Column of the focused cell */",
+      "type": { "returnType": "Column | string | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
+    },
+    "isFullWidthCell": {
+      "description": "/** Whether the cell a full width cell or a regular cell */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
-  "CellFocusedEvent": {
+  "CellFocusClearedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -6906,6 +6942,25 @@
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
       "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CellFocusedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
     },
     "forceBrowserFocus": {
       "description": "/** Whether browser focus is also set (false when editing) */",
@@ -6915,7 +6970,23 @@
       "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "floating": { "type": { "returnType": "string | null", "optional": true } }
+    "floating": { "type": { "returnType": "string | null", "optional": true } },
+    "rowIndex": {
+      "description": "/** Row index of the focused cell */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Column of the focused cell */",
+      "type": { "returnType": "Column | string | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
+    },
+    "isFullWidthCell": {
+      "description": "/** Whether the cell a full width cell or a regular cell */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "FullWidthRowFocusedEvent": {
     "fromBelow": { "type": { "returnType": "boolean", "optional": false } },
@@ -6936,6 +7007,15 @@
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
     },
+    "forceBrowserFocus": {
+      "description": "/** Whether browser focus is also set (false when editing) */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "preventScrollOnBrowserFocus": {
+      "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "floating": { "type": { "returnType": "string | null", "optional": true } },
     "rowIndex": {
       "description": "/** Row index of the focused cell */",
       "type": { "returnType": "number | null", "optional": false }
@@ -6951,16 +7031,7 @@
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "forceBrowserFocus": {
-      "description": "/** Whether browser focus is also set (false when editing) */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "preventScrollOnBrowserFocus": {
-      "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "floating": { "type": { "returnType": "string | null", "optional": true } }
+    }
   },
   "ExpandCollapseAllEvent": {
     "source": { "type": { "returnType": "string", "optional": false } },
@@ -11987,7 +12058,7 @@
   },
   "ChartToolPanelsDef": {
     "settingsPanel": {
-      "description": "/** Customisations for the settings panel */",
+      "description": "/** Customisations for the settings panel and chart menu items in the Context Menu. */",
       "type": { "returnType": "ChartSettingsPanel", "optional": true }
     },
     "formatPanel": {
@@ -15651,6 +15722,16 @@
     },
     "getBlockStates": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "setRowCount": {
+      "type": {
+        "arguments": {
+          "rowCount": "number",
+          "isLastRowIndexKnown?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
     },
     "getRow": {
       "description": "/** Returns the rowNode at the given index. */",
@@ -19781,6 +19862,7 @@
       "type": { "returnType": "AgPromise<Function>", "optional": false }
     }
   },
+  "TabGuardClassNames": {},
   "ITabGuard": {
     "setTabIndex": {
       "type": {
@@ -20789,7 +20871,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -21437,7 +21519,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -22326,7 +22408,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -22335,7 +22417,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -23587,7 +23669,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -24235,7 +24317,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -25124,7 +25206,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -25133,7 +25215,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -26391,7 +26473,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -27039,7 +27121,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -27928,7 +28010,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -27937,7 +28019,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",

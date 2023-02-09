@@ -117,6 +117,7 @@ export class Events {
     public static EVENT_CELL_EDIT_REQUEST: 'cellEditRequest' = 'cellEditRequest';
     public static EVENT_ROW_VALUE_CHANGED: 'rowValueChanged' = 'rowValueChanged';
     public static EVENT_CELL_FOCUSED: 'cellFocused' = 'cellFocused';
+    public static EVENT_CELL_FOCUS_CLEARED: 'cellFocusCleared' = 'cellFocusCleared';
     public static EVENT_FULL_WIDTH_ROW_FOCUSED: 'fullWidthRowFocused' = 'fullWidthRowFocused';
     public static EVENT_ROW_SELECTED: 'rowSelected' = 'rowSelected';
     public static EVENT_SELECTION_CHANGED: 'selectionChanged' = 'selectionChanged';
