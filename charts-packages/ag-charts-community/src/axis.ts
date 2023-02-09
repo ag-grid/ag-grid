@@ -41,6 +41,7 @@ import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
 import { AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight } from './chart/agChartOptions';
 import { LogScale } from './scale/logScale';
+import { Default } from './util/default';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -126,9 +127,11 @@ class AxisTick<S extends Scale<D, number>, D = any> {
     values?: any[] = undefined;
 
     @Validate(AND(NUMBER_OR_NAN(1), LESS_THAN('maxSpacing')))
+    @Default(NaN)
     minSpacing: number = NaN;
 
     @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
+    @Default(NaN)
     maxSpacing: number = NaN;
 }
 
