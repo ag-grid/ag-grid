@@ -441,13 +441,13 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 expandedListener = (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) => this.onExpandAll(e.item, e.isExpanded);
             } else if (item.children) {
                 // group
-                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey;
+                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey;
                 isGroup = true;
                 selectedListener = (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) => this.onGroupItemSelected(e.item, e.isSelected);
                 expandedListener = (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) => this.onExpandedChanged(e.item, e.isExpanded);
             } else {
                 // leaf
-                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey;
+                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey;
                 selectedListener = (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) => this.onItemSelected(e.item.key!, e.isSelected);
             }
         } else {

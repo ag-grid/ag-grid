@@ -19,12 +19,13 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         children: this.allDisplayedItemsTree,
         expanded: true,
         key: SetFilterDisplayValue.SELECT_ALL,
+        parentTreeKeys: []
     };
 
     constructor(
         private readonly formatter: TextFormatter,
         private readonly treeListPathGetter?: (value: V | null) => string[] | null,
-        private readonly treeListFormatter?: (pathKey: string | null, level: number) => string,
+        private readonly treeListFormatter?: (pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string,
         private readonly treeDataOrGrouping?: boolean
     ) {};
 
@@ -81,6 +82,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
             const available = availableKeys.has(key);
             let children: SetFilterModelTreeItem[] | undefined = this.allDisplayedItemsTree;
             let item: SetFilterModelTreeItem | undefined;
+            let parentTreeKeys: (string | null)[] = [];
             dataPath.forEach((treeKey: string | null, depth: number) => {
                 if (!children) {
                     children = [];
@@ -88,13 +90,14 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                 }
                 item = children.find(child => child.treeKey?.toUpperCase() === treeKey?.toUpperCase());
                 if (!item) {
-                    item = { treeKey, depth, filterPasses: true, expanded: false, available };
+                    item = { treeKey, depth, filterPasses: true, expanded: false, available, parentTreeKeys };
                     if (depth === dataPath.length - 1) {
                         item.key = key;
                     }
                     children.push(item);
                 }
                 children = item.children;
+                parentTreeKeys = [...parentTreeKeys, treeKey];
             });
         }
         // update the parent availability based on the children
@@ -170,7 +173,9 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                 return nullMatchesFilter;
             }
 
-            return matchesFilter(this.formatter(this.treeListFormatter ? this.treeListFormatter(item.treeKey, item.depth) : item.treeKey));
+            return matchesFilter(
+                this.formatter(this.treeListFormatter ? this.treeListFormatter(item.treeKey, item.depth, item.parentTreeKeys) : item.treeKey)
+            );
         };
 
         this.allDisplayedItemsTree.forEach(item => this.recursiveItemCheck(item, false, passesFilter, 'filterPasses'));

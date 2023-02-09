@@ -224,9 +224,16 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     treeListPathGetter?: (value: V | null) => string[] | null;
     /**
      * Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.
-     * `level` refers to the level of the tree (starting at 0).
+     * @param pathKey - The key for the current node in the tree.
+     * @param level - The level of the current node in the tree (starting at 0).
+     * @param parentPathKeys - The keys of the parent nodes up until the current node (exclusive).
+     * This will be an empty array if the node is at the root level.
      */
-    treeListFormatter?: (pathKey: string | null, level: number) => string;
+    treeListFormatter?: (
+        pathKey: string | null,
+        level: number,
+        parentPathKeys: (string | null)[]
+    ) => string;
 }
 
 /**
