@@ -53,6 +53,11 @@ const OPT_TICK_COUNT = predicateWithMessage(
     `expecting an optional tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
 );
 
+const OPT_TICK_INTERVAL = predicateWithMessage(
+    (v: any, ctx) => OPTIONAL(v, ctx, (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval),
+    `expecting an optional positive Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
+);
+
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
 const GRID_STYLE = predicateWithMessage(
     ARRAY(undefined, (o) => {
@@ -122,7 +127,7 @@ class AxisTick<S extends Scale<D, number>, D = any> {
     @Deprecated('Use tick.interval or tick.minSpacing and tick.maxSpacing instead')
     count?: TickType<S> = undefined;
 
-    @Validate(OPT_TICK_COUNT)
+    @Validate(OPT_TICK_INTERVAL)
     interval?: TickType<S> = undefined;
 
     @Validate(OPT_ARRAY())
