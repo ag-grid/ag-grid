@@ -1,12 +1,11 @@
-import { Grid, CellKeyDownEvent, CellKeyPressEvent, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
-function changeSize(e: Event) {
+function changeSize(value: string) {
   const sizes = ['large', 'normal', 'compact'];
-  const size = e.target.innerText.toLowerCase();
 
-  const el = document.querySelector('.ag-theme-alpine');
+  const el = document.querySelector<HTMLElement>('.ag-theme-alpine')!;
 
-  sizes.forEach(s => el.classList.toggle(s, s === size));
+  sizes.forEach(size => el.classList.toggle(size, size === value));
 }
 
 const columnDefs: ColDef[] = [
