@@ -202,14 +202,16 @@ const isFullScreenPageWithFooter = path => FULL_SCREEN_WITH_FOOTER_PAGES.some(pa
  * This is called when pages are created. We override the default layout for certain pages e.g. the example-runner page.
  */
 exports.onCreatePage = ({page, actions: {createPage}}) => {
+    // spl todo: refactor next week!
+    // used in layouts/index.js
     if (page.path.match(/example-runner/)) {
-        page.context.layout = 'bare'; // used in layouts/index.js
+        page.context.layout = 'bare';
         createPage(page);
     } else if (isFullScreenPage(page.path)) {
-        page.context.layout = 'fullScreenPage'; // used in layouts/index.js
+        page.context.layout = 'fullScreenPage';
         createPage(page);
     } else if(isFullScreenPageWithFooter(page.path)) {
-        page.context.layout = 'fullScreenPageWithFooter'; // used in layouts/index.js
+        page.context.layout = 'fullScreenPageWithFooter';
         createPage(page);
     }
 };
