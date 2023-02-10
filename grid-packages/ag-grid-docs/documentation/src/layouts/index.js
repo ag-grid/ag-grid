@@ -99,6 +99,7 @@ export const Layout = ({
     }
 
     const {fullScreenPage, fullScreenWithFooter} = getScreenLayout((IS_SSR ? path : href));
+    const notFullScreen = (!fullScreenPage && !fullScreenWithFooter) ? true : !IS_SSR;
 
     return (
         <GlobalContextProvider>
@@ -110,11 +111,11 @@ export const Layout = ({
                 <Helmet htmlAttributes={{ lang: 'en' }} />
                 <SiteHeader path={path} />
 
-                {!fullScreenPage && !fullScreenWithFooter && !IS_SSR && (
+                {notFullScreen && (
                     <TopBar frameworks={frameworks} currentFramework={framework} path={path} />
                 )}
                 <div className={styles['content-viewport']}>
-                    {!fullScreenPage && !fullScreenWithFooter && !IS_SSR && (
+                    {notFullScreen && (
                         <aside className={`${styles['main-menu']}`}>
                             <Menu currentFramework={framework} currentPage={pageName} />
                         </aside>
