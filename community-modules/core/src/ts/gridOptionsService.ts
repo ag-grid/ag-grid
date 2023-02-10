@@ -33,7 +33,7 @@ type NumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any>) => any>, NoArgFuncs | AnyArgFuncs>;
-type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>;
+type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps | 'api' | 'columnApi' | 'context'>;
 
 
 type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
@@ -79,14 +79,26 @@ export class GridOptionsService {
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
+        this.api = gridApi;
         this.gridOptions.columnApi = columnApi;
+        this.columnApi = columnApi;
+        this.context = this.gridOptions['context'];
     }
+
+    // Store locally to avoid retrieving many times as these are requested for every callback
+    public api: GridApi;
+    public columnApi: ColumnApi;
+    public context: any;
 
     @PostConstruct
     public init(): void {
         this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
         const async = !this.is('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
+
+        this.addEventListener('context', (propChanged) => {
+            this.context = propChanged.currentValue;
+        })
 
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
@@ -98,7 +110,10 @@ export class GridOptionsService {
         // remove the references in case the user keeps the grid options, we want the rest
         // of the grid to be picked up by the garbage collector
         this.gridOptions.api = null;
+        (this.api as any) = null;
         this.gridOptions.columnApi = null;
+        (this.columnApi as any) = null;
+        this.context = null;
 
         this.destroyed = true;
     }

@@ -146,7 +146,7 @@ export class LazyBlockLoader extends BeanStub {
             parentNode: this.parentNode,
             api: this.api,
             columnApi: this.columnApi,
-            context: this.gridOptionsService.get('context')
+            context: this.gridOptionsService.context
         };
 
         addNodesToLoadingMap();

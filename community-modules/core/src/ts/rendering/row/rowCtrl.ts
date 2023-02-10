@@ -827,9 +827,9 @@ export class RowCtrl extends BeanStub {
             data: this.rowNode.data,
             rowIndex: this.rowNode.rowIndex!,
             rowPinned: this.rowNode.rowPinned,
-            context: this.beans.gridOptionsService.get('context'),
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
+            context: this.beans.gridOptionsService.context,
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
             event: domEvent
         };
     }
@@ -977,9 +977,9 @@ export class RowCtrl extends BeanStub {
             value: this.rowNode.key,
             valueFormatted: this.rowNode.key,
             rowIndex: this.rowNode.rowIndex!,
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
-            context: this.beans.gridOptionsService.get('context'),
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
+            context: this.beans.gridOptionsService.context,
             // these need to be taken out, as part of 'afterAttached' now
             eGridCell: eRow,
             eParentOfValue: eRow,

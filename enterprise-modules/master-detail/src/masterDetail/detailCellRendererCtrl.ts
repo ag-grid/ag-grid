@@ -172,7 +172,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             // as the data could have been updated with new instance
             data: this.params.node.data,
             successCallback: successCallback,
-            context: this.gridOptionsService.get('context')
+            context: this.gridOptionsService.context
         };
         userFunc(funcParams);
     }

@@ -98,9 +98,9 @@ export class EventService implements IEventEmitter {
             // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsService. 
             agEvent = {
                 ...event,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context'),
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context,
             } as AgGridEvent<any>;
         }
 

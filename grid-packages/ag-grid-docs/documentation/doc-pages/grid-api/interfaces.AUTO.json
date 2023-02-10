@@ -5759,7 +5759,7 @@
   },
   "NonPrimitiveProps": {
     "meta": { "isTypeAlias": true },
-    "type": "Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>"
+    "type": "Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps | 'api' | 'columnApi' | 'context'>"
   },
   "ExtractParamsFromCallback": {
     "meta": { "isTypeAlias": true, "typeParams": ["TCallback"] },

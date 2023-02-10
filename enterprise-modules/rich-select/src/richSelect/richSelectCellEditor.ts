@@ -175,9 +175,9 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
                     column: this.params.column,
                     node: this.params.node,
                     data: this.params.data,
-                    api: this.gridOptionsService.get('api')!,
-                    columnApi: this.gridOptionsService.get('columnApi')!,
-                    context: this.gridOptionsService.get('context')
+                    api: this.gridOptionsService.api,
+                    columnApi: this.gridOptionsService.columnApi,
+                    context: this.gridOptionsService.context
                 };
                 return this.params.colDef.keyCreator!(keyParams);
             });
@@ -211,7 +211,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const params = {
             value: this.selectedValue,
             valueFormatted: valueFormatted,
-            api: this.gridOptionsService.get('api'),
+            api: this.gridOptionsService.api,
         } as ICellRendererParams;
 
         const compDetails = this.userComponentFactory.getCellRendererDetails(this.params, params);

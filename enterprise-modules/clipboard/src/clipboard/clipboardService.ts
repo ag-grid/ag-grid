@@ -298,8 +298,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         focusedCell: CellPosition | null,
         changedPath: ChangedPath | undefined) => void
     ): void {
-        const api = this.gridOptionsService.get('api');
-        const columnApi = this.gridOptionsService.get('columnApi');
+        const api = this.gridOptionsService.api;
+        const columnApi = this.gridOptionsService.columnApi;
         const source = 'clipboard';
 
         this.eventService.dispatchEvent({

@@ -62,9 +62,9 @@ export class GridSerializer extends BeanStub {
 
     private processRow<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T>, columnsToExport: Column[], node: RowNode): void {
         const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
-        const context = this.gridOptionsService.get('context');
-        const api = this.gridOptionsService.get('api')!;
-        const columnApi = this.gridOptionsService.get('columnApi')!;
+        const context = this.gridOptionsService.context;
+        const api = this.gridOptionsService.api;
+        const columnApi = this.gridOptionsService.columnApi;
         const skipSingleChildrenGroup = this.gridOptionsService.is('groupRemoveSingleChildren');
         const skipLowestSingleChildrenGroup = this.gridOptionsService.is('groupRemoveLowestSingleChildren');
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
@@ -357,9 +357,9 @@ export class GridSerializer extends BeanStub {
             if (processGroupHeaderCallback) {
                 name = processGroupHeaderCallback({
                     columnGroup: columnGroup,
-                    api: this.gridOptionsService.get('api')!,
-                    columnApi: this.gridOptionsService.get('columnApi')!,
-                    context: this.gridOptionsService.get('context')
+                    api: this.gridOptionsService.api,
+                    columnApi: this.gridOptionsService.columnApi,
+                    context: this.gridOptionsService.context
                 });
             } else {
                 name = this.columnModel.getDisplayNameForColumnGroup(columnGroup, 'header')!;

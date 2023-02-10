@@ -23,11 +23,14 @@ export class ValueService extends BeanStub {
 
     private initialised = false;
 
+    // Store locally for performance reasons but is kept updated via property listener
+    private isTreeData: boolean;
+
     @PostConstruct
     public init(): void {
         this.cellExpressions = this.gridOptionsService.is('enableCellExpressions');
         this.initialised = true;
-
+        this.isTreeData = this.gridOptionsService.isTreeData();
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
         this.eventService.addEventListener(
@@ -35,6 +38,7 @@ export class ValueService extends BeanStub {
             (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event),
             this.gridOptionsService.useAsyncEvents(),
         );
+        this.addManagedPropertyListener('treeData', (propChange) => this.isTreeData = propChange.currentValue);
     }
 
     public getValue(column: Column,
@@ -66,11 +70,11 @@ export class ValueService extends BeanStub {
 
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
-        } else if (this.gridOptionsService.isTreeData() && aggDataExists) {
+        } else if (this.isTreeData && aggDataExists) {
             result = rowNode.aggData[colId];
-        } else if (this.gridOptionsService.isTreeData() && colDef.valueGetter) {
+        } else if (this.isTreeData && colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (this.gridOptionsService.isTreeData() && (field && data)) {
+        } else if (this.isTreeData && (field && data)) {
             result = getValueUsingField(data, field, column.isFieldContainsDots());
         } else if (groupDataExists) {
             result = rowNode.groupData![colId];
@@ -153,9 +157,9 @@ export class ValueService extends BeanStub {
             newValue: newValue,
             colDef: column.getColDef(),
             column: column,
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            context: this.gridOptionsService.get('context')
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context
         };
 
         params.newValue = newValue;
@@ -267,9 +271,9 @@ export class ValueService extends BeanStub {
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            context: this.gridOptionsService.get('context'),
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context,
             getValue: this.getValueCallback.bind(this, rowNode)
         };
 
@@ -292,9 +296,9 @@ export class ValueService extends BeanStub {
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            context: this.gridOptionsService.get('context'),
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context,
             getValue: this.getValueCallback.bind(this, rowNode)
         };
 
@@ -329,9 +333,9 @@ export class ValueService extends BeanStub {
                 column: col,
                 node: rowNode,
                 data: rowNode.data,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context')
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context
             };
             result = keyCreator(keyParams);
         }

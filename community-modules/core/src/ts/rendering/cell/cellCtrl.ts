@@ -159,9 +159,9 @@ export class CellCtrl extends BeanStub {
             if (valueGetter) {
                 return valueGetter({
                     location: 'cell',
-                    api: this.beans.gridOptionsService.get('api')!,
-                    columnApi: this.beans.gridOptionsService.get('columnApi')!,
-                    context: this.beans.gridOptionsService.get('context'),
+                    api: this.beans.gridOptionsService.api,
+                    columnApi: this.beans.gridOptionsService.columnApi,
+                    context: this.beans.gridOptionsService.context,
                     colDef: this.column.getColDef(),
                     column: this.column,
                     rowIndex: this.cellPosition.rowIndex,
@@ -483,10 +483,10 @@ export class CellCtrl extends BeanStub {
             rowIndex: this.getCellPosition().rowIndex,
             node: this.rowNode,
             data: this.rowNode.data,
-            api: this.beans.gridOptionsService.get('api')!,
             cellStartedEdit: cellStartedEdit,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
-            context: this.beans.gridOptionsService.get('context'),
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
+            context: this.beans.gridOptionsService.context,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.getGui(),
@@ -509,9 +509,9 @@ export class CellCtrl extends BeanStub {
             colDef: this.column.getColDef(),
             column: this.column,
             rowIndex: this.getCellPosition().rowIndex,
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
-            context: this.beans.gridOptionsService.get('context'),
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
+            context: this.beans.gridOptionsService.context,
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.getGui(),
             eParentOfValue: this.cellComp.getParentOfValue(),
@@ -532,9 +532,9 @@ export class CellCtrl extends BeanStub {
             newValue: newValue,
             colDef: colDef,
             column: this.column,
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
-            context: this.beans.gridOptionsService.get('context')
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
+            context: this.beans.gridOptionsService.context
         };
 
         const valueParser = colDef.valueParser;
@@ -799,7 +799,7 @@ export class CellCtrl extends BeanStub {
             value: this.value,
             column: this.column,
             colDef: this.column.getColDef(),
-            context: this.beans.gridOptionsService.get('context'),
+            context: this.beans.gridOptionsService.context,
             api: this.beans.gridApi,
             columnApi: this.beans.columnApi,
             rowPinned: this.rowNode.rowPinned,

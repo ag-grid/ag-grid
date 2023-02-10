@@ -410,9 +410,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         const event: RowDragEvent = {
             type: type,
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            context: this.gridOptionsService.get('context'),
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context,
             event: draggingEvent.event,
             node: draggingEvent.dragItem.rowNode!,
             nodes: draggingEvent.dragItem.rowNodes!,

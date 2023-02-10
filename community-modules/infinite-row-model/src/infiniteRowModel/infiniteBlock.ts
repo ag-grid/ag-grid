@@ -102,7 +102,7 @@ export class InfiniteBlock extends RowNodeBlock {
             failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             sortModel: this.params.sortModel,
             filterModel: this.params.filterModel,
-            context: this.gridOptionsService.get('context')
+            context: this.gridOptionsService.context
         };
         return params;
     }
