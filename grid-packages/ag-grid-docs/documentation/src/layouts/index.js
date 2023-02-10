@@ -101,6 +101,7 @@ export const Layout = ({
     const {fullScreenPage, fullScreenWithFooter} = getScreenLayout((IS_SSR ? path : href));
     const fullScreen = (fullScreenPage || fullScreenWithFooter);
 
+    console.log(fullScreenPage, fullScreenWithFooter, IS_SSR, path, href);
     return (
         <GlobalContextProvider>
             <Helmet>
