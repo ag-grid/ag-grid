@@ -110,11 +110,11 @@ export const Layout = ({
                 <Helmet htmlAttributes={{ lang: 'en' }} />
                 <SiteHeader path={path} />
 
-                {!fullScreenPage && !fullScreenWithFooter && (
+                {!fullScreenPage && !fullScreenWithFooter && !IS_SSR && (
                     <TopBar frameworks={frameworks} currentFramework={framework} path={path} />
                 )}
                 <div className={styles['content-viewport']}>
-                    {!fullScreenPage && !fullScreenWithFooter && (
+                    {!fullScreenPage && !fullScreenWithFooter && !IS_SSR && (
                         <aside className={`${styles['main-menu']}`}>
                             <Menu currentFramework={framework} currentPage={pageName} />
                         </aside>
