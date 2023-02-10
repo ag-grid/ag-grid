@@ -22,11 +22,9 @@ export class LinearScale extends ContinuousScale {
 
         if (interval) {
             const step = Math.abs(interval);
-            if (this.isDenseInterval({ start: d0, stop: d1, interval: step })) {
-                return [];
+            if (!this.isDenseInterval({ start: d0, stop: d1, interval: step })) {
+                return range(d0, d1, step);
             }
-
-            return range(d0, d1, step);
         }
 
         return ticks(d0, d1, count);
