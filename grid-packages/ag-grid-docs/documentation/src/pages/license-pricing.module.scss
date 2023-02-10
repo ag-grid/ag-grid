@@ -47,24 +47,30 @@
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         div {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: $size-3;
         }
 
         a {
-            margin-left: 0;
-            margin-right: 0;
             font-size: $font-size-large !important; // !important for .ag-styles specificity
         }
+    }
+}
 
-        a:first-child {
-            justify-self: end;
-        }
+.contactSalesButton {
+    display: inline-flex !important; // !important for .ag-styles specificity
+    align-items: center;
+    gap: $size-1;
 
-        a:last-child {
-            justify-self: start;
-        }
+    :global(.icon) {
+        position: static !important; // !important for .ag-styles specificity
+        width: 54px !important; // !important for .ag-styles specificity
+        height: 54px !important; // !important for .ag-styles specificity
+        margin: 0 0 -0.1em !important; // !important for .ag-styles specificity
+    }
+
+    div > span {
+        display: block;
+        line-height: 1.125;
+        text-align: left;
     }
 }
 

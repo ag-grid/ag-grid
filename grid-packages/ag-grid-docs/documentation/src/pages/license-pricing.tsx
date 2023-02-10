@@ -38,22 +38,19 @@ const LicensePricing = () => {
 
                     <div>
                         <a
-                            className="button"
-                            href="mailto:info@ag-grid.com?subject=AG Grid - Development Licenses quote"
-                        >
-                            <span className="icon">
-                                <EmailIcon />
-                            </span>{' '}
-                            Request a quote
-                        </a>
-                        <a
-                            className="button-secondary"
+                            className={classnames(styles.contactSalesButton, 'button-secondary')}
                             href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
                         >
                             <span className="icon">
                                 <EmailIcon />
-                            </span>{' '}
-                            Contact sales
+                            </span>
+
+                            <div>
+                                <span className={styles.buttonText}>Contact sales</span>
+                                <span className={classnames(styles.buttonEmail, 'font-size-extra-small')}>
+                                    info@ag-grid.com
+                                </span>
+                            </div>
                         </a>
                     </div>
                 </div>
@@ -289,11 +286,20 @@ const LicensePricing = () => {
                         license related questions please contact our friendly sales team.{' '}
                     </p>
                     <div>
-                        <a className="button-secondary" href="mailto:info@ag-grid.com">
+                        <a
+                            className={classnames(styles.contactSalesButton, 'button-secondary')}
+                            href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
+                        >
                             <span className="icon">
                                 <EmailIcon />
-                            </span>{' '}
-                            Contact sales
+                            </span>
+
+                            <div>
+                                <span className={styles.buttonText}>Contact sales</span>
+                                <span className={classnames(styles.buttonEmail, 'font-size-extra-small')}>
+                                    info@ag-grid.com
+                                </span>
+                            </div>
                         </a>
                     </div>
                 </div>
