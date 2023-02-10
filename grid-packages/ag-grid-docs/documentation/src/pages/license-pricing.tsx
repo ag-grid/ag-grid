@@ -26,9 +26,50 @@ const LicensePricing = () => {
                     </p>
                 </Alert>
 
-                <h1 className={styles.licensesHeader}>AG Grid Enterprise</h1>
+                <div className={styles.topSection}>
+                    <div className={styles.enterpriseExplainer}>
+                        <h1>
+                            AG Grid Enterprise <EnterpriseIcon />
+                        </h1>
+                        <p>
+                            <b>AG Grid Enterprise</b> offers advanced functionality like{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/grouping/`}>Row Grouping</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/range-selection/`}>Range Selection</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/master-detail/`}>Master / Detail</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/server-side-model/`}>Server Side Row Model</a>{' '}
+                            and{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/licensing/#feature-comparison`}>
+                                much much more
+                            </a>
+                            .
+                        </p>
+                        <p>
+                            <b>AG Grid Enterprise</b> also comes with{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/integrated-charts/`}>Integrated Charts</a>,
+                            allowing your users to create charts using the grid's UI.
+                        </p>
 
-                <Licenses />
+                        <div className={styles.videoPrompt}>
+                            <img
+                                className={styles.thumbnail}
+                                src="https://img.youtube.com/vi/20SLdu4wLtI/hqdefault.jpg"
+                                alt="AG Grid license explained video"
+                            />
+
+                            <div>
+                                <h3>Which licences do I need?</h3>
+                                <p>
+                                    <a href="#video-explainer">
+                                        <span className="icon"></span>
+                                        Watch our short explainer video
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Licenses />
+                </div>
 
                 <div className={styles.bulkLicenses}>
                     <p className="text-secondary">
@@ -131,7 +172,7 @@ const LicensePricing = () => {
                     </div>
                 </div>
 
-                <div className={styles.videoExplainer}>
+                <div className={styles.videoExplainer} id="video-explainer">
                     <div>
                         <h3 className="font-size-extra-large">Questions about our licenses? </h3>
                         <p>

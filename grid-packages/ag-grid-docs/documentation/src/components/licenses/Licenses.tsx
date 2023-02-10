@@ -99,7 +99,7 @@ const License = (props: LicenseData) => {
                 <Price priceFullDollars={priceFullDollars} pricePer={pricePer} />
 
                 <div className={styles.licenseBenefits}>
-                    <ul className="font-size-small">
+                    <ul className="font-size-small list-style-none">
                         {licenseBenefits.map((benefit, i) => {
                             return <li key={i}>{benefit}</li>;
                         })}
@@ -132,15 +132,11 @@ const License = (props: LicenseData) => {
 };
 
 export const Licenses = () => {
-    return (
-        <ul className={classnames('list-style-none', styles.licenses)}>
-            {DEV_LICENSE_DATA.map((data) => {
-                return (
-                    <li key={data.name} className={classnames(styles.license, data.className, 'ag-card', data.id)}>
-                        <License {...data} />
-                    </li>
-                );
-            })}
-        </ul>
-    );
+    return DEV_LICENSE_DATA.map((data) => {
+        return (
+            <div key={data.name} className={classnames(styles.license, data.className, 'ag-card', data.id)}>
+                <License {...data} />
+            </div>
+        );
+    });
 };
