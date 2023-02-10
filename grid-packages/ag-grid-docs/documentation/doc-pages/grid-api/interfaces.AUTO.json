@@ -4941,6 +4941,21 @@
       "type": "/** Event identifier */"
     }
   },
+  "CssVariablesChanged": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
   "IFilterLocaleText": {
     "meta": {},
     "type": {

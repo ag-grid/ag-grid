@@ -621,3 +621,5 @@ export interface RightPinnedWidthChangedEvent<TData = any> extends AgGridEvent<T
 export interface RowContainerHeightChanged<TData = any> extends AgGridEvent<TData> { } // not documented
 
 export interface DisplayedRowsChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
+
+export interface CssVariablesChanged<TData = any> extends AgGridEvent<TData> {} // not documented

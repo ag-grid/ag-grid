@@ -8837,6 +8837,25 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "CssVariablesChanged": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "IFilterLocaleText": {
     "applyFilter": { "type": { "returnType": "string", "optional": false } },
     "clearFilter": { "type": { "returnType": "string", "optional": false } },
