@@ -1,4 +1,7 @@
 export default function (start: number, stop: number, count: number): NumericTicks {
+    if (count < 2) {
+        return range(start, stop, stop - start);
+    }
     const step = tickStep(start, stop, count);
     if (isNaN(step)) {
         return new NumericTicks(0);
@@ -30,6 +33,21 @@ export function tickStep(a: number, b: number, count: number): number {
         return NaN;
     }
     return m * step;
+}
+
+export function singleTickDomain(a: number, b: number): number[] {
+    const power = Math.floor(Math.log10(b - a));
+    const step = Math.pow(10, power);
+    return tickMultiplierErrors
+        .map(([multiplier]) => {
+            const s = multiplier * step;
+            const start = Math.floor(a / s) * s;
+            const end = Math.ceil(b / s) * s;
+            const error = 1 - (b - a) / (end - start);
+            const domain = [start, end];
+            return { error, domain };
+        })
+        .sort((a, b) => a.error - b.error)[0].domain;
 }
 
 export class NumericTicks extends Array<number> {
