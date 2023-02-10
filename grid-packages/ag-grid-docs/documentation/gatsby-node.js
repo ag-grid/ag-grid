@@ -181,12 +181,35 @@ exports.onCreateNode = async ({node, loadNodeContent, getNode, actions: {createN
     }
 };
 
+const FULL_SCREEN_PAGES = ['example'];
+
+const FULL_SCREEN_WITH_FOOTER_PAGES = [
+    'license-pricing',
+    'about',
+    'cookies',
+    'changelog',
+    'pipeline',
+    'privacy',
+    'style-guide',
+];
+
+const isFullScreenPage = path => path === '/' || FULL_SCREEN_PAGES.some(page => { const regex = new RegExp(page, 'g' ); return path.match(regex) });
+
+const isFullScreenPageWithFooter = path => FULL_SCREEN_WITH_FOOTER_PAGES.some(page => { const regex = new RegExp(page, 'g' ); return path.match(regex) });
+
+
 /**
  * This is called when pages are created. We override the default layout for certain pages e.g. the example-runner page.
  */
 exports.onCreatePage = ({page, actions: {createPage}}) => {
     if (page.path.match(/example-runner/)) {
         page.context.layout = 'bare'; // used in layouts/index.js
+        createPage(page);
+    } else if (isFullScreenPage(page.path)) {
+        page.context.layout = 'fullScreenPage'; // used in layouts/index.js
+        createPage(page);
+    } else if(isFullScreenPageWithFooter(page.path)) {
+        page.context.layout = 'fullScreenPageWithFooter'; // used in layouts/index.js
         createPage(page);
     }
 };

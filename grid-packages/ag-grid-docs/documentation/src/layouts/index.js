@@ -11,26 +11,6 @@ import favIcons from '../images/favicons';
 import styles from './index.module.scss';
 import './mailchimp.css';
 
-const IS_SSR = typeof window === "undefined"
-
-export const FULL_SCREEN_PAGES = ['example'];
-
-export const FULL_SCREEN_WITH_FOOTER_PAGES = [
-    'license-pricing',
-    'about',
-    'cookies',
-    'changelog',
-    'pipeline',
-    'privacy',
-    'style-guide',
-];
-
-const getAllPageUrls = (pages) => pages.map((page) => `/${page}`).concat(pages.map((page) => `/${page}/`));
-
-const isFullScreenPage = processedPath =>  processedPath === '/' || getAllPageUrls(FULL_SCREEN_PAGES).includes(processedPath);
-
-const isFullScreenPageWithFooter = processedPath => getAllPageUrls(FULL_SCREEN_WITH_FOOTER_PAGES).includes(processedPath);
-
 const TopBar = ({ frameworks, currentFramework, path }) => {
     const frameworksData = supportedFrameworks
         .filter((f) => !frameworks || frameworks.includes(f))
@@ -72,18 +52,18 @@ const TopBar = ({ frameworks, currentFramework, path }) => {
     );
 };
 
-export const getScreenLayout = path => {
-    // order is important here
-    const processedPath = path.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, "") // legacy archives
-        .replace(/.*(testing|archives).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, "") // branch builds/new archives
-        .replace(/.*ag-grid.com/, "") // prod
-        .replace(/.*localhost:8000/, "") // localhost
-        .replace(/\?.*/, ""); // query params
-
-    const fullScreenPage = isFullScreenPage(processedPath);
-    const fullScreenWithFooter = isFullScreenPageWithFooter(processedPath);
-    return {fullScreenPage, fullScreenWithFooter};
-}
+// export const getScreenLayout = path => {
+//     // order is important here
+//     const processedPath = path.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, "") // legacy archives
+//         .replace(/.*(testing|archives).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, "") // branch builds/new archives
+//         .replace(/.*ag-grid.com/, "") // prod
+//         .replace(/.*localhost:8000/, "") // localhost
+//         .replace(/\?.*/, ""); // query params
+//
+//     const fullScreenPage = isFullScreenPage(processedPath);
+//     const fullScreenWithFooter = isFullScreenPageWithFooter(processedPath);
+//     return {fullScreenPage, fullScreenWithFooter};
+// }
 
 /**
  * This controls the layout template for all pages.
@@ -93,15 +73,18 @@ export const Layout = ({
     pageContext: { frameworks, framework = 'javascript', layout, pageName },
     location: { pathname: path, href },
 }) => {
+    let fullScreenPage = false, fullScreenWithFooter = false;
     if (layout === 'bare') {
         // only for on the fly example runner
         return children;
+    } else if(layout === 'fullScreenPage') {
+        fullScreenPage = true;
+    } else if(layout === 'fullScreenPageWithFooter') {
+        fullScreenWithFooter = true;
     }
 
-    const {fullScreenPage, fullScreenWithFooter} = getScreenLayout((IS_SSR ? path : href));
     const fullScreen = (fullScreenPage || fullScreenWithFooter);
 
-    console.log(fullScreenPage, fullScreenWithFooter, IS_SSR, path, href);
     return (
         <GlobalContextProvider>
             <Helmet>
@@ -126,7 +109,7 @@ export const Layout = ({
                     </main>
                 </div>
             </div>
-            {(!fullScreenPage || fullScreenWithFooter) && <Footer framework={framework} />}
+            {fullScreenWithFooter && <Footer framework={framework} />}
         </GlobalContextProvider>
     );
 };
