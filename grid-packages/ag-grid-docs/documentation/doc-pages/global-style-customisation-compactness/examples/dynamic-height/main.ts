@@ -1,6 +1,6 @@
 import { Grid, CellKeyDownEvent, CellKeyPressEvent, ColDef, GridOptions } from '@ag-grid-community/core'
 
-function changeSize(e) {
+function changeSize(e: Event) {
   const sizes = ['large', 'normal', 'compact'];
   const size = e.target.innerText.toLowerCase();
 
