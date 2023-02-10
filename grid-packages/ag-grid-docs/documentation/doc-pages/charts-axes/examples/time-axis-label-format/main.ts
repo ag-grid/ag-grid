@@ -18,7 +18,7 @@ const options: AgCartesianChartOptions & { axes: AgTimeAxisThemeOptions[] } = {
       nice: false,
       position: 'bottom',
       tick: {
-        count: time.month,
+        interval: time.month,
       },
       label: {
         format: '%b %Y',
@@ -70,11 +70,11 @@ const options: AgCartesianChartOptions & { axes: AgTimeAxisThemeOptions[] } = {
 var chart = AgChart.create(options)
 
 function useOneMonthInterval() {
-  options.axes![0].tick!.count = time.month
+  options.axes![0].tick!.interval = time.month
   AgChart.update(chart, options)
 }
 
 function useTwoMonthInterval() {
-  options.axes![0].tick!.count = time.month.every(2)
+  options.axes![0].tick!.interval = time.month.every(2)
   AgChart.update(chart, options)
 }

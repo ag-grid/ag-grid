@@ -7,13 +7,28 @@ $icon-size: 30px;
     padding: $padding-size;
     background-color: var(--bright-blue-gray);
     border-radius: var(--border-radius);
+}
 
-    &.info {
-        padding-left: calc($padding-size + $icon-size + $size-2);
-        background-size: $icon-size $icon-size;
-        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjRkZDMTA3IiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTIwIDQ1bDEwLjUtM000NS41IDIwaC01TTMwLjUgMzZDMzAgMzEgMzcgMjkgMzcgMjFzLTctMTEtMTItMTEtMTEuNSAzLTExLjUgMTEgNyAxMSA3IDE2LjVjLTEuNSAzIDEwLTEuNSAxMC0xLjV6TTIwIDQybDEwLjUtM00yOC41IDQ2LjVjLTIuMzMzIDEuNjY3LTQuNSAxLjY2Ny02LjUgME0xMiAzMWwtMi41IDJNOS41IDIwaC01TTM4IDMxbDMgMk0zNiAxMWw0LTRNMjUgNi41VjFNMTQgMTFsLTQtMy41Ii8+PC9nPjwvc3ZnPg==);
-        background-repeat: no-repeat;
-        background-position-x: $padding-size;
-        background-position-y: $padding-size;
+.alert.info {
+    padding-left: calc($padding-size + $icon-size + $size-2);
+    background-size: $icon-size $icon-size;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjRkZDMTA3IiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTIwIDQ1bDEwLjUtM000NS41IDIwaC01TTMwLjUgMzZDMzAgMzEgMzcgMjkgMzcgMjFzLTctMTEtMTItMTEtMTEuNSAzLTExLjUgMTEgNyAxMSA3IDE2LjVjLTEuNSAzIDEwLTEuNSAxMC0xLjV6TTIwIDQybDEwLjUtM00yOC41IDQ2LjVjLTIuMzMzIDEuNjY3LTQuNSAxLjY2Ny02LjUgME0xMiAzMWwtMi41IDJNOS41IDIwaC01TTM4IDMxbDMgMk0zNiAxMWw0LTRNMjUgNi41VjFNMTQgMTFsLTQtMy41Ii8+PC9nPjwvc3ZnPg==);
+    background-repeat: no-repeat;
+    background-position-x: $padding-size;
+    background-position-y: $padding-size;
+}
+
+.alert.flag {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $size-2;
+
+    @media screen and (min-width: $breakpoint-alert-flag-small) {
+        flex-direction: row;
+    }
+
+    img {
+        width: 80px;
     }
 }

@@ -210,6 +210,9 @@ export class Events {
     public static EVENT_ROW_DRAG_LEAVE: 'rowDragLeave' = 'rowDragLeave';
     public static EVENT_ROW_DRAG_END: 'rowDragEnd' = 'rowDragEnd';
 
+    // environment
+    public static EVENT_GRID_STYLES_CHANGED: 'gridStylesChanged' = 'gridStylesChanged';
+
     // primarily for charts
     public static EVENT_POPUP_TO_FRONT: 'popupToFront' = 'popupToFront';
 

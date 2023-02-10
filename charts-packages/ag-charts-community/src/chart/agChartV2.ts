@@ -398,7 +398,8 @@ function debug(message?: any, ...optionalParams: any[]): void {
 }
 
 function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOptions>, userOptions: AgChartOptions): void {
-    applyModules(chart, processedOptions);
+    const completeOptions = jsonMerge([chart.processedOptions ?? {}, processedOptions], noDataCloneMergeOptions);
+    const modulesChanged = applyModules(chart, completeOptions);
 
     const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
     if (isAgCartesianChartOptions(processedOptions)) {
@@ -445,10 +446,11 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         Object.assign(chart.legend.listeners, processedOptions.legend.listeners ?? {});
     }
 
-    chart.processedOptions = jsonMerge([chart.processedOptions ?? {}, processedOptions], noDataCloneMergeOptions);
+    chart.processedOptions = completeOptions;
     chart.userOptions = jsonMerge([chart.userOptions ?? {}, userOptions], noDataCloneMergeOptions);
 
-    const updateType = forceNodeDataRefresh ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
+    const majorChange = forceNodeDataRefresh || modulesChanged;
+    const updateType = majorChange ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
     debug('chart update type', { updateType: ChartUpdateType[updateType] });
     chart.update(updateType, { forceNodeDataRefresh });
 }
@@ -462,11 +464,13 @@ function applyModules(chart: Chart, options: AgChartOptions) {
         );
     };
 
+    let modulesChanged = false;
     for (const next of REGISTERED_MODULES) {
         const shouldBeEnabled = matchingChartType(next) && (options as any)[next.optionsKey] != null;
         const isEnabled = chart.isModuleEnabled(next);
 
         if (shouldBeEnabled === isEnabled) continue;
+        modulesChanged = true;
 
         if (shouldBeEnabled) {
             chart.addModule(next);
@@ -474,6 +478,8 @@ function applyModules(chart: Chart, options: AgChartOptions) {
             chart.removeModule(next);
         }
     }
+
+    return modulesChanged;
 }
 
 function applySeries(chart: Chart, options: AgChartOptions) {

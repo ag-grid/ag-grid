@@ -44,7 +44,13 @@ const SEMANTIC_COLOR_GROUPS = {
     Text: ['text-color', 'secondary-text-color'],
     Border: ['border-color'],
     Link: ['link-color', 'link-hover-color'],
-    Button: ['button-text-color', 'button-color', 'button-hover-color', 'button-active-color'],
+    Button: [
+        'button-text-color',
+        'button-color',
+        'button-hover-color',
+        'button-active-color',
+        'button-focus-box-shadow-color',
+    ],
     Inline: ['inline-element-background-color'],
     Code: ['code-text-color'],
     Input: [

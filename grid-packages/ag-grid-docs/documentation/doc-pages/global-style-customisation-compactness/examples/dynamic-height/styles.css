@@ -1,0 +1,11 @@
+.ag-theme-alpine.large {
+    --ag-grid-size: 10px;
+    --ag-list-item-height: 40px;
+    --ag-font-size: 32px;
+  }
+  
+  .ag-theme-alpine.compact {
+    --ag-grid-size: 3px;
+    --ag-list-item-height: 20px;
+    --ag-font-size: 10px;
+  }

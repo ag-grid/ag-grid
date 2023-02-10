@@ -209,7 +209,7 @@ The next example demonstrates the `headerCheckboxSelectionCurrentPageOnly` prope
 - The checkbox selects collapsed groups and all of their children.
 - The checkbox will select expanded group nodes only if all of the children are selected.
 
-<grid-example title='Selecting Current Page with Group Selects Children' name='header-checkbox-current-page' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Selecting Current Page with Group Selects Children' name='header-checkbox-current-page-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Specify Selectable Rows
 

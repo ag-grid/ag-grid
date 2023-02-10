@@ -1,6 +1,12 @@
 import classnames from 'classnames';
+import ukraineFlagSVG from 'images/ukraine-flag.svg';
 import React from 'react';
+import { Alert } from '../components/alert/Alert';
 import { Licenses } from '../components/licenses/Licenses';
+import EmailIcon from '../images/inline-svgs/email.svg';
+import EnterpriseIcon from '../images/inline-svgs/enterprise.svg';
+import NPMIcon from '../images/inline-svgs/npm.svg';
+import { hostPrefix } from '../utils/consts';
 import SEO from './components/SEO';
 // @ts-ignore
 import styles from './license-pricing.module.scss';
@@ -9,104 +15,164 @@ const LicensePricing = () => {
     return (
         <div className="ag-styles">
             <div className={classnames('page-margin', styles.container)}>
-                <h1>AG Grid Licensing &amp; Pricing</h1>
-                <section className={styles.info}>
-                    <div className={styles.infoItem}>
-                        <div className={styles.ukraineFlag}>
-                            <div className={styles.top}></div>
-                            <div className={styles.bottom}></div>
-                        </div>
-                        <div>
-                            <h3>Sales Update</h3>
-                            <p>
-                                In light of current events in Ukraine we are choosing to express our disappointment in
-                                the breakdown of diplomacy, and its effects on the people of Ukraine, the global economy
-                                and community by not licensing software to companies or individuals registered or
-                                residing in the Russian Federation.
-                            </p>
-                        </div>
-                    </div>
-                    <div className={styles.infoItem}>
-                        <img src="../images/pricing/Community.svg" className={styles.mitLogo} alt="MIT" />
-                        <div>
-                            <h3>AG Grid Community</h3>
-                            <p>
-                                AG Grid Community is a free to use product distributed under the{' '}
-                                <a href="/eula/AG-Grid-Community-License.html">MIT License</a>. It is free to use in
-                                your production environments.
-                            </p>
-                            <h3>AG Charts Community</h3>
-                            <p>
-                                AG Charts Community (a.k.a. <a href="/javascript-charts/overview/">Standalone Charts</a>
-                                ) is a free to use product distributed under the{' '}
-                                <a href="/eula/AG-Grid-Community-License.html">MIT License</a>. It is free to use in
-                                your production environments.
-                            </p>
-                        </div>
-                    </div>
-                    <div className={styles.infoItem}>
-                        <img src="../images/svg/enterprise.svg" className={styles.enterpriseLogo} alt="Enterprise" />
-                        <div>
-                            <h3>AG Grid Enterprise</h3>
-                            <div className={styles.enterpriseContent}>
-                                <div>
-                                    <p>
-                                        AG Grid Enterprise is a commercial product distributed under our{' '}
-                                        <a href="/eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by
-                                        our technical staff. It has advanced functionality like Row Grouping, Range
-                                        Selection, Master / Detail, Server Side Row Model and{' '}
-                                        <a href="/javascript-data-grid/licensing/">more</a>. AG Grid Enterprise also comes
-                                        with <a href="/javascript-data-grid/integrated-charts/">Integrated Charts</a>,
-                                        allowing users to create charts using the grid's UI.
-                                    </p>
-                                    <p>
-                                        To evaluate AG Grid Enterprise you don&apos;t need our permission – all features
-                                        are unlocked. To temporarily hide the watermark and browser console errors
-                                        e-mail <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> to get a temporary
-                                        evaluation key.
-                                    </p>
-                                    <p>
-                                        Once you&apos;re ready to begin development, please purchase an appropriate
-                                        license key from the options below.
-                                    </p>
-                                    <p>
-                                        Expanded definitions and FAQ responses are available further down the page. You
-                                        can e-mail us at any time on{' '}
-                                        <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
-                                    </p>
-                                </div>
+                <Alert type="flag">
+                    <img src={ukraineFlagSVG} alt="flag of Ukraine" />
 
-                                <iframe
-                                    src="https://www.youtube.com/embed/20SLdu4wLtI"
-                                    title="YouTube video player"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                ></iframe>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <section>
-                    <Licenses />
-                </section>
-                <section className={styles.bulkDiscount}>
                     <p>
-                        Bulk pricing discounts available. Use the BUY buttons above to see pricing for up to 10
-                        developers. For more than 10 developers or any questions with regards your purchase, please
-                        email <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
+                        In light of current events in Ukraine we are choosing to express our disappointment in the
+                        breakdown of diplomacy, and its effects on the people of Ukraine, the global economy and
+                        community by not licensing software to companies or individuals registered or residing in the
+                        Russian Federation.
                     </p>
-                </section>
-                <section className={styles.definitions}>
-                    <h2>Definitions</h2>
-                    <dl>
-                        <dt className={styles.definitionTerm}>
-                            <img src="../images/pricing/SA.svg" />
-                            Single Application Development License
-                        </dt>
-                        <dd>
+                </Alert>
+
+                <h1 className={styles.licensesHeader}>AG Grid Enterprise</h1>
+
+                <Licenses />
+
+                <div className={styles.bulkLicenses}>
+                    <p className="text-secondary">
+                        Bulk pricing discounts available. Use the pay with card buttons above to see pricing for up to
+                        10 developers. For more than 10 developers or any questions with regards to your purchase...
+                    </p>
+
+                    <div>
+                        <a
+                            className="button"
+                            href="mailto:info@ag-grid.com?subject=AG Grid - Development Licenses quote"
+                        >
+                            <span className="icon">
+                                <EmailIcon />
+                            </span>{' '}
+                            Request a quote
+                        </a>
+                        <a
+                            className="button-secondary"
+                            href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
+                        >
+                            <span className="icon">
+                                <EmailIcon />
+                            </span>{' '}
+                            Contact sales
+                        </a>
+                    </div>
+                </div>
+
+                <div className={styles.communityEnterprise}>
+                    <div className={styles.community}>
+                        <h3>AG Grid Community</h3>
+                        <p>
+                            <b>AG Grid Community</b> and <b>AG Charts Community</b> (a.k.a.{' '}
+                            <a href={`${hostPrefix}/javascript-charts/overview/`}>Standalone Charts</a>) are free and
+                            open source products distributed under the{' '}
+                            <a href={`${hostPrefix}/eula/AG-Grid-Community-License.html`}>MIT License</a>. These
+                            versions are free to use in production environments.
+                        </p>
+
+                        <a
+                            href="https://www.npmjs.com/package/ag-grid-community"
+                            className={classnames(styles.NpmButton, 'button-secondary')}
+                        >
+                            <NPMIcon /> Get AG Grid Community at NPM
+                        </a>
+                        <br />
+                        <a
+                            href="https://www.npmjs.com/package/ag-charts-community"
+                            className={classnames(styles.NpmButton, 'button-secondary')}
+                        >
+                            <NPMIcon /> Get AG Grid Charts at NPM
+                        </a>
+                    </div>
+
+                    <div className={styles.enterprise}>
+                        <h3>
+                            AG Grid Enterprise <EnterpriseIcon />
+                        </h3>
+                        <p>
+                            <b>AG Grid Enterprise</b> offers advanced functionality like{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/grouping/`}>Row Grouping</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/range-selection/`}>Range Selection</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/master-detail/`}>Master / Detail</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/server-side-model/`}>Server Side Row Model</a>{' '}
+                            and{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/licensing/#feature-comparison`}>
+                                much much more
+                            </a>
+                            . <b>AG Grid Enterprise</b> also comes with{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/integrated-charts/`}>Integrated Charts</a>,
+                            allowing your users to create charts using the grid's UI.
+                        </p>
+
+                        <p>
+                            <b>AG Grid Enterprise</b> is a commercial product distributed under our{' '}
+                            <a href={`${hostPrefix}/eula/AG-Grid-Enterprise-License-Latest.html`}>EULA</a> and supported
+                            by our technical staff. To evaluate <b>AG Grid Enterprise</b> you don't need our permission
+                            – all features are unlocked. To temporarily hide the watermark and browser console errors
+                            e-mail us to{' '}
+                            <a href="mailto:info@ag-grid.com?subject=AG Grid - Development License Temporary Evaluation Key">
+                                get a temporary evaluation key
+                            </a>
+                            .
+                        </p>
+
+                        <p>
+                            Once you're ready to begin development, please purchase an appropriate license key from the
+                            options above.
+                        </p>
+
+                        <p>
+                            Expanded definitions are available further down the page. For any other questions please{' '}
+                            <a href="mailto:info@ag-grid.com?subject=AG Grid - Development License question">
+                                get in contact
+                            </a>
+                            .
+                        </p>
+
+                        <a
+                            href={`${hostPrefix}/javascript-data-grid/licensing/#feature-comparison`}
+                            className="button-secondary"
+                        >
+                            See all AG Grid Enterprise features
+                        </a>
+                    </div>
+                </div>
+
+                <div className={styles.videoExplainer}>
+                    <div>
+                        <h3 className="font-size-extra-large">Questions about our licenses? </h3>
+                        <p>
+                            Watch our short video for an in-depth look at exactly how each AG Grid license works. Learn
+                            which license is right for you, how many licenses you need for you team, and exactly when
+                            you need a deployment license.
+                        </p>
+                        <p>
+                            If you have any other questions, or want to investigate volume pricing please{' '}
+                            <a href="mailto:info@ag-grid.com">get in contact</a>.
+                        </p>
+                    </div>
+
+                    <iframe
+                        src="https://www.youtube.com/embed/20SLdu4wLtI"
+                        title="YouTube video player"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    ></iframe>
+                </div>
+
+                <div className={styles.licensesInDetail}>
+                    <h3 className="font-size-extra-large">Our Licenses in Depth</h3>
+
+                    <div
+                        className={classnames(styles.singleApplicationLicense, 'ag-card', 'single-application')}
+                        id="single-application"
+                    >
+                        <header>
+                            <h3>Single Application Development License</h3>
+                        </header>
+                        <div className="content">
                             <p>
-                                Licenses <b>one application</b>, developed for internal use, to embed AG Grid Enterprise
-                                in perpetuity.
+                                Licenses one application, developed for internal use, to embed AG Grid Enterprise in
+                                perpetuity.
                             </p>
                             <ul>
                                 <li>Includes a 1-year subscription to new versions, support and maintenance.</li>
@@ -126,18 +192,21 @@ const LicensePricing = () => {
                                     be reused on other applications.
                                 </li>
                             </ul>
-                        </dd>
+                        </div>
+                    </div>
 
-                        <dt className={styles.definitionTerm}>
-                            <img src="../images/pricing/MA.svg" />
-                            Multiple Application Development License
-                        </dt>
-                        <dd>
+                    <div
+                        className={classnames(styles.multipleApplicationsLicense, 'ag-card', 'multiple-applications')}
+                        id="multiple-applications"
+                    >
+                        <header>
+                            <h3>Multiple Application Development License</h3>
+                        </header>
+                        <div className="content">
                             <p>
-                                Licenses <b>unlimited number of applications</b>, developed for internal use, to embed
-                                AG Grid Enterprise in perpetuity.
+                                Licenses unlimited number of applications, developed for internal use, to embed AG Grid
+                                Enterprise in perpetuity.
                             </p>
-
                             <ul>
                                 <li>Includes a 1-year subscription to new versions, support and maintenance.</li>
                                 <li>
@@ -153,19 +222,19 @@ const LicensePricing = () => {
                                     long as the total licensed count isn’t exceeded.
                                 </li>
                             </ul>
-                        </dd>
+                        </div>
+                    </div>
 
-                        <dt className={styles.definitionTerm}>
-                            <img src="../images/pricing/Deployment%20Add-on.svg" />
-                            Deployment License Add-on
-                        </dt>
-                        <dd>
+                    <div className={classnames(styles.deploymentLicense, 'ag-card')} id="deployment">
+                        <header>
+                            <h3>Deployment License Add-on</h3>
+                        </header>
+                        <div className="content">
                             <p>
                                 Allows licensed developers to sub-license AG Grid for one application on one production
                                 environment in perpetuity. Includes a 1-year subscription to new versions, support and
                                 maintenance. Only available with a Developer License.
                             </p>
-
                             <ul>
                                 <li>
                                     A Deployment License Add-on allows making a project available to individuals (eg
@@ -206,13 +275,28 @@ const LicensePricing = () => {
                             </ul>
 
                             <p>
-                                If you have a deployment that doesn't fit within our licensing model, please start a
-                                conversation with us through <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> and
-                                we will do our best to get to something that works.
+                                If you have a deployment that doesn't fit within our licensing model, please{' '}
+                                <a href="mailto:info@ag-grid.com">start a conversation with us</a> and we will do our
+                                best to get to something that works.
                             </p>
-                        </dd>
-                    </dl>
-                </section>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.contactSales}>
+                    <p className="text-secondary">
+                        For any enquires about bulk pricing, questions on which license is right for you, or any other
+                        license related questions please contact our friendly sales team.{' '}
+                    </p>
+                    <div>
+                        <a className="button-secondary" href="mailto:info@ag-grid.com">
+                            <span className="icon">
+                                <EmailIcon />
+                            </span>{' '}
+                            Contact sales
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     );

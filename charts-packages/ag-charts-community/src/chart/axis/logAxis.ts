@@ -1,4 +1,5 @@
 import { AND, GREATER_THAN, LESS_THAN, NUMBER_OR_NAN, predicateWithMessage, Validate } from '../../util/validation';
+import { Default } from '../../util/default';
 import { LogScale } from '../../scale/logScale';
 import { NumberAxis } from './numberAxis';
 import { extent } from '../../util/array';
@@ -46,9 +47,11 @@ export class LogAxis extends NumberAxis {
     }
 
     @Validate(AND(NUMBER_OR_NAN(), LESS_THAN('max'), NON_ZERO_NUMBER()))
+    @Default(NaN)
     min: number = NaN;
 
     @Validate(AND(NUMBER_OR_NAN(), GREATER_THAN('min'), NON_ZERO_NUMBER()))
+    @Default(NaN)
     max: number = NaN;
 
     set base(value: number) {

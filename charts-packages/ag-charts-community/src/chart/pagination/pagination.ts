@@ -43,13 +43,13 @@ class PaginationMarkerStyle {
     size = 15;
 
     @Validate(OPT_COLOR_STRING)
-    fill?: string;
+    fill?: string = undefined;
 
     @Validate(OPT_NUMBER(0, 1))
     fillOpacity?: number = undefined;
 
     @Validate(OPT_COLOR_STRING)
-    stroke?: string;
+    stroke?: string = undefined;
 
     @Validate(NUMBER(0))
     strokeWidth: number = 1;

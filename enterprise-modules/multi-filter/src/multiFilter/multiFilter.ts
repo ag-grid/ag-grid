@@ -424,4 +424,13 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
         return true;
     }
+
+    getModelAsString(model: IMultiFilterModel): string {
+        if (!this.filters || !model?.filterModels?.length) {
+            return '';
+        }
+        const lastActiveIndex = this.getLastActiveFilterIndex() ?? 0;
+        const activeFilter = this.filters[lastActiveIndex];
+        return activeFilter.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
+    }
 }

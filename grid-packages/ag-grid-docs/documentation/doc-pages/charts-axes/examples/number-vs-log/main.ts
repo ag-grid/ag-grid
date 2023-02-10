@@ -24,10 +24,7 @@ const options: AgCartesianChartOptions = {
       position: 'left',
       label: {
         format: '.0f',
-      },
-      tick: {
-        count: 10,
-      },
+      }
     },
   ],
   legend: {
@@ -49,10 +46,7 @@ function useNumberAxis() {
       min: 1,
       label: {
         format: '.0f',
-      },
-      tick: {
-        count: 10,
-      },
+      }
     },
   ]
   AgChart.update(chart, options)
@@ -70,10 +64,7 @@ function useLogAxis() {
       min: 10,
       label: {
         format: '.0f',
-      },
-      tick: {
-        count: 10,
-      },
+      }
     },
   ]
   AgChart.update(chart, options)
@@ -91,9 +82,6 @@ function useBaseTwoLogAxis() {
       min: 10,
       label: {
         format: '.0f',
-      },
-      tick: {
-        count: 10,
       },
       base: 2,
     },
@@ -115,7 +103,7 @@ function useLogAxisWithFewerTicks() {
         format: '.0f',
       },
       tick: {
-        count: 2, // a hint that we want a smaller tick count
+        minSpacing: 200,
       },
     },
   ]

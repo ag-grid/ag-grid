@@ -371,21 +371,12 @@ export class LazyCache extends BeanStub {
             loaded: 1,
         };
 
-        const isLastBlockKnown = this.isLastRowIndexKnown();
-        const lastBlockStart =  this.rowLoader.getBlockStartIndexForIndex(this.getRowCount());
-
         const blockPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
 
         const results: { [key: string]: any } = {};
         Object.entries(blockStates).forEach(([blockStart, uniqueStates]) => {
             const sortedStates = [...uniqueStates].sort((a, b) => (statePriorityMap[a] ?? 0) - (statePriorityMap[b] ?? 0));
             const priorityState = sortedStates[0];
-
-            const statePriority = statePriorityMap[priorityState];
-            const isAssumedLoaded = statePriority === statePriorityMap.loaded;
-            const isLastBlock = isLastBlockKnown && lastBlockStart === Number(blockStart);
-
-            const isBlockIncomplete = isAssumedLoaded && blockCounts[blockStart] < this.rowLoader.getBlockSize() && !isLastBlock;
 
             const blockNumber = Number(blockStart) / this.rowLoader.getBlockSize();
 
@@ -395,7 +386,6 @@ export class LazyCache extends BeanStub {
                 startRow: Number(blockStart),
                 endRow: Number(blockStart) + this.rowLoader.getBlockSize(),
                 pageStatus: priorityState,
-                needsVerified: isBlockIncomplete || dirtyBlocks.has(Number(blockStart)),
                 loadedRowCount: blockCounts[blockStart],
             };
         });

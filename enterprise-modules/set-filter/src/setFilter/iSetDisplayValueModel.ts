@@ -44,4 +44,5 @@ export interface SetFilterModelTreeItem {
     expanded?: boolean;
     children?: SetFilterModelTreeItem[];
     key?: string | null;
+    parentTreeKeys: (string | null)[];
 }

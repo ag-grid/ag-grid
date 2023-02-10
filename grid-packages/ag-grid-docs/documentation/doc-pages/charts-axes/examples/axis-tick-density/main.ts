@@ -18,14 +18,12 @@ const options: AgCartesianChartOptions & { axes: AgNumberAxisThemeOptions[] } = 
       type: 'number',
       position: 'bottom',
       tick: {
-        count: 10,
       },
     },
     {
       type: 'number',
       position: 'left',
       tick: {
-        count: 10,
       },
     },
   ],
@@ -36,15 +34,41 @@ const options: AgCartesianChartOptions & { axes: AgNumberAxisThemeOptions[] } = 
 
 var chart = AgChart.create(options)
 
-function setTickCountTo5() {
-  options.axes![0].tick!.count = 5
-  options.axes![1].tick!.count = 5
+function resetTickConfig() {
+  options.axes![0].tick = {}
+  options.axes![1].tick = {}
   AgChart.update(chart, options)
 }
 
-function setTickCountTo10() {
-  options.axes![0].tick!.count = 10
-  options.axes![1].tick!.count = 10
+function setTickMinMaxSpacing() {
+  options.axes![0].tick = {
+    minSpacing: 50,
+    maxSpacing: 200,
+  }
+  options.axes![1].tick = {
+    minSpacing: 50,
+    maxSpacing: 200,
+  }
+  AgChart.update(chart, options)
+}
+
+function setTickInterval() {
+  options.axes![0].tick = {
+    interval: 30,
+  }
+  options.axes![1].tick = {
+    interval: 30,
+  }
+  AgChart.update(chart, options)
+}
+
+function setTickValues() {
+  options.axes![0].tick = {
+    values: [-50, -25, 0, 25, 50],
+  }
+  options.axes![1].tick = {
+    values: [-50, -25, 0, 25, 50],
+  }
   AgChart.update(chart, options)
 }
 

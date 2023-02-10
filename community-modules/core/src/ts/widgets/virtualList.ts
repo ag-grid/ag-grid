@@ -7,6 +7,7 @@ import { ResizeObserverService } from "../misc/resizeObserverService";
 import { waitUntil } from '../utils/function';
 import { TabGuardComp } from './tabGuardComp';
 import { FocusService } from '../focusService';
+import { Events } from '../eventKeys';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -51,6 +52,13 @@ export class VirtualList extends TabGuardComp {
         });
 
         this.setAriaProperties();
+
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanged.bind(this));
+    }
+
+    private onGridStylesChanged(): void {
+        this.rowHeight = this.getItemHeight();
+        this.refresh();
     }
 
     private setAriaProperties(): void {
