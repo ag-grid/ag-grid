@@ -51,9 +51,10 @@ const DEPLOY_LICENSE_DATA = {
 const Price = ({ priceFullDollars, pricePer }) => {
     return (
         <div className={styles.price}>
-            <p className="font-size-small text-secondary">Starting at</p>
             <p className={styles.priceFullDollars}>{priceFullDollars}</p>
-            <p className="font-size-small text-secondary">Per {pricePer}</p>
+            <p className="font-size-small">
+                <b>Per {pricePer}</b>
+            </p>
         </div>
     );
 };

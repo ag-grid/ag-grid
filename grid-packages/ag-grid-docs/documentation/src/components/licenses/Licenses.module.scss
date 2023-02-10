@@ -57,6 +57,7 @@
         grid-template-areas: 'meta price' 'required required';
         padding-top: $size-2 !important; // !important for .ag-styles specificity
         padding-bottom: $size-2 !important; // !important for .ag-styles specificity
+        border-top: 1px solid var(--border-color);
 
         p {
             font-size: 12px !important;
@@ -125,7 +126,7 @@ p.name {
     text-align: right;
 
     :global(.bottom) & p:last-child {
-        max-width: 140px;
+        max-width: 13em;
     }
 
     @include wide-layout {
