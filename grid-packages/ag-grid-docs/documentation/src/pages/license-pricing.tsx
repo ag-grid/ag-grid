@@ -35,24 +35,21 @@ const LicensePricing = () => {
                         Bulk pricing discounts available. Use the pay with card buttons above to see pricing for up to
                         10 developers. For more than 10 developers or any questions with regards to your purchase...
                     </p>
+                    <a
+                        className={classnames(styles.contactSalesButton, 'button-secondary')}
+                        href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
+                    >
+                        <span className="icon">
+                            <EmailIcon />
+                        </span>
 
-                    <div>
-                        <a
-                            className={classnames(styles.contactSalesButton, 'button-secondary')}
-                            href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
-                        >
-                            <span className="icon">
-                                <EmailIcon />
+                        <div>
+                            <span className={styles.buttonText}>Contact sales</span>
+                            <span className={classnames(styles.buttonEmail, 'font-size-extra-small')}>
+                                info@ag-grid.com
                             </span>
-
-                            <div>
-                                <span className={styles.buttonText}>Contact sales</span>
-                                <span className={classnames(styles.buttonEmail, 'font-size-extra-small')}>
-                                    info@ag-grid.com
-                                </span>
-                            </div>
-                        </a>
-                    </div>
+                        </div>
+                    </a>
                 </div>
 
                 <div className={styles.communityEnterprise}>
@@ -285,23 +282,22 @@ const LicensePricing = () => {
                         For any enquires about bulk pricing, questions on which license is right for you, or any other
                         license related questions please contact our friendly sales team.{' '}
                     </p>
-                    <div>
-                        <a
-                            className={classnames(styles.contactSalesButton, 'button-secondary')}
-                            href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
-                        >
-                            <span className="icon">
-                                <EmailIcon />
-                            </span>
 
-                            <div>
-                                <span className={styles.buttonText}>Contact sales</span>
-                                <span className={classnames(styles.buttonEmail, 'font-size-extra-small')}>
-                                    info@ag-grid.com
-                                </span>
-                            </div>
-                        </a>
-                    </div>
+                    <a
+                        className={classnames(styles.contactSalesButton, 'button-secondary')}
+                        href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
+                    >
+                        <span className="icon">
+                            <EmailIcon />
+                        </span>
+
+                        <div>
+                            <span className={styles.buttonText}>Contact sales</span>
+                            <span className={classnames(styles.buttonEmail, 'font-size-extra-small')}>
+                                info@ag-grid.com
+                            </span>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
