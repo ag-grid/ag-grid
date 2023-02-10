@@ -196,8 +196,8 @@ const LicensePricing = () => {
                     </div>
 
                     <div
-                        className={classnames(styles.multipleApplicationsLicense, 'ag-card', 'multiple-applications')}
-                        id="multiple-applications"
+                        className={classnames(styles.multipleApplicationsLicense, 'ag-card', 'multiple-application')}
+                        id="multiple-application"
                     >
                         <header>
                             <h3>Multiple Application Development License</h3>

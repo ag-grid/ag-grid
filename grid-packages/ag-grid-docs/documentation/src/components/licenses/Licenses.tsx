@@ -30,8 +30,8 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     },
     {
         className: styles.multipleApplicationsLicense,
-        name: 'Multiple Applications',
-        id: 'multiple-applications',
+        name: 'Multiple Application',
+        id: 'multiple-application',
         subHeading: 'Development License',
         licenseBenefits: ['Unlimited applications', 'Perpetual license', '1 year of support', '1 year of updates'],
         priceFullDollars: '1,499',
