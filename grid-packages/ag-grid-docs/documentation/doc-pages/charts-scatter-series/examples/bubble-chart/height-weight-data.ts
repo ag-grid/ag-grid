@@ -1,4 +1,4 @@
-var maleHeightWeight = [
+export const maleHeightWeight = [
     {
         "height": 174,
         "weight": 65.6,
@@ -1236,7 +1236,7 @@ var maleHeightWeight = [
     }
 ];
 
-var femaleHeightWeight = [
+export const femaleHeightWeight = [
     {
         "height": 161.2,
         "weight": 51.6,

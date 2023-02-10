@@ -1,6 +1,5 @@
 import { AgChartOptions, AgChart } from 'ag-charts-community'
-declare var maleHeightWeight: any[];
-declare var femaleHeightWeight: any[];
+import { maleHeightWeight, femaleHeightWeight } from './height-weight-data'
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),

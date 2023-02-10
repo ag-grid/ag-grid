@@ -1,97 +1,80 @@
-"use strict"
+'use strict';
 
-import { AgChartsReact } from "ag-charts-react"
-import React, { Component } from "react"
-import { render } from "react-dom"
+import React, { useState, useCallback, useRef } from 'react';
+import { render } from 'react-dom';
+import { AgChartsReact } from 'ag-charts-react';
+import { AgChart, AgChartOptions, AgChartTheme } from 'ag-charts-community';
 
-class Chart1 extends Component {
-  constructor(props) {
-    super(props)
+const Chart1 = () => {
 
-    this.state = {
-      options: {
-        theme: myTheme,
-        autoSize: true,
-        title: {
-          text: "Cartesian Chart Theming",
-        },
-        data: data,
-        series: [
-          {
-            type: "column",
-            xKey: "label",
-            yKey: "v1",
-            stacked: true,
-            yName: "Reliability",
-          },
-          {
-            type: "column",
-            xKey: "label",
-            yKey: "v2",
-            stacked: true,
-            yName: "Ease of use",
-          },
-          {
-            type: "column",
-            xKey: "label",
-            yKey: "v3",
-            stacked: true,
-            yName: "Performance",
-          },
-          {
-            type: "line",
-            xKey: "label",
-            yKey: "v4",
-            yName: "Price",
-          },
-        ],
+  const [options, setOptions] = useState<AgChartOptions>({
+    theme: myTheme,
+    autoSize: true,
+    title: {
+      text: "Cartesian Chart Theming",
+    },
+    data: data,
+    series: [
+      {
+        type: "column",
+        xKey: "label",
+        yKey: "v1",
+        stacked: true,
+        yName: "Reliability",
       },
-    }
-  }
+      {
+        type: "column",
+        xKey: "label",
+        yKey: "v2",
+        stacked: true,
+        yName: "Ease of use",
+      },
+      {
+        type: "column",
+        xKey: "label",
+        yKey: "v3",
+        stacked: true,
+        yName: "Performance",
+      },
+      {
+        type: "line",
+        xKey: "label",
+        yKey: "v4",
+        yName: "Price",
+      },
+    ],
+  });
 
-  render() {
-    return (
-      <div className="wrapper">
-        <AgChartsReact options={this.state.options} />
-      </div>
-    )
-  }
+  return <div className="wrapper">
+    <AgChartsReact options={options} />
+  </div>;
 }
 
-class Chart2 extends Component {
-  constructor(props) {
-    super(props)
+const Chart2 = () => {
 
-    this.state = {
-      options: {
-        theme: myTheme,
-        autoSize: true,
-        title: {
-          enabled: true,
-          text: "Polar Chart Theming",
-        },
-        data: data,
-        series: [
-          {
-            type: "pie",
-            angleKey: "v4",
-            calloutLabelKey: "label",
-          },
-        ],
+  const [options, setOptions] = useState<AgChartOptions>({
+    theme: myTheme,
+    autoSize: true,
+    title: {
+      enabled: true,
+      text: "Polar Chart Theming",
+    },
+    data: data,
+    series: [
+      {
+        type: "pie",
+        angleKey: "v4",
+        calloutLabelKey: "label",
       },
-    }
-  }
+    ],
+  });
 
-  render() {
-    return (
-      <div className="wrapper">
-        <AgChartsReact options={this.state.options} />
-      </div>
-    )
-  }
+  return <div className="wrapper">
+    <AgChartsReact options={options} />
+  </div>;
 }
 
-var myTheme = {
+var myTheme: AgChartTheme = {
   baseTheme: "ag-default-dark",
   palette: {
     fills: ["#5C2983", "#0076C5", "#21B372", "#FDDE02", "#F76700", "#D30018"],
