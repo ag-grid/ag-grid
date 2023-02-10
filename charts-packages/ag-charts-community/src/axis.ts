@@ -54,8 +54,8 @@ const OPT_TICK_COUNT = predicateWithMessage(
 );
 
 const OPT_TICK_INTERVAL = predicateWithMessage(
-    (v: any, ctx) => OPTIONAL(v, ctx, (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval),
-    `expecting an optional positive Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
+    (v: any, ctx) => OPTIONAL(v, ctx, (v: any, ctx) => (v !== 0 && NUMBER(0)(v, ctx)) || v instanceof TimeInterval),
+    `expecting an optional non-zero positive Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
 );
 
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
