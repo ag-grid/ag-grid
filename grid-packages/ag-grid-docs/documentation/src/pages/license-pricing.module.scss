@@ -30,13 +30,14 @@
 
 .enterpriseExplainer {
     margin-top: 84px !important; // !important for .ag-styles specificit
+    margin-bottom: $size-4 !important; // !important for .ag-styles specificit
 }
 
 .videoPrompt {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    // justify-content: center;
-    gap: $size-2;
+    gap: 0 $size-2;
     margin-top: $size-6 !important; // !important for .ag-styles specificity
 
     h3,
