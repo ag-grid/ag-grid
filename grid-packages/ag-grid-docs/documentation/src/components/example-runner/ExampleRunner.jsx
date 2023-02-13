@@ -162,6 +162,16 @@ const saveChartIndexHtmlPermutations = (nodes, library, pageName, name, title, t
         const typescriptExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, true);
 
         writeIndexHtmlFile(typescriptExampleInfo);
+    } else if (type === 'multi' && framework === 'react') {
+        // Also generate the alternative React style
+        const functionalExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, false);
+        writeIndexHtmlFile(functionalExampleInfo);
+
+        // Add the typescript versions for functional
+        if (useFunctionalReact) {
+            const reactTsStyle = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, true);
+            writeIndexHtmlFile(reactTsStyle);
+        }
     }
 };
 
