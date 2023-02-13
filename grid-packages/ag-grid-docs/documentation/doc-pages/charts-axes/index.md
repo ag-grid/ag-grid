@@ -162,7 +162,7 @@ tick: {
 
 `tick.interval` is the step value between ticks specified in the units of the axis.
 
-For number axes, the `interval` property should be set to a `number` to show a tick every `interval` value.
+For `number` axes, the `interval` property should be set to a `number` to show a tick every `interval` value.
 
 ```js
 tick: {
@@ -170,7 +170,20 @@ tick: {
 }
 ```
 
-For time axes the `interval` property can be set to a time interval such as `agCharts.time.month`, which makes the axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `agCharts.time.month.every(3)`.
+For `log` axes, the `interval` property can be a `number` which modifies the step for the exponent that the logarithm base is raised to.
+
+By default, the `interval` is `1`. Increasing the `interval` will result in less ticks as the powers are incremented by a larger step. Reducing the `interval` to a fractional number more than `0` and less than `1` will result in more ticks with smaller intervals.
+
+The table below shows the result of different `interval` values depending on the base.
+
+| Interval | Base 10 | Base 2 |
+| --------- | --------- | --------- |
+| 1 | 10^0, 10^1, 10^2, 10^3, 10^4 | 2^0, 2^1, 2^2, 2^3, 2^4 |
+| 2 | 10^0, 10^2, 10^4 | 2^0, 2^2, 2^4 |
+| 0.5 | 10^0, 10^0.5, 10^1, 10^1.5, 10^2, 10^2.5, 10^3, 10^3.5, 10^4 | 2^0, 2^0.5, 2^1, 2^1.5, 2^2, 2^2.5, 2^3, 2^3.5, 2^4  |
+
+
+For `time` axes the `interval` property can be set to a time interval such as `agCharts.time.month`, which makes the axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `agCharts.time.month.every(3)`.
 
 ```js
 tick: {

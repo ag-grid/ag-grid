@@ -291,8 +291,12 @@ export class TimeScale extends ContinuousScale {
             }
         }
 
-        const t = this.getTickInterval({ start: t0, stop: t1, count: this.tickCount });
-        return t ? t.range(new Date(t0), new Date(t1)) : []; // inclusive stop
+        return this.getDefaultTicks({ start: t0, stop: t1 });
+    }
+
+    private getDefaultTicks({ start, stop }: { start: number; stop: number }) {
+        const t = this.getTickInterval({ start, stop, count: this.tickCount });
+        return t ? t.range(new Date(start), new Date(stop)) : []; // inclusive stop
     }
 
     private getTicksForInterval({ start, stop }: { start: number; stop: number }): Date[] {
@@ -303,13 +307,18 @@ export class TimeScale extends ContinuousScale {
         }
 
         if (interval instanceof TimeInterval) {
-            return interval.range(new Date(start), new Date(stop));
+            const ticks = interval.range(new Date(start), new Date(stop));
+            if (this.isDenseInterval({ start, stop, interval, count: ticks.length })) {
+                return this.getDefaultTicks({ start, stop });
+            }
+
+            return ticks;
         }
 
         const absInterval = Math.abs(interval);
 
         if (this.isDenseInterval({ start, stop, interval: absInterval })) {
-            return [];
+            return this.getDefaultTicks({ start, stop });
         }
 
         const timeInterval = tickIntervals.reverse().find((tickInterval) => absInterval % tickInterval[2] === 0);

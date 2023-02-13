@@ -101,9 +101,13 @@ export class LogScale extends ContinuousScale {
         if (this.interval) {
             const step = Math.abs(this.interval);
             const absDiff = Math.abs(p1 - p0);
-            return range(p0, p1, Math.min(absDiff, step))
+            const ticks = range(p0, p1, Math.min(absDiff, step))
                 .map((x) => this.pow(x))
                 .filter((t) => t >= d0 && t <= d1);
+
+            if (!this.isDenseInterval({ start: d0, stop: d1, interval: step, count: ticks.length })) {
+                return ticks;
+            }
         }
 
         const isBaseInteger = base % 1 === 0;
