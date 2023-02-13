@@ -1,4 +1,4 @@
-import { AgAreaSeriesOptions, AgChartLegendPosition, AgChartOptions, AgChart } from "ag-charts-community";
+import { AgAreaSeriesOptions, AgChartOptions, AgChart } from "ag-charts-community";
 import { getData } from "./data";
 
 
@@ -33,7 +33,7 @@ const options: AgChartOptions = {
 let chart = AgChart.create(options);
 
 function download() {
-  AgChart.download(chart, undefined);
+  AgChart.download(chart);
 }
 
 function downloadFixedSize() {

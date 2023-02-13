@@ -26,36 +26,71 @@ const LicensePricing = () => {
                     </p>
                 </Alert>
 
-                <h1 className={styles.licensesHeader}>AG Grid Enterprise</h1>
+                <div className={styles.topSection}>
+                    <div className={styles.enterpriseExplainer}>
+                        <h1>
+                            AG Grid Enterprise <EnterpriseIcon />
+                        </h1>
+                        <p>
+                            <b>AG Grid Enterprise</b> offers advanced functionality like{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/grouping/`}>Row Grouping</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/range-selection/`}>Range Selection</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/master-detail/`}>Master / Detail</a>,{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/server-side-model/`}>Server Side Row Model</a>{' '}
+                            and{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/licensing/#feature-comparison`}>
+                                much much more
+                            </a>
+                            .
+                        </p>
+                        <p>
+                            <b>AG Grid Enterprise</b> also comes with{' '}
+                            <a href={`${hostPrefix}/javascript-data-grid/integrated-charts/`}>Integrated Charts</a>,
+                            allowing your users to create charts using the grid's UI.
+                        </p>
 
-                <Licenses />
+                        <div className={styles.videoPrompt}>
+                            <img
+                                className={styles.thumbnail}
+                                src="https://img.youtube.com/vi/20SLdu4wLtI/hqdefault.jpg"
+                                alt="AG Grid license explained video"
+                            />
+
+                            <div>
+                                <h3>Which licences do I need?</h3>
+                                <p>
+                                    <a href="#video-explainer">
+                                        <span className="icon"></span>
+                                        Watch our short explainer video
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Licenses />
+                </div>
 
                 <div className={styles.bulkLicenses}>
                     <p className="text-secondary">
                         Bulk pricing discounts available. Use the pay with card buttons above to see pricing for up to
                         10 developers. For more than 10 developers or any questions with regards to your purchase...
                     </p>
+                    <a
+                        className={classnames(styles.contactSalesButton, 'button-secondary')}
+                        href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
+                    >
+                        <span className="icon">
+                            <EmailIcon />
+                        </span>
 
-                    <div>
-                        <a
-                            className="button"
-                            href="mailto:info@ag-grid.com?subject=AG Grid - Development Licenses quote"
-                        >
-                            <span className="icon">
-                                <EmailIcon />
-                            </span>{' '}
-                            Request a quote
-                        </a>
-                        <a
-                            className="button-secondary"
-                            href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
-                        >
-                            <span className="icon">
-                                <EmailIcon />
-                            </span>{' '}
-                            Contact sales
-                        </a>
-                    </div>
+                        <div>
+                            <span className={styles.buttonText}>Contact sales</span>
+                            <span className={classnames(styles.buttonEmail, 'font-size-extra-small')}>
+                                info@ag-grid.com
+                            </span>
+                        </div>
+                    </a>
                 </div>
 
                 <div className={styles.communityEnterprise}>
@@ -137,7 +172,7 @@ const LicensePricing = () => {
                     </div>
                 </div>
 
-                <div className={styles.videoExplainer}>
+                <div className={styles.videoExplainer} id="video-explainer">
                     <div>
                         <h3 className="font-size-extra-large">Questions about our licenses? </h3>
                         <p>
@@ -196,8 +231,8 @@ const LicensePricing = () => {
                     </div>
 
                     <div
-                        className={classnames(styles.multipleApplicationsLicense, 'ag-card', 'multiple-applications')}
-                        id="multiple-applications"
+                        className={classnames(styles.multipleApplicationsLicense, 'ag-card', 'multiple-application')}
+                        id="multiple-application"
                     >
                         <header>
                             <h3>Multiple Application Development License</h3>
@@ -288,14 +323,22 @@ const LicensePricing = () => {
                         For any enquires about bulk pricing, questions on which license is right for you, or any other
                         license related questions please contact our friendly sales team.{' '}
                     </p>
-                    <div>
-                        <a className="button-secondary" href="mailto:info@ag-grid.com">
-                            <span className="icon">
-                                <EmailIcon />
-                            </span>{' '}
-                            Contact sales
-                        </a>
-                    </div>
+
+                    <a
+                        className={classnames(styles.contactSalesButton, 'button-secondary')}
+                        href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
+                    >
+                        <span className="icon">
+                            <EmailIcon />
+                        </span>
+
+                        <div>
+                            <span className={styles.buttonText}>Contact sales</span>
+                            <span className={classnames(styles.buttonEmail, 'font-size-extra-small')}>
+                                info@ag-grid.com
+                            </span>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>

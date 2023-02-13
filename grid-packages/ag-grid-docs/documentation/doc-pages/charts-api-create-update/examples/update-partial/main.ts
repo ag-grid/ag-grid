@@ -40,30 +40,24 @@ let chart = AgChart.create({
 });
 
 function reverseSeries() {
-  // Mutate options.
   const series = chart.getOptions().series as AgAreaSeriesOptions[]
   series!.reverse()
 
-  // Apply changes.
   AgChart.updateDelta(chart, { series })
 }
 
 function swapTitles() {
-  // Mutate options.
   const { title, subtitle } = chart.getOptions()
 
-  // Apply changes.
   AgChart.updateDelta(chart, { title: subtitle, subtitle: title })
 }
 
 function rotateLegend() {
-  // Mutate legend.
   const position  = chart.getOptions().legend!.position
 
   const currentIdx = positions.indexOf(position || "top")
   const newPosition = positions[(currentIdx + 1) % positions.length]
 
-  // Apply changes.
   AgChart.updateDelta(chart, { legend: { position: newPosition } })
 }
 

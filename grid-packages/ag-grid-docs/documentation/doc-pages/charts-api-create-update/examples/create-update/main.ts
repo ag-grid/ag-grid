@@ -40,29 +40,22 @@ const options: AgChartOptions = {
 let chart = AgChart.create(options);
 
 function reverseSeries() {
-  // Mutate options.
   options.series = series.reverse();
-
-  // Apply changes.
   AgChart.update(chart, options);
 }
 
 function swapTitles() {
-  // Mutate options.
   const oldTitle = options.title
   options.title = options.subtitle
   options.subtitle = oldTitle
 
-  // Apply changes.
   AgChart.update(chart, options);
 }
 
 function rotateLegend() {
-  // Mutate legend.
   const currentIdx = positions.indexOf(legend.position || "top")
   legend.position = positions[(currentIdx + 1) % positions.length];
 
-  // Apply changes.
   options.legend = legend;
   AgChart.update(chart, options);
 }

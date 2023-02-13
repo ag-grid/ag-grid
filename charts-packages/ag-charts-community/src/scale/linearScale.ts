@@ -1,5 +1,5 @@
 import { ContinuousScale } from './continuousScale';
-import ticks, { range, tickStep } from '../util/ticks';
+import ticks, { range, tickStep, singleTickDomain } from '../util/ticks';
 import { tickFormat } from '../util/numberFormat';
 
 /**
@@ -50,6 +50,11 @@ export class LinearScale extends ContinuousScale {
         let [start, stop] = this.domain;
         if (count < 1) {
             this.niceDomain = [start, stop];
+            return;
+        }
+
+        if (count === 1) {
+            this.niceDomain = singleTickDomain(start, stop);
             return;
         }
 

@@ -507,24 +507,6 @@ export class RowRenderer extends BeanStub {
             this.removeAllRowComps();
         }
 
-        const isFocusedCellGettingRecycled = () => {
-            if (focusedCell == null || rowsToRecycle == null) { return false; }
-            let res = false;
-
-            iterateObject(rowsToRecycle, (key: string, rowComp: RowCtrl) => {
-                const rowNode = rowComp.getRowNode();
-                const rowIndexEqual = rowNode.rowIndex == focusedCell.rowIndex;
-                const pinnedEqual = rowNode.rowPinned == focusedCell.rowPinned;
-                if (rowIndexEqual && pinnedEqual) {
-                    res = true;
-                }
-            });
-
-            return res;
-        };
-
-        const focusedCellRecycled = isFocusedCellGettingRecycled();
-
         this.redraw(rowsToRecycle, animate);
 
         this.gridBodyCtrl.updateRowCount();
@@ -535,9 +517,8 @@ export class RowRenderer extends BeanStub {
 
         this.dispatchDisplayedRowsChanged();
 
-        // if we focus a cell that's already focused, then we get an unnecessary 'cellFocused' event fired.
-        // this was happening when user clicked 'expand' on a rowGroup, then cellFocused was getting fired twice.
-        if (!focusedCellRecycled) {
+        // if a cell was focused before, ensure focus now.
+        if (focusedCell != null) {
             this.restoreFocusedCell(focusedCell);
         }
 
@@ -601,12 +582,19 @@ export class RowRenderer extends BeanStub {
     // edited cell).
     private restoreFocusedCell(cellPosition: CellPosition | null): void {
         if (cellPosition) {
-            this.focusService.setFocusedCell({
+            // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
+            // so we mock a change event for the full width rows and cells to ensure they update to the newly selected
+            // state
+            this.onCellFocusChanged({
                 rowIndex: cellPosition.rowIndex,
                 column: cellPosition.column,
                 rowPinned: cellPosition.rowPinned,
                 forceBrowserFocus: true,
-                preventScrollOnBrowserFocus: true
+                preventScrollOnBrowserFocus: true,
+                api: this.beans.gridApi,
+                columnApi: this.beans.columnApi,
+                context: this.beans.context,
+                type: 'mock',
             });
         }
     }

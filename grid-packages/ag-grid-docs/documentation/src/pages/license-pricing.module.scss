@@ -5,17 +5,59 @@
     margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
 }
 
-.licensesHeader {
-    --font-size: #{$font-size-large} !important; // !important for .ag-styles specificity
-    --line-height: #{$line-height-tight} !important; // !important for .ag-styles specificity
-
+.topSection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-4;
     margin-top: $size-6 !important; // !important for .ag-styles specificity
-    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
-    text-align: center;
 
-    @media screen and (min-width: 780px) {
-        --font-size: #{$font-size-massive} !important; // !important for .ag-styles specificity
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        flex-wrap: nowrap;
     }
+
+    h1 {
+        font-size: 46px;
+    }
+
+    p {
+        font-size: 18px;
+    }
+
+    h1 svg {
+        display: inline-block;
+        position: relative;
+        width: 46px;
+        bottom: 4px;
+    }
+}
+
+.enterpriseExplainer {
+    margin-top: 84px !important; // !important for .ag-styles specificit
+    margin-bottom: $size-4 !important; // !important for .ag-styles specificit
+}
+
+.videoPrompt {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 $size-2;
+    margin-top: $size-6 !important; // !important for .ag-styles specificity
+
+    h3,
+    p {
+        margin: 0 !important; // !important for .ag-styles specificity
+        line-height: $line-height-tight;
+    }
+}
+
+.thumbnail {
+    width: 33.333%;
+    min-width: 160px;
+    max-width: 220px;
+    aspect-ratio: 16 / 9;
+    margin-top: $size-1 !important; // !important for .ag-styles specificity
+    object-fit: cover;
+    border-radius: var(--border-radius);
 }
 
 .bulkLicenses,
@@ -34,9 +76,7 @@
     text-align: center;
 
     p {
-        max-width: 740px;
-        margin-left: auto;
-        margin-right: auto;
+        max-width: 44em;
     }
 
     a {
@@ -46,25 +86,37 @@
     }
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        div {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: $size-3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        p {
+            margin: 0 !important; // !important for .ag-styles specificity
+            text-align: left;
         }
 
         a {
-            margin-left: 0;
-            margin-right: 0;
             font-size: $font-size-large !important; // !important for .ag-styles specificity
         }
+    }
+}
 
-        a:first-child {
-            justify-self: end;
-        }
+.contactSalesButton {
+    display: inline-flex !important; // !important for .ag-styles specificity
+    align-items: center;
+    gap: $size-1;
 
-        a:last-child {
-            justify-self: start;
-        }
+    :global(.icon) {
+        position: static !important; // !important for .ag-styles specificity
+        width: 54px !important; // !important for .ag-styles specificity
+        height: 54px !important; // !important for .ag-styles specificity
+        margin: 0 0 -0.1em !important; // !important for .ag-styles specificity
+    }
+
+    div > span {
+        display: block;
+        line-height: 1.125;
+        text-align: left;
     }
 }
 

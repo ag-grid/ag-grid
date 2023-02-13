@@ -117,7 +117,7 @@ export function format(formatter: string | FormatterOptions) {
     }
 
     if (isNaN(precision!)) {
-        precision = 6;
+        precision = type ? 6 : 12;
     }
 
     return (n: number) => {
@@ -138,7 +138,7 @@ export function format(formatter: string | FormatterOptions) {
         if (type === 's') {
             result = `${result}${getSIPrefix(n)}`;
         }
-        if (type === '%') {
+        if (type === '%' || type === 'p') {
             result = `${result}%`;
         }
         result = `${prefix}${result}${suffix}`;
@@ -154,7 +154,7 @@ const absFloor = (n: number) => Math.floor(Math.abs(n));
 const integerTypes: Record<string, (n: number) => string> = {
     b: (n) => absFloor(n).toString(2),
     c: (n) => String.fromCharCode(n),
-    d: (n) => absFloor(n).toFixed(0),
+    d: (n) => Math.round(Math.abs(n)).toFixed(0),
     o: (n) => absFloor(n).toString(8),
     x: (n) => absFloor(n).toString(16),
     X: (n) => integerTypes.x(n).toUpperCase(),
@@ -180,6 +180,7 @@ const decimalTypes: Record<string, (n: number, f: number) => string> = {
     },
     G: (n, f) => decimalTypes.g(n, f).toUpperCase(),
     n: (n, f) => decimalTypes.g(n, f),
+    p: (n, f) => decimalTypes.r(n * 100, f),
     r: (n, f) => {
         if (n === 0) {
             return '0';
@@ -197,7 +198,7 @@ const decimalTypes: Record<string, (n: number, f: number) => string> = {
         const p = getSIPrefixPower(n);
         return decimalTypes.r(n / Math.pow(10, p), f);
     },
-    '%': (n, f) => `${Math.abs(n * 100).toFixed(f)}`,
+    '%': (n, f) => decimalTypes.f(n * 100, f),
 };
 
 function removeTrailingZeros(numString: string) {
