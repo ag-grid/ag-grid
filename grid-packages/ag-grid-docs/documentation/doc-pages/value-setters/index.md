@@ -58,6 +58,8 @@ the following:
 
 Read Only Edit is a mode in the grid whereby Cell Editing will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request. To enable this mode, set the grid property `readOnlyEdit=true`.
 
+<api-documentation source='grid-events/events.json' section='editing' names='["cellEditRequest"]'></api-documentation>
+
 [[only-javascript]]
 |```ts
 |const gridOptions = {

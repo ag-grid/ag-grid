@@ -169,6 +169,8 @@ The example below uses a custom `processDataFromClipboard` function to add new r
 
 When the grid is in [Read Only Edit](/value-setters/#read-only-edit) mode the `Clipboard` will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request.
 
+<api-documentation source='grid-events/events.json' section='editing' names='["cellEditRequest"]'></api-documentation>
+
 The example below will show how to update cell value combining the `Clipboard` with `readOnlyEdit=true`.
 
 <grid-example title='Clipboard - ReadOnlyEdit' name='read-only-edit' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard"] }'></grid-example>
