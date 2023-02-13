@@ -1078,7 +1078,22 @@
                 "title": "Filtering Groups",
                 "url": "/grouping-filtering/",
                 "enterprise": true,
-                "showInCollapsed": false
+                "showInCollapsed": false,
+                "matrixExcludeChildren": true,
+                "items": [
+                  {
+                    "title": "Group Column Filter",
+                    "url": "/grouping-column-filter/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Custom Group Filtering",
+                    "url": "/grouping-custom-filtering/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  }
+                ]
               },
               {
                 "title": "Group Footers",
