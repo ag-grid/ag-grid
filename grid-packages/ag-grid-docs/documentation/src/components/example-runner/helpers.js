@@ -46,9 +46,8 @@ export const getExampleInfo = (
     useTypescript = false,
     importType = 'modules') => {
     if (library === 'charts') {
-        // no support for modules or React Hooks or Vue 3 in charts yet
+        // no support for modules
         importType = 'packages';
-        useFunctionalReact = false;
     }
 
     const internalFramework = getInternalFramework(framework, useFunctionalReact, useVue3, useTypescript);
@@ -62,7 +61,7 @@ export const getExampleInfo = (
             boilerPlateFramework = useTypescript ? 'typescript' : 'javascript';
             break;
         case 'react':
-            boilerPlateFramework = (useTypescript && library === 'grid' && internalFramework === 'reactFunctionalTs') ? 'react-ts' : 'react';
+            boilerPlateFramework = (useTypescript && internalFramework === 'reactFunctionalTs') ? 'react-ts' : 'react';
             break;
         default:
             boilerPlateFramework = framework;

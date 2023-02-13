@@ -1,6 +1,7 @@
 import * as $ from 'jquery';
+import { SignatureDeclaration } from 'typescript';
 import {
-    extractEventHandlers, extractImportStatements, extractTypeInfoForVariable, extractUnboundInstanceMethods, parseFile, readAsJsFile, recognizedDomEvents, removeInScopeJsDoc, tsCollect, tsGenerate, tsNodeIsFunctionWithName, tsNodeIsGlobalFunctionCall, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelVariable, tsNodeIsTypeDeclaration, tsNodeIsUnusedFunction, usesChartApi
+    extractEventHandlers, extractImportStatements, extractTypeInfoForVariable, extractUnboundInstanceMethods, findAllAccessedProperties, findAllVariables, parseFile, readAsJsFile, recognizedDomEvents, removeInScopeJsDoc, tsCollect, tsGenerate, tsNodeIsFunctionWithName, tsNodeIsGlobalFunctionCall, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelFunction, tsNodeIsTopLevelVariable, tsNodeIsTypeDeclaration, tsNodeIsUnusedFunction, usesChartApi
 } from './parser-utils';
 
 export const templatePlaceholder = '$$CHART$$';
@@ -127,6 +128,36 @@ export function internalParser(js, html) {
         }
     });
 
+    // For React we need to identify the external dependencies for callbacks to prevent stale closures
+    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'AgChart', 'chart', 'window', 'Image', 'Date', 'this'])
+    tsCollectors.push({
+        matches: node => tsNodeIsTopLevelFunction(node),
+        apply: (bindings, node: SignatureDeclaration) => {
+
+            const body = (node as any).body
+
+            let allVariables = new Set(body ? findAllVariables(body) : []);
+            if (node.parameters && node.parameters.length > 0) {
+                node.parameters.forEach(p => {
+                    allVariables.add(p.name.getText())
+                })
+            }
+
+            const deps = body ? findAllAccessedProperties(body) : [];
+            const allDeps = deps.filter((id: string) => {
+                // Ignore locally defined variables
+                const isVariable = allVariables.has(id);
+                // Let's assume that all caps are constants so should be ignored, i.e KEY_UP
+                const isCapsConst = id === id.toUpperCase();
+                return !isVariable && !isCapsConst && !GLOBAL_DEPS.has(id);
+            });
+            if (allDeps.length > 0) {
+                bindings.callbackDependencies[node.name.getText()] = [...new Set(allDeps)];
+            }
+        }
+    });
+
+
     /*
      * properties -> chart related properties
      * globals -> none chart related methods/variables (i.e. non-instance)
@@ -140,6 +171,7 @@ export function internalParser(js, html) {
             globals: [],
             init: [],
             declarations: [],
+            callbackDependencies: {}
         },
         tsCollectors
     );

@@ -1,18 +1,22 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
 import { isInstanceMethod, convertFunctionToProperty } from './parser-utils';
-import { convertTemplate, getImport } from './react-utils';
+import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport } from './react-utils';
 import { wrapOptionsUpdateCode, getChartImports } from './chart-utils';
+import { toTitleCase } from './angular-utils';
 
 export function processFunction(code: string): string {
     return wrapOptionsUpdateCode(
         convertFunctionToProperty(code),
-        'const options = {...this.state.options};',
-        'this.setState({ options });');
+        'const clone = {...options};',
+        'setOptions(clone);', 'clone');
 }
 
 function getImports(componentFilenames: string[], bindings): string[] {
+
+    const useCallback = (bindings.externalEventHandlers?.length + bindings.instanceMethods?.length) > 0;
+
     const imports = [
-        "import React, { Component } from 'react';",
+        `import React, { useState${useCallback ? ', useCallback ' : ''}${bindings.usesChartApi ? ', useRef ' : ''}} from 'react';`,
         "import { render } from 'react-dom';",
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
@@ -31,18 +35,18 @@ function getImports(componentFilenames: string[], bindings): string[] {
 
 function getTemplate(bindings: any, componentAttributes: string[]): string {
     const agChartTag = `<AgChartsReact
-    ${bindings.usesChartApi ? `ref={this.chartRef}` : ''}
+    ${bindings.usesChartApi ? 'ref={chartRef}' : ''}
     ${componentAttributes.join('\n')}
 />`;
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agChartTag) : agChartTag;
 
-    return convertTemplate(template);
+    return convertFunctionalTemplate(template);
 }
 
-export function vanillaToReact(bindings: any, componentFilenames: string[]): () => string {
+export function vanillaToReactFunctional(bindings: any, componentFilenames: string[]): () => string {
     return () => {
-        const { properties, imports: bindingImports } = bindings;
+        const { properties, } = bindings;
         const imports = getImports(componentFilenames, bindings);
         const stateProperties = [];
         const componentAttributes = [];
@@ -53,7 +57,7 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): () 
             if (property.value === 'true' || property.value === 'false') {
                 componentAttributes.push(`${property.name}={${property.value}}`);
             } else if (property.value === null) {
-                componentAttributes.push(`${property.name}={this.${property.name}}`);
+                componentAttributes.push(`${property.name}={${property.name}}`);
             } else {
                 // for when binding a method
                 // see javascript-grid-keyboard-navigation for an example
@@ -61,42 +65,31 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): () 
                 if (isInstanceMethod(bindings.instanceMethods, property)) {
                     instanceBindings.push(`this.${property.name}=${property.value}`);
                 } else {
-                    stateProperties.push(`${property.name}: ${property.value}`);
-                    componentAttributes.push(`${property.name}={this.state.${property.name}}`);
+                    stateProperties.push(`const [${property.name}, set${toTitleCase(property.name)}] = useState(${property.value});`);
+                    componentAttributes.push(`${property.name}={${property.name}}`);
                 }
             }
         });
 
         const template = getTemplate(bindings, componentAttributes);
-        const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(handler.body));
-        const instanceMethods = bindings.instanceMethods.map(processFunction);
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(convertFunctionToConstCallback(handler.body, bindings.callbackDependencies)));
+        const instanceMethods = bindings.instanceMethods.map(m => processFunction(convertFunctionToConstCallback(m, bindings.callbackDependencies)));
 
         let indexFile = `'use strict';
 
 ${imports.join('\n')}
 
-class ChartExample extends Component {
-    constructor(props) {
-        super(props);
+const ChartExample = () => {
+    
         ${bindings.usesChartApi ? `
-        this.chartRef = React.createRef();` : ''}
-        this.state = {
-            ${stateProperties.join(',\n            ')}
-        };
+        const chartRef = useRef(null);` : ''}
+        ${stateProperties.join(',\n            ')}
 
         ${instanceBindings.join(';\n        ')}
-    }
+        ${instanceMethods.concat(externalEventHandlers).join('\n\n    ')}
 
-    componentDidMount() {
-        ${bindings.init.join(';\n        ')}
-    }
-
-    ${instanceMethods.concat(externalEventHandlers).join('\n\n    ')}
-
-    render() {
         return ${template};
     }
-}
 
 ${bindings.globals.join('\n')}
 
@@ -107,8 +100,8 @@ render(
 `;
 
         if (bindings.usesChartApi) {
-            indexFile = indexFile.replace(/AgChart.(\w*)\((\w*)(,|\))/g, 'AgChart.$1(this.chartRef.current.chart$3');
-            indexFile = indexFile.replace(/\(this.chartRef.current.chart, options/g, '(this.chartRef.current.chart, this.state.options');
+            indexFile = indexFile.replace(/AgChart.(\w*)\((\w*)(,|\))/g, 'AgChart.$1(chartRef.current.chart$3');
+            indexFile = indexFile.replace(/\(this.chartRef.current.chart, options/g, '(chartRef.current.chart, options');
         }
 
         return indexFile;
@@ -117,5 +110,5 @@ render(
 }
 
 if (typeof window !== 'undefined') {
-    (<any>window).vanillaToReact = vanillaToReact;
+    (<any>window).vanillaToReactFunctional = vanillaToReactFunctional;
 }
