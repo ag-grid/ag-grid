@@ -247,10 +247,10 @@
     "type": { "arguments": {}, "returnType": "IRowModel" }
   },
   "setRowNodeExpanded": {
-    "description": "/** Expand or collapse a specific row node. */",
+    "description": "/** Expand or collapse a specific row node, optionally expanding/collapsing all of its parent nodes. */",
     "type": {
       "arguments": {
-        "rowNode": "IRowNode | null",
+        "rowNode": "IRowNode",
         "expanded": "boolean",
         "expandParents?": "boolean"
       },

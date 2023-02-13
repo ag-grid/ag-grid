@@ -559,12 +559,14 @@ export class GridApi<TData = any> {
         return this.rowModel;
     }
 
-    /** Expand or collapse a specific row node. */
-    public setRowNodeExpanded(rowNode: IRowNode | null, expanded: boolean, expandParents?: boolean): void {
+    /** Expand or collapse a specific row node, optionally expanding/collapsing all of its parent nodes. */
+    public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean): void {
         if (rowNode) {
-            if (expandParents) {
+            // expand all parents recursively, except root node.
+            if (expandParents && rowNode.parent && rowNode.parent.level !== -1) {
                 this.setRowNodeExpanded(rowNode.parent, expanded, expandParents);
             }
+
             rowNode.setExpanded(expanded);
         }
     }

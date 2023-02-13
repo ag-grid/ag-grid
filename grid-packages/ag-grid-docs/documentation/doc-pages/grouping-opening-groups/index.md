@@ -63,21 +63,18 @@ countries, not just 'United States'.
 
 It is possible to expand and collapse all group rows using the `expandAll()` and `collapseAll()` grid API's as shown below: 
 
-<snippet>
-|// Expand all group rows
-|gridOptions.api.expandAll();
-|
-|// Collapse all group rows
-|gridOptions.api.collapseAll();
-</snippet>
+<api-documentation source='grid-api/api.json' section='rowGroups' names='["expandAll", "collapseAll"]'></api-documentation>
 
-When more custom behaviour is required, obtain a reference to the rowNode and then call `rowNode.setExpanded(boolean)`. 
+When more custom behaviour is required, obtain a reference to the rowNode and then call `api.setRowNodeExpanded(rowNode, boolean)`.
+
+<api-documentation source='grid-api/api.json' section='rowGroups' names='["setRowNodeExpanded"]'></api-documentation>
+
 For example, to expand a group with the name 'United States' would be done as follows:
 
 <snippet>
 gridOptions.api.forEachNode(node => {
     if (node.key === 'United States') {
-        node.setExpanded(true);
+        gridOptions.api.setRowNodeExpanded(node, true);
     }
 });
 </snippet>
