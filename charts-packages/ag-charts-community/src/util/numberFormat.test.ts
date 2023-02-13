@@ -8,6 +8,7 @@ describe('format', () => {
         expect(format('.2f')(0.337)).toBe('0.34');
         expect(format('.3f')(0.3337)).toBe('0.334');
         expect(format('.4f')(123)).toBe('123.0000');
+        expect(format('f')(0.1234567890123456)).toBe('0.123457');
     });
     test('rounded percentage', () => {
         const f = format('.0%');
@@ -17,6 +18,12 @@ describe('format', () => {
     });
     test('fixed point percentage', () => {
         expect(format('.2%')(0.345)).toBe('34.50%');
+    });
+    test('percentage rounded to significant digits', () => {
+        expect(format('.2p')(0.678)).toBe('68%');
+    });
+    test('decimal rounded to integer', () => {
+        expect(format('d')(67.7)).toBe('68');
     });
     test('localized fixed-point currency', () => {
         expect(format('$.2f')(3.5)).toBe('$3.50');
@@ -84,6 +91,9 @@ describe('format', () => {
     test('trim insignificant trailing zeros across format types', () => {
         expect(format('~s')(1500)).toBe('1.5k');
         expect(format('~s')(-1500)).toBe('\u22121.5k');
+    });
+    test('no type specified', () => {
+        expect(format(' ')(0.1234567890123456)).toBe('0.123456789012');
     });
     test('scale.tickFormat', () => {
         {

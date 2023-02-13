@@ -1,26 +1,16 @@
 @use "../../design-system/" as *;
 
-// Wrap in media query to show wide license layouts for specific screen sizes
-@mixin wide-layout {
-    @media screen and (min-width: $breakpoint-pricing-small) and (max-width: $breakpoint-pricing-medium),
-        (min-width: $breakpoint-pricing-large) {
-        @content;
-    }
-}
-
-.licenses {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $size-3;
-}
-
 .license {
     display: flex;
     flex-direction: column;
     width: 100%;
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        width: calc(50% - $size-3 / 2);
+        max-width: calc(50% - $size-2);
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        max-width: 340px;
     }
 
     p {
@@ -34,29 +24,26 @@
     }
 
     :global(.top) {
+        flex-grow: 1;
         display: grid;
         grid-template-columns: auto auto;
         grid-template-rows: auto auto auto;
-        grid-template-areas: 'meta meta' 'benefits price' 'actions actions';
+        grid-template-areas: 'meta meta' 'price benefits' 'actions actions';
         padding-top: $size-3 !important; // !important for .ag-styles specificity
         padding-bottom: $size-2 !important; // !important for .ag-styles specificity
-
-        @include wide-layout {
-            grid-template-columns: auto auto;
-            grid-template-rows: auto auto;
-            grid-template-areas: 'meta price' 'benefits actions';
-            gap: $size-7 $size-3;
-            height: 100%;
-        }
     }
 
     :global(.bottom) {
+        flex-grow: 0 !important; // !important for .ag-styles specificity
+        align-self: flex-end;
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-columns: 1fr 1fr;
         grid-template-areas: 'meta price' 'required required';
+        width: 100%;
         padding-top: $size-2 !important; // !important for .ag-styles specificity
         padding-bottom: $size-2 !important; // !important for .ag-styles specificity
+        border-top: 1px solid var(--border-color);
 
         p {
             font-size: 12px !important;
@@ -83,11 +70,6 @@
     :global(.top) & {
         margin-bottom: $size-5 !important; // !important for .ag-styles specificity
         text-align: center;
-
-        @include wide-layout {
-            margin-bottom: 0 !important; // !important for .ag-styles specificity
-            text-align: left;
-        }
     }
 }
 
@@ -108,28 +90,22 @@ p.name {
     :global(.bottom) & {
         font-size: $font-size-large !important; // !important for .ag-styles specificity
         line-height: 1 !important; // !important for .ag-styles specificity
-        margin-top: $size-2 !important; // !important for .ag-styles specificity
-        margin-bottom: auto !important; // !important for .ag-styles specificity
-
-        @include wide-layout {
-            margin-top: $size-1 !important; // !important for .ag-styles specificity
-            font-size: 30px !important; // !important for .ag-styles specificity
-        }
+        margin-top: $size-half !important; // !important for .ag-styles specificity
+        margin-bottom: $size-half !important; // !important for .ag-styles specificity
     }
 }
 
 .price {
     grid-area: price;
-    justify-self: end;
     align-self: end;
-    text-align: right;
 
-    :global(.bottom) & p:last-child {
-        max-width: 140px;
+    :global(.bottom) & {
+        justify-self: end;
+        text-align: right;
     }
 
-    @include wide-layout {
-        align-self: start;
+    :global(.bottom) & p:last-child {
+        max-width: 13em;
     }
 }
 
@@ -141,22 +117,9 @@ p.priceFullDollars {
         content: '$';
     }
 
-    &::after {
-        @include wide-layout {
-            content: '.00';
-            font-size: $font-size-large;
-            font-weight: 400 !important; // !important for .ag-styles specificity
-            color: var(--secondary-text-color);
-        }
-    }
-
     :global(.top) & {
         font-size: 46px !important; // !important for .ag-styles specificity
         font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
-
-        @include wide-layout {
-            font-size: $font-size-massive !important; // !important for .ag-styles specificity
-        }
     }
 
     :global(.bottom) & {
@@ -168,6 +131,7 @@ p.priceFullDollars {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    text-align: right;
 
     @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
         min-height: 130px;
@@ -176,10 +140,6 @@ p.priceFullDollars {
     a {
         display: block;
         margin-top: $size-half !important; // !important for .ag-styles specificity
-
-        @include wide-layout {
-            margin-top: $size-2 !important; // !important for .ag-styles specificity
-        }
     }
 }
 
@@ -187,25 +147,12 @@ p.priceFullDollars {
     grid-area: actions;
     margin-top: $size-5 !important; // !important for .ag-styles specificity
 
-    @include wide-layout {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        justify-content: flex-end;
-        margin-top: 0 !important; // !important for .ag-styles specificity
-    }
-
     a {
         width: 100%;
         text-align: center;
 
         &:not(:last-child) {
             margin-bottom: $size-half;
-        }
-
-        @include wide-layout {
-            width: unset;
-            text-align: unset;
         }
     }
 }
