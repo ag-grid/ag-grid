@@ -17,13 +17,13 @@
         margin: 0 !important; // !important for .ag-styles specificity
     }
 
-    :global(.top),
-    :global(.bottom) {
+    .top,
+    .bottom {
         padding-left: $size-2 !important; // !important for .ag-styles specificity
         padding-right: $size-2 !important; // !important for .ag-styles specificity
     }
 
-    :global(.top) {
+    .top {
         flex-grow: 1;
         display: grid;
         grid-template-columns: auto auto;
@@ -33,7 +33,7 @@
         padding-bottom: $size-2 !important; // !important for .ag-styles specificity
     }
 
-    :global(.bottom) {
+    .bottom {
         flex-grow: 0 !important; // !important for .ag-styles specificity
         align-self: flex-end;
         display: grid;
@@ -67,14 +67,14 @@
         }
     }
 
-    :global(.top) & {
+    .top & {
         margin-bottom: $size-5 !important; // !important for .ag-styles specificity
         text-align: center;
     }
 }
 
 p.name {
-    :global(.top) & {
+    .top & {
         font-size: 46px !important; // !important for .ag-styles specificity
         line-height: 1 !important; // !important for .ag-styles specificity
         margin-top: $size-half !important; // !important for .ag-styles specificity
@@ -87,7 +87,7 @@ p.name {
         }
     }
 
-    :global(.bottom) & {
+    .bottom & {
         font-size: $font-size-large !important; // !important for .ag-styles specificity
         line-height: 1 !important; // !important for .ag-styles specificity
         margin-top: $size-half !important; // !important for .ag-styles specificity
@@ -99,12 +99,12 @@ p.name {
     grid-area: price;
     align-self: end;
 
-    :global(.bottom) & {
+    .bottom & {
         justify-self: end;
         text-align: right;
     }
 
-    :global(.bottom) & p:last-child {
+    .bottom & p:last-child {
         max-width: 13em;
     }
 }
@@ -117,12 +117,12 @@ p.priceFullDollars {
         content: '$';
     }
 
-    :global(.top) & {
+    .top & {
         font-size: 46px !important; // !important for .ag-styles specificity
         font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
     }
 
-    :global(.bottom) & {
+    .bottom & {
         font-size: 36px !important; // !important for .ag-styles specificity
     }
 }

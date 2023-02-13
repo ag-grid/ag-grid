@@ -61,7 +61,7 @@ const Price = ({ priceFullDollars, pricePer }) => {
 
 const DevelopmentLicense = () => {
     return (
-        <div className="bottom">
+        <div className={classnames(styles.bottom, 'bottom')}>
             <div className={styles.licenseMeta}>
                 <p className={styles.name}>{DEPLOY_LICENSE_DATA.name}</p>
                 <p className="font-size-small text-secondary">{DEPLOY_LICENSE_DATA.subHeading}</p>
@@ -84,7 +84,7 @@ const License = (props: LicenseData) => {
 
     return (
         <>
-            <div className="top">
+            <div className={classnames(styles.top, 'top')}>
                 <div className={styles.licenseMeta}>
                     <p className="font-size-small text-secondary">
                         AG Grid Enterprise{' '}

@@ -24,7 +24,10 @@
     }
 
     h1 svg {
+        display: inline-block;
+        position: relative;
         width: 46px;
+        bottom: 4px;
     }
 }
 
@@ -49,6 +52,7 @@
 
 .thumbnail {
     width: 33.333%;
+    min-width: 160px;
     max-width: 220px;
     aspect-ratio: 16 / 9;
     margin-top: $size-1 !important; // !important for .ag-styles specificity
