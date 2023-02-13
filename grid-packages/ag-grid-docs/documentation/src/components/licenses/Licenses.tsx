@@ -117,9 +117,7 @@ const License = (props: LicenseData) => {
                         Pay with card
                     </a>
                     <a className="button" href={`mailto:info@ag-grid.com?subject=${name} licence quote request`}>
-                        <span className="icon">
-                            <EmailIcon />
-                        </span>{' '}
+                        <Icon name="email" />
                         Request a quote
                     </a>
                 </div>

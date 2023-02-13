@@ -28,7 +28,7 @@ const LicensePricing = () => {
                 <div className={styles.topSection}>
                     <div className={styles.enterpriseExplainer}>
                         <h1>
-                            AG Grid Enterprise <EnterpriseIcon />
+                            AG Grid Enterprise <Icon name="enterprise" />
                         </h1>
                         <p>
                             <b>AG Grid Enterprise</b> offers advanced functionality like{' '}
@@ -79,9 +79,7 @@ const LicensePricing = () => {
                         className={classnames(styles.contactSalesButton, 'button-secondary')}
                         href="mailto:info@ag-grid.com?subject=AG Grid Developer licence query"
                     >
-                        <span className="icon">
-                            <EmailIcon />
-                        </span>
+                        <Icon name="email" />
 
                         <div>
                             <span className={styles.buttonText}>Contact sales</span>
@@ -329,7 +327,7 @@ const LicensePricing = () => {
                         href="mailto:info@ag-grid.com?subject=AG Grid Developer licence query"
                     >
                         <span className="icon">
-                            <EmailIcon />
+                            <Icon name="email" />
                         </span>
 
                         <div>
