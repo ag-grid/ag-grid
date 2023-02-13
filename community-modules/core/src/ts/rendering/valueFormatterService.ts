@@ -36,12 +36,17 @@ export class ValueFormatterService extends BeanStub {
                 data: node ? node.data : null,
                 colDef,
                 column,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context')
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context
             };
+            if (typeof formatter === 'function') {
+                result = formatter(params);
+                //result = this.expressionService.evaluate(formatter, params);
 
-            result = this.expressionService.evaluate(formatter, params);
+            } else {
+                result = this.expressionService.evaluate(formatter, params);
+            }
         } else if (colDef.refData) {
             return colDef.refData[value] || '';
         }
