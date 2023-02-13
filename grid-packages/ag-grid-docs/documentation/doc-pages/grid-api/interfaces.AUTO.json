@@ -11280,7 +11280,8 @@
       "alignSide?": "'left' | 'right'",
       "keepWithinBounds?": "boolean",
       "skipObserver?": "boolean",
-      "updatePosition?": "() => { x: number; y: number; }"
+      "updatePosition?": "() => { x: number; y: number; }",
+      "postProcessCallback?": "() => void"
     }
   },
   "PopupEventParams": {

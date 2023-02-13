@@ -19816,6 +19816,9 @@
         "returnType": "{ x: number; y: number; }",
         "optional": true
       }
+    },
+    "postProcessCallback": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "PopupEventParams": {
