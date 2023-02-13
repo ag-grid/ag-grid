@@ -78,7 +78,7 @@ const LicensePricing = () => {
                     </p>
                     <a
                         className={classnames(styles.contactSalesButton, 'button-secondary')}
-                        href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
+                        href="mailto:info@ag-grid.com?subject=AG Grid Developer licence query"
                     >
                         <span className="icon">
                             <EmailIcon />
@@ -144,7 +144,7 @@ const LicensePricing = () => {
                             by our technical staff. To evaluate <b>AG Grid Enterprise</b> you don't need our permission
                             – all features are unlocked. To temporarily hide the watermark and browser console errors
                             e-mail us to{' '}
-                            <a href="mailto:info@ag-grid.com?subject=AG Grid - Development License Temporary Evaluation Key">
+                            <a href="mailto:info@ag-grid.com?subject=AG Grid Trial licence request">
                                 get a temporary evaluation key
                             </a>
                             .
@@ -157,9 +157,7 @@ const LicensePricing = () => {
 
                         <p>
                             Expanded definitions are available further down the page. For any other questions please{' '}
-                            <a href="mailto:info@ag-grid.com?subject=AG Grid - Development License question">
-                                get in contact
-                            </a>
+                            <a href="mailto:info@ag-grid.com?subject=AG Grid Developer licence query">get in contact</a>
                             .
                         </p>
 
@@ -182,7 +180,8 @@ const LicensePricing = () => {
                         </p>
                         <p>
                             If you have any other questions, or want to investigate volume pricing please{' '}
-                            <a href="mailto:info@ag-grid.com">get in contact</a>.
+                            <a href="mailto:info@ag-grid.com?subject=AG Grid Developer licence query">get in contact</a>
+                            .
                         </p>
                     </div>
 
@@ -311,8 +310,10 @@ const LicensePricing = () => {
 
                             <p>
                                 If you have a deployment that doesn't fit within our licensing model, please{' '}
-                                <a href="mailto:info@ag-grid.com">start a conversation with us</a> and we will do our
-                                best to get to something that works.
+                                <a href="mailto:info@ag-grid.com?subject=AG Grid Developer licence query">
+                                    start a conversation with us
+                                </a>{' '}
+                                and we will do our best to get to something that works.
                             </p>
                         </div>
                     </div>
@@ -326,7 +327,7 @@ const LicensePricing = () => {
 
                     <a
                         className={classnames(styles.contactSalesButton, 'button-secondary')}
-                        href="mailto:info@ag-grid.com?subject=AG Grid - Development License question"
+                        href="mailto:info@ag-grid.com?subject=AG Grid Developer licence query"
                     >
                         <span className="icon">
                             <EmailIcon />
