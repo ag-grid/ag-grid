@@ -145,6 +145,7 @@ p.priceFullDollars {
 
 .licenseActions {
     grid-area: actions;
+    align-self: end;
     margin-top: $size-5 !important; // !important for .ag-styles specificity
 
     a {
