@@ -45,7 +45,7 @@ Object {
         "interval": TimeInterval {
           "_decode": [Function],
           "_encode": [Function],
-          "_rangeCallback": undefined,
+          "_rangeCallback": [Function],
         },
         "size": 6,
         "width": 3,
@@ -9281,7 +9281,7 @@ Object {
         "interval": TimeInterval {
           "_decode": [Function],
           "_encode": [Function],
-          "_rangeCallback": undefined,
+          "_rangeCallback": [Function],
         },
         "size": 6,
         "width": 1,
