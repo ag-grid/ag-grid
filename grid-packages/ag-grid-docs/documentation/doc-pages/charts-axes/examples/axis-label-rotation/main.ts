@@ -18,11 +18,6 @@ const options: AgCartesianChartOptions = {
     {
       type: 'number',
       position: 'left',
-      label: {
-        formatter: (params) => {
-          return params.value + '%'
-        },
-      },
     },
   ],
   legend: {
