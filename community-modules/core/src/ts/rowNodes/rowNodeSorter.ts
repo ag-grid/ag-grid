@@ -1,10 +1,10 @@
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import { Autowired, Bean } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ValueService } from "../valueService/valueService";
 import { _ } from "../utils";
 import { ColumnModel } from "../columns/columnModel";
-import { GridOptionsService } from "../gridOptionsService";
+import { BeanStub } from "../context/beanStub";
 
 export interface SortOption {
     sort: 'asc' | 'desc';
@@ -19,11 +19,25 @@ export interface SortedRowNode {
 // this logic is used by both SSRM and CSRM
 
 @Bean('rowNodeSorter')
-export class RowNodeSorter {
+export class RowNodeSorter extends BeanStub {
 
-    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+
+    // Store locally but keep updated for performance reasons as this is on a very hot sorting path
+    private primaryColumnsSortGroups: boolean;
+    private accentedSort: boolean;
+
+    @PostConstruct
+    public init(): void {
+
+        this.addManagedPropertyListener('autoGroupColumnDef', () => this.primaryColumnsSortGroups = this.gridOptionsService.isColumnsSortingCoupledToGroup());
+        this.addManagedPropertyListener('rowModelType', () => this.primaryColumnsSortGroups = this.gridOptionsService.isColumnsSortingCoupledToGroup());
+        this.addManagedPropertyListener('accentedSort', (propChanged) => this.accentedSort = propChanged.currentValue);
+
+        this.accentedSort = this.gridOptionsService.is('accentedSort');
+        this.primaryColumnsSortGroups = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+    }
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
         
@@ -54,7 +68,7 @@ export class RowNodeSorter {
                 comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
             } else {
                 //otherwise do our own comparison
-                comparatorResult = _.defaultComparator(valueA, valueB, this.gridOptionsService.is('accentedSort'));
+                comparatorResult = _.defaultComparator(valueA, valueB, this.gridOptionsService.isAccentedSort('accentedSort'));
             }
 
             // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this
@@ -93,8 +107,7 @@ export class RowNodeSorter {
     }
 
     private getValue(node: RowNode, column: Column): any {
-        const primaryColumnsSortGroups = this.gridOptionsService.isColumnsSortingCoupledToGroup();
-        if (!primaryColumnsSortGroups) {
+        if (!this.primaryColumnsSortGroups) {
             return this.valueService.getValue(column, node, false, false);
         }
 

@@ -61,6 +61,33 @@ function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
 
+const methodCounts: any = {
+    is: {},
+    get: {},
+    getNum: {},
+    getCallback: {}
+}
+let hasChanged = true;
+function count(method: 'is' | 'get' | 'getNum' | 'getCallback', property: any) {
+    let curr = methodCounts[method][property];
+    if (curr !== undefined) {
+        methodCounts[method][property] = curr + 1;
+    } else {
+        methodCounts[method][property] = 1;
+    }
+    hasChanged = true;
+}
+
+setInterval(() => {
+    if (!hasChanged) return;
+    Object.entries(methodCounts).forEach(([k, v]) => {
+        //@ts-ignore
+        const props = Object.entries(v as any).sort(([a, c], [b, d]) => d - c).filter(([a, b]) => b > 10000).map(([p, n]) => `${k} ${p}: ${n}`)
+        console.log(props.join('\n'));
+        hasChanged = false;
+    })
+}, 3000)
+
 @Bean('gridOptionsService')
 export class GridOptionsService {
 
@@ -123,6 +150,7 @@ export class GridOptionsService {
      * @param property GridOption property that has the type `boolean | undefined`
      */
     public is(property: BooleanProps): boolean {
+        count('is', property);
         return isTrue(this.gridOptions[property]);
     }
 
@@ -131,6 +159,7 @@ export class GridOptionsService {
      * @param property
      */
     public get<K extends NonPrimitiveProps>(property: K): GridOptions[K] {
+        count('get', property);
         return this.gridOptions[property];
     }
 
@@ -139,6 +168,7 @@ export class GridOptionsService {
      * @param property GridOption property that has the type `number | undefined`
      */
     public getNum<K extends NumberProps>(property: K): number | undefined {
+        count('getNum', property);
         return toNumber(this.gridOptions[property]);
     }
 
@@ -147,6 +177,7 @@ export class GridOptionsService {
      * @param property GridOption callback properties based on the fact that this property has a callback with params extending AgGridCommon
      */
     public getCallback<K extends CallbackProps>(property: K): WrappedCallback<K, GridOptions[K]> {
+        count('getCallback', property);
         return this.mergeGridCommonParams(this.gridOptions[property]);
     }
 
@@ -442,14 +473,5 @@ export class GridOptionsService {
         if (pivotMode) { return false; }
 
         return this.gridOptions.groupDisplayType ? matchesGroupDisplayType('groupRows', this.gridOptions.groupDisplayType) : false;
-    }
-
-    public isAccentedSort(p: string) {
-        //@ts-ignore
-        return isTrue(this.gridOptions[p]);
-    }
-    public isAccentedSort1() {
-        //@ts-ignore
-        return (this.gridOptions.accentedSort);
     }
 }
