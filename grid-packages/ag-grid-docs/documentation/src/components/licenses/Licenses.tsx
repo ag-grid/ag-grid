@@ -48,6 +48,12 @@ const DEPLOY_LICENSE_DATA = {
     pricePer: 'Application Production Environment',
 };
 
+const makeNonBreaking = (text: string) => {
+    const nonBreakingSpace = '\u00A0';
+
+    return text.replace(' ', nonBreakingSpace);
+};
+
 const Price = ({ priceFullDollars, pricePer }) => {
     return (
         <div className={styles.price}>
@@ -101,7 +107,7 @@ const License = (props: LicenseData) => {
                 <div className={styles.licenseBenefits}>
                     <ul className="font-size-small list-style-none">
                         {licenseBenefits.map((benefit, i) => {
-                            return <li key={i}>{benefit}</li>;
+                            return <li key={i}>{makeNonBreaking(benefit)}</li>;
                         })}
                     </ul>
 
