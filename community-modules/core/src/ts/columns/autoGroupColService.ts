@@ -84,6 +84,12 @@ export class AutoGroupColService extends BeanStub {
             return existingCol;
         }
 
+        const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+        if (isSortingCoupled && (defaultAutoColDef.sort || defaultAutoColDef.initialSort) && !defaultAutoColDef.field) {
+            // if no field, then this column cannot hold its own sort state
+            mergeDeep(defaultAutoColDef, { sort: null, initialSort: null } as ColDef, true, true);
+        }
+
         const newCol = new Column(defaultAutoColDef, null, colId, true);
         this.context.createBean(newCol);
         return newCol;
