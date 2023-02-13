@@ -96,7 +96,7 @@ export class CountableTimeInterval extends TimeInterval {
         let offset = 0;
         let rangeCallback: RangeFn | undefined;
 
-        const { snapTo } = options ?? {};
+        const { snapTo = 'start' } = options ?? {};
         if (typeof snapTo === 'string') {
             const initialOffset = offset;
             rangeCallback = (start, stop) => {
