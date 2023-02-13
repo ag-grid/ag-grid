@@ -16,6 +16,7 @@ input[type='submit'],
     border-radius: var(--border-radius);
     background-color: var(--button-color);
     color: var(--button-text-color);
+    cursor: pointer;
     outline: none;
     border: 2px solid transparent;
     box-shadow: 0 0 0 4px transparent;
