@@ -36,3 +36,14 @@ test('hour.every', () => {
         new Date(2023, 0, 18, 20, 0, 0, 0),
     ]);
 });
+
+test('hour.every with snapTo: null', () => {
+    const interval = hour.every(5, { snapTo: null! });
+
+    const range = interval.range(new Date(2023, 0, 18, 8, 31, 5, 100), new Date(2023, 0, 18, 21, 31, 5, 100));
+    expect(range).toEqual([
+        new Date(2023, 0, 18, 10, 0, 0, 0),
+        new Date(2023, 0, 18, 15, 0, 0, 0),
+        new Date(2023, 0, 18, 20, 0, 0, 0),
+    ]);
+});

@@ -37,6 +37,17 @@ test('day.every', () => {
     ]);
 });
 
+test('day.every with snapTo: null', () => {
+    const interval = day.every(2, { snapTo: null! });
+
+    const range = interval.range(new Date(2023, 0, 17, 8, 31, 5, 100), new Date(2023, 0, 23, 21, 31, 5, 100));
+    expect(range).toEqual([
+        new Date(2023, 0, 19, 0, 0, 0, 0),
+        new Date(2023, 0, 21, 0, 0, 0, 0),
+        new Date(2023, 0, 23, 0, 0, 0, 0),
+    ]);
+});
+
 test('day.every stick to start', () => {
     const interval = day.every(5, { snapTo: 'start' });
     const ticks = interval.range(new Date(2023, 1, 1), new Date(2023, 1, 28));

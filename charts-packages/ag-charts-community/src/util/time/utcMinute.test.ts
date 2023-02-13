@@ -37,6 +37,20 @@ test('UTC minute.every', () => {
         new Date(Date.UTC(2019, 7, 23, 15, 32, 5, 100))
     );
     expect(range.map((d) => d.getTime())).toEqual([
+        Date.UTC(2019, 7, 23, 15, 22, 0, 0),
+        Date.UTC(2019, 7, 23, 15, 27, 0, 0),
+        Date.UTC(2019, 7, 23, 15, 32, 0, 0),
+    ]);
+});
+
+test('UTC minute.every with snapTo: null', () => {
+    const interval = utcMinute.every(5, { snapTo: null! });
+
+    const range = interval.range(
+        new Date(Date.UTC(2019, 7, 23, 15, 17, 5, 100)),
+        new Date(Date.UTC(2019, 7, 23, 15, 32, 5, 100))
+    );
+    expect(range.map((d) => d.getTime())).toEqual([
         Date.UTC(2019, 7, 23, 15, 20, 0, 0),
         Date.UTC(2019, 7, 23, 15, 25, 0, 0),
         Date.UTC(2019, 7, 23, 15, 30, 0, 0),
