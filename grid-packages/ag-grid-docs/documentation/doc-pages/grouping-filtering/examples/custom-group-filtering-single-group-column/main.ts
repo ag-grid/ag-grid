@@ -1,11 +1,9 @@
 import { Grid, GridOptions, ValueGetterParams } from '@ag-grid-community/core';
-import { getData } from "./data";
-
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
+    { field: 'sport', rowGroup: true, hide: true },
     { field: 'country', rowGroup: true, hide: true },
-    { field: 'year', rowGroup: true, hide: true },
     { field: 'gold', aggFunc: 'sum' },
     { field: 'silver', aggFunc: 'sum' },
     { field: 'bronze', aggFunc: 'sum' },
@@ -18,24 +16,29 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   autoGroupColumnDef: {
-    // supplies filter values to the column filters based on the colId
-    filterValueGetter: (params: ValueGetterParams<IOlympicData>) => {
-      const colId = params.column.getColId()
-      if (colId.includes('country')) {
-        return params.data ? params.data.country : undefined
-      }
-      if (colId.includes('year')) {
-        return params.data ? params.data.year : undefined
-      }
-    },
+    minWidth: 260,
+    filter: 'agTextColumnFilter',
+    filterValueGetter: (params: ValueGetterParams) => params.data.sport,
   },
-  groupDisplayType: 'multipleColumns',
   animateRows: true,
-  rowData: getData(),
+}
+
+function applyFilter() {
+  gridOptions.api!.setFilterModel({
+    'ag-Grid-AutoColumn': {
+      filterType: 'text',
+      type: 'contains',
+      filter: 'Skiing'
+    },
+  });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
+
+  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+    .then(response => response.json())
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

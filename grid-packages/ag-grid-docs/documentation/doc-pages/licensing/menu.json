@@ -858,12 +858,6 @@
                 "showInCollapsed": true
               },
               {
-                "title": "Group Filter",
-                "url": "/filter-group/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
                 "title": "Filter API",
                 "url": "/filter-api/"
               },
