@@ -7,7 +7,7 @@ import styles from './Icon.module.scss';
 // Uses IBM Carbon Design System icons as a base
 // Full list of Carbon icons => https://carbondesignsystem.com/guidelines/icons/library
 
-export const iconMap = {
+export const ICON_MAP = {
     info: CarbonIcon.Information,
     warning: CarbonIcon.WarningAlt,
     email: CarbonIcon.Email,
@@ -16,8 +16,12 @@ export const iconMap = {
     enterprise: EnterpriseIcon,
 };
 
-export const Icon = ({ name, svgClasses }) => {
-    const IconSvg = iconMap[name];
+export type IconName = keyof typeof ICON_MAP;
+
+type Props = { name: IconName; svgClasses?: string };
+
+export const Icon = ({ name, svgClasses }: Props) => {
+    const IconSvg = ICON_MAP[name];
 
     return <IconSvg size="32" className={classNames(styles.icon, 'icon', svgClasses)} />;
 };
