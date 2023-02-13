@@ -33,7 +33,7 @@ type NumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any>) => any>, NoArgFuncs | AnyArgFuncs>;
-type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps | 'api' | 'columnApi' | 'context'>;
+type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>;
 
 
 type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
@@ -60,6 +60,35 @@ function toNumber(value: any): number | undefined {
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
+
+
+const methodCounts: any = {
+    is: {},
+    get: {},
+    getNum: {},
+    getCallback: {},
+    exists: {}
+}
+let hasChanged = true;
+function count(method: 'is' | 'get' | 'getNum' | 'getCallback' | 'exists', property: any) {
+    let curr = methodCounts[method][property];
+    if (curr !== undefined) {
+        methodCounts[method][property] = curr + 1;
+    } else {
+        methodCounts[method][property] = 1;
+    }
+    hasChanged = true;
+}
+
+setInterval(() => {
+    if (!hasChanged) return;
+    Object.entries(methodCounts).forEach(([k, v]) => {
+        //@ts-ignore
+        const props = Object.entries(v as any).sort(([a, c], [b, d]) => d - c).filter(([a, b]) => b > 10000).map(([p, n]) => `${k} ${p}: ${n}`)
+        console.log(props.join('\n'));
+        hasChanged = false;
+    })
+}, 3000)
 
 @Bean('gridOptionsService')
 export class GridOptionsService {
@@ -123,6 +152,7 @@ export class GridOptionsService {
      * @param property GridOption property that has the type `boolean | undefined`
      */
     public is(property: BooleanProps): boolean {
+        count('is', property);
         return isTrue(this.gridOptions[property]);
     }
 
@@ -131,6 +161,7 @@ export class GridOptionsService {
      * @param property
      */
     public get<K extends NonPrimitiveProps>(property: K): GridOptions[K] {
+        count('get', property);
         return this.gridOptions[property];
     }
 
@@ -139,6 +170,7 @@ export class GridOptionsService {
      * @param property GridOption property that has the type `number | undefined`
      */
     public getNum<K extends NumberProps>(property: K): number | undefined {
+        count('getNum', property);
         return toNumber(this.gridOptions[property]);
     }
 
@@ -147,6 +179,7 @@ export class GridOptionsService {
      * @param property GridOption callback properties based on the fact that this property has a callback with params extending AgGridCommon
      */
     public getCallback<K extends CallbackProps>(property: K): WrappedCallback<K, GridOptions[K]> {
+       // count('getCallback', property);
         return this.mergeGridCommonParams(this.gridOptions[property]);
     }
 
@@ -155,6 +188,7 @@ export class GridOptionsService {
      * @param property GridOption property
      */
     public exists(property: keyof GridOptions): boolean {
+        count('exists', property);
         return exists(this.gridOptions[property]);
     }
 
@@ -166,9 +200,13 @@ export class GridOptionsService {
     private mergeGridCommonParams<P extends AgGridCommon<any>, T>(callback: ((params: P) => T) | undefined):
         ((params: WithoutGridCommon<P>) => T) | undefined {
         if (callback) {
-            const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
-                const mergedParams = { ...callbackParams, api: this.gridOptions.api!, columnApi: this.gridOptions.columnApi!, context: this.gridOptions.context } as P;
-                return callback(mergedParams);
+            const wrapped = (callbackParams: P): T => {
+                callbackParams.api = this.gridOptions.api!;
+                callbackParams.columnApi = this.gridOptions.columnApi!;
+                callbackParams.context = this.gridOptions.context;
+                //const mergedParams = { ...callbackParams, api: this.gridOptions.api!, columnApi: this.gridOptions.columnApi!, context: this.gridOptions.context } as P;
+                //const mergedParams = { ...callbackParams, api: this.get('api')!, columnApi: this.get('columnApi')!, context: this.get('context') } as P;
+                return callback(callbackParams);
             };
             return wrapped;
         }

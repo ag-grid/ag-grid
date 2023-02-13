@@ -1,25 +1,23 @@
 import { GridOptionsService } from "./gridOptionsService";
+import { GridOptions } from "./entities/gridOptions";
+import { describe, expect, it, fit, xit } from '@jest/globals';
 
-
-fdescribe('is performance', () => {
+describe('is performance', () => {
 
     const gos = new GridOptionsService();
-    (gos as any).gridOptions = { treeData: true, accentedSort: 'true' };
+    (gos as any).gridOptions = { isExternalFilterPresent: (p) => p.context } as GridOptions;
 
-    it('test false', () => {
+    fit('test false', () => {
         let count = 0;
         console.time('use Is');
 
-        while (count < 100000000) {
+        while (count < 1_000_000) {
             //const isTree = gos.isTreeData();
-            const isTree = gos.is('accentedSort');
-            if (isTree) {
-                count++;
-
-            }
+            const callback = gos.getCallback('isExternalFilterPresent')!;
+            const isFilter = callback({} as any);
+            count++;
         }
         console.timeEnd('use Is');
-
     })
 
     it('test true', () => {
