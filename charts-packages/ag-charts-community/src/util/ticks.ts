@@ -47,11 +47,15 @@ export class NumericTicks extends Array<number> {
 }
 
 export function range(start: number, stop: number, step: number): NumericTicks {
-    const fractionalRemainder = step.toString().split('.')[1];
-    const fractionDigits = fractionalRemainder?.length ?? 0;
-    const f = Math.pow(10, fractionDigits);
+    const countDigits = (expNo: string) => {
+        const parts = expNo.split('e');
+        return Math.max((parts[0].split('.')[1]?.length ?? 0) - Number(parts[1]), 0);
+    };
+
+    const fractionalDigits = countDigits((step % 1).toExponential());
+    const f = Math.pow(10, fractionalDigits);
     const n = Math.ceil((stop - start) / step);
-    const values = new NumericTicks(fractionDigits);
+    const values = new NumericTicks(fractionalDigits);
 
     for (let i = 0; i <= n; i++) {
         const value = start + step * i;
