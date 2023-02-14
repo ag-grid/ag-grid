@@ -18,6 +18,7 @@ const options: AgCartesianChartOptions = {
     {
       type: 'number',
       position: 'left',
+      label: {},
     },
   ],
   legend: {
