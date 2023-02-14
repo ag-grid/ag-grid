@@ -8,14 +8,13 @@
     "meta": {},
     "type": { "tick": "any", "translationY": "number" }
   },
-  "TimeTick": {
-    "meta": { "isTypeAlias": true },
-    "type": "number | TimeInterval"
-  },
-  "NumberTick": { "meta": { "isTypeAlias": true }, "type": "number" },
-  "TickType": {
+  "TickCount": {
     "meta": { "isTypeAlias": true, "typeParams": ["S"] },
-    "type": "S extends TimeScale ? TimeTick : NumberTick"
+    "type": "S extends TimeScale ? number | TimeInterval : number"
+  },
+  "TickInterval": {
+    "meta": { "isTypeAlias": true, "typeParams": ["S"] },
+    "type": "S extends TimeScale ? number | TimeInterval : number"
   },
   "Size": {
     "meta": { "isTypeAlias": true },
@@ -3632,13 +3631,13 @@
     "type": { "count?": "any", "ticks?": "any[]", "specifier?": "any" }
   },
   "Scale": {
-    "meta": { "typeParams": ["D", "R"] },
+    "meta": { "typeParams": ["D", "R", "I = number"] },
     "type": {
       "domain": "D[]",
       "range": "R[]",
       "nice?": "boolean",
       "tickCount?": "number",
-      "interval?": "number | TimeInterval",
+      "interval?": "I",
       "convert(value: D, params?: ScaleClampParams)": "R",
       "invert?(value: R)": "D",
       "ticks?()": "D[]",

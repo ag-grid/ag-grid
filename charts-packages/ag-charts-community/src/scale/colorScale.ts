@@ -2,7 +2,7 @@ import { Scale } from './scale';
 import { Color } from '../util/color';
 import interpolateColor from '../interpolate/color';
 
-export class ColorScale implements Scale<number, string> {
+export class ColorScale implements Scale<number, string, number> {
     domain = [0, 1];
 
     private _range = ['red', 'green'];

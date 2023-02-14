@@ -7,7 +7,7 @@ function clamp(x: number, min: number, max: number) {
 /**
  * Maps a discrete domain to a continuous numeric range.
  */
-export class BandScale<D> implements Scale<D, number> {
+export class BandScale<D> implements Scale<D, number, number> {
     readonly type = 'band';
 
     interval?: number;

@@ -1,5 +1,5 @@
 import { Scale } from '../scale/scale';
-import { Axis } from '../axis';
+import { Axis, TickInterval } from '../axis';
 import { Series } from './series/series';
 import { LinearScale } from '../scale/linearScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
@@ -18,7 +18,10 @@ export function flipChartAxisDirection(direction: ChartAxisDirection): ChartAxis
     }
 }
 
-export class ChartAxis<S extends Scale<any, number> = Scale<any, number>, D = any> extends Axis<S, D> {
+export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, number, any>, D = any> extends Axis<
+    S,
+    D
+> {
     @Validate(STRING_ARRAY)
     keys: string[] = [];
 

@@ -78,10 +78,10 @@ export class ColumnSparkline extends BarColumnSparkline {
                 yDatum = 0;
             }
 
-            const y = Math.min(yScale.convert(yDatum), yZero);
+            const y = Math.min(yDatum ? yScale.convert(yDatum) : NaN, yZero);
             const x = xScale.convert(xDatum);
 
-            const bottom: number = Math.max(yScale.convert(yDatum), yZero);
+            const bottom: number = Math.max(yDatum ? yScale.convert(yDatum) : NaN, yZero);
 
             // if the scale is a band scale, the width of the rects will be the bandwidth, otherwise the width of the rects will be the range / number of items in the data
             const width =

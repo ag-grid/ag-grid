@@ -5,11 +5,16 @@ import { NUMBER, Validate } from '../util/validation';
 
 const identity = (x: any) => x;
 
-export class LogScale extends ContinuousScale {
+export class LogScale extends ContinuousScale<number> {
     readonly type = 'log';
 
-    domain = [1, 10];
-    interval?: number;
+    public constructor() {
+        super([1, 10], [0, 1]);
+    }
+
+    toDomain(d: number): number {
+        return d;
+    }
 
     @Validate(NUMBER(0))
     base = 10;

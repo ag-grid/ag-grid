@@ -5,7 +5,7 @@ import { Point } from '../sparkline';
 const { isNumber } = _Util;
 const { BandScale } = _Scale;
 
-interface BarNodeDatum extends RectNodeDatum { }
+interface BarNodeDatum extends RectNodeDatum {}
 export class BarSparkline extends BarColumnSparkline {
     static className = 'BarSparkline';
 
@@ -80,15 +80,12 @@ export class BarSparkline extends BarColumnSparkline {
             }
 
             const y = xScale.convert(xDatum);
-            const x = Math.min(yScale.convert(yDatum), yZero);
+            const x = Math.min(yDatum ? yScale.convert(yDatum) : NaN, yZero);
 
-            const bottom: number = Math.max(yScale.convert(yDatum), yZero);
+            const bottom: number = Math.max(yDatum ? yScale.convert(yDatum) : NaN, yZero);
 
             // if the scale is a band scale, the width of the rects will be the bandwidth, otherwise the width of the rects will be the range / number of items in the data
-            const height =
-                xScale instanceof BandScale
-                    ? xScale.bandwidth
-                    : this.bandWidth;
+            const height = xScale instanceof BandScale ? xScale.bandwidth : this.bandWidth;
 
             const width = bottom - x;
 
