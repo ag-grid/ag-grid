@@ -1161,14 +1161,14 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         if (label.formatter) {
             return label.formatter({
-                value: fractionDigits >= 0 ? datum : String(datum),
+                value: fractionDigits > 0 ? datum : String(datum),
                 index,
                 fractionDigits,
                 formatter: labelFormatter,
             });
         } else if (labelFormatter) {
             return labelFormatter(datum);
-        } else if (!logScale && typeof datum === 'number' && fractionDigits >= 0) {
+        } else if (!logScale && typeof datum === 'number' && fractionDigits > 0) {
             // the `datum` is a floating point number
             return datum.toFixed(fractionDigits);
         }
