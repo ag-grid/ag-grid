@@ -315,9 +315,15 @@ The example also demonstrates exporting to CSV while using Pivot. Basically what
 The user is free to drag columns to reorder them and you are able to reorder columns via the columnApi in the normal way. However you may want to change the default order of the pivot columns.
 
 **Order of Pivot Value Column Groups**<br />
-Pivot value columns are the column groups created by the pivot values - eg if 'Country' is a pivot column, thn the Pivot Value Column Groups are 'Ireland', 'UK', etc. These columns are ordered alphabetically by default. To override this, provide `pivotComparator(a,b)` function in the column definition. See the example below for a demonstration.
+Pivot value columns are the column groups created by the pivot values - eg if 'Country' is a pivot column, then the Pivot Value Column Groups are 'Ireland', 'UK', etc. These columns are ordered alphabetically by default. To override this, provide `pivotComparator(a,b)` function in the column definition.
 
 <api-documentation source='column-properties/properties.json' section='pivoting' names='["pivotComparator"]'></api-documentation>
+
+In the example below, note the following:
+- A `pivotComparator` has been supplied to the `year` column.
+- The pivot column groups have been reversed, to instead display from highest to lowest.
+
+<grid-example title='Ordering Pivot Groups' name='order-pivot-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 650, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 **Order of Pivot Value Columns**<br/>
 Pivot value columns are the lowest level column and correspond to the values selected in your pivot. For example, if value columns are the months of the year, then the values will be 'Jan', 'Feb', 'Mar' etc, one for each value column added. The order of these will either be a) the order the value columns appear in the original column definitions if you provide 'aggFunc' as part of the columns or b) the order you add the columns as value columns.
