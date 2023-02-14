@@ -5132,7 +5132,7 @@
     },
     "docs": {
       "comparator?": "/** Required if the data for the column are not native JS `Date` objects. */",
-      "browserDatePicker?": "/** If a date component is not provided then by default the grid will use the browser date picker for all supported browsers and a plain text box for other browsers.\n     *  - `true`: Force the browser date picker to be used.\n     *  - `false`: Force a plain text box to be used.\n     * Default: `undefined`\n     */",
+      "browserDatePicker?": "/** Defines whether the grid uses the browser date picker or a plain text box.\n     *  - `true`: Force the browser date picker to be used.\n     *  - `false`: Force a plain text box to be used.\n     * \n     * Default: `undefined` - If a date component is not provided, then the grid will use the browser date picker\n     * for all supported browsers and a plain text box for other browsers.\n     */",
       "minValidYear?": "/** This is the minimum year that may be entered in a date field for the value to be considered valid. Default: `1000` */",
       "maxValidYear?": "/** This is the maximum year that may be entered in a date field for the value to be considered valid. Default is no restriction. */",
       "inRangeFloatingFilterDateFormat?": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n     * \n     * Default: `YYYY-MM-DD`\n     */",
