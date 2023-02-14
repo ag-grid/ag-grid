@@ -1,9 +1,9 @@
 ---
-title: "Row Grouping - Filtering Groups"
+title: "Row Grouping - Custom Group Filtering"
 enterprise: true
 ---
 
-This section shows how to customise Row Group filtering - such as providing different filters on the group columns than
+This section shows how to customise row group filtering - such as providing different filters on the group columns than
 the underlying columns.
 
 ## Custom Group Column Filtering
@@ -26,7 +26,7 @@ const gridOptions = {
         { field: 'bronze' },
     ], 
     autoGroupColumnDef: { 
-        // enables filtering on the group column with desired filter type
+        // enables filtering on the group column with specified filter type
         filter: 'agTextColumnFilter',
         // supplies 'sport' values to the filter 
         filterValueGetter: params => params.data.sport,                          
@@ -39,7 +39,7 @@ In the snippet above the rows are grouped by `sport` and `country`, however ther
 
 Note that [Adding Values to Leaf Nodes](/grouping-single-group-column/#adding-values-to-leaf-nodes) using a `valueGetter` or a `field` will also allow filtering once the `filter` column property is enabled. However, filtering will be performed using the leaf values in this case.
 
-When applying a filter directly on the group column instead of using the Group Filter, the filter model is tied to the group column instead of the underlying columns. To set the filter via the Grid API on a single group column (`setFilterModel`), it needs to be referenced using the name `ag-Grid-AutoColumn`.
+When applying a filter directly on the group column instead of using the Group Column Filter, the filter model is tied to the group column instead of the underlying columns. To set the filter via the Grid API on a single group column (`setFilterModel`), it needs to be referenced using the name `ag-Grid-AutoColumn`.
 
 <snippet>
 gridOptions.api.setFilterModel({
@@ -57,11 +57,11 @@ The following example demonstrates filtering with a single group column. Note th
 - A `filterValueGetter` is supplied to the group column which returns `sport` values to the filter.
 - Clicking the `Filter Skiing Sports` button at the top will set the filter using the Grid API `setFilterModel`. Note that the reference name `ag-Grid-AutoColumn` is used.
 
-<grid-example title='Custom Group Filtering with Single Group Column' name='custom-group-filtering-single-group-column' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+<grid-example title='Custom Group Filtering - Single Group Column' name='custom-group-filtering-single' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "setfilter"] }'></grid-example>
 
 ### Multiple Group Columns
 
-Filtering with [Multiple Group Columns](/grouping-multiple-group-columns/) uses the same approach as described above in [Custom Group Filtering with Single Group Column](#custom-group-filtering-with-single-group-column), however the `filterValueGetter` must return different filter values for each group column, as shown below:
+Filtering with [Multiple Group Columns](/grouping-multiple-group-columns/) uses the same approach as described above with a [Single Group Column](#single-group-column), however the `filterValueGetter` must return different filter values for each group column, as shown below:
 
 <snippet>
 const gridOptions = {  
@@ -73,7 +73,7 @@ const gridOptions = {
         { field: 'bronze' },
     ], 
     autoGroupColumnDef: { 
-        // enables filtering on the group column with desired filter type
+        // enables filtering on the group column with specified filter type
         filter: 'agTextColumnFilter',
         // supplies filter values to the column filters based on the colId
         filterValueGetter: params => {      
@@ -109,8 +109,20 @@ The following example demonstrates filtering with multiple group columns. Note t
 - A `filterValueGetter` is supplied to extract the correct filter value for each group column.
 - Clicking the `Filter Skiing Sports` button at the top will set the filter using the Grid API `setFilterModel`. Note that the reference name `ag-Grid-AutoColumn-sport` is used, as `sport` is the column id for the column where the filter is changing.
 
+<grid-example title='Custom Group Filtering - Multiple Group Columns' name='custom-group-filtering-multiple' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "setfilter"] }'></grid-example>
 
-<grid-example title='Custom Group Filtering with Multiple Group Columns' name='custom-group-filtering-multiple-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+### Group Rows
+
+The [Group Rows](/grouping-group-rows/) display type does not have group columns, so filters can only be defined on the underlying columns.
+
+If the columns used in the grouping are hidden, they can still be filtered by using the [Filters Tool Panel](/tool-panel-filters/).
+
+The following example demonstrates filtering with row groups. Note the following:
+
+- Rows are grouped by `sport` and `country` under [Group Rows](/grouping-group-rows/).
+- The Filters Tool Panel is shown, which allows filtering to be performed on `sport` and `country` values.
+
+<grid-example title='Custom Group Filtering - Group Rows' name='custom-group-filtering-group-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "filterpanel"] }'></grid-example>
 
 ## Next Up
 

@@ -64,12 +64,12 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         const { colDef } = this.params;
         if (colDef.field) {
             _.doOnce(() => console.warn(
-                        'AG Grid: Group Filter does not work with the colDef property "field". This property will be ignored.'
+                        'AG Grid: Group Column Filter does not work with the colDef property "field". This property will be ignored.'
                 ), 'groupFilterFieldParam'
             );
         } else if (colDef.filterValueGetter) {
             _.doOnce(() => console.warn(
-                        'AG Grid: Group Filter does not work with the colDef property "filterValueGetter". This property will be ignored.'
+                        'AG Grid: Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.'
                 ), 'groupFilterFilterValueGetterParam'
             );
         }
@@ -84,7 +84,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.groupColumn = this.params.column;
         if (this.gridOptionsService.is('treeData')) {
             _.doOnce(() => console.warn(
-                        'AG Grid: Group Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.'
+                        'AG Grid: Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.'
                 ), 'groupFilterTreeData'
             );
             return [];
@@ -92,7 +92,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         const sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
             _.doOnce(() => console.warn(
-                    'AG Grid: Group Filter only works on group columns. Please use a different filter.'
+                    'AG Grid: Group Column Filter only works on group columns. Please use a different filter.'
                 ), 'groupFilterNotGroupColumn'
             );
             return [];

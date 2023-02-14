@@ -177,13 +177,13 @@ Please note that Tree Data filtering behaves slightly differently to [Filtering 
 
 ### Filtering Aggregated Parent Rows
 
-The default behaviour of a Group Filter is to ignore aggregated group values that pass the filter, but this can be changed by enabling `groupAggFiltering`.
+The default behaviour of a group filter is to ignore aggregated group values that pass the filter, but this can be changed by enabling `groupAggFiltering`.
 
 The default behaviour of a Tree Data filter is to match aggregated group values as well, and setting the `groupAggFiltering` property to `true` or `false` will not change this. The one exception is that the Set Filter will not match a value in a parent row when `groupAggFiltering` is `false`. You can also change this behaviour by using [Custom Group Aggregation Filtering](/aggregation-filtering/#custom-group-aggregation-filtering) because passing a function to the `groupAggFiltering` property will work the same as without Tree Data filtering.
 
 ### Aggregated Values Based on Pre-Filtered Data
 
-The default behaviour of both Tree Data and Group Filters is to calculate aggregated values from the filtered results only. This can be changed by setting `suppressAggFilteredOnly = true`.
+The default behaviour of both Tree Data and group filters is to calculate aggregated values from the filtered results only. This can be changed by setting `suppressAggFilteredOnly = true`.
 
 This behaviour can also be achieved in the Tree Data filter by setting `groupAggFiltering = true`.
 
