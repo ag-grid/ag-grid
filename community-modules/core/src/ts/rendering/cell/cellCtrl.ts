@@ -539,7 +539,13 @@ export class CellCtrl extends BeanStub {
 
         const valueParser = colDef.valueParser;
 
-        return exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
+        if (exists(valueParser)) {
+            if (typeof valueParser === 'function') {
+                return valueParser(params);
+            }
+            return this.beans.expressionService.evaluate(valueParser, params);
+        }
+        return newValue;
     }
 
     public setFocusOutOnEditor(): void {

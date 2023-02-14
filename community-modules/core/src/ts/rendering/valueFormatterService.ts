@@ -42,8 +42,6 @@ export class ValueFormatterService extends BeanStub {
             };
             if (typeof formatter === 'function') {
                 result = formatter(params);
-                //result = this.expressionService.evaluate(formatter, params);
-
             } else {
                 result = this.expressionService.evaluate(formatter, params);
             }

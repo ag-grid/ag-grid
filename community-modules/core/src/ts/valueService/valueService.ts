@@ -167,7 +167,11 @@ export class ValueService extends BeanStub {
         let valueWasDifferent: boolean;
 
         if (exists(valueSetter)) {
-            valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
+            if (typeof valueSetter === 'function') {
+                valueWasDifferent = valueSetter(params)
+            } else {
+                valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
+            }
         } else {
             valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
         }
@@ -277,6 +281,9 @@ export class ValueService extends BeanStub {
             getValue: this.getValueCallback.bind(this, rowNode)
         };
 
+        if (typeof valueGetter === 'function') {
+            return valueGetter(params);
+        }
         return this.expressionService.evaluate(valueGetter, params);
     }
 
@@ -301,8 +308,6 @@ export class ValueService extends BeanStub {
             context: this.gridOptionsService.context,
             getValue: this.getValueCallback.bind(this, rowNode)
         };
-
-        // const result = this.expressionService.evaluate(valueGetter, params);
 
         let result;
         if (typeof valueGetter === 'function') {
