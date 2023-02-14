@@ -27,7 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   pivotMode: true,
 }
 
-function ReversedYearPivotComparator(a, b) {
+function ReversedYearPivotComparator(a: string, b: string) {
   return Number(b) - Number(a);
 }
 
