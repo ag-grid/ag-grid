@@ -166,13 +166,13 @@ export class ChartOptionsService extends BeanStub {
     private raiseChartOptionsChangedEvent(): void {
         const chartModel = this.chartController.getChartModel();
 
-        const event: WithoutGridCommon<ChartOptionsChanged> = Object.freeze({
+        const event: WithoutGridCommon<ChartOptionsChanged> = {
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId: chartModel.chartId,
             chartType: chartModel.chartType,
             chartThemeName: this.chartController.getChartThemeName(),
             chartOptions: chartModel.chartOptions
-        });
+        };
 
         this.eventService.dispatchEvent(event);
     }

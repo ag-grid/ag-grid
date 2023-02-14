@@ -193,18 +193,6 @@ export function set(target: any, expression: string, value: any) {
     objectToUpdate[keys[keys.length - 1]] = value;
 }
 
-export function deepFreeze(object: any): any {
-    Object.freeze(object);
-
-    values(object).forEach(v => {
-        if (isNonNullObject(v) || typeof v === 'function') {
-            deepFreeze(v);
-        }
-    });
-
-    return object;
-}
-
 export function getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
     if (!field || !data) { return; }
 

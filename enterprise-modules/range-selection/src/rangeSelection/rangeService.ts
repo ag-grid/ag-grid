@@ -787,12 +787,12 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
-        const event: WithoutGridCommon<RangeSelectionChangedEvent> = Object.freeze({
+        const event: WithoutGridCommon<RangeSelectionChangedEvent> = {
             type: Events.EVENT_RANGE_SELECTION_CHANGED,
             started,
             finished,
             id,
-        });
+        };
 
         this.eventService.dispatchEvent(event);
     }

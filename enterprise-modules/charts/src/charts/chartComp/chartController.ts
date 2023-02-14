@@ -297,16 +297,16 @@ export class ChartController extends BeanStub {
 
             if (updateChartType) {
                 // update the settings panel by raising an EVENT_CHART_TYPE_CHANGED event
-                this.dispatchEvent(Object.freeze({
+                this.dispatchEvent({
                     type: ChartController.EVENT_CHART_TYPE_CHANGED
-                }));
+                });
             }
 
             if (prevSeriesChartType !== chartType) {
                 // update the format panel by raising an EVENT_CHART_SERIES_CHART_TYPE_CHANGED event
-                this.dispatchEvent(Object.freeze({
+                this.dispatchEvent({
                     type: ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED
-                }));
+                });
             }
 
             this.raiseChartOptionsChangedEvent();
@@ -343,41 +343,41 @@ export class ChartController extends BeanStub {
     }
 
     private raiseChartModelUpdateEvent(): void {
-        const event = Object.freeze({
+        const event = {
             type: ChartController.EVENT_CHART_MODEL_UPDATE
-        });
+        };
 
         this.dispatchEvent(event);
     }
 
     public raiseChartUpdatedEvent(): void {
-        const event = Object.freeze({
+        const event = {
             type: ChartController.EVENT_CHART_UPDATED
-        });
+        };
 
         this.dispatchEvent(event);
     }
 
     private raiseChartOptionsChangedEvent(): void {
         const {chartId, chartType} = this.getChartModel();
-        const event: WithoutGridCommon<ChartOptionsChanged> = Object.freeze({
+        const event: WithoutGridCommon<ChartOptionsChanged> = {
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId,
             chartType,
             chartThemeName: this.getChartThemeName(),
             chartOptions: this.chartProxy.getChartThemeOverrides()
-        });
+        };
 
         this.eventService.dispatchEvent(event);
     }
 
     private raiseChartRangeSelectionChangedEvent(): void {
-        const event: WithoutGridCommon<ChartRangeSelectionChanged> = Object.freeze({
+        const event: WithoutGridCommon<ChartRangeSelectionChanged> = {
             type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED,
             id: this.model.chartId,
             chartId: this.model.chartId,
             cellRange: this.getCellRangeParams()
-        });
+        };
 
         this.eventService.dispatchEvent(event);
     }
