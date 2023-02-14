@@ -95,10 +95,11 @@ export class EventService implements IEventEmitter {
         let agEvent = event as AgGridEvent<any>;
         if (this.gridOptionsService) {
             // Apply common properties to all dispatched events if this event service has had its beans set with gridOptionsService.
-            // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsService. 
-            agEvent.api = this.gridOptionsService.api;
-            agEvent.columnApi = this.gridOptionsService.columnApi;
-            agEvent.context = this.gridOptionsService.context;
+            // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsService.
+            const { api, columnApi, context } = this.gridOptionsService;
+            agEvent.api = api;
+            agEvent.columnApi = columnApi;
+            agEvent.context = context;
         }
 
         this.dispatchToListeners(agEvent, true);
