@@ -32,7 +32,7 @@ export class LazyBlockLoader extends BeanStub {
     }
 
     public isRowLoading(index: number) {
-        return index in this.loadingNodes;
+        return this.loadingNodes.has(index);
     }
 
     private doesRowNeedLoaded(index: number) {

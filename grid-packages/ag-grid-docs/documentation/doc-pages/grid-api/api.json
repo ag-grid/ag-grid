@@ -431,7 +431,8 @@
         "purgeInfiniteCache": {},
         "getInfiniteRowCount": {},
         "isLastRowIndexKnown": {},
-        "setRowCount": {}
+        "setRowCount": {},
+        "getCacheBlockState": {}
     },
     "viewportRowModel": {
         "meta": {
@@ -772,6 +773,12 @@
             "more": {
                 "name": "Transactions",
                 "url": "/server-side-model-updating-transactions/#asynchronous-updates"
+            }
+        },
+        "getCacheBlockState": {
+            "more": {
+                "name": "Cache Block State",
+                "url": "/server-side-model-configuration/#debug-info"
             }
         }
     }

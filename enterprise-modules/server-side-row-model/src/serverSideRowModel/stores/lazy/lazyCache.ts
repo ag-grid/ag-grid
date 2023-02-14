@@ -386,7 +386,7 @@ export class LazyCache extends BeanStub {
                 startRow: Number(blockStart),
                 endRow: Number(blockStart) + this.rowLoader.getBlockSize(),
                 pageStatus: priorityState,
-                loadedRowCount: blockCounts[blockStart],
+                loadedRowCount: blockCounts[blockStart] ?? 0,
             };
         });
         return results;
