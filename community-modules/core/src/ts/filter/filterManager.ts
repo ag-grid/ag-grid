@@ -482,9 +482,9 @@ export class FilterManager extends BeanStub {
                 data: node.data,
                 column,
                 colDef,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context')
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context
             };
 
             value = colDef.getQuickFilterText(params);

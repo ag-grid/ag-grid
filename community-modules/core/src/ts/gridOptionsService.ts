@@ -74,12 +74,20 @@ export class GridOptionsService {
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
 
+    // Store locally to avoid retrieving many times as these are requested for every callback
+    public api: GridApi;
+    public columnApi: ColumnApi;
+    public context: any;
+
     private propertyEventService: EventService = new EventService();
     private gridOptionLookup: Set<string>;
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
+        this.api = gridApi;
+        this.columnApi = columnApi;
+        this.context = this.gridOptions['context'];
     }
 
     @PostConstruct
@@ -87,6 +95,9 @@ export class GridOptionsService {
         this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
         const async = !this.is('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
+
+        // Keep local context property updated
+        this.addEventListener('context', (propChanged) => this.context = propChanged.currentValue);
 
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();

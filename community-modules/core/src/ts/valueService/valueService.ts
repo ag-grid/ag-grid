@@ -20,12 +20,15 @@ export class ValueService extends BeanStub {
     @Autowired('valueCache') private valueCache: ValueCache;
 
     private cellExpressions: boolean;
+    // Store locally for performance reasons and keep updated via property listener
+    private isTreeData: boolean;
 
     private initialised = false;
 
     @PostConstruct
     public init(): void {
         this.cellExpressions = this.gridOptionsService.is('enableCellExpressions');
+        this.isTreeData = this.gridOptionsService.is('treeData');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
@@ -35,6 +38,7 @@ export class ValueService extends BeanStub {
             (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event),
             this.gridOptionsService.useAsyncEvents(),
         );
+        this.addManagedPropertyListener('treeData', (propChange) => this.isTreeData = propChange.currentValue);
     }
 
     public getValue(column: Column,
@@ -55,7 +59,7 @@ export class ValueService extends BeanStub {
         // pull these out to make code below easier to read
         const colDef = column.getColDef();
         const field = colDef.field;
-        const colId = column.getId();
+        const colId = column.getColId();
         const data = rowNode.data;
 
         let result: any;
@@ -66,11 +70,11 @@ export class ValueService extends BeanStub {
 
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
-        } else if (this.gridOptionsService.isTreeData() && aggDataExists) {
+        } else if (this.isTreeData && aggDataExists) {
             result = rowNode.aggData[colId];
-        } else if (this.gridOptionsService.isTreeData() && colDef.valueGetter) {
+        } else if (this.isTreeData && colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (this.gridOptionsService.isTreeData() && (field && data)) {
+        } else if (this.isTreeData && (field && data)) {
             result = getValueUsingField(data, field, column.isFieldContainsDots());
         } else if (groupDataExists) {
             result = rowNode.groupData![colId];
@@ -110,7 +114,7 @@ export class ValueService extends BeanStub {
         let pointer = rowNode.parent;
 
         while (pointer != null) {
-            if (pointer.rowGroupColumn && (showRowGroup === true || showRowGroup === pointer.rowGroupColumn.getId())) {
+            if (pointer.rowGroupColumn && (showRowGroup === true || showRowGroup === pointer.rowGroupColumn.getColId())) {
                 return pointer.key;
             }
             pointer = pointer.parent;
@@ -163,7 +167,11 @@ export class ValueService extends BeanStub {
         let valueWasDifferent: boolean;
 
         if (exists(valueSetter)) {
-            valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
+            if (typeof valueSetter === 'function') {
+                valueWasDifferent = valueSetter(params)
+            } else {
+                valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
+            }
         } else {
             valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
         }
@@ -267,18 +275,21 @@ export class ValueService extends BeanStub {
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            context: this.gridOptionsService.get('context'),
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context,
             getValue: this.getValueCallback.bind(this, rowNode)
         };
 
+        if (typeof valueGetter === 'function') {
+            return valueGetter(params);
+        }
         return this.expressionService.evaluate(valueGetter, params);
     }
 
     private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
 
-        const colId = column.getId();
+        const colId = column.getColId();
 
         // if inside the same turn, just return back the value we got last time
         const valueFromCache = this.valueCache.getValue(rowNode as RowNode, colId);
@@ -292,13 +303,18 @@ export class ValueService extends BeanStub {
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            context: this.gridOptionsService.get('context'),
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context,
             getValue: this.getValueCallback.bind(this, rowNode)
         };
 
-        const result = this.expressionService.evaluate(valueGetter, params);
+        let result;
+        if (typeof valueGetter === 'function') {
+            result = valueGetter(params)
+        } else {
+            result = this.expressionService.evaluate(valueGetter, params);
+        }
 
         // if a turn is active, store the value in case the grid asks for it again
         this.valueCache.setValue(rowNode as RowNode, colId, result);
@@ -329,9 +345,9 @@ export class ValueService extends BeanStub {
                 column: col,
                 node: rowNode,
                 data: rowNode.data,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context')
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context
             };
             result = keyCreator(keyParams);
         }
