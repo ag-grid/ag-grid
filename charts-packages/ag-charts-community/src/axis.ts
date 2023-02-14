@@ -399,7 +399,14 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     protected labelFormatter?: (datum: any) => string;
     protected onLabelFormatChange(ticks: any[], format?: string) {
-        const { scale } = this;
+        const { scale, fractionDigits } = this;
+        const logScale = scale instanceof LogScale;
+
+        const defaultLabelFormatter =
+            !logScale && fractionDigits > 0
+                ? (x: any) => (typeof x === 'number' ? x.toFixed(fractionDigits) : String(x))
+                : (x: any) => String(x);
+
         if (format && scale && scale.tickFormat) {
             try {
                 this.labelFormatter = scale.tickFormat({
@@ -408,7 +415,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                     specifier: format,
                 });
             } catch (e) {
-                this.labelFormatter = undefined;
+                this.labelFormatter = defaultLabelFormatter;
                 doOnce(
                     () =>
                         console.warn(
@@ -418,7 +425,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 );
             }
         } else {
-            this.labelFormatter = undefined;
+            this.labelFormatter = defaultLabelFormatter;
         }
     }
 
@@ -1153,9 +1160,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     // For formatting (nice rounded) tick values.
     formatTickDatum(datum: any, index: number): string {
-        const { label, labelFormatter, fractionDigits, scale } = this;
-
-        const logScale = scale instanceof LogScale;
+        const { label, labelFormatter, fractionDigits } = this;
 
         if (label.formatter) {
             return label.formatter({
@@ -1166,9 +1171,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             });
         } else if (labelFormatter) {
             return labelFormatter(datum);
-        } else if (!logScale && typeof datum === 'number' && fractionDigits > 0) {
-            // the `datum` is a floating point number
-            return datum.toFixed(fractionDigits);
         }
         // The axis is using a logScale or the`datum` is an integer, a string or an object
         return String(datum);
