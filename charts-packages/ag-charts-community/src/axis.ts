@@ -453,17 +453,13 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             dataDomain,
             tick: { values: tickValues },
         } = this;
-        const continuous = scale instanceof ContinuousScale;
-        if (!continuous || !tickValues) {
-            scale.domain = dataDomain;
-            return;
-        }
-
-        if (scale instanceof ContinuousScale) {
+        if (tickValues && scale instanceof ContinuousScale) {
             const [tickMin, tickMax] = extent(tickValues) ?? [Infinity, -Infinity];
             const min = Math.min(scale.fromDomain(dataDomain[0]), tickMin);
             const max = Math.max(scale.fromDomain(dataDomain[1]), tickMax);
             scale.domain = [scale.toDomain(min), scale.toDomain(max)];
+        } else {
+            scale.domain = dataDomain;
         }
     }
 
