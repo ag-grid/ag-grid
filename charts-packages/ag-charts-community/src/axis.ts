@@ -438,8 +438,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             this._title = value;
 
             // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
-            this.setTickCount();
-            this.setTickInterval();
+            this.setTickCount(this.tick.count);
+            this.setTickInterval(this.tick.interval);
             this.updateTitle({ ticks: this.scale.ticks!() });
         }
     }
@@ -468,7 +468,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     private setTickInterval(interval?: TickInterval<S>) {
-        this.scale.interval = interval;
+        this.scale.interval = this.tick.interval ?? interval;
     }
 
     private setTickCount(count?: TickCount<S> | number) {
@@ -583,7 +583,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const nice = this.nice;
         this.setDomain();
 
-        this.setTickInterval();
+        this.setTickInterval(this.tick.interval);
 
         if (scale instanceof ContinuousScale) {
             scale.nice = nice;
