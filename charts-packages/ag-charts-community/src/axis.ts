@@ -619,21 +619,21 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 const prevTicks = ticks;
                 const tickCount = Math.max(maxTickCount - i, minTickCount);
 
-                const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : 2;
-                const filteredTicks =
-                    !checkForOverlap || (continuous && this.tick.count === undefined)
-                        ? undefined
-                        : ticks.filter((_, i) => i % keepEvery === 0);
+                const filterTicks =
+                    checkForOverlap && !(continuous && this.tick.count === undefined) && (tickSpacing || i !== 0);
 
                 if (this.tick.values) {
                     ticks = this.tick.values;
                 } else if (maxTickCount === 0) {
                     ticks = [];
-                } else if (filteredTicks && filteredTicks.length > 0) {
-                    ticks = filteredTicks;
-                } else if (!secondaryAxis) {
+                } else if (i === 0 || !filterTicks) {
                     this.setTickCount(this.tick.count ?? tickCount);
                     ticks = scale.ticks!();
+                }
+
+                if (filterTicks) {
+                    const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : 2;
+                    ticks = ticks.filter((_, i) => i % keepEvery === 0);
                 }
 
                 let secondaryAxisTicks;
