@@ -147,6 +147,10 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
     // Determine type and ensure it's explicit in the options config.
     const userSuppliedOptionsType = options.type;
     const type = optionsType(options);
+    if (type != null && !isSeriesOptionType(type)) {
+        throw new Error(`AG Charts - unknown series type: ${type}`);
+    }
+
     options = { ...options, type };
 
     const defaultSeriesType = isAgCartesianChartOptions(options)
