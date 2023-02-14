@@ -27,31 +27,25 @@ describe('formatValue', () => {
 
     it('uses supplied formatter if provided', () => {
         const returnValue = 'foo';
-        const formatter = (value: string) => value.toString();
+        const formatter = (params: ValueFormatterParams) => returnValue;
         const value = 'bar';
-
-        expressionService.evaluate.mockReturnValue(returnValue);
 
         const formattedValue = valueFormatterService.formatValue(column, null, value, formatter);
 
         expect(formattedValue).toBe(returnValue);
-        expect(expressionService.evaluate).toHaveBeenCalledTimes(1);
-        expect(expressionService.evaluate).toHaveBeenCalledWith(formatter, expect.anything());
+        expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
     });
 
     it('uses value formatter from column definition if no formatter provided', () => {
         const returnValue = 'foo';
-        const formatter = (params: ValueFormatterParams) => params.value.toString();
+        const formatter = (params: ValueFormatterParams) => returnValue;
         colDef.valueFormatter = formatter;
         const value = 'bar';
-
-        expressionService.evaluate.mockReturnValue(returnValue);
 
         const formattedValue = valueFormatterService.formatValue(column, null, value);
 
         expect(formattedValue).toBe(returnValue);
-        expect(expressionService.evaluate).toHaveBeenCalledTimes(1);
-        expect(expressionService.evaluate).toHaveBeenCalledWith(formatter, expect.anything());
+        expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
     });
 
     it('does not use value formatter from column definition if disabled', () => {
@@ -65,19 +59,17 @@ describe('formatValue', () => {
 
     it('uses pinned value formatter from column definition if row is pinned', () => {
         const returnValue = 'foo';
-        const formatter = (params: ValueFormatterParams) => params.node?.isRowPinned() ? params.value.toString() : undefined;
+        const formatter = (params: ValueFormatterParams) => (params.node?.isRowPinned() ? returnValue : '');
         colDef.valueFormatter = formatter;
         const value = 'bar';
-        const node = mock<RowNode>();
+        const node = new RowNode({} as any);        
         node.rowPinned = 'top';
-
-        expressionService.evaluate.mockReturnValue(returnValue);
+        expect(node.isRowPinned()).toBe(true);
 
         const formattedValue = valueFormatterService.formatValue(column, node, value);
 
         expect(formattedValue).toBe(returnValue);
-        expect(expressionService.evaluate).toHaveBeenCalledTimes(1);
-        expect(expressionService.evaluate).toHaveBeenCalledWith(formatter, expect.anything());
+        expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
     });
 
     it('looks at refData if no formatter found', () => {
@@ -98,11 +90,9 @@ describe('formatValue', () => {
 
     it('does not use refData if formatter is found', () => {
         const value = 'foo';
-        const returnValue = 'bar';
-        const formatter = (value: string) => value.toString();
+        const returnValue = 'foo';
+        const formatter = (params: ValueFormatterParams) => params.value.toString();
         colDef.refData = { [value]: 'bob' };
-
-        expressionService.evaluate.mockReturnValue(returnValue);
 
         const formattedValue = valueFormatterService.formatValue(column, null,  value, formatter);
 
