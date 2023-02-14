@@ -299,7 +299,8 @@ export function tickFormat(
                         return 0;
                     }
                     const l = Math.floor(Math.log10(Math.abs(x)));
-                    const exp = x.toExponential(12).replace(/\.?[0]+e/, 'e');
+                    const digits = options.type ? 6 : 12;
+                    const exp = x.toExponential(digits - 1).replace(/\.?[0]+e/, 'e');
                     const dotIndex = exp.indexOf('.');
                     if (dotIndex < 0) {
                         return l >= 0 ? 0 : -l;
