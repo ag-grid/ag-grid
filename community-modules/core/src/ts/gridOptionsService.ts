@@ -33,7 +33,7 @@ type NumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any>) => any>, NoArgFuncs | AnyArgFuncs>;
-type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>;
+type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps | 'api' | 'columnApi' | 'context'>;
 
 
 type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
@@ -78,6 +78,7 @@ export class GridOptionsService {
     public api: GridApi;
     public columnApi: ColumnApi;
     public context: any;
+    private contextUpdater = () => this.context = this.gridOptions.context;
 
     private propertyEventService: EventService = new EventService();
     private gridOptionLookup: Set<string>;
@@ -97,7 +98,7 @@ export class GridOptionsService {
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
         // Keep local context property updated
-        this.addEventListener('context', (propChanged) => this.context = propChanged.currentValue);
+        this.addEventListener('context', this.contextUpdater);
 
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
@@ -110,8 +111,13 @@ export class GridOptionsService {
         // of the grid to be picked up by the garbage collector
         this.gridOptions.api = null;
         this.gridOptions.columnApi = null;
+        this.removeEventListener('context', this.contextUpdater);
 
         this.destroyed = true;
+    }
+
+    private updateContext() {
+        this.context = this.gridOptions.context;
     }
 
     /**
@@ -163,7 +169,11 @@ export class GridOptionsService {
         ((params: WithoutGridCommon<P>) => T) | undefined {
         if (callback) {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
-                const mergedParams = { ...callbackParams, api: this.gridOptions.api!, columnApi: this.gridOptions.columnApi!, context: this.gridOptions.context } as P;
+                const mergedParams = callbackParams as P;
+                mergedParams.api = this.api;
+                mergedParams.columnApi = this.columnApi;
+                mergedParams.context = this.context;
+
                 return callback(mergedParams);
             };
             return wrapped;
