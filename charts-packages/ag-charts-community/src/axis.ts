@@ -781,6 +781,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             }
         }
 
+        minSpacing = Math.max(minSpacing, defaultMinSpacing);
+
         const maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
         const minTickCount = Math.ceil(availableRange / maxSpacing);
 
