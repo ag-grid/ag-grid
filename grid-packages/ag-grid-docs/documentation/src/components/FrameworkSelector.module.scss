@@ -2,7 +2,7 @@
 
 .frameworkSelector {
     --height: 36px; // Match input height
-    --icon-size: #{$size-3};
+    --icon-size: #{$size-3} !important; // !important for .ag-styles specificity
     --x-padding: 10px;
 
     display: flex;
@@ -123,7 +123,7 @@
 
     @media screen and (min-width: $breakpoint-fw-selector-full-width-large) {
         --height: #{$size-7};
-        --icon-size: #{$size-5};
+        --icon-size: #{$size-5} !important; // !important for .ag-styles specificity
         --font-size: #{$font-size-large};
         --x-padding: 20px;
     }
