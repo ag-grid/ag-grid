@@ -1,7 +1,8 @@
 import { Chart, TransferableResources } from './chart';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
-import { ChartAxis, ChartAxisDirection } from './chartAxis';
+import { ChartAxis } from './chartAxis';
+import { ChartAxisDirection } from './chartAxisDirection';
 import { BBox } from '../scene/bbox';
 import { AgCartesianAxisPosition } from './agChartOptions';
 

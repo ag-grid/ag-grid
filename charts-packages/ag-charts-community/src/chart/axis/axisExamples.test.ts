@@ -3,8 +3,9 @@ import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
 import { AgChartOptions, AgCartesianAxisType, AgCartesianAxisPosition } from '../agChartOptions';
 import { AgChart } from '../agChartV2';
-import { Chart, ChartUpdateType } from '../chart';
-import { ChartAxis, ChartAxisDirection } from '../chartAxis';
+import { Chart } from '../chart';
+import { ChartUpdateType } from '../chartUpdateType';
+import { ChartAxis } from '../chartAxis';
 import * as axesExamples from '../test/examples-axes';
 import * as examples from '../test/examples';
 import {
@@ -19,6 +20,7 @@ import {
     deproxy,
     repeat,
 } from '../test/utils';
+import { ChartAxisDirection } from '../chartAxisDirection';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
 

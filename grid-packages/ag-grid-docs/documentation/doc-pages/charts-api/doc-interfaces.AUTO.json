@@ -4684,10 +4684,24 @@
   },
   "ObservableLike": {},
   "VisibilityMap": {},
-  "ChartUpdateType": {},
   "OptionalHTMLElement": {},
   "TransferableResources": {},
+  "BoundSeries": {
+    "type": { "type": { "returnType": "string", "optional": false } },
+    "getDomain": {
+      "type": {
+        "arguments": { "direction": "ChartAxisDirection" },
+        "returnType": "any[]",
+        "optional": false
+      }
+    },
+    "isEnabled": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "visible": { "type": { "returnType": "boolean", "optional": false } }
+  },
   "ChartAxisDirection": {},
+  "ChartUpdateType": {},
   "NodeData": {},
   "CrossLineType": {},
   "CrossLineLabelPosition": {},
@@ -4715,7 +4729,15 @@
   },
   "HighlightState": {
     "highlightedDatum": {
-      "type": { "returnType": "SeriesNodeDatum", "optional": false }
+      "type": { "returnType": "HighlightNodeDatum", "optional": false }
+    }
+  },
+  "HighlightNodeDatum": {
+    "series": { "type": { "returnType": "any", "optional": false } },
+    "itemId": { "type": { "returnType": "any", "optional": true } },
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "point": {
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
   "HighlightChangeEvent": {
@@ -4723,10 +4745,10 @@
       "type": { "returnType": "'highlight-change'", "optional": false }
     },
     "previousHighlight": {
-      "type": { "returnType": "SeriesNodeDatum", "optional": true }
+      "type": { "returnType": "HighlightNodeDatum", "optional": true }
     },
     "currentHighlight": {
-      "type": { "returnType": "SeriesNodeDatum", "optional": true }
+      "type": { "returnType": "HighlightNodeDatum", "optional": true }
     }
   },
   "InteractionTypes": {},

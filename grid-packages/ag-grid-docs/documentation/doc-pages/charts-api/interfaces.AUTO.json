@@ -3058,6 +3058,28 @@
     "meta": { "isTypeAlias": true },
     "type": "{ crossLines: boolean; series: boolean; }"
   },
+  "OptionalHTMLElement": {
+    "meta": { "isTypeAlias": true },
+    "type": "HTMLElement | undefined | null"
+  },
+  "TransferableResources": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ container?: OptionalHTMLElement; scene: Scene; element: HTMLElement; }"
+  },
+  "BoundSeries": {
+    "meta": {},
+    "type": {
+      "type": "string",
+      "getDomain(direction: ChartAxisDirection)": "any[]",
+      "isEnabled()": "boolean",
+      "visible": "boolean"
+    }
+  },
+  "ChartAxisDirection": {
+    "meta": { "isEnum": true },
+    "type": ["X = 'x'", "Y = 'y'"],
+    "docs": [null, null]
+  },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
     "type": [
@@ -3069,19 +3091,6 @@
       "NONE"
     ],
     "docs": [null, null, null, null, null, null]
-  },
-  "OptionalHTMLElement": {
-    "meta": { "isTypeAlias": true },
-    "type": "HTMLElement | undefined | null"
-  },
-  "TransferableResources": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ container?: OptionalHTMLElement; scene: Scene; element: HTMLElement; }"
-  },
-  "ChartAxisDirection": {
-    "meta": { "isEnum": true },
-    "type": ["X = 'x'", "Y = 'y'"],
-    "docs": [null, null]
   },
   "NodeData": { "meta": { "isTypeAlias": true }, "type": "number[]" },
   "CrossLineType": {
@@ -3135,14 +3144,23 @@
   "CursorState": { "meta": {}, "type": { "style": "string" } },
   "HighlightState": {
     "meta": {},
-    "type": { "highlightedDatum": "SeriesNodeDatum" }
+    "type": { "highlightedDatum": "HighlightNodeDatum" }
+  },
+  "HighlightNodeDatum": {
+    "meta": {},
+    "type": {
+      "series": "any",
+      "itemId?": "any",
+      "datum": "any",
+      "point?": "Readonly<SizedPoint>"
+    }
   },
   "HighlightChangeEvent": {
     "meta": {},
     "type": {
       "type": "'highlight-change'",
-      "previousHighlight?": "SeriesNodeDatum",
-      "currentHighlight?": "SeriesNodeDatum"
+      "previousHighlight?": "HighlightNodeDatum",
+      "currentHighlight?": "HighlightNodeDatum"
     }
   },
   "InteractionTypes": {

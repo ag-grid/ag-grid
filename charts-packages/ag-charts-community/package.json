@@ -14,6 +14,7 @@
     "test-coverage": "npm run test:dev -- --coverage",
     "test-debug": "export FONTCONFIG_PATH=$PWD/src/chart/test ; export FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf ; export PANGOCAIRO_BACKEND=fontconfig ; node --inspect-brk=0.0.0.0 node_modules/.bin/jest --watch --no-cache",
     "test-update": "export SNAPSHOT_FAILURE_THRESHOLD=0.001 ; npm run test:dev -- -u",
+    "test-circular-deps": "npx madge --circular --extensions ts src/",
     "build-cjs": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",

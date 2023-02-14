@@ -14,10 +14,10 @@ import { normalizeAngle180, toRadians } from '../../../util/angle';
 import { doOnce } from '../../../util/function';
 import { toFixed, mod } from '../../../util/number';
 import { Layers } from '../../layers';
-import { LegendDatum } from '../../legend';
+import { LegendDatum } from '../../legendDatum';
 import { Caption } from '../../../caption';
 import { PolarSeries } from './polarSeries';
-import { ChartAxisDirection } from '../../chartAxis';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { DeprecatedAndRenamedTo } from '../../../util/deprecation';
 import {

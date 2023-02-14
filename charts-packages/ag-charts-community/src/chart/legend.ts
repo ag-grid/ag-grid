@@ -34,7 +34,7 @@ import {
 } from '../util/validation';
 import { Layers } from './layers';
 import { Series } from './series/series';
-import { ChartUpdateType } from './chart';
+import { ChartUpdateType } from './chartUpdateType';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightManager } from './interaction/highlightManager';
@@ -42,29 +42,13 @@ import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
 import { TooltipManager } from './interaction/tooltipManager';
 import { toTooltipHtml } from './tooltip/tooltip';
+import { LegendDatum } from './legendDatum';
 
 const ORIENTATIONS = ['horizontal', 'vertical'];
 export const OPT_ORIENTATION = predicateWithMessage(
     (v: any, ctx) => OPTIONAL(v, ctx, (v) => ORIENTATIONS.includes(v)),
     `expecting an orientation keyword such as 'horizontal' or 'vertical'`
 );
-
-export interface LegendDatum {
-    id: string; // component ID
-    itemId: any; // sub-component ID
-    seriesId: string;
-    enabled: boolean; // the current state of the sub-component
-    marker: {
-        shape?: string | (new () => Marker);
-        fill: string;
-        stroke: string;
-        fillOpacity: number;
-        strokeOpacity: number;
-    };
-    label: {
-        text: string; // display name for the sub-component
-    };
-}
 
 class LegendLabel {
     @Validate(OPT_NUMBER(0))
