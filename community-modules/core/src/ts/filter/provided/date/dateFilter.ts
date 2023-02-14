@@ -40,10 +40,12 @@ export interface IDateFilterParams extends IScalarFilterParams {
     /** Required if the data for the column are not native JS `Date` objects. */
     comparator?: IDateComparatorFunc;
     /**
-     * If a date component is not provided then by default the grid will use the browser date picker for all supported browsers and a plain text box for other browsers.
+     * Defines whether the grid uses the browser date picker or a plain text box.
      *  - `true`: Force the browser date picker to be used.
      *  - `false`: Force a plain text box to be used.
-     * Default: `undefined`
+     * 
+     * Default: `undefined` - If a date component is not provided, then the grid will use the browser date picker
+     * for all supported browsers and a plain text box for other browsers.
      */
     browserDatePicker?: boolean;
     /** This is the minimum year that may be entered in a date field for the value to be considered valid. Default: `1000` */

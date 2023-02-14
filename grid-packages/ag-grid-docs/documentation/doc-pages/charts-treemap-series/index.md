@@ -248,19 +248,16 @@ Please see the API reference for more information.
 
 <chart-example title='Complex Colouring Chart' name='custom-colors' type='generated'></chart-example>
 
-## Tooltip
+## Tooltips
 
-There are several ways to display a tooltip.
+With no `tooltip` or `series[].tooltip` configuration, tooltip content will be taken from series
+values:
+- `series[].labelKey` will be displayed as tooltip title.
+- `series[].labels.value.name` will be displayed as tooltip content.
+- `series[].labels.value.key` will be displayed as additional tooltip content with a `: ` prefix to separate it from the previous content.
+- `series[].labels.value.formatter` allows formatting of the additional tooltip content.
 
-### Default tooltip
-
-The value of the property specified in `labelKey` will be displayed as a label (title) for a tooltip. In order to specify a numeric value use the `labels.value.key`. It should have a property name to get a value from the datum. `labels.value.name` can be used as a description for the value. The `labels.value.formatter` function will format the number in a desired way.
-
-### Custom tooltip
-
-For creating a custom tooltip, please use the `tooltip.renderer` function. It accepts an object containing several useful properties like `datum`, `color` etc., and returns a custom HTML string, or an object containing `title`, `content` and `color` properties.
-
-Please see the API reference for more Tooltip Renderer capabilities.
+For more advanced configuration see the [Tooltips](../tooltips/) section.
 
 ## API Reference
 
