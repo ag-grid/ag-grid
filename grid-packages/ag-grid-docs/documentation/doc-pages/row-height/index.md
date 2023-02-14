@@ -6,7 +6,7 @@ By default, the grid will display rows with a height of `25px`. You can change t
 individually to give each row a different height.
 
 [[note]]
-| You cannot use variable row height when using [Viewport Row Model](/viewport/).
+| You cannot use variable row height when using either the [Viewport Row Model](/viewport/) or [Infinite Row Model](/infinite-scrolling/).
 | This is because this row model needs to work out the position of rows that are not loaded and hence needs to assume the row height is fixed.
 
 ## rowHeight Property
