@@ -296,9 +296,9 @@ export class SetFilterListItem<V> extends Component {
         this.cellRendererParams = {
             value,
             valueFormatted: formattedValue,
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            context: this.gridOptionsService.get('context'),
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context,
             colDef: this.params.colDef,
             column: this.params.column,
         };

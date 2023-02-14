@@ -43,9 +43,9 @@ export class CellCustomStyleFeature extends BeanStub {
             colDef: colDef,
             column: this.column,
             rowIndex: this.rowNode.rowIndex!,
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
-            context: this.beans.gridOptionsService.get('context')
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
+            context: this.beans.gridOptionsService.context
         };
 
         this.beans.stylingService.processClassRules(
@@ -71,9 +71,9 @@ export class CellCustomStyleFeature extends BeanStub {
                 data: this.rowNode.data,
                 node: this.rowNode,
                 rowIndex: this.rowNode.rowIndex!,
-                api: this.beans.gridOptionsService.get('api')!,
-                columnApi: this.beans.gridOptionsService.get('columnApi')!,
-                context: this.beans.gridOptionsService.get('context'),
+                api: this.beans.gridOptionsService.api,
+                columnApi: this.beans.gridOptionsService.columnApi,
+                context: this.beans.gridOptionsService.context,
             };
             const cellStyleFunc = colDef.cellStyle as CellStyleFunc;
             styles = cellStyleFunc(cellStyleParams);
@@ -95,9 +95,9 @@ export class CellCustomStyleFeature extends BeanStub {
             column: this.column,
             colDef: colDef,
             rowIndex: this.rowNode.rowIndex!,
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
-            context: this.beans.gridOptionsService.get('context')
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
+            context: this.beans.gridOptionsService.context
         };
 
         if (this.staticClasses.length) {

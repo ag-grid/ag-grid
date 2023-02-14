@@ -663,9 +663,9 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
             data: this.data,
             rowIndex: this.rowIndex,
             rowPinned: this.rowPinned,
-            context: this.beans.gridOptionsService.get('context'),
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!
+            context: this.beans.gridOptionsService.context,
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi
         };
     }
 
@@ -714,9 +714,9 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
             rowPinned: this.rowPinned,
             column: column,
             colDef: column.getColDef(),
-            context: this.beans.gridOptionsService.get('context'),
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
+            context: this.beans.gridOptionsService.context,
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
             data: this.data,
             node: this,
             oldValue,

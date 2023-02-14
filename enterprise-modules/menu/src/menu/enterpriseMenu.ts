@@ -573,7 +573,7 @@ export class EnterpriseMenu extends BeanStub {
             suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsService.get('context')
+            context: this.gridOptionsService.context
         }, 'columnMenu');
 
         if (columnLayout) {

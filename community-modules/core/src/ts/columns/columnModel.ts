@@ -2675,9 +2675,9 @@ export class ColumnModel extends BeanStub {
                 columnGroup: columnGroup,
                 providedColumnGroup: providedColumnGroup,
                 location: location,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context')
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context
             };
 
             if (typeof headerValueGetter === 'function') {

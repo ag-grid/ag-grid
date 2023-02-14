@@ -157,9 +157,9 @@ export class ValueService extends BeanStub {
             newValue: newValue,
             colDef: column.getColDef(),
             column: column,
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            context: this.gridOptionsService.get('context')
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context
         };
 
         params.newValue = newValue;

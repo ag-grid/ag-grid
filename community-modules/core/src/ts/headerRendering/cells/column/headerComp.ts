@@ -196,7 +196,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (this.params.enableMenu) {
             const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
-                gridOptionsService.get('api')!.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
+                gridOptionsService.api.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
             this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
