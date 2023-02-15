@@ -98,7 +98,7 @@ All of the above points are demonstrated by the example below.
 <chart-example title='Number Axis vs Log Axis' name='number-vs-log' type='generated'></chart-example>
 
 [[note]]
-| The range of a log axis should be strictly positive or strictly negative (because there's no power you can raise a number to that will yield zero). For that reason, any non-conforming range will be clipped to conformity, leaving only the larger segment. For example, `[0, 10]` will be clipped to  `[Number.EPSILON, 10]`, while `[-10, 5]` will be clipped to `[-10, -Number.EPSILON]`. Since there can be orders of magnitude difference between `Number.EPSILON` and the other range value, it is often desirable to set the `min` or `max` property of the axis manually. In this case it can be `min: 1` and `max: -1`, respectively.
+| The domain of a log axis should be strictly positive or strictly negative (because there's no power you can raise a number to that will yield zero). For that reason, any non-conforming domain will be clipped to conformity. For example, `[0, 10]` will be clipped to  `[1, 10]`. If the data domain crosses `0`, for example `[-10, 5]`, no data will be rendered. It is often desirable to set the `min` or `max` property of the axis manually. In this case it can be `max: -1`.
 ## Time Axis
 
 The time axis is similar to the number axis in the sense that it is also used to plot continuous values. The time axis can even be used with numeric data (in addition to `Date` objects), but the numbers will be interpreted as Unix timestamps. The time axis differs from the number axis in tick segmentation and label formatting. For example, you could choose to place a tick every 5 minutes, every month, or every Friday.
