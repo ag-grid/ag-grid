@@ -79,8 +79,7 @@ export class LinearScale extends ContinuousScale<number> {
         this.niceDomain = [start, stop];
     }
 
-    tickFormat({ count, specifier }: { count?: number; ticks?: any[]; specifier?: string }) {
-        const [d0, d1] = this.getDomain();
-        return tickFormat(d0, d1, count ?? ContinuousScale.defaultTickCount, specifier);
+    tickFormat({ ticks, specifier }: { ticks?: any[]; specifier?: string }) {
+        return tickFormat(ticks || this.ticks(), specifier);
     }
 }
