@@ -16,7 +16,6 @@ const gridOptions: GridOptions = {
     minWidth: 200,
     resizable: true,
     filter: true,
-    floatingFilter: true,
   },
   autoGroupColumnDef: {
     headerName: 'Employee',
