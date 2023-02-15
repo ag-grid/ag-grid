@@ -201,6 +201,8 @@ When used with Tree Data, the [Set Filter](/filter-set/) will contain a list of 
 
 It is also possible to display the Set Filter List as a [Set Filter Tree List](/filter-set-tree-list/), which replicates the Tree Data structure. This can be seen in the [Tree List](#tree-list-example) example below.
 
+The Tree List also works with complex objects, which is demonstrated in the [Tree List Complex Objects Example](/filter-set-tree-list/#complex-objects).
+
 #### Tree List Example
 
 The following example demonstrates using the Set Filter Tree List with Tree Data:
