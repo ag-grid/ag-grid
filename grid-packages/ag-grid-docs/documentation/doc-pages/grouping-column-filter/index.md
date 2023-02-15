@@ -30,6 +30,10 @@ const gridOptions = {
 You must also have filters defined on the underlying columns which are being used in the grouping. If none of the columns
 in the grouping have filters defined, the Group Column Filter will not be displayed.
 
+Note that in order for the Group Column Filter to interact with the filters on the underlying columns in the grouping, they will all be created by the grid in advance of being opened for the first time.
+
+As the Group Column Filter is using the underlying filters and their parameters, it does not have any parameters itself. This means that the `autoGroupColumnDef.filterParams` property will be ignored.
+
 ### Single Group Column
 
 The following example shows the Group Column Filter with a [Single Group Column](/grouping-single-group-column/).

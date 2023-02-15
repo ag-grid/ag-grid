@@ -696,7 +696,11 @@ export class FilterManager extends BeanStub {
         // Group column filters can be dependant on underlying column filters, but don't normally get created until they're used for the first time.
         // Instead, create them by default when any filter changes.
         const groupColumns = this.columnModel.getGroupAutoColumns();
-        groupColumns?.forEach(groupColumn => this.getOrCreateFilterWrapper(groupColumn, 'NO_UI'));
+        groupColumns?.forEach(groupColumn => {
+            if (groupColumn.getColDef().filter === 'agGroupColumnFilter') {
+                this.getOrCreateFilterWrapper(groupColumn, 'NO_UI');
+            }
+        });
     }
 
     // for group filters, can change dynamically whether they are allowed or not

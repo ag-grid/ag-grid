@@ -64,14 +64,18 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         const { colDef } = this.params;
         if (colDef.field) {
             _.doOnce(() => console.warn(
-                        'AG Grid: Group Column Filter does not work with the colDef property "field". This property will be ignored.'
-                ), 'groupFilterFieldParam'
-            );
-        } else if (colDef.filterValueGetter) {
+                'AG Grid: Group Column Filter does not work with the colDef property "field". This property will be ignored.'
+            ), 'groupFilterFieldParam');
+        }
+        if (colDef.filterValueGetter) {
             _.doOnce(() => console.warn(
-                        'AG Grid: Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.'
-                ), 'groupFilterFilterValueGetterParam'
-            );
+                'AG Grid: Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.'
+            ), 'groupFilterFilterValueGetterParam');
+        }
+        if (colDef.filterParams) {
+            _.doOnce(() => console.warn(
+                'AG Grid: Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.'
+            ), 'groupFilterFilterParams');
         }
     }
 
