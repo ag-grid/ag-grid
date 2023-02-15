@@ -66,9 +66,9 @@ represent the same percentage increase. Whereas, if the `number` axis was used, 
 The above property of the log axis can also be useful in financial charts. For example, if your rate of
 return on an investment stays consistent over time, the investment value chart will look like a straight line.
 
-By default, the `log` axis attempts to render 10 ticks (and grid lines) per order of magnitude, depending
-on available space. If your range is wide enough, you may start getting too many ticks, in which case
-using a larger value for the `tick: { minSpacing: xxx }` config might be necessary:
+By default, if the data domain has `5` or more orders of magnitude, the `log` axis attempts to render `5` ticks. Otherwise, `10` ticks (the logarithm base) is rendered per order of magnitude. For example a data domain of `[1, 100]` with `2` orders of magnitude, will show `1`, `2`, `3`, `4`,`5`, `6`, `7`, `8`, `9`, `10`, `20`, `30`, `40`, `50`, `60`, `70`, `80`, `90`, `100`.
+
+Depending on the data domain and chart size, using a larger value for the `tick: { minSpacing: xxx }` config might be necessary to reduce the number of ticks.
 
 ```js
 {
