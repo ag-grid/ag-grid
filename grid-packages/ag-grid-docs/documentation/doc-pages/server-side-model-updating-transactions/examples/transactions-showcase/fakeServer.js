@@ -152,7 +152,7 @@ function FakeServer() {
     }
     var blockSize = request.endRow - request.startRow;
 
-    return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
+    return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
   }
 
   function isDoingGrouping(rowGroupCols, groupKeys) {

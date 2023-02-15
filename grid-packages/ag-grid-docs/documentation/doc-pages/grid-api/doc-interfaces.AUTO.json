@@ -15598,7 +15598,7 @@
       "type": { "returnType": "number | undefined", "optional": false }
     },
     "endRow": {
-      "description": "/** Last row requested or undefined for all rows. */",
+      "description": "/** Index after the last row required row or undefined for all rows. */",
       "type": { "returnType": "number | undefined", "optional": false }
     },
     "rowGroupCols": {

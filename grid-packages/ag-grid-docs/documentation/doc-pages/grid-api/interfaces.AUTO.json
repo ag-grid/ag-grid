@@ -8726,7 +8726,7 @@
     },
     "docs": {
       "startRow": "/** First row requested or undefined for all rows. */",
-      "endRow": "/** Last row requested or undefined for all rows. */",
+      "endRow": "/** Index after the last row required row or undefined for all rows. */",
       "rowGroupCols": "/** Columns that are currently row grouped.  */",
       "valueCols": "/** Columns that have aggregations on them.  */",
       "pivotCols": "/** Columns that have pivot on them.  */",

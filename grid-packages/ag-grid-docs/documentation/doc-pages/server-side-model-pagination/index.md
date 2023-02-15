@@ -36,7 +36,7 @@ The properties relevant to pagination in the request are shown below:
     // first row requested
     startRow: number,
 
-    // last row requested
+    // index after last row requested
     endRow: number,
 
 ... // other params

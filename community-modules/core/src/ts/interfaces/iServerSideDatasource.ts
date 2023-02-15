@@ -10,7 +10,7 @@ import { IRowNode } from "./iRowNode";
 export interface IServerSideGetRowsRequest {
     /** First row requested or undefined for all rows. */
     startRow: number | undefined;
-    /** Last row requested or undefined for all rows. */
+    /** Index after the last row required row or undefined for all rows. */
     endRow: number | undefined;
     /** Columns that are currently row grouped.  */
     rowGroupCols: ColumnVO[];
