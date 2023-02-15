@@ -9,7 +9,7 @@ import { getLineDash } from '../../util/lineDash';
 const { extent } = _Util;
 const { BandScale } = _Scale;
 
-interface AreaNodeDatum extends SeriesNodeDatum { }
+interface AreaNodeDatum extends SeriesNodeDatum {}
 
 interface PathDatum extends SeriesNodeDatum {
     point: Point;
@@ -59,9 +59,8 @@ export class AreaSparkline extends Sparkline {
     private areaSparklineGroup: _Scene.Group = new _Scene.Group();
     private xAxisLine: _Scene.Line = new _Scene.Line();
     private markers: _Scene.Group = new _Scene.Group();
-    private markerSelection: _Scene.Selection<_Scene.Marker, _Scene.Group, AreaNodeDatum, any> = _Scene.Selection.select(
-        this.markers
-    ).selectAll<_Scene.Marker>();
+    private markerSelection: _Scene.Selection<_Scene.Marker, _Scene.Group, AreaNodeDatum, any> =
+        _Scene.Selection.select(this.markers).selectAll<_Scene.Marker>();
     private markerSelectionData: AreaNodeDatum[] = [];
 
     readonly marker = new SparklineMarker();
@@ -133,7 +132,9 @@ export class AreaSparkline extends Sparkline {
             return;
         }
 
-        const offsetX = xScale instanceof BandScale ? xScale.bandwidth / 2 : 0;
+        const continuous = !(xScale instanceof BandScale);
+
+        const offsetX = !continuous ? xScale.bandwidth / 2 : 0;
         const n = yData.length;
 
         const nodeData: AreaNodeDatum[] = [];
@@ -152,12 +153,12 @@ export class AreaSparkline extends Sparkline {
             const yDatum = yData[i];
             const xDatum = xData[i];
 
-            const x = xScale.convert(xScale.toDomain(xDatum)) + offsetX;
+            const x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
             const y = yDatum ? yScale.convert(yDatum) : NaN;
 
             // if this iteration is not the last, set nextX using the next value in the data array
             if (i + 1 < n) {
-                nextX = xScale.convert(xData[i + 1]) + offsetX;
+                nextX = xScale.convert(continuous ? xScale.toDomain(xData[i + 1]) : xData[i + 1]) + offsetX;
             }
 
             // set stroke data regardless of missing/ undefined values. Undefined values will be handled in the updateStroke() method
