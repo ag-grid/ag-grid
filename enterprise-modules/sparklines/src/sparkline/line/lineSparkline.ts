@@ -241,7 +241,7 @@ export class LineSparkline extends Sparkline {
             const yDatum = yData[i];
 
             const x = xScale.convert(xDatum) + offsetX;
-            const y = yScale.convert(yDatum);
+            const y = yDatum ? yScale.convert(yDatum) : NaN;
 
             if (yDatum == undefined) {
                 moveTo = true;

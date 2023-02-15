@@ -43,6 +43,7 @@ import { AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight } fr
 import { LogScale } from './scale/logScale';
 import { Default } from './util/default';
 import { Deprecated } from './util/deprecation';
+import { extent } from './util/array';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -81,10 +82,9 @@ interface AxisNodeDatum {
     readonly translationY: number;
 }
 
-type TimeTick = number | TimeInterval;
-type NumberTick = number;
+type TickCount<S> = S extends TimeScale ? number | TimeInterval : number;
 
-type TickType<S> = S extends TimeScale ? TimeTick : NumberTick;
+export type TickInterval<S> = S extends TimeScale ? number | TimeInterval : number;
 
 export class AxisLine {
     @Validate(NUMBER(0))
@@ -125,10 +125,10 @@ class AxisTick<S extends Scale<D, number>, D = any> {
      */
     @Validate(OPT_TICK_COUNT)
     @Deprecated('Use tick.interval or tick.minSpacing and tick.maxSpacing instead')
-    count?: TickType<S> = undefined;
+    count?: TickCount<S> = undefined;
 
     @Validate(OPT_TICK_INTERVAL)
-    interval?: TickType<S> = undefined;
+    interval?: TickInterval<S> = undefined;
 
     @Validate(OPT_ARRAY())
     values?: any[] = undefined;
@@ -248,7 +248,7 @@ export class AxisLabel {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<S extends Scale<D, number>, D = any> {
+export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     static readonly defaultTickMinSpacing = 80;
 
     readonly id = createId(this);
@@ -438,8 +438,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
             this._title = value;
 
             // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
-            this.setTickCount(this.scale, this.tick.count);
-            this.setTickInterval(this.scale, this.tick.interval);
+            this.setTickCount(this.tick.count);
+            this.setTickInterval(this.tick.interval);
             this.updateTitle({ ticks: this.scale.ticks!() });
         }
     }
@@ -447,19 +447,28 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._title;
     }
 
-    private setTickInterval<S extends Scale<D, number>, D = any>(scale: S, interval?: any) {
-        if (!interval || typeof interval === 'number') {
-            scale.interval = interval;
-            return;
-        }
-
-        if (scale instanceof TimeScale && interval instanceof TimeInterval) {
-            scale.interval = interval;
-            return;
+    private setDomain() {
+        const {
+            scale,
+            dataDomain,
+            tick: { values: tickValues },
+        } = this;
+        if (tickValues && scale instanceof ContinuousScale) {
+            const [tickMin, tickMax] = extent(tickValues) ?? [Infinity, -Infinity];
+            const min = Math.min(scale.fromDomain(dataDomain[0]), tickMin);
+            const max = Math.max(scale.fromDomain(dataDomain[1]), tickMax);
+            scale.domain = [scale.toDomain(min), scale.toDomain(max)];
+        } else {
+            scale.domain = dataDomain;
         }
     }
 
-    private setTickCount<S extends Scale<D, number>, D = any>(scale: S, count?: any) {
+    private setTickInterval(interval?: TickInterval<S>) {
+        this.scale.interval = this.tick.interval ?? interval;
+    }
+
+    private setTickCount(count?: TickCount<S> | number) {
+        const { scale } = this;
         if (!(count && scale instanceof ContinuousScale)) {
             return;
         }
@@ -469,8 +478,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
             return;
         }
 
-        if (scale instanceof TimeScale && count instanceof TimeInterval) {
-            this.setTickInterval(scale, count);
+        if (scale instanceof TimeScale) {
+            this.setTickInterval(count);
         }
     }
 
@@ -568,13 +577,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
 
         const nice = this.nice;
-        scale.domain = this.dataDomain;
+        this.setDomain();
 
-        this.setTickInterval(scale, this.tick.interval);
+        this.setTickInterval(this.tick.interval);
 
         if (scale instanceof ContinuousScale) {
             scale.nice = nice;
-            this.setTickCount(scale, this.tick.count);
+            this.setTickCount(this.tick.count);
             scale.update();
         }
 
@@ -623,7 +632,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 } else if (filteredTicks && filteredTicks.length > 0) {
                     ticks = filteredTicks;
                 } else if (!secondaryAxis) {
-                    this.setTickCount(scale, this.tick.count ?? tickCount);
+                    this.setTickCount(this.tick.count ?? tickCount);
                     ticks = scale.ticks!();
                 }
 
@@ -1148,14 +1157,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         if (label.formatter) {
             return label.formatter({
-                value: fractionDigits >= 0 ? datum : String(datum),
+                value: fractionDigits > 0 ? datum : String(datum),
                 index,
                 fractionDigits,
                 formatter: labelFormatter,
             });
         } else if (labelFormatter) {
             return labelFormatter(datum);
-        } else if (!logScale && typeof datum === 'number' && fractionDigits >= 0) {
+        } else if (!logScale && typeof datum === 'number' && fractionDigits > 0) {
             // the `datum` is a floating point number
             return datum.toFixed(fractionDigits);
         }

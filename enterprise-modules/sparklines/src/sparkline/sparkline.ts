@@ -108,7 +108,7 @@ export abstract class Sparkline {
     // Maximum y value in provided data.
     protected max: number | undefined = undefined;
 
-    protected xScale!: ScaleType;
+    protected xScale!: any;
     protected yScale: _Scale.LinearScale = new LinearScale();
 
     readonly axis = new SparklineAxis();

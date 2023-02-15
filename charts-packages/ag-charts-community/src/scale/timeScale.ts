@@ -48,11 +48,9 @@ function toNumber(x: any) {
     return x instanceof Date ? x.getTime() : x;
 }
 
-export class TimeScale extends ContinuousScale {
+export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
     readonly type = 'time';
 
-    domain: Date[] = [new Date(2022, 11, 7), new Date(2022, 11, 8)];
-    interval?: TimeInterval | number;
     protected cacheProps: Array<keyof this> = ['domain', 'range', 'nice', 'tickCount', 'interval'];
 
     private year: CountableTimeInterval = timeYear;
@@ -98,6 +96,14 @@ export class TimeScale extends ContinuousScale {
         [this.month, 6, 6 * durationMonth],
         [this.year, 1, durationYear],
     ];
+
+    public constructor() {
+        super([new Date(2022, 11, 7), new Date(2022, 11, 8)], [0, 1]);
+    }
+
+    toDomain(d: number): Date {
+        return new Date(d);
+    }
 
     calculateDefaultTickFormat(ticks: any[] | undefined = []) {
         let defaultTimeFormat = DefaultTimeFormats.YEAR as DefaultTimeFormats;

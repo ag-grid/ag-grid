@@ -5,9 +5,8 @@
     "tick": { "type": { "returnType": "any", "optional": false } },
     "translationY": { "type": { "returnType": "number", "optional": false } }
   },
-  "TimeTick": {},
-  "NumberTick": {},
-  "TickType": { "meta": { "typeParams": ["S"] } },
+  "TickCount": { "meta": { "typeParams": ["S"] } },
+  "TickInterval": { "meta": { "typeParams": ["S"] } },
   "Size": {},
   "OffscreenCanvasRenderingContext2D": {},
   "OffscreenCanvas": {},
@@ -5182,9 +5181,7 @@
     "range": { "type": { "returnType": "R[]", "optional": false } },
     "nice": { "type": { "returnType": "boolean", "optional": true } },
     "tickCount": { "type": { "returnType": "number", "optional": true } },
-    "interval": {
-      "type": { "returnType": "number | TimeInterval", "optional": true }
-    },
+    "interval": { "type": { "returnType": "I", "optional": true } },
     "convert": {
       "type": {
         "arguments": { "value": "D", "params?": "ScaleClampParams" },
@@ -5210,7 +5207,7 @@
       }
     },
     "bandwidth": { "type": { "returnType": "number", "optional": true } },
-    "meta": { "typeParams": ["D", "R"] }
+    "meta": { "typeParams": ["D", "R", "I = number"] }
   },
   "DefaultTimeFormats": {},
   "RedrawType": {},

@@ -5,10 +5,18 @@ import { tickFormat } from '../util/numberFormat';
 /**
  * Maps continuous domain to a continuous range.
  */
-export class LinearScale extends ContinuousScale {
+export class LinearScale extends ContinuousScale<number> {
     readonly type = 'linear';
 
     interval?: number;
+
+    public constructor() {
+        super([0, 1], [0, 1]);
+    }
+
+    toDomain(d: number): number {
+        return d;
+    }
 
     ticks() {
         const count = this.tickCount ?? ContinuousScale.defaultTickCount;
