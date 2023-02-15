@@ -129,15 +129,20 @@ Please see the [API reference](#reference-AgBaseCartesianAxisOptions-title) for 
 
 ## Axis Ticks
 
-Category axes show a tick for every category. Number and time axes try to segment the whole range into a certain number of intervals depending on the available rendering space.
+Axis ticks are displayed at intervals along each axis, and are also used to determine the position and frequency of the axis labels and grid lines.
 
-The `width`, `size` and `color` of chart axis ticks can be configured as explained in the [API reference](#reference-AgNumberAxisOptions-tick) below. These configs apply to all axis types.
+### Tick Placement
 
-There are three main ways to control the density of the axis ticks. Configuring these properties will override the dynamic calculation based upon available rendering space:
+Category axes show a tick for every category. Number and time axes will display around 5 ticks depending on the available space.
+
+It is possible to customise or override this default behaviour by using one of the following options.
+
+- [Min and Max Spacing](#tick-min-and-max-spacing) - used to control the pixel gap between ticks
+- [Interval](#tick-interval) - used to place a tick at regular intervals
+- [Values](#tick-values) - used to place a tick at specified values
 
 ### Tick Min and Max Spacing
-`tick.minSpacing` and `tick.maxSpaxing` configure the minimum and maximum gap which should be present between ticks.
-An appropriate number of ticks will be generated to satisfy the `tick.minSpacing` and `tick.maxSpacing` constraints.
+`tick.minSpacing` and `tick.maxSpaxing` modify the default behaviour by specifying the approximate minimum and maximum pixel gap which should be present between ticks. An appropriate number of ticks will be generated to satisfy the `tick.minSpacing` and `tick.maxSpacing` constraints. This number will vary depending on the rendered size of the chart.
 
 ```js
 tick: {
@@ -146,23 +151,11 @@ tick: {
 }
 ```
 
-### Tick Values
-
-`tick.values` can be used to configure the exact array of ticks to display. This should be an array of `number`, `date`, `string` or `object` values where ticks will be placed along the axis.
-
-These values will also be used as the tick labels unless a `label.format` or `label.formatter` is configured.
-
-```js
-tick: {
-    values: [-50, -25, 0, 25, 50],
-}
-```
-
 ### Tick Interval
 
-`tick.interval` is the step value between ticks specified in the units of the axis.
+`tick.interval` is the exact step value between ticks, specified in the units of the axis.
 
-For `number` axes, the `interval` property should be set to a `number` to show a tick every `interval` value.
+For `number` axes, the interval property should be a `number`. A tick will be shown every `interval` value in the axis range. For example, an interval of `30` will show `0`, `30`, `60`, `90` etc.
 
 ```js
 tick: {
@@ -170,20 +163,9 @@ tick: {
 }
 ```
 
-For `log` axes, the `interval` property can be a `number` which modifies the step for the exponent that the logarithm base is raised to.
+For `log` axes, the `interval` property should be a `number`. This is used to step the exponent that the logarithm base is raised to. For example an interval of `2` will show `10^0`, `10^2`, `10^4` etc.
 
-By default, the `interval` is `1`. Increasing the `interval` will result in fewer ticks as the powers are incremented by a larger step. Reducing the `interval` to a fractional number more than `0` and less than `1` will result in more ticks with smaller intervals.
-
-The table below shows the result of different `interval` values depending on the base.
-
-| Interval | Base 10 | Base 2 |
-| --------- | --------- | --------- |
-| 1 | 10^0, 10^1, 10^2, 10^3, 10^4 | 2^0, 2^1, 2^2, 2^3, 2^4 |
-| 2 | 10^0, 10^2, 10^4 | 2^0, 2^2, 2^4 |
-| 0.5 | 10^0, 10^0.5, 10^1, 10^1.5, 10^2, 10^2.5, 10^3, 10^3.5, 10^4 | 2^0, 2^0.5, 2^1, 2^1.5, 2^2, 2^2.5, 2^3, 2^3.5, 2^4  |
-
-
-For `time` axes the `interval` property can be set to a time interval such as `time.month`, which makes the axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `time.month.every(3)`.
+For `time` axes the `interval` property should be a time interval such as `time.month`, to show a tick every month, or an interval derived from one of the predefined intervals, such as `time.month.every(3)`.
 
 ```js
 tick: {
@@ -191,11 +173,12 @@ tick: {
 }
 ```
 
-Additionally, the time axes tick `interval` can be set to a `number` value representing milliseconds.
+Other available `time` intervals are: `year`, `month`, `day`, `hour`, `minute`, `second`, `millisecond`. There are also some UTC time intervals available: `utcYear`, `utcMonth`, `utcDay`, `utcYear`, `utcMinute`.
+
+If the `interval` property of a time axis is set to a `number`, this will be interpreted as milliseconds.
 
 [[note]]
-| If the configured `interval` results in dense ticks given the data domain, the ticks will be removed.
-
+| If the configured `interval` results in too many ticks given the data domain and chart size, it will be ignored and the default tick behaviour will be applied.
 
 The example below demonstrates the usage of time intervals:
 - `time.month` will produce monthly ticks.
@@ -212,13 +195,31 @@ The example below demonstrates the usage of time intervals:
 
 <chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
 
-Other available time intervals are: `year`, `month`, `day`, `hour`, `minute`, `second`, `millisecond`. There are some UTC time intervals: `utcYear`, `utcMonth`, `utcDay`, `utcYear`, `utcMinute`.
+### Tick Values
+
+`tick.values` can be used to configure the exact array of tick values to display. This should either be an array of `number`, `date`, `string` or `object` values depending on the axis type.
+
+These values will also be used as the tick labels unless a `label.format` or `label.formatter` is configured.
+
+```js
+tick: {
+    values: [-50, -25, 0, 25, 50],
+}
+```
 
 ### Example: Axis Tick Density
 
-The example below demonstrates how `tick.minSpacing`, `tick.maxSpacing` and `tick.interval` propeties can be used to control the density of the ticks.
+
+The example below demonstrates how the `tick.minSpacing`, `tick.maxSpacing`, `tick.interval` and `tick.values` properties can be used to control the placement of the ticks.
+
+- There are buttons at the top to change between the different options.
+- There is a grab handle in the bottom right to allow resizing of the chart to see how the ticks change with available space.
 
 <chart-example title='Axis Tick Density' name='axis-tick-density' type='generated'></chart-example>
+
+### Tick Styling
+
+The `width`, `size` and `color` of chart axis ticks can be configured as explained in the [API reference](#reference-AgNumberAxisOptions-tick) below. These configs apply to all axis types.
 
 ## Axis Labels
 
