@@ -101,6 +101,7 @@ export const columnDefs: ColDef[] = [
         field: 'timeline',
         flex: 1,
         minWidth: 150,
+        sortable: false,
         cellRenderer: 'agSparklineCellRenderer',
         cellRendererParams: {
             sparklineOptions: {
