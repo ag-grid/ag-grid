@@ -172,7 +172,7 @@ tick: {
 
 For `log` axes, the `interval` property can be a `number` which modifies the step for the exponent that the logarithm base is raised to.
 
-By default, the `interval` is `1`. Increasing the `interval` will result in less ticks as the powers are incremented by a larger step. Reducing the `interval` to a fractional number more than `0` and less than `1` will result in more ticks with smaller intervals.
+By default, the `interval` is `1`. Increasing the `interval` will result in fewer ticks as the powers are incremented by a larger step. Reducing the `interval` to a fractional number more than `0` and less than `1` will result in more ticks with smaller intervals.
 
 The table below shows the result of different `interval` values depending on the base.
 
