@@ -8,7 +8,7 @@ import { getMarker } from '../marker/util';
 import { createId } from '../../util/id';
 import { InteractionEvent, InteractionManager } from '../interaction/interactionManager';
 import { CursorManager } from '../interaction/cursorManager';
-import { ChartUpdateType } from '../chart';
+import { ChartUpdateType } from '../chartUpdateType';
 import {
     COLOR_STRING,
     NUMBER,

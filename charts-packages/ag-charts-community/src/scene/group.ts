@@ -1,7 +1,6 @@
-import { Node, RedrawType, SceneChangeDetection, RenderContext } from './node';
+import { Node, RedrawType, SceneChangeDetection, RenderContext, LayerManager } from './node';
 import { BBox } from './bbox';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
-import { Scene } from './scene';
 import { Path2D } from './path2D';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { compoundAscending, ascendingStringNumberUndefined } from '../util/compare';
@@ -20,7 +19,7 @@ export class Group extends Node {
 
     protected zIndexChanged() {
         if (this.layer) {
-            this._scene?.moveLayer(this.layer, this.zIndex, this.zIndexSubOrder);
+            this._layerManager?.moveLayer(this.layer, this.zIndex, this.zIndexSubOrder);
         }
     }
 
@@ -50,9 +49,9 @@ export class Group extends Node {
         this.name = this.opts?.name;
     }
 
-    _setScene(scene?: Scene) {
-        if (this._scene && this.layer) {
-            this._scene.removeLayer(this.layer);
+    _setLayerManager(scene?: LayerManager) {
+        if (this._layerManager && this.layer) {
+            this._layerManager.removeLayer(this.layer);
             this.layer = undefined;
         }
 
@@ -60,7 +59,7 @@ export class Group extends Node {
             throw new Error('AG Charts - unable to deregister scene rendering layer!');
         }
 
-        super._setScene(scene);
+        super._setLayerManager(scene);
 
         if (scene && this.opts?.layer) {
             const { zIndex, zIndexSubOrder, name } = this.opts || {};

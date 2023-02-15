@@ -6,9 +6,9 @@ import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMo
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
 import { Text } from '../../../scene/shape/text';
-import { LegendDatum } from '../../legend';
+import { LegendDatum } from '../../legendDatum';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent } from './cartesianSeries';
-import { ChartAxisDirection } from '../../chartAxis';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { interpolate } from '../../../util/string';

@@ -33,7 +33,6 @@ import {
     AND,
     GREATER_THAN,
 } from './util/validation';
-import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
@@ -44,6 +43,7 @@ import { LogScale } from './scale/logScale';
 import { Default } from './util/default';
 import { Deprecated } from './util/deprecation';
 import { extent } from './util/array';
+import { ChartAxisDirection } from './chart/chartAxisDirection';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,

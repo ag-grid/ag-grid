@@ -6,7 +6,7 @@ import {
     SeriesNodePickMatch,
     SeriesNodeClickEvent,
 } from '../series';
-import { ChartAxis, ChartAxisDirection } from '../../chartAxis';
+import { ChartAxis } from '../../chartAxis';
 import { SeriesMarker } from '../seriesMarker';
 import { doOnce } from '../../../util/function';
 import { isContinuous, isDiscrete } from '../../../util/value';
@@ -26,6 +26,7 @@ import { OPT_FUNCTION, Validate } from '../../../util/validation';
 import { jsonDiff } from '../../../util/json';
 import { BBox } from '../../../scene/bbox';
 import { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,

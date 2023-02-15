@@ -6,7 +6,7 @@ import { Scale } from '../../scale/scale';
 import { ContinuousScale } from '../../scale/continuousScale';
 import { createId } from '../../util/id';
 import { normalizeAngle360, toRadians } from '../../util/angle';
-import { ChartAxisDirection } from '../chartAxis';
+import { ChartAxisDirection } from '../chartAxisDirection';
 import {
     CrossLineLabelPosition,
     labeldDirectionHandling,

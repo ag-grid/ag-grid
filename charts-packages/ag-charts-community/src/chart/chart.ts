@@ -3,12 +3,14 @@ import { Group } from '../scene/group';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 import { Background } from './background';
-import { Legend, LegendDatum } from './legend';
+import { Legend } from './legend';
+
 import { BBox } from '../scene/bbox';
 import { SizeMonitor } from '../util/sizeMonitor';
 import { Caption } from '../caption';
 import { Observable, TypedEvent } from '../util/observable';
-import { ChartAxis, ChartAxisDirection } from './chartAxis';
+import { ChartAxis } from './chartAxis';
+import { ChartAxisDirection } from './chartAxisDirection';
 import { createId } from '../util/id';
 import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '../util/labelPlacement';
 import { AgChartOptions, AgChartClickEvent, AgChartInstance } from './agChartOptions';
@@ -26,19 +28,11 @@ import { Layers } from './layers';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
 import { TooltipManager } from './interaction/tooltipManager';
-import { Module, ModuleInstanceMeta } from '../module-support';
+import { Module, ModuleInstanceMeta } from '../util/module';
 import { ZoomManager } from './interaction/zoomManager';
 import { LayoutService } from './layout/layoutService';
-
-/** Types of chart-update, in pipeline execution order. */
-export enum ChartUpdateType {
-    FULL,
-    PROCESS_DATA,
-    PERFORM_LAYOUT,
-    SERIES_UPDATE,
-    SCENE_RENDER,
-    NONE,
-}
+import { ChartUpdateType } from './chartUpdateType';
+import { LegendDatum } from './legendDatum';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 

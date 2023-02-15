@@ -1,18 +1,18 @@
 import { Group } from '../../scene/group';
-import { LegendDatum } from '../legend';
+import { LegendDatum } from '../legendDatum';
 import { Observable, TypedEvent } from '../../util/observable';
-import { ChartAxis, ChartAxisDirection } from '../chartAxis';
-import { Chart } from '../chart';
+import { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
 import { isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { createDeprecationWarning } from '../../util/deprecation';
 import { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, OPT_COLOR_STRING, STRING, Validate } from '../../util/validation';
-import { PointLabelDatum } from '../../util/labelPlacement';
+import { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import { SizedPoint, Point } from '../../scene/point';
 import { BBox } from '../../scene/bbox';
 import { HighlightManager } from '../interaction/highlightManager';
+import { ChartAxisDirection } from '../chartAxisDirection';
 
 /**
  * Processed series datum used in node selections,
@@ -145,7 +145,11 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     readonly labelGroup?: Group;
 
     // Package-level visibility, not meant to be set by the user.
-    chart?: Chart;
+    chart?: {
+        mode: 'standalone' | 'integrated';
+        placeLabels(): Map<Series<any>, PlacedLabel[]>;
+        getSeriesRect(): Readonly<BBox> | undefined;
+    };
     highlightManager?: HighlightManager;
     xAxis?: ChartAxis;
     yAxis?: ChartAxis;
