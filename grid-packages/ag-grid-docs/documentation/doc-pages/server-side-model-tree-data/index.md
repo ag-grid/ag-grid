@@ -107,9 +107,9 @@ Tree Data can have transactions applied in the same way as row groups. This is e
 
 The example below demonstrates transactions with Tree Data. Note the following:
 - **Add Child to Selected** adds a child under the selected row, even if it wasn't originally a group.
-- **Update Selected** changes the selected rows `Employment Type`.
-- **Delete Selected** removes the selected row, and all of it's child rows.
-- **Move Selected to Robert Peterson** moves the selected row to directly under `Robert Peterson`. 
+- **Update Selected** changes the selected row's `Employment Type`.
+- **Delete Selected** removes the selected row, and all of its child rows.
+- **Move Selected to Robert Peterson** moves the selected row and its children directly under `Robert Peterson`. 
 
 <grid-example title='Transactions with Tree Data' name='transactions-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
@@ -130,5 +130,6 @@ The following example demonstrates Server-Side Tree Data Filtering using the [Se
 - The **Date** column has the Set Filter Tree List enabled via `filterParams.treeList = true`, and is grouped by year -> month -> day.
 - The **Date** column has the filter values supplied asynchronously as an array of `Date` objects.
 - The **Date** column has a `filterParams.keyCreator` provided to convert the `Date` values into the (string) format the server is expecting in the Filter Model.
+- The **Group** and **Date** columns both have `filterParamsexcelMode = 'windows'`, which allows changes to the tree filter to be applied in batches.
 
 <grid-example title='Filtering Tree Data' name='filtering-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
