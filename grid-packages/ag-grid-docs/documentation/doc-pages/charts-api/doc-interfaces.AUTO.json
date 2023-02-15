@@ -1804,7 +1804,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "format": {
-      "description": "/** Format string used when rendering labels for time axes. */",
+      "description": "/** Format string used when rendering labels. */",
       "type": { "returnType": "string", "optional": true }
     },
     "formatter": {

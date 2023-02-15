@@ -632,7 +632,7 @@ export interface AgAxisLabelOptions {
     minSpacing?: PixelSize;
     // mirrored?: boolean;
     // parallel?: boolean;
-    /** Format string used when rendering labels for time axes. */
+    /** Format string used when rendering labels. */
     format?: string;
     /** Function used to render axis labels. If `value` is a number, `fractionDigits` will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of `0.0005` would have `fractionDigits` set to `4` */
     formatter?: (params: AgAxisLabelFormatterParams) => string | undefined;
