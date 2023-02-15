@@ -183,11 +183,11 @@ The table below shows the result of different `interval` values depending on the
 | 0.5 | 10^0, 10^0.5, 10^1, 10^1.5, 10^2, 10^2.5, 10^3, 10^3.5, 10^4 | 2^0, 2^0.5, 2^1, 2^1.5, 2^2, 2^2.5, 2^3, 2^3.5, 2^4  |
 
 
-For `time` axes the `interval` property can be set to a time interval such as `agCharts.time.month`, which makes the axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `agCharts.time.month.every(3)`.
+For `time` axes the `interval` property can be set to a time interval such as `time.month`, which makes the axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `time.month.every(3)`.
 
 ```js
 tick: {
-    interval: agCharts.time.month,
+    interval: time.month,
 }
 ```
 
@@ -198,14 +198,14 @@ Additionally, the time axes tick `interval` can be set to a `number` value repre
 
 
 The example below demonstrates the usage of time intervals:
-- `agCharts.time.month` will produce monthly ticks.
-- `agCharts.time.month.every(2)` will generate ticks for every second month.
+- `time.month` will produce monthly ticks.
+- `time.month.every(2)` will generate ticks for every second month.
 
 ```js
 {
     type: 'time',
     tick: {
-        interval: agCharts.time.month.every(2)
+        interval: time.month.every(2)
     }
 }
 ```
@@ -420,7 +420,7 @@ If no padding modifier is specified, the default is `0` for all directives excep
 
 The `label` config of the bottom axis in the example below uses the `'%b&nbsp;%Y'` specifier string for the `format` property to format dates as the abbreviated name of the month followed by the full year.
 
-Notice that the `label.format` property only affects label formatting but not segmentation. The fact that axis labels were configured to show the name of the month and the year doesn't mean that the axis will show a tick every month. To ensure that it does, we also set the `tick.interval` config to use the `agCharts.time.month` interval.
+Notice that the `label.format` property only affects label formatting but not segmentation. The fact that axis labels were configured to show the name of the month and the year doesn't mean that the axis will show a tick every month. To ensure that it does, we also set the `tick.interval` config to use the `time.month` interval.
 
 Please see the [Axis Ticks](#axis-ticks) section to learn more about tick intervals.
 
