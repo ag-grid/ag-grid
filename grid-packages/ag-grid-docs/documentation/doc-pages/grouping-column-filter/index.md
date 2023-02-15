@@ -44,7 +44,7 @@ The following example shows the Group Column Filter with a [Single Group Column]
 - The other columns demonstrate the different provided filters, and can be added to the group column by dragging them into the [Row Group Panel](/grouping-group-panel/) at the top.
 - If you remove all the columns from the grouping except for the **Athlete** column, the option to show the filter in the **Group** column will be hidden as there is no valid filter to display.
 
-<grid-example title='Group Column Filter - Single Group Column' name='group-filter-single' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "rowgrouping", "menu", "filterpanel"] }'></grid-example>
+<grid-example title='Group Column Filter - Single Group Column' name='group-filter-single' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "rowgrouping", "menu", "filterpanel", "setfilter", "multifilter"] }'></grid-example>
 
 ### Multiple Group Columns
 
@@ -55,7 +55,7 @@ The following example shows the Group Column Filter with [Multiple Group Columns
 - The Group Column Filters for **Country** and **Year** don't show the field dropdown as there is only one underlying column per group column.
 - The floating filters for **Country** and **Year** are using the floating filters from the underlying columns.
 
-<grid-example title='Group Column Filter - Multiple Group Columns' name='group-filter-multiple' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "rowgrouping", "menu"] }'></grid-example>
+<grid-example title='Group Column Filter - Multiple Group Columns' name='group-filter-multiple' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "rowgrouping", "menu", "setfilter"] }'></grid-example>
 
 ## Group Column Floating Filter
 

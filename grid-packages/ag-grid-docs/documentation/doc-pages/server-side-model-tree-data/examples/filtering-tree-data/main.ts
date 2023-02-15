@@ -111,8 +111,12 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 }
 
 function getDatesAsync(params: SetFilterValuesFuncParams<any, Date>) {
+  if (!fakeServer) {
+    // wait for init
+    setTimeout(() => getDatesAsync(params), 500);
+    return;
+  }
   var dates = fakeServer.getDates()
-
 
   if (dates) {
     // values need to match the cell value (what the `valueGetter` returns)
@@ -126,6 +130,11 @@ function getDatesAsync(params: SetFilterValuesFuncParams<any, Date>) {
 } 
 
 function getEmployeesAsync(params: SetFilterValuesFuncParams<any, string[]>) {
+  if (!fakeServer) {
+    // wait for init
+    setTimeout(() => getEmployeesAsync(params), 500);
+    return;
+  }
   var employees = fakeServer.getEmployees()
 
   // simulating real server call with a 500ms delay

@@ -20,12 +20,12 @@ function FakeServer(allData) {
                 lastRow: getLastRowIndex(request, results)
             };
         },
-        getDates() {
+        getDates: function() {
             var sql = 'SELECT DISTINCT startDate FROM ? ORDER BY startDate ASC';
 
             return alasql(sql, [processedData]).map(row => row.startDate);
         },
-        getEmployees() {
+        getEmployees: function() {
             // get children only
             var sql = 'SELECT DISTINCT dataPath FROM ? WHERE underlings = FALSE ORDER BY dataPath ASC';
 
