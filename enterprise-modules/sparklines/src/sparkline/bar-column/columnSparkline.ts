@@ -4,7 +4,7 @@ import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './ba
 const { isNumber } = _Util;
 const { BandScale } = _Scale;
 
-interface ColumnNodeDatum extends RectNodeDatum { }
+interface ColumnNodeDatum extends RectNodeDatum {}
 export class ColumnSparkline extends BarColumnSparkline {
     static className = 'ColumnSparkline';
 
@@ -68,6 +68,7 @@ export class ColumnSparkline extends BarColumnSparkline {
         const nodeData: ColumnNodeDatum[] = [];
 
         const yZero = yScale.convert(0);
+        const continuous = !(xScale instanceof BandScale);
 
         for (let i = 0, n = yData.length; i < n; i++) {
             let yDatum = yData[i];
@@ -79,15 +80,12 @@ export class ColumnSparkline extends BarColumnSparkline {
             }
 
             const y = Math.min(yDatum ? yScale.convert(yDatum) : NaN, yZero);
-            const x = xScale.convert(xDatum);
+            const x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum);
 
             const bottom: number = Math.max(yDatum ? yScale.convert(yDatum) : NaN, yZero);
 
             // if the scale is a band scale, the width of the rects will be the bandwidth, otherwise the width of the rects will be the range / number of items in the data
-            const width =
-                xScale instanceof BandScale
-                    ? xScale.bandwidth
-                    : this.bandWidth;
+            const width = !continuous ? xScale.bandwidth : this.bandWidth;
 
             const height = bottom - y;
 
