@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "rimraf dist typings .hash",
     "test:ci": "export FONTCONFIG_PATH=$PWD/src/chart/test ; export FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf ; export PANGOCAIRO_BACKEND=fontconfig ; npx jest --runInBand",
-    "test:dev": "export FONTCONFIG_PATH=$PWD/src/chart/test ; export FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf ; export PANGOCAIRO_BACKEND=fontconfig ; npx jest",
+    "test:dev": "npm run test-circular-deps ; export FONTCONFIG_PATH=$PWD/src/chart/test ; export FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf ; export PANGOCAIRO_BACKEND=fontconfig ; npx jest",
     "test": "if test -z \"$TEAMCITY_PROJECT_NAME\" ; then exec npm run test:dev ; else exec npm run test:ci ; fi",
     "test-watch": "npm run test:dev -- --watch",
     "test-coverage": "npm run test:dev -- --coverage",
@@ -90,6 +90,7 @@
     "jest-runner": "^27.5.1",
     "jest-serial-runner": "^1.2.1",
     "lint-staged": "^13.0.3",
+    "madge": "6.0.0",
     "pixelmatch": "^5.2.1",
     "prettier": "^2.8.3",
     "raf": "3.4.1",
