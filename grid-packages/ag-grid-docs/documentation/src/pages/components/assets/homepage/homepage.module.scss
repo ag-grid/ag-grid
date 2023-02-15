@@ -158,6 +158,11 @@ body {
         margin-top: ds.$size-1 !important; // !important for .ag-styles specificity
         float: right;
     }
+
+    // fixes homepage charts example .ag-styles specificity bug
+    :global(.ag-chart-menu-close) {
+        display: none !important;
+    }
 }
 
 .homepageDescription {
