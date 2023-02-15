@@ -411,7 +411,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             try {
                 this.labelFormatter = scale.tickFormat({
                     ticks,
-                    count: ticks.length,
                     specifier: format,
                 });
             } catch (e) {

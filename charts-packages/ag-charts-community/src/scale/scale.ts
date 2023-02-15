@@ -7,7 +7,6 @@ export interface ScaleClampParams {
 }
 
 export interface ScaleTickFormatParams {
-    count?: any;
     ticks?: any[];
     specifier?: any;
 }

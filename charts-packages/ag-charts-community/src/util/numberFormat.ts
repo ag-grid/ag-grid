@@ -1,5 +1,3 @@
-import { tickStep } from './ticks';
-
 interface FormatterOptions {
     prefix?: string;
     fill?: string;
@@ -276,26 +274,23 @@ function addPadding(numString: string, width: number, fill = ' ', align = '>') {
     return result;
 }
 
-export function tickFormat(
-    start: number,
-    stop: number,
-    count: number,
-    formatter?: string
-): (n: number | { valueOf(): number }) => string {
-    const step = tickStep(start, stop, count);
+export function tickFormat(ticks: any[], formatter?: string): (n: number | { valueOf(): number }) => string {
     const options = parseFormatter(formatter || ',f');
     if (isNaN(options.precision!)) {
         if (options.type === 's') {
             options.precision = Math.max(
-                ...[start, stop, step, start + step, stop - step].map((x) => {
+                ...ticks.map((x) => {
+                    if (typeof x !== 'number') {
+                        return 0;
+                    }
                     const exp = x.toExponential(12).replace(/\.?[0]+e/, 'e');
                     return exp.substring(0, exp.indexOf('e')).replace('.', '').length;
                 })
             );
         } else if (!options.type || options.type in decimalTypes) {
             options.precision = Math.max(
-                ...[start, stop, step, start + step, stop - step].map((x) => {
-                    if (x === 0) {
+                ...ticks.map((x) => {
+                    if (typeof x !== 'number' || x === 0) {
                         return 0;
                     }
                     const l = Math.floor(Math.log10(Math.abs(x)));
