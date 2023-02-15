@@ -76,8 +76,8 @@ export class NavigationService extends BeanStub {
         const ctrl = event.ctrlKey || event.metaKey;
         const rangeServiceShouldHandleShift = !!this.rangeService && event.shiftKey;
 
+        // home and end can be processed without knowing the currently selected cell, this can occur for full width rows.
         const currentCell: CellPosition | null = this.mouseEventService.getCellPositionForEvent(event);
-        if (!currentCell) { return false; }
 
         let processed = false;
 
@@ -94,6 +94,7 @@ export class NavigationService extends BeanStub {
             case KeyCode.RIGHT:
             case KeyCode.UP:
             case KeyCode.DOWN:
+                if (!currentCell) { return false; }
                 // handle when ctrl is pressed only, if shift is pressed
                 // it will be handled by the rangeService
                 if (ctrl && !alt && !rangeServiceShouldHandleShift) {
@@ -102,6 +103,7 @@ export class NavigationService extends BeanStub {
                 }
                 break;
             case KeyCode.PAGE_DOWN:
+                if (!currentCell) { return false; }
                 // handle page up and page down when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
                     this.onPageDown(currentCell);
@@ -109,6 +111,7 @@ export class NavigationService extends BeanStub {
                 }
                 break;
             case KeyCode.PAGE_UP:
+                if (!currentCell) { return false; }
                 // handle page up and page down when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
                     this.onPageUp(currentCell);

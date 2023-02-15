@@ -211,6 +211,11 @@ export class RowContainerEventsFeature extends BeanStub {
             const key = keyboardEvent.key;
             if (eventName === 'keydown') {
                 switch (key) {
+                    case KeyCode.PAGE_HOME:
+                    case KeyCode.PAGE_END:
+                        this.navigationService.handlePageScrollingKey(keyboardEvent);
+                        break;
+    
                     case KeyCode.UP:
                     case KeyCode.DOWN:
                         rowComp.onKeyboardNavigate(keyboardEvent);
