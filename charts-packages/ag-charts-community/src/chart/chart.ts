@@ -463,9 +463,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
             case ChartUpdateType.PROCESS_DATA:
                 await this.processData();
                 splits.push(performance.now());
-
-                // Disable tooltip/highlight if the data fundamentally shifted.
-                this.disablePointer();
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (this._autoSize && !this._lastAutoSize) {
@@ -494,6 +491,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 await Promise.all(seriesUpdates);
 
                 splits.push(performance.now());
+            // Fall-through to next pipeline stage.
+            case ChartUpdateType.TOOLTIP_RECALCULATION:
+                const tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
+                if (tooltipMeta != null) {
+                    this.handlePointer(tooltipMeta);
+                }
+
             // Fall-through to next pipeline stage.
             case ChartUpdateType.SCENE_RENDER:
                 await this.scene.render({ debugSplitTimes: splits, extraDebugStats });
@@ -942,7 +946,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
         this.lastInteractionEvent = undefined;
     });
-    protected handlePointer(event: InteractionEvent<'hover'>) {
+    protected handlePointer(event: {
+        pageX: number;
+        pageY: number;
+        offsetX: number;
+        offsetY: number;
+        sourceEvent?: any;
+    }) {
         const { lastPick } = this;
         const { pageX, pageY, offsetX, offsetY } = event;
 
