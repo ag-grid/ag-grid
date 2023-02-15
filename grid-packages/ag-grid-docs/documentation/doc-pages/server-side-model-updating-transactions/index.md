@@ -107,6 +107,10 @@ In the example below, note the following:
 
 <grid-example title='Showcase Example' name='transactions-showcase' type='generated' options='{ "enterprise": true, "exampleHeight": 670, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
+## Tree Data
+
+Transactions are also supported when using Tree data. See this documented on the [SSRM Tree Data](/server-side-model-tree-data/) page.
+
 ## Next Up
 
 Continue to the next section to learn about [Load Retry](/server-side-model-retry/) with the SSRM.

@@ -101,6 +101,18 @@ The example below shows this in action where the following can be noted:
 
 <grid-example title='Purging Tree Data' name='purging-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
+## Transactions with Tree Data
+
+Tree Data can have transactions applied in the same way as row groups. This is explained in the [SSRM Transactions](/server-side-model-updating-transactions/) section.
+
+The example below demonstrates transactions with Tree Data. Note the following:
+- **Add Child to Selected** adds a child under the selected row, even if it wasn't originally a group.
+- **Update Selected** changes the selected rows `Employment Type`.
+- **Delete Selected** removes the selected row, and all of it's child rows.
+- **Move Selected to Robert Peterson** moves the selected row to directly under `Robert Peterson`. 
+
+<grid-example title='Transactions with Tree Data' name='transactions-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
 ## Filtering Tree Data
 
 Server-Side Tree Data Filtering should behave the same as Client-Side [Tree Data Filtering](/tree-data/#tree-data-filtering). A group will be included if:
