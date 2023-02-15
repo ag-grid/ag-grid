@@ -116,7 +116,7 @@ export interface IColumnLimit {
     maxWidth?: number
 }
 
-interface ColDefPropertyChangedEvent extends PropertyChangedEvent {
+export interface ColDefPropertyChangedEvent extends PropertyChangedEvent {
     source?: ColumnEventType;
 }
 
@@ -277,17 +277,18 @@ export class ColumnModel extends BeanStub {
 
         this.addManagedPropertyListener('groupDisplayType', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
-        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('defaultColDef', (params) => this.onDefaultColDefChanged(params.source));
+        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('defaultColDef', (params) => this.onSharedColDefChanged(params.source));
+        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('columnTypes', (params) => this.onSharedColDefChanged(params.source));
     }
 
-    public onAutoGroupColumnDefChanged() {
+    private onAutoGroupColumnDefChanged() {
         this.autoGroupsNeedBuilding = true;
         this.forceRecreateAutoGroups = true;
         this.updateGridColumns();
         this.updateDisplayedColumns('gridOptionsChanged');
     }
 
-    public onDefaultColDefChanged(source: ColumnEventType = 'api'): void {
+    private onSharedColDefChanged(source: ColumnEventType = 'api'): void {
         // likewise for autoGroupCol, the default col def impacts this
         this.forceRecreateAutoGroups = true;
         this.createColumnsFromColumnDefs(true, source);

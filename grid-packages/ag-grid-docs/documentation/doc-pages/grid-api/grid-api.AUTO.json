@@ -179,6 +179,15 @@
       }
     }
   },
+  "setColumnTypes": {
+    "description": "/** Call to set new Column Types. */",
+    "type": {
+      "arguments": {
+        "columnTypes": "{ string: ColDef<TData>; }",
+        "source": "ColumnEventType = \"api\""
+      }
+    }
+  },
   "expireValueCache": { "type": { "arguments": {}, "returnType": "void" } },
   "getVerticalPixelRange": {
     "description": "/** Returns an object with two properties:\n     *  - `top`: The top pixel position of the current scroll in the grid\n     *  - `bottom`: The bottom pixel position of the current scroll in the grid\n     */",

@@ -478,6 +478,11 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('defaultColDef', colDef, true, { source });
     }
 
+    /** Call to set new Column Types. */
+    public setColumnTypes(columnTypes: { string: ColDef<TData> }, source: ColumnEventType = "api") {
+        this.gridOptionsService.set('columnTypes', columnTypes, true, { source });
+    }
+
     public expireValueCache(): void {
         this.valueCache.expire();
     }
