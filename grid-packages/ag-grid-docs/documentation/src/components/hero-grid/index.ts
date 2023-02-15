@@ -34,6 +34,7 @@ const gridOptions: GridOptions = {
     rowData,
     rowHeight: 48,
     headerHeight: 30,
+    popupParent: document.querySelector('body'),
     defaultColDef: {
         resizable: true,
         sortable: true,
