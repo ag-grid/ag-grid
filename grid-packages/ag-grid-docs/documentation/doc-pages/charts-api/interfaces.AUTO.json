@@ -3646,7 +3646,7 @@
   },
   "ScaleTickFormatParams": {
     "meta": {},
-    "type": { "count?": "any", "ticks?": "any[]", "specifier?": "any" }
+    "type": { "ticks?": "any[]", "specifier?": "any" }
   },
   "Scale": {
     "meta": { "typeParams": ["D", "R", "I = number"] },

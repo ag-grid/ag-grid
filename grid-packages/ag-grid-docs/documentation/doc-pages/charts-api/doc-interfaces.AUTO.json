@@ -5194,7 +5194,6 @@
     }
   },
   "ScaleTickFormatParams": {
-    "count": { "type": { "returnType": "any", "optional": true } },
     "ticks": { "type": { "returnType": "any[]", "optional": true } },
     "specifier": { "type": { "returnType": "any", "optional": true } }
   },
