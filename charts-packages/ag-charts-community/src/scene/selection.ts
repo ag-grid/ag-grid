@@ -1,17 +1,16 @@
-import { Node } from './node';
-import { Scene } from './scene';
+import { LayerManager, Node } from './node';
 
 type ValueFn<P, GDatum, PDatum> = (parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[];
 type KeyFn<N, G, GDatum> = (node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string;
 
 class EnterNode {
     constructor(parent: Node | EnterNode, datum: any) {
-        this.scene = parent.scene;
+        this.layerManager = parent.layerManager;
         this.parent = parent;
         this.datum = datum;
     }
 
-    scene?: Scene;
+    layerManager?: LayerManager;
     parent: Node | EnterNode;
     datum: any;
     next: Node | EnterNode | null = null;

@@ -3700,20 +3700,25 @@
     "meta": { "isTypeAlias": true },
     "type": "{ ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D; forceRender: boolean; resized: boolean; clipBBox?: BBox; stats?: { nodesRendered: number; nodesSkipped: number; layersRendered: number; layersSkipped: number; }; debugNodes: Record<string, Node>; }"
   },
+  "Layer": {
+    "meta": { "isTypeAlias": true },
+    "type": "HdpiCanvas | HdpiOffscreenCanvas"
+  },
+  "LayerManager": {
+    "meta": {},
+    "type": {
+      "debug": "SceneDebugOptions",
+      "canvas": "Layer",
+      "markDirty()": "void",
+      "addLayer(opts: { zIndex?: number; zIndexSubOrder?: [ string, number ]; name?: string; getComputedOpacity: () => number; getVisibility: () => boolean; })": "Layer | undefined",
+      "moveLayer(canvas: Layer, zIndex: number, zIndexSubOrder?: [ string, number ])": "void",
+      "removeLayer(canvas: Layer)": "void"
+    }
+  },
   "Point": { "meta": {}, "type": { "x": "number", "y": "number" } },
   "SizedPoint": {
     "meta": {},
     "type": { "size": "number", "x": "number", "y": "number" }
-  },
-  "DebugOptions": {
-    "meta": {},
-    "type": {
-      "stats": "false | 'basic' | 'detailed'",
-      "dirtyTree": "boolean",
-      "renderBoundingBoxes": "boolean",
-      "consoleLog": "boolean",
-      "sceneNodeHighlight": "(string | RegExp)[]"
-    }
   },
   "SceneOptions": {
     "meta": {},
@@ -3732,6 +3737,16 @@
       "canvas": "HdpiOffscreenCanvas | HdpiCanvas",
       "getComputedOpacity": "() => number",
       "getVisibility": "() => boolean"
+    }
+  },
+  "SceneDebugOptions": {
+    "meta": {},
+    "type": {
+      "stats": "false | 'basic' | 'detailed'",
+      "dirtyTree": "boolean",
+      "renderBoundingBoxes": "boolean",
+      "consoleLog": "boolean",
+      "sceneNodeHighlight": "(string | RegExp)[]"
     }
   },
   "ValueFn": {

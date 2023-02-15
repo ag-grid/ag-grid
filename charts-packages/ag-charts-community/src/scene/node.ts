@@ -1,8 +1,10 @@
-import { Scene } from './scene';
 import { Matrix } from './matrix';
 import { BBox } from './bbox';
 import { createId } from '../util/id';
 import { ChangeDetectable, SceneChangeDetection, RedrawType } from './changeDetectable';
+import { SceneDebugOptions } from './sceneDebugOptions';
+import { HdpiCanvas } from '../canvas/hdpiCanvas';
+import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 
 export { SceneChangeDetection, RedrawType };
 
@@ -34,6 +36,23 @@ const zIndexChangedCallback = (o: any) => {
     }
     o.zIndexChanged();
 };
+
+type Layer = HdpiCanvas | HdpiOffscreenCanvas;
+
+export interface LayerManager {
+    debug: SceneDebugOptions;
+    canvas: Layer;
+    markDirty(): void;
+    addLayer(opts: {
+        zIndex?: number;
+        zIndexSubOrder?: [string, number];
+        name?: string;
+        getComputedOpacity: () => number;
+        getVisibility: () => boolean;
+    }): Layer | undefined;
+    moveLayer(canvas: Layer, zIndex: number, zIndexSubOrder?: [string, number]): void;
+    removeLayer(canvas: Layer): void;
+}
 
 /**
  * Abstract scene graph node.
@@ -80,18 +99,18 @@ export abstract class Node extends ChangeDetectable {
     // Note: _setScene and _setParent methods are not meant for end users,
     // but they are not quite private either, rather, they have package level visibility.
 
-    protected _debug?: Scene['debug'];
-    protected _scene?: Scene;
-    _setScene(value?: Scene) {
-        this._scene = value;
+    protected _debug?: SceneDebugOptions;
+    protected _layerManager?: LayerManager;
+    _setLayerManager(value?: LayerManager) {
+        this._layerManager = value;
         this._debug = value?.debug;
 
         for (const child of this.children) {
-            child._setScene(value);
+            child._setLayerManager(value);
         }
     }
-    get scene(): Scene | undefined {
-        return this._scene;
+    get layerManager(): LayerManager | undefined {
+        return this._layerManager;
     }
 
     private _parent?: Node;
@@ -126,8 +145,8 @@ export abstract class Node extends ChangeDetectable {
             if (node.parent) {
                 throw new Error(`${node} already belongs to another parent: ${node.parent}.`);
             }
-            if (node.scene) {
-                throw new Error(`${node} already belongs to a scene: ${node.scene}.`);
+            if (node.layerManager) {
+                throw new Error(`${node} already belongs to a scene: ${node.layerManager}.`);
             }
             if (this.childSet[node.id]) {
                 // Cast to `any` to avoid `Property 'name' does not exist on type 'Function'`.
@@ -138,7 +157,7 @@ export abstract class Node extends ChangeDetectable {
             this.childSet[node.id] = true;
 
             node._parent = this;
-            node._setScene(this.scene);
+            node._setLayerManager(this.layerManager);
         }
 
         this.dirtyZIndex = true;
@@ -159,7 +178,7 @@ export abstract class Node extends ChangeDetectable {
                 this._children.splice(i, 1);
                 delete this.childSet[node.id];
                 node._parent = undefined;
-                node._setScene();
+                node._setLayerManager();
 
                 this.dirtyZIndex = true;
                 this.markDirty(node, RedrawType.MAJOR);
@@ -192,7 +211,7 @@ export abstract class Node extends ChangeDetectable {
                 this._children.splice(i, 0, node);
                 this.childSet[node.id] = true;
                 node._parent = this;
-                node._setScene(this.scene);
+                node._setLayerManager(this.layerManager);
             } else {
                 throw new Error(`${nextNode} has ${parent} as the parent, ` + `but is not in its list of children.`);
             }
@@ -442,8 +461,8 @@ export abstract class Node extends ChangeDetectable {
         this._dirty = type;
         if (this.parent) {
             this.parent.markDirty(this, parentType);
-        } else if (this.scene) {
-            this.scene.markDirty();
+        } else if (this.layerManager) {
+            this.layerManager.markDirty();
         }
     }
     get dirty() {

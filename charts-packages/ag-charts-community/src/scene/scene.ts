@@ -5,14 +5,7 @@ import { Group } from './group';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { windowValue } from '../util/window';
 import { ascendingStringNumberUndefined, compoundAscending } from '../util/compare';
-
-interface DebugOptions {
-    stats: false | 'basic' | 'detailed';
-    dirtyTree: boolean;
-    renderBoundingBoxes: boolean;
-    consoleLog: boolean;
-    sceneNodeHighlight: (string | RegExp)[];
-}
+import { SceneDebugOptions } from './sceneDebugOptions';
 
 interface SceneOptions {
     document: Document;
@@ -254,17 +247,17 @@ export class Scene {
         }
 
         if (this._root) {
-            this._root._setScene();
+            this._root._setLayerManager();
         }
 
         this._root = node;
 
         if (node) {
             // If `node` is the root node of another scene ...
-            if (node.parent === null && node.scene && node.scene !== this) {
-                node.scene.root = null;
+            if (node.parent === null && node.layerManager && node.layerManager !== this) {
+                (node.layerManager as Scene).root = null;
             }
-            node._setScene(this);
+            node._setLayerManager(this);
         }
 
         this.markDirty();
@@ -273,7 +266,7 @@ export class Scene {
         return this._root;
     }
 
-    readonly debug: DebugOptions = {
+    readonly debug: SceneDebugOptions = {
         dirtyTree: false,
         stats: false,
         renderBoundingBoxes: false,

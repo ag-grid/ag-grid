@@ -5240,6 +5240,43 @@
   },
   "PointerEvents": {},
   "RenderContext": {},
+  "Layer": {},
+  "LayerManager": {
+    "debug": {
+      "type": { "returnType": "SceneDebugOptions", "optional": false }
+    },
+    "canvas": { "type": { "returnType": "Layer", "optional": false } },
+    "markDirty": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "addLayer": {
+      "type": {
+        "arguments": {
+          "opts": "{ zIndex?: number; zIndexSubOrder?: [ string, number ]; name?: string; getComputedOpacity: () => number; getVisibility: () => boolean; }"
+        },
+        "returnType": "Layer | undefined",
+        "optional": false
+      }
+    },
+    "moveLayer": {
+      "type": {
+        "arguments": {
+          "canvas": "Layer",
+          "zIndex": "number",
+          "zIndexSubOrder?": "[ string, number ]"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "removeLayer": {
+      "type": {
+        "arguments": { "canvas": "Layer" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
   "Point": {
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } }
@@ -5248,22 +5285,6 @@
     "size": { "type": { "returnType": "number", "optional": false } },
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } }
-  },
-  "DebugOptions": {
-    "stats": {
-      "type": {
-        "returnType": "false | 'basic' | 'detailed'",
-        "optional": false
-      }
-    },
-    "dirtyTree": { "type": { "returnType": "boolean", "optional": false } },
-    "renderBoundingBoxes": {
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "consoleLog": { "type": { "returnType": "boolean", "optional": false } },
-    "sceneNodeHighlight": {
-      "type": { "returnType": "(string | RegExp)[]", "optional": false }
-    }
   },
   "SceneOptions": {
     "document": { "type": { "returnType": "Document", "optional": false } },
@@ -5292,6 +5313,22 @@
     },
     "getVisibility": {
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    }
+  },
+  "SceneDebugOptions": {
+    "stats": {
+      "type": {
+        "returnType": "false | 'basic' | 'detailed'",
+        "optional": false
+      }
+    },
+    "dirtyTree": { "type": { "returnType": "boolean", "optional": false } },
+    "renderBoundingBoxes": {
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "consoleLog": { "type": { "returnType": "boolean", "optional": false } },
+    "sceneNodeHighlight": {
+      "type": { "returnType": "(string | RegExp)[]", "optional": false }
     }
   },
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },
