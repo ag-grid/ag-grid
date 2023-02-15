@@ -277,17 +277,7 @@ function addPadding(numString: string, width: number, fill = ' ', align = '>') {
 export function tickFormat(ticks: any[], formatter?: string): (n: number | { valueOf(): number }) => string {
     const options = parseFormatter(formatter || ',f');
     if (isNaN(options.precision!)) {
-        if (options.type === 's') {
-            options.precision = Math.max(
-                ...ticks.map((x) => {
-                    if (typeof x !== 'number') {
-                        return 0;
-                    }
-                    const exp = x.toExponential(12).replace(/\.?[0]+e/, 'e');
-                    return exp.substring(0, exp.indexOf('e')).replace('.', '').length;
-                })
-            );
-        } else if (!options.type || options.type in decimalTypes) {
+        if (options.type === 'f' || options.type === '%') {
             options.precision = Math.max(
                 ...ticks.map((x) => {
                     if (typeof x !== 'number' || x === 0) {
@@ -302,6 +292,16 @@ export function tickFormat(ticks: any[], formatter?: string): (n: number | { val
                     }
                     const s = exp.indexOf('e') - dotIndex;
                     return Math.max(0, s - l - 1);
+                })
+            );
+        } else if (!options.type || options.type in decimalTypes) {
+            options.precision = Math.max(
+                ...ticks.map((x) => {
+                    if (typeof x !== 'number') {
+                        return 0;
+                    }
+                    const exp = x.toExponential((options.type ? 6 : 12) - 1).replace(/\.?[0]+e/, 'e');
+                    return exp.substring(0, exp.indexOf('e')).replace('.', '').length;
                 })
             );
         }
