@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { withPrefix } from 'gatsby';
 import classnames from 'classnames';
+import { withPrefix } from 'gatsby';
+import React, { useState } from 'react';
 import supportedFrameworks from 'utils/supported-frameworks.js';
 import LogoType from '../../images/inline-svgs/ag-grid-logotype.svg';
 import GithubLogo from '../../images/inline-svgs/github-logo.svg';
@@ -35,18 +35,16 @@ const links = [
 
 const getCurrentPageName = (path) => {
     const rawPath = path.split('/')[1];
-    
+
     const allLinks = [
         ...links,
-        ...supportedFrameworks.map(framework => (
-          { name: 'Documentation', url: `/${framework}-data-grid`}
-        ))
+        ...supportedFrameworks.map((framework) => ({ name: 'Documentation', url: `/${framework}-data-grid` })),
     ];
 
-    const match = allLinks.filter(link => (link.url.includes(rawPath)));
+    const match = allLinks.filter((link) => link.url.includes(rawPath));
 
     if (match && match.length === 1) {
-        return match[0].name
+        return match[0].name;
     }
 };
 
@@ -61,7 +59,7 @@ const HeaderLinks = ({ path }) => {
 
                 return (
                     <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
-                        <a className={styles.navLink} href={link.url} >
+                        <a className={styles.navLink} href={link.url}>
                             {link.icon}
                             <span>{link.name}</span>
                         </a>
