@@ -486,6 +486,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
                 await this.performLayout();
                 splits.push(performance.now());
+
             // Fall-through to next pipeline stage.
             case ChartUpdateType.SERIES_UPDATE:
                 const { seriesRect } = this;
@@ -497,7 +498,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             // Fall-through to next pipeline stage.
             case ChartUpdateType.TOOLTIP_RECALCULATION:
                 const tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
-                if (tooltipMeta != null) {
+                if (performUpdateType < ChartUpdateType.SERIES_UPDATE && tooltipMeta != null) {
                     this.handlePointer(tooltipMeta);
                 }
 
