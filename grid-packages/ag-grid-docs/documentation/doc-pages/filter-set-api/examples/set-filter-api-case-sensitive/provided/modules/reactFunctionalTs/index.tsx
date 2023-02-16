@@ -101,7 +101,7 @@ const GridExample = () => {
 
     const getValues = useCallback((type: string) => {
         const instance = gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type])!;
-        alert(JSON.stringify(instance.getValues(), null, 2));
+        alert(JSON.stringify(instance.getFilterValues(), null, 2));
     }, [alert])
 
     const reset = useCallback((type: string) => {
@@ -121,7 +121,7 @@ const GridExample = () => {
                         <button onClick={() => setModel('insensitive')}>API: setModel() - mismatching case</button>
                         <button onClick={() => getModel('insensitive')}>API: getModel()</button>
                         <button onClick={() => setFilterValues('insensitive')}>API: setFilterValues() - mismatching case</button>
-                        <button onClick={() => getValues('insensitive')}>API: getValues()</button>
+                        <button onClick={() => getValues('insensitive')}>API: getFilterValues()</button>
                         <button onClick={() => reset('insensitive')}>Reset</button>
                     </div>
                     <div style={{ "paddingTop": "10px" }}>
@@ -129,7 +129,7 @@ const GridExample = () => {
                         <button onClick={() => setModel('sensitive')}>API: setModel() - mismatching case</button>
                         <button onClick={() => getModel('sensitive')}>API: getModel()</button>
                         <button onClick={() => setFilterValues('sensitive')}>API: setFilterValues() - mismatching case</button>
-                        <button onClick={() => getValues('sensitive')}>API: getValues()</button>
+                        <button onClick={() => getValues('sensitive')}>API: getFilterValues()</button>
                         <button onClick={() => reset('sensitive')}>Reset</button>
                     </div>
                 </div>
