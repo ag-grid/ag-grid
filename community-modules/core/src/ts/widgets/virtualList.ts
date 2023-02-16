@@ -6,7 +6,6 @@ import { KeyCode } from '../constants/keyCode';
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { waitUntil } from '../utils/function';
 import { TabGuardComp } from './tabGuardComp';
-import { FocusService } from '../focusService';
 import { Events } from '../eventKeys';
 
 export interface VirtualListModel {
@@ -26,7 +25,6 @@ export class VirtualList extends TabGuardComp {
     private lastFocusedRowIndex: number | null;
 
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('focusService') private readonly focusService: FocusService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(
