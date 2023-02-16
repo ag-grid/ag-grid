@@ -154,7 +154,7 @@ export class AreaSparkline extends Sparkline {
             const xDatum = xData[i];
 
             const x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
-            const y = yDatum ? yScale.convert(yDatum) : NaN;
+            const y = yDatum === undefined ? NaN : yScale.convert(yDatum);
 
             // if this iteration is not the last, set nextX using the next value in the data array
             if (i + 1 < n) {
