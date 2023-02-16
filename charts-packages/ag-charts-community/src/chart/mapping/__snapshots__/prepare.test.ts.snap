@@ -10045,7 +10045,7 @@ Object {
         },
       ],
       "label": Object {
-        "autoRotate": false,
+        "autoRotate": true,
         "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
@@ -10065,7 +10065,11 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "maxSpacing": 70,
+        "interval": CountableTimeInterval {
+          "_decode": [Function],
+          "_encode": [Function],
+          "_rangeCallback": undefined,
+        },
         "size": 6,
         "width": 1,
       },
