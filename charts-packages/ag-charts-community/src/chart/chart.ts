@@ -368,8 +368,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
     }
 
-    disablePointer() {
-        this.tooltipManager.updateTooltip(this.id);
+    disablePointer(highlightOnly = false) {
+        if (!highlightOnly) {
+            this.tooltipManager.updateTooltip(this.id);
+        }
         this.highlightManager.updateHighlight(this.id);
         if (this.lastInteractionEvent) {
             this.lastInteractionEvent = undefined;
@@ -462,6 +464,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             case ChartUpdateType.FULL:
             case ChartUpdateType.PROCESS_DATA:
                 await this.processData();
+                this.disablePointer(true);
                 splits.push(performance.now());
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:

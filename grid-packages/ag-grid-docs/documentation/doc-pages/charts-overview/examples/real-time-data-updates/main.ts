@@ -1,10 +1,11 @@
-import { AgCartesianChartOptions, AgChart } from "ag-charts-community"
+import { AgCartesianChartOptions, AgChart, time } from "ag-charts-community"
 
 var systemLoad = 0
 var userLoad = 0
 var data: any[] = []
 var refreshRateInMilliseconds = 50
 var millisecondsOfData = 30 * 1000
+var now = Date.now();
 
 function calculateRandomDelta(maxChange: number) {
   return maxChange / 2 - Math.floor(Math.random() * Math.floor(maxChange + 1))
@@ -65,6 +66,9 @@ const options: AgCartesianChartOptions = {
       type: "time",
       position: "bottom",
       nice: false,
+      tick: {
+        interval: time.second.every(5, { snapTo: now }),
+      },
     },
     {
       type: "number",

@@ -56,7 +56,7 @@ export const Quotes = ({ data }: { data: QuotesData }) => {
     const quotes = filterAndSortByKey(data, 'order');
 
     return (
-        <ul className={styles.container}>
+        <ul className={classNames(styles.container, 'list-style-none')}>
             <QuoteItems quotes={quotes} />
         </ul>
     );

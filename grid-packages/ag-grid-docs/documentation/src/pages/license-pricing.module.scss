@@ -34,7 +34,7 @@
 }
 
 .enterpriseExplainer {
-    margin-top: 84px !important; // !important for .ag-styles specificit
+    margin-top: 76px !important; // !important for .ag-styles specificit
     margin-bottom: $size-4 !important; // !important for .ag-styles specificit
 }
 
@@ -67,10 +67,6 @@
 .videoExplainer,
 .licensesInDetail {
     margin-bottom: $size-8 !important; // !important for .ag-styles specificity
-
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        margin-bottom: $size-9 !important; // !important for .ag-styles specificity
-    }
 }
 
 .bulkLicenses {
