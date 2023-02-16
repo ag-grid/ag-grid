@@ -130,6 +130,6 @@ The following example demonstrates Server-Side Tree Data Filtering using the [Se
 - The **Date** column has the Set Filter Tree List enabled via `filterParams.treeList = true`, and is grouped by year -> month -> day.
 - The **Date** column has the filter values supplied asynchronously as an array of `Date` objects.
 - The **Date** column has a `filterParams.keyCreator` provided to convert the `Date` values into the (string) format the server is expecting in the Filter Model.
-- The **Group** and **Date** columns both have `filterParamsexcelMode = 'windows'`, which allows changes to the tree filter to be applied in batches.
+- The **Group** and **Date** columns both have `filterParams.excelMode = 'windows'`, which allows changes to the tree filter to be applied in batches.
 
 <grid-example title='Filtering Tree Data' name='filtering-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>

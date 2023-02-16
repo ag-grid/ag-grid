@@ -140,7 +140,7 @@ export class LineSparkline extends Sparkline {
             }
 
             const x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
-            const y = yScale.convert(yDatum);
+            const y = yDatum === undefined ? NaN : yScale.convert(yDatum);
 
             nodeData.push({
                 seriesDatum: { x: xDatum, y: yDatum },
@@ -242,7 +242,7 @@ export class LineSparkline extends Sparkline {
             const yDatum = yData[i];
 
             const x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
-            const y = yDatum ? yScale.convert(yDatum) : NaN;
+            const y = yDatum === undefined ? NaN : yScale.convert(yDatum);
 
             if (yDatum == undefined) {
                 moveTo = true;

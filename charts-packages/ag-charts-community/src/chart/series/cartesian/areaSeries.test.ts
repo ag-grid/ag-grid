@@ -5,10 +5,10 @@ import { AgChart } from '../../agChartV2';
 import { Chart } from '../../chart';
 import {
     DATA_FRACTIONAL_LOG_AXIS,
-    // DATA_INVALID_DOMAIN_LOG_AXIS,
+    DATA_INVALID_DOMAIN_LOG_AXIS,
     DATA_NEGATIVE_LOG_AXIS,
     DATA_POSITIVE_LOG_AXIS,
-    // DATA_ZERO_EXTENT_LOG_AXIS,
+    DATA_ZERO_EXTENT_LOG_AXIS,
 } from '../../test/data';
 import * as examples from '../../test/examples';
 import {
@@ -92,8 +92,11 @@ const EXAMPLES: Record<string, TestCase> = {
     AREA_CATEGORY_X_AXIS_POSITIVE_LOG_Y_AXIS: buildLogAxisTestCase(DATA_POSITIVE_LOG_AXIS),
     AREA_CATEGORY_X_AXIS_NEGATIVE_LOG_Y_AXIS: buildLogAxisTestCase(DATA_NEGATIVE_LOG_AXIS),
     AREA_CATEGORY_X_AXIS_FRACTIONAL_LOG_Y_AXIS: buildLogAxisTestCase(DATA_FRACTIONAL_LOG_AXIS),
-    // AREA_CATEGORY_X_AXIS_ZERO_EXTENT_LOG_Y_AXIS: buildLogAxisTestCase(DATA_ZERO_EXTENT_LOG_AXIS),
-    // AREA_CATEGORY_X_AXIS_INVALID_DOMAIN_LOG_Y_AXIS: buildLogAxisTestCase(DATA_INVALID_DOMAIN_LOG_AXIS),
+    AREA_CATEGORY_X_AXIS_ZERO_EXTENT_LOG_Y_AXIS: buildLogAxisTestCase(DATA_ZERO_EXTENT_LOG_AXIS),
+};
+
+const INVALID_DATA_EXAMPLES: Record<string, TestCase> = {
+    AREA_CATEGORY_X_AXIS_INVALID_DOMAIN_LOG_Y_AXIS: buildLogAxisTestCase(DATA_INVALID_DOMAIN_LOG_AXIS),
 };
 
 describe('AreaSeries', () => {
@@ -149,6 +152,49 @@ describe('AreaSeries', () => {
                     await example.extraScreenshotActions(chart);
                     await compare();
                 }
+            });
+        }
+    });
+
+    describe('invalid data domain', () => {
+        beforeEach(() => {
+            console.warn = jest.fn();
+        });
+
+        for (const [exampleName, example] of Object.entries(INVALID_DATA_EXAMPLES)) {
+            it(`for ${exampleName} it should create chart instance as expected`, async () => {
+                const options: AgChartOptions = { ...example.options };
+                options.autoSize = false;
+                options.width = CANVAS_WIDTH;
+                options.height = CANVAS_HEIGHT;
+
+                chart = AgChart.create(options) as Chart;
+                await waitForChartStability(chart);
+                await example.assertions(chart);
+            });
+
+            it(`for ${exampleName} it should render to canvas as expected`, async () => {
+                const compare = async () => {
+                    await waitForChartStability(chart);
+
+                    const imageData = extractImageData(ctx);
+                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+                };
+
+                const options: AgChartOptions = { ...example.options };
+                options.autoSize = false;
+                options.width = CANVAS_WIDTH;
+                options.height = CANVAS_HEIGHT;
+
+                chart = AgChart.create(options) as Chart;
+                await compare();
+
+                if (example.extraScreenshotActions) {
+                    await example.extraScreenshotActions(chart);
+                    await compare();
+                }
+
+                expect(console.warn).toBeCalled();
             });
         }
     });
