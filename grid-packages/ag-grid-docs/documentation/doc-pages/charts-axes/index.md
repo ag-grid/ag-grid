@@ -142,7 +142,11 @@ It is possible to customise or override this default behaviour by using one of t
 - [Values](#tick-values) - used to place a tick at specified values
 
 ### Tick Min and Max Spacing
-`tick.minSpacing` and `tick.maxSpaxing` modify the default behaviour by specifying the approximate minimum and maximum pixel gap which should be present between ticks. An appropriate number of ticks will be generated to satisfy the `tick.minSpacing` and `tick.maxSpacing` constraints. This number will vary depending on the rendered size of the chart.
+
+`tick.minSpacing` and `tick.maxSpaxing` modify the default behaviour by specifying the approximate 
+minimum and maximum pixel gap which should be present between ticks. One or both options can be 
+provided. An appropriate number of ticks will be generated to satisfy the provided `tick.minSpacing`
+and `tick.maxSpacing` constraints. This number will vary depending on the rendered size of the chart.
 
 ```js
 tick: {
@@ -207,15 +211,14 @@ tick: {
 }
 ```
 
-### Example: Axis Tick Density
-
+### Example: Axis Tick Placement
 
 The example below demonstrates how the `tick.minSpacing`, `tick.maxSpacing`, `tick.interval` and `tick.values` properties can be used to control the placement of the ticks.
 
 - There are buttons at the top to change between the different options.
 - There is a grab handle in the bottom right to allow resizing of the chart to see how the ticks change with available space.
 
-<chart-example title='Axis Tick Density' name='axis-tick-density' type='generated'></chart-example>
+<chart-example title='Axis Tick Placement' name='axis-tick-density' type='generated'></chart-example>
 
 ### Tick Styling
 
