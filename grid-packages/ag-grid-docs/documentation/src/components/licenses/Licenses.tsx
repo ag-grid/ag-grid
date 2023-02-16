@@ -41,7 +41,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
 const DEPLOY_LICENSE_DATA = {
     name: 'Deployment License',
     id: 'deployment',
-    subHeading: 'Add-on',
+    subHeading: 'Purchase with Development License',
     priceFullDollars: '750',
     pricePer: 'Application Production Environment',
 };
