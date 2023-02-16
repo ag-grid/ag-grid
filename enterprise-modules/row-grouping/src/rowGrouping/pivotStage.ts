@@ -103,7 +103,9 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
         // ensure childrenMapped is cleared, as if a node has been filtered out it should not have mapped children.
         changedPath.forEachChangedNodeDepthFirst(node => {
-            node.childrenMapped = null;
+            if (node.leafGroup) {
+                node.childrenMapped = null;
+            }
         });
 
         const recursivelyBucketFilteredChildren = (node: RowNode) => {
