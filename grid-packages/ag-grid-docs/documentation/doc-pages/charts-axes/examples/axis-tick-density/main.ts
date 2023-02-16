@@ -64,10 +64,10 @@ function setTickInterval() {
 
 function setTickValues() {
   options.axes![0].tick = {
-    values: [-50, -43 -21, -6, 21, 43, 50],
+    values: [-50, -43, -21, -6, 21, 43, 50],
   }
   options.axes![1].tick = {
-    values: [-50, -43 -21, -6, 21, 43, 50],
+    values: [-50, -43, -21, -6, 21, 43, 50],
   }
   AgChart.update(chart, options)
 }
