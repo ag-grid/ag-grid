@@ -126,7 +126,7 @@ The example below demonstrates Changed Path Selection. The example is best viewe
 
 - When the example first loads, all the data is set into the grid which results in 171 aggregation operations (one for each group), approximately 24,000 comparisons (for sorting all rows in each group, the number of sorts differs slightly dependent on the data values which are random in this example) and 10,000 filter passes (one for each row). The number of milliseconds to complete the operation is also printed (this value will depend on your hardware).
 
-- Select a row and click 'Update', 'Delete' OR 'Duplicate' (duplicate results in an add operation). Note in the console that the number of aggregations, compares and filters is drastically fewer. The total time to execute is also drastically less.
+- Select a row and click **Update**, **Delete** OR **Duplicate** (duplicate results in an add operation). Note in the console that the number of aggregations, compares and filters is drastically fewer. The total time to execute is also drastically less.
 
 - [Suppressing Top Level Aggregations](/aggregation/#suppressing-top-level-aggregations) is enabled via `suppressAggAtRootLevel=true` to improve performance.
 
@@ -153,9 +153,9 @@ contains any adds or removes, the sorting, filtering and grouping will always be
 The example below is identical to the previous example except `suppressModelUpdateAfterUpdateTransaction=true`.
 Note the following:
 
-1. When data is updated (Update buttons), the grid does not re-execute sorting, filtering or aggregation.
-2. When data is added (Duplicate button) or removed (Remove button), the grid does execute sorting, filtering and aggregation.
-3. After data is updated, hitting Update Model gets the grid to sort, filter and aggregate.
+1. When data is updated (**Update** button), the grid does not re-execute sorting, filtering or aggregation.
+2. When data is added (**Duplicate** button) or removed (**Delete** button), the grid does execute sorting, filtering and aggregation.
+3. After data is updated, hitting **Update Model** gets the grid to sort, filter and aggregate.
 
 <grid-example title='Suppress Update Model' name='suppress-update-model' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
