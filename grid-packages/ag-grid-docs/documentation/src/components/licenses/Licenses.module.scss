@@ -71,6 +71,11 @@
         margin-bottom: $size-5 !important; // !important for .ag-styles specificity
         text-align: center;
     }
+
+    .bottom & p:last-child {
+        max-width: 13em;
+        line-height: $line-height-tight;
+    }
 }
 
 p.name {
@@ -106,6 +111,7 @@ p.name {
 
     .bottom & p:last-child {
         max-width: 13em;
+        line-height: $line-height-tight;
     }
 }
 

@@ -15,7 +15,9 @@ main {
 
 .main-container {
     composes: container-fluid p-0 d-flex flex-column from global;
+
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
 }
 

@@ -29,12 +29,12 @@
     &.single-application {
         --card-color: #0f5bce !important; // !important for .ag-styles specificity
         --header-tint: 0.9 !important; // !important for .ag-styles specificity
-        --content-tint: 0.94 !important; // !important for .ag-styles specificity
+        --content-tint: 0.96 !important; // !important for .ag-styles specificity
     }
 
     &.multiple-application {
         --card-color: #2aaa33 !important; // !important for .ag-styles specificity
         --header-tint: 0.91 !important; // !important for .ag-styles specificity
-        --content-tint: 0.94 !important; // !important for .ag-styles specificity
+        --content-tint: 0.97 !important; // !important for .ag-styles specificity
     }
 }

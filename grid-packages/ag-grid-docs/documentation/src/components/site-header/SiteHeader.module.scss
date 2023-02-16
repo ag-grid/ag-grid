@@ -39,11 +39,14 @@ $header-height: 64px;
     --button-hover-color: #{rgba(map.get($abstract-colors, ag-grid-dark-blue), 0.6666)}; // needed for .ag-styles specificity
 
     appearance: none;
-    flex-basis: content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: $header-height;
     height: $header-height;
     margin-left: auto !important; // !important for .ag-styles specificity
-    border: none;
+    padding: 0 !important; // !important for .ag-styles specificity
+    border: none !important; // !important for .ag-styles specificity
     transition: background-color 0.4s ease-in-out;
 
     &[aria-expanded='true'],

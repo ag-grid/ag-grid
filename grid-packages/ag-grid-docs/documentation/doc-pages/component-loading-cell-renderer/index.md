@@ -17,6 +17,8 @@ The example below demonstrates how to provide custom loading cell renderer compo
  
 - **Custom Loading Cell Renderer** is supplied by name via `gridOptions.loadingCellRenderer`.
 - **Custom Loading Cell Renderer Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
+- Example simulates a long delay to display the spinner clearly. 
+- Scrolling the grid will request more rows and again display the loading cell renderer.
 
 <grid-example title='Custom Loading Cell Renderer' name='custom-loading-cell-renderer' type='generated' options='{ "enterprise": true, "modules": ["serverside"], "extras": ["fontawesome"] }'></grid-example>
 

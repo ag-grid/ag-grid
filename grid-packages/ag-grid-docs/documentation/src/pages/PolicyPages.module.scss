@@ -50,7 +50,7 @@
         margin-bottom: ds.$size-6;
     }
 
-    li h3::before {
+    li > h3:first-child:before {
         content: counter(policy-count, decimal) '. ';
         font-weight: ds.$font-weight-normal;
     }

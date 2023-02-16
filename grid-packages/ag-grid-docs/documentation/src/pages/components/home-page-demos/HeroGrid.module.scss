@@ -48,6 +48,10 @@
         background-color: #07161b;
     }
 
+    :global(.ag-icon.ag-icon-filter) {
+        display: none;
+    }
+
     svg[class*='logo-mark'] {
         position: absolute;
         display: block;

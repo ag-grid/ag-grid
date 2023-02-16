@@ -76,7 +76,7 @@
         cursor: pointer;
         color: $dark;
 
-        a {
+        &:a {
             color: $dark;
 
             &:hover {

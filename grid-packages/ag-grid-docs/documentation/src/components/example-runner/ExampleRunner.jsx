@@ -282,11 +282,9 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                     tabIndex="0">
                     <FontAwesomeIcon icon={faCode} fixedWidth />
                 </div>
-                <div className={styles['example-runner__menu-item']} title='Open example in new tab'>
-                    <a href={getIndexHtmlUrl(exampleInfo)} target="_blank" rel="noreferrer">
-                        <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
-                    </a>
-                </div>
+                <a className={styles['example-runner__menu-item']} title='Open example in new tab' href={getIndexHtmlUrl(exampleInfo)} target="_blank" rel="noreferrer">
+                    <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
+                </a>
                 {!exampleInfo.options.noPlunker &&
                     <div
                         className={styles['example-runner__menu-item']}

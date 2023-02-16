@@ -219,7 +219,7 @@ export function formatJsDocString(docString) {
         .replace('/**', '')
         .replace('*/', '')
         .replace(defaultReg, NEWLINE_DEFAULT_STRING)
-        .replace(paramReg, '<br> <strong>$1</strong> $2 \n')
+        .replace(paramReg, '<br> `$1` $2 \n')
         .replace(returnsReg, '<br> <strong>Returns: </strong> $2 \n')
         .replace(optionReg, '<li style="margin-left:1rem"> $1 </li>')
         .replace(newLineReg, ' ');

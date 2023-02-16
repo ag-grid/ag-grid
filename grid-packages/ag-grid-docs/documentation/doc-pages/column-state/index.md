@@ -136,7 +136,7 @@ Using the techniques above, it is possible to save and restore a subset of the p
 The example below demonstrates this by selectively saving and restoring a) sort state and
 b) column visibility and order state.
 
-Note than when saving and restoring Sort state, other state attributes (width, row group, column order etc)
+Note that when saving and restoring Sort state, other state attributes (width, row group, column order etc)
 are not impacted.
 
 Likewise when saving and restoring visibility and order, only visibility and order will be impacted when
@@ -157,7 +157,7 @@ For example setting `sort=null` will clear sort on a column whereas setting
 
 The only exception is with regards to Column Width. For width, both `undefined`
 and `null` will skip the attribute. This is because width is mandatory - there
-is no such things as a Column with no width.
+is no such thing as a Column with no width.
 
 ### Width and Flex
 

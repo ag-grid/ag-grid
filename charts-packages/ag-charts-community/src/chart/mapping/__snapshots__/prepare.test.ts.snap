@@ -79,7 +79,7 @@ Object {
         "fontSize": 14,
         "fontStyle": undefined,
         "fontWeight": "bold",
-        "formatter": [Function],
+        "formatter": undefined,
         "padding": 5,
         "rotation": undefined,
       },
@@ -2073,7 +2073,7 @@ Object {
         "format": "%d/%m",
         "formatter": undefined,
         "padding": 5,
-        "rotation": 30,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -9474,7 +9474,7 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "line",
       "visible": true,
@@ -9531,7 +9531,7 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "line",
       "visible": true,
@@ -10045,7 +10045,7 @@ Object {
         },
       ],
       "label": Object {
-        "autoRotate": false,
+        "autoRotate": true,
         "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
@@ -10065,7 +10065,11 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "maxSpacing": 70,
+        "interval": CountableTimeInterval {
+          "_decode": [Function],
+          "_encode": [Function],
+          "_rangeCallback": undefined,
+        },
         "size": 6,
         "width": 1,
       },
@@ -10447,6 +10451,7 @@ Object {
         "color": "rgb(195, 195, 195)",
         "width": 1,
       },
+      "nice": false,
       "position": "top",
       "thickness": 0,
       "tick": Object {
@@ -10912,7 +10917,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "column",
       "visibles": Array [

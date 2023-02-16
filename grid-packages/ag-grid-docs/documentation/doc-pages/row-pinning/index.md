@@ -23,7 +23,7 @@ Cell editing can take place as normal on pinned rows.
 
 Cell rendering can take place as normal on pinned rows. If you want to use a different
 Cell Renderer for pinned rows vs normal rows, use `colDef.cellRendererSelector` to specify
-different Cell Renderer's for different rows.
+different Cell Renderers for different rows.
 
 <api-documentation source='column-properties/properties.json' section='styling' names='["cellRendererSelector"]' ></api-documentation>
 
