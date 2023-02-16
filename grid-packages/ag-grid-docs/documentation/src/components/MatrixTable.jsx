@@ -178,6 +178,9 @@ const renderValue = (value, booleanOnly, stringOnly, notIn) => {
         );
     }
 
+    // Excel mode table mixes booleans with N/A
+    if (value === 'N/A') { return value; }
+
     return (
         <div>
             {renderTick()}
