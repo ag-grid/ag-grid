@@ -111,7 +111,7 @@ export const Layout = ({
                     </main>
                 </div>
             </div>
-            {fullScreenWithFooter && <Footer framework={framework} />}
+            {(fullScreenWithFooter || !fullScreen) && <Footer framework={framework} />}
         </GlobalContextProvider>
     );
 };
