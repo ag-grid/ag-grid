@@ -218,7 +218,7 @@ The example below demonstrates how the `tick.minSpacing`, `tick.maxSpacing`,
 - There are buttons at the top to change between the different options.
 - There is a grab handle in the bottom right to allow resizing of the chart to see how the ticks change with available space.
 
-<chart-example title='Axis Tick Placement' name='axis-tick-density' type='generated'></chart-example>
+<chart-example title='Axis Tick Placement' name='axis-tick-placement' type='generated'></chart-example>
 
 ### Tick Styling
 
