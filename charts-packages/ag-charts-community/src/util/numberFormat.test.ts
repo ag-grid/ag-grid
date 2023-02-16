@@ -95,6 +95,10 @@ describe('format', () => {
     test('no type specified', () => {
         expect(format(' ')(0.1234567890123456)).toBe('0.123456789012');
     });
+    test('padding with prefix and suffix', () => {
+        expect(format('🌧️ #{0>2.0f} °C')(4)).toBe('🌧️ 04 °C');
+        expect(format('🌧️ #{0>2.0f} °C')(12)).toBe('🌧️ 12 °C');
+    });
     test('scale.tickFormat', () => {
         {
             const scale = new LinearScale();
