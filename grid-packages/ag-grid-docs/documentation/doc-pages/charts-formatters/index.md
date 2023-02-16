@@ -14,24 +14,24 @@ If we take a stacked area series where we want the markers of the second sub-ser
 
 ```js
 function formatter({ yKey, size }) {
-    return { size: yKey === 'electric' ? 12 : size };
+  return { size: yKey === "electric" ? 12 : size }
 }
 
 series: [
-    {
-        type: 'area',
-        xKey: 'quarter',
-        yKey: 'petrol',
-        stacked: true,
-        marker: { formatter },
-    },
-    {
-        type: 'area',
-        xKey: 'quarter',
-        yKey: 'electric',
-        stacked: true,
-        marker: { formatter },
-    },
+  {
+    type: "area",
+    xKey: "quarter",
+    yKey: "petrol",
+    stacked: true,
+    marker: { formatter },
+  },
+  {
+    type: "area",
+    xKey: "quarter",
+    yKey: "electric",
+    stacked: true,
+    marker: { formatter },
+  },
 ]
 ```
 
@@ -44,23 +44,24 @@ Applies to _series without markers_, such as `bar` and `pie`, where each data po
 If we have a list of values by country presented via bar series and want the bar for a particular country to stand out, we could use the following formatter function:
 
 ```js
-function formatter({ datum, fill }) {
-    return {
-        fill: params.datum[params.xKey] === 'UK'
-              ? params.highlighted
-                ? 'lime'
-                : 'red'
-              : params.fill,
-    };
+function formatter(params) {
+  return {
+    fill:
+      params.datum[params.xKey] === "UK"
+        ? params.highlighted
+          ? "lime"
+          : "red"
+        : params.fill,
+  }
 }
 
 series: [
-    {
-        type: 'column',
-        xKey: 'country',
-        yKey: 'gdp',
-        formatter,
-    },
+  {
+    type: "column",
+    xKey: "country",
+    yKey: "gdp",
+    formatter,
+  },
 ]
 ```
 
