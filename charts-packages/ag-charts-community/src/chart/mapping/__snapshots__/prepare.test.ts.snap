@@ -10447,6 +10447,7 @@ Object {
         "color": "rgb(195, 195, 195)",
         "width": 1,
       },
+      "nice": false,
       "position": "top",
       "thickness": 0,
       "tick": Object {
