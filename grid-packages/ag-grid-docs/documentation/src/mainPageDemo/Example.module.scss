@@ -1,9 +1,11 @@
 @use "../design-system/" as *;
 
 .exampleWrapper {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
     display: flex;
     flex-direction: column;
-    -webkit-font-smoothing: antialiased;
     overflow: auto;
 
     max-width: 100%;
