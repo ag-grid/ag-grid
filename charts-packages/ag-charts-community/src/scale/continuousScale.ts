@@ -2,7 +2,7 @@ import { TimeInterval } from '../util/time/interval';
 import { Scale } from './scale';
 
 export abstract class ContinuousScale<D extends number | Date, I = number> implements Scale<D, number, I> {
-    static readonly defaultTickCount = 5;
+    static readonly defaultTickCount = 7;
 
     nice = false;
     interval?: I;
