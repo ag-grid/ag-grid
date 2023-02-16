@@ -119,24 +119,21 @@ that column to determine the line height.
 `autoHeight` is typically used with `wrapText`.
 If `wrapText` is not set, and no custom
 [Cell Renderer Component](/component-cell-renderer/)
-is used, then the cell will display all it's contents on one line. This is probably not
-the intention if using Auto Row Height.
+is used, then the cell will display all its contents on one line. This is probably not the intention if using Auto Row Height.
 
 If multiple columns are marked with `autoHeight=true` then the
 height of the largest column is used.
 
-The example below shows auto height. Column A has Auto Height enabled by setting both `wrapText=true` and `autoHeight=true`. Column B only has `wrapText=true` set so it's contents are clipped if content doesn't fit.
+The example below shows Auto Height. Column A has Auto Height enabled by setting both `wrapText=true` and `autoHeight=true`. Column B only has `wrapText=true` set so its contents are clipped if content doesn't fit.
 
 <!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
 <grid-example title='Auto Row Height' name='auto-row-height' type='generated' options=' { "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 ### Lazy Height Calculation
 
-Auto height works by the grid listening for height changes for all Cells configured
-for Auto Height.
+Auto Height works by the grid listening for height changes for all Cells configured for Auto Height.
 As such it is only looking at rows that are currently rendered into the DOM.
-As the grid scrolls vertically and more rows are displayed, the height of those rows will be
-calculated on the fly.
+As the grid scrolls vertically and more rows are displayed, the height of those rows will be calculated on the fly.
 
 This means the row heights and row positions are changing as the grid is scrolling vertically. This leads to the following behaviours:
 
@@ -152,7 +149,7 @@ Columns with Auto Height will always be rendered. The grid needs to have all Aut
 
 ### Auto Height Performance Consideration
 
-Because auto-height adds size listeners to cells and stops Column Virtualisation, consideration should be given for when and how to use it. Only apply auto-height to columns where it makes sense. For example, if you have many columns that do not require a variable height, then do not set them to auto-height.
+Because Auto Height adds size listeners to cells and stops Column Virtualisation, consideration should be given for when and how to use it. Only apply Auto Height to columns where it makes sense. For example, if you have many columns that do not require a variable height, then do not set them to Auto Height.
 
 
 ## Height for Pinned Rows
