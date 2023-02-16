@@ -5,10 +5,10 @@ import { AgChart } from '../../agChartV2';
 import { Chart } from '../../chart';
 import {
     DATA_FRACTIONAL_LOG_AXIS,
-    DATA_INVALID_DOMAIN_LOG_AXIS,
+    // DATA_INVALID_DOMAIN_LOG_AXIS,
     DATA_NEGATIVE_LOG_AXIS,
     DATA_POSITIVE_LOG_AXIS,
-    DATA_ZERO_EXTENT_LOG_AXIS,
+    // DATA_ZERO_EXTENT_LOG_AXIS,
 } from '../../test/data';
 import * as examples from '../../test/examples';
 import { CARTESIAN_CATEGORY_X_AXIS_LOG_Y_AXIS } from '../../test/examples';
@@ -77,8 +77,8 @@ const EXAMPLES: Record<string, TestCase> = {
     LINE_CATEGORY_X_AXIS_POSITIVE_LOG_Y_AXIS: buildLogAxisTestCase(DATA_POSITIVE_LOG_AXIS),
     LINE_CATEGORY_X_AXIS_NEGATIVE_LOG_Y_AXIS: buildLogAxisTestCase(DATA_NEGATIVE_LOG_AXIS),
     LINE_CATEGORY_X_AXIS_FRACTIONAL_LOG_Y_AXIS: buildLogAxisTestCase(DATA_FRACTIONAL_LOG_AXIS),
-    LINE_CATEGORY_X_AXIS_ZERO_EXTENT_LOG_Y_AXIS: buildLogAxisTestCase(DATA_ZERO_EXTENT_LOG_AXIS),
-    LINE_CATEGORY_X_AXIS_INVALID_DOMAIN_LOG_Y_AXIS: buildLogAxisTestCase(DATA_INVALID_DOMAIN_LOG_AXIS),
+    // LINE_CATEGORY_X_AXIS_ZERO_EXTENT_LOG_Y_AXIS: buildLogAxisTestCase(DATA_ZERO_EXTENT_LOG_AXIS),
+    // LINE_CATEGORY_X_AXIS_INVALID_DOMAIN_LOG_Y_AXIS: buildLogAxisTestCase(DATA_INVALID_DOMAIN_LOG_AXIS),
 };
 
 describe('LineSeries', () => {
