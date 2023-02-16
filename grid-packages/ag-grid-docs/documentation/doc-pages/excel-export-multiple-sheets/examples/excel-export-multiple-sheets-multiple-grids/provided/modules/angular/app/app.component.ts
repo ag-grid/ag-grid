@@ -28,7 +28,6 @@ export class SportRenderer implements ICellRendererAngularComp {
     }
 
     applyTransaction() {
-        console.log("here!!");
         this.params.api.applyTransaction({ remove: [this.params.node.data] });
     }
 
