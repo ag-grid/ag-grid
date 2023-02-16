@@ -10,6 +10,11 @@ When you call `applyTransactionAsync()` the grid will execute the update, along 
 
 <api-documentation source='grid-api/api.json' section='data' names='["applyTransactionAsync"]' ></api-documentation>
 
+The following example demonstrates updating data using normal transactions and async transactions:
+
+- **Normal Update**: Calls `applyTransaction()` 200 times with each call updating a single row.
+- **Async Update**: Calls `applyTransactionAsync()` 200 times with each call updating a single row.
+
 <grid-example title='Async Transaction' name='async-transaction' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"], "exampleHeight": 590 }'></grid-example>
 
 
