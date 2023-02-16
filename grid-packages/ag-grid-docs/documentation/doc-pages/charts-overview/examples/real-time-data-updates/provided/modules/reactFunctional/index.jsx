@@ -1,6 +1,7 @@
 "use strict"
 
 import { AgChartsReact } from "ag-charts-react"
+import { time } from 'ag-charts-community';
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import { render } from "react-dom"
 
@@ -41,6 +42,9 @@ const ChartExample = () => {
         type: "time",
         position: "bottom",
         nice: false,
+        tick: {
+          interval: time.second.every(5, { snapTo: 0 }),
+        },
       },
       {
         type: "number",
