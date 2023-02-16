@@ -32,14 +32,13 @@ const gridOptions: GridOptions<IOlympicData> = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  // fetch 100 rows per at a time
-  cacheBlockSize: 100,
+  // fetch 20 rows per at a time
+  cacheBlockSize: 20,
 
   // only keep 10 blocks of rows
   maxBlocksInCache: 10,
 
   animateRows: true,
-  // debug: true,
 }
 
 // setup the grid after the page has finished loading
@@ -76,7 +75,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
           // inform the grid request failed
           params.fail()
         }
-      }, 2000)
+      }, 4000)
     },
   }
 }
