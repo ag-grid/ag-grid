@@ -42,11 +42,11 @@ function resetTickConfig() {
 
 function setTickMinMaxSpacing() {
   options.axes![0].tick = {
-    minSpacing: 50,
-    maxSpacing: 200,
+    minSpacing: 300,
+    maxSpacing: 500,
   }
   options.axes![1].tick = {
-    minSpacing: 50,
+    minSpacing: 100,
     maxSpacing: 200,
   }
   AgChart.update(chart, options)
@@ -64,10 +64,10 @@ function setTickInterval() {
 
 function setTickValues() {
   options.axes![0].tick = {
-    values: [-50, -25, 0, 25, 50],
+    values: [-50, -43 -21, -6, 21, 43, 50],
   }
   options.axes![1].tick = {
-    values: [-50, -25, 0, 25, 50],
+    values: [-50, -43 -21, -6, 21, 43, 50],
   }
   AgChart.update(chart, options)
 }
