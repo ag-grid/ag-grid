@@ -66,9 +66,9 @@ represent the same percentage increase. Whereas, if the `number` axis was used, 
 The above property of the log axis can also be useful in financial charts. For example, if your rate of
 return on an investment stays consistent over time, the investment value chart will look like a straight line.
 
-By default, the `log` axis attempts to render 10 ticks (and grid lines) per order of magnitude, depending
-on available space. If your range is wide enough, you may start getting too many ticks, in which case
-using a larger value for the `tick: { minSpacing: xxx }` config might be necessary:
+By default, if the data domain has `5` or more orders of magnitude, the `log` axis attempts to render `5` ticks. Otherwise, `10` ticks (the logarithm base) is rendered per order of magnitude. For example a data domain of `[1, 100]` with `2` orders of magnitude, will show `1`, `2`, `3`, `4`,`5`, `6`, `7`, `8`, `9`, `10`, `20`, `30`, `40`, `50`, `60`, `70`, `80`, `90`, `100`.
+
+Depending on the data domain and chart size, using a larger value for the `tick: { minSpacing: xxx }` config might be necessary to reduce the number of ticks.
 
 ```js
 {
@@ -98,7 +98,7 @@ All of the above points are demonstrated by the example below.
 <chart-example title='Number Axis vs Log Axis' name='number-vs-log' type='generated'></chart-example>
 
 [[note]]
-| The range of a log axis should be strictly positive or strictly negative (because there's no power you can raise a number to that will yield zero). For that reason, any non-conforming range will be clipped to conformity, leaving only the larger segment. For example, `[0, 10]` will be clipped to  `[Number.EPSILON, 10]`, while `[-10, 5]` will be clipped to `[-10, -Number.EPSILON]`. Since there can be orders of magnitude difference between `Number.EPSILON` and the other range value, it is often desirable to set the `min` or `max` property of the axis manually. In this case it can be `min: 1` and `max: -1`, respectively.
+| The domain of a log axis should be strictly positive or strictly negative (because there's no power you can raise a number to that will yield zero). For that reason, any non-conforming domain will be clipped to conformity. For example, `[0, 10]` will be clipped to  `[1, 10]`. If the data domain crosses `0`, for example `[-10, 5]`, no data will be rendered. It is often desirable to set the `min` or `max` property of the axis manually. In this case it can be `max: -1`.
 ## Time Axis
 
 The time axis is similar to the number axis in the sense that it is also used to plot continuous values. The time axis can even be used with numeric data (in addition to `Date` objects), but the numbers will be interpreted as Unix timestamps. The time axis differs from the number axis in tick segmentation and label formatting. For example, you could choose to place a tick every 5 minutes, every month, or every Friday.
@@ -143,8 +143,8 @@ It is possible to customise or override this default behaviour by using one of t
 
 ### Tick Min and Max Spacing
 
-`tick.minSpacing` and `tick.maxSpaxing` modify the default behaviour by specifying the approximate 
-minimum and maximum pixel gap which should be present between ticks. One or both options can be 
+`tick.minSpacing` and `tick.maxSpaxing` modify the default behaviour by specifying the approximate
+minimum and maximum pixel gap which should be present between ticks. One or both options can be
 provided. An appropriate number of ticks will be generated to satisfy the provided `tick.minSpacing`
 and `tick.maxSpacing` constraints. This number will vary depending on the rendered size of the chart.
 
