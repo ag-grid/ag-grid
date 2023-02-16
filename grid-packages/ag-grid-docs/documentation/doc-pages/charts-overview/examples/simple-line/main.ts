@@ -1,10 +1,4 @@
-import {
-  AgCartesianSeriesTooltipRendererParams,
-  AgChart,
-  AgChartOptions,
-  AgTooltipRendererResult,
-  time,
-} from "ag-charts-community"
+import { AgCartesianSeriesTooltipRendererParams, AgChart, AgChartOptions, AgTooltipRendererResult, time } from "ag-charts-community"
 import { getData } from "./data"
 
 const dateFormatter = new Intl.DateTimeFormat("en-US")
