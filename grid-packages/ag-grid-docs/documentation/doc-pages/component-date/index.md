@@ -58,7 +58,7 @@ By default the grid will use the browser-provided date picker for all [Supported
 |```
 |
  
-Please see [Provided Components](../components/#grid-provided-components) for more information about overridden AG Grid provided components (as we're doing here
+Please see [Provided Components](../components/#grid-provided-components) for more information about overriding AG Grid provided components (as we're doing here
 by overriding `agDateInput`).
 
 ## Example: Custom Date Component

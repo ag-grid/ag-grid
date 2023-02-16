@@ -10,7 +10,7 @@ Expressions can be used in two different ways as follows:
 
 ## Column Definition Expressions
 
-Expressions can be used inside column definitions instead of using functions for the getters, setters, formatters and parsers. To use an expression instead of a function, just put what the body of the function into a string.
+Expressions can be used inside column definitions instead of using functions for the getters, setters, formatters and parsers. To use an expression instead of a function, just put the body of the function into a string.
 
 <snippet>
 const gridOptions = {

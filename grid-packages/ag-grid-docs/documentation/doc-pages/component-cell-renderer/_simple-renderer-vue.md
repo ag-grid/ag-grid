@@ -15,7 +15,7 @@
 |};
 |```
 |
-|And below is the example using Vue 3's Composition API::
+|And below is the example using Vue 3's Composition API:
 |
 |```js
 |export default {

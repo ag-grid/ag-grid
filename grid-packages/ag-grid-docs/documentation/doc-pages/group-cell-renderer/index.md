@@ -54,7 +54,7 @@ The example is built up as follows:
 
 - The column **Group Renderer A** builds on before, but adds the group cell renderer with `cellRenderer='agGroupCellRenderer'`. The values are exactly as per the previous column, except now we have expand and collapse functionality.
 
-- The column **Group Renderer B** builds on before, but adds `field=city` so that the city is displayed in the leave nodes in the group column.
+- The column **Group Renderer B** builds on before, but adds `field=city` so that the city is displayed in the leaf nodes in the group column.
 
 - The column **Group Renderer C** builds on before, but adds the following `cellRendererParams`:
 
