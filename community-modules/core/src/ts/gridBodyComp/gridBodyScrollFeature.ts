@@ -63,11 +63,8 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private onBodyScrollEnd(e: BodyScrollEndEvent) {
-        if (e.direction === 'horizontal') {
-            this.eLastHScroll = null;
-        } else {
-            this.eLastVScroll = null;
-        }
+        this.eLastHScroll = null;
+        this.eLastVScroll = null;
     }
 
     private addScrollListener() {
