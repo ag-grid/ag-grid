@@ -67,10 +67,6 @@
 .videoExplainer,
 .licensesInDetail {
     margin-bottom: $size-8 !important; // !important for .ag-styles specificity
-
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        margin-bottom: $size-9 !important; // !important for .ag-styles specificity
-    }
 }
 
 .bulkLicenses {
