@@ -76,6 +76,7 @@ const options: AgChartOptions = {
     {
       type: "number",
       position: "top",
+      nice: false,
     },
   ],
   legend: {
