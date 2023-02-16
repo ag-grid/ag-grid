@@ -1,22 +1,31 @@
-import { AgChartOptions, AgChart } from 'ag-charts-community'
-import { data } from './data'
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { data } from "./data"
 
 const options: AgChartOptions = {
-  container: document.getElementById('myChart'),
+  container: document.getElementById("myChart"),
   theme: {
     palette: {
-      fills: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921', '#fa3081'],
-      strokes: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921', '#fa3081'],
+      fills: ["#5BC0EB", "#FDE74C", "#9BC53D", "#E55934", "#FA7921", "#fa3081"],
+      strokes: [
+        "#5BC0EB",
+        "#FDE74C",
+        "#9BC53D",
+        "#E55934",
+        "#FA7921",
+        "#fa3081",
+      ],
     },
-    overrides: { line: { series: { strokeWidth: 3, marker: { enabled: false } } } },
+    overrides: {
+      line: { series: { strokeWidth: 3, marker: { enabled: false } } },
+    },
   },
   autoSize: true,
   title: {
-    text: 'Earthquake Magnitudes by Source (January 2020)',
+    text: "Earthquake Magnitudes by Source (January 2020)",
     fontSize: 18,
   },
   subtitle: {
-    text: 'Source: US Geological Survey',
+    text: "Source: US Geological Survey",
   },
   padding: {
     left: 40,
@@ -25,57 +34,56 @@ const options: AgChartOptions = {
   series: [
     {
       data: data.ci,
-      type: 'line',
-      title: 'Southern California Seismic Network',
-      xKey: 'time',
-      yKey: 'magnitude',
+      type: "line",
+      title: "Southern California Seismic Network",
+      xKey: "time",
+      yKey: "magnitude",
     },
     {
       data: data.hv,
-      type: 'line',
-      title: 'Hawaiian Volcano Observatory Network',
-      xKey: 'time',
-      yKey: 'magnitude',
+      type: "line",
+      title: "Hawaiian Volcano Observatory Network",
+      xKey: "time",
+      yKey: "magnitude",
     },
     {
       data: data.nc,
-      type: 'line',
-      title: 'USGS Northern California Network',
-      xKey: 'time',
-      yKey: 'magnitude',
+      type: "line",
+      title: "USGS Northern California Network",
+      xKey: "time",
+      yKey: "magnitude",
     },
     {
       data: data.ok,
-      type: 'line',
-      title: 'Oklahoma Seismic Network',
-      xKey: 'time',
-      yKey: 'magnitude',
+      type: "line",
+      title: "Oklahoma Seismic Network",
+      xKey: "time",
+      yKey: "magnitude",
     },
   ],
   axes: [
     {
-      position: 'bottom',
-      type: 'time',
+      position: "bottom",
+      type: "time",
       label: {
-        format: '%d/%m',
-        rotation: 30,
+        format: "%d/%m",
       },
     },
     {
-      position: 'left',
-      type: 'number',
+      position: "left",
+      type: "number",
       title: {
-        text: 'Magnitude',
+        text: "Magnitude",
       },
     },
   ],
   legend: {
-    position: 'bottom',
+    position: "bottom",
     item: {
       marker: {
-        strokeWidth: 0
-      }
-    }
+        strokeWidth: 0,
+      },
+    },
   },
 }
 
