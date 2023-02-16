@@ -1,0 +1,24 @@
+// Type definitions for @ag-grid-community/core v29.1.0
+// Project: https://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { BeanStub } from "../context/beanStub";
+export interface LayoutView {
+    updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams): void;
+}
+export declare enum LayoutCssClasses {
+    AUTO_HEIGHT = "ag-layout-auto-height",
+    NORMAL = "ag-layout-normal",
+    PRINT = "ag-layout-print"
+}
+export interface UpdateLayoutClassesParams {
+    autoHeight: boolean;
+    normal: boolean;
+    print: boolean;
+}
+export declare class LayoutFeature extends BeanStub {
+    private view;
+    constructor(view: LayoutView);
+    private postConstruct;
+    private updateLayoutClasses;
+    private getDomLayout;
+}

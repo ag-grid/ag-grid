@@ -1,0 +1,38 @@
+import { BeanStub } from "../context/beanStub";
+export declare class UndoRedoService extends BeanStub {
+    private focusService;
+    private ctrlsService;
+    private rowModel;
+    private pinnedRowModel;
+    private cellPositionUtils;
+    private rowPositionUtils;
+    private columnModel;
+    private readonly rangeService;
+    private gridBodyCtrl;
+    private cellValueChanges;
+    private undoStack;
+    private redoStack;
+    private activeCellEdit;
+    private activeRowEdit;
+    private isPasting;
+    private isRangeInAction;
+    init(): void;
+    private onCellValueChanged;
+    private clearStacks;
+    getCurrentUndoStackSize(): number;
+    getCurrentRedoStackSize(): number;
+    undo(source: 'api' | 'ui'): void;
+    redo(source: 'api' | 'ui'): void;
+    private undoRedo;
+    private processAction;
+    private processRange;
+    private processCell;
+    private setLastFocusedCell;
+    private addRowEditingListeners;
+    private addCellEditingListeners;
+    private addPasteListeners;
+    private addFillListeners;
+    private addCellKeyListeners;
+    private pushActionsToUndoStack;
+    private getRowNode;
+}
