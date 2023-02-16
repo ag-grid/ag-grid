@@ -201,7 +201,7 @@ The example below demonstrates the usage of time intervals:
 
 ### Tick Values
 
-`tick.values` can be used to configure the exact array of tick values to display. This should either be an array of `number`, `date`, `string` or `object` values depending on the axis type.
+`tick.values` can be used to configure the exact array of tick values to display. This should either be an array of `number`, `date` or `string` values depending on the axis type.
 
 These values will also be used as the tick labels unless a `label.format` or `label.formatter` is configured.
 
