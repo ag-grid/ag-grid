@@ -166,7 +166,13 @@ function FakeServer(allData) {
     }
 
     function getLastRowIndex(request) {
-        return executeQuery({ ...request, startRow: undefined, endRow: undefined }).length;
+        const hasFilter = request.filterModel && Object.keys(request.filterModel).length;
+        var results = executeQuery(request, hasFilter);
+
+        if (hasFilter) {
+            results = recursiveFilter(request, results);
+        }
+        return results.length;
     }
 
     function processData(data) {
