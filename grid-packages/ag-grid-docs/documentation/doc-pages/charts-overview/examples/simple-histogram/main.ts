@@ -27,6 +27,9 @@ const options: AgChartOptions = {
       title: {
         text: 'Engine Size (Cubic inches)',
       },
+      tick: {
+        interval: 20,
+      },
     },
     {
       position: 'left',
