@@ -109,7 +109,7 @@ In the example below, note the following:
 
 ## Tree Data
 
-Transactions are also supported when using Tree data. See this documented on the [SSRM Tree Data](/server-side-model-tree-data/) page.
+Transactions are also supported when using Tree data. See this documented on the [SSRM Tree Data](/server-side-model-tree-data/#transactions-with-tree-data) page.
 
 ## Next Up
 
