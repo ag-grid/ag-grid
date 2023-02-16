@@ -1,4 +1,4 @@
-import { AgChart, AgCartesianChartOptions } from "ag-charts-community"
+import { AgChart, AgCartesianChartOptions, time } from "ag-charts-community"
 
 var systemLoad = 0
 var userLoad = 0
@@ -65,6 +65,9 @@ const options: AgCartesianChartOptions = {
       type: "time",
       position: "bottom",
       nice: false,
+      tick: {
+        interval: time.second.every(5, { snapTo: 0 }),
+      },
     },
     {
       type: "number",

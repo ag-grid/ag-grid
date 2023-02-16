@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { render } from 'react-dom';
 import { AgChartsReact } from 'ag-charts-react';
-import { AgCartesianChartOptions } from 'ag-charts-community';
+import { AgCartesianChartOptions, time } from 'ag-charts-community';
 
 const ChartExample = () => {
     const chartRef = useRef<AgChartsReact>(null);
@@ -31,6 +31,9 @@ const ChartExample = () => {
                 type: "time",
                 position: "bottom",
                 nice: false,
+                tick: {
+                    interval: time.second.every(5, { snapTo: 0 }),
+                  },
             },
             {
                 type: "number",
