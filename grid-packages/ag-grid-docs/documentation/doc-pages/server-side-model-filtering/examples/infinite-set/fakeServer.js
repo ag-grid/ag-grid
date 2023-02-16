@@ -19,7 +19,7 @@ function FakeServer(allData) {
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request, results),
+                lastRow: getLastRowIndex(request),
             };
         },
         getCountries: function() {
@@ -96,17 +96,10 @@ function FakeServer(allData) {
         if (request.endRow == undefined || request.startRow == undefined) { return ''; }
         var blockSize = request.endRow - request.startRow;
 
-        return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
+        return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }
 
-    function getLastRowIndex(request, results) {
-        if (!results || results.length === 0) {
-            return request.startRow;
-        }
-        if (request.endRow == undefined || request.startRow == undefined) { return results.length; }
-
-        var currentLastRow = request.startRow + results.length;
-
-        return currentLastRow <= request.endRow ? currentLastRow : -1;
+    function getLastRowIndex(request) {
+        return executeQuery({ ...request, startRow: undefined, endRow: undefined }).length;
     }
 }

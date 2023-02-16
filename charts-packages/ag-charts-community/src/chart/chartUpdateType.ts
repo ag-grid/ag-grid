@@ -4,6 +4,7 @@ export enum ChartUpdateType {
     PROCESS_DATA,
     PERFORM_LAYOUT,
     SERIES_UPDATE,
+    TOOLTIP_RECALCULATION,
     SCENE_RENDER,
     NONE,
 }

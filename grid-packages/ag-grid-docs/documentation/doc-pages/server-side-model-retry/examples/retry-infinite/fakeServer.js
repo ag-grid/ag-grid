@@ -19,7 +19,7 @@ function FakeServer(allData) {
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request, results)
+                lastRow: getLastRowIndex(request)
             };
         }
     };
@@ -105,7 +105,7 @@ function FakeServer(allData) {
 
         var blockSize = request.endRow - request.startRow;
 
-        return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
+        return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }
 
     function isDoingGrouping(rowGroupCols, groupKeys) {
@@ -113,12 +113,7 @@ function FakeServer(allData) {
         return rowGroupCols.length > groupKeys.length;
     }
 
-    function getLastRowIndex(request, results) {
-        if (!results || results.length === 0) { return null; }
-        if (request.endRow == undefined || request.startRow == undefined) { return results.length; }
-
-        var currentLastRow = request.startRow + results.length;
-
-        return currentLastRow <= request.endRow ? currentLastRow : -1;
+    function getLastRowIndex(request) {
+        return executeQuery({ ...request, startRow: undefined, endRow: undefined }).length;
     }
 }

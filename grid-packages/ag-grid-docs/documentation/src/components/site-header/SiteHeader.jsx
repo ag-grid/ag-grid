@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { withPrefix } from 'gatsby';
 import classnames from 'classnames';
+import { withPrefix } from 'gatsby';
+import React, { useRef, useState } from 'react';
 import supportedFrameworks from 'utils/supported-frameworks.js';
 import LogoType from '../../images/inline-svgs/ag-grid-logotype.svg';
 import GithubLogo from '../../images/inline-svgs/github-logo.svg';
@@ -35,22 +35,20 @@ const links = [
 
 const getCurrentPageName = (path) => {
     const rawPath = path.split('/')[1];
-    
+
     const allLinks = [
         ...links,
-        ...supportedFrameworks.map(framework => (
-          { name: 'Documentation', url: `/${framework}-data-grid`}
-        ))
+        ...supportedFrameworks.map((framework) => ({ name: 'Documentation', url: `/${framework}-data-grid` })),
     ];
 
-    const match = allLinks.filter(link => (link.url.includes(rawPath)));
+    const match = allLinks.filter((link) => link.url.includes(rawPath));
 
     if (match && match.length === 1) {
-        return match[0].name
+        return match[0].name;
     }
 };
 
-const HeaderLinks = ({ path }) => {
+const HeaderLinks = ({ path, toggleButtonRef }) => {
     return (
         <ul className={classnames(styles.navItemList, 'list-style-none')}>
             {links.map((link) => {
@@ -61,7 +59,16 @@ const HeaderLinks = ({ path }) => {
 
                 return (
                     <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
-                        <a className={styles.navLink} href={link.url} >
+                        <a
+                            className={styles.navLink}
+                            href={link.url}
+                            onClick={() => {
+                                const isOpen = !toggleButtonRef.current?.classList.contains('collapsed');
+                                if (isOpen) {
+                                    toggleButtonRef.current?.click();
+                                }
+                            }}
+                        >
                             {link.icon}
                             <span>{link.name}</span>
                         </a>
@@ -72,8 +79,9 @@ const HeaderLinks = ({ path }) => {
     );
 };
 
-const HeaderExpandButton = () => (
+const HeaderExpandButton = ({ buttonRef }) => (
     <button
+        ref={buttonRef}
         className={styles.mobileMenuButton}
         type="button"
         data-toggle="collapse"
@@ -86,14 +94,17 @@ const HeaderExpandButton = () => (
     </button>
 );
 
-const HeaderNav = ({ path }) => (
-    <>
-        <HeaderExpandButton />
-        <nav className={classnames(styles.nav, 'collapse')} id="main-nav">
-            <HeaderLinks path={path} />
-        </nav>
-    </>
-);
+const HeaderNav = ({ path }) => {
+    const buttonRef = useRef();
+    return (
+        <>
+            <HeaderExpandButton buttonRef={buttonRef} />
+            <nav className={classnames(styles.nav, 'collapse')} id="main-nav">
+                <HeaderLinks path={path} toggleButtonRef={buttonRef} />
+            </nav>
+        </>
+    );
+};
 
 export const SiteHeader = ({ path }) => {
     const [isLogoHover, setIsLogoHover] = useState(false);

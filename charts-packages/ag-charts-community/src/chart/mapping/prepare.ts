@@ -101,11 +101,12 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
     }
 }
 
+const SERIES_OPTION_TYPES = ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'];
 function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsTypes['type']> {
     if (input == null) {
         return false;
     }
-    return ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'].indexOf(input) >= 0;
+    return SERIES_OPTION_TYPES.indexOf(input) >= 0;
 }
 
 function countArrayElements<T extends any[] | any[][]>(input: T): number {
@@ -147,8 +148,18 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
     // Determine type and ensure it's explicit in the options config.
     const userSuppliedOptionsType = options.type;
     const type = optionsType(options);
-    if (type != null && !isSeriesOptionType(type)) {
-        throw new Error(`AG Charts - unknown series type: ${type}`);
+
+    const checkSeriesType = (type?: string) => {
+        if (type != null && !isSeriesOptionType(type)) {
+            throw new Error(
+                `AG Charts - unknown series type: ${type}; expected one of: ${SERIES_OPTION_TYPES.join(', ')}`
+            );
+        }
+    };
+    checkSeriesType(type);
+    for (const { type: seriesType } of options.series ?? []) {
+        if (seriesType == null) continue;
+        checkSeriesType(seriesType);
     }
 
     options = { ...options, type };

@@ -1640,7 +1640,7 @@
       "type": { "returnType": "CssColor", "optional": true }
     },
     "values": {
-      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "description": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
       "type": { "returnType": "any[]", "optional": true }
     },
     "minSpacing": {
@@ -1666,7 +1666,7 @@
       "type": { "returnType": "CssColor", "optional": true }
     },
     "values": {
-      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "description": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
       "type": { "returnType": "any[]", "optional": true }
     },
     "minSpacing": {
@@ -1684,7 +1684,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "interval": {
-      "description": "/** The step value between ticks specified as a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
+      "description": "/** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "width": {
@@ -1700,7 +1700,7 @@
       "type": { "returnType": "CssColor", "optional": true }
     },
     "values": {
-      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "description": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
       "type": { "returnType": "any[]", "optional": true }
     },
     "minSpacing": {
@@ -1718,7 +1718,7 @@
       "type": { "returnType": "any", "optional": true }
     },
     "interval": {
-      "description": "/** The step value between ticks specified as a number or a TimeInterval. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
+      "description": "/** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
       "type": { "returnType": "any", "optional": true }
     },
     "width": {
@@ -1734,7 +1734,7 @@
       "type": { "returnType": "CssColor", "optional": true }
     },
     "values": {
-      "description": "/** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.\n     */",
+      "description": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
       "type": { "returnType": "any[]", "optional": true }
     },
     "minSpacing": {

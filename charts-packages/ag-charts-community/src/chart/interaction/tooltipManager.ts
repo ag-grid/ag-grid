@@ -32,6 +32,10 @@ export class TooltipManager {
         this.applyStates();
     }
 
+    public getTooltipMeta(callerId: string): TooltipMeta | undefined {
+        return this.states[callerId]?.meta;
+    }
+
     private applyStates() {
         let contentToApply: string | undefined = undefined;
         let metaToApply: TooltipMeta | undefined = undefined;

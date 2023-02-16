@@ -150,5 +150,26 @@ describe('format', () => {
             const expectedTicks = ['35.0', '35.2', '35.4', '35.6', '35.8', '36.0'];
             scale.ticks().forEach((t, i) => expect(f(t)).toBe(expectedTicks[i]));
         }
+
+        const singlePointFormat = (n: number, specifier: string) => {
+            const scale = new LinearScale();
+            const pad = Math.abs(n) * 0.01;
+            scale.domain = [n - pad, n + pad];
+            const format = scale.tickFormat({ specifier, ticks: [n] });
+            return format(n);
+        };
+
+        expect(singlePointFormat(0.1234567890123456, ' ')).toEqual('0.123456789012');
+        expect(singlePointFormat(67.7, 'd')).toEqual('68');
+        expect(singlePointFormat(0.678, '.2p')).toEqual('68%');
+        expect(singlePointFormat(123, 'f')).toEqual('123');
+        expect(singlePointFormat(0.001234567890123456, 'f')).toEqual('0.00123457');
+        expect(singlePointFormat(0.1234567890123456, 'f')).toEqual('0.123457');
+        expect(singlePointFormat(1.234567890123, 'f')).toEqual('1.23457');
+        expect(singlePointFormat(123.4567890123, 'f')).toEqual('123.457');
+        expect(singlePointFormat(12345.67890123, 'f')).toEqual('12345.7');
+        expect(singlePointFormat(1234567.890123, 'f')).toEqual('1234568');
+        expect(singlePointFormat(1234.567890123, 'f')).toEqual('1234.57');
+        expect(singlePointFormat(1234.567890123, ' ')).toEqual('1234.56789012');
     });
 });

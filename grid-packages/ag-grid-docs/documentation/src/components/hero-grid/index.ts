@@ -34,7 +34,6 @@ const gridOptions: GridOptions = {
     rowData,
     rowHeight: 48,
     headerHeight: 30,
-    popupParent: document.querySelector('body'),
     defaultColDef: {
         resizable: true,
         sortable: true,
@@ -96,10 +95,14 @@ export function initGrid({
 }) {
     const init = () => {
         const gridDiv = document.querySelector(selector);
+        if (!gridDiv) {
+            return;
+        }
 
         if (useStaticData) {
             gridOptions.rowData = fixtureData;
         }
+        gridOptions.popupParent = document.querySelector('body');
         gridOptions.onGridReady = () => {
             if (suppressUpdates) {
                 return;
@@ -109,7 +112,7 @@ export function initGrid({
         };
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
 
-        gridDiv?.classList.add('loaded');
+        gridDiv.classList.add('loaded');
     };
 
     const loadGrid = function () {

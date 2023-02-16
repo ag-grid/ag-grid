@@ -84,7 +84,7 @@ The example below demonstrates loading rows using a simple SSRM Datasource. Note
 
 - The Server-Side Row Model is selected using the grid options property: `rowModelType = 'serverSide'`.
 - The datasource is registered with the grid using: `api.setServerSideDatasource(datasource)`.
-- A request is contained in params supplied to `getRows(params)` with `startRow` and `endRow` to determine the range of rows to return.
+- The `getRows(params)` defines the request parameters, with `params` containing a `startRow` and `endRow` that determines the range of rows to return. For example, if block size is 100, the `getRows` function will be called with `startRow: 0` and `endRow: 100` and the grid will expect a result with 100 rows (rows 0 to 99).
 - When scrolling down there is a delay as more rows are fetched from the server.
 - Open the browser's dev console to view the contents of the request made by the grid for rows.
 

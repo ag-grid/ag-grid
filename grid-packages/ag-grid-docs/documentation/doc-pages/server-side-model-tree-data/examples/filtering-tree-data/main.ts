@@ -21,6 +21,7 @@ const columnDefs: ColDef[] = [
     filter: 'agSetColumnFilter',
     filterParams: {
       treeList: true,
+      excelMode:'windows',
       keyCreator: dateKeyCreator,
       valueFormatter: floatingFilterValueFormatter,
       values: getDatesAsync
@@ -40,6 +41,7 @@ const gridOptions: GridOptions = {
     filter: 'agSetColumnFilter',
     filterParams: {
       treeList: true,
+      excelMode:'windows',
       keyCreator: treeDataKeyCreator,
       values: getEmployeesAsync
     } as ISetFilterParams<any, string[]>,
