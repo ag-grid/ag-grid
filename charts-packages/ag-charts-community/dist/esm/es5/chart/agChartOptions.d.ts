@@ -477,7 +477,8 @@ export interface AgAxisBaseTickOptions {
     size?: PixelSize;
     /** The colour of the axis ticks. */
     color?: CssColor;
-    /** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type and within the data domain to be displayed.
+    /** Array of values in axis units to display as ticks along the axis.
+     * The values in this array must be compatible with the axis type.
      */
     values?: any[];
     /** Minimum gap in pixels between tick lines.
@@ -495,7 +496,7 @@ export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
      * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.
      */
     count?: number;
-    /** The step value between ticks specified as a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.
+    /** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.
      */
     interval?: number;
 }
@@ -506,7 +507,7 @@ export interface AgAxisTimeTickOptions extends AgAxisBaseTickOptions {
      * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.
      * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */
     count?: any;
-    /** The step value between ticks specified as a number or a TimeInterval. If the configured interval results in dense ticks given the data domain, the ticks will be removed.
+    /** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.
      */
     interval?: any;
 }

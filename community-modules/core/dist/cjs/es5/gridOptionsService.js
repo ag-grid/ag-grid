@@ -70,25 +70,28 @@ function isTrue(value) {
 }
 var GridOptionsService = /** @class */ (function () {
     function GridOptionsService() {
-        var _this = this;
         this.destroyed = false;
         this.domDataKey = '__AG_' + Math.random().toString();
-        this.contextUpdater = function () { return _this.context = _this.gridOptions.context; };
         this.propertyEventService = new eventService_1.EventService();
     }
+    Object.defineProperty(GridOptionsService.prototype, "context", {
+        // This is quicker then having code call gos.get('context')
+        get: function () {
+            return this.gridOptions['context'];
+        },
+        enumerable: false,
+        configurable: true
+    });
     GridOptionsService.prototype.agWire = function (gridApi, columnApi) {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
         this.api = gridApi;
         this.columnApi = columnApi;
-        this.context = this.gridOptions['context'];
     };
     GridOptionsService.prototype.init = function () {
         this.gridOptionLookup = new Set(__spread(componentUtil_1.ComponentUtil.ALL_PROPERTIES, componentUtil_1.ComponentUtil.EVENT_CALLBACKS));
         var async = !this.is('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
-        // Keep local context property updated
-        this.addEventListener('context', this.contextUpdater);
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
     };
@@ -98,11 +101,7 @@ var GridOptionsService = /** @class */ (function () {
         // of the grid to be picked up by the garbage collector
         this.gridOptions.api = null;
         this.gridOptions.columnApi = null;
-        this.removeEventListener('context', this.contextUpdater);
         this.destroyed = true;
-    };
-    GridOptionsService.prototype.updateContext = function () {
-        this.context = this.gridOptions.context;
     };
     /**
      * Is the given GridOption property set to true.

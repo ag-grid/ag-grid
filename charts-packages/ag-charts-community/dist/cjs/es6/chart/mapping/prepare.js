@@ -68,11 +68,12 @@ function isAgPolarChartOptions(input) {
     }
 }
 exports.isAgPolarChartOptions = isAgPolarChartOptions;
+const SERIES_OPTION_TYPES = ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'];
 function isSeriesOptionType(input) {
     if (input == null) {
         return false;
     }
-    return ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'].indexOf(input) >= 0;
+    return SERIES_OPTION_TYPES.indexOf(input) >= 0;
 }
 function countArrayElements(input) {
     let count = 0;
@@ -97,14 +98,22 @@ exports.noDataCloneMergeOptions = {
     avoidDeepClone: ['data'],
 };
 function prepareOptions(newOptions, ...fallbackOptions) {
-    var _a;
+    var _a, _b;
     let options = json_1.jsonMerge([...fallbackOptions, newOptions], exports.noDataCloneMergeOptions);
     sanityCheckOptions(options);
     // Determine type and ensure it's explicit in the options config.
     const userSuppliedOptionsType = options.type;
     const type = optionsType(options);
-    if (type != null && !isSeriesOptionType(type)) {
-        throw new Error(`AG Charts - unknown series type: ${type}`);
+    const checkSeriesType = (type) => {
+        if (type != null && !isSeriesOptionType(type)) {
+            throw new Error(`AG Charts - unknown series type: ${type}; expected one of: ${SERIES_OPTION_TYPES.join(', ')}`);
+        }
+    };
+    checkSeriesType(type);
+    for (const { type: seriesType } of (_a = options.series) !== null && _a !== void 0 ? _a : []) {
+        if (seriesType == null)
+            continue;
+        checkSeriesType(seriesType);
     }
     options = Object.assign(Object.assign({}, options), { type });
     const defaultSeriesType = isAgCartesianChartOptions(options)
@@ -140,7 +149,7 @@ function prepareOptions(newOptions, ...fallbackOptions) {
         return mergedSeries;
     })).map((s) => prepareSeries(context, s));
     if (isAgCartesianChartOptions(mergedOptions)) {
-        mergedOptions.axes = (_a = mergedOptions.axes) === null || _a === void 0 ? void 0 : _a.map((a) => {
+        mergedOptions.axes = (_b = mergedOptions.axes) === null || _b === void 0 ? void 0 : _b.map((a) => {
             var _a;
             const type = (_a = a.type) !== null && _a !== void 0 ? _a : 'number';
             const axis = Object.assign(Object.assign({}, a), { type });

@@ -15465,8 +15465,8 @@ var RowNode = /** @class */ (function () {
         }
     };
     RowNode.prototype.updateHasChildren = function () {
-        // in CSRM, the rowNode will always have children loaded if it's a group
-        var newValue = !!this.childrenAfterGroup && this.childrenAfterGroup.length > 0;
+        // in CSRM, the group property will be set before the childrenAfterGroup property, check both to prevent flickering
+        var newValue = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
         var isSsrm = this.beans.gridOptionsService.isRowModelType('serverSide');
         if (isSsrm) {
             var isTreeData = this.beans.gridOptionsService.isTreeData();
@@ -21164,26 +21164,19 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         _this.nextScrollTop = -1;
         _this.scrollTop = -1;
         _this.eBodyViewport = eBodyViewport;
+        _this.resetLastHScrollDebounced = debounce(function () { return _this.eLastHScroll = null; }, 500);
+        _this.resetLastVScrollDebounced = debounce(function () { return _this.eLastVScroll = null; }, 500);
         return _this;
     }
     GridBodyScrollFeature.prototype.postConstruct = function () {
         var _this = this;
         this.enableRtl = this.gridOptionsService.is('enableRtl');
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, function (e) { return _this.onBodyScrollEnd(e); });
         this.ctrlsService.whenReady(function (p) {
             _this.centerRowContainerCtrl = p.centerRowContainerCtrl;
             _this.onDisplayedColumnsWidthChanged();
             _this.addScrollListener();
         });
-    };
-    GridBodyScrollFeature.prototype.onBodyScrollEnd = function (e) {
-        if (e.direction === 'horizontal') {
-            this.eLastHScroll = null;
-        }
-        else {
-            this.eLastVScroll = null;
-        }
     };
     GridBodyScrollFeature.prototype.addScrollListener = function () {
         var fakeHScroll = this.ctrlsService.getFakeHScrollComp();
@@ -21275,6 +21268,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         // as the scroll would move 1px at at time bouncing from one grid to the next (eg one grid would cause
         // scroll to 200px, the next to 199px, then the first back to 198px and so on).
         this.doHorizontalScroll(Math.round(getScrollLeft(eSource, this.enableRtl)));
+        this.resetLastHScrollDebounced();
     };
     GridBodyScrollFeature.prototype.onFakeVScroll = function () {
         var fakeVScrollViewport = this.ctrlsService.getFakeVScrollComp().getViewport();
@@ -21312,6 +21306,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         else {
             this.animationFrameService.schedule();
         }
+        this.resetLastVScrollDebounced();
     };
     GridBodyScrollFeature.prototype.doHorizontalScroll = function (scrollLeft) {
         var fakeHScrollViewport = this.ctrlsService.getFakeHScrollComp().getViewport();
@@ -38176,13 +38171,6 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         }
     };
     TabGuardCtrl.prototype.onFocusIn = function (e) {
-        var _a;
-        // when the element that has focus is the tabGuards, we shouldn't deactivate them
-        // as the focus isn't within the component and this could happen as a result of 
-        // `forceFocusOutOfContainer()`.
-        if ((_a = e.target) === null || _a === void 0 ? void 0 : _a.classList.contains(TabGuardClassNames.TAB_GUARD)) {
-            return;
-        }
         if (this.providedFocusIn && this.providedFocusIn(e)) {
             return;
         }
@@ -40752,9 +40740,6 @@ var __decorate$1U = (undefined && undefined.__decorate) || function (decorators,
     __decorate$1U([
         Autowired('resizeObserverService')
     ], VirtualList.prototype, "resizeObserverService", void 0);
-    __decorate$1U([
-        Autowired('focusService')
-    ], VirtualList.prototype, "focusService", void 0);
     __decorate$1U([
         RefSelector('eContainer')
     ], VirtualList.prototype, "eContainer", void 0);
@@ -45986,7 +45971,7 @@ var AbstractFakeScrollComp = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, function (params) {
             if (params.direction === _this.direction) {
                 if (_this.hideTimeout !== null) {
-                    window.clearInterval(_this.hideTimeout);
+                    window.clearTimeout(_this.hideTimeout);
                     _this.hideTimeout = null;
                 }
                 _this.addOrRemoveCssClass('ag-scrollbar-scrolling', true);
@@ -46349,25 +46334,28 @@ function isTrue(value) {
 }
 /** @class */ ((function () {
     function GridOptionsService() {
-        var _this = this;
         this.destroyed = false;
         this.domDataKey = '__AG_' + Math.random().toString();
-        this.contextUpdater = function () { return _this.context = _this.gridOptions.context; };
         this.propertyEventService = new EventService();
     }
+    Object.defineProperty(GridOptionsService.prototype, "context", {
+        // This is quicker then having code call gos.get('context')
+        get: function () {
+            return this.gridOptions['context'];
+        },
+        enumerable: false,
+        configurable: true
+    });
     GridOptionsService.prototype.agWire = function (gridApi, columnApi) {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
         this.api = gridApi;
         this.columnApi = columnApi;
-        this.context = this.gridOptions['context'];
     };
     GridOptionsService.prototype.init = function () {
         this.gridOptionLookup = new Set(__spread$t(ComponentUtil.ALL_PROPERTIES, ComponentUtil.EVENT_CALLBACKS));
         var async = !this.is('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
-        // Keep local context property updated
-        this.addEventListener('context', this.contextUpdater);
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
     };
@@ -46377,11 +46365,7 @@ function isTrue(value) {
         // of the grid to be picked up by the garbage collector
         this.gridOptions.api = null;
         this.gridOptions.columnApi = null;
-        this.removeEventListener('context', this.contextUpdater);
         this.destroyed = true;
-    };
-    GridOptionsService.prototype.updateContext = function () {
-        this.context = this.gridOptions.context;
     };
     /**
      * Is the given GridOption property set to true.
@@ -54150,10 +54134,10 @@ function format(formatter) {
         if (type === '%' || type === 'p') {
             result = result + "%";
         }
-        result = "" + prefix + result + suffix;
         if (!isNaN(width)) {
             result = addPadding(result, width, fill || zero, align);
         }
+        result = "" + prefix + result + suffix;
         return result;
     };
 }
@@ -61940,8 +61924,11 @@ var Chart = /** @class */ (function (_super) {
             console.log(opts);
         }
     };
-    Chart.prototype.disablePointer = function () {
-        this.tooltipManager.updateTooltip(this.id);
+    Chart.prototype.disablePointer = function (highlightOnly) {
+        if (highlightOnly === void 0) { highlightOnly = false; }
+        if (!highlightOnly) {
+            this.tooltipManager.updateTooltip(this.id);
+        }
         this.highlightManager.updateHighlight(this.id);
         if (this.lastInteractionEvent) {
             this.lastInteractionEvent = undefined;
@@ -62073,6 +62060,7 @@ var Chart = /** @class */ (function (_super) {
                     case 1: return [4 /*yield*/, this.processData()];
                     case 2:
                         _c.sent();
+                        this.disablePointer(true);
                         splits.push(performance.now());
                         _c.label = 3;
                     case 3:
@@ -62105,7 +62093,7 @@ var Chart = /** @class */ (function (_super) {
                         _c.label = 7;
                     case 7:
                         tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
-                        if (tooltipMeta != null) {
+                        if (performUpdateType < ChartUpdateType.SERIES_UPDATE && tooltipMeta != null) {
                             this.handlePointer(tooltipMeta);
                         }
                         _c.label = 8;
@@ -64456,6 +64444,14 @@ var LogAxis = /** @class */ (function (_super) {
         var invalidDomain = isInverted || crossesZero || hasZeroExtent;
         if (invalidDomain) {
             d = [];
+            var warningMessage = crossesZero
+                ? 'The data domain crosses zero, the chart data cannot be rendered. See log axis documentation for more information.'
+                : hasZeroExtent
+                    ? 'The data domain has 0 extent, no data is rendered.'
+                    : undefined;
+            if (warningMessage) {
+                console.warn("AG Charts - " + warningMessage);
+            }
         }
         if (d[0] === 0) {
             d[0] = 1;
@@ -71799,11 +71795,12 @@ function isAgPolarChartOptions(input) {
             return false;
     }
 }
+var SERIES_OPTION_TYPES = ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'];
 function isSeriesOptionType(input) {
     if (input == null) {
         return false;
     }
-    return ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'].indexOf(input) >= 0;
+    return SERIES_OPTION_TYPES.indexOf(input) >= 0;
 }
 function countArrayElements(input) {
     var e_1, _a;
@@ -71839,7 +71836,8 @@ var noDataCloneMergeOptions = {
     avoidDeepClone: ['data'],
 };
 function prepareOptions(newOptions) {
-    var _a;
+    var e_2, _a;
+    var _b, _c;
     var fallbackOptions = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         fallbackOptions[_i - 1] = arguments[_i];
@@ -71849,8 +71847,26 @@ function prepareOptions(newOptions) {
     // Determine type and ensure it's explicit in the options config.
     var userSuppliedOptionsType = options.type;
     var type = optionsType(options);
-    if (type != null && !isSeriesOptionType(type)) {
-        throw new Error("AG Charts - unknown series type: " + type);
+    var checkSeriesType = function (type) {
+        if (type != null && !isSeriesOptionType(type)) {
+            throw new Error("AG Charts - unknown series type: " + type + "; expected one of: " + SERIES_OPTION_TYPES.join(', '));
+        }
+    };
+    checkSeriesType(type);
+    try {
+        for (var _d = __values$6((_b = options.series) !== null && _b !== void 0 ? _b : []), _e = _d.next(); !_e.done; _e = _d.next()) {
+            var seriesType = _e.value.type;
+            if (seriesType == null)
+                continue;
+            checkSeriesType(seriesType);
+        }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
+        }
+        finally { if (e_2) throw e_2.error; }
     }
     options = __assign$h(__assign$h({}, options), { type: type });
     var defaultSeriesType = isAgCartesianChartOptions(options)
@@ -71869,7 +71885,7 @@ function prepareOptions(newOptions) {
                 : isAgCartesianChartOptions(options)
                     ? DEFAULT_CARTESIAN_CHART_OVERRIDES
                     : {};
-    var _b = prepareMainOptions(defaultOverrides, options), context = _b.context, mergedOptions = _b.mergedOptions, axesThemes = _b.axesThemes, seriesThemes = _b.seriesThemes;
+    var _f = prepareMainOptions(defaultOverrides, options), context = _f.context, mergedOptions = _f.mergedOptions, axesThemes = _f.axesThemes, seriesThemes = _f.seriesThemes;
     // Special cases where we have arrays of elements which need their own defaults.
     // Apply series themes before calling processSeriesOptions() as it reduces and renames some
     // properties, and in that case then cannot correctly have themes applied.
@@ -71886,7 +71902,7 @@ function prepareOptions(newOptions) {
         return mergedSeries;
     })).map(function (s) { return prepareSeries(context, s); });
     if (isAgCartesianChartOptions(mergedOptions)) {
-        mergedOptions.axes = (_a = mergedOptions.axes) === null || _a === void 0 ? void 0 : _a.map(function (a) {
+        mergedOptions.axes = (_c = mergedOptions.axes) === null || _c === void 0 ? void 0 : _c.map(function (a) {
             var _a;
             var type = (_a = a.type) !== null && _a !== void 0 ? _a : 'number';
             var axis = __assign$h(__assign$h({}, a), { type: type });

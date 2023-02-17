@@ -78,6 +78,7 @@ var BlockUtils = /** @class */ (function (_super) {
         if (!rowNode.hasChildren() && rowNode.childStore != null) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
+            rowNode.expanded = false;
         }
     };
     BlockUtils.prototype.setRowGroupInfo = function (rowNode) {

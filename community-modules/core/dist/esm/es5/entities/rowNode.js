@@ -513,8 +513,8 @@ var RowNode = /** @class */ (function () {
         }
     };
     RowNode.prototype.updateHasChildren = function () {
-        // in CSRM, the rowNode will always have children loaded if it's a group
-        var newValue = !!this.childrenAfterGroup && this.childrenAfterGroup.length > 0;
+        // in CSRM, the group property will be set before the childrenAfterGroup property, check both to prevent flickering
+        var newValue = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
         var isSsrm = this.beans.gridOptionsService.isRowModelType('serverSide');
         if (isSsrm) {
             var isTreeData = this.beans.gridOptionsService.isTreeData();

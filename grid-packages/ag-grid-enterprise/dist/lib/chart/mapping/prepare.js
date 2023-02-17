@@ -110,11 +110,12 @@ function isAgPolarChartOptions(input) {
     }
 }
 exports.isAgPolarChartOptions = isAgPolarChartOptions;
+var SERIES_OPTION_TYPES = ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'];
 function isSeriesOptionType(input) {
     if (input == null) {
         return false;
     }
-    return ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'].indexOf(input) >= 0;
+    return SERIES_OPTION_TYPES.indexOf(input) >= 0;
 }
 function countArrayElements(input) {
     var e_1, _a;
@@ -150,7 +151,8 @@ exports.noDataCloneMergeOptions = {
     avoidDeepClone: ['data'],
 };
 function prepareOptions(newOptions) {
-    var _a;
+    var e_2, _a;
+    var _b, _c;
     var fallbackOptions = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         fallbackOptions[_i - 1] = arguments[_i];
@@ -160,8 +162,26 @@ function prepareOptions(newOptions) {
     // Determine type and ensure it's explicit in the options config.
     var userSuppliedOptionsType = options.type;
     var type = optionsType(options);
-    if (type != null && !isSeriesOptionType(type)) {
-        throw new Error("AG Charts - unknown series type: " + type);
+    var checkSeriesType = function (type) {
+        if (type != null && !isSeriesOptionType(type)) {
+            throw new Error("AG Charts - unknown series type: " + type + "; expected one of: " + SERIES_OPTION_TYPES.join(', '));
+        }
+    };
+    checkSeriesType(type);
+    try {
+        for (var _d = __values((_b = options.series) !== null && _b !== void 0 ? _b : []), _e = _d.next(); !_e.done; _e = _d.next()) {
+            var seriesType = _e.value.type;
+            if (seriesType == null)
+                continue;
+            checkSeriesType(seriesType);
+        }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
+        }
+        finally { if (e_2) throw e_2.error; }
     }
     options = __assign(__assign({}, options), { type: type });
     var defaultSeriesType = isAgCartesianChartOptions(options)
@@ -180,7 +200,7 @@ function prepareOptions(newOptions) {
                 : isAgCartesianChartOptions(options)
                     ? defaults_1.DEFAULT_CARTESIAN_CHART_OVERRIDES
                     : {};
-    var _b = prepareMainOptions(defaultOverrides, options), context = _b.context, mergedOptions = _b.mergedOptions, axesThemes = _b.axesThemes, seriesThemes = _b.seriesThemes;
+    var _f = prepareMainOptions(defaultOverrides, options), context = _f.context, mergedOptions = _f.mergedOptions, axesThemes = _f.axesThemes, seriesThemes = _f.seriesThemes;
     // Special cases where we have arrays of elements which need their own defaults.
     // Apply series themes before calling processSeriesOptions() as it reduces and renames some
     // properties, and in that case then cannot correctly have themes applied.
@@ -197,7 +217,7 @@ function prepareOptions(newOptions) {
         return mergedSeries;
     })).map(function (s) { return prepareSeries(context, s); });
     if (isAgCartesianChartOptions(mergedOptions)) {
-        mergedOptions.axes = (_a = mergedOptions.axes) === null || _a === void 0 ? void 0 : _a.map(function (a) {
+        mergedOptions.axes = (_c = mergedOptions.axes) === null || _c === void 0 ? void 0 : _c.map(function (a) {
             var _a;
             var type = (_a = a.type) !== null && _a !== void 0 ? _a : 'number';
             var axis = __assign(__assign({}, a), { type: type });

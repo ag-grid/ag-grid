@@ -103,10 +103,10 @@ export function format(formatter) {
         if (type === '%' || type === 'p') {
             result = `${result}%`;
         }
-        result = `${prefix}${result}${suffix}`;
         if (!isNaN(width)) {
             result = addPadding(result, width, fill || zero, align);
         }
+        result = `${prefix}${result}${suffix}`;
         return result;
     };
 }

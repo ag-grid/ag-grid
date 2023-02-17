@@ -320,8 +320,10 @@ class Chart extends observable_1.Observable {
             console.log(opts);
         }
     }
-    disablePointer() {
-        this.tooltipManager.updateTooltip(this.id);
+    disablePointer(highlightOnly = false) {
+        if (!highlightOnly) {
+            this.tooltipManager.updateTooltip(this.id);
+        }
         this.highlightManager.updateHighlight(this.id);
         if (this.lastInteractionEvent) {
             this.lastInteractionEvent = undefined;
@@ -393,6 +395,7 @@ class Chart extends observable_1.Observable {
                 case chartUpdateType_1.ChartUpdateType.FULL:
                 case chartUpdateType_1.ChartUpdateType.PROCESS_DATA:
                     yield this.processData();
+                    this.disablePointer(true);
                     splits.push(performance.now());
                 // Fall-through to next pipeline stage.
                 case chartUpdateType_1.ChartUpdateType.PERFORM_LAYOUT:
@@ -421,7 +424,7 @@ class Chart extends observable_1.Observable {
                 // Fall-through to next pipeline stage.
                 case chartUpdateType_1.ChartUpdateType.TOOLTIP_RECALCULATION:
                     const tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
-                    if (tooltipMeta != null) {
+                    if (performUpdateType < chartUpdateType_1.ChartUpdateType.SERIES_UPDATE && tooltipMeta != null) {
                         this.handlePointer(tooltipMeta);
                     }
                 // Fall-through to next pipeline stage.

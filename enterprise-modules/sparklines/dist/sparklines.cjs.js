@@ -6644,10 +6644,10 @@ function format(formatter) {
         if (type === '%' || type === 'p') {
             result = result + "%";
         }
-        result = "" + prefix + result + suffix;
         if (!isNaN(width)) {
             result = addPadding(result, width, fill || zero, align);
         }
+        result = "" + prefix + result + suffix;
         return result;
     };
 }
@@ -14301,8 +14301,11 @@ var Chart = /** @class */ (function (_super) {
             console.log(opts);
         }
     };
-    Chart.prototype.disablePointer = function () {
-        this.tooltipManager.updateTooltip(this.id);
+    Chart.prototype.disablePointer = function (highlightOnly) {
+        if (highlightOnly === void 0) { highlightOnly = false; }
+        if (!highlightOnly) {
+            this.tooltipManager.updateTooltip(this.id);
+        }
         this.highlightManager.updateHighlight(this.id);
         if (this.lastInteractionEvent) {
             this.lastInteractionEvent = undefined;
@@ -14434,6 +14437,7 @@ var Chart = /** @class */ (function (_super) {
                     case 1: return [4 /*yield*/, this.processData()];
                     case 2:
                         _c.sent();
+                        this.disablePointer(true);
                         splits.push(performance.now());
                         _c.label = 3;
                     case 3:
@@ -14466,7 +14470,7 @@ var Chart = /** @class */ (function (_super) {
                         _c.label = 7;
                     case 7:
                         tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
-                        if (tooltipMeta != null) {
+                        if (performUpdateType < ChartUpdateType.SERIES_UPDATE && tooltipMeta != null) {
                             this.handlePointer(tooltipMeta);
                         }
                         _c.label = 8;
@@ -16817,6 +16821,14 @@ var LogAxis = /** @class */ (function (_super) {
         var invalidDomain = isInverted || crossesZero || hasZeroExtent;
         if (invalidDomain) {
             d = [];
+            var warningMessage = crossesZero
+                ? 'The data domain crosses zero, the chart data cannot be rendered. See log axis documentation for more information.'
+                : hasZeroExtent
+                    ? 'The data domain has 0 extent, no data is rendered.'
+                    : undefined;
+            if (warningMessage) {
+                console.warn("AG Charts - " + warningMessage);
+            }
         }
         if (d[0] === 0) {
             d[0] = 1;
@@ -26314,7 +26326,7 @@ var AreaSparkline = /** @class */ (function (_super) {
             var yDatum = yData[i];
             var xDatum = xData[i];
             var x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
-            var y = yDatum ? yScale.convert(yDatum) : NaN;
+            var y = yDatum === undefined ? NaN : yScale.convert(yDatum);
             // if this iteration is not the last, set nextX using the next value in the data array
             if (i + 1 < n) {
                 nextX = xScale.convert(continuous ? xScale.toDomain(xData[i + 1]) : xData[i + 1]) + offsetX;
@@ -26658,7 +26670,7 @@ var LineSparkline = /** @class */ (function (_super) {
                 continue;
             }
             var x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
-            var y = yScale.convert(yDatum);
+            var y = yDatum === undefined ? NaN : yScale.convert(yDatum);
             nodeData.push({
                 seriesDatum: { x: xDatum, y: yDatum },
                 point: { x: x, y: y },
@@ -26735,7 +26747,7 @@ var LineSparkline = /** @class */ (function (_super) {
             var xDatum = xData[i];
             var yDatum = yData[i];
             var x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
-            var y = yDatum ? yScale.convert(yDatum) : NaN;
+            var y = yDatum === undefined ? NaN : yScale.convert(yDatum);
             if (yDatum == undefined) {
                 moveTo = true;
             }
@@ -27125,8 +27137,8 @@ var BarSparkline = /** @class */ (function (_super) {
                 yDatum = 0;
             }
             var y = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum);
-            var x = Math.min(yDatum ? yScale.convert(yDatum) : NaN, yZero);
-            var bottom = Math.max(yDatum ? yScale.convert(yDatum) : NaN, yZero);
+            var x = Math.min(yDatum === undefined ? NaN : yScale.convert(yDatum), yZero);
+            var bottom = Math.max(yDatum === undefined ? NaN : yScale.convert(yDatum), yZero);
             // if the scale is a band scale, the width of the rects will be the bandwidth, otherwise the width of the rects will be the range / number of items in the data
             var height = !continuous ? xScale.bandwidth : this.bandWidth;
             var width = bottom - x;
@@ -27276,9 +27288,9 @@ var ColumnSparkline = /** @class */ (function (_super) {
             if (invalidDatum) {
                 yDatum = 0;
             }
-            var y = Math.min(yDatum ? yScale.convert(yDatum) : NaN, yZero);
+            var y = Math.min(yDatum === undefined ? NaN : yScale.convert(yDatum), yZero);
             var x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum);
-            var bottom = Math.max(yDatum ? yScale.convert(yDatum) : NaN, yZero);
+            var bottom = Math.max(yDatum === undefined ? NaN : yScale.convert(yDatum), yZero);
             // if the scale is a band scale, the width of the rects will be the bandwidth, otherwise the width of the rects will be the range / number of items in the data
             var width = !continuous ? xScale.bandwidth : this.bandWidth;
             var height = bottom - y;

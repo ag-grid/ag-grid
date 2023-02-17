@@ -72,9 +72,9 @@ var ColumnSparkline = /** @class */ (function (_super) {
             if (invalidDatum) {
                 yDatum = 0;
             }
-            var y = Math.min(yDatum ? yScale.convert(yDatum) : NaN, yZero);
+            var y = Math.min(yDatum === undefined ? NaN : yScale.convert(yDatum), yZero);
             var x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum);
-            var bottom = Math.max(yDatum ? yScale.convert(yDatum) : NaN, yZero);
+            var bottom = Math.max(yDatum === undefined ? NaN : yScale.convert(yDatum), yZero);
             // if the scale is a band scale, the width of the rects will be the bandwidth, otherwise the width of the rects will be the range / number of items in the data
             var width = !continuous ? xScale.bandwidth : this.bandWidth;
             var height = bottom - y;

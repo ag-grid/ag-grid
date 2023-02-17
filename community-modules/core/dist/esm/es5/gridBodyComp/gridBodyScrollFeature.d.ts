@@ -20,10 +20,11 @@ export declare class GridBodyScrollFeature extends BeanStub {
     private nextScrollTop;
     private scrollTop;
     private scrollTimer;
+    private readonly resetLastHScrollDebounced;
+    private readonly resetLastVScrollDebounced;
     private centerRowContainerCtrl;
     constructor(eBodyViewport: HTMLElement);
     private postConstruct;
-    private onBodyScrollEnd;
     private addScrollListener;
     private onDisplayedColumnsWidthChanged;
     horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void;

@@ -23,24 +23,17 @@ export class GridBodyScrollFeature extends BeanStub {
         this.nextScrollTop = -1;
         this.scrollTop = -1;
         this.eBodyViewport = eBodyViewport;
+        this.resetLastHScrollDebounced = debounce(() => this.eLastHScroll = null, 500);
+        this.resetLastVScrollDebounced = debounce(() => this.eLastVScroll = null, 500);
     }
     postConstruct() {
         this.enableRtl = this.gridOptionsService.is('enableRtl');
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, (e) => this.onBodyScrollEnd(e));
         this.ctrlsService.whenReady(p => {
             this.centerRowContainerCtrl = p.centerRowContainerCtrl;
             this.onDisplayedColumnsWidthChanged();
             this.addScrollListener();
         });
-    }
-    onBodyScrollEnd(e) {
-        if (e.direction === 'horizontal') {
-            this.eLastHScroll = null;
-        }
-        else {
-            this.eLastVScroll = null;
-        }
     }
     addScrollListener() {
         const fakeHScroll = this.ctrlsService.getFakeHScrollComp();
@@ -132,6 +125,7 @@ export class GridBodyScrollFeature extends BeanStub {
         // as the scroll would move 1px at at time bouncing from one grid to the next (eg one grid would cause
         // scroll to 200px, the next to 199px, then the first back to 198px and so on).
         this.doHorizontalScroll(Math.round(getScrollLeft(eSource, this.enableRtl)));
+        this.resetLastHScrollDebounced();
     }
     onFakeVScroll() {
         const fakeVScrollViewport = this.ctrlsService.getFakeVScrollComp().getViewport();
@@ -169,6 +163,7 @@ export class GridBodyScrollFeature extends BeanStub {
         else {
             this.animationFrameService.schedule();
         }
+        this.resetLastVScrollDebounced();
     }
     doHorizontalScroll(scrollLeft) {
         const fakeHScrollViewport = this.ctrlsService.getFakeHScrollComp().getViewport();

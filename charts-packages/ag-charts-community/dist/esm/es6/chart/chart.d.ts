@@ -82,7 +82,7 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
         keepTransferableResources: boolean;
     }): TransferableResources | undefined;
     log(opts: any): void;
-    disablePointer(): void;
+    disablePointer(highlightOnly?: boolean): void;
     private _pendingFactoryUpdates;
     requestFactoryUpdate(cb: () => Promise<void>): void;
     private _processCallbacks;

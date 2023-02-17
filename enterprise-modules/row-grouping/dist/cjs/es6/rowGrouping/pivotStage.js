@@ -73,11 +73,22 @@ let PivotStage = class PivotStage extends core_1.BeanStub {
     bucketUpRowNodes(changedPath) {
         // accessed from inside inner function
         const uniqueValues = {};
+        // ensure childrenMapped is cleared, as if a node has been filtered out it should not have mapped children.
         changedPath.forEachChangedNodeDepthFirst(node => {
+            if (node.leafGroup) {
+                node.childrenMapped = null;
+            }
+        });
+        const recursivelyBucketFilteredChildren = (node) => {
+            var _a;
             if (node.leafGroup) {
                 this.bucketRowNode(node, uniqueValues);
             }
-        });
+            else {
+                (_a = node.childrenAfterFilter) === null || _a === void 0 ? void 0 : _a.forEach(recursivelyBucketFilteredChildren);
+            }
+        };
+        changedPath.executeFromRootNode(recursivelyBucketFilteredChildren);
         return uniqueValues;
     }
     bucketRowNode(rowNode, uniqueValues) {

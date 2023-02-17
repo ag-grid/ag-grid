@@ -62,6 +62,7 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
         if (!rowNode.hasChildren() && rowNode.childStore != null) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
+            rowNode.expanded = false;
         }
     }
     setRowGroupInfo(rowNode) {

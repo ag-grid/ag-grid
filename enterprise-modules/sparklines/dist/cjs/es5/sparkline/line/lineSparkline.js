@@ -130,7 +130,7 @@ var LineSparkline = /** @class */ (function (_super) {
                 continue;
             }
             var x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
-            var y = yScale.convert(yDatum);
+            var y = yDatum === undefined ? NaN : yScale.convert(yDatum);
             nodeData.push({
                 seriesDatum: { x: xDatum, y: yDatum },
                 point: { x: x, y: y },
@@ -207,7 +207,7 @@ var LineSparkline = /** @class */ (function (_super) {
             var xDatum = xData[i];
             var yDatum = yData[i];
             var x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
-            var y = yDatum ? yScale.convert(yDatum) : NaN;
+            var y = yDatum === undefined ? NaN : yScale.convert(yDatum);
             if (yDatum == undefined) {
                 moveTo = true;
             }

@@ -55,9 +55,9 @@ class ColumnSparkline extends barColumnSparkline_1.BarColumnSparkline {
             if (invalidDatum) {
                 yDatum = 0;
             }
-            const y = Math.min(yDatum ? yScale.convert(yDatum) : NaN, yZero);
+            const y = Math.min(yDatum === undefined ? NaN : yScale.convert(yDatum), yZero);
             const x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum);
-            const bottom = Math.max(yDatum ? yScale.convert(yDatum) : NaN, yZero);
+            const bottom = Math.max(yDatum === undefined ? NaN : yScale.convert(yDatum), yZero);
             // if the scale is a band scale, the width of the rects will be the bandwidth, otherwise the width of the rects will be the range / number of items in the data
             const width = !continuous ? xScale.bandwidth : this.bandWidth;
             const height = bottom - y;

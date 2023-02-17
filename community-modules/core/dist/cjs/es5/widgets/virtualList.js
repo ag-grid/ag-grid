@@ -329,9 +329,6 @@ var VirtualList = /** @class */ (function (_super) {
         context_1.Autowired('resizeObserverService')
     ], VirtualList.prototype, "resizeObserverService", void 0);
     __decorate([
-        context_1.Autowired('focusService')
-    ], VirtualList.prototype, "focusService", void 0);
-    __decorate([
         componentAnnotations_1.RefSelector('eContainer')
     ], VirtualList.prototype, "eContainer", void 0);
     __decorate([

@@ -15465,8 +15465,8 @@ var RowNode = /** @class */ (function () {
         }
     };
     RowNode.prototype.updateHasChildren = function () {
-        // in CSRM, the rowNode will always have children loaded if it's a group
-        var newValue = !!this.childrenAfterGroup && this.childrenAfterGroup.length > 0;
+        // in CSRM, the group property will be set before the childrenAfterGroup property, check both to prevent flickering
+        var newValue = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
         var isSsrm = this.beans.gridOptionsService.isRowModelType('serverSide');
         if (isSsrm) {
             var isTreeData = this.beans.gridOptionsService.isTreeData();
@@ -21164,26 +21164,19 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         _this.nextScrollTop = -1;
         _this.scrollTop = -1;
         _this.eBodyViewport = eBodyViewport;
+        _this.resetLastHScrollDebounced = debounce(function () { return _this.eLastHScroll = null; }, 500);
+        _this.resetLastVScrollDebounced = debounce(function () { return _this.eLastVScroll = null; }, 500);
         return _this;
     }
     GridBodyScrollFeature.prototype.postConstruct = function () {
         var _this = this;
         this.enableRtl = this.gridOptionsService.is('enableRtl');
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, function (e) { return _this.onBodyScrollEnd(e); });
         this.ctrlsService.whenReady(function (p) {
             _this.centerRowContainerCtrl = p.centerRowContainerCtrl;
             _this.onDisplayedColumnsWidthChanged();
             _this.addScrollListener();
         });
-    };
-    GridBodyScrollFeature.prototype.onBodyScrollEnd = function (e) {
-        if (e.direction === 'horizontal') {
-            this.eLastHScroll = null;
-        }
-        else {
-            this.eLastVScroll = null;
-        }
     };
     GridBodyScrollFeature.prototype.addScrollListener = function () {
         var fakeHScroll = this.ctrlsService.getFakeHScrollComp();
@@ -21275,6 +21268,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         // as the scroll would move 1px at at time bouncing from one grid to the next (eg one grid would cause
         // scroll to 200px, the next to 199px, then the first back to 198px and so on).
         this.doHorizontalScroll(Math.round(getScrollLeft(eSource, this.enableRtl)));
+        this.resetLastHScrollDebounced();
     };
     GridBodyScrollFeature.prototype.onFakeVScroll = function () {
         var fakeVScrollViewport = this.ctrlsService.getFakeVScrollComp().getViewport();
@@ -21312,6 +21306,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         else {
             this.animationFrameService.schedule();
         }
+        this.resetLastVScrollDebounced();
     };
     GridBodyScrollFeature.prototype.doHorizontalScroll = function (scrollLeft) {
         var fakeHScrollViewport = this.ctrlsService.getFakeHScrollComp().getViewport();
@@ -38176,13 +38171,6 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         }
     };
     TabGuardCtrl.prototype.onFocusIn = function (e) {
-        var _a;
-        // when the element that has focus is the tabGuards, we shouldn't deactivate them
-        // as the focus isn't within the component and this could happen as a result of 
-        // `forceFocusOutOfContainer()`.
-        if ((_a = e.target) === null || _a === void 0 ? void 0 : _a.classList.contains(TabGuardClassNames.TAB_GUARD)) {
-            return;
-        }
         if (this.providedFocusIn && this.providedFocusIn(e)) {
             return;
         }
@@ -40752,9 +40740,6 @@ var __decorate$K = (undefined && undefined.__decorate) || function (decorators, 
     __decorate$K([
         Autowired('resizeObserverService')
     ], VirtualList.prototype, "resizeObserverService", void 0);
-    __decorate$K([
-        Autowired('focusService')
-    ], VirtualList.prototype, "focusService", void 0);
     __decorate$K([
         RefSelector('eContainer')
     ], VirtualList.prototype, "eContainer", void 0);
@@ -45986,7 +45971,7 @@ var AbstractFakeScrollComp = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, function (params) {
             if (params.direction === _this.direction) {
                 if (_this.hideTimeout !== null) {
-                    window.clearInterval(_this.hideTimeout);
+                    window.clearTimeout(_this.hideTimeout);
                     _this.hideTimeout = null;
                 }
                 _this.addOrRemoveCssClass('ag-scrollbar-scrolling', true);
@@ -46349,25 +46334,28 @@ function isTrue(value) {
 }
 /** @class */ ((function () {
     function GridOptionsService() {
-        var _this = this;
         this.destroyed = false;
         this.domDataKey = '__AG_' + Math.random().toString();
-        this.contextUpdater = function () { return _this.context = _this.gridOptions.context; };
         this.propertyEventService = new EventService();
     }
+    Object.defineProperty(GridOptionsService.prototype, "context", {
+        // This is quicker then having code call gos.get('context')
+        get: function () {
+            return this.gridOptions['context'];
+        },
+        enumerable: false,
+        configurable: true
+    });
     GridOptionsService.prototype.agWire = function (gridApi, columnApi) {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
         this.api = gridApi;
         this.columnApi = columnApi;
-        this.context = this.gridOptions['context'];
     };
     GridOptionsService.prototype.init = function () {
         this.gridOptionLookup = new Set(__spread$2(ComponentUtil.ALL_PROPERTIES, ComponentUtil.EVENT_CALLBACKS));
         var async = !this.is('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
-        // Keep local context property updated
-        this.addEventListener('context', this.contextUpdater);
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
     };
@@ -46377,11 +46365,7 @@ function isTrue(value) {
         // of the grid to be picked up by the garbage collector
         this.gridOptions.api = null;
         this.gridOptions.columnApi = null;
-        this.removeEventListener('context', this.contextUpdater);
         this.destroyed = true;
-    };
-    GridOptionsService.prototype.updateContext = function () {
-        this.context = this.gridOptions.context;
     };
     /**
      * Is the given GridOption property set to true.

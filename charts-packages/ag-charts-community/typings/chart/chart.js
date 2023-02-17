@@ -469,8 +469,11 @@ var Chart = /** @class */ (function (_super) {
             console.log(opts);
         }
     };
-    Chart.prototype.disablePointer = function () {
-        this.tooltipManager.updateTooltip(this.id);
+    Chart.prototype.disablePointer = function (highlightOnly) {
+        if (highlightOnly === void 0) { highlightOnly = false; }
+        if (!highlightOnly) {
+            this.tooltipManager.updateTooltip(this.id);
+        }
         this.highlightManager.updateHighlight(this.id);
         if (this.lastInteractionEvent) {
             this.lastInteractionEvent = undefined;
@@ -602,6 +605,7 @@ var Chart = /** @class */ (function (_super) {
                     case 1: return [4 /*yield*/, this.processData()];
                     case 2:
                         _c.sent();
+                        this.disablePointer(true);
                         splits.push(performance.now());
                         _c.label = 3;
                     case 3:
@@ -634,7 +638,7 @@ var Chart = /** @class */ (function (_super) {
                         _c.label = 7;
                     case 7:
                         tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
-                        if (tooltipMeta != null) {
+                        if (performUpdateType < chartUpdateType_1.ChartUpdateType.SERIES_UPDATE && tooltipMeta != null) {
                             this.handlePointer(tooltipMeta);
                         }
                         _c.label = 8;

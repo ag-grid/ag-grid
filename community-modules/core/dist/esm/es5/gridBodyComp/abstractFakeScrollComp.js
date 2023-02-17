@@ -73,7 +73,7 @@ var AbstractFakeScrollComp = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, function (params) {
             if (params.direction === _this.direction) {
                 if (_this.hideTimeout !== null) {
-                    window.clearInterval(_this.hideTimeout);
+                    window.clearTimeout(_this.hideTimeout);
                     _this.hideTimeout = null;
                 }
                 _this.addOrRemoveCssClass('ag-scrollbar-scrolling', true);

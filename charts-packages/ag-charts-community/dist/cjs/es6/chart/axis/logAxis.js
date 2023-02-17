@@ -41,6 +41,14 @@ class LogAxis extends numberAxis_1.NumberAxis {
         const invalidDomain = isInverted || crossesZero || hasZeroExtent;
         if (invalidDomain) {
             d = [];
+            const warningMessage = crossesZero
+                ? 'The data domain crosses zero, the chart data cannot be rendered. See log axis documentation for more information.'
+                : hasZeroExtent
+                    ? 'The data domain has 0 extent, no data is rendered.'
+                    : undefined;
+            if (warningMessage) {
+                console.warn(`AG Charts - ${warningMessage}`);
+            }
         }
         if (d[0] === 0) {
             d[0] = 1;

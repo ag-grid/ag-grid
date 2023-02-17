@@ -86,11 +86,22 @@ var PivotStage = /** @class */ (function (_super) {
         var _this = this;
         // accessed from inside inner function
         var uniqueValues = {};
+        // ensure childrenMapped is cleared, as if a node has been filtered out it should not have mapped children.
         changedPath.forEachChangedNodeDepthFirst(function (node) {
+            if (node.leafGroup) {
+                node.childrenMapped = null;
+            }
+        });
+        var recursivelyBucketFilteredChildren = function (node) {
+            var _a;
             if (node.leafGroup) {
                 _this.bucketRowNode(node, uniqueValues);
             }
-        });
+            else {
+                (_a = node.childrenAfterFilter) === null || _a === void 0 ? void 0 : _a.forEach(recursivelyBucketFilteredChildren);
+            }
+        };
+        changedPath.executeFromRootNode(recursivelyBucketFilteredChildren);
         return uniqueValues;
     };
     PivotStage.prototype.bucketRowNode = function (rowNode, uniqueValues) {

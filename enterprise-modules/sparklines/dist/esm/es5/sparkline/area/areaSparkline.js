@@ -134,7 +134,7 @@ var AreaSparkline = /** @class */ (function (_super) {
             var yDatum = yData[i];
             var xDatum = xData[i];
             var x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
-            var y = yDatum ? yScale.convert(yDatum) : NaN;
+            var y = yDatum === undefined ? NaN : yScale.convert(yDatum);
             // if this iteration is not the last, set nextX using the next value in the data array
             if (i + 1 < n) {
                 nextX = xScale.convert(continuous ? xScale.toDomain(xData[i + 1]) : xData[i + 1]) + offsetX;

@@ -59,7 +59,7 @@ class AbstractFakeScrollComp extends component_1.Component {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_BODY_SCROLL, (params) => {
             if (params.direction === this.direction) {
                 if (this.hideTimeout !== null) {
-                    window.clearInterval(this.hideTimeout);
+                    window.clearTimeout(this.hideTimeout);
                     this.hideTimeout = null;
                 }
                 this.addOrRemoveCssClass('ag-scrollbar-scrolling', true);

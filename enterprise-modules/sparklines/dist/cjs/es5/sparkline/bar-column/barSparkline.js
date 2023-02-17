@@ -73,8 +73,8 @@ var BarSparkline = /** @class */ (function (_super) {
                 yDatum = 0;
             }
             var y = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum);
-            var x = Math.min(yDatum ? yScale.convert(yDatum) : NaN, yZero);
-            var bottom = Math.max(yDatum ? yScale.convert(yDatum) : NaN, yZero);
+            var x = Math.min(yDatum === undefined ? NaN : yScale.convert(yDatum), yZero);
+            var bottom = Math.max(yDatum === undefined ? NaN : yScale.convert(yDatum), yZero);
             // if the scale is a band scale, the width of the rects will be the bandwidth, otherwise the width of the rects will be the range / number of items in the data
             var height = !continuous ? xScale.bandwidth : this.bandWidth;
             var width = bottom - x;

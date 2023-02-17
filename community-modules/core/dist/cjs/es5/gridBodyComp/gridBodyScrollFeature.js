@@ -51,26 +51,19 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         _this.nextScrollTop = -1;
         _this.scrollTop = -1;
         _this.eBodyViewport = eBodyViewport;
+        _this.resetLastHScrollDebounced = function_1.debounce(function () { return _this.eLastHScroll = null; }, 500);
+        _this.resetLastVScrollDebounced = function_1.debounce(function () { return _this.eLastVScroll = null; }, 500);
         return _this;
     }
     GridBodyScrollFeature.prototype.postConstruct = function () {
         var _this = this;
         this.enableRtl = this.gridOptionsService.is('enableRtl');
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_BODY_SCROLL_END, function (e) { return _this.onBodyScrollEnd(e); });
         this.ctrlsService.whenReady(function (p) {
             _this.centerRowContainerCtrl = p.centerRowContainerCtrl;
             _this.onDisplayedColumnsWidthChanged();
             _this.addScrollListener();
         });
-    };
-    GridBodyScrollFeature.prototype.onBodyScrollEnd = function (e) {
-        if (e.direction === 'horizontal') {
-            this.eLastHScroll = null;
-        }
-        else {
-            this.eLastVScroll = null;
-        }
     };
     GridBodyScrollFeature.prototype.addScrollListener = function () {
         var fakeHScroll = this.ctrlsService.getFakeHScrollComp();
@@ -162,6 +155,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         // as the scroll would move 1px at at time bouncing from one grid to the next (eg one grid would cause
         // scroll to 200px, the next to 199px, then the first back to 198px and so on).
         this.doHorizontalScroll(Math.round(dom_1.getScrollLeft(eSource, this.enableRtl)));
+        this.resetLastHScrollDebounced();
     };
     GridBodyScrollFeature.prototype.onFakeVScroll = function () {
         var fakeVScrollViewport = this.ctrlsService.getFakeVScrollComp().getViewport();
@@ -199,6 +193,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         else {
             this.animationFrameService.schedule();
         }
+        this.resetLastVScrollDebounced();
     };
     GridBodyScrollFeature.prototype.doHorizontalScroll = function (scrollLeft) {
         var fakeHScrollViewport = this.ctrlsService.getFakeHScrollComp().getViewport();

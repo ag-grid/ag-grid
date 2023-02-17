@@ -40,14 +40,12 @@ export declare class GridOptionsService {
     private domDataKey;
     api: GridApi;
     columnApi: ColumnApi;
-    context: any;
-    private contextUpdater;
+    get context(): any;
     private propertyEventService;
     private gridOptionLookup;
     private agWire;
     init(): void;
     private destroy;
-    private updateContext;
     /**
      * Is the given GridOption property set to true.
      * @param property GridOption property that has the type `boolean | undefined`

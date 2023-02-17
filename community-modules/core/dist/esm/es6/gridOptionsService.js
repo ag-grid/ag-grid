@@ -38,22 +38,22 @@ let GridOptionsService = class GridOptionsService {
     constructor() {
         this.destroyed = false;
         this.domDataKey = '__AG_' + Math.random().toString();
-        this.contextUpdater = () => this.context = this.gridOptions.context;
         this.propertyEventService = new EventService();
+    }
+    // This is quicker then having code call gos.get('context')
+    get context() {
+        return this.gridOptions['context'];
     }
     agWire(gridApi, columnApi) {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
         this.api = gridApi;
         this.columnApi = columnApi;
-        this.context = this.gridOptions['context'];
     }
     init() {
         this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
         const async = !this.is('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
-        // Keep local context property updated
-        this.addEventListener('context', this.contextUpdater);
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
     }
@@ -63,11 +63,7 @@ let GridOptionsService = class GridOptionsService {
         // of the grid to be picked up by the garbage collector
         this.gridOptions.api = null;
         this.gridOptions.columnApi = null;
-        this.removeEventListener('context', this.contextUpdater);
         this.destroyed = true;
-    }
-    updateContext() {
-        this.context = this.gridOptions.context;
     }
     /**
      * Is the given GridOption property set to true.

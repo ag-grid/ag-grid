@@ -18,7 +18,6 @@ export declare class VirtualList extends TabGuardComp {
     private rowHeight;
     private lastFocusedRowIndex;
     private readonly resizeObserverService;
-    private readonly focusService;
     private readonly eContainer;
     constructor(cssIdentifier?: string, ariaRole?: string, listName?: string | undefined);
     private postConstruct;
