@@ -29,13 +29,12 @@ var filterParams: IDateFilterParams = {
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
   { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 100 },
-  { field: 'country' },
-  { field: 'year', maxWidth: 100 },
   {
     field: 'date',
     filter: 'agDateColumnFilter',
     filterParams: filterParams,
   },
+  { field: 'country', filter: 'agSetColumnFilter' },
   { field: 'sport' },
   { field: 'gold', filter: 'agNumberColumnFilter' },
   { field: 'silver', filter: 'agNumberColumnFilter' },
@@ -48,7 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    filter: true,
+    filter: 'agTextColumnFilter',
   },
 }
 

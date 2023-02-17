@@ -2,11 +2,56 @@
 title: "Date Filter"
 ---
 
-Date filters allow you to filter date data. The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the date filter that are the same as the other provided filters. This page builds on that and explains some details that are specific to the date filter.
+Date Filters allow you to filter date data. 
+
+<image-caption src="filter-date/resources/date-filter.png" alt="Date Filter" width="12.5rem" centered="true"></image-caption>
+
+## Enabling Date Filters
+
+The Date Filter can be configured as shown below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            // configure column to use the Date Filter
+            filter: 'agDateColumnFilter',
+            filterParams: {
+                // pass in additional parameters to the Date Filter
+            },
+        },
+    ],
+}
+</snippet>
+
+## Example: Date Filter
+
+The example below shows the Date Filter in action:
+
+- The **Date** column is using a Date Filter.
+- A [Date Filter Comparator](#date-filter-comparator) is provided to parse the data and allow date comparisons to be made.
+- The minimum valid year is set to `2000`, and maximum valid year is `2021`. Dates outside this range will be considered invalid, and will:
+  - Deactivate the column filter. This avoids the filter getting applied as the user is typing a year - for example suppose the user is typing the year `2008`, the filter doesn't execute for values `2`, `20` or `200` (as the text `2008` is partially typed).
+  - Be highlighted with a red border (default theme) or other theme-appropriate highlight.
+- the `inRangeFloatingFilterDateFormat` property has been set to define a custom date format, this is only shown in the floating filter panel when an in-range filter has been applied.
+
+<grid-example title='Date Picker' name='date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
+
+## Common Configuration
+
+The Date Filter is a type of [Simple Filter](/filter-provided-simple/) and shares some configuration, which is described in more detail in the following sections:
+
+- [Apply, Clear, Reset and Cancel Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)
+- [Applying the UI Model](/filter-applying/#applying-the-ui-model)
+- [Simple Filter Parts](/filter-provided-simple/#simple-filter-parts) (filter options and conditions)
+- [Blank Cells](/filter-provided-simple/#blank-cells-date-and-number-filters)
+- [Data Updates](/filter-provided-simple/#data-updates)
+- [Customising Filter Placeholder Text](/filter-provided-simple/#customising-filter-placeholder-text)
 
 ## Date Filter Parameters
 
-Date Filters are configured though the `filterParams` attribute of the column definition (`IDateFilterParams` interface):
+[Filter Parameters](/filter-column/#filter-parameters) for Date Filters are configured though the `filterParams` attribute of the column definition (`IDateFilterParams` interface):
 
 <interface-documentation interfaceName='IDateFilterParams' config='{"description":"", "sortAlphabetically":"true"}'  overrideSrc="filter-date/resources/date-filter-params.json"></interface-documentation>
 
@@ -79,16 +124,35 @@ Once the date comparator callback is provided, then the Date Filter is able to p
 
 It should be noted that the Date Filter Model represents the Date as a string in format `'YYYY-MM-DD'`, however when doing comparisons the date is provided as a JavaScript `Date` object as that's what date pickers typically work with. The model uses string representation to make it easier to save and avoid any timezone issues.
 
-## Example: Date Filter
+## Date Filter Model
 
-The example below shows the date filter in action, using some of the configuration options discussed above:
+The [Filter Model](/filter-column/#filter-model) describes the current state of the applied Date Filter. This will either be a `DateFilterModel` or an `ICombinedSimpleModel<DateFilterModel>`.
 
-- The **Date** column is using a Date Filter.
-- A custom `comparator` is provided to parse the data and allow date comparisons to be made.
-- The native date picker is forced to be used in every browser.
-- The minimum valid year is set to `2000`, and maximum valid year is `2021`. Dates outside this range will be considered invalid, and will:
-  - Deactivate the column filter. This avoids the filter getting applied as the user is typing a year - for example suppose the user is typing the year `2008`, the filter doesn't execute for values `2`, `20` or `200` (as the text `2008` is partially typed).
-  - Be highlighted with a red border (default theme) or other theme-appropriate highlight.
-- the `inRangeFloatingFilterDateFormat` property has been set to define a custom date format, this is only shown in the floating filter panel when an in-range filter has been applied.
+This is described in more detail in the [Simple Filter Models](/filter-provided-simple/#simple-filter-models) section.
 
-<grid-example title='Date Picker' name='date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
+<interface-documentation interfaceName='DateFilterModel'></interface-documentation>
+
+## Date Filter Options
+
+The Date Filter presents a list of [Filter Options](/filter-provided-simple/#filter-options) to the user.
+
+The list of options are as follows:
+
+| Option Name             | Option Key            | Included by Default |
+| ----------------------- | --------------------- | ------------------- |
+| Equals                  | `equals`              | Yes                 |
+| Greater than            | `greaterThan`         | Yes                 |
+| Less than               | `lessThan`            | Yes                 |
+| Not equal               | `notEqual`            | Yes                 |
+| In range                | `inRange`             | Yes                 |
+| Blank                   | `blank`               | Yes                 |
+| Not blank               | `notBlank`            | Yes                 |
+| Choose One              | `empty`               | No                  |
+
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-provided-simple/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+
+The default option for Date Filter is `equals`.
+
+## Next Up
+
+Continue to the next section to learn about the [Set Filter](/filter-set/).

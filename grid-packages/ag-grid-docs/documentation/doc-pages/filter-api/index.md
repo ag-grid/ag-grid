@@ -149,8 +149,8 @@ const gridOptions = {
 }
 </snippet>
 
-The following example demonstrates all of the provided filters with `readOnly: true` enabled:
-- [Simple Column Filters](/filter-provided-simple/) have a read-only display with no buttons; if there is no 2nd condition set then the join operator and 2nd condition are hidden:
+The following example demonstrates all of the Provided Filters with `readOnly: true` enabled:
+- [Simple Filters](/filter-provided-simple/) have a read-only display with no buttons; if there is no 2nd condition set then the join operator and 2nd condition are hidden:
     - `athlete` column demonstrates [Text Filter](/filter-text/).
     - `age` and `year` columns demonstrate [Number Filter](/filter-number/).
     - `date` column demonstrates [Date Filter](/filter-date/).

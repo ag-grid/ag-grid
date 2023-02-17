@@ -77,3 +77,7 @@ The following example demonstrates the difference in behaviour between `caseSens
 - In both cases `getModel()` and `getFilterValues()` will return the values with casing that matches those displayed in the Filter List.
 
 <grid-example title='Set Filter API - Case Sensitivity' name='set-filter-api-case-sensitive' type='mixed' options='{ "enterprise": true, "exampleHeight": 570, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>
+
+## Next Up
+
+Continue to the next section to learn about [Provided Filters](/filter-provided/).

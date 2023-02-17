@@ -35,7 +35,7 @@ Note that in this example:
 
 1. The columns with the floating filter are using the standard Number filter as the base filter
 
-1. Since the parent filter is the Number filter, the floating filter methods `onFloatingFilterChanged(parentModel)`, and `currentParentModel()` take and receive model objects that correspond to [the model for the Number filter](/filter-provided-simple/#simple-filter-models)
+1. Since the parent filter is the Number filter, the floating filter methods `onFloatingFilterChanged(parentModel)`, and `currentParentModel()` take and receive model objects that correspond to [the model for the Number filter](/filter-number/#number-filter-model)
 
 1. Since these floating filters are providing a subset of the functionality of their parent filter, which can filter for other conditions which are not `'greaterThan'`, the user is prevented from seeing the parent filter by adding `suppressFilterButton: true` in the `floatingFilterComponentParams` and `suppressMenu: true` in the `colDef`
 
@@ -65,7 +65,7 @@ When the user interacts with a floating filter, the floating filter must set the
 
 If you create your own filter and floating filter, it is up to you which method you expose on the filter for the floating filter to call. This contract is between the filter and the floating filter and doesn't go through the grid.
 
-The simple provided filters (Text, Number, Date) provide methods that the corresponding provided floating filters can call. This information is useful if a) you want to create your own floating filter that is paired with a provided parent filter or b) you are just interested to know how the interaction works to help build your own filters and floating filters.
+The Simple Filters (Text, Number, Date) provide methods that the corresponding provided floating filters can call. This information is useful if a) you want to create your own floating filter that is paired with a provided parent filter or b) you are just interested to know how the interaction works to help build your own filters and floating filters.
 
 - **Date, Text and Number Filters:** all these filters provide a method `onFloatingFilterChanged(type: string, value: string)` where `type` is the type (`'lessThan'`, `'equals'`, etc.) and the value is the text value to use (the number and date filters will convert the text to the corresponding type).
 

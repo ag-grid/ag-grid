@@ -788,29 +788,23 @@
             "showInCollapsed": false,
             "items": [
               {
-                "title": "Provided Column Filters",
-                "url": "/filter-provided/"
+                "title": "Configuration",
+                "url": "/filter-column/"
               },
               {
-                "title": "Simple Column Filters",
-                "url": "/filter-provided-simple/",
-                "items": [
-                  {
-                    "title": "Text Filter",
-                    "url": "/filter-text/",
-                    "showInCollapsed": true
-                  },
-                  {
-                    "title": "Number Filter",
-                    "url": "/filter-number/",
-                    "showInCollapsed": true
-                  },
-                  {
-                    "title": "Date Filter",
-                    "url": "/filter-date/",
-                    "showInCollapsed": true
-                  }
-                ]
+                "title": "Text Filter",
+                "url": "/filter-text/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Number Filter",
+                "url": "/filter-number/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Date Filter",
+                "url": "/filter-date/",
+                "showInCollapsed": true
               },
               {
                 "title": "Set Filter",
@@ -851,6 +845,19 @@
                   }
                 ]
               },
+              {
+                "title": "Provided Filters",
+                "url": "/filter-provided/",
+                "items": [
+                  {
+                    "title": "Applying Filters",
+                    "url": "/filter-applying/"
+                },
+                {
+                  "title": "Simple Filters",
+                  "url": "/filter-provided-simple/"
+                }
+              ]},
               {
                 "title": "Multi Filter",
                 "url": "/filter-multi/",

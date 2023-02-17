@@ -4,8 +4,7 @@ enterprise: true
 description: "Set Filter works like Excel, providing checkboxes to select values from a set."
 ---
 
-The Set Filter takes inspiration from Excel's AutoFilter and allows filtering on sets of data. It is built on top of the shared functionality that is common across all [Provided Filters](/filter-provided/).
-
+The Set Filter takes inspiration from Excel's AutoFilter and allows filtering on sets of data.
 <image-caption src="filter-set/resources/set-filter.png" alt="Set Filter" width="28rem" centered="true"></image-caption>
 
 ## Set Filter Sections
@@ -15,7 +14,7 @@ The Set Filter is comprised of the following sections:
 - **[Mini Filter](/filter-set-mini-filter/)**: used to narrow the values available for selection inside the Filter List.
 - **Select All**: used to select / deselect all values shown in the Filter List.
 - **[Filter List](/filter-set-filter-list/)**: a list of Set Filter Values which can be selected / deselected to set the filter.
-- **Filter Buttons**: Action buttons that can be optionally added to the bottom of the Set Filter.
+- **[Filter Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)**: Action buttons that can be optionally added to the bottom of the Set Filter.
 
 ## Enabling Set Filters
 

@@ -2,26 +2,7 @@
 title: "Simple Filters"
 ---
 
-The grid provides three Simple Filters for filtering strings, numbers and dates.
-
-<div style="display: flex; justify-content: space-around;">
-    <image-caption src="filter-provided-simple/resources/text-filter.png" alt="Text Filter" width="12.5rem" descriptionTop="true"><strong>Text Filter</strong></image-caption>
-    <image-caption src="filter-provided-simple/resources/number-filter.png" alt="Number Filter" width="12.5rem" descriptionTop="true"><strong>Number Filter</strong></image-caption>
-    <image-caption src="filter-provided-simple/resources/date-filter.png" alt="Date Filter" width="12.5rem" descriptionTop="true"><strong>Date Filter</strong></image-caption>
-</div>
-
-Each of the filters works in a similar way. This page describes the common parts of the Simple Filters.
-
-### Example: Simple Filters
-
-The example below demonstrates all three Simple Filters working. Note the following:
-
-- The **Athlete** column has a Text Filter.
-- The **Age** column has a Number Filter.
-- The **Date** column has a Date Filter.
-- `filter=false` is set on the **Total** column to disable the filter.
-
-<grid-example title='Provided Simple' name='provided-simple' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
+This section describes the configuration shared by the three Simple Filters provided by the grid - [Text Filter](/filter-text/), [Number Filter](/filter-number/) and [Date Filter](/filter-date/).
 
 ## Simple Filter Parts
 
@@ -33,7 +14,12 @@ Each Simple Filter follows the same layout. The only layout difference is the ty
 
 Each filter provides a dropdown list of filter options to select from. Each filter option represents a filtering strategy, e.g. 'equals', 'not equals', etc.
 
-Each filter's default [Filter Options](#simple-filter-options) are listed below, as well as information on [Defining Custom Filter Options](#custom-filter-options).
+Each filter's default filter options can be found on their respective pages:
+- [Text Filter Options](/filter-text/#text-filter-options)
+- [Number Filter Options](/filter-number/#number-filter-options)
+- [Date Filter Options](/filter-date/#date-filter-options)
+
+Information on defining [Custom Filter Options](#custom-filter-options) can be found below.
 
 ### Filter Value
 
@@ -46,14 +32,6 @@ Each filter initially only displays Condition 1. When the user completes the Con
 ### Join Operator
 
 The Join Operator decides how Condition 1 and Condition 2 are joined, using either `AND` or `OR`.
-
-## Simple Filters Parameters
-
-Simple Filters are configured though the `filterParams` attribute of the column definition:
-
-<interface-documentation interfaceName='ISimpleFilterParams' config='{"description":""}' overrideSrc="filter-provided-simple/resources/simple-filters.json"></interface-documentation>
-
-Additional parameters are also available depending on the type of filter being used. See each type for the full list of parameters available: [Text](/filter-text/), [Number](/filter-number/), [Date](/filter-date/).
 
 ### Example: Simple Filter Options
 
@@ -69,136 +47,7 @@ The following example demonstrates those configuration options that can be appli
 
 <grid-example title='Simple Filter Options' name='simple-filter-options' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
-## Simple Filter Options
-
-Each simple filter presents a list of options to the user. The list of options for each filter are as follows:
-
-| Option Name             | Option Key            | Supported Filters   |
-| ----------------------- | --------------------- | ------------------- |
-| Equals                  | `equals`              | Text, Number, Date  |
-| Not Equals              | `notEqual`            | Text, Number, Date  |
-| Contains                | `contains`            | Text                |
-| Not Contains            | `notContains`         | Text                |
-| Starts With             | `startsWith`          | Text                |
-| Ends With               | `endsWith`            | Text                |
-| Less Than               | `lessThan`            | Number, Date        |
-| Less Than or Equal      | `lessThanOrEqual`     | Number              |
-| Greater Than            | `greaterThan`         | Number, Date        |
-| Greater Than or Equal   | `greaterThanOrEqual`  | Number              |
-| In Range                | `inRange`             | Number, Date        |
-| Blank                   | `blank`               | Text, Number, Date  |
-| Not blank               | `notBlank`            | Text, Number, Date  |
-| Choose One              | `empty`               | Text, Number, Date  |
-
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-provided-simple/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
-
-### Default Filter Options
-
-Each of the three filter types has the following default options and default selected option.
-
-| Filter   | Default List of Options                                                                           | Default Selected Option   |
-| -------- | ------------------------------------------------------------------------------------------------- | ------------------------- |
-| Text     | Contains, Not Contains, Equals, Not Equals, Starts With, Ends With.                               | Contains                  |
-| Number   | Equals, Not Equals, Less Than, Less Than or Equal, Greater Than, Greater Than or Equal, In Range. | Equals                    |
-| Date     | Equals, Greater Than, Less Than, Not Equals, In Range.                                            | Equals                    |
-
-## Simple Filter Models
-
-When saving or restoring state on a filter, the Filter Model is used. The Filter Model represents the state of the filter. For example, the code below first gets and then sets the Filter Model for the Athlete column:
-
-<snippet>
-|// get filter instance
-|const filterInstance = gridOptions.api.getFilterInstance('athlete');
-|
-|// get filter model
-|const model = filterInstance.getModel();
-|
-|// set filter model and update
-|filterInstance.setModel({
-|    type: 'endsWith',
-|    filter: 'thing'
-|});
-|
-|// refresh rows based on the filter (not automatic to allow for batching multiple filters)
-|gridOptions.api.onFilterChanged();
-</snippet>
-
-This section explains what the Filter Model looks like for each of the simple filters. The interface used by each filter type is as follows:
-
-[[note]]
-| The best way to understand what the Filter Models look like is to set a filter via the
-| UI and call `api.getFilterModel()` in your console. You can then see what the model looks like for different variations of the filters.
-
-<interface-documentation interfaceName='TextFilterModel' config='{"hideHeader":false, "headerLevel": 3}'></interface-documentation>
-
-<interface-documentation interfaceName='NumberFilterModel' config='{"hideHeader":false, "headerLevel": 3}'></interface-documentation>
-
-<interface-documentation interfaceName='DateFilterModel' config='{"hideHeader":false, "headerLevel": 3}'></interface-documentation>
-
-Examples of filter model instances are as follows:
-
-```js
-// number filter with one condition, with equals type
-const numberLessThan35 = {
-    filterType: 'number',
-    type: 'lessThan',
-    filter: 35
-};
-```
-
-```js
-// number filter with one condition, with inRange type
-const numberBetween35And40 = {
-    filterType: 'number',
-    type: 'inRange',
-    filter: 35,
-    filterTo: 40
-};
-```
-
-[[note]]
-| The `filterType` is not used by the grid when you call `setFilterModel()`. It is provided for information purposes only when you get the filter model. This is useful if you are doing server-side filtering, where the filter type may be used in building back-end queries.
-
-If the filter has both Condition 1 and Condition 2 set, then two instances of the model are created and wrapped inside a Combined Model. A combined model looks as follows:
-
-```ts
-// A filter combining two conditions
-// M is either TextFilterModel, NumberFilterModel or DateFilterModel
-interface ICombinedSimpleModel<M> {
-    // the filter type: date, number or text
-    filterType: string;
-
-    operator: JoinOperator;
-
-    // two instances of the filter model
-    condition1: M;
-    condition2: M;
-}
-
-type JoinOperator = 'AND' | 'OR';
-```
-
-An example of a filter model with two conditions is as follows:
-
-```js
-// number filter with two conditions, both are equals type
-const numberEquals18OrEquals20 = {
-    filterType: 'number',
-    operator: 'OR',
-    condition1: {
-        filterType: 'number',
-        type: 'equals',
-        filter: 18
-    },
-    condition2: {
-        filterType: 'number',
-        type: 'equals',
-        filter: 18
-    }
-};
-```
-
-## Custom Filter Options
+### Custom Filter Options
 
 For applications that have bespoke filtering requirements, it is also possible to add new custom filtering options to the number, text and date filters. For example, a 'Not Equal (with Nulls)' filter option could be included alongside the built in 'Not Equal' option.
 
@@ -274,6 +123,53 @@ The following example demonstrates several custom filter options:
 
 <grid-example title='Custom Filter Options' name='custom-filter-options' type='generated'></grid-example>
 
+## Simple Filter Models
+
+All Simple Filters follow a similar [Filter Model](/filter-column/#filter-model) structure.
+
+When a single condition is set in the filter, then the model will consist of that Filter Model type:
+- [Text Filter Model](/filter-text/#text-filter-model)
+- [Number Filter Model](/filter-number/#number-filter-model)
+- [Date Filter Model](/filter-date/#date-filter-model)
+
+If the filter has both Condition 1 and Condition 2 set, then two instances of the model are created and wrapped inside a Combined Model. A combined model looks as follows:
+
+```ts
+// A filter combining two conditions
+// M is either TextFilterModel, NumberFilterModel or DateFilterModel
+interface ICombinedSimpleModel<M> {
+    // the filter type: date, number or text
+    filterType: string;
+
+    operator: JoinOperator;
+
+    // two instances of the Filter Model
+    condition1: M;
+    condition2: M;
+}
+
+type JoinOperator = 'AND' | 'OR';
+```
+
+An example of a Filter Model with two conditions is as follows:
+
+```js
+// Number Filter with two conditions, both are equals type
+const numberEquals18OrEquals20 = {
+    filterType: 'number',
+    operator: 'OR',
+    condition1: {
+        filterType: 'number',
+        type: 'equals',
+        filter: 18
+    },
+    condition2: {
+        filterType: 'number',
+        type: 'equals',
+        filter: 18
+    }
+};
+```
 ## Blank Cells (Date and Number Filters)
 
 If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range:
@@ -310,14 +206,6 @@ Simple filters are not affected by data changes, as is demonstrated by the follo
   of `24`.
 
 <grid-example title='Date Updates' name='simple-data-update' type='generated' options='{ "enterprise": false, "modules": ["clientside"] }'></grid-example>
-
-## Style Header on Filter
-
-Each time a filter is applied to a column the CSS class `ag-header-cell-filtered` is added to the header. This can be used for adding style to headers that are filtered.
-
-In the example below, we've added some styling to `ag-header-cell-filtered`, so when you filter a column you will notice the column header change.
-
-<grid-example title='Style Header' name='style-header-on-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
 
 ## Customising Filter Placeholder Text
 
@@ -358,4 +246,8 @@ The following example shows the various ways of specifying filter placeholders. 
 * `Sport` column shows the filter option key with the default placeholder eg, for the `Contains` filter option, it shows `contains - Filter...`. The [filter option keys](#simple-filter-options) are listed in the table above.
 * `Total` column shows the filter option name with the suffix `total` eg, for the `Equals` filter option, it shows `Equals total`. The [filter option names](#simple-filter-options) are listed in the table above.
 
-<grid-example title='Filter placeholder text' name='filter-placeholder-text' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
+<grid-example title='Filter Placeholder Text' name='filter-placeholder-text' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
+
+## Next Up
+
+Continue to the next section to learn about the [Multi Filter](/filter-multi/).

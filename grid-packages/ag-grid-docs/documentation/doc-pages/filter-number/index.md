@@ -2,13 +2,53 @@
 title: "Number Filter"
 ---
 
-Number filters allow you to filter number data.
+Number Filters allow you to filter number data.
 
-The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the Number Filter that are the same as the other Provided Filters. This page builds on that and explains some details that are specific to the Number Filter.
+<image-caption src="filter-number/resources/number-filter.png" alt="Number Filter" width="12.5rem" centered="true"></image-caption>
+
+## Enabling Number Filters
+
+The Number Filter can be configured as shown below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            // configure column to use the Number Filter
+            filter: 'agNumberColumnFilter',
+            filterParams: {
+                // pass in additional parameters to the Number Filter
+            },
+        },
+    ],
+}
+</snippet>
+
+## Example: Number Filter
+
+The example below shows the Number Filter in action:
+
+- The first column shows the default Number Filter behaviour.
+- The second column demonstrates [Custom Number Support](#custom-number-support) and uses commas for decimals and allows a dollar sign ($) to be included.
+- Floating filters are enabled and also react to the configuration of `allowedCharPattern`.
+
+<grid-example title='Number Filter' name='number-filter' type='generated'></grid-example>
+
+## Common Configuration
+
+The Number Filter is a type of [Simple Filter](/filter-provided-simple/) and shares some configuration, which is described in more detail in the following sections:
+
+- [Apply, Clear, Reset and Cancel Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)
+- [Applying the UI Model](/filter-applying/#applying-the-ui-model)
+- [Simple Filter Parts](/filter-provided-simple/#simple-filter-parts) (filter options and conditions)
+- [Blank Cells](/filter-provided-simple/#blank-cells-date-and-number-filters)
+- [Data Updates](/filter-provided-simple/#data-updates)
+- [Customising Filter Placeholder Text](/filter-provided-simple/#customising-filter-placeholder-text)
 
 ## Number Filter Parameters
 
-Number Filters are configured though the `filterParams` attribute of the column definition (`INumberFilterParams` interface):
+[Filter Parameters](/filter-column/#filter-parameters) for Number Filters are configured though the `filterParams` attribute of the column definition (`INumberFilterParams` interface):
 
 <interface-documentation interfaceName='INumberFilterParams' config='{"description":"", "sortAlphabetically":"true"}' overrideSrc="filter-number/resources/number-filter-params.json"></interface-documentation>
 
@@ -41,9 +81,39 @@ The `allowedCharPattern` is a regex of all the characters that are allowed to be
 
 The `numberParser` should take the user-entered text and return either a number if one can be interpreted, or `null` if not.
 
-The example below shows custom number support in action:
--  The first column shows the default behaviour, and the second column uses commas for decimals and allows a dollar sign ($) to be included.
-- Floating filters are enabled and also react to the configuration of `allowedCharPattern`.
+Custom number support can be seen in the [Number Filter Example](#example-number-filter) above.
 
-<grid-example title='Number Filter' name='number-filter' type='generated'></grid-example>
+## Number Filter Model
 
+The [Filter Model](/filter-column/#filter-model) describes the current state of the applied Number Filter. This will either be a `NumberFilterModel` or an `ICombinedSimpleModel<NumberFilterModel>`.
+
+This is described in more detail in the [Simple Filter Models](/filter-provided-simple/#simple-filter-models) section.
+
+<interface-documentation interfaceName='NumberFilterModel'></interface-documentation>
+
+## Number Filter Options
+
+The Number Filter presents a list of [Filter Options](/filter-provided-simple/#filter-options) to the user.
+
+The list of options are as follows:
+
+| Option Name             | Option Key            | Included by Default |
+| ----------------------- | --------------------- | ------------------- |
+| Equals                  | `equals`              | Yes                 |
+| Not equal               | `notEqual`            | Yes                 |
+| Less than               | `lessThan`            | Yes                 |
+| Less than or equals     | `lessThanOrEqual`     | Yes                 |
+| Greater than            | `greaterThan`         | Yes                 |
+| Greater than or equals  | `greaterThanOrEqual`  | Yes                 |
+| In range                | `inRange`             | Yes                 |
+| Blank                   | `blank`               | Yes                 |
+| Not blank               | `notBlank`            | Yes                 |
+| Choose One              | `empty`               | No                  |
+
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-provided-simple/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+
+The default option for the Number Filter is `equals`.
+
+## Next Up
+
+Continue to the next section to learn about the [Date Filter](/filter-date/).
