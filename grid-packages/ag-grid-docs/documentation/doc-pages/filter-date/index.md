@@ -4,7 +4,7 @@ title: "Date Filter"
 
 Date Filters allow you to filter date data. 
 
-<image-caption src="filter-date/resources/date-filter.png" alt="Date Filter" width="12.5rem" centered="true"></image-caption>
+<image-caption src="filter-provided-simple/resources/date-filter.png" alt="Date Filter" width="12.5rem" centered="true"></image-caption>
 
 ## Enabling Date Filters
 
@@ -42,12 +42,12 @@ The example below shows the Date Filter in action:
 
 The Date Filter is a type of [Simple Filter](/filter-provided-simple/) and shares some configuration, which is described in more detail in the following sections:
 
-- [Apply, Clear, Reset and Cancel Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)
-- [Applying the UI Model](/filter-applying/#applying-the-ui-model)
-- [Simple Filter Parts](/filter-provided-simple/#simple-filter-parts) (filter options and conditions)
-- [Blank Cells](/filter-provided-simple/#blank-cells-date-and-number-filters)
-- [Data Updates](/filter-provided-simple/#data-updates)
-- [Customising Filter Placeholder Text](/filter-provided-simple/#customising-filter-placeholder-text)
+- [Apply, Clear, Reset and Cancel Buttons](/filter-provided/#apply-clear-reset-and-cancel-buttons)
+- [Applying the UI Model](/filter-provided/#applying-the-ui-model)
+- [Simple Filter Parts](/filter-simple-configuration/#simple-filter-parts) (filter options and conditions)
+- [Blank Cells](/filter-simple-configuration/#blank-cells-date-and-number-filters)
+- [Data Updates](/filter-simple-configuration/#data-updates)
+- [Customising Filter Placeholder Text](/filter-simple-configuration/#customising-filter-placeholder-text)
 
 ## Date Filter Parameters
 
@@ -128,13 +128,13 @@ It should be noted that the Date Filter Model represents the Date as a string in
 
 The [Filter Model](/filter-column/#filter-model) describes the current state of the applied Date Filter. This will either be a `DateFilterModel` or an `ICombinedSimpleModel<DateFilterModel>`.
 
-This is described in more detail in the [Simple Filter Models](/filter-provided-simple/#simple-filter-models) section.
+This is described in more detail in the [Simple Filter Models](/filter-simple-configuration/#simple-filter-models) section.
 
 <interface-documentation interfaceName='DateFilterModel'></interface-documentation>
 
 ## Date Filter Options
 
-The Date Filter presents a list of [Filter Options](/filter-provided-simple/#filter-options) to the user.
+The Date Filter presents a list of [Filter Options](/filter-simple-configuration/#filter-options) to the user.
 
 The list of options are as follows:
 
@@ -149,10 +149,10 @@ The list of options are as follows:
 | Not blank               | `notBlank`            | Yes                 |
 | Choose One              | `empty`               | No                  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-provided-simple/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-simple-configuration/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
 
 The default option for Date Filter is `equals`.
 
 ## Next Up
 
-Continue to the next section to learn about the [Set Filter](/filter-set/).
+Continue to the next section to learn about [Shared Simple Filter Configuration](/filter-simple-configuration/).

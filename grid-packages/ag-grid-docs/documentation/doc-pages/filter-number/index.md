@@ -4,7 +4,7 @@ title: "Number Filter"
 
 Number Filters allow you to filter number data.
 
-<image-caption src="filter-number/resources/number-filter.png" alt="Number Filter" width="12.5rem" centered="true"></image-caption>
+<image-caption src="filter-provided-simple/resources/number-filter.png" alt="Number Filter" width="12.5rem" centered="true"></image-caption>
 
 ## Enabling Number Filters
 
@@ -39,12 +39,12 @@ The example below shows the Number Filter in action:
 
 The Number Filter is a type of [Simple Filter](/filter-provided-simple/) and shares some configuration, which is described in more detail in the following sections:
 
-- [Apply, Clear, Reset and Cancel Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)
-- [Applying the UI Model](/filter-applying/#applying-the-ui-model)
-- [Simple Filter Parts](/filter-provided-simple/#simple-filter-parts) (filter options and conditions)
-- [Blank Cells](/filter-provided-simple/#blank-cells-date-and-number-filters)
-- [Data Updates](/filter-provided-simple/#data-updates)
-- [Customising Filter Placeholder Text](/filter-provided-simple/#customising-filter-placeholder-text)
+- [Apply, Clear, Reset and Cancel Buttons](/filter-provided/#apply-clear-reset-and-cancel-buttons)
+- [Applying the UI Model](/filter-provided/#applying-the-ui-model)
+- [Simple Filter Parts](/filter-simple-configuration/#simple-filter-parts) (filter options and conditions)
+- [Blank Cells](/filter-simple-configuration/#blank-cells-date-and-number-filters)
+- [Data Updates](/filter-simple-configuration/#data-updates)
+- [Customising Filter Placeholder Text](/filter-simple-configuration/#customising-filter-placeholder-text)
 
 ## Number Filter Parameters
 
@@ -87,13 +87,13 @@ Custom number support can be seen in the [Number Filter Example](#example-number
 
 The [Filter Model](/filter-column/#filter-model) describes the current state of the applied Number Filter. This will either be a `NumberFilterModel` or an `ICombinedSimpleModel<NumberFilterModel>`.
 
-This is described in more detail in the [Simple Filter Models](/filter-provided-simple/#simple-filter-models) section.
+This is described in more detail in the [Simple Filter Models](/filter-simple-configuration/#simple-filter-models) section.
 
 <interface-documentation interfaceName='NumberFilterModel'></interface-documentation>
 
 ## Number Filter Options
 
-The Number Filter presents a list of [Filter Options](/filter-provided-simple/#filter-options) to the user.
+The Number Filter presents a list of [Filter Options](/filter-simple-configuration/#filter-options) to the user.
 
 The list of options are as follows:
 
@@ -110,7 +110,7 @@ The list of options are as follows:
 | Not blank               | `notBlank`            | Yes                 |
 | Choose One              | `empty`               | No                  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-provided-simple/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-simple-configuration/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
 
 The default option for the Number Filter is `equals`.
 

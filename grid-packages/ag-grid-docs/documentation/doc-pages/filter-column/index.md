@@ -59,7 +59,7 @@ The following example demonstrates configuring different filters on columns.
 
 Each filter can take additional filter parameters by setting `colDef.filterParams`. The parameters each filter type accepts are specific to each filter; parameters for the Provided Filters are explained in their relevant sections.
 
-The code below shows configuring a Text Filter on the Athlete column and providing extra filter parameters (what the `buttons` do is explained in [Apply, Clear, Reset and Cancel Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)).
+The code below shows configuring a Text Filter on the Athlete column and providing extra filter parameters (what the `buttons` do is explained in [Apply, Clear, Reset and Cancel Buttons](/filter-provided/#apply-clear-reset-and-cancel-buttons)).
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -146,4 +146,4 @@ In the example below, we've added some styling to `ag-header-cell-filtered`, so 
 
 ## Next Up
 
-Continue to the next section to learn about the [Text Filter](/filter-text/).
+Continue to the next section to learn about [Simple Filters](/filter-provided-simple/).

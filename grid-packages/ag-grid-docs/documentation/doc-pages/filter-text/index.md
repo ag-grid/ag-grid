@@ -4,7 +4,7 @@ title: "Text Filter"
 
 Text Filters allow you to filter string data.
 
-<image-caption src="filter-text/resources/text-filter.png" alt="Text Filter" width="12.5rem" centered="true"></image-caption>
+<image-caption src="filter-provided-simple/resources/text-filter.png" alt="Text Filter" width="12.5rem" centered="true"></image-caption>
 
 ## Enabling Text Filters
 
@@ -57,11 +57,11 @@ The example below shows the Text Filter in action:
 
 The Text Filter is a type of [Simple Filter](/filter-provided-simple/) and shares some configuration, which is described in more detail in the following sections:
 
-- [Apply, Clear, Reset and Cancel Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)
-- [Applying the UI Model](/filter-applying/#applying-the-ui-model)
-- [Simple Filter Parts](/filter-provided-simple/#simple-filter-parts) (filter options and conditions)
-- [Data Updates](/filter-provided-simple/#data-updates)
-- [Customising Filter Placeholder Text](/filter-provided-simple/#customising-filter-placeholder-text)
+- [Apply, Clear, Reset and Cancel Buttons](/filter-provided/#apply-clear-reset-and-cancel-buttons)
+- [Applying the UI Model](/filter-provided/#applying-the-ui-model)
+- [Simple Filter Parts](/filter-simple-configuration/#simple-filter-parts) (filter options and conditions)
+- [Data Updates](/filter-simple-configuration/#data-updates)
+- [Customising Filter Placeholder Text](/filter-simple-configuration/#customising-filter-placeholder-text)
 
 ## Text Filter Parameters
 
@@ -156,13 +156,13 @@ const toLowerWithoutAccents = value =>
 
 The [Filter Model](/filter-column/#filter-model) describes the current state of the applied Text Filter. This will either be a `TextFilterModel` or an `ICombinedSimpleModel<TextFilterModel>`.
 
-This is described in more detail in the [Simple Filter Models](/filter-provided-simple/#simple-filter-models) section.
+This is described in more detail in the [Simple Filter Models](/filter-simple-configuration/#simple-filter-models) section.
 
 <interface-documentation interfaceName='TextFilterModel'></interface-documentation>
 
 ## Text Filter Options
 
-The Text Filter presents a list of [Filter Options](/filter-provided-simple/#filter-options) to the user.
+The Text Filter presents a list of [Filter Options](/filter-simple-configuration/#filter-options) to the user.
 
 The list of options are as follows:
 
@@ -178,7 +178,7 @@ The list of options are as follows:
 | Not blank               | `notBlank`            | Yes                 |
 | Choose One              | `empty`               | No                  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-provided-simple/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-simple-configuration/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
 
 The default option for Text Filter is `contains`.
 
