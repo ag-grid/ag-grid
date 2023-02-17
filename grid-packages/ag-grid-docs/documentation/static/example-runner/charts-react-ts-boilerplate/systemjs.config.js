@@ -11,6 +11,11 @@
         return result;
     }
 
+    var sjsPaths = {};
+    if (typeof systemJsPaths !== "undefined") {
+        sjsPaths = systemJsPaths;
+    }
+
     System.config({
         transpiler: 'ts',
         typescriptOptions: {
@@ -27,7 +32,7 @@
                 // paths serve as alias
                 'npm:': 'https://cdn.jsdelivr.net/npm/',
             },
-            systemJsPaths
+            sjsPaths
         ),
         map: assign(
             {
