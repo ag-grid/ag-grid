@@ -130,7 +130,6 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     }
 
     private preventRangeExtension(e: MouseEvent) {
-        e.preventDefault();
         e.stopPropagation();
     }
 
