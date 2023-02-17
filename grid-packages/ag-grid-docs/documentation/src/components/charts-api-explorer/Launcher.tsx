@@ -2,7 +2,7 @@ import { faChartLine, faCompress, faExternalLinkAlt, faWindowRestore } from '@fo
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AgChartOptions } from 'ag-charts-community';
 import GlobalContextConsumer from 'components/GlobalContext';
-import React from 'react';
+import React, { useMemo } from 'react';
 import isServerSideRendering from 'utils/is-server-side-rendering';
 import { getExampleInfo, openPlunker } from '../example-runner/helpers';
 import { useExampleFileNodes } from '../example-runner/use-example-file-nodes';
@@ -53,7 +53,11 @@ const LauncherInner = ({
     useTypescript,
     set,
 }) => {
-    const exampleInfo = buildExampleInfo(framework, options);
+    const nodes = useExampleFileNodes();
+    const exampleInfo = useMemo(
+        () => buildExampleInfo(nodes, framework, options, useFunctionalReact, useVue3, useTypescript),
+        [nodes, framework, options, useFunctionalReact, useVue3, useTypescript]
+    );
     const isGenerated = isGeneratedExample(exampleInfo.type);
 
     return (
@@ -216,21 +220,25 @@ interface ExampleInfo {
     getFiles(...args: any[]): ExampleFile[];
 }
 
-const determineFrameworks = (framework: string) => {
-    let useFunctionalReact = false;
-    let useVue3 = false;
-    let useTypescript = false;
+const determineFrameworks = (
+    framework: string = 'javascript',
+    useFunctionalReact = false,
+    useVue3 = false,
+    useTypescript = false
+) => {
     let mainFile = 'main.js';
 
     switch (framework) {
-        case 'javascript':
         case 'vue':
+            break;
+        case 'javascript':
+            mainFile = useTypescript ? 'main.ts' : 'main.js';
             break;
         case 'angular':
             mainFile = 'app.component.ts';
             break;
         case 'react':
-            mainFile = 'index.jsx';
+            mainFile = useFunctionalReact && useTypescript ? 'index.tsx' : 'index.jsx';
             break;
         default:
             console.warn(`AG Grid Docs - unable to determine internalFramework for: ${framework}`);
@@ -276,8 +284,15 @@ const mutateExampleInfo = (exampleInfo: ExampleInfo, mainFile: string, options: 
     };
 };
 
-const buildExampleInfo = (providedFramework: string, options: AgChartOptions): ExampleInfo => {
-    const { framework, useFunctionalReact, useVue3, useTypescript, mainFile } = determineFrameworks(providedFramework);
+const buildExampleInfo = (
+    nodes: any,
+    providedFramework: string,
+    options: AgChartOptions,
+    useFunctionalReact = false,
+    useVue3 = false,
+    useTypescript = false
+): ExampleInfo => {
+    const { framework, mainFile } = determineFrameworks(providedFramework, useFunctionalReact, useVue3, useTypescript);
     const library = 'charts';
     const pageName = 'charts-api-explorer';
     const exampleName = 'baseline';
@@ -287,7 +302,7 @@ const buildExampleInfo = (providedFramework: string, options: AgChartOptions): E
     const exampleImportType = 'modules';
 
     const exampleInfo: ExampleInfo = getExampleInfo(
-        useExampleFileNodes(),
+        nodes,
         library,
         pageName,
         exampleName,
