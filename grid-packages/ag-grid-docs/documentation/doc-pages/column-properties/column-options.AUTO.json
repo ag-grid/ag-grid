@@ -5,7 +5,7 @@
   },
   "headerValueGetter": {
     "description": "/** Function or expression. Gets the value for display in the header. */",
-    "type": { "returnType": "string | HeaderValueGetterFunc<TData>" }
+    "type": { "returnType": "string | HeaderValueGetterFunc<TData, TContext>" }
   },
   "headerTooltip": {
     "description": "/** Tooltip for the column header */",
@@ -96,18 +96,18 @@
   },
   "valueGetter": {
     "description": "/** Function or expression. Gets the value from your data for display. */",
-    "type": { "returnType": "string | ValueGetterFunc<TData>" }
+    "type": { "returnType": "string | ValueGetterFunc<TData, TContext>" }
   },
   "valueFormatter": {
     "description": "/** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */",
-    "type": { "returnType": "string | ValueFormatterFunc<TData>" }
+    "type": { "returnType": "string | ValueFormatterFunc<TData, TContext>" }
   },
   "refData": {
     "description": "/** Provided a reference data map to be used to map column values to their respective value from the map. */",
     "type": { "returnType": "{ [key: string]: string; }" }
   },
   "keyCreator": {
-    "description": "/** Function to return a string key for a value.\n     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */",
+    "description": "/** Function to return a string key for a value.\n     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value.\n     */",
     "type": {
       "arguments": { "params": "KeyCreatorParams<TData>" },
       "returnType": "string"
@@ -133,7 +133,9 @@
   },
   "checkboxSelection": {
     "description": "/** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
-    "type": { "returnType": "boolean | CheckboxSelectionCallback<TData>" }
+    "type": {
+      "returnType": "boolean | CheckboxSelectionCallback<TData, TContext>"
+    }
   },
   "showDisabledCheckboxes": {
     "description": "/** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */",
@@ -145,7 +147,9 @@
   },
   "suppressNavigable": {
     "description": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n     * Can also be a callback function to have different rows navigable.\n     * Default: `false`\n     */",
-    "type": { "returnType": "boolean | SuppressNavigableCallback<TData>" }
+    "type": {
+      "returnType": "boolean | SuppressNavigableCallback<TData, TContext>"
+    }
   },
   "suppressKeyboardEvent": {
     "description": "/** Allows the user to suppress certain keyboard events in the grid cell. Default: `false` */",
@@ -156,7 +160,7 @@
   },
   "suppressPaste": {
     "description": "/** Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation).\n     * Set to `true` turn paste operations off.\n     */",
-    "type": { "returnType": "boolean | SuppressPasteCallback<TData>" }
+    "type": { "returnType": "boolean | SuppressPasteCallback<TData, TContext>" }
   },
   "suppressFillHandle": {
     "description": "/** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column */",
@@ -184,15 +188,15 @@
   },
   "editable": {
     "description": "/** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. Default: `false` */",
-    "type": { "returnType": "boolean | EditableCallback<TData>" }
+    "type": { "returnType": "boolean | EditableCallback<TData, TContext>" }
   },
   "valueSetter": {
     "description": "/** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */",
-    "type": { "returnType": "string | ValueSetterFunc<TData>" }
+    "type": { "returnType": "string | ValueSetterFunc<TData, TContext>" }
   },
   "valueParser": {
     "description": "/** Function or expression. Parses the value for saving. */",
-    "type": { "returnType": "string | ValueParserFunc<TData>" }
+    "type": { "returnType": "string | ValueParserFunc<TData, TContext>" }
   },
   "cellEditor": {
     "description": "/** Provide your own cell editor component for this column's cells.\n    * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail.\n    */",
@@ -208,7 +212,7 @@
   },
   "cellEditorSelector": {
     "description": "/** Callback to select which cell editor to be used for a given row within the same column. */",
-    "type": { "returnType": "CellEditorSelectorFunc<TData>" }
+    "type": { "returnType": "CellEditorSelectorFunc<TData, TContext>" }
   },
   "singleClickEdit": {
     "description": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
@@ -259,7 +263,7 @@
   },
   "filterValueGetter": {
     "description": "/** Function or expression. Gets the value for filtering purposes. */",
-    "type": { "returnType": "string | ValueGetterFunc<TData>" }
+    "type": { "returnType": "string | ValueGetterFunc<TData, TContext>" }
   },
   "floatingFilter": {
     "description": "/** Whether to display a floating filter for this column. Default: `false` */",
@@ -291,7 +295,7 @@
   },
   "columnsMenuParams": {
     "description": "/** Params used to change the behaviour and appearance of the Columns Menu tab. */",
-    "type": { "returnType": "ColumnsMenuParams" }
+    "type": { "returnType": "ColumnsMenuParams<TContext>" }
   },
   "suppressMenu": {
     "description": "/** Set to `true` if no menu should be shown for this column header. Default: `false` */",
@@ -299,7 +303,9 @@
   },
   "headerCheckboxSelection": {
     "description": "/** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */",
-    "type": { "returnType": "boolean | HeaderCheckboxSelectionCallback<TData>" }
+    "type": {
+      "returnType": "boolean | HeaderCheckboxSelectionCallback<TData, TContext>"
+    }
   },
   "headerCheckboxSelectionFilteredOnly": {
     "description": "/** If `true`, the header checkbox selection will only select filtered items. */",
@@ -354,7 +360,7 @@
   },
   "cellStyle": {
     "description": "/** An object of css values / or function returning an object of css values for a particular cell. */",
-    "type": { "returnType": "CellStyle | CellStyleFunc<TData>" }
+    "type": { "returnType": "CellStyle | CellStyleFunc<TData, TContext>" }
   },
   "cellClass": {
     "description": "/** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */",
@@ -362,7 +368,7 @@
   },
   "cellClassRules": {
     "description": "/** Rules which can be applied to include certain CSS classes. */",
-    "type": { "returnType": "CellClassRules<TData>" }
+    "type": { "returnType": "CellClassRules<TData, TContext>" }
   },
   "cellRenderer": {
     "description": "/** \n    * Provide your own cell Renderer component for this column's cells.\n    * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.\n    */",
@@ -378,7 +384,7 @@
   },
   "cellRendererSelector": {
     "description": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
-    "type": { "returnType": "CellRendererSelectorFunc<TData>" }
+    "type": { "returnType": "CellRendererSelectorFunc<TData, TContext>" }
   },
   "autoHeight": {
     "description": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",
@@ -398,7 +404,7 @@
   },
   "rowDrag": {
     "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. Default: `false` */",
-    "type": { "returnType": "boolean | RowDragCallback<TData>" }
+    "type": { "returnType": "boolean | RowDragCallback<TData, TContext>" }
   },
   "rowDragText": {
     "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n     * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and\n     * if there is no callback in the `gridOptions` the current cell value will be used.\n     */",
@@ -409,7 +415,7 @@
   },
   "dndSource": {
     "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false` */",
-    "type": { "returnType": "boolean | DndSourceCallback<TData>" }
+    "type": { "returnType": "boolean | DndSourceCallback<TData, TContext>" }
   },
   "dndSourceOnRowDrag": {
     "description": "/** Function to allow custom drag functionality for native drag and drop. */",
@@ -444,11 +450,11 @@
   },
   "aggFunc": {
     "description": "/** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */",
-    "type": { "returnType": "string | IAggFunc<TData> | null" }
+    "type": { "returnType": "string | IAggFunc<TData, TContext> | null" }
   },
   "initialAggFunc": {
     "description": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
-    "type": { "returnType": "string | IAggFunc<TData>" }
+    "type": { "returnType": "string | IAggFunc<TData, TContext>" }
   },
   "defaultAggFunc": {
     "description": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n     * Note that this does not immediately apply the aggregation function like `aggFunc`\n     * Default: `sum`\n     */",

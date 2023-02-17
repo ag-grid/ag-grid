@@ -4,7 +4,7 @@ import { AgGridCommon } from "../../interfaces/iCommon";
 import { IRowNode } from "../../interfaces/iRowNode";
 import { IComponent } from "../../interfaces/iComponent";
 
-export interface ICellRendererParams<TData = any, TValue = any> extends AgGridCommon<TData> {
+export interface ICellRendererParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Value to be rendered. */
     value: TValue;
     /** Formatted value to be rendered. */
@@ -20,7 +20,7 @@ export interface ICellRendererParams<TData = any, TValue = any> extends AgGridCo
     /** The current index of the row (this changes after filter and sort). */
     rowIndex: number;
     /** The cell's column definition. */
-    colDef?: ColDef;
+    colDef?: ColDef<TContext>;
     /** The cell's column. */
     column?: Column;
     /** The grid's cell, a DOM div element. */
@@ -45,26 +45,26 @@ export interface ICellRendererParams<TData = any, TValue = any> extends AgGridCo
     registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void;
 }
 
-export interface ISetFilterCellRendererParams<TData = any> extends AgGridCommon<TData> {
+export interface ISetFilterCellRendererParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     value: any;
     valueFormatted: string | null | undefined;
 
     /** The cell's column definition. */
-    colDef?: ColDef;
+    colDef?: ColDef<TContext>;
     /** The cell's column. */
     column?: Column;
 }
 
-export interface ICellRenderer<TData = any> {
+export interface ICellRenderer<TData = any, TContext = any> {
     /**
      * Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),
      * then the grid will refresh the cell for you.
      */
-    refresh(params: ICellRendererParams<TData>): boolean;
+    refresh(params: ICellRendererParams<TData, TContext>): boolean;
 }
 
-export interface ICellRendererComp<TData = any> extends IComponent<ICellRendererParams<TData>>, ICellRenderer<TData> { }
+export interface ICellRendererComp<TData = any, TContext = any> extends IComponent<ICellRendererParams<TData>>, ICellRenderer<TData, TContext> { }
 
-export interface ICellRendererFunc<TData = any> {
-    (params: ICellRendererParams<TData>): HTMLElement | string;
+export interface ICellRendererFunc<TData = any, TContext = any> {
+    (params: ICellRendererParams<TData, TContext>): HTMLElement | string;
 }

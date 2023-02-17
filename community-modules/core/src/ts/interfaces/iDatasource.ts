@@ -1,7 +1,7 @@
 import { SortModelItem } from "../sortController";
 
 /** Datasource used by both PaginationController and InfiniteRowModel */
-export interface IDatasource {
+export interface IDatasource<TContext = any> {
 
     /** If you know up front how many rows are in the dataset, set it here. Otherwise leave blank. */
     rowCount?: number;
@@ -9,14 +9,14 @@ export interface IDatasource {
     // scrolling uses the grid property infiniteInitialRowCount
 
     /** Callback the grid calls that you implement to fetch rows from the server. */
-    getRows(params: IGetRowsParams): void;
+    getRows(params: IGetRowsParams<TContext>): void;
 
     /** Optional destroy method, if your datasource has state it needs to clean up. */
     destroy?(): void;
 }
 
 /** Params for the above IDatasource.getRows() */
-export interface IGetRowsParams {
+export interface IGetRowsParams<TContext = any> {
 
     /** The first row index to get. */
     startRow: number;
@@ -37,5 +37,5 @@ export interface IGetRowsParams {
     filterModel: any;
 
     /** The context as provided on `gridOptions.context` */
-    context: any;
+    context: TContext;
 }

@@ -54,7 +54,7 @@ export interface ICellEditor {
     afterGuiAttached?(): void;
 }
 
-export interface ICellEditorParams<TData = any, TValue = any> extends AgGridCommon<TData> {
+export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Current value of the cell */
     value: TValue;
     /** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable
@@ -66,7 +66,7 @@ export interface ICellEditorParams<TData = any, TValue = any> extends AgGridComm
     /** Grid column */
     column: Column;
     /** Column definition */
-    colDef: ColDef<TData>;
+    colDef: ColDef<TData, TContext>;
     /** Row node for the cell */
     node: IRowNode<TData>;
     /** Row data */

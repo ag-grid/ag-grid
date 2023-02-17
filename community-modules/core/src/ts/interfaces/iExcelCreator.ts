@@ -353,7 +353,7 @@ export interface RowHeightCallbackParams {
     rowIndex: number;
 }
 
-export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
+export interface ExcelExportParams<TContext = any> extends ExportParams<ExcelRow[]> {
     /** The author of the exported file. Default: `"AG Grid"` */
     author?: string;
     /**
@@ -463,10 +463,10 @@ export interface ExcelHeaderFooterContent {
     font?: ExcelFont;
 }
 
-export interface IExcelCreator {
-    exportDataAsExcel(params?: ExcelExportParams): void;
-    getDataAsExcel(params?: ExcelExportParams): Blob | string | undefined;
-    getSheetDataForExcel(params?: ExcelExportParams): string;
+export interface IExcelCreator<TContext = any> {
+    exportDataAsExcel(params?: ExcelExportParams<TContext>): void;
+    getDataAsExcel(params?: ExcelExportParams<TContext>): Blob | string | undefined;
+    getSheetDataForExcel(params?: ExcelExportParams<TContext>): string;
 
     getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined;
     exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;

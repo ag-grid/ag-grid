@@ -4,7 +4,7 @@ import { RowPosition } from "../entities/rowPositionUtils";
 import { AgGridCommon } from "./iCommon";
 import { IRowNode } from "./iRowNode";
 
-export interface BaseExportParams {
+export interface BaseExportParams<TContext = any> {
     /**
      * If `true`, all columns will be exported in the order they appear in the columnDefs.
      * When `false` only the columns currently being displayed will be exported.
@@ -66,24 +66,24 @@ export interface BaseExportParams {
     /**
      * A callback function that will be invoked once per row in the grid. Return true to omit the row from the export.
      */
-    shouldRowBeSkipped?(params: ShouldRowBeSkippedParams): boolean;
+    shouldRowBeSkipped?(params: ShouldRowBeSkippedParams<TContext>): boolean;
     /**
      * A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. For example this is useful for formatting date values.
      */
-    processCellCallback?(params: ProcessCellForExportParams): string;
+    processCellCallback?(params: ProcessCellForExportParams<TContext>): string;
     /**
      * A callback function invoked once per column. Return a string to be displayed in the column header.
      */
-    processHeaderCallback?(params: ProcessHeaderForExportParams): string;
+    processHeaderCallback?(params: ProcessHeaderForExportParams<TContext>): string;
     /**
      * A callback function invoked once per column group. Return a `string` to be displayed in the column group header.
      * Note that column groups are exported by default, this option will not work with `skipColumnGroupHeaders=true`.
      */
-    processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams): string;
+    processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams<TContext>): string;
     /**
      * A callback function invoked once per row group. Return a `string` to be displayed in the group cell.
      */
-    processRowGroupCallback?(params: ProcessRowGroupForExportParams): string;
+    processRowGroupCallback?(params: ProcessRowGroupForExportParams<TContext>): string;
 
     /** @deprecated */
     columnGroups?: boolean;
@@ -93,7 +93,7 @@ export interface BaseExportParams {
     skipHeader?: boolean;
 }
 
-export interface ExportParams<T> extends BaseExportParams {
+export interface ExportParams<T, TContext = any> extends BaseExportParams<TContext> {
     /**
      * Content to put at the top of the exported sheet.
      */
@@ -135,7 +135,7 @@ export interface CsvCellData {
 
 export type CsvCustomContent = CsvCell[][] | string;
 
-export interface CsvExportParams extends ExportParams<CsvCustomContent> {
+export interface CsvExportParams<TContext = any> extends ExportParams<CsvCustomContent> {
     /**
      * Delimiter to insert between cell values.
      * Default: `,`
@@ -149,12 +149,12 @@ export interface CsvExportParams extends ExportParams<CsvCustomContent> {
     suppressQuotes?: boolean;
 }
 
-export interface ShouldRowBeSkippedParams<TData = any> extends AgGridCommon<TData> {
+export interface ShouldRowBeSkippedParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Row node. */
     node: IRowNode<TData>;
 }
 
-export interface ProcessCellForExportParams<TData = any> extends AgGridCommon<TData> {
+export interface ProcessCellForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     value: any;
     accumulatedRowIndex?: number;
     node?: IRowNode<TData> | null;
@@ -162,15 +162,15 @@ export interface ProcessCellForExportParams<TData = any> extends AgGridCommon<TD
     type: string; // clipboard, dragCopy (ctrl+D), export
 }
 
-export interface ProcessHeaderForExportParams<TData = any> extends AgGridCommon<TData> {
+export interface ProcessHeaderForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     column: Column;
 }
 
-export interface ProcessGroupHeaderForExportParams<TData = any> extends AgGridCommon<TData> {
+export interface ProcessGroupHeaderForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     columnGroup: ColumnGroup;
 }
 
-export interface ProcessRowGroupForExportParams<TData = any> extends AgGridCommon<TData> {
+export interface ProcessRowGroupForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Row node. */
     node: IRowNode<TData>;
 }

@@ -129,11 +129,11 @@ export interface IFilterOptionDef {
 /**
  * Parameters provided by the grid to the `init` method of an `IFilterComp`
  */
-export interface IFilterParams<TData = any> extends AgGridCommon<TData> {
+export interface IFilterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column this filter is for. */
     column: Column;
     /** The column definition for the column. */
-    colDef: ColDef<TData>;
+    colDef: ColDef<TData, TContext>;
     /**
      * The row model, helpful for looking up data values if needed.
      * If the filter needs to know which rows are
@@ -167,7 +167,7 @@ export interface IFilterParams<TData = any> extends AgGridCommon<TData> {
      * The callback takes care of selecting the right column definition and deciding whether to use
      * the column `valueGetter` or raw field etc.
      */
-    valueGetter: ValueGetterFunc<TData>;
+    valueGetter: ValueGetterFunc<TData, TContext>;
 
     /**
      * A function callback, call with a node to be told whether the node passes all filters except the current filter.

@@ -90,7 +90,7 @@ import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsPar
 import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
 
-export interface GridOptions<TData = any> {
+export interface GridOptions<TData = any, TContext = any> {
 
     // ******************************************************************************************************
     // If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
@@ -159,11 +159,11 @@ export interface GridOptions<TData = any> {
     /** Array of Column / Column Group definitions. */
     columnDefs?: (ColDef<TData> | ColGroupDef<TData>)[] | null;
     /** A default column definition. Items defined in the actual column definitions get precedence. */
-    defaultColDef?: ColDef<TData>;
+    defaultColDef?: ColDef<TData, TContext>;
     /** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence. */
-    defaultColGroupDef?: Partial<ColGroupDef<TData>>;
+    defaultColGroupDef?: Partial<ColGroupDef<TData, TContext>>;
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
-    columnTypes?: { [key: string]: ColDef<TData>; };
+    columnTypes?: { [key: string]: ColDef<TData, TContext>; };
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */
     maintainColumnOrder?: boolean;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */
@@ -259,11 +259,11 @@ export interface GridOptions<TData = any> {
 
     // *** Export *** //
     /** A default configuration object used to export to CSV. */
-    defaultCsvExportParams?: CsvExportParams;
+    defaultCsvExportParams?: CsvExportParams<TContext>;
     /** Prevents the user from exporting the grid to CSV. Default: `false` */
     suppressCsvExport?: boolean;
     /** A default configuration object used to export to Excel. */
-    defaultExcelExportParams?: ExcelExportParams;
+    defaultExcelExportParams?: ExcelExportParams<TContext>;
     /** Prevents the user from exporting the grid to Excel. Default: `false` */
     suppressExcelExport?: boolean;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles. */
@@ -310,7 +310,7 @@ export interface GridOptions<TData = any> {
     /** Params to be passed to the `loadingCellRenderer` component. */
     loadingCellRendererParams?: any;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */
-    loadingCellRendererSelector?: LoadingCellRendererSelectorFunc<TData>;
+    loadingCellRendererSelector?: LoadingCellRendererSelectorFunc<TData, TContext>;
 
     // *** Localisation *** //
     // just set once
@@ -343,7 +343,7 @@ export interface GridOptions<TData = any> {
     // *** Miscellaneous *** //
     // changeable, but no immediate impact
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */
-    context?: any;
+    context?: TContext;
     /** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */
     alignedGrids?: { api?: GridApi | null, columnApi?: ColumnApi | null }[];
     /** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */
@@ -447,7 +447,7 @@ export interface GridOptions<TData = any> {
     /** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. Default: `false` */
     functionsReadOnly?: boolean;
     /** A map of 'function name' to 'function' for custom aggregation functions. */
-    aggFuncs?: { [key: string]: IAggFunc<TData>; };
+    aggFuncs?: { [key: string]: IAggFunc<TData, TContext>; };
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */
     suppressAggFuncInHeader?: boolean;
     /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false` */
@@ -542,13 +542,13 @@ export interface GridOptions<TData = any> {
     /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0` */
     groupDefaultExpanded?: number;
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included. */
-    autoGroupColumnDef?: ColDef<TData>;
+    autoGroupColumnDef?: ColDef<TData, TContext>;
     /** When `true`, preserves the current group order when sorting on non-group columns. Default: `false` */
     groupMaintainOrder?: boolean;
     /** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */
     groupSelectsChildren?: boolean;
     /** Set to determine whether filters should be applied on aggregated group values. Default: `false` */
-    groupAggFiltering?: boolean | IsRowFilterable<TData>;
+    groupAggFiltering?: boolean | IsRowFilterable<TData, TContext>;
     /**
      * If grouping, this controls whether to show a group footer when the group is expanded.
      * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
@@ -625,7 +625,7 @@ export interface GridOptions<TData = any> {
 
     // *** Row Model: Infinite / Server-side *** //
     /** Provide the datasource for infinite scrolling. */
-    datasource?: IDatasource;
+    datasource?: IDatasource<TContext>;
     /**
      * How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
      * Default: `1`
@@ -670,7 +670,7 @@ export interface GridOptions<TData = any> {
     /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false`  */
     purgeClosedRowNodes?: boolean;
     /** Provide the `serverSideDatasource` for server side row model. */
-    serverSideDatasource?: IServerSideDatasource;
+    serverSideDatasource?: IServerSideDatasource<TContext>;
 
     /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */
     serverSideSortAllLevels?: boolean;
@@ -783,7 +783,7 @@ export interface GridOptions<TData = any> {
     /** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names). */
     rowClass?: string | string[];
     /** Rules which can be applied to include certain CSS classes. */
-    rowClassRules?: RowClassRules<TData>;
+    rowClassRules?: RowClassRules<TData, TContext>;
     /** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */
     suppressRowHoverHighlight?: boolean;
     /** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */
@@ -802,18 +802,18 @@ export interface GridOptions<TData = any> {
 
     // *** Accessories *** //
     /** For customising the context menu. */
-    getContextMenuItems?: GetContextMenuItems<TData>;
+    getContextMenuItems?: GetContextMenuItems<TData, TContext>;
     /** For customising the main 'column header' menu. */
-    getMainMenuItems?: GetMainMenuItems;
+    getMainMenuItems?: GetMainMenuItems<TContext>;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */
     postProcessPopup?: (params: PostProcessPopupParams<TData>) => void;
 
     // *** Clipboard *** //
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */
     processCellForClipboard?: (params: ProcessCellForExportParams<TData>) => any;
-    /** Allows you to process header values for the clipboard.  */
+    /** Allows you to process header values for the clipboard. */
     processHeaderForClipboard?: (params: ProcessHeaderForExportParams<TData>) => any;
-    /** Allows you to process group header values for the clipboard.  */
+    /** Allows you to process group header values for the clipboard. */
     processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams<TData>) => any;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */
     processCellFromClipboard?: (params: ProcessCellForExportParams<TData>) => any;
@@ -830,18 +830,18 @@ export interface GridOptions<TData = any> {
 
     // *** Integrated Charts *** //
     /** Callback to be used to customise the chart toolbar items. */
-    getChartToolbarItems?: GetChartToolbarItems;
+    getChartToolbarItems?: GetChartToolbarItems<TContext>;
     /** Callback to enable displaying the chart in an alternative chart container. */
     createChartContainer?: (params: ChartRefParams<TData>) => void;
 
     // *** Keyboard Navigation *** //
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */
     navigateToNextHeader?: (params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null);
-    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.  */
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */
     tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => (HeaderPosition | null);
-    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.  */
+    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */
     navigateToNextCell?: (params: NavigateToNextCellParams<TData>) => (CellPosition | null);
-    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.  */
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */
     tabToNextCell?: (params: TabToNextCellParams<TData>) => (CellPosition | null);
 
     // *** Localisation *** //
@@ -890,7 +890,7 @@ export interface GridOptions<TData = any> {
     /** Allows groups to be open by default. */
     isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
     /** Allows cancelling transactions. */
-    isApplyServerSideTransaction?: IsApplyServerSideTransaction;
+    isApplyServerSideTransaction?: IsApplyServerSideTransaction<TContext>;
     /** SSRM Tree Data: Allows specifying which rows are expandable. */
     isServerSideGroup?: IsServerSideGroup;
     /** SSRM Tree Data: Allows specifying group keys. */
@@ -907,7 +907,7 @@ export interface GridOptions<TData = any> {
      * Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc<TData>;
     /** Allows setting the ID for a particular row node based on the data. */
-    getRowId?: GetRowIdFunc<TData>;
+    getRowId?: GetRowIdFunc<TData, TContext>;
     /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */
     resetRowDataOnUpdate?: boolean;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
@@ -944,124 +944,124 @@ export interface GridOptions<TData = any> {
 
     // *** Accessories *** //
     /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */
-    onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>): void;
+    onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData, TContext>): void;
     /** The tool panel size has been changed. */
-    onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>): void;
+    onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData, TContext>): void;
 
     // *** Clipboard *** //
     /** Paste operation has started. */
-    onPasteStart?(event: PasteStartEvent<TData>): void;
+    onPasteStart?(event: PasteStartEvent<TData, TContext>): void;
     /** Paste operation has ended. */
-    onPasteEnd?(event: PasteEndEvent<TData>): void;
+    onPasteEnd?(event: PasteEndEvent<TData, TContext>): void;
 
     // *** Columns *** //
     /** A column, or group of columns, was hidden / shown. */
-    onColumnVisible?(event: ColumnVisibleEvent<TData>): void;
+    onColumnVisible?(event: ColumnVisibleEvent<TData, TContext>): void;
     /** A column, or group of columns, was pinned / unpinned. */
-    onColumnPinned?(event: ColumnPinnedEvent<TData>): void;
+    onColumnPinned?(event: ColumnPinnedEvent<TData, TContext>): void;
     /** A column was resized. */
-    onColumnResized?(event: ColumnResizedEvent<TData>): void;
+    onColumnResized?(event: ColumnResizedEvent<TData, TContext>): void;
     /** A column was moved. */
-    onColumnMoved?(event: ColumnMovedEvent<TData>): void;
+    onColumnMoved?(event: ColumnMovedEvent<TData, TContext>): void;
     /** A value column was added or removed. */
-    onColumnValueChanged?(event: ColumnValueChangedEvent<TData>): void;
+    onColumnValueChanged?(event: ColumnValueChangedEvent<TData, TContext>): void;
     /** The pivot mode flag was changed. */
-    onColumnPivotModeChanged?(event: ColumnPivotModeChangedEvent<TData>): void;
+    onColumnPivotModeChanged?(event: ColumnPivotModeChangedEvent<TData, TContext>): void;
     /** A pivot column was added, removed or order changed. */
-    onColumnPivotChanged?(event: ColumnPivotChangedEvent<TData>): void;
+    onColumnPivotChanged?(event: ColumnPivotChangedEvent<TData, TContext>): void;
     /** A column group was opened / closed. */
-    onColumnGroupOpened?(event: ColumnGroupOpenedEvent<TData>): void;
+    onColumnGroupOpened?(event: ColumnGroupOpenedEvent<TData, TContext>): void;
     /** User set new columns. */
-    onNewColumnsLoaded?(event: NewColumnsLoadedEvent<TData>): void;
+    onNewColumnsLoaded?(event: NewColumnsLoadedEvent<TData, TContext>): void;
     /** The list of grid columns changed. */
-    onGridColumnsChanged?(event: GridColumnsChangedEvent<TData>): void;
+    onGridColumnsChanged?(event: GridColumnsChangedEvent<TData, TContext>): void;
     /** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */
-    onDisplayedColumnsChanged?(event: DisplayedColumnsChangedEvent<TData>): void;
+    onDisplayedColumnsChanged?(event: DisplayedColumnsChangedEvent<TData, TContext>): void;
     /** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */
-    onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>): void;
+    onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData, TContext>): void;
     /** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */
-    onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
+    onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData, TContext>): void;
 
     // *** Components *** //
     /**
      * Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
      */
-    onComponentStateChanged?(event: ComponentStateChangedEvent<TData>): void;
+    onComponentStateChanged?(event: ComponentStateChangedEvent<TData, TContext>): void;
 
     // *** Editing *** //
     /**
      * Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
      *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
      * fill handle, copy range down, undo and redo.
-    */
-    onCellValueChanged?(event: CellValueChangedEvent<TData>): void;
+     */
+    onCellValueChanged?(event: CellValueChangedEvent<TData, TContext>): void;
     /** Value has changed after editing. Only fires when `readOnlyEdit=true`. */
-    onCellEditRequest?(event: CellEditRequestEvent<TData>): void;
+    onCellEditRequest?(event: CellEditRequestEvent<TData, TContext>): void;
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */
-    onRowValueChanged?(event: RowValueChangedEvent<TData>): void;
+    onRowValueChanged?(event: RowValueChangedEvent<TData, TContext>): void;
     /** Editing a cell has started. */
-    onCellEditingStarted?(event: CellEditingStartedEvent<TData>): void;
+    onCellEditingStarted?(event: CellEditingStartedEvent<TData, TContext>): void;
     /** Editing a cell has stopped. */
-    onCellEditingStopped?(event: CellEditingStoppedEvent<TData>): void;
+    onCellEditingStopped?(event: CellEditingStoppedEvent<TData, TContext>): void;
     /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */
-    onRowEditingStarted?(event: RowEditingStartedEvent<TData>): void;
+    onRowEditingStarted?(event: RowEditingStartedEvent<TData, TContext>): void;
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */
-    onRowEditingStopped?(event: RowEditingStoppedEvent<TData>): void;
+    onRowEditingStopped?(event: RowEditingStoppedEvent<TData, TContext>): void;
     /** Undo operation has started. */
-    onUndoStarted?(event: UndoStartedEvent<TData>): void;
+    onUndoStarted?(event: UndoStartedEvent<TData, TContext>): void;
     /** Undo operation has ended. */
-    onUndoEnded?(event: UndoEndedEvent<TData>): void;
+    onUndoEnded?(event: UndoEndedEvent<TData, TContext>): void;
     /** Redo operation has started. */
-    onRedoStarted?(event: RedoStartedEvent<TData>): void;
+    onRedoStarted?(event: RedoStartedEvent<TData, TContext>): void;
     /** Redo operation has ended. */
-    onRedoEnded?(event: RedoEndedEvent<TData>): void;
+    onRedoEnded?(event: RedoEndedEvent<TData, TContext>): void;
 
     // *** Filtering *** //
     /** Filter has been opened. */
-    onFilterOpened?(event: FilterOpenedEvent<TData>): void;
+    onFilterOpened?(event: FilterOpenedEvent<TData, TContext>): void;
     /** Filter has been modified and applied. */
-    onFilterChanged?(event: FilterChangedEvent<TData>): void;
+    onFilterChanged?(event: FilterChangedEvent<TData, TContext>): void;
     /** Filter was modified but not applied. Used when filters have 'Apply' buttons. */
-    onFilterModified?(event: FilterModifiedEvent<TData>): void;
+    onFilterModified?(event: FilterModifiedEvent<TData, TContext>): void;
 
     // *** Integrated Charts *** //
     /** A chart has been created. */
-    onChartCreated?(event: ChartCreated<TData>): void;
+    onChartCreated?(event: ChartCreated<TData, TContext>): void;
     /** The data range for the chart has been changed. */
-    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged<TData>): void;
+    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged<TData, TContext>): void;
     /** Formatting changes have been made by users through the Format Panel. */
-    onChartOptionsChanged?(event: ChartOptionsChanged<TData>): void;
+    onChartOptionsChanged?(event: ChartOptionsChanged<TData, TContext>): void;
     /** A chart has been destroyed. */
-    onChartDestroyed?(event: ChartDestroyed<TData>): void;
+    onChartDestroyed?(event: ChartDestroyed<TData, TContext>): void;
 
     // *** Keyboard Navigation *** //
     /** DOM event `keyDown` happened on a cell. */
-    onCellKeyDown?(event: CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>): void;
+    onCellKeyDown?(event: CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>): void;
     /** DOM event `keyPress` happened on a cell. */
-    onCellKeyPress?(event: CellKeyPressEvent<TData> | FullWidthCellKeyPressEvent<TData>): void;
+    onCellKeyPress?(event: CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>): void;
 
     // *** Miscellaneous *** //
-    /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet  */
-    onGridReady?(event: GridReadyEvent<TData>): void;
+    /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */
+    onGridReady?(event: GridReadyEvent<TData, TContext>): void;
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */
-    onFirstDataRendered?(event: FirstDataRenderedEvent<TData>): void;
+    onFirstDataRendered?(event: FirstDataRenderedEvent<TData, TContext>): void;
     /** The size of the grid `div` has changed. In other words, the grid was resized. */
-    onGridSizeChanged?(event: GridSizeChangedEvent<TData>): void;
+    onGridSizeChanged?(event: GridSizeChangedEvent<TData, TContext>): void;
     /** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */
-    onModelUpdated?(event: ModelUpdatedEvent<TData>): void;
+    onModelUpdated?(event: ModelUpdatedEvent<TData, TContext>): void;
     /** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row. */
-    onVirtualRowRemoved?(event: VirtualRowRemovedEvent<TData>): void;
+    onVirtualRowRemoved?(event: VirtualRowRemovedEvent<TData, TContext>): void;
     /** Which rows are rendered in the DOM has changed. */
-    onViewportChanged?(event: ViewportChangedEvent<TData>): void;
+    onViewportChanged?(event: ViewportChangedEvent<TData, TContext>): void;
     /** The body was scrolled horizontally or vertically. */
-    onBodyScroll?(event: BodyScrollEvent<TData>): void;
+    onBodyScroll?(event: BodyScrollEvent<TData, TContext>): void;
     /** Main body of the grid has stopped scrolling, either horizontally or vertically. */
-    onBodyScrollEnd?(event: BodyScrollEndEvent<TData>): void;
+    onBodyScrollEnd?(event: BodyScrollEndEvent<TData, TContext>): void;
     /** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */
-    onDragStarted?(event: DragStartedEvent<TData>): void;
+    onDragStarted?(event: DragStartedEvent<TData, TContext>): void;
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */
-    onDragStopped?(event: DragStoppedEvent<TData>): void;
+    onDragStopped?(event: DragStoppedEvent<TData, TContext>): void;
 
     // *** Pagination *** //
     /**
@@ -1071,72 +1071,72 @@ export interface GridOptions<TData = any> {
      *  - The current shown page is changed.
      *  - New data is loaded onto the grid.
      */
-    onPaginationChanged?(event: PaginationChangedEvent<TData>): void;
+    onPaginationChanged?(event: PaginationChangedEvent<TData, TContext>): void;
 
     // *** Row Drag and Drop *** //
     /** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid. */
-    onRowDragEnter?(event: RowDragEvent<TData>): void;
+    onRowDragEnter?(event: RowDragEvent<TData, TContext>): void;
     /** The mouse has moved while dragging. */
-    onRowDragMove?(event: RowDragEvent<TData>): void;
+    onRowDragMove?(event: RowDragEvent<TData, TContext>): void;
     /** The mouse has left the grid while dragging. */
-    onRowDragLeave?(event: RowDragEvent<TData>): void;
+    onRowDragLeave?(event: RowDragEvent<TData, TContext>): void;
     /** The drag has finished over the grid. */
-    onRowDragEnd?(event: RowDragEvent<TData>): void;
+    onRowDragEnd?(event: RowDragEvent<TData, TContext>): void;
 
     // *** Row Grouping *** //
     /** A row group column was added or removed. */
-    onColumnRowGroupChanged?(event: ColumnRowGroupChangedEvent<TData>): void;
+    onColumnRowGroupChanged?(event: ColumnRowGroupChangedEvent<TData, TContext>): void;
     /** A row group was opened or closed. */
-    onRowGroupOpened?(event: RowGroupOpenedEvent<TData>): void;
+    onRowGroupOpened?(event: RowGroupOpenedEvent<TData, TContext>): void;
     /** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */
-    onExpandOrCollapseAll?(event: ExpandCollapseAllEvent<TData>): void;
+    onExpandOrCollapseAll?(event: ExpandCollapseAllEvent<TData, TContext>): void;
 
     // *** Row Pinning *** //
     /** The client has set new pinned row data into the grid. */
-    onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent<TData>): void;
+    onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent<TData, TContext>): void;
 
     // *** Row Model: Client Side *** //
     /** @deprecated v28 No longer fired, use onRowDataUpdated instead */
-    onRowDataChanged?(event: RowDataChangedEvent<TData>): void;
+    onRowDataChanged?(event: RowDataChangedEvent<TData, TContext>): void;
     /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
-    onRowDataUpdated?(event: RowDataUpdatedEvent<TData>): void;
+    onRowDataUpdated?(event: RowDataUpdatedEvent<TData, TContext>): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
-    onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>): void;
+    onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData, TContext>): void;
 
     // *** Selection *** //
     /** Cell is clicked. */
-    onCellClicked?(event: CellClickedEvent<TData>): void;
+    onCellClicked?(event: CellClickedEvent<TData, TContext>): void;
     /** Cell is double clicked. */
-    onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>): void;
+    onCellDoubleClicked?(event: CellDoubleClickedEvent<TData, TContext>): void;
     /** Cell is focused. */
-    onCellFocused?(event: CellFocusedEvent<TData>): void;
+    onCellFocused?(event: CellFocusedEvent<TData, TContext>): void;
     /** Mouse entered cell. */
-    onCellMouseOver?(event: CellMouseOverEvent<TData>): void;
+    onCellMouseOver?(event: CellMouseOverEvent<TData, TContext>): void;
     /** Mouse left cell. */
-    onCellMouseOut?(event: CellMouseOutEvent<TData>): void;
+    onCellMouseOut?(event: CellMouseOutEvent<TData, TContext>): void;
     /** Mouse down on cell. */
-    onCellMouseDown?(event: CellMouseDownEvent<TData>): void;
+    onCellMouseDown?(event: CellMouseDownEvent<TData, TContext>): void;
     /** Row is clicked. */
-    onRowClicked?(event: RowClickedEvent<TData>): void;
+    onRowClicked?(event: RowClickedEvent<TData, TContext>): void;
     /** Row is double clicked. */
-    onRowDoubleClicked?(event: RowDoubleClickedEvent<TData>): void;
+    onRowDoubleClicked?(event: RowDoubleClickedEvent<TData, TContext>): void;
     /** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected. */
-    onRowSelected?(event: RowSelectedEvent<TData>): void;
+    onRowSelected?(event: RowSelectedEvent<TData, TContext>): void;
     /** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data. */
-    onSelectionChanged?(event: SelectionChangedEvent<TData>): void;
+    onSelectionChanged?(event: SelectionChangedEvent<TData, TContext>): void;
     /** Cell is right clicked. */
-    onCellContextMenu?(event: CellContextMenuEvent<TData>): void;
+    onCellContextMenu?(event: CellContextMenuEvent<TData, TContext>): void;
     /** A change to range selection has occurred. */
-    onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>): void;
+    onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData, TContext>): void;
 
     // *** Sorting *** //
     /** Sort has changed. The grid also listens for this and updates the model. */
-    onSortChanged?(event: SortChangedEvent<TData>): void;
+    onSortChanged?(event: SortChangedEvent<TData, TContext>): void;
 
-    onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>): void;
-    onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>): void;
-    onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>): void;
-    onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>): void;
+    onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData, TContext>): void;
+    onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData, TContext>): void;
+    onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData, TContext>): void;
+    onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData, TContext>): void;
 
     /**
      * The Grid Api for interacting with the grid.
@@ -1161,11 +1161,11 @@ export interface IsServerSideGroup {
     (dataItem: any): boolean;
 }
 
-export interface IsRowFilterable<TData = any> {
-    (params: GetGroupAggFilteringParams<TData>): boolean;
+export interface IsRowFilterable<TData = any, TContext = any> {
+    (params: GetGroupAggFilteringParams<TData, TContext>): boolean;
 }
-export interface IsApplyServerSideTransaction {
-    (params: IsApplyServerSideTransactionParams): boolean;
+export interface IsApplyServerSideTransaction<TContext = any> {
+    (params: IsApplyServerSideTransactionParams<TContext>): boolean;
 }
 export interface GetServerSideGroupKey {
     (dataItem: any): string;
@@ -1179,13 +1179,13 @@ export interface IsRowSelectable<TData = any> {
     (node: IRowNode<TData>): boolean;
 }
 
-export interface RowClassRules<TData = any> {
+export interface RowClassRules<TData = any, TContext = any> {
     [cssClassName: string]: (((params: RowClassParams<TData>) => boolean) | string);
 }
 
 export interface RowStyle { [cssProperty: string]: string | number; }
 
-export interface RowClassParams<TData = any> extends AgGridCommon<TData> {
+export interface RowClassParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The data associated with this row from rowData. Data is `undefined` for row groups. */
     data: TData | undefined;
     /** The RowNode associated with this row */
@@ -1194,11 +1194,11 @@ export interface RowClassParams<TData = any> extends AgGridCommon<TData> {
     rowIndex: number;
 }
 
-export interface GetContextMenuItems<TData = any> {
-    (params: GetContextMenuItemsParams<TData>): (string | MenuItemDef)[];
+export interface GetContextMenuItems<TData = any, TContext = any> {
+    (params: GetContextMenuItemsParams<TData, TContext>): (string | MenuItemDef)[];
 }
-export interface GetChartToolbarItems {
-    (params: GetChartToolbarItemsParams): ChartMenuOptions[];
+export interface GetChartToolbarItems<TContext = any> {
+    (params: GetChartToolbarItemsParams<TContext>): ChartMenuOptions[];
 }
 export interface MenuItemLeafDef {
     /** Name of the menu item */
@@ -1223,16 +1223,16 @@ export interface MenuItemDef extends MenuItemLeafDef {
     /** If this item is a sub menu, contains a list of menu item definitions */
     subMenu?: (MenuItemDef | string)[];
 }
-export interface GetMainMenuItems {
-    (params: GetMainMenuItemsParams): (string | MenuItemDef)[];
+export interface GetMainMenuItems<TContext = any> {
+    (params: GetMainMenuItemsParams<TContext>): (string | MenuItemDef)[];
 }
 
 export interface GetRowNodeIdFunc<TData = any> {
     (data: TData): string;
 }
 
-export interface GetRowIdFunc<TData = any> {
-    (params: GetRowIdParams<TData>): string;
+export interface GetRowIdFunc<TData = any, TContext = any> {
+    (params: GetRowIdParams<TData, TContext>): string;
 }
 
 export interface ChartRef {
@@ -1246,7 +1246,7 @@ export interface ChartRef {
     destroyChart: () => void;
 }
 
-export interface ChartRefParams<TData = any> extends AgGridCommon<TData>, ChartRef { }
+export interface ChartRefParams<TData = any, TContext = any> extends ChartRef, AgGridCommon<TData, TContext> { }
 
 export type ServerSideStoreType = 'full' | 'partial';
 
@@ -1281,8 +1281,8 @@ export interface ServerSideGroupLevelParams {
 /** @deprecated use ServerSideGroupLevelParams instead */
 export interface ServerSideStoreParams extends ServerSideGroupLevelParams { }
 
-export interface LoadingCellRendererSelectorFunc<TData = any> {
-    (params: ILoadingCellRendererParams<TData>): LoadingCellRendererSelectorResult | undefined;
+export interface LoadingCellRendererSelectorFunc<TData = any, TContext = any> {
+    (params: ILoadingCellRendererParams<TData, TContext>): LoadingCellRendererSelectorResult | undefined;
 }
 export interface LoadingCellRendererSelectorResult {
     /** Equivalent of setting `loadingCellRenderer` */
