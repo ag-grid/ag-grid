@@ -498,8 +498,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             // Fall-through to next pipeline stage.
             case ChartUpdateType.TOOLTIP_RECALCULATION:
                 const tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
-                if (performUpdateType < ChartUpdateType.SERIES_UPDATE && tooltipMeta != null) {
-                    this.handlePointer(tooltipMeta);
+                if (performUpdateType < ChartUpdateType.SERIES_UPDATE && tooltipMeta?.event?.type === 'hover') {
+                    this.handlePointer(tooltipMeta.event as InteractionEvent<'hover'>);
                 }
 
             // Fall-through to next pipeline stage.
@@ -950,13 +950,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
         this.lastInteractionEvent = undefined;
     });
-    protected handlePointer(event: {
-        pageX: number;
-        pageY: number;
-        offsetX: number;
-        offsetY: number;
-        sourceEvent?: any;
-    }) {
+    protected handlePointer(event: InteractionEvent<'hover'>) {
         const { lastPick } = this;
         const { pageX, pageY, offsetX, offsetY } = event;
 
@@ -979,7 +973,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             return;
         }
 
-        const meta = { pageX, pageY, offsetX, offsetY, event: event.sourceEvent };
+        const meta = { pageX, pageY, offsetX, offsetY, event: event };
         if (!lastPick || lastPick.datum !== pick.datum) {
             this.onSeriesDatumPick(meta, pick.datum);
             return;
