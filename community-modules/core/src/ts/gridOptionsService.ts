@@ -77,7 +77,7 @@ export class GridOptionsService {
     // Store locally to avoid retrieving many times as these are requested for every callback
     public api: GridApi;
     public columnApi: ColumnApi;
-    // This is quicker then having code call gos.get('context')
+    // This is quicker then having code call gridOptionsService.get('context')
     public get context() {
         return this.gridOptions['context'];
     }
@@ -247,7 +247,7 @@ export class GridOptionsService {
     }
 
     public isDomLayout(domLayout: DomLayoutType) {
-        const gridLayout = this.get('domLayout') ?? 'normal';
+        const gridLayout = this.gridOptions.domLayout ?? 'normal';
         return gridLayout === domLayout;
     }
 
@@ -382,7 +382,7 @@ export class GridOptionsService {
             return getRowId;
         }
         // this is the deprecated way, so provide a proxy to make it compatible
-        const getRowNodeId = this.get('getRowNodeId');
+        const getRowNodeId = this.gridOptions.getRowNodeId;
         if (getRowNodeId) {
             return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data);
         }
@@ -410,7 +410,7 @@ export class GridOptionsService {
     }
 
     public isColumnsSortingCoupledToGroup(): boolean {
-        const autoGroupColumnDef = this.get('autoGroupColumnDef');
+        const autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
         const isClientSideRowModel = this.isRowModelType('clientSide');
         return isClientSideRowModel && !autoGroupColumnDef?.comparator;
     }
