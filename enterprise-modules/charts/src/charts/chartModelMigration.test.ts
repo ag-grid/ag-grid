@@ -77,6 +77,7 @@ describe('chartModelMigration', () => {
             const chartModel = loadChartModel(name);
 
             const upgradedChartModel = upgradeChartModel(chartModel);
+            delete upgradedChartModel.version; // Exercised in the next test-case.
             expect(upgradedChartModel).toMatchSnapshot();
         });
 
