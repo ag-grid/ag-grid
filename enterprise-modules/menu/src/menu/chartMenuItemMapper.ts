@@ -43,7 +43,7 @@ export class ChartMenuItemMapper extends BeanStub {
         const addItem = (item: T) => {
             itemLookup[item._key] = item;
             if (item.subMenu) {
-                item.subMenu.map(s => addItem(s as T))
+                item.subMenu.forEach(s => addItem(s as T))
             }
         }
         addItem(menuItem);
@@ -58,7 +58,7 @@ export class ChartMenuItemMapper extends BeanStub {
         const menuItemLookup = this.buildLookup(topLevelMenuItem)
         let orderedAndFiltered: MenuItemDefWithKey = { ...topLevelMenuItem, subMenu: [] };
 
-        Object.entries(chartGroupsDef).map(([group, chartTypes]: [keyof ChartGroupsDef, ChartType[]]) => {
+        Object.entries(chartGroupsDef).forEach(([group, chartTypes]: [keyof ChartGroupsDef, ChartType[]]) => {
 
             const chartConfigGroup = configLookup[group];
             if (chartConfigGroup == undefined) {
