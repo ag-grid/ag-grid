@@ -1,13 +1,14 @@
 import { faChartLine, faCompress, faExternalLinkAlt, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AgChartOptions } from 'ag-charts-community';
-import GlobalContextConsumer from 'components/GlobalContext';
 import React, { useMemo } from 'react';
-import isServerSideRendering from 'utils/is-server-side-rendering';
+import GlobalContextConsumer from '../../components/GlobalContext';
+import isServerSideRendering from '../../utils/is-server-side-rendering';
 import { getExampleInfo, openPlunker } from '../example-runner/helpers';
 import { useExampleFileNodes } from '../example-runner/use-example-file-nodes';
 import { doOnEnter } from '../key-handlers';
 import styles from './Launcher.module.scss';
+
 interface LauncherProps {
     framework: string;
     options: AgChartOptions;
