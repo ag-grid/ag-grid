@@ -22,14 +22,14 @@ import {
     RowNode,
     RowHighlightPosition,
     RowNodeTransaction,
-    SelectionService,
     ValueCache,
     AsyncTransactionsFlushed,
     Beans,
     FilterManager,
     WithoutGridCommon,
     RowModelType,
-    SelectionChangedEvent
+    SelectionChangedEvent,
+    ISelectionService,
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -48,7 +48,7 @@ export interface RowNodeMap {
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('selectionService') private selectionService: SelectionService;
+    @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('beans') private beans: Beans;

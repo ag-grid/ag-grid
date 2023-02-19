@@ -149,7 +149,7 @@ export class GridCoreCreator {
 
         const registeredModules = this.getRegisteredModules(params);
 
-        const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules);
+        const beanClasses = this.createBeansList(gridOptions, registeredModules);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
 
         if (!beanClasses) { return; } // happens when no row model found
@@ -290,20 +290,26 @@ export class GridCoreCreator {
         return components;
     }
 
-    private createBeansList(rowModelType: RowModelType | undefined, registeredModules: Module[]): any[] | undefined {
-        const rowModelClass = this.getRowModelClass(rowModelType, registeredModules);
+    private createBeansList(gridOptions: GridOptions, registeredModules: Module[]): any[] | undefined {
+        const rowModelClass = this.getRowModelClass(gridOptions.rowModelType, registeredModules);
 
         if (!rowModelClass) { return; }
+
+        let selectionService: any = SelectionService;
+        if (gridOptions.rowModelType === 'serverSide' && gridOptions.serverSideSelectionMode) {
+            const ssrmModule = registeredModules.find(module => module.moduleName === ModuleNames.ServerSideRowModelModule);
+            selectionService = ssrmModule?.beans?.find(bean => bean.name === 'selectionService') ?? SelectableService;
+        }
 
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
 
         const beans = [
-            rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
+            rowModelClass, selectionService, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, HorizontalResizeService, LocaleService, GridOptionsValidator,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
-            PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
+            PopupService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
             ColumnUtils, AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
@@ -320,12 +326,13 @@ export class GridCoreCreator {
 
         // check for duplicates, as different modules could include the same beans that
         // they depend on, eg ClientSideRowModel in enterprise, and ClientSideRowModel in community
-        const beansNoDuplicates: any[] = [];
-        beans.forEach(bean => {
-            if (beansNoDuplicates.indexOf(bean) < 0) {
-                beansNoDuplicates.push(bean);
+        const beanMap: { [key: string]: any } = {};
+        beans.forEach(b => {
+            if (!beanMap[b.__agBeanMetaData.beanName]) {
+                beanMap[b.__agBeanMetaData.beanName] = b;
             }
         });
+        const beansNoDuplicates: any[] = Object.values(beanMap);
 
         return beansNoDuplicates;
     }
@@ -347,13 +354,7 @@ export class GridCoreCreator {
         beans.eventService.dispatchEvent(readyEvent);
     }
 
-    private getRowModelClass(rowModelType: RowModelType | undefined, registeredModules: Module[]): any {
-
-        // default to client side
-        if (!rowModelType) {
-            rowModelType = 'clientSide';
-        }
-
+    private getRowModelClass(rowModelType: RowModelType | undefined = 'clientSide', registeredModules: Module[]): any {
         const rowModelClasses: { [name: string]: { new(): IRowModel; }; } = {};
         registeredModules.forEach(module => {
             iterateObject(module.rowModels, (key: string, value: { new(): IRowModel; }) => {
@@ -378,7 +379,5 @@ export class GridCoreCreator {
         } else {
             console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
         }
-
     }
-
 }

@@ -31,7 +31,7 @@ import {
     RowPositionUtils,
     RowRenderer,
     RowValueChangedEvent,
-    SelectionService,
+    ISelectionService,
     ValueService,
     ICsvCreator,
     IRangeService,
@@ -64,7 +64,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     @Autowired('csvCreator') private csvCreator: ICsvCreator;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('selectionService') private selectionService: SelectionService;
+    @Autowired('selectionService') private selectionService: ISelectionService;
     @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;

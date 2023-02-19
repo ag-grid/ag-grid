@@ -10,6 +10,7 @@ import { SortListener } from "./serverSideRowModel/listeners/sortListener";
 import { FilterListener } from "./serverSideRowModel/listeners/filterListener";
 import { StoreFactory } from "./serverSideRowModel/stores/storeFactory";
 import { ListenerUtils } from "./serverSideRowModel/listeners/listenerUtils";
+import { ServerSideSelectionService } from "./serverSideRowModel/services/serverSideSelectionService";
 import { VERSION } from "./version";
 
 export const ServerSideRowModelModule: Module = {
@@ -17,7 +18,7 @@ export const ServerSideRowModelModule: Module = {
     moduleName: ModuleNames.ServerSideRowModelModule,
     rowModels: { serverSide: ServerSideRowModel },
     beans: [ExpandListener, SortListener, StoreUtils, BlockUtils, NodeManager, TransactionManager,
-        FilterListener, StoreFactory, ListenerUtils],
+        FilterListener, StoreFactory, ListenerUtils, ServerSideSelectionService],
     dependantModules: [
         EnterpriseCoreModule
     ]
