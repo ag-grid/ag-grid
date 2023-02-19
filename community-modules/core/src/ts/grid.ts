@@ -295,15 +295,21 @@ export class GridCoreCreator {
 
         if (!rowModelClass) { return; }
 
+        let selectionService: any = SelectionService;
+        if (rowModelType === 'serverSide') {
+            const ssrmModule = registeredModules.find(module => module.moduleName === ModuleNames.ServerSideRowModelModule);
+            selectionService = ssrmModule?.beans?.find(bean => bean.name === 'selectionService') ?? SelectableService;
+        }
+
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
 
         const beans = [
-            rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
+            rowModelClass, selectionService, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, HorizontalResizeService, LocaleService, GridOptionsValidator,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
-            PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
+            PopupService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
             ColumnUtils, AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
@@ -347,13 +353,7 @@ export class GridCoreCreator {
         beans.eventService.dispatchEvent(readyEvent);
     }
 
-    private getRowModelClass(rowModelType: RowModelType | undefined, registeredModules: Module[]): any {
-
-        // default to client side
-        if (!rowModelType) {
-            rowModelType = 'clientSide';
-        }
-
+    private getRowModelClass(rowModelType: RowModelType | undefined = 'clientSide', registeredModules: Module[]): any {
         const rowModelClasses: { [name: string]: { new(): IRowModel; }; } = {};
         registeredModules.forEach(module => {
             iterateObject(module.rowModels, (key: string, value: { new(): IRowModel; }) => {
@@ -378,7 +378,5 @@ export class GridCoreCreator {
         } else {
             console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
         }
-
     }
-
 }

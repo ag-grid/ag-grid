@@ -15592,6 +15592,104 @@
     },
     "meta": { "typeParams": ["TData = any"] }
   },
+  "ISelectionService": {
+    "setLastSelectedNode": {
+      "type": {
+        "arguments": { "rowNode": "RowNode" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getLastSelectedNode": {
+      "type": {
+        "arguments": {},
+        "returnType": "RowNode | null",
+        "optional": false
+      }
+    },
+    "getSelectedNodes": {
+      "type": {
+        "arguments": {},
+        "returnType": "RowNode<any>[]",
+        "optional": false
+      }
+    },
+    "getSelectedRows": {
+      "type": { "arguments": {}, "returnType": "any[]", "optional": false }
+    },
+    "removeGroupsFromSelection": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "updateGroupsFromChildrenSelections": {
+      "type": {
+        "arguments": {
+          "source": "SelectionEventSourceType",
+          "changedPath?": "ChangedPath"
+        },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "clearOtherNodes": {
+      "type": {
+        "arguments": {
+          "rowNodeToKeepSelected": "RowNode",
+          "source": "SelectionEventSourceType"
+        },
+        "returnType": "number",
+        "optional": false
+      }
+    },
+    "syncInRowNode": {
+      "type": {
+        "arguments": { "rowNode": "RowNode", "oldNode": "RowNode | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "reset": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "getBestCostNodeSelection": {
+      "type": {
+        "arguments": {},
+        "returnType": "RowNode[] | undefined",
+        "optional": false
+      }
+    },
+    "isEmpty": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "getSelectAllState": {
+      "description": "/** @param justFiltered whether to just include nodes which have passed the filter\n     * @param justCurrentPage whether to just include nodes on the current page\n     * @returns all nodes including unselectable nodes which are the target of this selection attempt\n     */",
+      "type": {
+        "arguments": {
+          "justFiltered?": "boolean",
+          "justCurrentPage?": "boolean"
+        },
+        "returnType": "boolean | null",
+        "optional": false
+      }
+    },
+    "selectAllRowNodes": {
+      "type": {
+        "arguments": {
+          "params": "{ source: SelectionEventSourceType; justFiltered?: boolean; justCurrentPage?: boolean; }"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "deselectAllRowNodes": {
+      "type": {
+        "arguments": {
+          "params": "{ source: SelectionEventSourceType; justFiltered?: boolean; justCurrentPage?: boolean; }"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
   "IServerSideGetRowsRequest": {
     "startRow": {
       "description": "/** First row requested or undefined for all rows. */",

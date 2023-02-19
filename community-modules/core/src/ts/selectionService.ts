@@ -14,9 +14,10 @@ import { iterateObject } from "./utils/object";
 import { exists } from "./utils/generic";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { PaginationProxy } from "./pagination/paginationProxy";
+import { ISelectionService } from "./interfaces/iSelectionService";
 
 @Bean('selectionService')
-export class SelectionService extends BeanStub {
+export class SelectionService extends BeanStub implements ISelectionService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
@@ -105,10 +106,6 @@ export class SelectionService extends BeanStub {
         });
 
         return selectionChanged;
-    }
-
-    public getNodeForIdIfSelected(id: number): RowNode | undefined {
-        return this.selectedNodes[id];
     }
 
     public clearOtherNodes(rowNodeToKeepSelected: RowNode, source: SelectionEventSourceType): number {
@@ -235,10 +232,6 @@ export class SelectionService extends BeanStub {
         return result;
     }
 
-    public setRowModel(rowModel: any) {
-        this.rowModel = rowModel;
-    }
-
     public isEmpty(): boolean {
         let count = 0;
         iterateObject(this.selectedNodes, (nodeId: string, rowNode: RowNode) => {
@@ -285,12 +278,44 @@ export class SelectionService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
+    public getSelectAllState(justFiltered?: boolean | undefined, justCurrentPage?: boolean | undefined): boolean | null {
+        let selectedCount = 0;
+        let notSelectedCount = 0;
+
+        const callback = (node: RowNode) => {
+            if (this.groupSelectsChildren && node.group) { return; }
+
+            if (node.isSelected()) {
+                selectedCount++;
+            } else if (!node.selectable) {
+                // don't count non-selectable nodes!
+            } else {
+                notSelectedCount++;
+            }
+        };
+
+        this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
+
+        // if no rows, always have it unselected
+        if (selectedCount === 0 && notSelectedCount === 0) {
+            return false;
+        }
+
+        // if mix of selected and unselected, this is indeterminate
+        if (selectedCount > 0 && notSelectedCount > 0) {
+            return null;
+        }
+
+        // only selected
+        return selectedCount > 0;
+    }
+
     /**
      * @param justFiltered whether to just include nodes which have passed the filter
      * @param justCurrentPage whether to just include nodes on the current page
      * @returns all nodes including unselectable nodes which are the target of this selection attempt
      */
-    public getNodesToSelect(justFiltered = false, justCurrentPage = false) {
+    private getNodesToSelect(justFiltered = false, justCurrentPage = false) {
         if (this.rowModel.getType() !== 'clientSide') {
             throw new Error(`selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`);
         }

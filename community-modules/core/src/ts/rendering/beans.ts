@@ -27,7 +27,7 @@ import { RowContainerHeightService } from "./rowContainerHeightService";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { CellPositionUtils } from "../entities/cellPositionUtils";
 import { RowPositionUtils } from "../entities/rowPositionUtils";
-import { SelectionService } from "../selectionService";
+import { ISelectionService } from "../interfaces/iSelectionService";
 import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
@@ -86,7 +86,7 @@ export class Beans {
     @Autowired('frameworkOverrides') public frameworkOverrides: IFrameworkOverrides;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
-    @Autowired('selectionService') public selectionService: SelectionService;
+    @Autowired('selectionService') public selectionService: ISelectionService;
     @Optional('selectionHandleFactory') public selectionHandleFactory: ISelectionHandleFactory;
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('rowModel') public rowModel: IRowModel;
