@@ -14,9 +14,12 @@ import { iterateObject } from "./utils/object";
 import { exists } from "./utils/generic";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { PaginationProxy } from "./pagination/paginationProxy";
+import { ISelectionService } from "./interfaces/iSelectionService";
+import { SetSelectedParams } from "./interfaces/iRowNode";
+import { _ } from "./utils";
 
 @Bean('selectionService')
-export class SelectionService extends BeanStub {
+export class SelectionService extends BeanStub implements ISelectionService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
@@ -28,6 +31,7 @@ export class SelectionService extends BeanStub {
     private lastSelectedNode: RowNode | null;
 
     private groupSelectsChildren: boolean;
+    private rowSelection?: 'single' | 'multiple';
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('selectionService');
@@ -37,14 +41,157 @@ export class SelectionService extends BeanStub {
     @PostConstruct
     private init(): void {
         this.groupSelectsChildren = this.gridOptionsService.is('groupSelectsChildren');
+        this.addManagedPropertyListener('groupSelectsChildren', (propChange) => this.groupSelectsChildren = propChange.currentValue);
+        this.rowSelection = this.gridOptionsService.get('rowSelection');
+        this.addManagedPropertyListener('rowSelection', (propChange) => this.rowSelection = propChange.currentValue);
+
         this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
-    public setLastSelectedNode(rowNode: RowNode): void {
+    private isMultiselect() {
+        return this.rowSelection === 'multiple';
+    }
+
+    public setNodeSelected(params: SetSelectedParams & { event?: Event, node: RowNode }): number {
+        const {
+            newValue,
+            clearSelection,
+            suppressFinishActions,
+            rangeSelect,
+            event,
+            node,
+            source = 'api',
+        } = params;
+
+        // groupSelectsFiltered only makes sense when group selects children
+        const groupSelectsFiltered = this.groupSelectsChildren && (params.groupSelectsFiltered === true);
+
+        if (node.id === undefined) {
+            console.warn('AG Grid: cannot select node until id for node is known');
+            return 0;
+        }
+
+        if (node.rowPinned) {
+            console.warn('AG Grid: cannot select pinned rows');
+            return 0;
+        }
+
+        // if we are a footer, we don't do selection, just pass the info
+        // to the sibling (the parent of the group)
+        if (node.footer) {
+            return this.setNodeSelected({ ...params, node: node.sibling });
+        }
+
+        const lastSelectedNode = this.getLastSelectedNode();
+        if (rangeSelect && lastSelectedNode) {
+            const newRowClicked = lastSelectedNode !== node;
+            if (newRowClicked && this.isMultiselect()) {
+                const nodesChanged = this.selectRange(node, lastSelectedNode, params.newValue, source);
+                this.setLastSelectedNode(node);
+                return nodesChanged;
+            }
+        }
+
+        // when groupSelectsFiltered, then this node may end up intermediate despite
+        // trying to set it to true / false. this group will be calculated further on
+        // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
+        // here, otherwise the updatedCount would include it.
+        const skipThisNode = groupSelectsFiltered && node.group;
+        let updatedCount = 0;
+
+        if (!skipThisNode) {
+            const thisNodeWasSelected = node.selectThisNode(newValue, params.event, source);
+            if (thisNodeWasSelected) {
+                updatedCount++;
+            }
+        }
+
+        if (this.groupSelectsChildren && node.childrenAfterGroup?.length) {
+            updatedCount += this.selectChildren(node, newValue, groupSelectsFiltered, source);
+        }
+
+        // clear other nodes if not doing multi select
+        if (!suppressFinishActions) {
+            const clearOtherNodes = newValue && (clearSelection || !this.isMultiselect());
+            if (clearOtherNodes) {
+                updatedCount += this.clearOtherNodes(node, source);
+            }
+
+            // only if we selected something, then update groups and fire events
+            if (updatedCount > 0) {
+                this.updateGroupsFromChildrenSelections(source);
+
+                // this is the very end of the 'action node', so we are finished all the updates,
+                // include any parent / child changes that this method caused
+                const event: WithoutGridCommon<SelectionChangedEvent> = {
+                    type: Events.EVENT_SELECTION_CHANGED,
+                    source
+                };
+                this.eventService.dispatchEvent(event);
+            }
+
+            // so if user next does shift-select, we know where to start the selection from
+            if (newValue) {
+                this.setLastSelectedNode(node);
+            }
+        }
+        return updatedCount;
+    }
+
+    // selects all rows between this node and the last selected node (or the top if this is the first selection).
+    // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
+    // holding down 'shift'.
+    private selectRange(fromNode: RowNode, toNode: RowNode, value: boolean = true, source: SelectionEventSourceType): number {
+        const nodesToSelect = this.rowModel.getNodesInRangeForSelection(fromNode, toNode);   
+
+        let updatedCount = 0;
+
+        nodesToSelect.forEach(rowNode => {
+            if (rowNode.group && this.groupSelectsChildren || (value === false && fromNode === rowNode)) { return; }
+
+            const nodeWasSelected = rowNode.selectThisNode(value, undefined, source);
+            if (nodeWasSelected) {
+                updatedCount++;
+            }
+        });
+
+        this.updateGroupsFromChildrenSelections(source);
+
+        const event: WithoutGridCommon<SelectionChangedEvent> = {
+            type: Events.EVENT_SELECTION_CHANGED,
+            source
+        };
+
+        this.eventService.dispatchEvent(event);
+
+        return updatedCount;
+    }
+
+    private selectChildren(node: RowNode, newValue: boolean, groupSelectsFiltered: boolean, source: SelectionEventSourceType): number {
+        const children = groupSelectsFiltered ? node.childrenAfterAggFilter : node.childrenAfterGroup;
+
+        if (_.missing(children)) { return 0; }
+
+        let updatedCount = 0;
+
+        for (let i = 0; i < children.length; i++) {
+            updatedCount += children[i].setSelectedParams({
+                newValue: newValue,
+                clearSelection: false,
+                suppressFinishActions: true,
+                groupSelectsFiltered,
+                source
+            });
+        }
+
+        return updatedCount;
+    }
+
+    private setLastSelectedNode(rowNode: RowNode): void {
         this.lastSelectedNode = rowNode;
     }
 
-    public getLastSelectedNode(): RowNode | null {
+    private getLastSelectedNode(): RowNode | null {
         return this.lastSelectedNode;
     }
 
@@ -68,18 +215,29 @@ export class SelectionService extends BeanStub {
         return selectedRows;
     }
 
-    public removeGroupsFromSelection(): void {
-        iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
-            if (rowNode && rowNode.group) {
-                this.selectedNodes[rowNode.id!] = undefined;
+    public getSelectionCount(): number {
+        return Object.values(this.selectedNodes).length;
+    }
+
+    /**
+     * This method is used by the CSRM to remove groups which are being disposed of,
+     * events do not need fired in this case
+     */
+    public filterFromSelection(predicate: (node: RowNode) => boolean): void {
+        const newSelectedNodes: { [key: string]: RowNode | undefined; } = {};
+        Object.entries(this.selectedNodes).forEach(([key, node]) => {
+            const passesPredicate = node && predicate(node);
+            if (passesPredicate) {
+                newSelectedNodes[key] = node;
             }
-        });
+        })
+        this.selectedNodes = newSelectedNodes;
     }
 
     // should only be called if groupSelectsChildren=true
     public updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean {
         // we only do this when group selection state depends on selected children
-        if (!this.gridOptionsService.is('groupSelectsChildren')) {
+        if (!this.groupSelectsChildren) {
             return false;
         }
         // also only do it if CSRM (code should never allow this anyway)
@@ -105,10 +263,6 @@ export class SelectionService extends BeanStub {
         });
 
         return selectionChanged;
-    }
-
-    public getNodeForIdIfSelected(id: number): RowNode | undefined {
-        return this.selectedNodes[id];
     }
 
     public clearOtherNodes(rowNodeToKeepSelected: RowNode, source: SelectionEventSourceType): number {
@@ -235,10 +389,6 @@ export class SelectionService extends BeanStub {
         return result;
     }
 
-    public setRowModel(rowModel: any) {
-        this.rowModel = rowModel;
-    }
-
     public isEmpty(): boolean {
         let count = 0;
         iterateObject(this.selectedNodes, (nodeId: string, rowNode: RowNode) => {
@@ -285,12 +435,44 @@ export class SelectionService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
+    public getSelectAllState(justFiltered?: boolean | undefined, justCurrentPage?: boolean | undefined): boolean | null {
+        let selectedCount = 0;
+        let notSelectedCount = 0;
+
+        const callback = (node: RowNode) => {
+            if (this.groupSelectsChildren && node.group) { return; }
+
+            if (node.isSelected()) {
+                selectedCount++;
+            } else if (!node.selectable) {
+                // don't count non-selectable nodes!
+            } else {
+                notSelectedCount++;
+            }
+        };
+
+        this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
+
+        // if no rows, always have it unselected
+        if (selectedCount === 0 && notSelectedCount === 0) {
+            return false;
+        }
+
+        // if mix of selected and unselected, this is indeterminate
+        if (selectedCount > 0 && notSelectedCount > 0) {
+            return null;
+        }
+
+        // only selected
+        return selectedCount > 0;
+    }
+
     /**
      * @param justFiltered whether to just include nodes which have passed the filter
      * @param justCurrentPage whether to just include nodes on the current page
      * @returns all nodes including unselectable nodes which are the target of this selection attempt
      */
-    public getNodesToSelect(justFiltered = false, justCurrentPage = false) {
+    private getNodesToSelect(justFiltered = false, justCurrentPage = false) {
         if (this.rowModel.getType() !== 'clientSide') {
             throw new Error(`selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`);
         }
@@ -360,4 +542,11 @@ export class SelectionService extends BeanStub {
         };
         this.eventService.dispatchEvent(event);
     }
+
+    // Used by SSRM
+    public getServerSideSelectionState() {
+        return null;
+    }
+
+    public setServerSideSelectionState(state: any): void {}
 }

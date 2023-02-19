@@ -104,13 +104,14 @@ import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { FlashCellsParams, GetCellEditorInstancesParams, GetCellRendererInstancesParams, RedrawRowsParams, RefreshCellsParams, RowRenderer } from "./rendering/rowRenderer";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
-import { SelectionService } from "./selectionService";
 import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { exists, missing } from "./utils/generic";
 import { iterateObject, removeAllReferences } from "./utils/object";
 import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
+import { ISelectionService } from "./interfaces/iSelectionService";
+import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
 
 export interface DetailGridInfo {
     /**
@@ -153,7 +154,7 @@ export class GridApi<TData = any> {
     @Autowired('navigationService') private navigationService: NavigationService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('selectionService') private selectionService: SelectionService;
+    @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
@@ -719,6 +720,36 @@ export class GridApi<TData = any> {
      */
     public deselectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
         this.selectionService.deselectAllRowNodes({ source, justFiltered: true });
+    }
+
+    /**
+     * Returns an object containing rules matching the selected rows in the SSRM.
+     * 
+     * If `groupSelectsChildren=false` the returned object will be flat, and will conform to IServerSideSelectionState.
+     * If `groupSelectsChildren=true` the retuned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
+     */
+    public getServerSideSelectionState(): IServerSideSelectionState | IServerSideGroupSelectionState | null {
+        if (missing(this.serverSideRowModel)) {
+            this.logMissingRowModel('getServerSideSelectionState', 'serverSide');
+            return null;
+        }
+
+        return this.selectionService.getServerSideSelectionState();
+    }
+
+    /**
+     * Set the rules matching the selected rows in the SSRM.
+     * 
+     * If `groupSelectsChildren=false` the param will be flat, and should conform to IServerSideSelectionState.
+     * If `groupSelectsChildren=true` the param will be hierarchical, and should conform to IServerSideGroupSelectionState.
+     */
+    public setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState) {
+        if (missing(this.serverSideRowModel)) {
+            this.logMissingRowModel('setServerSideSelectionState', 'serverSide');
+            return;
+        }
+
+        this.selectionService.setServerSideSelectionState(state);
     }
 
     /**

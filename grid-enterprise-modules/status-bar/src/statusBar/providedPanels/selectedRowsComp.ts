@@ -1,9 +1,10 @@
-import { Autowired, Events, GridApi, PostConstruct, IStatusPanelComp, _ } from '@ag-grid-community/core';
+import { Autowired, Events, GridApi, PostConstruct, IStatusPanelComp, _, ISelectionService } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
 
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('selectionService') private selectionService: ISelectionService;
 
     @PostConstruct
     protected postConstruct(): void {
@@ -18,13 +19,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-selected-row-count');
 
-        const selectedRowCount = this.gridApi.getSelectedRows().length;
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const thousandSeparator = localeTextFunc('thousandSeparator', ',');
-        const decimalSeparator = localeTextFunc('decimalSeparator', '.');
-
-        this.setValue(_.formatNumberCommas(selectedRowCount, thousandSeparator, decimalSeparator));
-        this.setDisplayed(selectedRowCount > 0);
+        this.onRowSelectionChanged();
 
         const eventListener = this.onRowSelectionChanged.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, eventListener);
@@ -38,7 +33,12 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
     }
 
     private onRowSelectionChanged() {
-        const selectedRowCount = this.gridApi.getSelectedRows().length;
+        const selectedRowCount = this.selectionService.getSelectionCount();
+        if (selectedRowCount < 0) {
+            this.setValue('?');
+            this.setDisplayed(true);
+            return;
+        }
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
