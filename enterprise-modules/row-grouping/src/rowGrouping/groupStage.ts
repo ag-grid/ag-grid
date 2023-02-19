@@ -17,7 +17,7 @@ import {
     StageExecuteParams,
     ValueService,
     Beans,
-    SelectionService,
+    ISelectionService,
     WithoutGridCommon,
     InitialGroupOrderComparatorParams
 } from "@ag-grid-community/core";
@@ -48,7 +48,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('beans') private beans: Beans;
-    @Autowired('selectionService') private selectionService: SelectionService;
+    @Autowired('selectionService') private selectionService: ISelectionService;
 
     // if doing tree data, this is true. we set this at create time - as our code does not
     // cater for the scenario where this is switched on / off dynamically
@@ -474,7 +474,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
 
         // groups are about to get disposed, so need to deselect any that are selected
-        this.selectionService.removeGroupsFromSelection();
+        this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
 
         const { rootNode, groupedCols } = details;
         // because we are not creating the root node each time, we have the logic

@@ -353,6 +353,10 @@
       }
     }
   },
+  "getServerSideSelectionState": {
+    "description": "/** Returns an object containing rules matching the selected rows in the SSRM.\n     * If using `groupSelectsChildren` this object will be hierarchical.\n     */",
+    "type": { "arguments": {} }
+  },
   "selectAllOnCurrentPage": {
     "description": "/** Select all rows on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`\n     */",
     "type": {

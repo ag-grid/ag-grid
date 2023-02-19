@@ -740,6 +740,10 @@
     "description": "/** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.\n     * Default: `false`\n     */",
     "type": { "returnType": "boolean" }
   },
+  "serverSideSelectionMode": {
+    "description": "/** When `true`, the Server-side Row Model will use a server oriented strategy for handling row selection.\n     * Default: `false`\n     */",
+    "type": { "returnType": "boolean" }
+  },
   "cacheBlockSize": {
     "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
     "type": { "returnType": "number" }

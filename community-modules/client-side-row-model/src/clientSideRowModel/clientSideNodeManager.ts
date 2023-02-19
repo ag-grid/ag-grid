@@ -6,10 +6,11 @@ import {
     RowNode,
     RowNodeTransaction,
     SelectionChangedEvent,
-    SelectionService, _,
+    _,
     WithoutGridCommon,
     GridOptionsService,
-    SelectionEventSourceType
+    SelectionEventSourceType,
+    ISelectionService,
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -21,7 +22,7 @@ export class ClientSideNodeManager {
     private gridOptionsService: GridOptionsService;
     private eventService: EventService;
     private columnModel: ColumnModel;
-    private selectionService: SelectionService;
+    private selectionService: ISelectionService;
     private beans: Beans;
 
     private nextId = 0;
@@ -38,7 +39,7 @@ export class ClientSideNodeManager {
     private allNodesMap: { [id: string]: RowNode } = {};
 
     constructor(rootNode: RowNode, gridOptionsService: GridOptionsService, eventService: EventService,
-        columnModel: ColumnModel, selectionService: SelectionService, beans: Beans) {
+        columnModel: ColumnModel, selectionService: ISelectionService, beans: Beans) {
         this.rootNode = rootNode;
         this.gridOptionsService = gridOptionsService;
         this.eventService = eventService;

@@ -653,6 +653,11 @@ export interface GridOptions<TData = any> {
      */
     suppressServerSideInfiniteScroll?: boolean;
     /**
+     * When `true`, the Server-side Row Model will use a server oriented strategy for handling row selection.
+     * Default: `false`
+     */
+    serverSideSelectionMode?: boolean;
+    /**
      * How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * Default: `100`
      */

@@ -3124,6 +3124,10 @@
       "description": "/** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "serverSideSelectionMode": {
+      "description": "/** When `true`, the Server-side Row Model will use a server oriented strategy for handling row selection.\n     * Default: `false`\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
       "type": { "returnType": "number", "optional": true }
@@ -15592,6 +15596,110 @@
     },
     "meta": { "typeParams": ["TData = any"] }
   },
+  "ISelectionService": {
+    "getSelectedState": {
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "getSelectedNodes": {
+      "type": {
+        "arguments": {},
+        "returnType": "RowNode<any>[]",
+        "optional": false
+      }
+    },
+    "getSelectedRows": {
+      "type": { "arguments": {}, "returnType": "any[]", "optional": false }
+    },
+    "setNodeSelected": {
+      "type": {
+        "arguments": { "params": "ISetNodeSelectedParams" },
+        "returnType": "number",
+        "optional": false
+      }
+    },
+    "filterFromSelection": {
+      "type": {
+        "arguments": { "predicate": "(node: RowNode) => boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "updateGroupsFromChildrenSelections": {
+      "type": {
+        "arguments": {
+          "source": "SelectionEventSourceType",
+          "changedPath?": "ChangedPath"
+        },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "syncInRowNode": {
+      "type": {
+        "arguments": { "rowNode": "RowNode", "oldNode": "RowNode | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "reset": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "getBestCostNodeSelection": {
+      "type": {
+        "arguments": {},
+        "returnType": "RowNode[] | undefined",
+        "optional": false
+      }
+    },
+    "isEmpty": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "getSelectAllState": {
+      "description": "/** @param justFiltered whether to just include nodes which have passed the filter\n     * @param justCurrentPage whether to just include nodes on the current page\n     * @returns all nodes including unselectable nodes which are the target of this selection attempt\n     */",
+      "type": {
+        "arguments": {
+          "justFiltered?": "boolean",
+          "justCurrentPage?": "boolean"
+        },
+        "returnType": "boolean | null",
+        "optional": false
+      }
+    },
+    "selectAllRowNodes": {
+      "type": {
+        "arguments": {
+          "params": "{ source: SelectionEventSourceType; justFiltered?: boolean; justCurrentPage?: boolean; }"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "deselectAllRowNodes": {
+      "type": {
+        "arguments": {
+          "params": "{ source: SelectionEventSourceType; justFiltered?: boolean; justCurrentPage?: boolean; }"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
+  "ISetNodeSelectedParams": {
+    "node": { "type": { "returnType": "RowNode", "optional": false } },
+    "newValue": { "type": { "returnType": "boolean", "optional": false } },
+    "clearSelection": { "type": { "returnType": "boolean", "optional": true } },
+    "suppressFinishActions": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "rangeSelect": { "type": { "returnType": "boolean", "optional": true } },
+    "groupSelectsFiltered": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "source": {
+      "type": { "returnType": "SelectionEventSourceType", "optional": false }
+    },
+    "event": { "type": { "returnType": "Event", "optional": true } }
+  },
   "IServerSideGetRowsRequest": {
     "startRow": {
       "description": "/** First row requested or undefined for all rows. */",
@@ -21514,6 +21622,10 @@
       "description": "/** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "serverSideSelectionMode": {
+      "description": "/** When `true`, the Server-side Row Model will use a server oriented strategy for handling row selection.\n     * Default: `false`\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "cacheBlockSize": {
       "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n     * Default: `100`\n     */",
       "type": { "returnType": "number", "optional": true }
@@ -24310,6 +24422,10 @@
     },
     "suppressServerSideInfiniteScroll": {
       "description": "/** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.\n     * Default: `false`\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideSelectionMode": {
+      "description": "/** When `true`, the Server-side Row Model will use a server oriented strategy for handling row selection.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {
@@ -27114,6 +27230,10 @@
     },
     "suppressServerSideInfiniteScroll": {
       "description": "/** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.\n     * Default: `false`\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideSelectionMode": {
+      "description": "/** When `true`, the Server-side Row Model will use a server oriented strategy for handling row selection.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cacheBlockSize": {

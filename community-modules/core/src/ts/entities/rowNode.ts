@@ -890,7 +890,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         }
     }
 
-    public setSelectedInitialValue(selected: boolean): void {
+    public setSelectedInitialValue(selected?: boolean): void {
         this.selected = selected;
     }
 
@@ -911,6 +911,21 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         });
     }
 
+    // to make calling code more readable, this is the same method as setSelected except it takes names parameters
+    public setSelectedParams(params: SetSelectedParams & { event?: Event }): number {
+        if (this.rowPinned) {
+            console.warn('AG Grid: cannot select pinned rows');
+            return 0;
+        }
+
+        if (this.id === undefined) {
+            console.warn('AG Grid: cannot select node until id for node is known');
+            return 0;
+        }
+
+        return this.beans.selectionService.setNodeSelected({ ...params, node: this.footer ? this.sibling : this });
+    }
+
     /**
      * Returns:
      * - `true` if node is either pinned to the `top` or `bottom`
@@ -918,122 +933,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      */
     public isRowPinned(): boolean {
         return this.rowPinned === 'top' || this.rowPinned === 'bottom';
-    }
-
-    // to make calling code more readable, this is the same method as setSelected except it takes names parameters
-    public setSelectedParams(params: SetSelectedParams & { event?: Event }): number {
-        const groupSelectsChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
-        const newValue = params.newValue === true;
-        const clearSelection = params.clearSelection === true;
-        const suppressFinishActions = params.suppressFinishActions === true;
-        const rangeSelect = params.rangeSelect === true;
-        // groupSelectsFiltered only makes sense when group selects children
-        const groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
-        const source = params.source ?? 'api';
-
-        if (this.id === undefined) {
-            console.warn('AG Grid: cannot select node until id for node is known');
-            return 0;
-        }
-
-        if (this.rowPinned) {
-            console.warn('AG Grid: cannot select pinned rows');
-            return 0;
-        }
-
-        // if we are a footer, we don't do selection, just pass the info
-        // to the sibling (the parent of the group)
-        if (this.footer) {
-            return this.sibling.setSelectedParams(params);
-        }
-
-        if (rangeSelect && this.beans.selectionService.getLastSelectedNode()) {
-            const newRowClicked = this.beans.selectionService.getLastSelectedNode() !== this;
-            const allowMultiSelect = this.beans.gridOptionsService.get('rowSelection') === 'multiple';
-            if (newRowClicked && allowMultiSelect) {
-                const nodesChanged = this.doRowRangeSelection(params.newValue, source);
-                this.beans.selectionService.setLastSelectedNode(this);
-                return nodesChanged;
-            }
-        }
-
-        let updatedCount = 0;
-
-        // when groupSelectsFiltered, then this node may end up intermediate despite
-        // trying to set it to true / false. this group will be calculated further on
-        // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
-        // here, otherwise the updatedCount would include it.
-        const skipThisNode = groupSelectsFiltered && this.group;
-
-        if (!skipThisNode) {
-            const thisNodeWasSelected = this.selectThisNode(newValue, params.event, source);
-            if (thisNodeWasSelected) {
-                updatedCount++;
-            }
-        }
-
-        if (groupSelectsChildren && this.childrenAfterGroup?.length) {
-            updatedCount += this.selectChildNodes(newValue, groupSelectsFiltered, source);
-        }
-
-        // clear other nodes if not doing multi select
-        if (!suppressFinishActions) {
-            const clearOtherNodes = newValue && (clearSelection || this.beans.gridOptionsService.get('rowSelection') !== 'multiple');
-            if (clearOtherNodes) {
-                updatedCount += this.beans.selectionService.clearOtherNodes(this, source);
-            }
-
-            // only if we selected something, then update groups and fire events
-            if (updatedCount > 0) {
-                this.beans.selectionService.updateGroupsFromChildrenSelections(source);
-
-                // this is the very end of the 'action node', so we are finished all the updates,
-                // include any parent / child changes that this method caused
-                const event: WithoutGridCommon<SelectionChangedEvent> = {
-                    type: Events.EVENT_SELECTION_CHANGED,
-                    source
-                };
-                this.beans.eventService.dispatchEvent(event);
-            }
-
-            // so if user next does shift-select, we know where to start the selection from
-            if (newValue) {
-                this.beans.selectionService.setLastSelectedNode(this);
-            }
-        }
-
-        return updatedCount;
-    }
-
-    // selects all rows between this node and the last selected node (or the top if this is the first selection).
-    // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
-    // holding down 'shift'.
-    private doRowRangeSelection(value: boolean = true, source: SelectionEventSourceType): number {
-        const groupsSelectChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
-        const lastSelectedNode = this.beans.selectionService.getLastSelectedNode();
-        const nodesToSelect = this.beans.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
-
-        let updatedCount = 0;
-
-        nodesToSelect.forEach(rowNode => {
-            if (rowNode.group && groupsSelectChildren || (value === false && this === rowNode)) { return; }
-
-            const nodeWasSelected = rowNode.selectThisNode(value, undefined, source);
-            if (nodeWasSelected) {
-                updatedCount++;
-            }
-        });
-
-        this.beans.selectionService.updateGroupsFromChildrenSelections(source);
-
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: Events.EVENT_SELECTION_CHANGED,
-            source
-        };
-
-        this.beans.eventService.dispatchEvent(event);
-
-        return updatedCount;
     }
 
     public isParentOfNode(potentialParent: RowNode): boolean {
@@ -1050,7 +949,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     public selectThisNode(newValue?: boolean, e?: Event, source: SelectionEventSourceType = 'api'): boolean {
-
         // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
         // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
         const selectionNotAllowed = !this.selectable && newValue;
@@ -1073,26 +971,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.beans.eventService.dispatchEvent(event);
 
         return true;
-    }
-
-    private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean, source: SelectionEventSourceType): number {
-        const children = groupSelectsFiltered ? this.childrenAfterAggFilter : this.childrenAfterGroup;
-
-        if (missing(children)) { return 0; }
-
-        let updatedCount = 0;
-
-        for (let i = 0; i < children.length; i++) {
-            updatedCount += children[i].setSelectedParams({
-                newValue: newValue,
-                clearSelection: false,
-                suppressFinishActions: true,
-                groupSelectsFiltered,
-                source
-            });
-        }
-
-        return updatedCount;
     }
 
     /** Add an event listener. */

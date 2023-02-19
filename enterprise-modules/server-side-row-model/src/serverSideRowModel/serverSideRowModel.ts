@@ -19,7 +19,6 @@ import {
     RowDataChangedEvent,
     RowNode,
     RowRenderer,
-    SortController,
     StoreRefreshAfterParams,
     RefreshServerSideParams,
     ServerSideGroupLevelState,
@@ -52,7 +51,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('sortController') private sortController: SortController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('ssrmSortService') private sortListener: SortListener;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
@@ -479,11 +477,48 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return res;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
-        if (_.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
-            return [];
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode | null): RowNode[] {
+        const startIndex = firstInRange.rowIndex;
+
+        if (!_.exists(firstInRange)) {
+            return [];   
         }
-        return firstInRange.parent!.childStore!.getRowNodesInRange(lastInRange, firstInRange) as RowNode[];
+
+        if (!lastInRange) {
+            return [firstInRange];
+        }
+
+        const endIndex = lastInRange.rowIndex;
+        if (startIndex === null || endIndex === null) {
+            return [firstInRange];
+        }
+
+        const nodeRange: RowNode[] = [];
+        const [firstIndex, lastIndex] = [startIndex, endIndex].sort((a,b) => a - b);
+        this.forEachNode((node) => {
+            const thisRowIndex = node.rowIndex;
+            if (thisRowIndex == null || node.stub) {
+                return;
+            }
+
+            if (thisRowIndex >= firstIndex && thisRowIndex <= lastIndex) {
+                nodeRange.push(node);
+            }
+        });
+
+        const rowsAreContiguous = nodeRange.every((node, idx, all) => {
+            if (idx === 0) {
+                return node.rowIndex === firstIndex;
+            }
+            return all[idx - 1].rowIndex! === (node.rowIndex! - 1);
+        });
+
+        // don't allow range selection if we don't have the full range of rows
+        if (!rowsAreContiguous || nodeRange.length !== (lastIndex - firstIndex + 1)) {
+            return [firstInRange];
+        }
+
+        return nodeRange;
     }
 
     public getRowNode(id: string): RowNode | undefined {
