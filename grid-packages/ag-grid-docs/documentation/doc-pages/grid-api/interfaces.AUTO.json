@@ -8711,6 +8711,42 @@
     "meta": { "typeParams": ["TData = any"] },
     "type": { "execute(params: StageExecuteParams<TData>)": "any" }
   },
+  "ISelectionService": {
+    "meta": {},
+    "type": {
+      "getServerSideSelectionState()": "IServerSideSelectionState | IServerSideGroupSelectionState | null",
+      "setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState)": "void",
+      "getSelectedNodes()": "RowNode<any>[]",
+      "getSelectedRows()": "any[]",
+      "getSelectionCount()": "number",
+      "setNodeSelected(params: ISetNodeSelectedParams)": "number",
+      "filterFromSelection(predicate: (node: RowNode) => boolean)": "void",
+      "updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath)": "boolean",
+      "syncInRowNode(rowNode: RowNode, oldNode: RowNode | null)": "void",
+      "reset()": "void",
+      "getBestCostNodeSelection()": "RowNode[] | undefined",
+      "isEmpty()": "boolean",
+      "getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean)": "boolean | null",
+      "selectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean; justCurrentPage?: boolean; })": "void",
+      "deselectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean; justCurrentPage?: boolean; })": "void"
+    },
+    "docs": {
+      "getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean)": "/** @param justFiltered whether to just include nodes which have passed the filter\n     * @param justCurrentPage whether to just include nodes on the current page\n     * @returns all nodes including unselectable nodes which are the target of this selection attempt\n     */"
+    }
+  },
+  "ISetNodeSelectedParams": {
+    "meta": {},
+    "type": {
+      "node": "RowNode",
+      "newValue": "boolean",
+      "clearSelection?": "boolean",
+      "suppressFinishActions?": "boolean",
+      "rangeSelect?": "boolean",
+      "groupSelectsFiltered?": "boolean",
+      "source": "SelectionEventSourceType",
+      "event?": "Event"
+    }
+  },
   "IServerSideGetRowsRequest": {
     "meta": {},
     "type": {
@@ -8844,6 +8880,18 @@
     "docs": {
       "route?": "/** List of group keys, pointing to the level to refresh.\n     * For example, to purge two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n     * If no route is passed, or an empty array, then the top level is refreshed.\n     */",
       "purge?": "/** If true, then all rows at the level getting refreshed are immediately destroyed and 'loading' rows will appear.\n     * If false, then all rows at the level getting refreshed are kept until rows are loaded (no 'loading' rows appear).\n     */"
+    }
+  },
+  "IServerSideSelectionState": {
+    "meta": {},
+    "type": { "selectAll": "boolean", "toggledNodes": "string[]" }
+  },
+  "IServerSideGroupSelectionState": {
+    "meta": {},
+    "type": {
+      "nodeId?": "string",
+      "selectAllChildren?": "boolean",
+      "toggledNodes?": "IServerSideGroupSelectionState[]"
     }
   },
   "IServerSideStore": {

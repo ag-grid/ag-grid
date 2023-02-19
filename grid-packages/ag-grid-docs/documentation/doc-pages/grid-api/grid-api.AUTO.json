@@ -353,6 +353,21 @@
       }
     }
   },
+  "getServerSideSelectionState": {
+    "description": "/** Returns an object containing rules matching the selected rows in the SSRM.\n     * \n     * If `groupSelectsChildren=false` the returned object will be flat, and will conform to IServerSideSelectionState.\n     * If `groupSelectsChildren=true` the retuned object will be hierarchical, and will conform to IServerSideGroupSelectionState.\n     */",
+    "type": {
+      "arguments": {},
+      "returnType": "IServerSideSelectionState | IServerSideGroupSelectionState | null"
+    }
+  },
+  "setServerSideSelectionState": {
+    "description": "/** Set the rules matching the selected rows in the SSRM.\n     * \n     * If `groupSelectsChildren=false` the param will be flat, and should conform to IServerSideSelectionState.\n     * If `groupSelectsChildren=true` the param will be hierarchical, and should conform to IServerSideGroupSelectionState.\n     */",
+    "type": {
+      "arguments": {
+        "state": "IServerSideSelectionState | IServerSideGroupSelectionState"
+      }
+    }
+  },
   "selectAllOnCurrentPage": {
     "description": "/** Select all rows on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`\n     */",
     "type": {

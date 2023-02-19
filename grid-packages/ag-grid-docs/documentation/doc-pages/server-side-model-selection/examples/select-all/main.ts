@@ -16,15 +16,18 @@ const gridOptions: GridOptions<IOlympicData> = {
     sortable: true,
   },
   getRowId: (params: GetRowIdParams) => {
-    var data = params.data;
-    // use year for group level ids, or the id we assigned for leaf level
-    return data.id != null ? ('id-' + data.id) : ('year-' + data.year);
+    if (params.data.id != null) {
+      return (params.parentKeys || []).join('-') + params.data.id;
+    }
+    const rowGroupCols = params.columnApi.getRowGroupColumns();
+    const thisGroupCol = rowGroupCols[params.level];
+    return (params.parentKeys || []).join('-') + params.data[thisGroupCol.getColDef().field!];
   },
   autoGroupColumnDef: {
+    headerCheckboxSelection: true,
     field: 'athlete',
     flex: 1,
     minWidth: 240,
-    // headerCheckboxSelection: true, // not supported for Enterprise Model
     cellRendererParams: {
       checkbox: true,
     },
@@ -36,15 +39,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   // allow multiple row selections
   rowSelection: 'multiple',
 
-  // restrict selections to leaf rows
-  isRowSelectable: (rowNode: IRowNode) => {
-    return rowNode.data.year > 2004;
-  },
-
   // restrict row selections via checkbox selection
   suppressRowClickSelection: true,
-
-  // groupSelectsChildren: true, // not supported for Server Side Row Model
 
   animateRows: true,
   suppressAggFuncInHeader: true,

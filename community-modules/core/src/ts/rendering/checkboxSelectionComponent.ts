@@ -101,15 +101,8 @@ export class CheckboxSelectionComponent extends Component {
             stopPropagationForAgGrid(event);
 
             const isSelected = this.eCheckbox.getValue();
-            const previousValue = this.eCheckbox.getPreviousValue();
 
-            if (previousValue === undefined || isSelected === undefined) {
-                // Indeterminate state - try toggling children to determine action.
-                const result = this.onUncheckedClicked(event || {});
-                if (result === 0) {
-                    this.onCheckedClicked(event);
-                }
-            } else if (isSelected) {
+            if (isSelected) {
                 this.onCheckedClicked(event);
             } else {
                 this.onUncheckedClicked(event || {});

@@ -44,13 +44,6 @@ export class GridOptionsValidator {
             if (this.gridOptionsService.get('rowSelection') !== 'multiple') {
                 console.warn("AG Grid: rowSelection must be 'multiple' for groupSelectsChildren to make sense");
             }
-            if (this.gridOptionsService.isRowModelType('serverSide')) {
-                console.warn(
-                    'AG Grid: group selects children is NOT supported for Server Side Row Model. ' +
-                    'This is because the rows are lazy loaded, so selecting a group is not possible as' +
-                    'the grid has no way of knowing what the children are.'
-                );
-            }
         }
 
         if (this.gridOptionsService.is('groupRemoveSingleChildren') && this.gridOptionsService.is('groupHideOpenParents')) {

@@ -775,6 +775,8 @@
                 "url": "/server-side-model-updating-transactions/#asynchronous-updates"
             }
         },
+        "getServerSideSelectionState": {},
+        "setServerSideSelectionState": {},
         "getCacheBlockState": {
             "more": {
                 "name": "Cache Block State",
