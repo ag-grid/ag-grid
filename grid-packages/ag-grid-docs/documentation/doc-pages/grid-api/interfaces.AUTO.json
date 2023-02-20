@@ -9015,16 +9015,16 @@
   },
   "ISetFilter": {
     "meta": {
-      "typeParams": ["TValue = string"],
-      "doc": "/** Interface contract for the public aspects of the SetFilter implementation. \n * @param TValue type of value in the Set Filter\n*/"
+      "typeParams": ["V = string"],
+      "doc": "/** Interface contract for the public aspects of the SetFilter implementation. \n * @param V type of value in the Set Filter\n*/"
     },
     "type": {
       "getModel()": "SetFilterModel | null",
       "setModel(model: SetFilterModel | null)": "void | AgPromise<void>",
       "getValues()": "SetFilterModelValue",
       "getFilterKeys()": "SetFilterModelValue",
-      "getFilterValues()": "(TValue | null)[]",
-      "setFilterValues(values: (TValue | null)[])": "void",
+      "getFilterValues()": "(V | null)[]",
+      "setFilterValues(values: (V | null)[])": "void",
       "refreshFilterValues()": "void",
       "resetFilterValues()": "void",
       "getMiniFilter()": "string | null",
@@ -9046,7 +9046,7 @@
       "getValues()": "/** @deprecated As of v29 use `getFilterValues` to get the values in the Set Filter\n     * (e.g. complex objects if provided), or `getFilterKeys` to get the string keys\n     * \n     * Returns the full list of unique keys used by the Set Filter.\n     */",
       "getFilterKeys()": "/** Returns the full list of unique keys used by the Set Filter. */",
       "getFilterValues()": "/** Returns the full list of unique values used by the Set Filter. */",
-      "setFilterValues(values: (TValue | null)[])": "/** Sets the values used in the Set Filter on the fly. */",
+      "setFilterValues(values: (V | null)[])": "/** Sets the values used in the Set Filter on the fly. */",
       "refreshFilterValues()": "/** Refreshes the values shown in the filter from the original source. For example, if a\n     * callback was provided, the callback will be executed again and the filter will refresh using\n     * the values returned.\n     */",
       "resetFilterValues()": "/** Resets the Set Filter to use values from the grid, rather than any values that have been\n     * provided directly.\n     */",
       "getMiniFilter()": "/** Returns the current mini-filter text. */",
@@ -9065,11 +9065,11 @@
   },
   "SetFilterValuesFuncParams": {
     "meta": {
-      "typeParams": ["TData = any", "TValue = string"],
-      "doc": "/** \n * @param TData type of data row\n * @param TValue type of value in the Set Filter\n */"
+      "typeParams": ["TData = any", "V = string"],
+      "doc": "/** \n * @param TData type of data row\n * @param V type of value in the Set Filter\n */"
     },
     "type": {
-      "success": "(values: (TValue | null)[]) => void",
+      "success": "(values: (V | null)[]) => void",
       "colDef": "ColDef<TData>",
       "column": "Column",
       "columnApi": "ColumnApi",
@@ -9086,31 +9086,31 @@
   "SetFilterValuesFunc": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": ["TData = any", "TValue = string"]
+      "typeParams": ["TData = any", "V = string"]
     },
-    "type": "(params: SetFilterValuesFuncParams<TData, TValue>) => void"
+    "type": "(params: SetFilterValuesFuncParams<TData, V>) => void"
   },
   "SetFilterValues": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": ["TData = any", "TValue = string"]
+      "typeParams": ["TData = any", "V = string"]
     },
-    "type": "SetFilterValuesFunc<TData, TValue> | (TValue | null)[]"
+    "type": "SetFilterValuesFunc<TData, V> | (V | null)[]"
   },
   "SetFilterParams": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": ["TData = any", "TValue = string"]
+      "typeParams": ["TData = any", "V = string"]
     },
-    "type": "ISetFilterParams<TData, TValue> & IFilterParams<TData>"
+    "type": "ISetFilterParams<TData, V> & IFilterParams<TData>"
   },
   "ISetFilterParams": {
     "meta": {
-      "typeParams": ["TData = any", "TValue = string"],
-      "doc": "/** \n * Parameters used in `colDef.filterParams` to configure a Set Filter (`agSetColumnFilter`).\n * @param TData type of data row\n * @param TValue type of value in the Set Filter\n */"
+      "typeParams": ["TData = any", "V = string"],
+      "doc": "/** \n * Parameters used in `colDef.filterParams` to configure a Set Filter (`agSetColumnFilter`).\n * @param TData type of data row\n * @param V type of value in the Set Filter\n */"
     },
     "type": {
-      "values?": "SetFilterValues<TData, TValue>",
+      "values?": "SetFilterValues<TData, V>",
       "refreshValuesOnOpen?": "boolean",
       "cellHeight?": "number",
       "suppressSorting?": "boolean",
@@ -9120,16 +9120,16 @@
       "applyMiniFilterWhileTyping?": "boolean",
       "suppressSelectAll?": "boolean",
       "defaultToNothingSelected?": "boolean",
-      "comparator?": "(a: TValue | null, b: TValue | null) => number",
+      "comparator?": "(a: V | null, b: V | null) => number",
       "textFormatter?": "(from: string) => string",
-      "valueFormatter?": "(params: ValueFormatterParams<TData, TValue, any>) => string",
+      "valueFormatter?": "(params: ValueFormatterParams) => string",
       "keyCreator?": "(params: KeyCreatorParams<TData>) => string",
       "showTooltips?": "boolean",
       "caseSensitive?": "boolean",
       "excelMode?": "'mac' | 'windows'",
       "convertValuesToStrings?": "boolean",
       "treeList?": "boolean",
-      "treeListPathGetter?": "(value: TValue | null) => string[] | null",
+      "treeListPathGetter?": "(value: V | null) => string[] | null",
       "treeListFormatter?": "(pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",

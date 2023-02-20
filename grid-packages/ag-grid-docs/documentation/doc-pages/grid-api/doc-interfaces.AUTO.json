@@ -16391,14 +16391,14 @@
       "description": "/** Returns the full list of unique values used by the Set Filter. */",
       "type": {
         "arguments": {},
-        "returnType": "(TValue | null)[]",
+        "returnType": "(V | null)[]",
         "optional": false
       }
     },
     "setFilterValues": {
       "description": "/** Sets the values used in the Set Filter on the fly. */",
       "type": {
-        "arguments": { "values": "(TValue | null)[]" },
+        "arguments": { "values": "(V | null)[]" },
         "returnType": "void",
         "optional": false
       }
@@ -16435,7 +16435,7 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TValue = string"] },
+    "meta": { "typeParams": ["V = string"] },
     "applyModel": {
       "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
       "type": {
@@ -16489,7 +16489,7 @@
     "success": {
       "description": "/** The function to call with the values to load into the filter once they are ready. */",
       "type": {
-        "arguments": { "values": "(TValue | null)[]" },
+        "arguments": { "values": "(V | null)[]" },
         "returnType": "void",
         "optional": false
       }
@@ -16508,24 +16508,21 @@
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TValue = string"] }
+    "meta": { "typeParams": ["TData = any", "V = string"] }
   },
   "SetFilterValuesFunc": {
-    "meta": { "typeParams": ["TData = any", "TValue = string"] }
+    "meta": { "typeParams": ["TData = any", "V = string"] }
   },
   "SetFilterValues": {
-    "meta": { "typeParams": ["TData = any", "TValue = string"] }
+    "meta": { "typeParams": ["TData = any", "V = string"] }
   },
   "SetFilterParams": {
-    "meta": { "typeParams": ["TData = any", "TValue = string"] }
+    "meta": { "typeParams": ["TData = any", "V = string"] }
   },
   "ISetFilterParams": {
     "values": {
       "description": "/** The values to display in the Filter List. If this is not set, the filter will takes its\n     * values from what is loaded in the table.\n     */",
-      "type": {
-        "returnType": "SetFilterValues<TData, TValue>",
-        "optional": true
-      }
+      "type": { "returnType": "SetFilterValues<TData, V>", "optional": true }
     },
     "refreshValuesOnOpen": {
       "description": "/** Refresh the values every time the Set filter is opened.\n     */",
@@ -16566,7 +16563,7 @@
     "comparator": {
       "description": "/** Comparator for sorting. If not provided, the Column Definition comparator is used. If Column\n     * Definition comparator is also not provided, the default (grid provided) comparator is used.\n     */",
       "type": {
-        "arguments": { "a": "TValue | null", "b": "TValue | null" },
+        "arguments": { "a": "V | null", "b": "V | null" },
         "returnType": "number",
         "optional": true
       }
@@ -16582,7 +16579,7 @@
     "valueFormatter": {
       "description": "/** If specified, this formats the value before it is displayed in the Filter List.\n     * If a Key Creator is provided (see `keyCreator`), this must also be provided,\n     * unless `convertValuesToStrings` is `true`\n     */",
       "type": {
-        "arguments": { "params": "ValueFormatterParams<TData, TValue, any>" },
+        "arguments": { "params": "ValueFormatterParams" },
         "returnType": "string",
         "optional": true
       }
@@ -16618,7 +16615,7 @@
     "treeListPathGetter": {
       "description": "/** Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.\n     */",
       "type": {
-        "arguments": { "value": "TValue | null" },
+        "arguments": { "value": "V | null" },
         "returnType": "string[] | null",
         "optional": true
       }
@@ -16635,7 +16632,7 @@
         "optional": true
       }
     },
-    "meta": { "typeParams": ["TData = any", "TValue = string"] },
+    "meta": { "typeParams": ["TData = any", "V = string"] },
     "buttons": {
       "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n     * The options are:\n     * \n     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.\n     */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
