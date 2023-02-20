@@ -6372,7 +6372,7 @@
     }
   },
   "GetContextMenuItemsParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "defaultItems": "string[] | undefined",
       "column": "Column | null",
@@ -6393,7 +6393,7 @@
     }
   },
   "GetMainMenuItemsParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column": "Column",
       "defaultItems": "string[]",
@@ -6410,7 +6410,7 @@
     }
   },
   "PostProcessPopupParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column?": "Column | null",
       "rowNode?": "IRowNode<TData> | null",
@@ -6435,7 +6435,7 @@
     }
   },
   "SendToClipboardParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "string",
       "api": "GridApi<TData, TContext>",
@@ -6449,7 +6449,7 @@
     }
   },
   "ProcessDataFromClipboardParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "string[][]",
       "api": "GridApi<TData, TContext>",
@@ -6464,7 +6464,7 @@
     }
   },
   "GetChartToolbarItemsParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "defaultItems?": "ChartMenuOptions[]",
       "api": "GridApi<TData, TContext>",
@@ -6478,7 +6478,7 @@
     }
   },
   "NavigateToNextHeaderParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "key": "string",
       "previousHeaderPosition": "HeaderPosition | null",
@@ -6500,7 +6500,7 @@
     }
   },
   "TabToNextHeaderParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "backwards": "boolean",
       "previousHeaderPosition": "HeaderPosition | null",
@@ -6521,7 +6521,7 @@
     }
   },
   "TabToNextCellParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "backwards": "boolean",
       "editing": "boolean",
@@ -6542,7 +6542,7 @@
     }
   },
   "NavigateToNextCellParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "key": "string",
       "previousCellPosition": "CellPosition",
@@ -6562,7 +6562,7 @@
     }
   },
   "PaginationNumberFormatterParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "value": "number",
       "api": "GridApi<TData, TContext>",
@@ -6576,7 +6576,7 @@
     }
   },
   "IsGroupOpenByDefaultParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "rowNode": "IRowNode<TData>",
       "rowGroupColumn": "Column",
@@ -6684,7 +6684,7 @@
     }
   },
   "GetRowIdParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData",
       "level": "number",
@@ -6703,7 +6703,7 @@
     }
   },
   "ProcessRowParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "eRow": "HTMLElement",
       "ePinnedLeftRow?": "HTMLElement",
@@ -6722,7 +6722,7 @@
     }
   },
   "FillOperationParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "event": "MouseEvent",
       "values": "any[]",
@@ -6751,7 +6751,7 @@
     }
   },
   "RowHeightParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
@@ -6768,7 +6768,7 @@
     }
   },
   "IsExternalFilterPresentParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData, TContext>",
       "columnApi": "ColumnApi",
@@ -6781,7 +6781,7 @@
     }
   },
   "InitialGroupOrderComparatorParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "nodeA": "IRowNode<TData>",
       "nodeB": "IRowNode<TData>",
@@ -6796,7 +6796,7 @@
     }
   },
   "GetGroupRowAggParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "nodes": "IRowNode<TData>[]",
       "api": "GridApi<TData, TContext>",
@@ -6810,7 +6810,7 @@
     }
   },
   "PostSortRowsParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "nodes": "IRowNode<TData>[]",
       "api": "GridApi<TData, TContext>",
@@ -6824,7 +6824,7 @@
     }
   },
   "IsFullWidthRowParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "rowNode": "IRowNode<TData>",
       "api": "GridApi<TData, TContext>",
@@ -6838,7 +6838,7 @@
     }
   },
   "GetLocaleTextParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "key": "string",
       "defaultValue": "string",
@@ -6854,7 +6854,7 @@
     }
   },
   "GetGroupAggFilteringParams": {
-    "meta": { "typeParams": ["TData", "TContext"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "api": "GridApi<TData, TContext>",
