@@ -277,7 +277,7 @@ export class GridOptionsService {
                 return { height: defaultRowHeight, estimated: true };
             }
 
-            const params: WithoutGridCommon<RowHeightParams> = {
+            const params: WithoutGridCommon<RowHeightParams<any, any>> = {
                 node: rowNode,
                 data: rowNode.data
             };
@@ -376,7 +376,7 @@ export class GridOptionsService {
         return this.eGridDiv.getRootNode() as Document | ShadowRoot;
     }
 
-    public getRowIdFunc(): ((params: WithoutGridCommon<GetRowIdParams>) => string) | undefined {
+    public getRowIdFunc(): ((params: WithoutGridCommon<GetRowIdParams<any, any>>) => string) | undefined {
         const getRowId = this.getCallback('getRowId');
         if (getRowId) {
             return getRowId;
@@ -384,7 +384,7 @@ export class GridOptionsService {
         // this is the deprecated way, so provide a proxy to make it compatible
         const getRowNodeId = this.gridOptions.getRowNodeId;
         if (getRowNodeId) {
-            return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data);
+            return (params: WithoutGridCommon<GetRowIdParams<any, any>>) => getRowNodeId(params.data);
         }
     }
 
@@ -415,7 +415,7 @@ export class GridOptionsService {
         return isClientSideRowModel && !autoGroupColumnDef?.comparator;
     }
 
-    public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
+    public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams<any, any>>) => boolean) | undefined {
         const userValue = this.gridOptions.groupAggFiltering;
 
         if (typeof userValue === 'function') {

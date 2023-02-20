@@ -144,7 +144,7 @@ export function unwrapUserComp<T>(comp: T): T {
 }
 
 @Bean('gridApi')
-export class GridApi<TData = any> {
+export class GridApi<TData = any, TContext = any> {
 
     @Optional('immutableService') private immutableService: IImmutableService;
     @Optional('csvCreator') private csvCreator: ICsvCreator;
@@ -462,24 +462,24 @@ export class GridApi<TData = any> {
     /**
      * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
      */
-    public setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source: ColumnEventType = "api") {
+    public setColumnDefs(colDefs: (ColDef<TData, TContext> | ColGroupDef<TData, TContext>)[], source: ColumnEventType = "api") {
         this.columnModel.setColumnDefs(colDefs, source);
         // Keep gridOptions.columnDefs in sync
         this.gridOptionsService.set('columnDefs', colDefs, true, { source });
     }
 
     /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
-    public setAutoGroupColumnDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
+    public setAutoGroupColumnDef(colDef: ColDef<TData, TContext>, source: ColumnEventType = "api") {
         this.gridOptionsService.set('autoGroupColumnDef', colDef, true, { source });
     }
 
     /** Call to set new Default Column Definition. */
-    public setDefaultColDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
+    public setDefaultColDef(colDef: ColDef<TData, TContext>, source: ColumnEventType = "api") {
         this.gridOptionsService.set('defaultColDef', colDef, true, { source });
     }
 
     /** Call to set new Column Types. */
-    public setColumnTypes(columnTypes: { string: ColDef<TData> }, source: ColumnEventType = "api") {
+    public setColumnTypes(columnTypes: { string: ColDef<TData, TContext> }, source: ColumnEventType = "api") {
         this.gridOptionsService.set('columnTypes', columnTypes, true, { source });
     }
 
@@ -918,7 +918,7 @@ export class GridApi<TData = any> {
         return unwrapUserComp(comp) as any;
     }
 
-    public getColumnDef(key: string | Column): ColDef<TData> | null {
+    public getColumnDef(key: string | Column): ColDef<TData, TContext> | null {
         const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
@@ -929,7 +929,7 @@ export class GridApi<TData = any> {
     /**
      * Returns the current column definitions.
     */
-    public getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined { return this.columnModel.getColumnDefs(); }
+    public getColumnDefs(): (ColDef<TData, TContext> | ColGroupDef<TData, TContext>)[] | undefined { return this.columnModel.getColumnDefs(); }
 
     /** Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs. */
     public onFilterChanged() {
@@ -1062,19 +1062,19 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('doesExternalFilterPass', doesExternalFilterPassFunc);
     }
 
-    public setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => (CellPosition | null)): void {
+    public setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams<TData, TContext>) => (CellPosition | null)): void {
         this.gridOptionsService.set('navigateToNextCell', navigateToNextCellFunc);
     }
 
-    public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => (CellPosition | null)): void {
+    public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams<TData, TContext>) => (CellPosition | null)): void {
         this.gridOptionsService.set('tabToNextCell', tabToNextCellFunc);
     }
 
-    public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => (HeaderPosition | null)): void {
+    public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams<TData, TContext>) => (HeaderPosition | null)): void {
         this.gridOptionsService.set('tabToNextHeader', tabToNextHeaderFunc);
     }
 
-    public setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => (HeaderPosition | null)): void {
+    public setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams<TData, TContext>) => (HeaderPosition | null)): void {
         this.gridOptionsService.set('navigateToNextHeader', navigateToNextHeaderFunc);
     }
 
@@ -1086,7 +1086,7 @@ export class GridApi<TData = any> {
         logDeprecation<GridApi>('27.2', 'setGroupRowAggNodes', 'setGetGroupRowAgg');
         this.gridOptionsService.set('groupRowAggNodes', groupRowAggNodesFunc);
     }
-    public setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void {
+    public setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams<TData, TContext>) => any): void {
         this.gridOptionsService.set('getGroupRowAgg', getGroupRowAggFunc);
     }
 
@@ -1098,7 +1098,7 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('getChildCount', getChildCountFunc);
     }
 
-    public setProcessRowPostCreate(processRowPostCreateFunc: (params: ProcessRowParams) => void): void {
+    public setProcessRowPostCreate(processRowPostCreateFunc: (params: ProcessRowParams<TData, TContext>) => void): void {
         this.gridOptionsService.set('processRowPostCreate', processRowPostCreateFunc);
     }
 
@@ -1236,7 +1236,7 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('getRowStyle', rowStyleFunc);
     }
 
-    public setGetRowHeight(rowHeightFunc: (params: RowHeightParams) => number): void {
+    public setGetRowHeight(rowHeightFunc: (params: RowHeightParams<TData, TContext>) => number): void {
         this.gridOptionsService.set('getRowHeight', rowHeightFunc);
     }
 

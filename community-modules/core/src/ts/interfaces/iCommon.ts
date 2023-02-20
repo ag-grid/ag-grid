@@ -9,7 +9,7 @@ export type WithoutGridCommon<T extends AgGridCommon<any, any>> = Omit<T, keyof 
 
 export interface AgGridCommon<TData, TContext> {
     /** The grid api. */
-    api: GridApi<TData>;
+    api: GridApi<TData, TContext>;
     /** The column api. */
     columnApi: ColumnApi;
     /** Application context as set on `gridOptions.context`. */

@@ -188,7 +188,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     private _fullyReady: AgPromise<boolean> = AgPromise.resolve(true);
 
     // making these public, so they are accessible to people using the ng2 component references
-    public api: GridApi<TData>;
+     public api: GridApi<TData, TContext>;
     public columnApi: ColumnApi;
 
     constructor(elementDef: ElementRef,

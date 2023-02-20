@@ -806,25 +806,25 @@ export interface GridOptions<TData = any, TContext = any> {
     /** For customising the main 'column header' menu. */
     getMainMenuItems?: GetMainMenuItems<TContext>;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */
-    postProcessPopup?: (params: PostProcessPopupParams<TData>) => void;
+    postProcessPopup?: (params: PostProcessPopupParams<TData, TContext>) => void;
 
     // *** Clipboard *** //
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */
-    processCellForClipboard?: (params: ProcessCellForExportParams<TData>) => any;
+    processCellForClipboard?: (params: ProcessCellForExportParams<TData, TContext>) => any;
     /** Allows you to process header values for the clipboard. */
-    processHeaderForClipboard?: (params: ProcessHeaderForExportParams<TData>) => any;
+    processHeaderForClipboard?: (params: ProcessHeaderForExportParams<TData, TContext>) => any;
     /** Allows you to process group header values for the clipboard. */
-    processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams<TData>) => any;
+    processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams<TData, TContext>) => any;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */
-    processCellFromClipboard?: (params: ProcessCellForExportParams<TData>) => any;
+    processCellFromClipboard?: (params: ProcessCellForExportParams<TData, TContext>) => any;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */
-    sendToClipboard?: (params: SendToClipboardParams<TData>) => void;
+    sendToClipboard?: (params: SendToClipboardParams<TData, TContext>) => void;
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */
-    processDataFromClipboard?: (params: ProcessDataFromClipboardParams<TData>) => string[][] | null;
+    processDataFromClipboard?: (params: ProcessDataFromClipboardParams<TData, TContext>) => string[][] | null;
 
     // *** Filtering *** //
     /** Grid calls this method to know if an external filter is present. */
-    isExternalFilterPresent?: (params: IsExternalFilterPresentParams<TData>) => boolean;
+    isExternalFilterPresent?: (params: IsExternalFilterPresentParams<TData, TContext>) => boolean;
     /** Should return `true` if external filter passes, otherwise `false`. */
     doesExternalFilterPass?: (node: IRowNode<TData>) => boolean;
 
@@ -832,23 +832,23 @@ export interface GridOptions<TData = any, TContext = any> {
     /** Callback to be used to customise the chart toolbar items. */
     getChartToolbarItems?: GetChartToolbarItems<TContext>;
     /** Callback to enable displaying the chart in an alternative chart container. */
-    createChartContainer?: (params: ChartRefParams<TData>) => void;
+    createChartContainer?: (params: ChartRefParams<TData, TContext>) => void;
 
     // *** Keyboard Navigation *** //
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */
-    navigateToNextHeader?: (params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null);
+    navigateToNextHeader?: (params: NavigateToNextHeaderParams<TData, TContext>) => (HeaderPosition | null);
     /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */
-    tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => (HeaderPosition | null);
+    tabToNextHeader?: (params: TabToNextHeaderParams<TData, TContext>) => (HeaderPosition | null);
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */
-    navigateToNextCell?: (params: NavigateToNextCellParams<TData>) => (CellPosition | null);
+    navigateToNextCell?: (params: NavigateToNextCellParams<TData, TContext>) => (CellPosition | null);
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */
-    tabToNextCell?: (params: TabToNextCellParams<TData>) => (CellPosition | null);
+    tabToNextCell?: (params: TabToNextCellParams<TData, TContext>) => (CellPosition | null);
 
     // *** Localisation *** //
     /** @deprecated v27.2 - Use `getLocaleText` instead. */
     localeTextFunc?: (key: string, defaultValue: string, variableValues?: string[]) => string;
     /** A callback for localising text within the grid. */
-    getLocaleText?: (params: GetLocaleTextParams<TData>) => string;
+    getLocaleText?: (params: GetLocaleTextParams<TData, TContext>) => string;
 
     // *** Miscellaneous *** //
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */
@@ -856,17 +856,17 @@ export interface GridOptions<TData = any, TContext = any> {
 
     // *** Pagination *** //
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */
-    paginationNumberFormatter?: (params: PaginationNumberFormatterParams<TData>) => string;
+    paginationNumberFormatter?: (params: PaginationNumberFormatterParams<TData, TContext>) => string;
 
     // *** Row Grouping and Pivoting *** //
     /** @deprecated v27.2 - Use `getGroupRowAgg` instead. */
     groupRowAggNodes?: (nodes: IRowNode[]) => any;
     /** Callback to use when you need access to more then the current column for aggregation. */
-    getGroupRowAgg?: (params: GetGroupRowAggParams<TData>) => any;
+    getGroupRowAgg?: (params: GetGroupRowAggParams<TData, TContext>) => any;
     /** (Client-side Row Model only) Allows groups to be open by default. */
-    isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
+    isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData, TContext>) => boolean;
     /** Allows default sorting of groups. */
-    initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
+    initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData, TContext>) => number;
     /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */
     defaultGroupOrderComparator?: (nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number;
     /** @deprecated v28 - Use `processPivotResultColDef` instead */
@@ -911,31 +911,31 @@ export interface GridOptions<TData = any, TContext = any> {
     /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */
     resetRowDataOnUpdate?: boolean;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
-    processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
+    processRowPostCreate?: (params: ProcessRowParams<TData, TContext>) => void;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */
     isRowSelectable?: IsRowSelectable<TData>;
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */
     isRowMaster?: IsRowMaster<TData>;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression. */
-    fillOperation?: (params: FillOperationParams<TData>) => any;
+    fillOperation?: (params: FillOperationParams<TData, TContext>) => any;
 
     // *** Sorting *** //
     /** @deprecated v27.2 Use `postSortRows` instead */
     postSort?: (nodes: IRowNode<TData>[]) => void;
     /** Callback to perform additional sorting after the grid has sorted the rows. */
-    postSortRows?: (params: PostSortRowsParams<TData>) => void;
+    postSortRows?: (params: PostSortRowsParams<TData, TContext>) => void;
 
     // *** Styling *** //
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */
-    getRowStyle?: (params: RowClassParams<TData>) => RowStyle | undefined;
+    getRowStyle?: (params: RowClassParams<TData, TContext>) => RowStyle | undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */
-    getRowClass?: (params: RowClassParams<TData>) => string | string[] | undefined;
+    getRowClass?: (params: RowClassParams<TData, TContext>) => string | string[] | undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
-    getRowHeight?: (params: RowHeightParams<TData>) => number | undefined | null;
+    getRowHeight?: (params: RowHeightParams<TData, TContext>) => number | undefined | null;
     /** @deprecated v27.2 Use `isFullWidthRow` instead. */
     isFullWidthCell?: (rowNode: IRowNode<TData>) => boolean;
     /** Tells the grid if this row should be rendered as full width. */
-    isFullWidthRow?: (params: IsFullWidthRowParams<TData>) => boolean;
+    isFullWidthRow?: (params: IsFullWidthRowParams<TData, TContext>) => boolean;
 
     // **********************************************************************************************************
     // * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
@@ -1037,9 +1037,9 @@ export interface GridOptions<TData = any, TContext = any> {
 
     // *** Keyboard Navigation *** //
     /** DOM event `keyDown` happened on a cell. */
-    onCellKeyDown?(event: CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>): void;
+    onCellKeyDown?(event: CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>): void;
     /** DOM event `keyPress` happened on a cell. */
-    onCellKeyPress?(event: CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>): void;
+    onCellKeyPress?(event: CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>): void;
 
     // *** Miscellaneous *** //
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */
@@ -1142,7 +1142,7 @@ export interface GridOptions<TData = any, TContext = any> {
      * The Grid Api for interacting with the grid.
      * Set by the grid on init, set to null on destroy.
      */
-    api?: GridApi<TData> | null;
+    api?: GridApi<TData, TContext> | null;
     /**
      * The Column Api for interacting with the grid columns.
      * Set by the grid on init, set to null on destroy.
@@ -1180,7 +1180,7 @@ export interface IsRowSelectable<TData = any> {
 }
 
 export interface RowClassRules<TData = any, TContext = any> {
-    [cssClassName: string]: (((params: RowClassParams<TData>) => boolean) | string);
+    [cssClassName: string]: (((params: RowClassParams<TData, TContext>) => boolean) | string);
 }
 
 export interface RowStyle { [cssProperty: string]: string | number; }
@@ -1197,8 +1197,8 @@ export interface RowClassParams<TData = any, TContext = any> extends AgGridCommo
 export interface GetContextMenuItems<TData = any, TContext = any> {
     (params: GetContextMenuItemsParams<TData, TContext>): (string | MenuItemDef)[];
 }
-export interface GetChartToolbarItems<TContext = any> {
-    (params: GetChartToolbarItemsParams<TContext>): ChartMenuOptions[];
+export interface GetChartToolbarItems<TData = any, TContext = any> {
+    (params: GetChartToolbarItemsParams<TData, TContext>): ChartMenuOptions[];
 }
 export interface MenuItemLeafDef {
     /** Name of the menu item */
@@ -1223,8 +1223,8 @@ export interface MenuItemDef extends MenuItemLeafDef {
     /** If this item is a sub menu, contains a list of menu item definitions */
     subMenu?: (MenuItemDef | string)[];
 }
-export interface GetMainMenuItems<TContext = any> {
-    (params: GetMainMenuItemsParams<TContext>): (string | MenuItemDef)[];
+export interface GetMainMenuItems<TData = any, TContext = any> {
+    (params: GetMainMenuItemsParams<TData, TContext>): (string | MenuItemDef)[];
 }
 
 export interface GetRowNodeIdFunc<TData = any> {
