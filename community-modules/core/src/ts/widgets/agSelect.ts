@@ -8,6 +8,7 @@ import { IAgLabel } from './agAbstractLabel';
 import { setAriaExpanded } from "../utils/aria";
 
 export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
+    public static EVENT_ITEM_SELECTED = 'selectedItem';
     protected listComponent: AgList;
     private hideList: ((event?: any) => void) | null;
 
@@ -26,7 +27,10 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         this.listComponent.addManagedListener(
             this.listComponent,
             AgList.EVENT_ITEM_SELECTED,
-            () => { if (this.hideList) { this.hideList(); } }
+            () => {
+                if (this.hideList) { this.hideList(); }
+                this.dispatchEvent({ type: AgSelect.EVENT_ITEM_SELECTED });
+            }
         );
 
         this.listComponent.addManagedListener(
@@ -126,6 +130,12 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         this.eDisplayField.innerHTML = this.listComponent.getDisplayValue()!;
 
         return super.setValue(value, silent);
+    }
+
+    public onItemSelected(callbackFn: () => void): this {
+        this.addManagedListener(this, AgSelect.EVENT_ITEM_SELECTED, () => callbackFn());
+
+        return this;
     }
 
     protected destroy(): void {
