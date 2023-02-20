@@ -340,7 +340,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround.     */
     @Input() public suppressClipboardApi: boolean | undefined = undefined;
     /** Array of Column / Column Group definitions.     */
-    @Input() public columnDefs: (TColDef | ColGroupDef<TData>)[] | null | undefined = undefined;
+    @Input() public columnDefs: (ColDef<TData, TContext> | ColGroupDef<TData, TContext>)[] | null | undefined = undefined;
     /** A default column definition. Items defined in the actual column definitions get precedence.     */
     @Input() public defaultColDef: ColDef<TData, TContext> | undefined = undefined;
     /** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence.     */
@@ -918,13 +918,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead     */
     @Input() public defaultGroupOrderComparator: ((nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number) | undefined = undefined;
     /** @deprecated v28 - Use `processPivotResultColDef` instead     */
-    @Input() public processSecondaryColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
+    @Input() public processSecondaryColDef: ((colDef: ColDef<TData, TContext>) => void) | undefined = undefined;
     /** @deprecated v28 - Use `processPivotResultColGroupDef` instead     */
-    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
+    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef<TData, TContext>) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
-    @Input() public processPivotResultColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
+    @Input() public processPivotResultColDef: ((colDef: ColDef<TData, TContext>) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column group definition.     */
-    @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
+    @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef<TData, TContext>) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath<TData> | undefined = undefined;
     /** Allows setting the child count for a group row.     */

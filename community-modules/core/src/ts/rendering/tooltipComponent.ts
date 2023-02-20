@@ -15,7 +15,7 @@ export interface ITooltipParams<TData = any, TValue = any, TContext = any> exten
     /** The formatted value to be rendered by the tooltip. */
     valueFormatted?: string | null;
     /** Column / ColumnGroup definition. */
-    colDef?: ColDef<TData, TContext> | ColGroupDef<TData> | null;
+    colDef?: ColDef<TData, TContext> | ColGroupDef<TData, TContext> | null;
     /** Column / ColumnGroup */
     column?: Column | ColumnGroup;
     /** The index of the row containing the cell rendering the tooltip. */

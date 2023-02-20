@@ -22,12 +22,12 @@ export interface AbstractColDef<TData = any, TContext = any> {
     /** CSS class to use for the header cell. Can be a string, array of strings, or function. */
     headerClass?: HeaderClass;
     /** Suppress the grid taking action for the relevant keyboard event when a header is focused. */
-    suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams<TData>) => boolean;
+    suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams<TData, TContext>) => boolean;
 
     /** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */
     columnGroupShow?: ColumnGroupShowType;
     /** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */
-    toolPanelClass?: ToolPanelClass<TData>;
+    toolPanelClass?: ToolPanelClass<TData, TContext>;
     /** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */
     suppressColumnsToolPanel?: boolean;
 
@@ -51,7 +51,7 @@ export interface AbstractColDef<TData = any, TContext = any> {
 /** Configuration options for column groups in AG Grid.  */
 export interface ColGroupDef<TData = any, TContext = any> extends AbstractColDef<TData, TContext> {
     /** A list containing a mix of columns and column groups. */
-    children: (ColDef<TData> | ColGroupDef<TData>)[];
+    children: (ColDef<TData, TContext> | ColGroupDef<TData, TContext>)[];
     /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API. */
     groupId?: string;
     /** Set to `true` if this group should be opened by default. Default: `false` */
@@ -92,13 +92,13 @@ export interface HeaderClassParams<TData = any, TContext = any> extends AgGridCo
     column?: Column | null;
     columnGroup?: ColumnGroup | null;
 }
-export type HeaderClass<TData = any> = string | string[] | ((params: HeaderClassParams<TData>) => string | string[] | undefined);
+export type HeaderClass<TData = any, TContext = any> = string | string[] | ((params: HeaderClassParams<TData, TContext>) => string | string[] | undefined);
 export interface ToolPanelClassParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     colDef: AbstractColDef<TData, TContext>;
     column?: Column | null;
     columnGroup?: ProvidedColumnGroup | null;
 }
-export type ToolPanelClass<TData = any> = string | string[] | ((params: ToolPanelClassParams<TData>) => string | string[] | undefined);
+export type ToolPanelClass<TData = any, TContext = any> = string | string[] | ((params: ToolPanelClassParams<TData, TContext>) => string | string[] | undefined);
 
 /** Configuration options for columns in AG Grid. */
 export interface ColDef<TData = any, TContext = any> extends IFilterDef, AbstractColDef<TData, TContext> {
@@ -156,7 +156,7 @@ export interface ColDef<TData = any, TContext = any> extends IFilterDef, Abstrac
      */
     suppressNavigable?: boolean | SuppressNavigableCallback<TData, TContext>;
     /** Allows the user to suppress certain keyboard events in the grid cell. Default: `false` */
-    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams<TData>) => boolean;
+    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams<TData, TContext>) => boolean;
     /**
      * Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation).
      * Set to `true` turn paste operations off.
@@ -216,7 +216,7 @@ export interface ColDef<TData = any, TContext = any> extends IFilterDef, Abstrac
     // *** Columns: Events *** //
 
     /** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */
-    onCellValueChanged?: (event: NewValueParams<TData>) => void;
+    onCellValueChanged?: (event: NewValueParams<TData, TContext>) => void;
     /** Callback called when a cell is clicked. */
     onCellClicked?: (event: CellClickedEvent<TData, any, TContext>) => void;
     /** Callback called when a cell is double clicked. */
@@ -259,7 +259,7 @@ export interface ColDef<TData = any, TContext = any> extends IFilterDef, Abstrac
      */
     menuTabs?: ColumnMenuTab[];
     /** Params used to change the behaviour and appearance of the Columns Menu tab. */
-    columnsMenuParams?: ColumnsMenuParams<TContext>;
+    columnsMenuParams?: ColumnsMenuParams<TData, TContext>;
     /** Set to `true` if no menu should be shown for this column header. Default: `false` */
     suppressMenu?: boolean;
     /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */
@@ -350,7 +350,7 @@ export interface ColDef<TData = any, TContext = any> extends IFilterDef, Abstrac
     /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false` */
     dndSource?: boolean | DndSourceCallback<TData, TContext>;
     /** Function to allow custom drag functionality for native drag and drop. */
-    dndSourceOnRowDrag?: (params: DndSourceOnRowDragParams<TData>) => void;
+    dndSourceOnRowDrag?: (params: DndSourceOnRowDragParams<TData, TContext>) => void;
 
     // *** Columns: Row Grouping *** //
 
@@ -430,9 +430,9 @@ export interface ColDef<TData = any, TContext = any> extends IFilterDef, Abstrac
     // *** Columns: Spanning *** //
 
     /** By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns. */
-    colSpan?: (params: ColSpanParams<TData>) => number;
+    colSpan?: (params: ColSpanParams<TData, TContext>) => number;
     /** By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows. */
-    rowSpan?: (params: RowSpanParams<TData>) => number;
+    rowSpan?: (params: RowSpanParams<TData, TContext>) => number;
 
     // *** Columns: Widths *** //
 
@@ -646,7 +646,7 @@ export interface SuppressKeyboardEventParams<TData = any, TContext = any> extend
 
 export interface SuppressHeaderKeyboardEventParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     column: Column | ColumnGroup;
-    colDef: ColDef<TData, TContext> | ColGroupDef<TData> | null;
+    colDef: ColDef<TData, TContext> | ColGroupDef<TData, TContext> | null;
     /** The index of the header row of the current focused header */
     headerRowIndex: number;
     /** The keyboard event the grid received */

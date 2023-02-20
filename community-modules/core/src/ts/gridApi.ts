@@ -1166,22 +1166,22 @@ export class GridApi<TData = any, TContext = any> {
     }
 
     /** @deprecated v28 use `setProcessPivotResultColDef` instead */
-    public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void {
+    public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef<TData, TContext>) => void): void {
         logDeprecation<GridApi>('28.0', 'setProcessSecondaryColDef', 'setProcessPivotResultColDef')
         this.setProcessPivotResultColDef(processSecondaryColDefFunc);
     }
 
     /** @deprecated v28 use `setProcessPivotResultColGroupDef` instead */
-    public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
+    public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef<TData, TContext>) => void): void {
         logDeprecation<GridApi>('28.0', 'setProcessSecondaryColGroupDef', 'setProcessPivotResultColGroupDef')
         this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
     }
 
-    public setProcessPivotResultColDef(processPivotResultColDefFunc: (colDef: ColDef) => void): void {
+    public setProcessPivotResultColDef(processPivotResultColDefFunc: (colDef: ColDef<TData, TContext>) => void): void {
         this.gridOptionsService.set('processPivotResultColDef', processPivotResultColDefFunc);
     }
 
-    public setProcessPivotResultColGroupDef(processPivotResultColGroupDefFunc: (colDef: ColDef) => void): void {
+    public setProcessPivotResultColGroupDef(processPivotResultColGroupDefFunc: (colDef: ColDef<TData, TContext>) => void): void {
         this.gridOptionsService.set('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
     }
 

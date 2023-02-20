@@ -20,7 +20,7 @@ export interface ICellRendererParams<TData = any, TValue = any, TContext = any> 
     /** The current index of the row (this changes after filter and sort). */
     rowIndex: number;
     /** The cell's column definition. */
-    colDef?: ColDef<TContext>;
+    colDef?: ColDef<TData, TContext>;
     /** The cell's column. */
     column?: Column;
     /** The grid's cell, a DOM div element. */
@@ -50,7 +50,7 @@ export interface ISetFilterCellRendererParams<TData = any, TContext = any> exten
     valueFormatted: string | null | undefined;
 
     /** The cell's column definition. */
-    colDef?: ColDef<TContext>;
+    colDef?: ColDef<TData, TContext>;
     /** The cell's column. */
     column?: Column;
 }

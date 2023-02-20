@@ -157,7 +157,7 @@ export interface GridOptions<TData = any, TContext = any> {
 
     // *** Columns *** //
     /** Array of Column / Column Group definitions. */
-    columnDefs?: (ColDef<TData> | ColGroupDef<TData>)[] | null;
+    columnDefs?: (ColDef<TData, TContext> | ColGroupDef<TData, TContext>)[] | null;
     /** A default column definition. Items defined in the actual column definitions get precedence. */
     defaultColDef?: ColDef<TData, TContext>;
     /** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence. */
@@ -870,13 +870,13 @@ export interface GridOptions<TData = any, TContext = any> {
     /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */
     defaultGroupOrderComparator?: (nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number;
     /** @deprecated v28 - Use `processPivotResultColDef` instead */
-    processSecondaryColDef?: (colDef: ColDef<TData>) => void;
+    processSecondaryColDef?: (colDef: ColDef<TData, TContext>) => void;
     /** @deprecated v28 - Use `processPivotResultColGroupDef` instead */
-    processSecondaryColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
+    processSecondaryColGroupDef?: (colGroupDef: ColGroupDef<TData, TContext>) => void;
     /** Callback to be used with pivoting, to allow changing the second column definition. */
-    processPivotResultColDef?: (colDef: ColDef<TData>) => void;
+    processPivotResultColDef?: (colDef: ColDef<TData, TContext>) => void;
     /** Callback to be used with pivoting, to allow changing the second column group definition. */
-    processPivotResultColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
+    processPivotResultColGroupDef?: (colGroupDef: ColGroupDef<TData, TContext>) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath<TData>;
 
