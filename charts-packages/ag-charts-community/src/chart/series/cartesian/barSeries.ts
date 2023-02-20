@@ -398,8 +398,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         // or min is a negative total of all values in the stack and max is zero.
         const isLogAxis = yAxis instanceof LogAxis;
         let yMinMax: {
-            min?: number | undefined;
-            max?: number | undefined;
+            min?: number;
+            max?: number;
         }[][];
 
         if (!isLogAxis) {

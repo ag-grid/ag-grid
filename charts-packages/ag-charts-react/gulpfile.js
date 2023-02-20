@@ -20,7 +20,7 @@ const cleanLib = () => {
         .pipe(clean());
 };
 
-tscTask = async () => {
+const tscTask = async () => {
     const tscProject = gulpTypescript.createProject(tsConfig);
     const tsResult = await gulp.src(
         [

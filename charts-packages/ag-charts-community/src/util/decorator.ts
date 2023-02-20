@@ -27,7 +27,7 @@ function initialiseConfig(
 
     const getter = function (this: any) {
         let value = prevGet ? prevGet.call(this) : this[valueStoreKey];
-        for (const transformFn of config![propertyKey]?.getters ?? []) {
+        for (const transformFn of config[propertyKey]?.getters ?? []) {
             value = transformFn(this, propertyKeyOrSymbol, value);
 
             if (value === BREAK_TRANSFORM_CHAIN) {
@@ -38,7 +38,7 @@ function initialiseConfig(
         return value;
     };
     const setter = function (this: any, value: any) {
-        for (const transformFn of config![propertyKey]?.setters ?? []) {
+        for (const transformFn of config[propertyKey]?.setters ?? []) {
             value = transformFn(this, propertyKeyOrSymbol, value);
 
             if (value === BREAK_TRANSFORM_CHAIN) {

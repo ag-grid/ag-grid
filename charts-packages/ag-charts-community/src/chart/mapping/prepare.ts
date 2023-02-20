@@ -69,13 +69,7 @@ export function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHie
         return true;
     }
 
-    switch (specifiedType) {
-        case 'treemap':
-            return true;
-
-        default:
-            return false;
-    }
+    return specifiedType === 'treemap';
 }
 
 export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarChartOptions {
@@ -92,13 +86,7 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
         return true;
     }
 
-    switch (specifiedType) {
-        case 'pie':
-            return true;
-
-        default:
-            return false;
-    }
+    return specifiedType === 'pie';
 }
 
 const SERIES_OPTION_TYPES = ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'];

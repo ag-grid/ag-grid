@@ -327,7 +327,8 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
             return this.getDefaultTicks({ start, stop });
         }
 
-        const timeInterval = tickIntervals.reverse().find((tickInterval) => absInterval % tickInterval[2] === 0);
+        const reversedInterval = tickIntervals.reverse();
+        const timeInterval = reversedInterval.find((tickInterval) => absInterval % tickInterval[2] === 0);
 
         if (timeInterval) {
             const i = timeInterval[0].every(absInterval / (timeInterval[2] / timeInterval[1]));
