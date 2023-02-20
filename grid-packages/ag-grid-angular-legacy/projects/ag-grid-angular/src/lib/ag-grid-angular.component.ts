@@ -188,7 +188,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     private _fullyReady: AgPromise<boolean> = AgPromise.resolve(true);
 
     // making these public, so they are accessible to people using the ng2 component references
-    public api: GridApi<TData>;
+     public api: GridApi<TData, TContext>;
     public columnApi: ColumnApi;
 
     constructor(elementDef: ElementRef,
@@ -870,51 +870,51 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** For customising the main 'column header' menu.     */
     @Input() public getMainMenuItems: GetMainMenuItems<TContext> | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.     */
-    @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;
+    @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData, TContext>) => void) | undefined = undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.     */
-    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined = undefined;
+    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams<TData, TContext>) => any) | undefined = undefined;
     /** Allows you to process header values for the clipboard.     */
-    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams<TData>) => any) | undefined = undefined;
+    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams<TData, TContext>) => any) | undefined = undefined;
     /** Allows you to process group header values for the clipboard.     */
-    @Input() public processGroupHeaderForClipboard: ((params: ProcessGroupHeaderForExportParams<TData>) => any) | undefined = undefined;
+    @Input() public processGroupHeaderForClipboard: ((params: ProcessGroupHeaderForExportParams<TData, TContext>) => any) | undefined = undefined;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.     */
-    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined = undefined;
+    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams<TData, TContext>) => any) | undefined = undefined;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.     */
-    @Input() public sendToClipboard: ((params: SendToClipboardParams<TData>) => void) | undefined = undefined;
+    @Input() public sendToClipboard: ((params: SendToClipboardParams<TData, TContext>) => void) | undefined = undefined;
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.     */
-    @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams<TData>) => string[][] | null) | undefined = undefined;
+    @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams<TData, TContext>) => string[][] | null) | undefined = undefined;
     /** Grid calls this method to know if an external filter is present.     */
-    @Input() public isExternalFilterPresent: ((params: IsExternalFilterPresentParams<TData>) => boolean) | undefined = undefined;
+    @Input() public isExternalFilterPresent: ((params: IsExternalFilterPresentParams<TData, TContext>) => boolean) | undefined = undefined;
     /** Should return `true` if external filter passes, otherwise `false`.     */
     @Input() public doesExternalFilterPass: ((node: IRowNode<TData>) => boolean) | undefined = undefined;
     /** Callback to be used to customise the chart toolbar items.     */
     @Input() public getChartToolbarItems: GetChartToolbarItems<TContext> | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.     */
-    @Input() public createChartContainer: ((params: ChartRefParams<TData>) => void) | undefined = undefined;
+    @Input() public createChartContainer: ((params: ChartRefParams<TData, TContext>) => void) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
-    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)) | undefined = undefined;
+    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams<TData, TContext>) => (HeaderPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
-    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams<TData>) => (HeaderPosition | null)) | undefined = undefined;
+    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams<TData, TContext>) => (HeaderPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.     */
-    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
+    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData, TContext>) => (CellPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.     */
-    @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => (CellPosition | null)) | undefined = undefined;
+    @Input() public tabToNextCell: ((params: TabToNextCellParams<TData, TContext>) => (CellPosition | null)) | undefined = undefined;
     /** @deprecated v27.2 - Use `getLocaleText` instead.     */
     @Input() public localeTextFunc: ((key: string, defaultValue: string, variableValues?: string[]) => string) | undefined = undefined;
     /** A callback for localising text within the grid.     */
-    @Input() public getLocaleText: ((params: GetLocaleTextParams<TData>) => string) | undefined = undefined;
+    @Input() public getLocaleText: ((params: GetLocaleTextParams<TData, TContext>) => string) | undefined = undefined;
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)     */
     @Input() public getDocument: (() => Document) | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
-    @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams<TData>) => string) | undefined = undefined;
+    @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams<TData, TContext>) => string) | undefined = undefined;
     /** @deprecated v27.2 - Use `getGroupRowAgg` instead.     */
     @Input() public groupRowAggNodes: ((nodes: IRowNode[]) => any) | undefined = undefined;
     /** Callback to use when you need access to more then the current column for aggregation.     */
-    @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams<TData>) => any) | undefined = undefined;
+    @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams<TData, TContext>) => any) | undefined = undefined;
     /** (Client-side Row Model only) Allows groups to be open by default.     */
-    @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams<TData>) => boolean) | undefined = undefined;
+    @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams<TData, TContext>) => boolean) | undefined = undefined;
     /** Allows default sorting of groups.     */
-    @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams<TData>) => number) | undefined = undefined;
+    @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams<TData, TContext>) => number) | undefined = undefined;
     /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead     */
     @Input() public defaultGroupOrderComparator: ((nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number) | undefined = undefined;
     /** @deprecated v28 - Use `processPivotResultColDef` instead     */
@@ -953,27 +953,27 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false`     */
     @Input() public resetRowDataOnUpdate: boolean | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
-    @Input() public processRowPostCreate: ((params: ProcessRowParams<TData>) => void) | undefined = undefined;
+    @Input() public processRowPostCreate: ((params: ProcessRowParams<TData, TContext>) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.     */
     @Input() public isRowSelectable: IsRowSelectable<TData> | undefined = undefined;
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.     */
     @Input() public isRowMaster: IsRowMaster<TData> | undefined = undefined;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.     */
-    @Input() public fillOperation: ((params: FillOperationParams<TData>) => any) | undefined = undefined;
+    @Input() public fillOperation: ((params: FillOperationParams<TData, TContext>) => any) | undefined = undefined;
     /** @deprecated v27.2 Use `postSortRows` instead     */
     @Input() public postSort: ((nodes: IRowNode<TData>[]) => void) | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.     */
-    @Input() public postSortRows: ((params: PostSortRowsParams<TData>) => void) | undefined = undefined;
+    @Input() public postSortRows: ((params: PostSortRowsParams<TData, TContext>) => void) | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.     */
-    @Input() public getRowStyle: ((params: RowClassParams<TData>) => RowStyle | undefined) | undefined = undefined;
+    @Input() public getRowStyle: ((params: RowClassParams<TData, TContext>) => RowStyle | undefined) | undefined = undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.     */
-    @Input() public getRowClass: ((params: RowClassParams<TData>) => string | string[] | undefined) | undefined = undefined;
+    @Input() public getRowClass: ((params: RowClassParams<TData, TContext>) => string | string[] | undefined) | undefined = undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
-    @Input() public getRowHeight: ((params: RowHeightParams<TData>) => number | undefined | null) | undefined = undefined;
+    @Input() public getRowHeight: ((params: RowHeightParams<TData, TContext>) => number | undefined | null) | undefined = undefined;
     /** @deprecated v27.2 Use `isFullWidthRow` instead.     */
     @Input() public isFullWidthCell: ((rowNode: IRowNode<TData>) => boolean) | undefined = undefined;
     /** Tells the grid if this row should be rendered as full width.     */
-    @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
+    @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData, TContext>) => boolean) | undefined = undefined;
 
     /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status.     */
     @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent<TData, TContext>> = new EventEmitter<ToolPanelVisibleChangedEvent<TData, TContext>>();
@@ -1053,9 +1053,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** A chart has been destroyed.     */
     @Output() public chartDestroyed: EventEmitter<ChartDestroyed<TData, TContext>> = new EventEmitter<ChartDestroyed<TData, TContext>>();
     /** DOM event `keyDown` happened on a cell.     */
-    @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>> = new EventEmitter<CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>>();
+    @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>> = new EventEmitter<CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>>();
     /** DOM event `keyPress` happened on a cell.     */
-    @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>> = new EventEmitter<CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>>();
+    @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>> = new EventEmitter<CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>>();
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet     */
     @Output() public gridReady: EventEmitter<GridReadyEvent<TData, TContext>> = new EventEmitter<GridReadyEvent<TData, TContext>>();
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */

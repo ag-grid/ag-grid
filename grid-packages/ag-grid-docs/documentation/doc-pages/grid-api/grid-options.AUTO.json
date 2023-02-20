@@ -967,56 +967,64 @@
   "postProcessPopup": {
     "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
     "type": {
-      "arguments": { "params": "PostProcessPopupParams<TData>" },
+      "arguments": { "params": "PostProcessPopupParams<TData, TContext>" },
       "returnType": "void"
     }
   },
   "processCellForClipboard": {
     "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
     "type": {
-      "arguments": { "params": "ProcessCellForExportParams<TData>" },
+      "arguments": { "params": "ProcessCellForExportParams<TData, TContext>" },
       "returnType": "any"
     }
   },
   "processHeaderForClipboard": {
     "description": "/** Allows you to process header values for the clipboard. */",
     "type": {
-      "arguments": { "params": "ProcessHeaderForExportParams<TData>" },
+      "arguments": {
+        "params": "ProcessHeaderForExportParams<TData, TContext>"
+      },
       "returnType": "any"
     }
   },
   "processGroupHeaderForClipboard": {
     "description": "/** Allows you to process group header values for the clipboard. */",
     "type": {
-      "arguments": { "params": "ProcessGroupHeaderForExportParams<TData>" },
+      "arguments": {
+        "params": "ProcessGroupHeaderForExportParams<TData, TContext>"
+      },
       "returnType": "any"
     }
   },
   "processCellFromClipboard": {
     "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
     "type": {
-      "arguments": { "params": "ProcessCellForExportParams<TData>" },
+      "arguments": { "params": "ProcessCellForExportParams<TData, TContext>" },
       "returnType": "any"
     }
   },
   "sendToClipboard": {
     "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
     "type": {
-      "arguments": { "params": "SendToClipboardParams<TData>" },
+      "arguments": { "params": "SendToClipboardParams<TData, TContext>" },
       "returnType": "void"
     }
   },
   "processDataFromClipboard": {
     "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
     "type": {
-      "arguments": { "params": "ProcessDataFromClipboardParams<TData>" },
+      "arguments": {
+        "params": "ProcessDataFromClipboardParams<TData, TContext>"
+      },
       "returnType": "string[][] | null"
     }
   },
   "isExternalFilterPresent": {
     "description": "/** Grid calls this method to know if an external filter is present. */",
     "type": {
-      "arguments": { "params": "IsExternalFilterPresentParams<TData>" },
+      "arguments": {
+        "params": "IsExternalFilterPresentParams<TData, TContext>"
+      },
       "returnType": "boolean"
     }
   },
@@ -1034,35 +1042,35 @@
   "createChartContainer": {
     "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
     "type": {
-      "arguments": { "params": "ChartRefParams<TData>" },
+      "arguments": { "params": "ChartRefParams<TData, TContext>" },
       "returnType": "void"
     }
   },
   "navigateToNextHeader": {
     "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
     "type": {
-      "arguments": { "params": "NavigateToNextHeaderParams<TData>" },
+      "arguments": { "params": "NavigateToNextHeaderParams<TData, TContext>" },
       "returnType": "(HeaderPosition | null)"
     }
   },
   "tabToNextHeader": {
     "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
     "type": {
-      "arguments": { "params": "TabToNextHeaderParams<TData>" },
+      "arguments": { "params": "TabToNextHeaderParams<TData, TContext>" },
       "returnType": "(HeaderPosition | null)"
     }
   },
   "navigateToNextCell": {
     "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
     "type": {
-      "arguments": { "params": "NavigateToNextCellParams<TData>" },
+      "arguments": { "params": "NavigateToNextCellParams<TData, TContext>" },
       "returnType": "(CellPosition | null)"
     }
   },
   "tabToNextCell": {
     "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
     "type": {
-      "arguments": { "params": "TabToNextCellParams<TData>" },
+      "arguments": { "params": "TabToNextCellParams<TData, TContext>" },
       "returnType": "(CellPosition | null)"
     }
   },
@@ -1080,7 +1088,7 @@
   "getLocaleText": {
     "description": "/** A callback for localising text within the grid. */",
     "type": {
-      "arguments": { "params": "GetLocaleTextParams<TData>" },
+      "arguments": { "params": "GetLocaleTextParams<TData, TContext>" },
       "returnType": "string"
     }
   },
@@ -1091,7 +1099,9 @@
   "paginationNumberFormatter": {
     "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
     "type": {
-      "arguments": { "params": "PaginationNumberFormatterParams<TData>" },
+      "arguments": {
+        "params": "PaginationNumberFormatterParams<TData, TContext>"
+      },
       "returnType": "string"
     }
   },
@@ -1102,21 +1112,23 @@
   "getGroupRowAgg": {
     "description": "/** Callback to use when you need access to more then the current column for aggregation. */",
     "type": {
-      "arguments": { "params": "GetGroupRowAggParams<TData>" },
+      "arguments": { "params": "GetGroupRowAggParams<TData, TContext>" },
       "returnType": "any"
     }
   },
   "isGroupOpenByDefault": {
     "description": "/** (Client-side Row Model only) Allows groups to be open by default. */",
     "type": {
-      "arguments": { "params": "IsGroupOpenByDefaultParams<TData>" },
+      "arguments": { "params": "IsGroupOpenByDefaultParams<TData, TContext>" },
       "returnType": "boolean"
     }
   },
   "initialGroupOrderComparator": {
     "description": "/** Allows default sorting of groups. */",
     "type": {
-      "arguments": { "params": "InitialGroupOrderComparatorParams<TData>" },
+      "arguments": {
+        "params": "InitialGroupOrderComparatorParams<TData, TContext>"
+      },
       "returnType": "number"
     }
   },
@@ -1212,7 +1224,7 @@
   "processRowPostCreate": {
     "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
     "type": {
-      "arguments": { "params": "ProcessRowParams<TData>" },
+      "arguments": { "params": "ProcessRowParams<TData, TContext>" },
       "returnType": "void"
     }
   },
@@ -1227,7 +1239,7 @@
   "fillOperation": {
     "description": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
     "type": {
-      "arguments": { "params": "FillOperationParams<TData>" },
+      "arguments": { "params": "FillOperationParams<TData, TContext>" },
       "returnType": "any"
     }
   },
@@ -1241,28 +1253,28 @@
   "postSortRows": {
     "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
     "type": {
-      "arguments": { "params": "PostSortRowsParams<TData>" },
+      "arguments": { "params": "PostSortRowsParams<TData, TContext>" },
       "returnType": "void"
     }
   },
   "getRowStyle": {
     "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
     "type": {
-      "arguments": { "params": "RowClassParams<TData>" },
+      "arguments": { "params": "RowClassParams<TData, TContext>" },
       "returnType": "RowStyle | undefined"
     }
   },
   "getRowClass": {
     "description": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
     "type": {
-      "arguments": { "params": "RowClassParams<TData>" },
+      "arguments": { "params": "RowClassParams<TData, TContext>" },
       "returnType": "string | string[] | undefined"
     }
   },
   "getRowHeight": {
     "description": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
     "type": {
-      "arguments": { "params": "RowHeightParams<TData>" },
+      "arguments": { "params": "RowHeightParams<TData, TContext>" },
       "returnType": "number | undefined | null"
     }
   },
@@ -1276,7 +1288,7 @@
   "isFullWidthRow": {
     "description": "/** Tells the grid if this row should be rendered as full width. */",
     "type": {
-      "arguments": { "params": "IsFullWidthRowParams<TData>" },
+      "arguments": { "params": "IsFullWidthRowParams<TData, TContext>" },
       "returnType": "boolean"
     }
   },
@@ -1860,7 +1872,7 @@
     "description": "/** DOM event `keyDown` happened on a cell. */",
     "type": {
       "arguments": {
-        "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>"
+        "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
       },
       "returnType": "void"
     },
@@ -1870,7 +1882,7 @@
     "description": "/** DOM event `keyDown` happened on a cell. */",
     "type": {
       "arguments": {
-        "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>"
+        "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
       },
       "returnType": "void"
     },
@@ -1880,7 +1892,7 @@
     "description": "/** DOM event `keyPress` happened on a cell. */",
     "type": {
       "arguments": {
-        "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>"
+        "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
       },
       "returnType": "void"
     },
@@ -1890,7 +1902,7 @@
     "description": "/** DOM event `keyPress` happened on a cell. */",
     "type": {
       "arguments": {
-        "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>"
+        "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
       },
       "returnType": "void"
     },
@@ -2530,7 +2542,7 @@
   },
   "api": {
     "description": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
-    "type": { "returnType": "GridApi<TData> | null" }
+    "type": { "returnType": "GridApi<TData, TContext> | null" }
   },
   "columnApi": {
     "description": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */",

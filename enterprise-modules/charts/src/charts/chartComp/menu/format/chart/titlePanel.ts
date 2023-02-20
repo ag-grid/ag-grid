@@ -2,7 +2,6 @@ import { _, Autowired, Component, PostConstruct, ChartMenuOptions,GetChartToolba
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { PaddingPanel } from "./paddingPanel";
 
 export default class TitlePanel extends Component {
 

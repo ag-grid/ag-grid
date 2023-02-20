@@ -742,7 +742,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -767,7 +767,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -793,7 +793,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1471,7 +1471,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1502,7 +1502,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1536,7 +1536,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1570,7 +1570,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1593,7 +1593,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1627,7 +1627,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1661,7 +1661,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1695,7 +1695,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1717,7 +1717,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1754,7 +1754,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1789,7 +1789,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1848,7 +1848,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1879,7 +1879,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1918,7 +1918,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -1961,7 +1961,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -2003,7 +2003,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -2042,7 +2042,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -2084,7 +2084,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -2122,7 +2122,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -2160,7 +2160,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -2191,7 +2191,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -2222,7 +2222,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -2261,7 +2261,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -2293,7 +2293,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -2332,7 +2332,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -3424,7 +3424,7 @@
     "postProcessPopup": {
       "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
       "type": {
-        "arguments": { "params": "PostProcessPopupParams<TData>" },
+        "arguments": { "params": "PostProcessPopupParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -3432,7 +3432,9 @@
     "processCellForClipboard": {
       "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessCellForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -3440,7 +3442,9 @@
     "processHeaderForClipboard": {
       "description": "/** Allows you to process header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessHeaderForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessHeaderForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -3448,7 +3452,9 @@
     "processGroupHeaderForClipboard": {
       "description": "/** Allows you to process group header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessGroupHeaderForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessGroupHeaderForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -3456,7 +3462,9 @@
     "processCellFromClipboard": {
       "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessCellForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -3464,7 +3472,7 @@
     "sendToClipboard": {
       "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
       "type": {
-        "arguments": { "params": "SendToClipboardParams<TData>" },
+        "arguments": { "params": "SendToClipboardParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -3472,7 +3480,9 @@
     "processDataFromClipboard": {
       "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
       "type": {
-        "arguments": { "params": "ProcessDataFromClipboardParams<TData>" },
+        "arguments": {
+          "params": "ProcessDataFromClipboardParams<TData, TContext>"
+        },
         "returnType": "string[][] | null",
         "optional": true
       }
@@ -3480,7 +3490,9 @@
     "isExternalFilterPresent": {
       "description": "/** Grid calls this method to know if an external filter is present. */",
       "type": {
-        "arguments": { "params": "IsExternalFilterPresentParams<TData>" },
+        "arguments": {
+          "params": "IsExternalFilterPresentParams<TData, TContext>"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -3503,7 +3515,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRefParams<TData>" },
+        "arguments": { "params": "ChartRefParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -3511,7 +3523,9 @@
     "navigateToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "NavigateToNextHeaderParams<TData>" },
+        "arguments": {
+          "params": "NavigateToNextHeaderParams<TData, TContext>"
+        },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -3519,7 +3533,7 @@
     "tabToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "TabToNextHeaderParams<TData>" },
+        "arguments": { "params": "TabToNextHeaderParams<TData, TContext>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -3527,7 +3541,7 @@
     "navigateToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "type": {
-        "arguments": { "params": "NavigateToNextCellParams<TData>" },
+        "arguments": { "params": "NavigateToNextCellParams<TData, TContext>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -3535,7 +3549,7 @@
     "tabToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "type": {
-        "arguments": { "params": "TabToNextCellParams<TData>" },
+        "arguments": { "params": "TabToNextCellParams<TData, TContext>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -3555,7 +3569,7 @@
     "getLocaleText": {
       "description": "/** A callback for localising text within the grid. */",
       "type": {
-        "arguments": { "params": "GetLocaleTextParams<TData>" },
+        "arguments": { "params": "GetLocaleTextParams<TData, TContext>" },
         "returnType": "string",
         "optional": true
       }
@@ -3567,7 +3581,9 @@
     "paginationNumberFormatter": {
       "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
       "type": {
-        "arguments": { "params": "PaginationNumberFormatterParams<TData>" },
+        "arguments": {
+          "params": "PaginationNumberFormatterParams<TData, TContext>"
+        },
         "returnType": "string",
         "optional": true
       }
@@ -3583,7 +3599,7 @@
     "getGroupRowAgg": {
       "description": "/** Callback to use when you need access to more then the current column for aggregation. */",
       "type": {
-        "arguments": { "params": "GetGroupRowAggParams<TData>" },
+        "arguments": { "params": "GetGroupRowAggParams<TData, TContext>" },
         "returnType": "any",
         "optional": true
       }
@@ -3591,7 +3607,9 @@
     "isGroupOpenByDefault": {
       "description": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "type": {
-        "arguments": { "params": "IsGroupOpenByDefaultParams<TData>" },
+        "arguments": {
+          "params": "IsGroupOpenByDefaultParams<TData, TContext>"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -3599,7 +3617,9 @@
     "initialGroupOrderComparator": {
       "description": "/** Allows default sorting of groups. */",
       "type": {
-        "arguments": { "params": "InitialGroupOrderComparatorParams<TData>" },
+        "arguments": {
+          "params": "InitialGroupOrderComparatorParams<TData, TContext>"
+        },
         "returnType": "number",
         "optional": true
       }
@@ -3721,7 +3741,7 @@
     "processRowPostCreate": {
       "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "type": {
-        "arguments": { "params": "ProcessRowParams<TData>" },
+        "arguments": { "params": "ProcessRowParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -3737,7 +3757,7 @@
     "fillOperation": {
       "description": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
       "type": {
-        "arguments": { "params": "FillOperationParams<TData>" },
+        "arguments": { "params": "FillOperationParams<TData, TContext>" },
         "returnType": "any",
         "optional": true
       }
@@ -3753,7 +3773,7 @@
     "postSortRows": {
       "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "type": {
-        "arguments": { "params": "PostSortRowsParams<TData>" },
+        "arguments": { "params": "PostSortRowsParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -3761,7 +3781,7 @@
     "getRowStyle": {
       "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "type": {
-        "arguments": { "params": "RowClassParams<TData>" },
+        "arguments": { "params": "RowClassParams<TData, TContext>" },
         "returnType": "RowStyle | undefined",
         "optional": true
       }
@@ -3769,7 +3789,7 @@
     "getRowClass": {
       "description": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
       "type": {
-        "arguments": { "params": "RowClassParams<TData>" },
+        "arguments": { "params": "RowClassParams<TData, TContext>" },
         "returnType": "string | string[] | undefined",
         "optional": true
       }
@@ -3777,7 +3797,7 @@
     "getRowHeight": {
       "description": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "type": {
-        "arguments": { "params": "RowHeightParams<TData>" },
+        "arguments": { "params": "RowHeightParams<TData, TContext>" },
         "returnType": "number | undefined | null",
         "optional": true
       }
@@ -3793,7 +3813,7 @@
     "isFullWidthRow": {
       "description": "/** Tells the grid if this row should be rendered as full width. */",
       "type": {
-        "arguments": { "params": "IsFullWidthRowParams<TData>" },
+        "arguments": { "params": "IsFullWidthRowParams<TData, TContext>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -4466,7 +4486,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>"
+          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -4477,7 +4497,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>"
+          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -4488,7 +4508,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>"
+          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -4499,7 +4519,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>"
+          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -5218,7 +5238,10 @@
     },
     "api": {
       "description": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
-      "type": { "returnType": "GridApi<TData> | null", "optional": true }
+      "type": {
+        "returnType": "GridApi<TData, TContext> | null",
+        "optional": true
+      }
     },
     "columnApi": {
       "description": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */",
@@ -5259,7 +5282,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5273,7 +5296,9 @@
   "GetContextMenuItems": {
     "meta": { "typeParams": ["TData = any", "TContext = any"] }
   },
-  "GetChartToolbarItems": { "meta": { "typeParams": ["TContext = any"] } },
+  "GetChartToolbarItems": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] }
+  },
   "MenuItemLeafDef": {
     "name": {
       "description": "/** Name of the menu item */",
@@ -5346,7 +5371,9 @@
       "type": { "returnType": "string", "optional": true }
     }
   },
-  "GetMainMenuItems": { "meta": { "typeParams": ["TContext = any"] } },
+  "GetMainMenuItems": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] }
+  },
   "GetRowNodeIdFunc": { "meta": { "typeParams": ["TData = any"] } },
   "GetRowIdFunc": {
     "meta": { "typeParams": ["TData = any", "TContext = any"] }
@@ -5389,7 +5416,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5495,7 +5522,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5530,7 +5557,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5555,7 +5582,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5577,7 +5604,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5610,7 +5637,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5640,7 +5667,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5659,7 +5686,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5678,7 +5705,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5698,7 +5725,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5717,7 +5744,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5736,7 +5763,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5755,7 +5782,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5774,7 +5801,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5793,7 +5820,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5812,7 +5839,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5835,7 +5862,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5866,7 +5893,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5889,7 +5916,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5923,7 +5950,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5946,7 +5973,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5965,7 +5992,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -5984,7 +6011,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6003,7 +6030,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6022,7 +6049,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6041,7 +6068,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6066,7 +6093,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6085,7 +6112,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6108,7 +6135,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6128,7 +6155,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6148,7 +6175,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6187,7 +6214,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6238,7 +6265,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6289,7 +6316,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6340,7 +6367,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6391,7 +6418,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6442,7 +6469,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6462,7 +6489,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6482,7 +6509,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6501,7 +6528,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6524,7 +6551,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6547,7 +6574,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6574,7 +6601,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6597,7 +6624,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6624,7 +6651,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6651,7 +6678,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6678,7 +6705,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6706,7 +6733,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6729,7 +6756,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6760,7 +6787,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6795,7 +6822,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6818,7 +6845,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6840,7 +6867,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6862,7 +6889,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6887,7 +6914,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6911,7 +6938,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6931,7 +6958,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -6950,7 +6977,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7048,7 +7075,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7092,7 +7119,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7137,7 +7164,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7157,7 +7184,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7189,7 +7216,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7228,7 +7255,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7259,7 +7286,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7290,7 +7317,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7321,7 +7348,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7360,7 +7387,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7395,7 +7422,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7430,7 +7457,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7469,7 +7496,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7512,7 +7539,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7555,7 +7582,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7602,7 +7629,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7645,7 +7672,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7691,7 +7718,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7734,7 +7761,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7777,7 +7804,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7820,7 +7847,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7863,7 +7890,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7906,7 +7933,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7949,7 +7976,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -7992,7 +8019,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8043,7 +8070,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8094,7 +8121,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8145,7 +8172,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8196,7 +8223,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8247,7 +8274,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8298,7 +8325,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8349,7 +8376,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8400,7 +8427,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8451,7 +8478,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8502,7 +8529,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8553,7 +8580,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8616,7 +8643,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8672,7 +8699,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8728,7 +8755,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8754,7 +8781,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8774,7 +8801,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8794,7 +8821,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8814,7 +8841,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8834,7 +8861,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8855,7 +8882,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8874,7 +8901,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8893,7 +8920,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8912,7 +8939,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8931,7 +8958,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8950,7 +8977,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8969,7 +8996,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -8988,7 +9015,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -9100,7 +9127,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -9752,7 +9779,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -10340,7 +10367,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -10466,7 +10493,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11130,7 +11157,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11154,7 +11181,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11170,7 +11197,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11188,7 +11215,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11207,7 +11234,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11299,10 +11326,10 @@
       "description": "/** The value, if a cell was clicked, otherwise null.  */",
       "type": { "returnType": "any", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11322,10 +11349,10 @@
       "description": "/** List of the items that would be displayed by default */",
       "type": { "returnType": "string[]", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11361,10 +11388,10 @@
       "description": "/** If the popup is as a result of a click or touch,\n     *  this is the event - eg user showing context menu */",
       "type": { "returnType": "MouseEvent | Touch | null", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11377,10 +11404,10 @@
   },
   "SendToClipboardParams": {
     "data": { "type": { "returnType": "string", "optional": false } },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11396,10 +11423,10 @@
       "description": "/** 2D array of all cells from the clipboard */",
       "type": { "returnType": "string[][]", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11414,10 +11441,10 @@
     "defaultItems": {
       "type": { "returnType": "ChartMenuOptions[]", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11446,10 +11473,10 @@
       "type": { "returnType": "number", "optional": false }
     },
     "event": { "type": { "returnType": "KeyboardEvent", "optional": false } },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11477,10 +11504,10 @@
       "description": "/** The number of header rows present in the grid */",
       "type": { "returnType": "number", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11508,10 +11535,10 @@
       "description": "/** The cell the grid would normally pick as the next cell for navigation.  */",
       "type": { "returnType": "CellPosition | null", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11538,10 +11565,10 @@
     "event": {
       "type": { "returnType": "KeyboardEvent | null", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11554,10 +11581,10 @@
   },
   "PaginationNumberFormatterParams": {
     "value": { "type": { "returnType": "number", "optional": false } },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11589,10 +11616,10 @@
       "description": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
       "type": { "returnType": "string", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11627,7 +11654,7 @@
     "meta": { "typeParams": ["TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<any>", "optional": false }
+      "type": { "returnType": "GridApi<any, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11662,7 +11689,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<any>", "optional": false }
+      "type": { "returnType": "GridApi<any, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11679,7 +11706,7 @@
     "meta": { "typeParams": ["TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<any>", "optional": false }
+      "type": { "returnType": "GridApi<any, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11710,7 +11737,7 @@
     "meta": { "typeParams": ["TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<any>", "optional": false }
+      "type": { "returnType": "GridApi<any, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11734,10 +11761,10 @@
       "description": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
       "type": { "returnType": "string[]", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11765,10 +11792,10 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11815,10 +11842,10 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11838,10 +11865,10 @@
       "description": "/** The RowNode of the row in question. */",
       "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11853,10 +11880,10 @@
     }
   },
   "IsExternalFilterPresentParams": {
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11870,10 +11897,10 @@
   "InitialGroupOrderComparatorParams": {
     "nodeA": { "type": { "returnType": "IRowNode<TData>", "optional": false } },
     "nodeB": { "type": { "returnType": "IRowNode<TData>", "optional": false } },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11888,10 +11915,10 @@
     "nodes": {
       "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11906,10 +11933,10 @@
     "nodes": {
       "type": { "returnType": "IRowNode<TData>[]", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11924,10 +11951,10 @@
     "rowNode": {
       "type": { "returnType": "IRowNode<TData>", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11944,10 +11971,10 @@
     "variableValues": {
       "type": { "returnType": "string[]", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -11960,10 +11987,10 @@
   },
   "GetGroupAggFilteringParams": {
     "node": { "type": { "returnType": "IRowNode<TData>", "optional": false } },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -12088,7 +12115,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -12950,7 +12977,7 @@
   "AgGridCommon": {
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -14110,7 +14137,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -15117,7 +15144,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -15832,7 +15859,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -16644,7 +16671,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -16868,7 +16895,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -17601,7 +17628,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -17639,7 +17666,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -17724,7 +17751,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -18010,7 +18037,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -18402,7 +18429,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -18493,7 +18520,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -18588,7 +18615,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -18801,7 +18828,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -18828,7 +18855,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -18969,7 +18996,7 @@
     },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -19064,7 +19091,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -19182,7 +19209,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -19219,7 +19246,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -19526,7 +19553,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -20401,7 +20428,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
+      "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
     },
     "columnApi": {
       "description": "/** The column api. */",
@@ -21928,7 +21955,7 @@
     "postProcessPopup": {
       "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
       "type": {
-        "arguments": { "params": "PostProcessPopupParams<TData>" },
+        "arguments": { "params": "PostProcessPopupParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -21936,7 +21963,9 @@
     "processCellForClipboard": {
       "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessCellForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -21944,7 +21973,9 @@
     "processHeaderForClipboard": {
       "description": "/** Allows you to process header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessHeaderForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessHeaderForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -21952,7 +21983,9 @@
     "processGroupHeaderForClipboard": {
       "description": "/** Allows you to process group header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessGroupHeaderForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessGroupHeaderForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -21960,7 +21993,9 @@
     "processCellFromClipboard": {
       "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessCellForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -21968,7 +22003,7 @@
     "sendToClipboard": {
       "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
       "type": {
-        "arguments": { "params": "SendToClipboardParams<TData>" },
+        "arguments": { "params": "SendToClipboardParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -21976,7 +22011,9 @@
     "processDataFromClipboard": {
       "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
       "type": {
-        "arguments": { "params": "ProcessDataFromClipboardParams<TData>" },
+        "arguments": {
+          "params": "ProcessDataFromClipboardParams<TData, TContext>"
+        },
         "returnType": "string[][] | null",
         "optional": true
       }
@@ -21984,7 +22021,9 @@
     "isExternalFilterPresent": {
       "description": "/** Grid calls this method to know if an external filter is present. */",
       "type": {
-        "arguments": { "params": "IsExternalFilterPresentParams<TData>" },
+        "arguments": {
+          "params": "IsExternalFilterPresentParams<TData, TContext>"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -22007,7 +22046,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRefParams<TData>" },
+        "arguments": { "params": "ChartRefParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -22015,7 +22054,9 @@
     "navigateToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "NavigateToNextHeaderParams<TData>" },
+        "arguments": {
+          "params": "NavigateToNextHeaderParams<TData, TContext>"
+        },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -22023,7 +22064,7 @@
     "tabToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "TabToNextHeaderParams<TData>" },
+        "arguments": { "params": "TabToNextHeaderParams<TData, TContext>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -22031,7 +22072,7 @@
     "navigateToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "type": {
-        "arguments": { "params": "NavigateToNextCellParams<TData>" },
+        "arguments": { "params": "NavigateToNextCellParams<TData, TContext>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -22039,7 +22080,7 @@
     "tabToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "type": {
-        "arguments": { "params": "TabToNextCellParams<TData>" },
+        "arguments": { "params": "TabToNextCellParams<TData, TContext>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -22059,7 +22100,7 @@
     "getLocaleText": {
       "description": "/** A callback for localising text within the grid. */",
       "type": {
-        "arguments": { "params": "GetLocaleTextParams<TData>" },
+        "arguments": { "params": "GetLocaleTextParams<TData, TContext>" },
         "returnType": "string",
         "optional": true
       }
@@ -22071,7 +22112,9 @@
     "paginationNumberFormatter": {
       "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
       "type": {
-        "arguments": { "params": "PaginationNumberFormatterParams<TData>" },
+        "arguments": {
+          "params": "PaginationNumberFormatterParams<TData, TContext>"
+        },
         "returnType": "string",
         "optional": true
       }
@@ -22087,7 +22130,7 @@
     "getGroupRowAgg": {
       "description": "/** Callback to use when you need access to more then the current column for aggregation. */",
       "type": {
-        "arguments": { "params": "GetGroupRowAggParams<TData>" },
+        "arguments": { "params": "GetGroupRowAggParams<TData, TContext>" },
         "returnType": "any",
         "optional": true
       }
@@ -22095,7 +22138,9 @@
     "isGroupOpenByDefault": {
       "description": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "type": {
-        "arguments": { "params": "IsGroupOpenByDefaultParams<TData>" },
+        "arguments": {
+          "params": "IsGroupOpenByDefaultParams<TData, TContext>"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -22103,7 +22148,9 @@
     "initialGroupOrderComparator": {
       "description": "/** Allows default sorting of groups. */",
       "type": {
-        "arguments": { "params": "InitialGroupOrderComparatorParams<TData>" },
+        "arguments": {
+          "params": "InitialGroupOrderComparatorParams<TData, TContext>"
+        },
         "returnType": "number",
         "optional": true
       }
@@ -22225,7 +22272,7 @@
     "processRowPostCreate": {
       "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "type": {
-        "arguments": { "params": "ProcessRowParams<TData>" },
+        "arguments": { "params": "ProcessRowParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -22241,7 +22288,7 @@
     "fillOperation": {
       "description": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
       "type": {
-        "arguments": { "params": "FillOperationParams<TData>" },
+        "arguments": { "params": "FillOperationParams<TData, TContext>" },
         "returnType": "any",
         "optional": true
       }
@@ -22257,7 +22304,7 @@
     "postSortRows": {
       "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "type": {
-        "arguments": { "params": "PostSortRowsParams<TData>" },
+        "arguments": { "params": "PostSortRowsParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -22265,7 +22312,7 @@
     "getRowStyle": {
       "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "type": {
-        "arguments": { "params": "RowClassParams<TData>" },
+        "arguments": { "params": "RowClassParams<TData, TContext>" },
         "returnType": "RowStyle | undefined",
         "optional": true
       }
@@ -22273,7 +22320,7 @@
     "getRowClass": {
       "description": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
       "type": {
-        "arguments": { "params": "RowClassParams<TData>" },
+        "arguments": { "params": "RowClassParams<TData, TContext>" },
         "returnType": "string | string[] | undefined",
         "optional": true
       }
@@ -22281,7 +22328,7 @@
     "getRowHeight": {
       "description": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "type": {
-        "arguments": { "params": "RowHeightParams<TData>" },
+        "arguments": { "params": "RowHeightParams<TData, TContext>" },
         "returnType": "number | undefined | null",
         "optional": true
       }
@@ -22297,7 +22344,7 @@
     "isFullWidthRow": {
       "description": "/** Tells the grid if this row should be rendered as full width. */",
       "type": {
-        "arguments": { "params": "IsFullWidthRowParams<TData>" },
+        "arguments": { "params": "IsFullWidthRowParams<TData, TContext>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -22970,7 +23017,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>"
+          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -22981,7 +23028,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>"
+          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -22992,7 +23039,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>"
+          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -23003,7 +23050,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>"
+          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -23722,7 +23769,10 @@
     },
     "api": {
       "description": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
-      "type": { "returnType": "GridApi<TData> | null", "optional": true }
+      "type": {
+        "returnType": "GridApi<TData, TContext> | null",
+        "optional": true
+      }
     },
     "columnApi": {
       "description": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */",
@@ -24779,7 +24829,7 @@
     "postProcessPopup": {
       "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
       "type": {
-        "arguments": { "params": "PostProcessPopupParams<TData>" },
+        "arguments": { "params": "PostProcessPopupParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -24787,7 +24837,9 @@
     "processCellForClipboard": {
       "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessCellForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -24795,7 +24847,9 @@
     "processHeaderForClipboard": {
       "description": "/** Allows you to process header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessHeaderForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessHeaderForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -24803,7 +24857,9 @@
     "processGroupHeaderForClipboard": {
       "description": "/** Allows you to process group header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessGroupHeaderForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessGroupHeaderForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -24811,7 +24867,9 @@
     "processCellFromClipboard": {
       "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessCellForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -24819,7 +24877,7 @@
     "sendToClipboard": {
       "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
       "type": {
-        "arguments": { "params": "SendToClipboardParams<TData>" },
+        "arguments": { "params": "SendToClipboardParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -24827,7 +24885,9 @@
     "processDataFromClipboard": {
       "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
       "type": {
-        "arguments": { "params": "ProcessDataFromClipboardParams<TData>" },
+        "arguments": {
+          "params": "ProcessDataFromClipboardParams<TData, TContext>"
+        },
         "returnType": "string[][] | null",
         "optional": true
       }
@@ -24835,7 +24895,9 @@
     "isExternalFilterPresent": {
       "description": "/** Grid calls this method to know if an external filter is present. */",
       "type": {
-        "arguments": { "params": "IsExternalFilterPresentParams<TData>" },
+        "arguments": {
+          "params": "IsExternalFilterPresentParams<TData, TContext>"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -24858,7 +24920,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRefParams<TData>" },
+        "arguments": { "params": "ChartRefParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -24866,7 +24928,9 @@
     "navigateToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "NavigateToNextHeaderParams<TData>" },
+        "arguments": {
+          "params": "NavigateToNextHeaderParams<TData, TContext>"
+        },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -24874,7 +24938,7 @@
     "tabToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "TabToNextHeaderParams<TData>" },
+        "arguments": { "params": "TabToNextHeaderParams<TData, TContext>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -24882,7 +24946,7 @@
     "navigateToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "type": {
-        "arguments": { "params": "NavigateToNextCellParams<TData>" },
+        "arguments": { "params": "NavigateToNextCellParams<TData, TContext>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -24890,7 +24954,7 @@
     "tabToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "type": {
-        "arguments": { "params": "TabToNextCellParams<TData>" },
+        "arguments": { "params": "TabToNextCellParams<TData, TContext>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -24910,7 +24974,7 @@
     "getLocaleText": {
       "description": "/** A callback for localising text within the grid. */",
       "type": {
-        "arguments": { "params": "GetLocaleTextParams<TData>" },
+        "arguments": { "params": "GetLocaleTextParams<TData, TContext>" },
         "returnType": "string",
         "optional": true
       }
@@ -24922,7 +24986,9 @@
     "paginationNumberFormatter": {
       "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
       "type": {
-        "arguments": { "params": "PaginationNumberFormatterParams<TData>" },
+        "arguments": {
+          "params": "PaginationNumberFormatterParams<TData, TContext>"
+        },
         "returnType": "string",
         "optional": true
       }
@@ -24938,7 +25004,7 @@
     "getGroupRowAgg": {
       "description": "/** Callback to use when you need access to more then the current column for aggregation. */",
       "type": {
-        "arguments": { "params": "GetGroupRowAggParams<TData>" },
+        "arguments": { "params": "GetGroupRowAggParams<TData, TContext>" },
         "returnType": "any",
         "optional": true
       }
@@ -24946,7 +25012,9 @@
     "isGroupOpenByDefault": {
       "description": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "type": {
-        "arguments": { "params": "IsGroupOpenByDefaultParams<TData>" },
+        "arguments": {
+          "params": "IsGroupOpenByDefaultParams<TData, TContext>"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -24954,7 +25022,9 @@
     "initialGroupOrderComparator": {
       "description": "/** Allows default sorting of groups. */",
       "type": {
-        "arguments": { "params": "InitialGroupOrderComparatorParams<TData>" },
+        "arguments": {
+          "params": "InitialGroupOrderComparatorParams<TData, TContext>"
+        },
         "returnType": "number",
         "optional": true
       }
@@ -25076,7 +25146,7 @@
     "processRowPostCreate": {
       "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "type": {
-        "arguments": { "params": "ProcessRowParams<TData>" },
+        "arguments": { "params": "ProcessRowParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -25092,7 +25162,7 @@
     "fillOperation": {
       "description": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
       "type": {
-        "arguments": { "params": "FillOperationParams<TData>" },
+        "arguments": { "params": "FillOperationParams<TData, TContext>" },
         "returnType": "any",
         "optional": true
       }
@@ -25108,7 +25178,7 @@
     "postSortRows": {
       "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "type": {
-        "arguments": { "params": "PostSortRowsParams<TData>" },
+        "arguments": { "params": "PostSortRowsParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -25116,7 +25186,7 @@
     "getRowStyle": {
       "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "type": {
-        "arguments": { "params": "RowClassParams<TData>" },
+        "arguments": { "params": "RowClassParams<TData, TContext>" },
         "returnType": "RowStyle | undefined",
         "optional": true
       }
@@ -25124,7 +25194,7 @@
     "getRowClass": {
       "description": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
       "type": {
-        "arguments": { "params": "RowClassParams<TData>" },
+        "arguments": { "params": "RowClassParams<TData, TContext>" },
         "returnType": "string | string[] | undefined",
         "optional": true
       }
@@ -25132,7 +25202,7 @@
     "getRowHeight": {
       "description": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "type": {
-        "arguments": { "params": "RowHeightParams<TData>" },
+        "arguments": { "params": "RowHeightParams<TData, TContext>" },
         "returnType": "number | undefined | null",
         "optional": true
       }
@@ -25148,7 +25218,7 @@
     "isFullWidthRow": {
       "description": "/** Tells the grid if this row should be rendered as full width. */",
       "type": {
-        "arguments": { "params": "IsFullWidthRowParams<TData>" },
+        "arguments": { "params": "IsFullWidthRowParams<TData, TContext>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -25821,7 +25891,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>"
+          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -25832,7 +25902,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>"
+          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -25843,7 +25913,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>"
+          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -25854,7 +25924,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>"
+          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -26573,7 +26643,10 @@
     },
     "api": {
       "description": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
-      "type": { "returnType": "GridApi<TData> | null", "optional": true }
+      "type": {
+        "returnType": "GridApi<TData, TContext> | null",
+        "optional": true
+      }
     },
     "columnApi": {
       "description": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */",
@@ -27636,7 +27709,7 @@
     "postProcessPopup": {
       "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
       "type": {
-        "arguments": { "params": "PostProcessPopupParams<TData>" },
+        "arguments": { "params": "PostProcessPopupParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -27644,7 +27717,9 @@
     "processCellForClipboard": {
       "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessCellForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -27652,7 +27727,9 @@
     "processHeaderForClipboard": {
       "description": "/** Allows you to process header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessHeaderForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessHeaderForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -27660,7 +27737,9 @@
     "processGroupHeaderForClipboard": {
       "description": "/** Allows you to process group header values for the clipboard. */",
       "type": {
-        "arguments": { "params": "ProcessGroupHeaderForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessGroupHeaderForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -27668,7 +27747,9 @@
     "processCellFromClipboard": {
       "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
       "type": {
-        "arguments": { "params": "ProcessCellForExportParams<TData>" },
+        "arguments": {
+          "params": "ProcessCellForExportParams<TData, TContext>"
+        },
         "returnType": "any",
         "optional": true
       }
@@ -27676,7 +27757,7 @@
     "sendToClipboard": {
       "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
       "type": {
-        "arguments": { "params": "SendToClipboardParams<TData>" },
+        "arguments": { "params": "SendToClipboardParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -27684,7 +27765,9 @@
     "processDataFromClipboard": {
       "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
       "type": {
-        "arguments": { "params": "ProcessDataFromClipboardParams<TData>" },
+        "arguments": {
+          "params": "ProcessDataFromClipboardParams<TData, TContext>"
+        },
         "returnType": "string[][] | null",
         "optional": true
       }
@@ -27692,7 +27775,9 @@
     "isExternalFilterPresent": {
       "description": "/** Grid calls this method to know if an external filter is present. */",
       "type": {
-        "arguments": { "params": "IsExternalFilterPresentParams<TData>" },
+        "arguments": {
+          "params": "IsExternalFilterPresentParams<TData, TContext>"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -27715,7 +27800,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRefParams<TData>" },
+        "arguments": { "params": "ChartRefParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -27723,7 +27808,9 @@
     "navigateToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "NavigateToNextHeaderParams<TData>" },
+        "arguments": {
+          "params": "NavigateToNextHeaderParams<TData, TContext>"
+        },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -27731,7 +27818,7 @@
     "tabToNextHeader": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
-        "arguments": { "params": "TabToNextHeaderParams<TData>" },
+        "arguments": { "params": "TabToNextHeaderParams<TData, TContext>" },
         "returnType": "(HeaderPosition | null)",
         "optional": true
       }
@@ -27739,7 +27826,7 @@
     "navigateToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "type": {
-        "arguments": { "params": "NavigateToNextCellParams<TData>" },
+        "arguments": { "params": "NavigateToNextCellParams<TData, TContext>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -27747,7 +27834,7 @@
     "tabToNextCell": {
       "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "type": {
-        "arguments": { "params": "TabToNextCellParams<TData>" },
+        "arguments": { "params": "TabToNextCellParams<TData, TContext>" },
         "returnType": "(CellPosition | null)",
         "optional": true
       }
@@ -27767,7 +27854,7 @@
     "getLocaleText": {
       "description": "/** A callback for localising text within the grid. */",
       "type": {
-        "arguments": { "params": "GetLocaleTextParams<TData>" },
+        "arguments": { "params": "GetLocaleTextParams<TData, TContext>" },
         "returnType": "string",
         "optional": true
       }
@@ -27779,7 +27866,9 @@
     "paginationNumberFormatter": {
       "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
       "type": {
-        "arguments": { "params": "PaginationNumberFormatterParams<TData>" },
+        "arguments": {
+          "params": "PaginationNumberFormatterParams<TData, TContext>"
+        },
         "returnType": "string",
         "optional": true
       }
@@ -27795,7 +27884,7 @@
     "getGroupRowAgg": {
       "description": "/** Callback to use when you need access to more then the current column for aggregation. */",
       "type": {
-        "arguments": { "params": "GetGroupRowAggParams<TData>" },
+        "arguments": { "params": "GetGroupRowAggParams<TData, TContext>" },
         "returnType": "any",
         "optional": true
       }
@@ -27803,7 +27892,9 @@
     "isGroupOpenByDefault": {
       "description": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "type": {
-        "arguments": { "params": "IsGroupOpenByDefaultParams<TData>" },
+        "arguments": {
+          "params": "IsGroupOpenByDefaultParams<TData, TContext>"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -27811,7 +27902,9 @@
     "initialGroupOrderComparator": {
       "description": "/** Allows default sorting of groups. */",
       "type": {
-        "arguments": { "params": "InitialGroupOrderComparatorParams<TData>" },
+        "arguments": {
+          "params": "InitialGroupOrderComparatorParams<TData, TContext>"
+        },
         "returnType": "number",
         "optional": true
       }
@@ -27933,7 +28026,7 @@
     "processRowPostCreate": {
       "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "type": {
-        "arguments": { "params": "ProcessRowParams<TData>" },
+        "arguments": { "params": "ProcessRowParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -27949,7 +28042,7 @@
     "fillOperation": {
       "description": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
       "type": {
-        "arguments": { "params": "FillOperationParams<TData>" },
+        "arguments": { "params": "FillOperationParams<TData, TContext>" },
         "returnType": "any",
         "optional": true
       }
@@ -27965,7 +28058,7 @@
     "postSortRows": {
       "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "type": {
-        "arguments": { "params": "PostSortRowsParams<TData>" },
+        "arguments": { "params": "PostSortRowsParams<TData, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -27973,7 +28066,7 @@
     "getRowStyle": {
       "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "type": {
-        "arguments": { "params": "RowClassParams<TData>" },
+        "arguments": { "params": "RowClassParams<TData, TContext>" },
         "returnType": "RowStyle | undefined",
         "optional": true
       }
@@ -27981,7 +28074,7 @@
     "getRowClass": {
       "description": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
       "type": {
-        "arguments": { "params": "RowClassParams<TData>" },
+        "arguments": { "params": "RowClassParams<TData, TContext>" },
         "returnType": "string | string[] | undefined",
         "optional": true
       }
@@ -27989,7 +28082,7 @@
     "getRowHeight": {
       "description": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "type": {
-        "arguments": { "params": "RowHeightParams<TData>" },
+        "arguments": { "params": "RowHeightParams<TData, TContext>" },
         "returnType": "number | undefined | null",
         "optional": true
       }
@@ -28005,7 +28098,7 @@
     "isFullWidthRow": {
       "description": "/** Tells the grid if this row should be rendered as full width. */",
       "type": {
-        "arguments": { "params": "IsFullWidthRowParams<TData>" },
+        "arguments": { "params": "IsFullWidthRowParams<TData, TContext>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -28678,7 +28771,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>"
+          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -28689,7 +28782,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData>"
+          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -28700,7 +28793,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>"
+          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -28711,7 +28804,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData>"
+          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -29430,7 +29523,10 @@
     },
     "api": {
       "description": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
-      "type": { "returnType": "GridApi<TData> | null", "optional": true }
+      "type": {
+        "returnType": "GridApi<TData, TContext> | null",
+        "optional": true
+      }
     },
     "columnApi": {
       "description": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */",

@@ -156,7 +156,7 @@
     "description": "/** Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.\n     */",
     "type": {
       "arguments": {
-        "colDefs": "(ColDef<TData> | ColGroupDef<TData>)[]",
+        "colDefs": "(ColDef<TData, TContext> | ColGroupDef<TData, TContext>)[]",
         "source": "ColumnEventType = \"api\""
       }
     }
@@ -165,7 +165,7 @@
     "description": "/** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */",
     "type": {
       "arguments": {
-        "colDef": "ColDef<TData>",
+        "colDef": "ColDef<TData, TContext>",
         "source": "ColumnEventType = \"api\""
       }
     }
@@ -174,7 +174,7 @@
     "description": "/** Call to set new Default Column Definition. */",
     "type": {
       "arguments": {
-        "colDef": "ColDef<TData>",
+        "colDef": "ColDef<TData, TContext>",
         "source": "ColumnEventType = \"api\""
       }
     }
@@ -183,7 +183,7 @@
     "description": "/** Call to set new Column Types. */",
     "type": {
       "arguments": {
-        "columnTypes": "{ string: ColDef<TData>; }",
+        "columnTypes": "{ string: ColDef<TData, TContext>; }",
         "source": "ColumnEventType = \"api\""
       }
     }
@@ -483,14 +483,14 @@
   "getColumnDef": {
     "type": {
       "arguments": { "key": "string | Column" },
-      "returnType": "ColDef<TData> | null"
+      "returnType": "ColDef<TData, TContext> | null"
     }
   },
   "getColumnDefs": {
     "description": "/** Returns the current column definitions.\n    */",
     "type": {
       "arguments": {},
-      "returnType": "(ColDef<TData> | ColGroupDef<TData>)[] | undefined"
+      "returnType": "(ColDef<TData, TContext> | ColGroupDef<TData, TContext>)[] | undefined"
     }
   },
   "onFilterChanged": {
@@ -613,7 +613,7 @@
   "setNavigateToNextCell": {
     "type": {
       "arguments": {
-        "navigateToNextCellFunc": "(params: NavigateToNextCellParams) => (CellPosition | null)"
+        "navigateToNextCellFunc": "(params: NavigateToNextCellParams<TData, TContext>) => (CellPosition | null)"
       },
       "returnType": "void"
     }
@@ -621,7 +621,7 @@
   "setTabToNextCell": {
     "type": {
       "arguments": {
-        "tabToNextCellFunc": "(params: TabToNextCellParams) => (CellPosition | null)"
+        "tabToNextCellFunc": "(params: TabToNextCellParams<TData, TContext>) => (CellPosition | null)"
       },
       "returnType": "void"
     }
@@ -629,7 +629,7 @@
   "setTabToNextHeader": {
     "type": {
       "arguments": {
-        "tabToNextHeaderFunc": "(params: TabToNextHeaderParams) => (HeaderPosition | null)"
+        "tabToNextHeaderFunc": "(params: TabToNextHeaderParams<TData, TContext>) => (HeaderPosition | null)"
       },
       "returnType": "void"
     }
@@ -637,7 +637,7 @@
   "setNavigateToNextHeader": {
     "type": {
       "arguments": {
-        "navigateToNextHeaderFunc": "(params: NavigateToNextHeaderParams) => (HeaderPosition | null)"
+        "navigateToNextHeaderFunc": "(params: NavigateToNextHeaderParams<TData, TContext>) => (HeaderPosition | null)"
       },
       "returnType": "void"
     }
@@ -660,7 +660,7 @@
   "setGetGroupRowAgg": {
     "type": {
       "arguments": {
-        "getGroupRowAggFunc": "(params: GetGroupRowAggParams) => any"
+        "getGroupRowAggFunc": "(params: GetGroupRowAggParams<TData, TContext>) => any"
       },
       "returnType": "void"
     }
@@ -682,7 +682,7 @@
   "setProcessRowPostCreate": {
     "type": {
       "arguments": {
-        "processRowPostCreateFunc": "(params: ProcessRowParams) => void"
+        "processRowPostCreateFunc": "(params: ProcessRowParams<TData, TContext>) => void"
       },
       "returnType": "void"
     }
@@ -718,7 +718,7 @@
   "setIsFullWidthRow": {
     "type": {
       "arguments": {
-        "isFullWidthRowFunc": "(params: IsFullWidthRowParams) => boolean"
+        "isFullWidthRowFunc": "(params: IsFullWidthRowParams<TData, TContext>) => boolean"
       },
       "returnType": "void"
     }
@@ -745,7 +745,7 @@
   "setPostSortRows": {
     "type": {
       "arguments": {
-        "postSortRowsFunc": "(params: PostSortRowsParams) => void"
+        "postSortRowsFunc": "(params: PostSortRowsParams<TData, TContext>) => void"
       },
       "returnType": "void"
     }
@@ -827,7 +827,7 @@
   "setPostProcessPopup": {
     "type": {
       "arguments": {
-        "postProcessPopupFunc": "(params: PostProcessPopupParams) => void"
+        "postProcessPopupFunc": "(params: PostProcessPopupParams<TData, TContext>) => void"
       },
       "returnType": "void"
     }
@@ -844,7 +844,7 @@
   "setInitialGroupOrderComparator": {
     "type": {
       "arguments": {
-        "initialGroupOrderComparatorFunc": "(params: InitialGroupOrderComparatorParams) => number"
+        "initialGroupOrderComparatorFunc": "(params: InitialGroupOrderComparatorParams<TData, TContext>) => number"
       },
       "returnType": "void"
     }
@@ -858,7 +858,7 @@
   "setPaginationNumberFormatter": {
     "type": {
       "arguments": {
-        "paginationNumberFormatterFunc": "(params: PaginationNumberFormatterParams) => string"
+        "paginationNumberFormatterFunc": "(params: PaginationNumberFormatterParams<TData, TContext>) => string"
       },
       "returnType": "void"
     }
@@ -916,7 +916,9 @@
   },
   "setGetRowHeight": {
     "type": {
-      "arguments": { "rowHeightFunc": "(params: RowHeightParams) => number" },
+      "arguments": {
+        "rowHeightFunc": "(params: RowHeightParams<TData, TContext>) => number"
+      },
       "returnType": "void"
     }
   },

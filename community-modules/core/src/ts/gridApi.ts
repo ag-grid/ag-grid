@@ -1120,7 +1120,7 @@ export class GridApi<TData = any, TContext = any> {
         logDeprecation<GridApi>('27.2', 'setIsFullWidthCell', 'setIsFullWidthRow');
         this.gridOptionsService.set('isFullWidthCell', isFullWidthCellFunc);
     }
-    public setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void {
+    public setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams<TData, TContext>) => boolean): void {
         this.gridOptionsService.set('isFullWidthRow', isFullWidthRowFunc);
     }
 
@@ -1137,7 +1137,7 @@ export class GridApi<TData = any, TContext = any> {
         logDeprecation<GridApi>('27.2', 'setPostSort', 'setPostSortRows');
         this.gridOptionsService.set('postSort', postSortFunc);
     }
-    public setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void {
+    public setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams<TData, TContext>) => void): void {
         this.gridOptionsService.set('postSortRows', postSortRowsFunc);
     }
 
@@ -1185,7 +1185,7 @@ export class GridApi<TData = any, TContext = any> {
         this.gridOptionsService.set('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
     }
 
-    public setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void): void {
+    public setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams<TData, TContext>) => void): void {
         this.gridOptionsService.set('postProcessPopup', postProcessPopupFunc);
     }
 
@@ -1194,7 +1194,7 @@ export class GridApi<TData = any, TContext = any> {
         logDeprecation<GridApi>('27.2', 'setDefaultGroupOrderComparator', 'setInitialGroupOrderComparator');
         this.gridOptionsService.set('defaultGroupOrderComparator', defaultGroupOrderComparatorFunc);
     }
-    public setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void {
+    public setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams<TData, TContext>) => number): void {
         this.gridOptionsService.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
     }
 
@@ -1202,7 +1202,7 @@ export class GridApi<TData = any, TContext = any> {
         this.gridOptionsService.set('getChartToolbarItems', getChartToolbarItemsFunc);
     }
 
-    public setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string): void {
+    public setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams<TData, TContext>) => string): void {
         this.gridOptionsService.set('paginationNumberFormatter', paginationNumberFormatterFunc);
     }
 
