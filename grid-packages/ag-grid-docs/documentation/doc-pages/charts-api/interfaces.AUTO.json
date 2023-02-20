@@ -815,9 +815,32 @@
       "toggleSeriesVisible?": "/** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */"
     }
   },
+  "AgChartLegendEvent": {
+    "meta": { "typeParams": ["T extends string"] },
+    "type": { "type": "T" }
+  },
   "AgChartLegendClickEvent": {
     "meta": {},
-    "type": { "seriesId": "string", "itemId": "string", "enabled": "boolean" },
+    "type": {
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean",
+      "type": "T"
+    },
+    "docs": {
+      "seriesId": "/** Series id */",
+      "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
+      "enabled": "/** Whether the legend item is currently enabled or not. */"
+    }
+  },
+  "AgChartLegendDoubleClickEvent": {
+    "meta": {},
+    "type": {
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean",
+      "type": "T"
+    },
     "docs": {
       "seriesId": "/** Series id */",
       "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
@@ -826,9 +849,13 @@
   },
   "AgChartLegendListeners": {
     "meta": {},
-    "type": { "legendItemClick?": "(event: AgChartLegendClickEvent) => void" },
+    "type": {
+      "legendItemClick?": "(event: AgChartLegendClickEvent) => void",
+      "legendItemDoubleClick?": "(event: AgChartLegendDoubleClickEvent) => void"
+    },
     "docs": {
-      "legendItemClick?": "/** The listener to call when a legend item is clicked. */"
+      "legendItemClick?": "/** The listener to call when a legend item is clicked. */",
+      "legendItemDoubleClick?": "/** The listener to call when a legend item is double clicked. */"
     }
   },
   "AgChartLegendOptions": {
@@ -3166,11 +3193,11 @@
   },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
+    "type": "'click' | 'dblclick' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
+    "type": "'click' | 'dblclick' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
   },
   "InteractionEvent": {
     "meta": {

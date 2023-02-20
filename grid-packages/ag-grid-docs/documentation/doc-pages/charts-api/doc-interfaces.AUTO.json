@@ -1296,6 +1296,10 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
+  "AgChartLegendEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "meta": { "typeParams": ["T extends string"] }
+  },
   "AgChartLegendClickEvent": {
     "seriesId": {
       "description": "/** Series id */",
@@ -1308,13 +1312,37 @@
     "enabled": {
       "description": "/** Whether the legend item is currently enabled or not. */",
       "type": { "returnType": "boolean", "optional": false }
-    }
+    },
+    "type": { "type": { "returnType": "T", "optional": false } }
+  },
+  "AgChartLegendDoubleClickEvent": {
+    "seriesId": {
+      "description": "/** Series id */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "itemId": {
+      "description": "/** Legend item id - usually yKey value for cartesian series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "enabled": {
+      "description": "/** Whether the legend item is currently enabled or not. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "type": { "type": { "returnType": "T", "optional": false } }
   },
   "AgChartLegendListeners": {
     "legendItemClick": {
       "description": "/** The listener to call when a legend item is clicked. */",
       "type": {
         "arguments": { "event": "AgChartLegendClickEvent" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "legendItemDoubleClick": {
+      "description": "/** The listener to call when a legend item is double clicked. */",
+      "type": {
+        "arguments": { "event": "AgChartLegendDoubleClickEvent" },
         "returnType": "void",
         "optional": true
       }
