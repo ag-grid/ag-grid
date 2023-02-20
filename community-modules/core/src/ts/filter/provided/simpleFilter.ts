@@ -5,7 +5,7 @@ import { IProvidedFilter, IProvidedFilterParams, ProvidedFilter } from './provid
 import { AgPromise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
-import { includes } from '../../utils/array';
+import { areEqual, includes } from '../../utils/array';
 import { setDisplayed, setDisabled } from '../../utils/dom';
 import { IFilterLocaleText } from '../filterLocaleText';
 import { AgInputTextField } from '../../widgets/agInputTextField';
@@ -62,15 +62,24 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
      */
     defaultJoinOperator?: JoinOperator;
     /**
-     * If `true`, the filter will only allow one condition.
-     * Default: `false`
+     * Maximum number of conditions allowed in the filter.
+     * Default: 2
+     */
+    maxNumConditions?: number;
+    /**
+     * By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered
+     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.
+     * Conditions will be disabled until the previous conditions have been entered.
+     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. 
+     * Default: 1
+     */
+    numAlwaysVisibleConditions?: number;
+    /**
+     * @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxNumConditions = 1` instead.
      */
     suppressAndOrCondition?: boolean;
     /**
-     * By default, only one condition is shown, and a second is made visible once a first condition has been entered.
-     * Set this to `true` to always show both conditions.
-     * In this case the second condition will be disabled until a first condition has been entered.
-     * Default: `false`
+     * @deprecated As of v29.2 there can be more than two conditions in the filter. Use `numAlwaysVisibleConditions = 2` instead.
      */
     alwaysShowBothConditions?: boolean;
 
@@ -104,9 +113,8 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
     operator: JoinOperator;
     condition1: M;
     condition2: M;
+    conditions?: M[];
 }
-
-export enum ConditionPosition { One, Two }
 
 export type Tuple<T> = (T | null)[];
 
@@ -126,15 +134,13 @@ export abstract class SimpleFilterModelFormatter {
         const isCombined = (model as any).operator != null;
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
-            const { condition1, condition2 } = combinedModel || {};
-            const customOption1 = this.getModelAsString(condition1);
-            const customOption2 = this.getModelAsString(condition2);
-
-            return [
-                customOption1,
-                combinedModel.operator,
-                customOption2,
-            ].join(' ');
+            let { conditions } = combinedModel;
+            if (!conditions) {
+                const { condition1, condition2 } = combinedModel;
+                conditions = [condition1, condition2];
+            }
+            const customOptions = conditions.map(condition => this.getModelAsString(condition));
+            return customOptions.join(` ${combinedModel.operator} `);
         } else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
             const translate = this.localeService.getLocaleTextFunc();
             return translate(model.type, model.type);
@@ -189,8 +195,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     @RefSelector('eCondition1Body') protected readonly eCondition1Body: HTMLElement;
     @RefSelector('eCondition2Body') protected readonly eCondition2Body: HTMLElement;
 
-    private allowTwoConditions: boolean;
-    private alwaysShowBothConditions: boolean;
+    private maxNumConditions: number;
+    private numAlwaysVisibleConditions: number;
     private defaultJoinOperator: JoinOperator | undefined;
     private filterPlaceholder: SimpleFilterParams['filterPlaceholder'];
 
@@ -198,7 +204,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected abstract getDefaultFilterOptions(): string[];
 
     // gets called once during initialisation, to build up the html template
-    protected abstract createValueTemplate(position: ConditionPosition): string;
+    protected abstract createValueTemplate(position: number): string;
 
     // filter uses this to know if new model is different from previous model, ie if filter has changed
     protected abstract areSimpleModelsEqual(a: ISimpleFilterModel, b: ISimpleFilterModel): boolean;
@@ -206,7 +212,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     // getModel() calls this to create the two conditions. if only one condition,
     // the result is returned by getModel(), otherwise is called twice and both results
     // returned in a CombinedFilter object.
-    protected abstract createCondition(position: ConditionPosition): M;
+    protected abstract createCondition(position: number): M;
 
     // because the sub-class filter models have different attribute names, we have to map
     protected abstract mapValuesFromModel(filterModel: ISimpleFilterModel | null): Tuple<V>;
@@ -221,7 +227,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected abstract getInputs(): Tuple<E>[];
 
     // allow retrieval of all condition input values.
-    protected abstract getValues(position: ConditionPosition): Tuple<V>;
+    protected abstract getValues(position: number): Tuple<V>;
 
     protected getNumberOfInputs(type?: ISimpleFilterModelType | null): number {
         const customOpts = this.optionsFactory.getCustomOption(type);
@@ -257,20 +263,26 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     public getModelFromUi(): M | ICombinedSimpleModel<M> | null {
-        if (!this.isConditionUiComplete(ConditionPosition.One)) {
+        if (!this.isConditionUiComplete(0)) {
             return null;
         }
 
-        if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
+        if (this.maxNumConditions >= 2 && this.isConditionUiComplete(1)) {
+            // TODO - change this bit
+            const conditions = [
+                this.createCondition(0),
+                this.createCondition(1)
+            ];
             return {
                 filterType: this.getFilterType(),
                 operator: this.getJoinOperator(),
-                condition1: this.createCondition(ConditionPosition.One),
-                condition2: this.createCondition(ConditionPosition.Two)
+                condition1: conditions[0],
+                condition2: conditions[1],
+                conditions
             };
         }
 
-        return this.createCondition(ConditionPosition.One);
+        return this.createCondition(0);
     }
 
     protected getConditionTypes(): Tuple<ISimpleFilterModelType> {
@@ -278,6 +290,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             this.eType1.getValue() as ISimpleFilterModelType,
             this.eType2.getValue() as ISimpleFilterModelType,
         ];
+    }
+
+    protected getConditionType(position: number): ISimpleFilterModelType | null {
+        return this.getConditionTypes()[position];
     }
 
     protected getJoinOperator(): JoinOperator {
@@ -310,8 +326,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             const bCombined = b as ICombinedSimpleModel<M>;
 
             res = aCombined.operator === bCombined.operator
-                && this.areSimpleModelsEqual(aCombined.condition1, bCombined.condition1)
-                && this.areSimpleModelsEqual(aCombined.condition2, bCombined.condition2);
+                && areEqual(aCombined.conditions, bCombined.conditions, (aModel, bModel) => this.areSimpleModelsEqual(aModel, bModel));
         }
 
         return res;
@@ -321,17 +336,23 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         const isCombined = (model as any).operator;
 
         if (isCombined) {
-            const combinedModel = model as ICombinedSimpleModel<M>;
+            let combinedModel = model as ICombinedSimpleModel<M>;
+            if (!combinedModel.conditions) {
+                combinedModel.conditions = [
+                    combinedModel.condition1,
+                    combinedModel.condition2
+                ];
+            }
 
             const orChecked = combinedModel.operator === 'OR';
             this.eJoinOperatorAnd.setValue(!orChecked);
             this.eJoinOperatorOr.setValue(orChecked);
 
-            this.eType1.setValue(combinedModel.condition1.type);
-            this.eType2.setValue(combinedModel.condition2.type);
+            this.eType1.setValue(combinedModel.conditions[0].type);
+            this.eType2.setValue(combinedModel.conditions[1].type);
 
-            this.setConditionIntoUi(combinedModel.condition1, ConditionPosition.One);
-            this.setConditionIntoUi(combinedModel.condition2, ConditionPosition.Two);
+            this.setConditionIntoUi(combinedModel.conditions[0], 0);
+            this.setConditionIntoUi(combinedModel.conditions[1], 1);
         } else {
             const simpleModel = model as ISimpleFilterModel;
 
@@ -341,8 +362,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             this.eType1.setValue(simpleModel.type);
             this.eType2.setValue(this.optionsFactory.getDefaultOption());
 
-            this.setConditionIntoUi(simpleModel as M, ConditionPosition.One);
-            this.setConditionIntoUi(null, ConditionPosition.Two);
+            this.setConditionIntoUi(simpleModel as M, 0);
+            this.setConditionIntoUi(null, 1);
         }
 
         return AgPromise.resolve();
@@ -359,7 +380,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         if (operator) {
             const combinedModel = model as ICombinedSimpleModel<M>;
 
-            models.push(combinedModel.condition1, combinedModel.condition2);
+            models.push(...(combinedModel.conditions ?? []));
         } else {
             models.push(model as M);
         }
@@ -375,8 +396,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
 
-        this.allowTwoConditions = !params.suppressAndOrCondition;
-        this.alwaysShowBothConditions = !!params.alwaysShowBothConditions;
+        this.maxNumConditions = params.maxNumConditions ?? (params.suppressAndOrCondition ? 1 : 2);
+        this.numAlwaysVisibleConditions = params.numAlwaysVisibleConditions ?? (params.alwaysShowBothConditions ? 2 : 1);
         this.defaultJoinOperator = this.getDefaultJoinOperator(params.defaultJoinOperator);
         this.filterPlaceholder = params.filterPlaceholder;
 
@@ -420,20 +441,23 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         };
     }
 
+    /**
+     * @deprecated As of v29.2 filters can have more than two conditions. Check `colDef.filterParams.maxNumConditions` instead.
+     */
     public isAllowTwoConditions(): boolean {
-        return this.allowTwoConditions;
+        return this.maxNumConditions >= 2;
     }
 
     protected createBodyTemplate(): string {
         return /* html */`
             <ag-select class="ag-filter-select" ref="eOptions1"></ag-select>
-            ${this.createValueTemplate(ConditionPosition.One)}
+            ${this.createValueTemplate(0)}
             <div class="ag-filter-condition" ref="eJoinOperatorPanel">
                <ag-radio-button ref="eJoinOperatorAnd" class="ag-filter-condition-operator ag-filter-condition-operator-and"></ag-radio-button>
                <ag-radio-button ref="eJoinOperatorOr" class="ag-filter-condition-operator ag-filter-condition-operator-or"></ag-radio-button>
             </div>
             <ag-select class="ag-filter-select" ref="eOptions2"></ag-select>
-            ${this.createValueTemplate(ConditionPosition.Two)}`;
+            ${this.createValueTemplate(1)}`;
     }
 
     protected getCssIdentifier() {
@@ -567,22 +591,22 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         });
     }
 
-    protected isConditionVisible(position: ConditionPosition): boolean {
+    protected isConditionVisible(position: number): boolean {
         if (position === 0) { return true; } // Position 0 should always be visible.
-        if (!this.allowTwoConditions) { return false; } // Short-circuit if no tail conditions.
+        if (position >= this.maxNumConditions) { return false; } // Short-circuit if no tail conditions.
 
         if (this.isReadOnly()) {
             // Only display a condition when read-only if the condition is complete.
             return this.isConditionUiComplete(position);
         }
 
-        if (this.alwaysShowBothConditions) { return true; }
+        if (position < this.numAlwaysVisibleConditions) { return true; }
 
         // Only display a 2nd or later condition when the previous condition is complete.
         return this.isConditionUiComplete(position - 1);
     }
 
-    protected isConditionDisabled(position: ConditionPosition): boolean {
+    protected isConditionDisabled(position: number): boolean {
         if (this.isReadOnly()) { return true; } // Read-only mode trumps everything.
         if (!this.isConditionVisible(position)) { return true; } // Invisible implies disabled.
         if (position === 0) { return false; } // Position 0 should typically be editable.
@@ -591,19 +615,19 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return !this.isConditionUiComplete(position - 1);
     }
 
-    protected isConditionBodyVisible(position: ConditionPosition): boolean {
+    protected isConditionBodyVisible(position: number): boolean {
         if (!this.isConditionVisible(position)) { return false; }
 
         // Check that the condition needs inputs.
-        const type = this.getConditionTypes()[position];
+        const type = this.getConditionType(position);
         const numberOfInputs = this.getNumberOfInputs(type);
         return numberOfInputs > 0;
     }
 
     // returns true if the UI represents a working filter, eg all parts are filled out.
     // eg if text filter and textfield blank then returns false.
-    protected isConditionUiComplete(position: ConditionPosition): boolean {
-        const type = this.getConditionTypes()[position];
+    protected isConditionUiComplete(position: number): boolean {
+        const type = this.getConditionType(position);
 
         if (type === SimpleFilter.EMPTY) { return false; }
 
@@ -652,7 +676,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     // puts model values into the UI
-    protected setConditionIntoUi(model: M | null, position: ConditionPosition): void {
+    protected setConditionIntoUi(model: M | null, position: number): void {
         const values = this.mapValuesFromModel(model);
         this.forEachInput((element, index, elPosition, _) => {
             if (elPosition !== position) { return; }

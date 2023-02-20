@@ -1,5 +1,5 @@
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { ConditionPosition, ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
+import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
@@ -130,8 +130,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected createValueTemplate(position: ConditionPosition): string {
-        const pos = position === ConditionPosition.One ? '1' : '2';
+    protected createValueTemplate(position: number): string {
+        const pos = String(position + 1);
         const allowedCharPattern = this.getAllowedCharPattern();
         const agElementTag = allowedCharPattern ? 'ag-input-text-field' : 'ag-input-number-field';
 
@@ -142,7 +142,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             </div>`;
     }
 
-    protected getValues(position: ConditionPosition): Tuple<number> {
+    protected getValues(position: number): Tuple<number> {
         const result: Tuple<number> = [];
         this.forEachInput((element, index, elPosition, numberOfInputs) => {
             if (position === elPosition && index < numberOfInputs) {
@@ -181,8 +181,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return filterText == null || filterText.trim() === '-' ? null : parseFloat(filterText);
     }
 
-    protected createCondition(position: ConditionPosition): NumberFilterModel {
-        const type = this.getConditionTypes()[position];
+    protected createCondition(position: number): NumberFilterModel {
+        const type = this.getConditionType(position);
         const model: NumberFilterModel = {
             filterType: this.getFilterType(),
             type

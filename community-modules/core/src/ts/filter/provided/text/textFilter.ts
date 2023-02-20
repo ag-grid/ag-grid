@@ -1,7 +1,6 @@
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import {
     SimpleFilter,
-    ConditionPosition,
     ISimpleFilterParams,
     ISimpleFilterModel,
     ISimpleFilterModelType,
@@ -179,8 +178,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER
     }
 
-    protected createCondition(position: ConditionPosition): TextFilterModel {
-        const type = this.getConditionTypes()[position];
+    protected createCondition(position: number): TextFilterModel {
+        const type = this.getConditionType(position);
 
         const model: TextFilterModel = {
             filterType: this.getFilterType(),
@@ -215,7 +214,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         ];
     }
 
-    protected getValues(position: ConditionPosition): Tuple<string> {
+    protected getValues(position: number): Tuple<string> {
         const result: Tuple<string> = [];
         this.forEachInput((element, index, elPosition, numberOfInputs) => {
             if (position === elPosition && index < numberOfInputs) {
@@ -233,8 +232,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return TextFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected createValueTemplate(position: ConditionPosition): string {
-        const pos = position === ConditionPosition.One ? '1' : '2';
+    protected createValueTemplate(position: number): string {
+        const pos = String(position + 1);
 
         return /* html */`
             <div class="ag-filter-body" ref="eCondition${pos}Body" role="presentation">

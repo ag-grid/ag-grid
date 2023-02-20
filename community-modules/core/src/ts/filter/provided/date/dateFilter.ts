@@ -2,7 +2,7 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { DateCompWrapper } from './dateCompWrapper';
-import { ConditionPosition, ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
+import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
 import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
 import { serialiseDate, parseDateTimeFromString, dateToFormattedString } from '../../../utils/date';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
@@ -232,8 +232,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return DateFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected createValueTemplate(position: ConditionPosition): string {
-        const pos = position === ConditionPosition.One ? '1' : '2';
+    protected createValueTemplate(position: number): string {
+        const pos = String(position + 1);
 
         return /* html */`
             <div class="ag-filter-body" ref="eCondition${pos}Body">
@@ -242,7 +242,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
             </div>`;
     }
 
-    protected isConditionUiComplete(position: ConditionPosition): boolean {
+    protected isConditionUiComplete(position: number): boolean {
         if (!super.isConditionUiComplete(position)) {
             return false;
         }
@@ -272,8 +272,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return 'date';
     }
 
-    protected createCondition(position: ConditionPosition): DateFilterModel {
-        const type = this.getConditionTypes()[position];
+    protected createCondition(position: number): DateFilterModel {
+        const type = this.getConditionType(position);
         const model: Partial<DateFilterModel> = {};
 
         const values = this.getValues(position);
@@ -311,7 +311,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         ];
     }
 
-    protected getValues(position: ConditionPosition): Tuple<Date> {
+    protected getValues(position: number): Tuple<Date> {
         const result: Tuple<Date> = [];
         this.forEachInput((element, index, elPosition, numberOfInputs) => {
             if (position === elPosition && index < numberOfInputs) {
