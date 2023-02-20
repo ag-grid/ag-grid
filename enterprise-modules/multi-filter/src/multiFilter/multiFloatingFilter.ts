@@ -103,7 +103,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): AgPromise<IFloatingFilterComp> | null {
-        let defaultComponentName = this.userComponentFactory.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
+        let defaultComponentName = this.userComponentFactory.getDefaultFloatingFilterType(filterDef) ?? 'agReadOnlyFloatingFilter';
 
         const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
         return compDetails ? compDetails.newAgStackInstance() : null;
@@ -112,7 +112,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private parentMultiFilterInstance(cb: (instance: MultiFilter) => void): void {
         this.params.parentFilterInstance((parent) => {
             if (!(parent instanceof MultiFilter)) {
-                throw new Error('AG Grid - MultiFloatingFilterComp expects MultiFilter as it\'s parent');
+                throw new Error('AG Grid - MultiFloatingFilterComp expects MultiFilter as its parent');
             }
 
             cb(parent);
