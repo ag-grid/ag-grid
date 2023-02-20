@@ -1564,6 +1564,10 @@
     "type": { "type": { "returnType": "T", "optional": false } },
     "event": { "type": { "returnType": "Event", "optional": false } }
   },
+  "AgChartDoubleClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "event": { "type": { "returnType": "Event", "optional": false } }
+  },
   "AgBaseChartListeners": {
     "seriesNodeClick": {
       "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
@@ -1577,6 +1581,14 @@
       "description": "/** The listener to call to signify a general click on the chart by the user. */",
       "type": {
         "arguments": { "event": "AgChartClickEvent" },
+        "returnType": "any",
+        "optional": true
+      }
+    },
+    "doubleClick": {
+      "description": "/** The listener to call to signify a double click on the chart by the user. */",
+      "type": {
+        "arguments": { "event": "AgChartDoubleClickEvent" },
         "returnType": "any",
         "optional": true
       }

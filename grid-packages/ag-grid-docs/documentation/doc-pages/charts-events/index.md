@@ -71,3 +71,18 @@ This example demonstrates:
 - when a legend item is clicked, an alert message is shown with the `legendItemClick` event contents.
 
 <chart-example title='Legend Item Click Event' name='legend-item-click-event' type='generated'></chart-example>
+
+## Chart Event - click and doubleClick
+
+The `click` and `doubleClick` events are fired when any part of the chart is clicked or double clicked, respectively. The `doubleClick` event does not block the original `click` event from firing.
+
+These events may be prevented by other clickable parts of the chart, such as nodes.
+
+### Example: Single & Double Click Events
+
+This example demonstrates:
+
+- when a chart is clicked, a message is logged to the console
+- when a chart is double clicked, a different message is logged to the console
+
+<chart-example title='Chart Double Click Event' name='chart-double-click-event' type='generated'></chart-example>

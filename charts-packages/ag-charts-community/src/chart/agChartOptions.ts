@@ -520,12 +520,15 @@ export interface AgNodeClickEvent extends AgChartEvent<'seriesNodeClick'> {
 }
 
 export interface AgChartClickEvent extends AgChartEvent<'click'> {}
+export interface AgChartDoubleClickEvent extends AgChartEvent<'doubleClick'> {}
 
 export interface AgBaseChartListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
     seriesNodeClick?: (event: AgNodeClickEvent) => any;
     /** The listener to call to signify a general click on the chart by the user. */
     click?: (event: AgChartClickEvent) => any;
+    /** The listener to call to signify a double click on the chart by the user. */
+    doubleClick?: (event: AgChartDoubleClickEvent) => any;
 }
 
 /** Configuration common to all charts.  */
