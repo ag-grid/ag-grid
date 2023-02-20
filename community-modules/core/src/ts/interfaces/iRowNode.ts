@@ -53,8 +53,8 @@ export interface DataChangedEvent<TData = any> extends RowNodeEvent<TData> {
 
 export interface CellChangedEvent<TData = any> extends RowNodeEvent<TData> {
     column: Column;
-    newValue: TData | undefined;
-    oldValue: TData | undefined;
+    newValue: any;
+    oldValue: any;
 }
 
 export enum RowHighlightPosition { Above, Below }

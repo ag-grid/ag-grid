@@ -793,7 +793,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return this.group && missingOrEmpty(this.childrenAfterGroup);
     }
 
-    private dispatchCellChangedEvent(column: Column, newValue: TData, oldValue: TData): void {
+    private dispatchCellChangedEvent(column: Column, newValue: any, oldValue: any): void {
         const cellChangedEvent: CellChangedEvent<TData> = {
             type: RowNode.EVENT_CELL_CHANGED,
             node: this,
