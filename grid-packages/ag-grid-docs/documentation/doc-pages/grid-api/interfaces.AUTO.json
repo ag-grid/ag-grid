@@ -10113,6 +10113,7 @@
     "meta": {},
     "type": { "list": "TaskItem[]", "sorted": "boolean" }
   },
+  "SimpleHttpRequestParams": { "meta": {}, "type": { "url": "string" } },
   "ModuleNames": {
     "meta": { "isEnum": true },
     "type": [
