@@ -194,7 +194,9 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     }
  
     public getDisplayedKeys(): (string | null)[] {
-        return this.activeDisplayedItemsFlat.map(({ treeKey }) => treeKey) as any;
+        const displayedKeys: (string | null)[] = [];
+        this.forEachDisplayedKey((key) => displayedKeys.push(key));
+        return displayedKeys;
     }
 
     public forEachDisplayedKey(func: (key: string | null) => void): void {
