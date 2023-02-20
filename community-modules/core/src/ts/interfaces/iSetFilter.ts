@@ -239,7 +239,7 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
 /**
  * Tooltip params used with the Set Filter Tree List.
  */
-export interface ISetFilterTreeListTooltipParams extends ITooltipParams {
+export interface ISetFilterTreeListTooltipParams<TData = any, TValue = any, TContext = any> extends ITooltipParams<TData, TValue, TContext> {
     /** Level of the tree (starting at 0). */
     level: number;
 }

@@ -447,7 +447,7 @@ export interface GridOptions<TData = any, TContext = any> {
     /** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. Default: `false` */
     functionsReadOnly?: boolean;
     /** A map of 'function name' to 'function' for custom aggregation functions. */
-    aggFuncs?: { [key: string]: IAggFunc<TData, TContext>; };
+    aggFuncs?: { [key: string]: IAggFunc<TData, any, TContext>; };
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */
     suppressAggFuncInHeader?: boolean;
     /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false` */
@@ -804,7 +804,7 @@ export interface GridOptions<TData = any, TContext = any> {
     /** For customising the context menu. */
     getContextMenuItems?: GetContextMenuItems<TData, TContext>;
     /** For customising the main 'column header' menu. */
-    getMainMenuItems?: GetMainMenuItems<TContext>;
+    getMainMenuItems?: GetMainMenuItems<TData, TContext>;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */
     postProcessPopup?: (params: PostProcessPopupParams<TData, TContext>) => void;
 
@@ -830,7 +830,7 @@ export interface GridOptions<TData = any, TContext = any> {
 
     // *** Integrated Charts *** //
     /** Callback to be used to customise the chart toolbar items. */
-    getChartToolbarItems?: GetChartToolbarItems<TContext>;
+    getChartToolbarItems?: GetChartToolbarItems<TData, TContext>;
     /** Callback to enable displaying the chart in an alternative chart container. */
     createChartContainer?: (params: ChartRefParams<TData, TContext>) => void;
 
@@ -995,15 +995,15 @@ export interface GridOptions<TData = any, TContext = any> {
      *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
      * fill handle, copy range down, undo and redo.
      */
-    onCellValueChanged?(event: CellValueChangedEvent<TData, TContext>): void;
+    onCellValueChanged?(event: CellValueChangedEvent<TData, any, TContext>): void;
     /** Value has changed after editing. Only fires when `readOnlyEdit=true`. */
-    onCellEditRequest?(event: CellEditRequestEvent<TData, TContext>): void;
+    onCellEditRequest?(event: CellEditRequestEvent<TData, any, TContext>): void;
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */
     onRowValueChanged?(event: RowValueChangedEvent<TData, TContext>): void;
     /** Editing a cell has started. */
-    onCellEditingStarted?(event: CellEditingStartedEvent<TData, TContext>): void;
+    onCellEditingStarted?(event: CellEditingStartedEvent<TData, any, TContext>): void;
     /** Editing a cell has stopped. */
-    onCellEditingStopped?(event: CellEditingStoppedEvent<TData, TContext>): void;
+    onCellEditingStopped?(event: CellEditingStoppedEvent<TData, any, TContext>): void;
     /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */
     onRowEditingStarted?(event: RowEditingStartedEvent<TData, TContext>): void;
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */
@@ -1037,9 +1037,9 @@ export interface GridOptions<TData = any, TContext = any> {
 
     // *** Keyboard Navigation *** //
     /** DOM event `keyDown` happened on a cell. */
-    onCellKeyDown?(event: CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>): void;
+    onCellKeyDown?(event: CellKeyDownEvent<TData, any, TContext> | FullWidthCellKeyDownEvent<TData, TContext>): void;
     /** DOM event `keyPress` happened on a cell. */
-    onCellKeyPress?(event: CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>): void;
+    onCellKeyPress?(event: CellKeyPressEvent<TData, any, TContext> | FullWidthCellKeyPressEvent<TData, TContext>): void;
 
     // *** Miscellaneous *** //
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */
@@ -1105,17 +1105,17 @@ export interface GridOptions<TData = any, TContext = any> {
 
     // *** Selection *** //
     /** Cell is clicked. */
-    onCellClicked?(event: CellClickedEvent<TData, TContext>): void;
+    onCellClicked?(event: CellClickedEvent<TData, any, TContext>): void;
     /** Cell is double clicked. */
-    onCellDoubleClicked?(event: CellDoubleClickedEvent<TData, TContext>): void;
+    onCellDoubleClicked?(event: CellDoubleClickedEvent<TData, any, TContext>): void;
     /** Cell is focused. */
     onCellFocused?(event: CellFocusedEvent<TData, TContext>): void;
     /** Mouse entered cell. */
-    onCellMouseOver?(event: CellMouseOverEvent<TData, TContext>): void;
+    onCellMouseOver?(event: CellMouseOverEvent<TData, any, TContext>): void;
     /** Mouse left cell. */
-    onCellMouseOut?(event: CellMouseOutEvent<TData, TContext>): void;
+    onCellMouseOut?(event: CellMouseOutEvent<TData, any, TContext>): void;
     /** Mouse down on cell. */
-    onCellMouseDown?(event: CellMouseDownEvent<TData, TContext>): void;
+    onCellMouseDown?(event: CellMouseDownEvent<TData, any, TContext>): void;
     /** Row is clicked. */
     onRowClicked?(event: RowClickedEvent<TData, TContext>): void;
     /** Row is double clicked. */
@@ -1125,7 +1125,7 @@ export interface GridOptions<TData = any, TContext = any> {
     /** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data. */
     onSelectionChanged?(event: SelectionChangedEvent<TData, TContext>): void;
     /** Cell is right clicked. */
-    onCellContextMenu?(event: CellContextMenuEvent<TData, TContext>): void;
+    onCellContextMenu?(event: CellContextMenuEvent<TData, any, TContext>): void;
     /** A change to range selection has occurred. */
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData, TContext>): void;
 

@@ -1,6 +1,6 @@
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 
-export interface ISparklineCellRendererParams<TData = any> extends ICellRendererParams<TData> {
+export interface ISparklineCellRendererParams<TData = any, TValue = any, TContext = any> extends ICellRendererParams<TData, TValue, TContext> {
     sparklineOptions?: SparklineOptions;
 }
 

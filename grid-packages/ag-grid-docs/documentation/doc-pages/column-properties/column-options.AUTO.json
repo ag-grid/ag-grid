@@ -109,7 +109,7 @@
   "keyCreator": {
     "description": "/** Function to return a string key for a value.\n     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value.\n     */",
     "type": {
-      "arguments": { "params": "KeyCreatorParams<TData>" },
+      "arguments": { "params": "KeyCreatorParams<TData, any, TContext>" },
       "returnType": "string"
     }
   },
@@ -127,7 +127,7 @@
   "tooltipValueGetter": {
     "description": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n     * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.\n     */",
     "type": {
-      "arguments": { "params": "ITooltipParams<TData>" },
+      "arguments": { "params": "ITooltipParams<TData, any, TContext>" },
       "returnType": "string | any"
     }
   },
@@ -196,7 +196,7 @@
   },
   "valueParser": {
     "description": "/** Function or expression. Parses the value for saving. */",
-    "type": { "returnType": "string | ValueParserFunc<TData, TContext>" }
+    "type": { "returnType": "string | ValueParserFunc<TData, any, TContext>" }
   },
   "cellEditor": {
     "description": "/** Provide your own cell editor component for this column's cells.\n    * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail.\n    */",
@@ -236,28 +236,30 @@
   "onCellClicked": {
     "description": "/** Callback called when a cell is clicked. */",
     "type": {
-      "arguments": { "event": "CellClickedEvent<TData>" },
+      "arguments": { "event": "CellClickedEvent<TData, any, TContext>" },
       "returnType": "void"
     }
   },
   "onCellDoubleClicked": {
     "description": "/** Callback called when a cell is double clicked. */",
     "type": {
-      "arguments": { "event": "CellDoubleClickedEvent<TData>" },
+      "arguments": { "event": "CellDoubleClickedEvent<TData, any, TContext>" },
       "returnType": "void"
     }
   },
   "onCellContextMenu": {
     "description": "/** Callback called when a cell is right clicked. */",
     "type": {
-      "arguments": { "event": "CellContextMenuEvent<TData>" },
+      "arguments": { "event": "CellContextMenuEvent<TData, any, TContext>" },
       "returnType": "void"
     }
   },
   "getQuickFilterText": {
     "description": "/** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
     "type": {
-      "arguments": { "params": "GetQuickFilterTextParams<TData>" },
+      "arguments": {
+        "params": "GetQuickFilterTextParams<TData, any, TContext>"
+      },
       "returnType": "string"
     }
   },
@@ -450,11 +452,11 @@
   },
   "aggFunc": {
     "description": "/** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */",
-    "type": { "returnType": "string | IAggFunc<TData, TContext> | null" }
+    "type": { "returnType": "string | IAggFunc<TData, any, TContext> | null" }
   },
   "initialAggFunc": {
     "description": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
-    "type": { "returnType": "string | IAggFunc<TData, TContext>" }
+    "type": { "returnType": "string | IAggFunc<TData, any, TContext>" }
   },
   "defaultAggFunc": {
     "description": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n     * Note that this does not immediately apply the aggregation function like `aggFunc`\n     * Default: `sum`\n     */",

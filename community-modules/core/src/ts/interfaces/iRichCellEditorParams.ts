@@ -1,9 +1,8 @@
-import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
 import { ICellEditorParams } from "./iCellEditor";
 
 type CellValue = object | string | number;
 
-export interface IRichCellEditorParams extends ICellEditorParams {
+export interface IRichCellEditorParams<TData = any, TValue = any, TContext = any> extends ICellEditorParams<TData, TValue, TContext> {
 /** The list of values to be selected from. */
     values: CellValue[];
 /** The row height, in pixels, of each value. */

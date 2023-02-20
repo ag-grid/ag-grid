@@ -839,7 +839,7 @@
     "keyCreator": {
       "description": "/** Function to return a string key for a value.\n     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value.\n     */",
       "type": {
-        "arguments": { "params": "KeyCreatorParams<TData>" },
+        "arguments": { "params": "KeyCreatorParams<TData, any, TContext>" },
         "returnType": "string",
         "optional": true
       }
@@ -859,7 +859,7 @@
     "tooltipValueGetter": {
       "description": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n     * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.\n     */",
       "type": {
-        "arguments": { "params": "ITooltipParams<TData>" },
+        "arguments": { "params": "ITooltipParams<TData, any, TContext>" },
         "returnType": "string | any",
         "optional": true
       }
@@ -945,7 +945,7 @@
     "valueParser": {
       "description": "/** Function or expression. Parses the value for saving. */",
       "type": {
-        "returnType": "string | ValueParserFunc<TData, TContext>",
+        "returnType": "string | ValueParserFunc<TData, any, TContext>",
         "optional": true
       }
     },
@@ -991,7 +991,7 @@
     "onCellClicked": {
       "description": "/** Callback called when a cell is clicked. */",
       "type": {
-        "arguments": { "event": "CellClickedEvent<TData>" },
+        "arguments": { "event": "CellClickedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -999,7 +999,9 @@
     "onCellDoubleClicked": {
       "description": "/** Callback called when a cell is double clicked. */",
       "type": {
-        "arguments": { "event": "CellDoubleClickedEvent<TData>" },
+        "arguments": {
+          "event": "CellDoubleClickedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       }
@@ -1007,7 +1009,7 @@
     "onCellContextMenu": {
       "description": "/** Callback called when a cell is right clicked. */",
       "type": {
-        "arguments": { "event": "CellContextMenuEvent<TData>" },
+        "arguments": { "event": "CellContextMenuEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       }
@@ -1015,7 +1017,9 @@
     "getQuickFilterText": {
       "description": "/** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
       "type": {
-        "arguments": { "params": "GetQuickFilterTextParams<TData>" },
+        "arguments": {
+          "params": "GetQuickFilterTextParams<TData, any, TContext>"
+        },
         "returnType": "string",
         "optional": true
       }
@@ -1241,14 +1245,14 @@
     "aggFunc": {
       "description": "/** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */",
       "type": {
-        "returnType": "string | IAggFunc<TData, TContext> | null",
+        "returnType": "string | IAggFunc<TData, any, TContext> | null",
         "optional": true
       }
     },
     "initialAggFunc": {
       "description": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": {
-        "returnType": "string | IAggFunc<TData, TContext>",
+        "returnType": "string | IAggFunc<TData, any, TContext>",
         "optional": true
       }
     },
@@ -1824,9 +1828,12 @@
     },
     "columnLayout": {
       "description": "/** Custom Columns Panel layout */",
-      "type": { "returnType": "(ColDef | ColGroupDef)[]", "optional": true }
+      "type": {
+        "returnType": "(ColDef<TData, TContext> | ColGroupDef<TData, TContext>)[]",
+        "optional": true
+      }
     },
-    "meta": { "typeParams": ["TContext = any"] }
+    "meta": { "typeParams": ["TData = any", "TContext = any"] }
   },
   "BaseColDefParams": {
     "node": {
@@ -2913,7 +2920,7 @@
     "aggFuncs": {
       "description": "/** A map of 'function name' to 'function' for custom aggregation functions. */",
       "type": {
-        "returnType": "{ [key: string]: IAggFunc<TData, TContext>; }",
+        "returnType": "{ [key: string]: IAggFunc<TData, any, TContext>; }",
         "optional": true
       }
     },
@@ -3419,7 +3426,10 @@
     },
     "getMainMenuItems": {
       "description": "/** For customising the main 'column header' menu. */",
-      "type": { "returnType": "GetMainMenuItems<TContext>", "optional": true }
+      "type": {
+        "returnType": "GetMainMenuItems<TData, TContext>",
+        "optional": true
+      }
     },
     "postProcessPopup": {
       "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -3508,7 +3518,7 @@
     "getChartToolbarItems": {
       "description": "/** Callback to be used to customise the chart toolbar items. */",
       "type": {
-        "returnType": "GetChartToolbarItems<TContext>",
+        "returnType": "GetChartToolbarItems<TData, TContext>",
         "optional": true
       }
     },
@@ -4161,7 +4171,7 @@
     "onCellValueChanged": {
       "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n     */",
       "type": {
-        "arguments": { "event": "CellValueChangedEvent<TData, TContext>" },
+        "arguments": { "event": "CellValueChangedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -4170,7 +4180,7 @@
     "cellValueChanged": {
       "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n     */",
       "type": {
-        "arguments": { "event": "CellValueChangedEvent<TData, TContext>" },
+        "arguments": { "event": "CellValueChangedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -4179,7 +4189,7 @@
     "onCellEditRequest": {
       "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
-        "arguments": { "event": "CellEditRequestEvent<TData, TContext>" },
+        "arguments": { "event": "CellEditRequestEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -4188,7 +4198,7 @@
     "cellEditRequest": {
       "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
-        "arguments": { "event": "CellEditRequestEvent<TData, TContext>" },
+        "arguments": { "event": "CellEditRequestEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -4215,7 +4225,9 @@
     "onCellEditingStarted": {
       "description": "/** Editing a cell has started. */",
       "type": {
-        "arguments": { "event": "CellEditingStartedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStartedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -4224,7 +4236,9 @@
     "cellEditingStarted": {
       "description": "/** Editing a cell has started. */",
       "type": {
-        "arguments": { "event": "CellEditingStartedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStartedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -4233,7 +4247,9 @@
     "onCellEditingStopped": {
       "description": "/** Editing a cell has stopped. */",
       "type": {
-        "arguments": { "event": "CellEditingStoppedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStoppedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -4242,7 +4258,9 @@
     "cellEditingStopped": {
       "description": "/** Editing a cell has stopped. */",
       "type": {
-        "arguments": { "event": "CellEditingStoppedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStoppedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -4486,7 +4504,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
+          "event": "CellKeyDownEvent<TData, any, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -4497,7 +4515,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
+          "event": "CellKeyDownEvent<TData, any, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -4508,7 +4526,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
+          "event": "CellKeyPressEvent<TData, any, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -4519,7 +4537,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
+          "event": "CellKeyPressEvent<TData, any, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -4925,7 +4943,7 @@
     "onCellClicked": {
       "description": "/** Cell is clicked. */",
       "type": {
-        "arguments": { "event": "CellClickedEvent<TData, TContext>" },
+        "arguments": { "event": "CellClickedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -4934,7 +4952,7 @@
     "cellClicked": {
       "description": "/** Cell is clicked. */",
       "type": {
-        "arguments": { "event": "CellClickedEvent<TData, TContext>" },
+        "arguments": { "event": "CellClickedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -4943,7 +4961,9 @@
     "onCellDoubleClicked": {
       "description": "/** Cell is double clicked. */",
       "type": {
-        "arguments": { "event": "CellDoubleClickedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellDoubleClickedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -4952,7 +4972,9 @@
     "cellDoubleClicked": {
       "description": "/** Cell is double clicked. */",
       "type": {
-        "arguments": { "event": "CellDoubleClickedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellDoubleClickedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -4979,7 +5001,7 @@
     "onCellMouseOver": {
       "description": "/** Mouse entered cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOverEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOverEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -4988,7 +5010,7 @@
     "cellMouseOver": {
       "description": "/** Mouse entered cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOverEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOverEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -4997,7 +5019,7 @@
     "onCellMouseOut": {
       "description": "/** Mouse left cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOutEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOutEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -5006,7 +5028,7 @@
     "cellMouseOut": {
       "description": "/** Mouse left cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOutEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOutEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -5015,7 +5037,7 @@
     "onCellMouseDown": {
       "description": "/** Mouse down on cell. */",
       "type": {
-        "arguments": { "event": "CellMouseDownEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseDownEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -5024,7 +5046,7 @@
     "cellMouseDown": {
       "description": "/** Mouse down on cell. */",
       "type": {
-        "arguments": { "event": "CellMouseDownEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseDownEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -5105,7 +5127,7 @@
     "onCellContextMenu": {
       "description": "/** Cell is right clicked. */",
       "type": {
-        "arguments": { "event": "CellContextMenuEvent<TData, TContext>" },
+        "arguments": { "event": "CellContextMenuEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -5114,7 +5136,7 @@
     "cellContextMenu": {
       "description": "/** Cell is right clicked. */",
       "type": {
-        "arguments": { "event": "CellContextMenuEvent<TData, TContext>" },
+        "arguments": { "event": "CellContextMenuEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -12127,7 +12149,7 @@
     }
   },
   "ICellEditorComp": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
@@ -15077,6 +15099,7 @@
         "optional": false
       }
     },
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "value": {
       "description": "/** Current value of the cell */",
       "type": { "returnType": "TValue", "optional": false }
@@ -15141,7 +15164,6 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
@@ -16369,14 +16391,14 @@
       "description": "/** Returns the full list of unique values used by the Set Filter. */",
       "type": {
         "arguments": {},
-        "returnType": "(V | null)[]",
+        "returnType": "(TValue | null)[]",
         "optional": false
       }
     },
     "setFilterValues": {
       "description": "/** Sets the values used in the Set Filter on the fly. */",
       "type": {
-        "arguments": { "values": "(V | null)[]" },
+        "arguments": { "values": "(TValue | null)[]" },
         "returnType": "void",
         "optional": false
       }
@@ -16413,7 +16435,7 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["V = string"] },
+    "meta": { "typeParams": ["TValue = string"] },
     "applyModel": {
       "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
       "type": {
@@ -16467,7 +16489,7 @@
     "success": {
       "description": "/** The function to call with the values to load into the filter once they are ready. */",
       "type": {
-        "arguments": { "values": "(V | null)[]" },
+        "arguments": { "values": "(TValue | null)[]" },
         "returnType": "void",
         "optional": false
       }
@@ -16486,21 +16508,24 @@
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any", "V = string"] }
+    "meta": { "typeParams": ["TData = any", "TValue = string"] }
   },
   "SetFilterValuesFunc": {
-    "meta": { "typeParams": ["TData = any", "V = string"] }
+    "meta": { "typeParams": ["TData = any", "TValue = string"] }
   },
   "SetFilterValues": {
-    "meta": { "typeParams": ["TData = any", "V = string"] }
+    "meta": { "typeParams": ["TData = any", "TValue = string"] }
   },
   "SetFilterParams": {
-    "meta": { "typeParams": ["TData = any", "V = string"] }
+    "meta": { "typeParams": ["TData = any", "TValue = string"] }
   },
   "ISetFilterParams": {
     "values": {
       "description": "/** The values to display in the Filter List. If this is not set, the filter will takes its\n     * values from what is loaded in the table.\n     */",
-      "type": { "returnType": "SetFilterValues<TData, V>", "optional": true }
+      "type": {
+        "returnType": "SetFilterValues<TData, TValue>",
+        "optional": true
+      }
     },
     "refreshValuesOnOpen": {
       "description": "/** Refresh the values every time the Set filter is opened.\n     */",
@@ -16541,7 +16566,7 @@
     "comparator": {
       "description": "/** Comparator for sorting. If not provided, the Column Definition comparator is used. If Column\n     * Definition comparator is also not provided, the default (grid provided) comparator is used.\n     */",
       "type": {
-        "arguments": { "a": "V | null", "b": "V | null" },
+        "arguments": { "a": "TValue | null", "b": "TValue | null" },
         "returnType": "number",
         "optional": true
       }
@@ -16557,7 +16582,7 @@
     "valueFormatter": {
       "description": "/** If specified, this formats the value before it is displayed in the Filter List.\n     * If a Key Creator is provided (see `keyCreator`), this must also be provided,\n     * unless `convertValuesToStrings` is `true`\n     */",
       "type": {
-        "arguments": { "params": "ValueFormatterParams" },
+        "arguments": { "params": "ValueFormatterParams<TData, TValue, any>" },
         "returnType": "string",
         "optional": true
       }
@@ -16593,7 +16618,7 @@
     "treeListPathGetter": {
       "description": "/** Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.\n     */",
       "type": {
-        "arguments": { "value": "V | null" },
+        "arguments": { "value": "TValue | null" },
         "returnType": "string[] | null",
         "optional": true
       }
@@ -16610,7 +16635,7 @@
         "optional": true
       }
     },
-    "meta": { "typeParams": ["TData = any", "V = string"] },
+    "meta": { "typeParams": ["TData = any", "TValue = string"] },
     "buttons": {
       "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n     * The options are:\n     * \n     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.\n     */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
@@ -16633,6 +16658,7 @@
       "description": "/** Level of the tree (starting at 0). */",
       "type": { "returnType": "number", "optional": false }
     },
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "location": {
       "description": "/** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */",
       "type": { "returnType": "string", "optional": false }
@@ -16668,7 +16694,6 @@
       "description": "/** Data for the row node in question. */",
       "type": { "returnType": "TData", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData, TContext>", "optional": false }
@@ -16811,7 +16836,7 @@
     "sparklineOptions": {
       "type": { "returnType": "SparklineOptions", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
       "type": { "returnType": "TValue", "optional": false }
@@ -21444,7 +21469,7 @@
     "aggFuncs": {
       "description": "/** A map of 'function name' to 'function' for custom aggregation functions. */",
       "type": {
-        "returnType": "{ [key: string]: IAggFunc<TData, TContext>; }",
+        "returnType": "{ [key: string]: IAggFunc<TData, any, TContext>; }",
         "optional": true
       }
     },
@@ -21950,7 +21975,10 @@
     },
     "getMainMenuItems": {
       "description": "/** For customising the main 'column header' menu. */",
-      "type": { "returnType": "GetMainMenuItems<TContext>", "optional": true }
+      "type": {
+        "returnType": "GetMainMenuItems<TData, TContext>",
+        "optional": true
+      }
     },
     "postProcessPopup": {
       "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -22039,7 +22067,7 @@
     "getChartToolbarItems": {
       "description": "/** Callback to be used to customise the chart toolbar items. */",
       "type": {
-        "returnType": "GetChartToolbarItems<TContext>",
+        "returnType": "GetChartToolbarItems<TData, TContext>",
         "optional": true
       }
     },
@@ -22692,7 +22720,7 @@
     "onCellValueChanged": {
       "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n     */",
       "type": {
-        "arguments": { "event": "CellValueChangedEvent<TData, TContext>" },
+        "arguments": { "event": "CellValueChangedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -22701,7 +22729,7 @@
     "cellValueChanged": {
       "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n     */",
       "type": {
-        "arguments": { "event": "CellValueChangedEvent<TData, TContext>" },
+        "arguments": { "event": "CellValueChangedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -22710,7 +22738,7 @@
     "onCellEditRequest": {
       "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
-        "arguments": { "event": "CellEditRequestEvent<TData, TContext>" },
+        "arguments": { "event": "CellEditRequestEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -22719,7 +22747,7 @@
     "cellEditRequest": {
       "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
-        "arguments": { "event": "CellEditRequestEvent<TData, TContext>" },
+        "arguments": { "event": "CellEditRequestEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -22746,7 +22774,9 @@
     "onCellEditingStarted": {
       "description": "/** Editing a cell has started. */",
       "type": {
-        "arguments": { "event": "CellEditingStartedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStartedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -22755,7 +22785,9 @@
     "cellEditingStarted": {
       "description": "/** Editing a cell has started. */",
       "type": {
-        "arguments": { "event": "CellEditingStartedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStartedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -22764,7 +22796,9 @@
     "onCellEditingStopped": {
       "description": "/** Editing a cell has stopped. */",
       "type": {
-        "arguments": { "event": "CellEditingStoppedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStoppedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -22773,7 +22807,9 @@
     "cellEditingStopped": {
       "description": "/** Editing a cell has stopped. */",
       "type": {
-        "arguments": { "event": "CellEditingStoppedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStoppedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -23017,7 +23053,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
+          "event": "CellKeyDownEvent<TData, any, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -23028,7 +23064,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
+          "event": "CellKeyDownEvent<TData, any, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -23039,7 +23075,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
+          "event": "CellKeyPressEvent<TData, any, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -23050,7 +23086,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
+          "event": "CellKeyPressEvent<TData, any, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -23456,7 +23492,7 @@
     "onCellClicked": {
       "description": "/** Cell is clicked. */",
       "type": {
-        "arguments": { "event": "CellClickedEvent<TData, TContext>" },
+        "arguments": { "event": "CellClickedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -23465,7 +23501,7 @@
     "cellClicked": {
       "description": "/** Cell is clicked. */",
       "type": {
-        "arguments": { "event": "CellClickedEvent<TData, TContext>" },
+        "arguments": { "event": "CellClickedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -23474,7 +23510,9 @@
     "onCellDoubleClicked": {
       "description": "/** Cell is double clicked. */",
       "type": {
-        "arguments": { "event": "CellDoubleClickedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellDoubleClickedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -23483,7 +23521,9 @@
     "cellDoubleClicked": {
       "description": "/** Cell is double clicked. */",
       "type": {
-        "arguments": { "event": "CellDoubleClickedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellDoubleClickedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -23510,7 +23550,7 @@
     "onCellMouseOver": {
       "description": "/** Mouse entered cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOverEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOverEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -23519,7 +23559,7 @@
     "cellMouseOver": {
       "description": "/** Mouse entered cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOverEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOverEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -23528,7 +23568,7 @@
     "onCellMouseOut": {
       "description": "/** Mouse left cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOutEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOutEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -23537,7 +23577,7 @@
     "cellMouseOut": {
       "description": "/** Mouse left cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOutEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOutEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -23546,7 +23586,7 @@
     "onCellMouseDown": {
       "description": "/** Mouse down on cell. */",
       "type": {
-        "arguments": { "event": "CellMouseDownEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseDownEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -23555,7 +23595,7 @@
     "cellMouseDown": {
       "description": "/** Mouse down on cell. */",
       "type": {
-        "arguments": { "event": "CellMouseDownEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseDownEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -23636,7 +23676,7 @@
     "onCellContextMenu": {
       "description": "/** Cell is right clicked. */",
       "type": {
-        "arguments": { "event": "CellContextMenuEvent<TData, TContext>" },
+        "arguments": { "event": "CellContextMenuEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -23645,7 +23685,7 @@
     "cellContextMenu": {
       "description": "/** Cell is right clicked. */",
       "type": {
-        "arguments": { "event": "CellContextMenuEvent<TData, TContext>" },
+        "arguments": { "event": "CellContextMenuEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -24318,7 +24358,7 @@
     "aggFuncs": {
       "description": "/** A map of 'function name' to 'function' for custom aggregation functions. */",
       "type": {
-        "returnType": "{ [key: string]: IAggFunc<TData, TContext>; }",
+        "returnType": "{ [key: string]: IAggFunc<TData, any, TContext>; }",
         "optional": true
       }
     },
@@ -24824,7 +24864,10 @@
     },
     "getMainMenuItems": {
       "description": "/** For customising the main 'column header' menu. */",
-      "type": { "returnType": "GetMainMenuItems<TContext>", "optional": true }
+      "type": {
+        "returnType": "GetMainMenuItems<TData, TContext>",
+        "optional": true
+      }
     },
     "postProcessPopup": {
       "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -24913,7 +24956,7 @@
     "getChartToolbarItems": {
       "description": "/** Callback to be used to customise the chart toolbar items. */",
       "type": {
-        "returnType": "GetChartToolbarItems<TContext>",
+        "returnType": "GetChartToolbarItems<TData, TContext>",
         "optional": true
       }
     },
@@ -25566,7 +25609,7 @@
     "onCellValueChanged": {
       "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n     */",
       "type": {
-        "arguments": { "event": "CellValueChangedEvent<TData, TContext>" },
+        "arguments": { "event": "CellValueChangedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -25575,7 +25618,7 @@
     "cellValueChanged": {
       "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n     */",
       "type": {
-        "arguments": { "event": "CellValueChangedEvent<TData, TContext>" },
+        "arguments": { "event": "CellValueChangedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -25584,7 +25627,7 @@
     "onCellEditRequest": {
       "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
-        "arguments": { "event": "CellEditRequestEvent<TData, TContext>" },
+        "arguments": { "event": "CellEditRequestEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -25593,7 +25636,7 @@
     "cellEditRequest": {
       "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
-        "arguments": { "event": "CellEditRequestEvent<TData, TContext>" },
+        "arguments": { "event": "CellEditRequestEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -25620,7 +25663,9 @@
     "onCellEditingStarted": {
       "description": "/** Editing a cell has started. */",
       "type": {
-        "arguments": { "event": "CellEditingStartedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStartedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -25629,7 +25674,9 @@
     "cellEditingStarted": {
       "description": "/** Editing a cell has started. */",
       "type": {
-        "arguments": { "event": "CellEditingStartedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStartedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -25638,7 +25685,9 @@
     "onCellEditingStopped": {
       "description": "/** Editing a cell has stopped. */",
       "type": {
-        "arguments": { "event": "CellEditingStoppedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStoppedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -25647,7 +25696,9 @@
     "cellEditingStopped": {
       "description": "/** Editing a cell has stopped. */",
       "type": {
-        "arguments": { "event": "CellEditingStoppedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStoppedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -25891,7 +25942,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
+          "event": "CellKeyDownEvent<TData, any, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -25902,7 +25953,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
+          "event": "CellKeyDownEvent<TData, any, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -25913,7 +25964,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
+          "event": "CellKeyPressEvent<TData, any, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -25924,7 +25975,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
+          "event": "CellKeyPressEvent<TData, any, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -26330,7 +26381,7 @@
     "onCellClicked": {
       "description": "/** Cell is clicked. */",
       "type": {
-        "arguments": { "event": "CellClickedEvent<TData, TContext>" },
+        "arguments": { "event": "CellClickedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -26339,7 +26390,7 @@
     "cellClicked": {
       "description": "/** Cell is clicked. */",
       "type": {
-        "arguments": { "event": "CellClickedEvent<TData, TContext>" },
+        "arguments": { "event": "CellClickedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -26348,7 +26399,9 @@
     "onCellDoubleClicked": {
       "description": "/** Cell is double clicked. */",
       "type": {
-        "arguments": { "event": "CellDoubleClickedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellDoubleClickedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -26357,7 +26410,9 @@
     "cellDoubleClicked": {
       "description": "/** Cell is double clicked. */",
       "type": {
-        "arguments": { "event": "CellDoubleClickedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellDoubleClickedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -26384,7 +26439,7 @@
     "onCellMouseOver": {
       "description": "/** Mouse entered cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOverEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOverEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -26393,7 +26448,7 @@
     "cellMouseOver": {
       "description": "/** Mouse entered cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOverEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOverEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -26402,7 +26457,7 @@
     "onCellMouseOut": {
       "description": "/** Mouse left cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOutEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOutEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -26411,7 +26466,7 @@
     "cellMouseOut": {
       "description": "/** Mouse left cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOutEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOutEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -26420,7 +26475,7 @@
     "onCellMouseDown": {
       "description": "/** Mouse down on cell. */",
       "type": {
-        "arguments": { "event": "CellMouseDownEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseDownEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -26429,7 +26484,7 @@
     "cellMouseDown": {
       "description": "/** Mouse down on cell. */",
       "type": {
-        "arguments": { "event": "CellMouseDownEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseDownEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -26510,7 +26565,7 @@
     "onCellContextMenu": {
       "description": "/** Cell is right clicked. */",
       "type": {
-        "arguments": { "event": "CellContextMenuEvent<TData, TContext>" },
+        "arguments": { "event": "CellContextMenuEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -26519,7 +26574,7 @@
     "cellContextMenu": {
       "description": "/** Cell is right clicked. */",
       "type": {
-        "arguments": { "event": "CellContextMenuEvent<TData, TContext>" },
+        "arguments": { "event": "CellContextMenuEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -27198,7 +27253,7 @@
     "aggFuncs": {
       "description": "/** A map of 'function name' to 'function' for custom aggregation functions. */",
       "type": {
-        "returnType": "{ [key: string]: IAggFunc<TData, TContext>; }",
+        "returnType": "{ [key: string]: IAggFunc<TData, any, TContext>; }",
         "optional": true
       }
     },
@@ -27704,7 +27759,10 @@
     },
     "getMainMenuItems": {
       "description": "/** For customising the main 'column header' menu. */",
-      "type": { "returnType": "GetMainMenuItems<TContext>", "optional": true }
+      "type": {
+        "returnType": "GetMainMenuItems<TData, TContext>",
+        "optional": true
+      }
     },
     "postProcessPopup": {
       "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -27793,7 +27851,7 @@
     "getChartToolbarItems": {
       "description": "/** Callback to be used to customise the chart toolbar items. */",
       "type": {
-        "returnType": "GetChartToolbarItems<TContext>",
+        "returnType": "GetChartToolbarItems<TData, TContext>",
         "optional": true
       }
     },
@@ -28446,7 +28504,7 @@
     "onCellValueChanged": {
       "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n     */",
       "type": {
-        "arguments": { "event": "CellValueChangedEvent<TData, TContext>" },
+        "arguments": { "event": "CellValueChangedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -28455,7 +28513,7 @@
     "cellValueChanged": {
       "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n     */",
       "type": {
-        "arguments": { "event": "CellValueChangedEvent<TData, TContext>" },
+        "arguments": { "event": "CellValueChangedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -28464,7 +28522,7 @@
     "onCellEditRequest": {
       "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
-        "arguments": { "event": "CellEditRequestEvent<TData, TContext>" },
+        "arguments": { "event": "CellEditRequestEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -28473,7 +28531,7 @@
     "cellEditRequest": {
       "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
-        "arguments": { "event": "CellEditRequestEvent<TData, TContext>" },
+        "arguments": { "event": "CellEditRequestEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -28500,7 +28558,9 @@
     "onCellEditingStarted": {
       "description": "/** Editing a cell has started. */",
       "type": {
-        "arguments": { "event": "CellEditingStartedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStartedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -28509,7 +28569,9 @@
     "cellEditingStarted": {
       "description": "/** Editing a cell has started. */",
       "type": {
-        "arguments": { "event": "CellEditingStartedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStartedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -28518,7 +28580,9 @@
     "onCellEditingStopped": {
       "description": "/** Editing a cell has stopped. */",
       "type": {
-        "arguments": { "event": "CellEditingStoppedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStoppedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -28527,7 +28591,9 @@
     "cellEditingStopped": {
       "description": "/** Editing a cell has stopped. */",
       "type": {
-        "arguments": { "event": "CellEditingStoppedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellEditingStoppedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -28771,7 +28837,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
+          "event": "CellKeyDownEvent<TData, any, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -28782,7 +28848,7 @@
       "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
+          "event": "CellKeyDownEvent<TData, any, TContext> | FullWidthCellKeyDownEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -28793,7 +28859,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
+          "event": "CellKeyPressEvent<TData, any, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -28804,7 +28870,7 @@
       "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
-          "event": "CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
+          "event": "CellKeyPressEvent<TData, any, TContext> | FullWidthCellKeyPressEvent<TData, TContext>"
         },
         "returnType": "void",
         "optional": true
@@ -29210,7 +29276,7 @@
     "onCellClicked": {
       "description": "/** Cell is clicked. */",
       "type": {
-        "arguments": { "event": "CellClickedEvent<TData, TContext>" },
+        "arguments": { "event": "CellClickedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -29219,7 +29285,7 @@
     "cellClicked": {
       "description": "/** Cell is clicked. */",
       "type": {
-        "arguments": { "event": "CellClickedEvent<TData, TContext>" },
+        "arguments": { "event": "CellClickedEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -29228,7 +29294,9 @@
     "onCellDoubleClicked": {
       "description": "/** Cell is double clicked. */",
       "type": {
-        "arguments": { "event": "CellDoubleClickedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellDoubleClickedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -29237,7 +29305,9 @@
     "cellDoubleClicked": {
       "description": "/** Cell is double clicked. */",
       "type": {
-        "arguments": { "event": "CellDoubleClickedEvent<TData, TContext>" },
+        "arguments": {
+          "event": "CellDoubleClickedEvent<TData, any, TContext>"
+        },
         "returnType": "void",
         "optional": true
       },
@@ -29264,7 +29334,7 @@
     "onCellMouseOver": {
       "description": "/** Mouse entered cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOverEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOverEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -29273,7 +29343,7 @@
     "cellMouseOver": {
       "description": "/** Mouse entered cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOverEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOverEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -29282,7 +29352,7 @@
     "onCellMouseOut": {
       "description": "/** Mouse left cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOutEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOutEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -29291,7 +29361,7 @@
     "cellMouseOut": {
       "description": "/** Mouse left cell. */",
       "type": {
-        "arguments": { "event": "CellMouseOutEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseOutEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -29300,7 +29370,7 @@
     "onCellMouseDown": {
       "description": "/** Mouse down on cell. */",
       "type": {
-        "arguments": { "event": "CellMouseDownEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseDownEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -29309,7 +29379,7 @@
     "cellMouseDown": {
       "description": "/** Mouse down on cell. */",
       "type": {
-        "arguments": { "event": "CellMouseDownEvent<TData, TContext>" },
+        "arguments": { "event": "CellMouseDownEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -29390,7 +29460,7 @@
     "onCellContextMenu": {
       "description": "/** Cell is right clicked. */",
       "type": {
-        "arguments": { "event": "CellContextMenuEvent<TData, TContext>" },
+        "arguments": { "event": "CellContextMenuEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },
@@ -29399,7 +29469,7 @@
     "cellContextMenu": {
       "description": "/** Cell is right clicked. */",
       "type": {
-        "arguments": { "event": "CellContextMenuEvent<TData, TContext>" },
+        "arguments": { "event": "CellContextMenuEvent<TData, any, TContext>" },
         "returnType": "void",
         "optional": true
       },

@@ -93,4 +93,4 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
     formatValue: (value: any) => any;
 }
 
-export interface ICellEditorComp<TData = any> extends ICellEditor, IPopupComponent<ICellEditorParams<TData>> { }
+export interface ICellEditorComp<TData = any, TValue = any, TContext = any> extends ICellEditor, IPopupComponent<ICellEditorParams<TData, TValue, TContext>> { }

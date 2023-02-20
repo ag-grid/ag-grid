@@ -130,7 +130,7 @@ export interface ColDef<TData = any, TContext = any> extends IFilterDef, Abstrac
      * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.
      * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value.
      */
-    keyCreator?: (params: KeyCreatorParams<TData>) => string;
+    keyCreator?: (params: KeyCreatorParams<TData, any, TContext>) => string;
     /**
      * Custom comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.
      * By default the grid uses `===` is used which should work for most use cases.
@@ -142,7 +142,7 @@ export interface ColDef<TData = any, TContext = any> extends IFilterDef, Abstrac
      * Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
      */
-    tooltipValueGetter?: (params: ITooltipParams<TData>) => string | any;
+    tooltipValueGetter?: (params: ITooltipParams<TData, any, TContext>) => string | any;
     /** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */
     checkboxSelection?: boolean | CheckboxSelectionCallback<TData, TContext>;
     /** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */
@@ -185,7 +185,7 @@ export interface ColDef<TData = any, TContext = any> extends IFilterDef, Abstrac
     /** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */
     valueSetter?: string | ValueSetterFunc<TData, TContext>;
     /** Function or expression. Parses the value for saving. */
-    valueParser?: string | ValueParserFunc<TData, TContext>;
+    valueParser?: string | ValueParserFunc<TData, any, TContext>;
     /**
     * Provide your own cell editor component for this column's cells.
     * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail.
@@ -218,16 +218,16 @@ export interface ColDef<TData = any, TContext = any> extends IFilterDef, Abstrac
     /** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */
     onCellValueChanged?: (event: NewValueParams<TData>) => void;
     /** Callback called when a cell is clicked. */
-    onCellClicked?: (event: CellClickedEvent<TData>) => void;
+    onCellClicked?: (event: CellClickedEvent<TData, any, TContext>) => void;
     /** Callback called when a cell is double clicked. */
-    onCellDoubleClicked?: (event: CellDoubleClickedEvent<TData>) => void;
+    onCellDoubleClicked?: (event: CellDoubleClickedEvent<TData, any, TContext>) => void;
     /** Callback called when a cell is right clicked. */
-    onCellContextMenu?: (event: CellContextMenuEvent<TData>) => void;
+    onCellContextMenu?: (event: CellContextMenuEvent<TData, any, TContext>) => void;
 
     // *** Columns: Filtering *** //
 
     /** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */
-    getQuickFilterText?: (params: GetQuickFilterTextParams<TData>) => string;
+    getQuickFilterText?: (params: GetQuickFilterTextParams<TData, any, TContext>) => string;
     /** Function or expression. Gets the value for filtering purposes. */
     filterValueGetter?: string | ValueGetterFunc<TData, TContext>;
     /** Whether to display a floating filter for this column. Default: `false` */
@@ -379,9 +379,9 @@ export interface ColDef<TData = any, TContext = any> extends IFilterDef, Abstrac
      */
     enableValue?: boolean;
     /** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */
-    aggFunc?: string | IAggFunc<TData, TContext> | null;
+    aggFunc?: string | IAggFunc<TData, any, TContext> | null;
     /** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */
-    initialAggFunc?: string | IAggFunc<TData, TContext>;
+    initialAggFunc?: string | IAggFunc<TData, any, TContext>;
     /**
      * The name of the aggregation function to use for this column when it is enabled via the GUI.
      * Note that this does not immediately apply the aggregation function like `aggFunc`
@@ -539,7 +539,7 @@ export interface GetQuickFilterTextParams<TData = any, TValue = any, TContext = 
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';
 
-export interface ColumnsMenuParams<TContext = any> {
+export interface ColumnsMenuParams<TData = any, TContext = any> {
     /** To suppress updating the layout of columns as they are rearranged in the grid */
     suppressSyncLayoutWithGrid?: boolean;
     /** To suppress Column Filter section*/
@@ -552,7 +552,7 @@ export interface ColumnsMenuParams<TContext = any> {
      * Pass true to default to contracted groups*/
     contractColumnSelection?: boolean;
     /** Custom Columns Panel layout */
-    columnLayout?: (ColDef | ColGroupDef)[];
+    columnLayout?: (ColDef<TData, TContext> | ColGroupDef<TData, TContext>)[];
 }
 
 export interface BaseColDefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -623,7 +623,7 @@ export interface ValueFormatterParams<TData = any, TValue = any, TContext = any>
 }
 
 export interface ValueFormatterFunc<TData = any, TContext = any> {
-    (params: ValueFormatterParams<TData, TContext>): string;
+    (params: ValueFormatterParams<TData, any, TContext>): string;
 }
 
 export interface KeyCreatorParams<TData = any, TValue = any, TContext = any> extends BaseColDefParams<TData, TContext> {
@@ -662,23 +662,23 @@ export interface CellClassParams<TData = any, TValue = any, TContext = any> exte
     value: TValue;
 }
 export interface CellClassFunc<TData = any, TContext = any> {
-    (cellClassParams: CellClassParams<TData, TContext>): string | string[] | null | undefined;
+    (cellClassParams: CellClassParams<TData, any, TContext>): string | string[] | null | undefined;
 }
 export interface CellStyleFunc<TData = any, TContext = any> {
-    (cellClassParams: CellClassParams<TData, TContext>): CellStyle | null | undefined;
+    (cellClassParams: CellClassParams<TData, any, TContext>): CellStyle | null | undefined;
 }
 
 export interface CellStyle { [cssProperty: string]: string | number; }
 export interface CellClassRules<TData = any, TContext = any> {
-    [cssClassName: string]: (((params: CellClassParams<TData>) => boolean) | string);
+    [cssClassName: string]: (((params: CellClassParams<TData, any, TContext>) => boolean) | string);
 }
 
 export interface CellRendererSelectorFunc<TData = any, TContext = any> {
-    (params: ICellRendererParams<TData, TContext>): CellRendererSelectorResult | undefined;
+    (params: ICellRendererParams<TData, any, TContext>): CellRendererSelectorResult | undefined;
 }
 
 export interface CellEditorSelectorFunc<TData = any, TContext = any> {
-    (params: ICellEditorParams<TData, TContext>): CellEditorSelectorResult | undefined;
+    (params: ICellEditorParams<TData, any, TContext>): CellEditorSelectorResult | undefined;
 }
 export interface CellRendererSelectorResult {
     /** Equivalent of setting `colDef.cellRenderer` */

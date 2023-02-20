@@ -571,7 +571,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. Default: `false`     */
     @Input() public functionsReadOnly: boolean | undefined = undefined;
     /** A map of 'function name' to 'function' for custom aggregation functions.     */
-    @Input() public aggFuncs: { [key: string]: IAggFunc<TData, TContext>; } | undefined = undefined;
+    @Input() public aggFuncs: { [key: string]: IAggFunc<TData, any, TContext>; } | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false`     */
     @Input() public suppressAggFuncInHeader: boolean | undefined = undefined;
     /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false`     */
@@ -868,7 +868,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** For customising the context menu.     */
     @Input() public getContextMenuItems: GetContextMenuItems<TData, TContext> | undefined = undefined;
     /** For customising the main 'column header' menu.     */
-    @Input() public getMainMenuItems: GetMainMenuItems<TContext> | undefined = undefined;
+    @Input() public getMainMenuItems: GetMainMenuItems<TData, TContext> | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.     */
     @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData, TContext>) => void) | undefined = undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.     */
@@ -888,7 +888,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Should return `true` if external filter passes, otherwise `false`.     */
     @Input() public doesExternalFilterPass: ((node: IRowNode<TData>) => boolean) | undefined = undefined;
     /** Callback to be used to customise the chart toolbar items.     */
-    @Input() public getChartToolbarItems: GetChartToolbarItems<TContext> | undefined = undefined;
+    @Input() public getChartToolbarItems: GetChartToolbarItems<TData, TContext> | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.     */
     @Input() public createChartContainer: ((params: ChartRefParams<TData, TContext>) => void) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
@@ -1017,15 +1017,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
          * fill handle, copy range down, undo and redo.
          */
-    @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData, TContext>> = new EventEmitter<CellValueChangedEvent<TData, TContext>>();
+    @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData, any, TContext>> = new EventEmitter<CellValueChangedEvent<TData, any, TContext>>();
     /** Value has changed after editing. Only fires when `readOnlyEdit=true`.     */
-    @Output() public cellEditRequest: EventEmitter<CellEditRequestEvent<TData, TContext>> = new EventEmitter<CellEditRequestEvent<TData, TContext>>();
+    @Output() public cellEditRequest: EventEmitter<CellEditRequestEvent<TData, any, TContext>> = new EventEmitter<CellEditRequestEvent<TData, any, TContext>>();
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only.     */
     @Output() public rowValueChanged: EventEmitter<RowValueChangedEvent<TData, TContext>> = new EventEmitter<RowValueChangedEvent<TData, TContext>>();
     /** Editing a cell has started.     */
-    @Output() public cellEditingStarted: EventEmitter<CellEditingStartedEvent<TData, TContext>> = new EventEmitter<CellEditingStartedEvent<TData, TContext>>();
+    @Output() public cellEditingStarted: EventEmitter<CellEditingStartedEvent<TData, any, TContext>> = new EventEmitter<CellEditingStartedEvent<TData, any, TContext>>();
     /** Editing a cell has stopped.     */
-    @Output() public cellEditingStopped: EventEmitter<CellEditingStoppedEvent<TData, TContext>> = new EventEmitter<CellEditingStoppedEvent<TData, TContext>>();
+    @Output() public cellEditingStopped: EventEmitter<CellEditingStoppedEvent<TData, any, TContext>> = new EventEmitter<CellEditingStoppedEvent<TData, any, TContext>>();
     /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
     @Output() public rowEditingStarted: EventEmitter<RowEditingStartedEvent<TData, TContext>> = new EventEmitter<RowEditingStartedEvent<TData, TContext>>();
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
@@ -1053,9 +1053,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** A chart has been destroyed.     */
     @Output() public chartDestroyed: EventEmitter<ChartDestroyed<TData, TContext>> = new EventEmitter<ChartDestroyed<TData, TContext>>();
     /** DOM event `keyDown` happened on a cell.     */
-    @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>> = new EventEmitter<CellKeyDownEvent<TData, TContext> | FullWidthCellKeyDownEvent<TData, TContext>>();
+    @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData, any, TContext> | FullWidthCellKeyDownEvent<TData, TContext>> = new EventEmitter<CellKeyDownEvent<TData, any, TContext> | FullWidthCellKeyDownEvent<TData, TContext>>();
     /** DOM event `keyPress` happened on a cell.     */
-    @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>> = new EventEmitter<CellKeyPressEvent<TData, TContext> | FullWidthCellKeyPressEvent<TData, TContext>>();
+    @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent<TData, any, TContext> | FullWidthCellKeyPressEvent<TData, TContext>> = new EventEmitter<CellKeyPressEvent<TData, any, TContext> | FullWidthCellKeyPressEvent<TData, TContext>>();
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet     */
     @Output() public gridReady: EventEmitter<GridReadyEvent<TData, TContext>> = new EventEmitter<GridReadyEvent<TData, TContext>>();
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */
@@ -1106,17 +1106,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Async transactions have been applied. Contains a list of all transaction results.     */
     @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed<TData, TContext>> = new EventEmitter<AsyncTransactionsFlushed<TData, TContext>>();
     /** Cell is clicked.     */
-    @Output() public cellClicked: EventEmitter<CellClickedEvent<TData, TContext>> = new EventEmitter<CellClickedEvent<TData, TContext>>();
+    @Output() public cellClicked: EventEmitter<CellClickedEvent<TData, any, TContext>> = new EventEmitter<CellClickedEvent<TData, any, TContext>>();
     /** Cell is double clicked.     */
-    @Output() public cellDoubleClicked: EventEmitter<CellDoubleClickedEvent<TData, TContext>> = new EventEmitter<CellDoubleClickedEvent<TData, TContext>>();
+    @Output() public cellDoubleClicked: EventEmitter<CellDoubleClickedEvent<TData, any, TContext>> = new EventEmitter<CellDoubleClickedEvent<TData, any, TContext>>();
     /** Cell is focused.     */
     @Output() public cellFocused: EventEmitter<CellFocusedEvent<TData, TContext>> = new EventEmitter<CellFocusedEvent<TData, TContext>>();
     /** Mouse entered cell.     */
-    @Output() public cellMouseOver: EventEmitter<CellMouseOverEvent<TData, TContext>> = new EventEmitter<CellMouseOverEvent<TData, TContext>>();
+    @Output() public cellMouseOver: EventEmitter<CellMouseOverEvent<TData, any, TContext>> = new EventEmitter<CellMouseOverEvent<TData, any, TContext>>();
     /** Mouse left cell.     */
-    @Output() public cellMouseOut: EventEmitter<CellMouseOutEvent<TData, TContext>> = new EventEmitter<CellMouseOutEvent<TData, TContext>>();
+    @Output() public cellMouseOut: EventEmitter<CellMouseOutEvent<TData, any, TContext>> = new EventEmitter<CellMouseOutEvent<TData, any, TContext>>();
     /** Mouse down on cell.     */
-    @Output() public cellMouseDown: EventEmitter<CellMouseDownEvent<TData, TContext>> = new EventEmitter<CellMouseDownEvent<TData, TContext>>();
+    @Output() public cellMouseDown: EventEmitter<CellMouseDownEvent<TData, any, TContext>> = new EventEmitter<CellMouseDownEvent<TData, any, TContext>>();
     /** Row is clicked.     */
     @Output() public rowClicked: EventEmitter<RowClickedEvent<TData, TContext>> = new EventEmitter<RowClickedEvent<TData, TContext>>();
     /** Row is double clicked.     */
@@ -1126,7 +1126,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data.     */
     @Output() public selectionChanged: EventEmitter<SelectionChangedEvent<TData, TContext>> = new EventEmitter<SelectionChangedEvent<TData, TContext>>();
     /** Cell is right clicked.     */
-    @Output() public cellContextMenu: EventEmitter<CellContextMenuEvent<TData, TContext>> = new EventEmitter<CellContextMenuEvent<TData, TContext>>();
+    @Output() public cellContextMenu: EventEmitter<CellContextMenuEvent<TData, any, TContext>> = new EventEmitter<CellContextMenuEvent<TData, any, TContext>>();
     /** A change to range selection has occurred.     */
     @Output() public rangeSelectionChanged: EventEmitter<RangeSelectionChangedEvent<TData, TContext>> = new EventEmitter<RangeSelectionChangedEvent<TData, TContext>>();
     /** Sort has changed. The grid also listens for this and updates the model.     */
