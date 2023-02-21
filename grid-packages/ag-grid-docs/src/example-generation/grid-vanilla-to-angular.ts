@@ -145,7 +145,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
 }
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
-    const { data, properties, typeDeclares, interfaces, tData } = bindings;
+    const { data, properties, typeDeclares, interfaces, tData, tContext } = bindings;
     const rowDataType = tData || 'any';
     const diParams = [];
 
@@ -171,6 +171,10 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
                 propertyAttributes.push(toConst(property));
             } else if (property.value === null || property.value === 'null') {
                 propertyAttributes.push(toInput(property));
+            } else if (property.name === 'context') {
+                const contextType = tContext || 'any';
+                propertyAssignments.push(`public context: ${contextType} = ${property.value}`);
+                propertyAttributes.push(toInput(property));
             } else {
                 // for when binding a method
                 // see javascript-grid-keyboard-navigation for an example
@@ -188,7 +192,6 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
         }
 
         if (!propertyAssignments.find(item => item.indexOf('rowData') >= 0)) {
-
             propertyAssignments.push(`public rowData!: ${rowDataType}[];`);
         }
 

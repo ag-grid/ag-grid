@@ -232,7 +232,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
         const getMatchingPaths = (pattern, options = {}) => glob.sync(createExamplePath(pattern), options);
 
         function addRawScripts(fileMap, convertToJs, fileExtension = '.ts') {
-            const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3,typescript}.ts', '**/main.ts'] });
+            const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3,typescript}.ts', '**/main.ts', '**/interfaces.ts'] });
             tsScripts.forEach(tsFile => {
 
                 let fileContents, fileName;
@@ -248,6 +248,25 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
             });
 
             return fileMap;
+        }
+        function getInterfaceFileContents(tsBindings) {
+            let interfaces = [];
+            if(tsBindings.tData){
+                interfaces.push(getGenericInterface(tsBindings.tData));
+            }
+            if(tsBindings.tContext){
+                interfaces.push(getGenericInterface(tsBindings.tContext));
+            }
+            const interfaceFile = getMatchingPaths('*interfaces.ts');
+            // If the example has an existing interface file then merge that with our globally shared interfaces
+            if (interfaceFile.length === 1) {
+                const exampleInterfaces = getFileContents(interfaceFile[0]);
+                interfaces.push(exampleInterfaces);
+            }
+            if(interfaces.length > 0){
+                return interfaces.join('\n');
+            }
+            return undefined;
         }
 
         const providedExamples = {};
@@ -408,18 +427,15 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                         const getSource = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}.tsx`, ''), allStylesheets);
                         importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.tsx': getSource(importType) }));
                         reactDeclarativeConfigs = addRawScripts(reactDeclarativeConfigs, false, '.tsx');
-
-                        if (typedBindings.tData) {
-                            const interfaces = getGenericInterface(typedBindings.tData);
-                            if (interfaces) {
-                                importTypes.forEach(importType =>
-                                    reactDeclarativeConfigs.set(importType,
-                                        {
-                                            ...reactDeclarativeConfigs.get(importType),
-                                            'interfaces.ts': interfaces
-                                        }));
-
-                            }
+                     
+                        const interfaces = getInterfaceFileContents(typedBindings);                            
+                        if (interfaces) {
+                            importTypes.forEach(importType =>
+                                reactDeclarativeConfigs.set(importType,
+                                    {
+                                        ...reactDeclarativeConfigs.get(importType),
+                                        'interfaces.ts': interfaces
+                                    }));
                         }
 
                     } catch (e) {
@@ -445,11 +461,9 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                             'app.component.ts': getSource(importType),
                             'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames, typedBindings),
                         };
-                        if (typedBindings.tData) {
-                            const interfaces = getGenericInterface(typedBindings.tData);
-                            if (interfaces) {
-                                frameworkFiles = { ...frameworkFiles, 'interfaces.ts': interfaces }
-                            }
+                        const interfaces = getInterfaceFileContents(typedBindings);
+                        if (interfaces) {
+                            frameworkFiles = { ...frameworkFiles, 'interfaces.ts': interfaces }
                         }
                         angularConfigs.set(importType, frameworkFiles);
                     });
@@ -550,7 +564,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
         } else {
 
             const htmlScripts = getMatchingPaths('*.html');
-            const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
+            const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts', '**/interfaces.ts'] });
             const tsConfigs = new Map();
             try {
                 const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript, allStylesheets);
@@ -559,16 +573,13 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                         'main.ts': getSource(importType),
                     });
 
-                    if (typedBindings.tData) {
-                        const interfaces = getGenericInterface(typedBindings.tData);
-                        if (interfaces) {
-                            tsConfigs.set(importType, {
-                                ...tsConfigs.get(importType),
-                                'interfaces.ts': interfaces
-                            });
-                        }
+                    const interfaces = getInterfaceFileContents(typedBindings);
+                    if (interfaces) {
+                        tsConfigs.set(importType, {
+                            ...tsConfigs.get(importType),
+                            'interfaces.ts': interfaces
+                        });
                     }
-
                 });
             } catch (e) {
                 console.error(`Failed to process Typescript example in ${examplePath}`, e);

@@ -549,6 +549,7 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
         apply: (bindings, node) => {
             if (node.type?.typeArguments?.length > 0) {
                 bindings.tData = node.type.typeArguments[0].getText();
+                bindings.tContext = node.type.typeArguments[1]?.getText();
             }
             bindings = tsCollect(node.initializer, bindings, tsGridOptionsCollectors, false);
             return bindings;

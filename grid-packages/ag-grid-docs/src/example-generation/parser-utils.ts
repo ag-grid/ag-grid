@@ -649,18 +649,25 @@ export function getModuleRegistration({ gridSettings, enterprise, exampleName })
 
 export function handleRowGenericInterface(fileTxt: string, tData: string): string {
         fileTxt = fileTxt
-        // Until we support this cleanly.
-            //.replace(/<TData>/g, `<${tData}>`)
-            .replace(/<TData>/g, '')
-            .replace(/<TData, TContext>/g, '')
+            .replace(/<(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?>/g, '')
             .replace(/TData\[\]/g, `${tData ?? 'any'}[]`);
     return fileTxt;
 }
 
 export function addGenericInterfaceImport(imports: string[], tData: string, bindings) {
+    const interfacesUsed = [];
     if (tData &&
         !bindings.interfaces.some(i => i.includes(tData)) &&
         !imports.some(i => i.includes(tData))) {
-        imports.push(`import { ${tData} } from './interfaces'`)
+        interfacesUsed.push(tData);
+    }
+    const tContext = bindings.tContext;
+    if (tContext &&
+        !bindings.interfaces.some(i => i.includes(tContext)) &&
+        !imports.some(i => i.includes(tContext))) {
+        interfacesUsed.push(tContext);
+    }
+    if (interfacesUsed.length > 0) {
+        imports.push(`import { ${interfacesUsed.join(', ')} } from './interfaces'`);
     }
 }

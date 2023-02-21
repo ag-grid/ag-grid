@@ -1,4 +1,13 @@
 import { ColDef, Grid, GridOptions, ICellRendererFunc, ICellRendererParams, ValueGetterParams } from '@ag-grid-community/core';
+export interface CurrencyContext {
+  reportingCurrency: string;
+}
+
+export interface CurrencyData {
+  product: string;
+  price: { currency: string, amount: number };
+};
+
 
 const columnDefs: ColDef[] = [
   { headerName: 'Product', field: 'product' },
@@ -19,7 +28,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<CurrencyData, CurrencyContext> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
@@ -32,7 +41,7 @@ const gridOptions: GridOptions = {
 }
 
 
-function reportingCurrencyValueGetter(params: ValueGetterParams) {
+function reportingCurrencyValueGetter(params: ValueGetterParams<CurrencyData, CurrencyContext>) {
   // Rates taken from google at time of writing
   var exchangeRates: Record<string, any> = {
     EUR: {
@@ -49,7 +58,7 @@ function reportingCurrencyValueGetter(params: ValueGetterParams) {
     },
   }
 
-  var price = params.data[params.colDef.field!]
+  var price = params.data!.price;
   var reportingCurrency = params.context.reportingCurrency
   var fxRateSet = exchangeRates[reportingCurrency]
   var fxRate = fxRateSet[price.currency]
@@ -107,7 +116,7 @@ function currencyChanged() {
   gridOptions.api!.refreshHeader()
 }
 
-function getData() {
+function getData(): CurrencyData[] {
   return [
     { product: 'Product 1', price: { currency: 'EUR', amount: 644 } },
     { product: 'Product 2', price: { currency: 'EUR', amount: 354 } },

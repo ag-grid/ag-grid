@@ -1,5 +1,6 @@
 import { ColDef, Grid, GridOptions } from '@ag-grid-community/core'
 import { CountryCellRenderer } from './countryCellRenderer_typescript'
+import { FlagContext } from './interfaces'
 
 declare function createBase64FlagsFromResponse(response: any, countryCodes: any, base64flags: any): any;
 
@@ -13,11 +14,7 @@ const columnDefs: ColDef[] = [
         minWidth: 70,
         width: 70,
         maxWidth: 70,
-        cellRenderer: CountryCellRenderer,
-        cellRendererParams: {
-            base64flags: base64flags,
-            countryCodes: countryCodes
-        }
+        cellRenderer: CountryCellRenderer
     },
     { field: 'athlete' },
     { field: 'age' },
@@ -30,7 +27,7 @@ const columnDefs: ColDef[] = [
     { field: 'total' },
 ]
 
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions: GridOptions<IOlympicData, FlagContext> = {
     columnDefs: columnDefs,
     defaultColDef: {
         width: 150,

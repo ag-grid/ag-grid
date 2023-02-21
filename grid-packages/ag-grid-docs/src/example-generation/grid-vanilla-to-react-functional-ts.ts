@@ -227,6 +227,11 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
                     const rowDataIndex = stateProperties.indexOf(rowDataState);
                     stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState<${rowDataType}[]>(${property.value});`
                 }
+            } else if (property.name === 'rowData') {
+                if (property.value !== "null" && property.value !== null) {
+                    const rowDataIndex = stateProperties.indexOf(rowDataState);
+                    stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState<${rowDataType}[]>(${property.value});`
+                }
             } else if (property.value === 'true' || property.value === 'false') {
                 componentProps.push(`${property.name}={${property.value}}`);
             } else if (property.value === null) {

@@ -11,6 +11,10 @@ interface LeftData {
   function: string;
   value: string;
 }
+interface LeftContext {
+  theNumber: Number;
+  sum?: (field: keyof RightData) => number;
+}
 
 const rowDataLeft: LeftData[] = [
   { function: 'Number Squared', value: '=ctx.theNumber * ctx.theNumber' },
@@ -20,7 +24,7 @@ const rowDataLeft: LeftData[] = [
   { function: 'Sum B', value: '=ctx.sum("b")' },
 ]
 
-const gridOptionsLeft: GridOptions = {
+const gridOptionsLeft: GridOptions<LeftData, LeftContext> = {
   columnDefs: columnDefsLeft,
   defaultColDef: {
     flex: 1,
@@ -74,7 +78,7 @@ const gridOptionsRight: GridOptions = {
   rowData: rowDataRight,
 }
 
-gridOptionsLeft.context.sum = function (field: keyof RightData) {
+gridOptionsLeft.context!.sum = function (field: keyof RightData) {
   var result = 0
   rowDataRight.forEach(function (item) {
     result += item[field]
@@ -84,7 +88,7 @@ gridOptionsLeft.context.sum = function (field: keyof RightData) {
 
 // tell Left grid to refresh when number changes
 function onNewNumber(value: string) {
-  gridOptionsLeft.context.theNumber = new Number(value)
+  gridOptionsLeft.context!.theNumber = new Number(value)
   gridOptionsLeft.api!.redrawRows()
 }
 
