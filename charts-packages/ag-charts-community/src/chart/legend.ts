@@ -779,11 +779,16 @@ export class Legend {
         event.consume();
 
         if (toggleSeriesVisible) {
-            const legendData = series.getLegendData();
-            const anyVisible = legendData.filter((d) => d.enabled).length;
-            legendData.forEach((d) => {
-                const newEnabled = d.itemId === itemId || anyVisible === 1;
-                series.toggleSeriesItem(d.itemId, newEnabled);
+            const singleItemVisible =
+                chart.series.reduce((count, s) => count + s.getLegendData().filter((d) => d.enabled).length, 0) === 1;
+
+            chart.series.forEach((s) => {
+                const legendData = s.getLegendData();
+
+                legendData.forEach((d) => {
+                    const newEnabled = d.itemId === itemId || singleItemVisible;
+                    s.toggleSeriesItem(d.itemId, newEnabled);
+                });
             });
         }
 
