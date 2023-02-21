@@ -155,7 +155,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     yAxis?: ChartAxis;
 
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
-    directionKeys: { [key in ChartAxisDirection]?: string[] } = {};
+    directionKeys: { [key in ChartAxisDirection]?: string[] };
 
     // Flag to determine if we should recalculate node data.
     protected nodeDataRefresh = true;
@@ -193,10 +193,13 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         useSeriesGroupLayer = true,
         useLabelLayer = false,
         pickModes = [SeriesNodePickMode.NEAREST_BY_MAIN_AXIS_FIRST],
+        directionKeys = {} as { [key in ChartAxisDirection]?: string[] },
     } = {}) {
         super();
 
         const { rootGroup } = this;
+
+        this.directionKeys = directionKeys;
 
         this.contentGroup = rootGroup.appendChild(
             new Group({
@@ -245,24 +248,39 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
     getKeys(direction: ChartAxisDirection): string[] {
         const { directionKeys } = this;
-        const keys = directionKeys && directionKeys[direction];
+        const resolvedDirection = this.resolveKeyDirection(direction);
+        const keys = directionKeys && directionKeys[resolvedDirection];
         const values: string[] = [];
 
-        if (keys) {
-            keys.forEach((key) => {
-                const value = (this as any)[key];
+        const flatten = (...array: any[]) => {
+            for (const value of array) {
+                addValue(value);
+            }
+        };
 
-                if (value) {
-                    if (Array.isArray(value)) {
-                        values.push(...value);
-                    } else {
-                        values.push(value);
-                    }
-                }
-            });
-        }
+        const addValue = (value: any) => {
+            if (Array.isArray(value)) {
+                flatten(...value);
+            } else {
+                values.push(value);
+            }
+        };
+
+        if (!keys) return values;
+
+        keys.forEach((key) => {
+            const value = (this as any)[key];
+
+            if (!value) return;
+
+            addValue(value);
+        });
 
         return values;
+    }
+
+    protected resolveKeyDirection(direction: ChartAxisDirection): ChartAxisDirection {
+        return direction;
     }
 
     abstract getDomain(direction: ChartAxisDirection): any[];

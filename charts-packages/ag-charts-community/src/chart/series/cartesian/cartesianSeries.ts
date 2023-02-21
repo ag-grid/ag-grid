@@ -57,6 +57,11 @@ interface SeriesOpts {
     renderLayerPerSubSeries: boolean;
 }
 
+const DEFAULT_DIRECTION_KEYS: { [key in ChartAxisDirection]?: string[] } = {
+    [ChartAxisDirection.X]: ['xKey'],
+    [ChartAxisDirection.Y]: ['yKey'],
+};
+
 export class CartesianSeriesNodeClickEvent<Datum extends { datum: any }> extends SeriesNodeClickEvent<Datum> {
     readonly xKey: string;
     readonly yKey: string;
@@ -95,8 +100,17 @@ export abstract class CartesianSeries<
      */
     protected readonly seriesItemEnabled = new Map<string, boolean>();
 
-    protected constructor(opts: Partial<SeriesOpts> & { pickModes?: SeriesNodePickMode[] } = {}) {
-        super({ useSeriesGroupLayer: true, pickModes: opts.pickModes });
+    protected constructor(
+        opts: Partial<SeriesOpts> & {
+            pickModes?: SeriesNodePickMode[];
+            directionKeys?: { [key in ChartAxisDirection]?: string[] };
+        } = {}
+    ) {
+        super({
+            useSeriesGroupLayer: true,
+            pickModes: opts.pickModes,
+            directionKeys: opts.directionKeys ?? DEFAULT_DIRECTION_KEYS,
+        });
 
         const {
             pathsPerSeries = 1,
@@ -113,11 +127,6 @@ export abstract class CartesianSeries<
         this._contextNodeData.splice(0, this._contextNodeData.length);
         this.subGroups.splice(0, this.subGroups.length);
     }
-
-    directionKeys: { [key in ChartAxisDirection]?: string[] } = {
-        [ChartAxisDirection.X]: ['xKey'],
-        [ChartAxisDirection.Y]: ['yKey'],
-    };
 
     /**
      * Note: we are passing `isContinuousX` and `isContinuousY` into this method because it will

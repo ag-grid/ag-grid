@@ -91,17 +91,6 @@ class BarSeriesTooltip extends SeriesTooltip {
     renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
 }
 
-function flat(arr: any[], target: any[] = []): any[] {
-    arr.forEach((v) => {
-        if (Array.isArray(v)) {
-            flat(v, target);
-        } else {
-            target.push(v);
-        }
-    });
-    return target;
-}
-
 function is2dArray<E>(array: E[] | E[][]): array is E[][] {
     return array.length > 0 && Array.isArray(array[0]);
 }
@@ -146,6 +135,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         super({
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
+            directionKeys: {
+                [ChartAxisDirection.X]: ['xKey'],
+                [ChartAxisDirection.Y]: ['yKeys'],
+            },
         });
 
         this.label.enabled = false;
@@ -156,31 +149,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
      */
     private groupScale = new BandScale<string>();
 
-    directionKeys = {
-        [ChartAxisDirection.X]: ['xKey'],
-        [ChartAxisDirection.Y]: ['yKeys'],
-    };
-
-    getKeys(direction: ChartAxisDirection): string[] {
-        const { directionKeys } = this;
-        const keys = directionKeys && directionKeys[this.flipXY ? flipChartAxisDirection(direction) : direction];
-        let values: string[] = [];
-
-        if (keys) {
-            keys.forEach((key) => {
-                const value = (this as any)[key];
-
-                if (value) {
-                    if (Array.isArray(value)) {
-                        values = values.concat(flat(value));
-                    } else {
-                        values.push(value);
-                    }
-                }
-            });
-        }
-
-        return values;
+    protected resolveKeyDirection(direction: ChartAxisDirection) {
+        return this.flipXY ? flipChartAxisDirection(direction) : direction;
     }
 
     @Validate(STRING)

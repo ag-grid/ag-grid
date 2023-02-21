@@ -117,11 +117,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     private yDomain: any[] = [];
     private xDomain: any[] = [];
 
-    directionKeys = {
-        x: ['xKey'],
-        y: ['yKeys'],
-    };
-
     readonly marker = new CartesianSeriesMarker();
 
     readonly label = new AreaSeriesLabel();
@@ -150,6 +145,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             pathsZIndexSubOrderOffset: [0, 1000],
             hasMarkers: true,
             renderLayerPerSubSeries: false,
+            directionKeys: {
+                x: ['xKey'],
+                y: ['yKeys'],
+            },
         });
 
         const { marker, label } = this;

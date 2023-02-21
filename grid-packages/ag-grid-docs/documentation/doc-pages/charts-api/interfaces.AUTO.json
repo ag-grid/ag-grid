@@ -3572,6 +3572,10 @@
     "meta": { "isTypeAlias": true },
     "type": "{ text: string; style: Label; x: number; y: number; hAlign: CanvasTextAlign; vAlign: CanvasTextBaseline; }"
   },
+  "LabelMeta": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ label?: TextMeta; value?: TextMeta; }"
+  },
   "PieNodeDatum": {
     "meta": {},
     "type": {

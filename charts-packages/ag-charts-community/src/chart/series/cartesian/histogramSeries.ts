@@ -162,33 +162,6 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         this.label.enabled = false;
     }
 
-    directionKeys = {
-        [ChartAxisDirection.X]: ['xKey'],
-        [ChartAxisDirection.Y]: ['yKey'],
-    };
-
-    getKeys(direction: ChartAxisDirection): string[] {
-        const { directionKeys } = this;
-        const keys = directionKeys && directionKeys[direction];
-        const values: string[] = [];
-
-        if (keys) {
-            keys.forEach((key) => {
-                const value = (this as any)[key];
-
-                if (value) {
-                    if (Array.isArray(value)) {
-                        values.push(...value);
-                    } else {
-                        values.push(value);
-                    }
-                }
-            });
-        }
-
-        return values;
-    }
-
     @Validate(STRING)
     xKey: string = '';
 

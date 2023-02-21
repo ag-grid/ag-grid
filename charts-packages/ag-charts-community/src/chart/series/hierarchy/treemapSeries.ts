@@ -608,9 +608,9 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             }
         });
 
-        const updateLabelFn = (text: Text, datum: TreemapNodeDatum, highlighted: boolean) => {
+        const updateLabelFn = (text: Text, datum: TreemapNodeDatum, highlighted: boolean, key: 'label' | 'value') => {
             const meta = labelMeta.get(datum);
-            const label = meta?.label;
+            const label = meta?.[key];
             if (!label) {
                 text.visible = false;
                 return;
@@ -631,46 +631,25 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         };
         this.groupSelection
             .selectByTag<Text>(TextNodeTag.Name)
-            .each((text, datum) => updateLabelFn(text, datum, false));
+            .each((text, datum) => updateLabelFn(text, datum, false, 'label'));
         this.highlightSelection.selectByTag<Text>(TextNodeTag.Name).each((text, datum) => {
             const isDatumHighlighted = this.isDatumHighlighted(datum);
 
             text.visible = isDatumHighlighted;
             if (text.visible) {
-                updateLabelFn(text, datum, isDatumHighlighted);
+                updateLabelFn(text, datum, isDatumHighlighted, 'label');
             }
         });
 
-        const updateValueFn = (text: Text, datum: TreemapNodeDatum, highlighted: boolean) => {
-            const meta = labelMeta.get(datum);
-            const label = meta?.value;
-            if (!label) {
-                text.visible = false;
-                return;
-            }
-
-            text.text = label.text;
-            text.fontFamily = label.style.fontFamily;
-            text.fontSize = label.style.fontSize;
-            text.fontWeight = label.style.fontWeight;
-            text.fill = highlighted ? highlightedTextColor ?? label.style.color : label.style.color;
-            text.fillShadow = highlighted ? undefined : labelShadow;
-
-            text.textAlign = label.hAlign;
-            text.textBaseline = label.vAlign;
-            text.x = label.x;
-            text.y = label.y;
-            text.visible = true;
-        };
         this.groupSelection
             .selectByTag<Text>(TextNodeTag.Value)
-            .each((text, datum) => updateValueFn(text, datum, false));
+            .each((text, datum) => updateLabelFn(text, datum, false, 'value'));
         this.highlightSelection.selectByTag<Text>(TextNodeTag.Value).each((text, datum) => {
             const isDatumHighlighted = this.isDatumHighlighted(datum);
 
             text.visible = isDatumHighlighted;
             if (text.visible) {
-                updateValueFn(text, datum, isDatumHighlighted);
+                updateLabelFn(text, datum, isDatumHighlighted, 'value');
             }
         });
     }
@@ -687,7 +666,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             vAlign: CanvasTextBaseline;
         };
 
-        const labelMeta = new Map<TreemapNodeDatum, { label?: TextMeta; value?: TextMeta }>();
+        type LabelMeta = { label?: TextMeta; value?: TextMeta };
+        const labelMeta = new Map<TreemapNodeDatum, LabelMeta>();
 
         boxes.forEach((box, datum) => {
             if (!labelKey || datum.depth === 0) {
