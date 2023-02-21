@@ -593,7 +593,7 @@ export class RowRenderer extends BeanStub {
                 preventScrollOnBrowserFocus: true,
                 api: this.beans.gridApi,
                 columnApi: this.beans.columnApi,
-                context: this.beans.context,
+                context: this.beans.gridOptionsService.context,
                 type: 'mock',
             });
         }
