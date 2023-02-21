@@ -796,7 +796,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         return { minTickCount, maxTickCount };
     }
 
-    private getLabelSpacing(rotated: boolean): number {
+    private getLabelSpacing(rotated?: boolean): number {
         const { label, tick } = this;
         if (!isNaN(label.minSpacing) && !isNaN(tick.minSpacing)) {
             return Math.max(label.minSpacing, tick.minSpacing);
@@ -967,7 +967,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }) {
         const {
             label,
-            label: { parallel: parallelLabels, minSpacing },
+            label: { parallel: parallelLabels },
             tick,
         } = this;
         let labelAutoRotation = 0;
@@ -1034,8 +1034,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             });
         });
 
-        const labelPadding = minSpacing ?? 10;
-        const rotate = axisLabelsOverlap(labelData, labelPadding);
+        const labelSpacing = this.getLabelSpacing();
+        const rotate = axisLabelsOverlap(labelData, labelSpacing);
 
         if (label.rotation === undefined && label.autoRotate === true && rotate) {
             // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
