@@ -1,8 +1,14 @@
-export default function (start: number, stop: number, count: number): NumericTicks {
+export default function (
+    start: number,
+    stop: number,
+    count: number,
+    minCount?: number,
+    maxCount?: number
+): NumericTicks {
     if (count < 2) {
         return range(start, stop, stop - start);
     }
-    const step = tickStep(start, stop, count);
+    const step = tickStep(start, stop, count, minCount, maxCount);
     if (isNaN(step)) {
         return new NumericTicks(0);
     }
@@ -11,24 +17,26 @@ export default function (start: number, stop: number, count: number): NumericTic
     return range(start, stop, step);
 }
 
-// Make error thresholds 2/5 between the intervals
-const tickMultiplierErrors = [
-    [10, 7],
-    [5, 3.2],
-    [2, 1.4],
-    [1, 0],
-];
+const tickMultipliers = [1, 2, 5, 10];
 
-function getTickMultiplier(error: number) {
-    return tickMultiplierErrors.find((m) => error >= m[1])?.[0];
-}
-
-export function tickStep(a: number, b: number, count: number): number {
+export function tickStep(a: number, b: number, count: number, minCount = 0, maxCount = Infinity): number {
     const rawStep = (b - a) / count;
     const power = Math.floor(Math.log10(rawStep));
     const step = Math.pow(10, power);
-    const error = rawStep / step;
-    const m = getTickMultiplier(error);
+    const m = tickMultipliers
+        .map((multiplier) => {
+            const s = multiplier * step;
+            const c = (b - a) / s;
+            const isWithinBounds = c >= minCount && c <= maxCount;
+            const diffCount = Math.abs(c - count);
+            return { multiplier, isWithinBounds, diffCount };
+        })
+        .sort((a, b) => {
+            if (a.isWithinBounds !== b.isWithinBounds) {
+                return a.isWithinBounds ? -1 : 1;
+            }
+            return a.diffCount - b.diffCount;
+        })[0].multiplier;
     if (!m || isNaN(m)) {
         return NaN;
     }
@@ -38,8 +46,8 @@ export function tickStep(a: number, b: number, count: number): number {
 export function singleTickDomain(a: number, b: number): number[] {
     const power = Math.floor(Math.log10(b - a));
     const step = Math.pow(10, power);
-    return tickMultiplierErrors
-        .map(([multiplier]) => {
+    return tickMultipliers
+        .map((multiplier) => {
             const s = multiplier * step;
             const start = Math.floor(a / s) * s;
             const end = Math.ceil(b / s) * s;

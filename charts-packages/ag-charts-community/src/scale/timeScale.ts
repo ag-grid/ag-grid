@@ -51,7 +51,15 @@ function toNumber(x: any) {
 export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
     readonly type = 'time';
 
-    protected cacheProps: Array<keyof this> = ['domain', 'range', 'nice', 'tickCount', 'interval'];
+    protected cacheProps: Array<keyof this> = [
+        'domain',
+        'range',
+        'nice',
+        'tickCount',
+        'interval',
+        'minTickCount',
+        'maxTickCount',
+    ];
 
     private year: CountableTimeInterval = timeYear;
     private month: CountableTimeInterval = timeMonth;
@@ -233,10 +241,14 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
         start,
         stop,
         count,
+        minCount,
+        maxCount,
     }: {
         start: number;
         stop: number;
         count: number;
+        minCount: number;
+        maxCount: number;
     }): CountableTimeInterval | TimeInterval | undefined {
         const { tickIntervals } = this;
 
@@ -251,12 +263,12 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
         }
 
         if (i === 0) {
-            step = Math.max(tickStep(start, stop, tickCount), 1);
+            step = Math.max(tickStep(start, stop, tickCount, minCount, maxCount), 1);
             countableTimeInterval = this.millisecond;
         } else if (i === tickIntervals.length) {
             const y0 = start / durationYear;
             const y1 = stop / durationYear;
-            step = tickStep(y0, y1, tickCount);
+            step = tickStep(y0, y1, tickCount, minCount, maxCount);
             countableTimeInterval = this.year;
         } else {
             const diff0 = target - tickIntervals[i - 1][2];
@@ -301,7 +313,13 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
     }
 
     private getDefaultTicks({ start, stop }: { start: number; stop: number }) {
-        const t = this.getTickInterval({ start, stop, count: this.tickCount });
+        const t = this.getTickInterval({
+            start,
+            stop,
+            count: this.tickCount,
+            minCount: this.minTickCount,
+            maxCount: this.maxTickCount,
+        });
         return t ? t.range(new Date(start), new Date(stop)) : []; // inclusive stop
     }
 
@@ -384,7 +402,13 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
             i = interval;
         } else {
             const tickCount = typeof interval === 'number' ? (stop - start) / Math.max(interval, 1) : this.tickCount;
-            i = this.getTickInterval({ start, stop, count: tickCount });
+            i = this.getTickInterval({
+                start,
+                stop,
+                count: tickCount,
+                minCount: this.minTickCount,
+                maxCount: this.maxTickCount,
+            });
         }
 
         if (i) {

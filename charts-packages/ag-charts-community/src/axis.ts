@@ -251,7 +251,7 @@ export class AxisLabel {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
-    static readonly defaultTickMinSpacing = 80;
+    static readonly defaultTickMinSpacing = 50;
 
     readonly id = createId(this);
 
@@ -475,7 +475,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.scale.interval = this.tick.interval ?? interval;
     }
 
-    private setTickCount(count?: TickCount<S> | number) {
+    private setTickCount(count?: TickCount<S> | number, minTickCount?: number, maxTickCount?: number) {
         const { scale } = this;
         if (!(count && scale instanceof ContinuousScale)) {
             return;
@@ -483,6 +483,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         if (typeof count === 'number') {
             scale.tickCount = count;
+            scale.maxTickCount = minTickCount ?? 0;
+            scale.maxTickCount = maxTickCount ?? Infinity;
             return;
         }
 
@@ -635,7 +637,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 } else if (maxTickCount === 0) {
                     ticks = [];
                 } else if (i === 0 || !filterTicks) {
-                    this.setTickCount(this.tick.count ?? tickCount);
+                    this.setTickCount(this.tick.count ?? tickCount, minTickCount, maxTickCount);
                     ticks = scale.ticks!();
                 }
 

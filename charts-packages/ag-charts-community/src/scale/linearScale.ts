@@ -35,7 +35,7 @@ export class LinearScale extends ContinuousScale<number> {
             }
         }
 
-        return ticks(d0, d1, count);
+        return ticks(d0, d1, count, this.minTickCount, this.maxTickCount);
     }
 
     update() {
@@ -65,7 +65,7 @@ export class LinearScale extends ContinuousScale<number> {
         }
 
         for (let i = 0; i < 2; i++) {
-            const step = this.interval ?? tickStep(start, stop, count);
+            const step = this.interval ?? tickStep(start, stop, count, this.minTickCount, this.maxTickCount);
             if (step >= 1) {
                 start = Math.floor(start / step) * step;
                 stop = Math.ceil(stop / step) * step;
