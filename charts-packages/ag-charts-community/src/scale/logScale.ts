@@ -127,12 +127,24 @@ export class LogScale extends ContinuousScale<number> {
         const isPositive = d0 > 0;
         p0 = Math.floor(p0) - 1;
         p1 = Math.round(p1) + 1;
+
+        const min = Math.min(...this.range);
+        const max = Math.max(...this.range);
+
+        const availableSpacing = (max - min) / count;
+        let lastTickPosition = Infinity;
         for (let p = p0; p <= p1; p++) {
+            const nextMagnitudeTickPosition = this.convert(this.pow(p + 1));
             for (let k = 1; k < base; k++) {
                 const q = isPositive ? k : base - k + 1;
                 const t = this.pow(p) * q;
-                if (t >= d0 && t <= d1) {
+                const tickPosition = this.convert(t);
+                const prevSpacing = Math.abs(lastTickPosition - tickPosition);
+                const nextSpacing = Math.abs(tickPosition - nextMagnitudeTickPosition);
+                const fits = prevSpacing >= availableSpacing && nextSpacing >= availableSpacing;
+                if (t >= d0 && t <= d1 && (k === 1 || fits)) {
                     ticks.push(t);
+                    lastTickPosition = tickPosition;
                 }
             }
         }
