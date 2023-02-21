@@ -17,38 +17,19 @@ import {
 } from './data';
 
 export function loadExampleOptions(name: string, evalFn = 'options'): any {
-    const filters = [/^import .*/, /.*AgChart\.(update|create)/, /.* container\: .*/ /*, /.* data/*/];
-    const dataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/data.ts`;
-    const exampleFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/main.ts`;
+    const filters = [/.*AgChart\.(update|create)/, /.* container\: .*/, /.*setInterval.*/, /.*setTimeout.*/];
+    const dataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/_gen/packages/vanilla/data.js`;
+    const exampleFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/_gen/packages/vanilla/main.js`;
 
-    const cleanTs = (content: Buffer) => {
+    const cleanJs = (content: Buffer) => {
         const inputLines = content.toString().split('\n');
         const lines: string[] = [];
 
-        let skipNext = false;
         for (let line of inputLines) {
-            if (skipNext) {
-                skipNext = false;
-                continue;
-            }
-
-            if (line.indexOf('@ts-ignore') >= 0) {
-                skipNext = true;
-                continue;
-            }
-
             // Remove grossly unsupported lines.
             if (filters.some((f) => f.test(line))) continue;
-            // Remove types, without matching string literals.
-            line = ["'", '"'].some((v) => line.indexOf(v) >= 0) ? line : line.replace(/: [A-Z][A-Za-z<, >]*/g, '');
             // Remove declares.
             line = line.replace(/declare var.*;/g, '');
-            // Remove sugars.
-            line = line.replace(/([a-z])!/g, '$1');
-            // Remove primitives + primitive arrays.
-            line = line.replace(/: (number|string|any)(\[\]){0,}/g, '');
-            // Remove unsupported keywords.
-            line = line.replace(/export /g, '');
 
             lines.push(line);
         }
@@ -57,12 +38,14 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
     };
 
     const dataFileExists = fs.existsSync(dataFile);
-    const dataFileContent = dataFileExists ? cleanTs(fs.readFileSync(dataFile)) : [];
-    const exampleFileLines = cleanTs(fs.readFileSync(exampleFile));
+    const dataFileContent = dataFileExists ? cleanJs(fs.readFileSync(dataFile)) : [];
+    const exampleFileLines = cleanJs(fs.readFileSync(exampleFile));
 
     const evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
     // @ts-ignore - used in the eval() call.
-    const { AgChart, time, Marker } = require('../../main');
+    const agCharts = require('../../main');
+    // @ts-ignore - used in the eval() call.
+    const { AgChart, time, Marker } = agCharts;
     try {
         return eval(evalExpr);
     } catch (error) {
