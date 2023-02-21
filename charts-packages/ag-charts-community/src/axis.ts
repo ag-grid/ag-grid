@@ -483,7 +483,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         if (typeof count === 'number') {
             scale.tickCount = count;
-            scale.maxTickCount = minTickCount ?? 0;
+            scale.minTickCount = minTickCount ?? 0;
             scale.maxTickCount = maxTickCount ?? Infinity;
             return;
         }
