@@ -255,7 +255,8 @@ function addSign(num: number, numString: string, signType = '') {
     if (signType === '(') {
         return num >= 0 ? numString : `(${numString})`;
     }
-    return `${num >= 0 ? (signType === '+' ? '+' : '') : minusSign}${numString}`;
+    const plusSign = signType === '+' ? '+' : '';
+    return `${num >= 0 ? plusSign : minusSign}${numString}`;
 }
 
 function addPadding(numString: string, width: number, fill = ' ', align = '>') {

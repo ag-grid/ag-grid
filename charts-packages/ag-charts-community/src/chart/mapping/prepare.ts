@@ -152,24 +152,23 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
 
     options = { ...options, type };
 
-    const defaultSeriesType = isAgCartesianChartOptions(options)
-        ? 'line'
-        : isAgHierarchyChartOptions(options)
-        ? 'treemap'
-        : isAgPolarChartOptions(options)
-        ? 'pie'
-        : 'line';
+    let defaultSeriesType = 'line';
+    if (isAgCartesianChartOptions(options)) {
+        defaultSeriesType = 'line';
+    } else if (isAgHierarchyChartOptions(options)) {
+        defaultSeriesType = 'treemap';
+    } else if (isAgPolarChartOptions(options)) {
+        defaultSeriesType = 'pie';
+    }
 
-    const defaultOverrides =
-        type === 'bar'
-            ? DEFAULT_BAR_CHART_OVERRIDES
-            : type === 'scatter'
-            ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES
-            : type === 'histogram'
-            ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES
-            : isAgCartesianChartOptions(options)
-            ? DEFAULT_CARTESIAN_CHART_OVERRIDES
-            : {};
+    let defaultOverrides = {};
+    if (type === 'bar') {
+        defaultOverrides = DEFAULT_BAR_CHART_OVERRIDES;
+    } else if (type === 'scatter' || type === 'histogram') {
+        defaultOverrides = DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES;
+    } else if (isAgCartesianChartOptions(options)) {
+        defaultOverrides = DEFAULT_CARTESIAN_CHART_OVERRIDES;
+    }
 
     const { context, mergedOptions, axesThemes, seriesThemes } = prepareMainOptions<T>(defaultOverrides as T, options);
 
@@ -179,11 +178,12 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
     // properties, and in that case then cannot correctly have themes applied.
     mergedOptions.series = processSeriesOptions(
         ((mergedOptions.series as SeriesOptions[]) || []).map((s) => {
-            const type = s.type
-                ? s.type
-                : isSeriesOptionType(userSuppliedOptionsType)
-                ? userSuppliedOptionsType
-                : defaultSeriesType;
+            let type = defaultSeriesType;
+            if (s.type) {
+                type = s.type;
+            } else if (isSeriesOptionType(userSuppliedOptionsType)) {
+                type = userSuppliedOptionsType;
+            }
             const mergedSeries = jsonMerge([seriesThemes[type] || {}, { ...s, type }], noDataCloneMergeOptions);
             if (type === 'pie') {
                 preparePieOptions(seriesThemes.pie, s, mergedSeries);
