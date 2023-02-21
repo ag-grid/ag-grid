@@ -10,7 +10,7 @@ A legend is shown by default but can be hidden using the `enabled` config:
 
 ```js
 legend: {
-    enabled: false
+  enabled: false
 }
 ```
 
@@ -18,7 +18,7 @@ When enabled, it can be positioned to any side of a chart using the `position` c
 
 ```js
 legend: {
-    position: 'right' // 'bottom', 'left', 'top'
+  position: "right" // 'bottom', 'left', 'top'
 }
 ```
 
@@ -52,7 +52,6 @@ If the legend is `horizontal`, the legend items are arranged using the minimum p
 
 By default, when the legend is positioned to the `'bottom'` or `'top'` of a chart, it is rendered in a `horizontal` orientation. The number of rows in a `horizontal` legend increases as the width of a chart shrinks, as fewer legend items can be placed in a given row.
 
-
 ### Example: Horizontal Legend Layout
 
 <chart-example title='Horizontal Legend Layout' name='legend-layout-horizontal' type='generated'></chart-example>
@@ -69,9 +68,9 @@ In addition to `maxWidth` and `maxHeight`, the legend's layout is also affected 
 
 ```js
 legend: {
-    item: {
-        paddingX: 16
-    }
+  item: {
+    paddingX: 16
+  }
 }
 ```
 
@@ -79,9 +78,9 @@ legend: {
 
 ```js
 legend: {
-    item: {
-        paddingY: 8
-    }
+  item: {
+    paddingY: 8
+  }
 }
 ```
 
@@ -89,11 +88,11 @@ And the `legend.item.marker.padding` config is responsible for the amount of pad
 
 ```js
 legend: {
-    item: {
-        marker: {
-            padding: 8
-        }
+  item: {
+    marker: {
+      padding: 8
     }
+  }
 }
 ```
 
@@ -111,11 +110,11 @@ The pagination component can be customised using `legend.pagination`. For exampl
 
 ```js
 legend: {
-    pagination: {
-        marker: {
-            size: 18
-        }
+  pagination: {
+    marker: {
+      size: 18
     }
+  }
 }
 ```
 
@@ -204,6 +203,7 @@ legend: {
 The `legendItemClick` event can be used to listen to legend item clicks. A listener can be configured via `legend.listeners.legendItemClick`.
 
 The event object passed to the listener includes:
+
 - the `seriesId` of the series associated with the legend item
 - the `itemId`, usually the `yKey` value for cartesian series
 - `enabled`, whether the legend item is currently enabled or not
@@ -212,17 +212,17 @@ For example, to show an alert message with the `legendItemClick` event contents 
 
 ```js
 legend: {
-    listeners: {
-        legendItemClick: ({
-            seriesId,
-            itemId,
-            enabled,
-        }: AgChartLegendClickEvent) => {
-            window.alert(
-                `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
-            );
-        }
+  listeners: {
+    legendItemClick: ({
+      seriesId,
+      itemId,
+      enabled,
+    }: AgChartLegendClickEvent) => {
+      window.alert(
+        `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
+      )
     }
+  }
 }
 ```
 
@@ -234,14 +234,13 @@ To disable series toggling on legend item click, the `legend.item.toggleSeriesVi
 
 ```js
 legend: {
-    item: {
-        toggleSeriesVisible: false
-    }
+  item: {
+    toggleSeriesVisible: false
+  }
 }
 ```
 
 If a callback function is configured via [`legend.listeners.legendItemClick`](#legenditemclick), it will still be invoked when the legend click event is fired.
-
 
 ### Example: Legend Click
 
