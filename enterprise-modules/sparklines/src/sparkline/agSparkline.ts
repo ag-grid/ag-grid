@@ -17,7 +17,7 @@ import { SparklineTooltip } from './tooltip/sparklineTooltip';
 import { BarColumnLabel } from './bar-column/barColumnSparkline';
 import { _Util } from 'ag-charts-community';
 
-const { extent, isNumber } = _Util;
+const { isNumber } = _Util;
 
 export type SparklineFactoryOptions = SparklineOptions & {
     data: any[];
@@ -52,6 +52,8 @@ export abstract class AgSparkline {
         if (options.data) {
             sparkline.data = options.data;
         }
+
+        sparkline.processedOptions = options;
 
         return sparkline;
     }
