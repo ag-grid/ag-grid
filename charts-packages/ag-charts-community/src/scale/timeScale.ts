@@ -256,7 +256,7 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
         let step;
 
         const tickCount = count ?? ContinuousScale.defaultTickCount;
-        const target = Math.abs(stop - start) / Math.max(tickCount - 1, 1);
+        const target = Math.abs(stop - start) / Math.max(tickCount, 1);
         let i = 0;
         while (i < tickIntervals.length && target > tickIntervals[i][2]) {
             i++;
@@ -391,7 +391,20 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
      * This method typically modifies the scale’s domain, and may only extend the bounds to the nearest round value.
      */
     protected updateNiceDomain(): void {
-        const [d0, d1] = this.domain;
+        const maxAttempts = 4;
+        let [d0, d1] = this.domain;
+        for (let i = 0; i < maxAttempts; i++) {
+            this.updateNiceDomainIteration(d0, d1);
+            const [n0, n1] = this.niceDomain;
+            if (toNumber(d0) === toNumber(n0) && toNumber(d1) === toNumber(n1)) {
+                break;
+            }
+            d0 = n0;
+            d1 = n1;
+        }
+    }
+
+    protected updateNiceDomainIteration(d0: Date, d1: Date) {
         const start = toNumber(d0);
         const stop = toNumber(d1);
 
