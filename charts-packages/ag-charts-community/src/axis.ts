@@ -44,6 +44,7 @@ import { Default } from './util/default';
 import { Deprecated } from './util/deprecation';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
+import { calculateLabelRotation } from './chart/label';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -967,18 +968,17 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }) {
         const {
             label,
-            label: { parallel: parallelLabels },
+            label: { parallel, rotation },
             tick,
         } = this;
         let labelAutoRotation = 0;
 
-        const labelRotation = label.rotation ? normalizeAngle360(toRadians(label.rotation)) : 0;
-        const parallelFlipFlag =
-            !labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
-        // Flip if the axis rotation angle is in the top hemisphere.
-        const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
-
-        const autoRotation = parallelLabels ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
+        const { autoRotation, labelRotation, parallelFlipFlag, regularFlipFlag } = calculateLabelRotation({
+            rotation,
+            parallel,
+            regularFlipRotation,
+            parallelFlipRotation,
+        });
 
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
@@ -1043,23 +1043,31 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             labelAutoRotation = normalizeAngle360(toRadians(label.autoRotateAngle));
         }
 
-        const labelTextBaseline =
-            parallelLabels && !labelRotation ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom') : 'middle';
+        let labelTextBaseline: 'hanging' | 'bottom' | 'middle' = 'middle';
+        if (parallel && !labelRotation) {
+            if (sideFlag * parallelFlipFlag === -1) {
+                labelTextBaseline = 'hanging';
+            } else {
+                labelTextBaseline = 'bottom';
+            }
+        }
 
-        const alignFlag =
-            (labelRotation > 0 && labelRotation <= Math.PI) || (labelAutoRotation > 0 && labelAutoRotation <= Math.PI)
-                ? -1
-                : 1;
+        const labelRotated = labelRotation > 0 && labelRotation <= Math.PI;
+        const labelAutoRotated = labelAutoRotation > 0 && labelAutoRotation <= Math.PI;
+        const alignFlag = labelRotated || labelAutoRotated ? -1 : 1;
 
-        const labelTextAlign = parallelLabels
-            ? labelRotation || labelAutoRotation
-                ? sideFlag * alignFlag === -1
-                    ? 'end'
-                    : 'start'
-                : 'center'
-            : sideFlag * regularFlipFlag === -1
-            ? 'end'
-            : 'start';
+        let labelTextAlign: 'start' | 'end' | 'center' = 'start';
+        if (parallel) {
+            if (labelRotation || labelAutoRotation) {
+                if (sideFlag * alignFlag === -1) {
+                    labelTextAlign = 'end';
+                }
+            } else {
+                labelTextAlign = 'center';
+            }
+        } else if (sideFlag * regularFlipFlag === -1) {
+            labelTextAlign = 'end';
+        }
 
         const combinedRotation = autoRotation + labelRotation + labelAutoRotation;
         if (combinedRotation) {

@@ -35,13 +35,12 @@ export class LogAxis extends NumberAxis {
 
         if (invalidDomain) {
             d = [];
-            const warningMessage = crossesZero
-                ? 'The data domain crosses zero, the chart data cannot be rendered. See log axis documentation for more information.'
-                : hasZeroExtent
-                ? 'The data domain has 0 extent, no data is rendered.'
-                : undefined;
-            if (warningMessage) {
-                console.warn(`AG Charts - ${warningMessage}`);
+            if (crossesZero) {
+                console.warn(
+                    `AG Charts - The data domain crosses zero, the chart data cannot be rendered. See log axis documentation for more information.`
+                );
+            } else if (hasZeroExtent) {
+                console.warn(`AG Charts - The data domain has 0 extent, no data is rendered.`);
             }
         }
         if (d[0] === 0) {

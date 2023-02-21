@@ -12,6 +12,7 @@ import { ChartAxisDirection } from '../chartAxisDirection';
 import { extent } from '../../util/array';
 import { Point } from '../../scene/point';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
+import { calculateLabelRotation } from '../label';
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     @Validate(BOOLEAN)
@@ -183,7 +184,13 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     update(primaryTickCount?: number): number | undefined {
         this.calculateDomain();
 
-        const { scale, label, tickScale, requestedRange } = this;
+        const {
+            scale,
+            label,
+            label: { parallel },
+            tickScale,
+            requestedRange,
+        } = this;
 
         scale.domain = this.dataDomain;
 
@@ -191,10 +198,8 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         const rangeEnd = scale.range[1];
         const rangeLength = Math.abs(rangeEnd - rangeStart);
         const bandwidth = rangeLength / scale.domain.length || 0;
-        const parallelLabels = label.parallel;
         const rotation = toRadians(this.rotation);
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
-        const labelRotation = this.label.rotation ? normalizeAngle360(toRadians(this.label.rotation)) : 0;
 
         this.updatePosition();
 
@@ -225,13 +230,12 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         // and then rotated, zero rotation means 12 (not 3) o-clock.
         // -1 = flip
         //  1 = don't flip (default)
-        const parallelFlipRotation = normalizeAngle360(rotation);
-        const parallelFlipFlag =
-            !labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
-
-        const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
-        // Flip if the axis rotation angle is in the top hemisphere.
-        const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
+        const { autoRotation, labelRotation, parallelFlipFlag } = calculateLabelRotation({
+            rotation: label.rotation,
+            parallel,
+            regularFlipRotation: normalizeAngle360(rotation - Math.PI / 2),
+            parallelFlipRotation: normalizeAngle360(rotation),
+        });
 
         const updateGridLines = this.gridLineSelection.setData(this.gridLength ? ticks : []);
         updateGridLines.exit.remove();
@@ -288,7 +292,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         });
 
         const labelX = sideFlag * label.padding;
-        const autoRotation = parallelLabels ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
 
         const labelGrid = this.label.grid;
         const separatorData = [] as { y: number; x1: number; x2: number; toString: () => string }[];
