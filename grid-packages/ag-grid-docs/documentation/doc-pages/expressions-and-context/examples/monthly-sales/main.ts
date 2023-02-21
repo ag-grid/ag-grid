@@ -1,4 +1,5 @@
 import { Grid, ColDef, ColGroupDef, GridOptions, ICellRendererParams, IGroupCellRendererParams } from '@ag-grid-community/core'
+import { IMonth, IYearlySales } from './interfaces'
 
 var monthValueGetter =
   '(ctx.month < ctx.months.indexOf(colDef.field)) ? data[colDef.field + "_bud"] : data[colDef.field + "_act"]'
@@ -94,7 +95,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   },
 ]
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IYearlySales, IMonth> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
@@ -150,7 +151,7 @@ var monthNames = [
 ]
 
 function onChangeMonth(i: number) {
-  var newMonth = (gridOptions.context.month += i)
+  var newMonth = (gridOptions.context!.month += i)
 
   if (newMonth < -1) {
     newMonth = -1
@@ -159,7 +160,7 @@ function onChangeMonth(i: number) {
     newMonth = 5
   }
 
-  gridOptions.context.month = newMonth
+  gridOptions.context!.month = newMonth
   document.querySelector('#monthName')!.innerHTML = monthNames[newMonth + 1]
   gridOptions.api!.refreshClientSideRowModel('aggregate')
   gridOptions.api!.refreshCells()
