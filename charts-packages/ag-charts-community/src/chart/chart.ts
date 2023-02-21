@@ -13,7 +13,7 @@ import { ChartAxis } from './chartAxis';
 import { ChartAxisDirection } from './chartAxisDirection';
 import { createId } from '../util/id';
 import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '../util/labelPlacement';
-import { AgChartOptions, AgChartClickEvent, AgChartInstance } from './agChartOptions';
+import { AgChartOptions, AgChartClickEvent, AgChartDoubleClickEvent, AgChartInstance } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
@@ -275,6 +275,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         // Add interaction listeners last so child components are registered first.
         this.interactionManager.addListener('click', (event) => this.onClick(event));
+        this.interactionManager.addListener('dblclick', (event) => this.onDoubleClick(event));
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
         this.interactionManager.addListener('leave', () => this.disablePointer());
         this.interactionManager.addListener('page-left', () => this.destroy());
@@ -993,6 +994,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
         this.fireEvent<AgChartClickEvent>({
             type: 'click',
+            event: event.sourceEvent,
+        });
+    }
+
+    protected onDoubleClick(event: InteractionEvent<'dblclick'>) {
+        this.fireEvent<AgChartDoubleClickEvent>({
+            type: 'doubleClick',
             event: event.sourceEvent,
         });
     }

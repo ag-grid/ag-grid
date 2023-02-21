@@ -368,7 +368,8 @@ export interface AgChartLegendItemOptions {
     toggleSeriesVisible?: boolean;
 }
 
-export interface AgChartLegendClickEvent {
+export interface AgChartLegendEvent<T extends string> {
+    type: T;
     /** Series id */
     seriesId: string;
     /** Legend item id - usually yKey value for cartesian series. */
@@ -377,9 +378,15 @@ export interface AgChartLegendClickEvent {
     enabled: boolean;
 }
 
+export interface AgChartLegendClickEvent extends AgChartLegendEvent<'click'> {}
+
+export interface AgChartLegendDoubleClickEvent extends AgChartLegendEvent<'dblclick'> {}
+
 export interface AgChartLegendListeners {
     /** The listener to call when a legend item is clicked. */
     legendItemClick?: (event: AgChartLegendClickEvent) => void;
+    /** The listener to call when a legend item is double clicked. */
+    legendItemDoubleClick?: (event: AgChartLegendDoubleClickEvent) => void;
 }
 
 export interface AgChartLegendOptions {
@@ -505,12 +512,15 @@ export interface AgNodeClickEvent extends AgChartEvent<'seriesNodeClick'> {
 }
 
 export interface AgChartClickEvent extends AgChartEvent<'click'> {}
+export interface AgChartDoubleClickEvent extends AgChartEvent<'doubleClick'> {}
 
 export interface AgBaseChartListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
     seriesNodeClick?: (event: AgNodeClickEvent) => any;
     /** The listener to call to signify a general click on the chart by the user. */
     click?: (event: AgChartClickEvent) => any;
+    /** The listener to call to signify a double click on the chart by the user. */
+    doubleClick?: (event: AgChartDoubleClickEvent) => any;
 }
 
 /** Configuration common to all charts.  */

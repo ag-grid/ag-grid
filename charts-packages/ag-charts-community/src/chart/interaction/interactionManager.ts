@@ -1,10 +1,11 @@
 import { isNumber } from '../../util/value';
 import { BaseManager } from './baseManager';
 
-type InteractionTypes = 'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left';
+type InteractionTypes = 'click' | 'dblclick' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left';
 
 type SUPPORTED_EVENTS =
     | 'click'
+    | 'dblclick'
     | 'mousedown'
     | 'mousemove'
     | 'mouseup'
@@ -18,6 +19,7 @@ type SUPPORTED_EVENTS =
 const WINDOW_EVENT_HANDLERS: SUPPORTED_EVENTS[] = ['pagehide', 'mousemove', 'mouseup'];
 const EVENT_HANDLERS: SUPPORTED_EVENTS[] = [
     'click',
+    'dblclick',
     'mousedown',
     'mouseout',
     'mouseenter',
@@ -133,6 +135,9 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         switch (event.type) {
             case 'click':
                 return ['click'];
+
+            case 'dblclick':
+                return ['dblclick'];
 
             case 'mousedown':
                 this.mouseDown = true;

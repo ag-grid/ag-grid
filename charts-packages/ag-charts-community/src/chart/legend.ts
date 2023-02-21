@@ -7,6 +7,7 @@ import { getFont } from '../scene/shape/text';
 import { Marker } from './marker/marker';
 import {
     AgChartLegendClickEvent,
+    AgChartLegendDoubleClickEvent,
     AgChartLegendListeners,
     AgChartLegendLabelFormatterParams,
     AgChartLegendPosition,
@@ -133,6 +134,7 @@ class LegendItem {
 class LegendListeners implements AgChartLegendListeners {
     @Validate(OPT_FUNCTION)
     legendItemClick?: (event: AgChartLegendClickEvent) => void = undefined;
+    legendItemDoubleClick?: (event: AgChartLegendDoubleClickEvent) => void = undefined;
 }
 
 export class Legend {
@@ -251,6 +253,7 @@ export class Legend {
         this.item.marker.parent = this;
 
         this.interactionManager.addListener('click', (e) => this.checkLegendClick(e));
+        this.interactionManager.addListener('dblclick', (e) => this.checkLegendDoubleClick(e));
         this.interactionManager.addListener('hover', (e) => this.handleLegendMouseMove(e));
     }
 
@@ -754,7 +757,44 @@ export class Legend {
 
         this.chart.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
 
-        legendItemClick?.({ enabled: newEnabled, itemId, seriesId: series.id });
+        legendItemClick?.({ type: 'click', enabled: newEnabled, itemId, seriesId: series.id });
+    }
+
+    private checkLegendDoubleClick(event: InteractionEvent<'dblclick'>) {
+        const {
+            listeners: { legendItemDoubleClick },
+            chart,
+            item: { toggleSeriesVisible },
+        } = this;
+        const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
+        if (!datum) {
+            return;
+        }
+
+        const { id, itemId } = datum;
+        const series = chart.series.find((s) => s.id === id);
+        if (!series) {
+            return;
+        }
+        event.consume();
+
+        if (toggleSeriesVisible) {
+            const singleItemVisible =
+                chart.series.reduce((count, s) => count + s.getLegendData().filter((d) => d.enabled).length, 0) === 1;
+
+            chart.series.forEach((s) => {
+                const legendData = s.getLegendData();
+
+                legendData.forEach((d) => {
+                    const newEnabled = d.itemId === itemId || singleItemVisible;
+                    s.toggleSeriesItem(d.itemId, newEnabled);
+                });
+            });
+        }
+
+        this.chart.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
+
+        legendItemDoubleClick?.({ type: 'dblclick', enabled: true, itemId, seriesId: series.id });
     }
 
     private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
