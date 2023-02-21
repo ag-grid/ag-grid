@@ -66,22 +66,22 @@
             {
                 "name": "Github",
                 "url": "https://github.com/ag-grid/ag-grid",
-                "iconUrl": "/images/social-icons/github.svg"
+                "iconName": "github"
             },
             {
                 "name": "Twitter",
                 "url": "https://twitter.com/ag_grid",
-                "iconUrl": "/images/social-icons/twitter.svg"
+                "iconName": "twitter"
             },
             {
                 "name": "YouTube",
                 "url": "https://youtube.com/c/ag-grid",
-                "iconUrl": "/images/social-icons/youtube.svg"
+                "iconName": "youtube"
             },
             {
                 "name": "LinkedIn",
                 "url": "https://www.linkedin.com/company/ag-grid",
-                "iconUrl": "/images/social-icons/linkedin.svg"
+                "iconName": "linkedin"
             }
         ]
     }
