@@ -228,9 +228,9 @@ legend: {
 
 ### Series Visibility Toggling
 
-By default, when a legend item is clicked, the visibility of the series associated with that legend item will be toggled. This allows the users to control which series are displayed in the chart by clicking on legend items.
+By default, when a legend item is clicked, the visibility of the series associated with that legend item will be toggled. This allows the users to control which series are displayed in the chart by clicking on legend items. Additionally, when a legend item is double clicked, the visibility of all other series, except that associated with that legend item, will be toggled.
 
-To disable series toggling on legend item click, the `legend.item.toggleSeriesVisible` property can be set to `false`:
+To disable series toggling on legend item click or double click, the `legend.item.toggleSeriesVisible` property can be set to `false`:
 
 ```js
 legend: {
