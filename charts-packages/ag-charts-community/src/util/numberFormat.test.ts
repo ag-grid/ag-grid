@@ -55,6 +55,42 @@ describe('format', () => {
         expect(format(',.3r')(7777.7)).toBe('7,780');
         expect(format(',.3r')(77777)).toBe('77,800');
     });
+    test('grouped thousands', () => {
+        expect(format(',d')(1)).toBe('1');
+        expect(format(',d')(12)).toBe('12');
+        expect(format(',d')(123)).toBe('123');
+        expect(format(',d')(1234)).toBe('1,234');
+        expect(format(',d')(12345)).toBe('12,345');
+        expect(format(',d')(123456)).toBe('123,456');
+        expect(format(',d')(1234567)).toBe('1,234,567');
+        expect(format(',d')(12345678)).toBe('12,345,678');
+        expect(format(',d')(-1)).toBe('\u22121');
+        expect(format(',d')(-12)).toBe('\u221212');
+        expect(format(',d')(-123)).toBe('\u2212123');
+        expect(format(',d')(-1234)).toBe('\u22121,234');
+        expect(format(',d')(-12345)).toBe('\u221212,345');
+        expect(format(',d')(-123456)).toBe('\u2212123,456');
+        expect(format(',d')(-1234567)).toBe('\u22121,234,567');
+        expect(format(',d')(-12345678)).toBe('\u221212,345,678');
+    });
+    test('grouped thousands and parenthesis for negative values', () => {
+        expect(format('(,d')(1)).toBe('1');
+        expect(format('(,d')(12)).toBe('12');
+        expect(format('(,d')(123)).toBe('123');
+        expect(format('(,d')(1234)).toBe('1,234');
+        expect(format('(,d')(12345)).toBe('12,345');
+        expect(format('(,d')(123456)).toBe('123,456');
+        expect(format('(,d')(1234567)).toBe('1,234,567');
+        expect(format('(,d')(12345678)).toBe('12,345,678');
+        expect(format('(,d')(-1)).toBe('(1)');
+        expect(format('(,d')(-12)).toBe('(12)');
+        expect(format('(,d')(-123)).toBe('(123)');
+        expect(format('(,d')(-1234)).toBe('(1,234)');
+        expect(format('(,d')(-12345)).toBe('(12,345)');
+        expect(format('(,d')(-123456)).toBe('(123,456)');
+        expect(format('(,d')(-1234567)).toBe('(1,234,567)');
+        expect(format('(,d')(-12345678)).toBe('(12,345,678)');
+    });
     test('grouped thousands with two significant digits', () => {
         expect(format(',.2r')(4223)).toBe('4,200');
     });

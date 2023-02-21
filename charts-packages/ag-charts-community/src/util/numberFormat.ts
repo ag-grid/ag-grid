@@ -123,15 +123,15 @@ export function format(formatter: string | FormatterOptions) {
         if (trim) {
             result = removeTrailingZeros(result);
         }
+        if (comma) {
+            result = insertSeparator(result, comma);
+        }
         result = addSign(n, result, sign);
         if (symbol && symbol !== '#') {
             result = `${symbol}${result}`;
         }
         if (symbol === '#' && type === 'x') {
             result = `0x${result}`;
-        }
-        if (comma) {
-            result = insertSeparator(result, comma);
         }
         if (type === 's') {
             result = `${result}${getSIPrefix(n)}`;
