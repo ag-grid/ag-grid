@@ -891,6 +891,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         | {
               series: Series<any>;
               datum: SeriesNodeDatum;
+              distance: number;
           }
         | undefined {
         const {
@@ -1006,19 +1007,11 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
-        const { lastPick } = this;
+        const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY });
 
-        if (lastPick?.datum) {
-            const { datum } = lastPick;
-            datum.series.fireNodeClickEvent(event.sourceEvent, datum);
+        if (pick?.distance === 0) {
+            pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
             return true;
-        } else if (event.sourceEvent.type.startsWith('touch')) {
-            const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY });
-
-            if (pick) {
-                pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
-                return true;
-            }
         }
 
         return false;
