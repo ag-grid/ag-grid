@@ -1298,9 +1298,22 @@
   },
   "AgChartLegendEvent": {
     "type": { "type": { "returnType": "T", "optional": false } },
+    "seriesId": {
+      "description": "/** Series id */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "itemId": {
+      "description": "/** Legend item id - usually yKey value for cartesian series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "enabled": {
+      "description": "/** Whether the legend item is currently enabled or not. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
     "meta": { "typeParams": ["T extends string"] }
   },
   "AgChartLegendClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
     "seriesId": {
       "description": "/** Series id */",
       "type": { "returnType": "string", "optional": false }
@@ -1312,10 +1325,10 @@
     "enabled": {
       "description": "/** Whether the legend item is currently enabled or not. */",
       "type": { "returnType": "boolean", "optional": false }
-    },
-    "type": { "type": { "returnType": "T", "optional": false } }
+    }
   },
   "AgChartLegendDoubleClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
     "seriesId": {
       "description": "/** Series id */",
       "type": { "returnType": "string", "optional": false }
@@ -1327,8 +1340,7 @@
     "enabled": {
       "description": "/** Whether the legend item is currently enabled or not. */",
       "type": { "returnType": "boolean", "optional": false }
-    },
-    "type": { "type": { "returnType": "T", "optional": false } }
+    }
   },
   "AgChartLegendListeners": {
     "legendItemClick": {

@@ -370,9 +370,6 @@ export interface AgChartLegendItemOptions {
 
 export interface AgChartLegendEvent<T extends string> {
     type: T;
-}
-
-export interface AgChartLegendClickEvent extends AgChartLegendEvent<'click'> {
     /** Series id */
     seriesId: string;
     /** Legend item id - usually yKey value for cartesian series. */
@@ -381,14 +378,9 @@ export interface AgChartLegendClickEvent extends AgChartLegendEvent<'click'> {
     enabled: boolean;
 }
 
-export interface AgChartLegendDoubleClickEvent extends AgChartLegendEvent<'dblclick'> {
-    /** Series id */
-    seriesId: string;
-    /** Legend item id - usually yKey value for cartesian series. */
-    itemId: string;
-    /** Whether the legend item is currently enabled or not. */
-    enabled: boolean;
-}
+export interface AgChartLegendClickEvent extends AgChartLegendEvent<'click'> {}
+
+export interface AgChartLegendDoubleClickEvent extends AgChartLegendEvent<'dblclick'> {}
 
 export interface AgChartLegendListeners {
     /** The listener to call when a legend item is clicked. */

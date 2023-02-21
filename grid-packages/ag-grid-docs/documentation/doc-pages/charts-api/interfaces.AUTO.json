@@ -817,15 +817,25 @@
   },
   "AgChartLegendEvent": {
     "meta": { "typeParams": ["T extends string"] },
-    "type": { "type": "T" }
+    "type": {
+      "type": "T",
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean"
+    },
+    "docs": {
+      "seriesId": "/** Series id */",
+      "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
+      "enabled": "/** Whether the legend item is currently enabled or not. */"
+    }
   },
   "AgChartLegendClickEvent": {
     "meta": {},
     "type": {
+      "type": "T",
       "seriesId": "string",
       "itemId": "string",
-      "enabled": "boolean",
-      "type": "T"
+      "enabled": "boolean"
     },
     "docs": {
       "seriesId": "/** Series id */",
@@ -836,10 +846,10 @@
   "AgChartLegendDoubleClickEvent": {
     "meta": {},
     "type": {
+      "type": "T",
       "seriesId": "string",
       "itemId": "string",
-      "enabled": "boolean",
-      "type": "T"
+      "enabled": "boolean"
     },
     "docs": {
       "seriesId": "/** Series id */",
