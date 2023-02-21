@@ -27,7 +27,7 @@ export interface IDate {
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 
-export interface IDateParams<TData = any> extends AgGridCommon<TData> {
+export interface IDateParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Method for component to tell AG Grid that the date has changed. */
     onDateChanged: () => void;
     filterParams: DateFilterParams;
