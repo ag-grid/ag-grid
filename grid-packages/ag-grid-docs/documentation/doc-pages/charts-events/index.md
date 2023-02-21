@@ -60,15 +60,18 @@ This example demonstrates:
 
 <chart-example title='Node Click Event' name='series-node-click-event' type='generated'></chart-example>
 
-## Legend Event - legendItemClick
+## Legend Event - legendItemClick and legendItemDoubleClick
 
-The `legendItemClick` event can be used to listen to legend item clicks.
+The `legendItemClick` and `legendItemDoubleClick` events can be used to listen to legend item clicks and double clicks, respectively.
 
-### Example: legendItemClick Event
+By default, when a legend item is clicked it hides the related series, and when double clicked it shows that series and hides all others.
+
+### Example: legendItemClick & legendItemDoubleClick Events
 
 This example demonstrates:
 
-- when a legend item is clicked, an alert message is shown with the `legendItemClick` event contents.
+- when a legend item is clicked, a message is logged to the console with the `legendItemClick` event contents.
+- when a legend item is double clicked, a message is logged to the console with the `legendItemDoubleClick` event contents.
 
 <chart-example title='Legend Item Click Event' name='legend-item-click-event' type='generated'></chart-example>
 
@@ -76,7 +79,7 @@ This example demonstrates:
 
 The `click` and `doubleClick` events are fired when any part of the chart is clicked or double clicked, respectively. The `doubleClick` event does not block the original `click` event from firing.
 
-These events may be prevented by other clickable parts of the chart, such as nodes.
+These events may be prevented by other clickable parts of the chart, such as series-nodes and legend items.
 
 ### Example: Single & Double Click Events
 
@@ -85,4 +88,4 @@ This example demonstrates:
 - when a chart is clicked, a message is logged to the console
 - when a chart is double clicked, a different message is logged to the console
 
-<chart-example title='Chart Double Click Event' name='chart-double-click-event' type='generated'></chart-example>
+<chart-example title='Chart Single & Double Click Events' name='chart-click-event' type='generated'></chart-example>

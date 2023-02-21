@@ -1,7 +1,4 @@
-import {
-  AgChart, AgCartesianChartOptions,
-  AgChartLegendClickEvent,
-} from "ag-charts-community"
+import { AgCartesianChartOptions, AgChart } from "ag-charts-community"
 
 let options: AgCartesianChartOptions = {
   container: document.getElementById("myChart"),
@@ -44,17 +41,26 @@ let options: AgCartesianChartOptions = {
   ],
   legend: {
     listeners: {
-      legendItemClick: ({
-        seriesId,
-        itemId,
-        enabled,
-      }: AgChartLegendClickEvent) => {
-        window.alert(
-          `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
-        )
-      },
+      // legendItemClick: ({
+      //   seriesId,
+      //   itemId,
+      //   enabled,
+      // }: AgChartLegendClickEvent) => {
+      //   console.log(
+      //     `Click - seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
+      //   )
+      // },
+      // legendItemDoubleClick: ({
+      //   seriesId,
+      //   itemId,
+      //   enabled,
+      // }: AgChartLegendDoubleClickEvent) => {
+      //   console.log(
+      //     `Double Click - seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
+      //   )
+      // },
     },
   },
-};
+}
 
-AgChart.create(options);
+AgChart.create(options)
