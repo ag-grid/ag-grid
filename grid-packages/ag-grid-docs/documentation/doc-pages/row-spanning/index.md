@@ -46,7 +46,7 @@ const gridOptions = {
 
 ## Row Spanning Simple Example
 
-Below shows a simple example using row spanning. The example doesn't make much sense,
+Below is a simple example using row spanning. The example doesn't make much sense,
 it just arbitrarily sets row span on some cells for demonstration purposes.
 
 - The **Athlete** column is configured to span 2 rows for 'Aleksey Nemov' and 4 rows for 'Ryan Lochte'.

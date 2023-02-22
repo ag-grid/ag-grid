@@ -101,9 +101,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         if (callback) {
             return callback({
                 column: column,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context')
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context
             });
         }
 
@@ -114,9 +114,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         if (this.processRowGroupCallback) {
             return this.processRowGroupCallback({
                 node: node,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context'),
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context,
             });
         }
         const isFooter = node.footer;
@@ -143,9 +143,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 column: column,
                 node: rowNode,
                 value: value,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context'),
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context,
                 type: type
             });
         }

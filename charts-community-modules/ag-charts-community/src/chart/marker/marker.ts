@@ -25,7 +25,7 @@ export abstract class Marker extends Path {
         let { x, y } = this;
 
         path.clear();
-        for (let { x: mx, y: my, t } of moves) {
+        for (const { x: mx, y: my, t } of moves) {
             x += mx * s;
             y += my * s;
             if (t === 'move') {

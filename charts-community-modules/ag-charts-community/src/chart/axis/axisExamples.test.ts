@@ -3,8 +3,9 @@ import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
 import { AgChartOptions, AgCartesianAxisType, AgCartesianAxisPosition } from '../agChartOptions';
 import { AgChart } from '../agChartV2';
-import { Chart, ChartUpdateType } from '../chart';
-import { ChartAxis, ChartAxisDirection } from '../chartAxis';
+import { Chart } from '../chart';
+import { ChartUpdateType } from '../chartUpdateType';
+import { ChartAxis } from '../chartAxis';
 import * as axesExamples from '../test/examples-axes';
 import * as examples from '../test/examples';
 import {
@@ -17,7 +18,9 @@ import {
     CANVAS_HEIGHT,
     CANVAS_WIDTH,
     deproxy,
+    repeat,
 } from '../test/utils';
+import { ChartAxisDirection } from '../chartAxisDirection';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
 
@@ -114,14 +117,14 @@ const EXAMPLES_NO_SERIES: Record<string, TestCase> = {
         options: axesExamples.TIME_AXIS_NO_SERIES,
         assertions: cartesianChartAssertions({
             axisTypes: ['time', 'number'],
-            seriesTypes: ['line', 'line', 'line', 'line'],
+            seriesTypes: repeat('line', 4),
         }),
     },
     TIME_AXIS_NO_SERIES_FIXED_DOMAIN: {
         options: axesExamples.TIME_AXIS_NO_SERIES_FIXED_DOMAIN,
         assertions: cartesianChartAssertions({
             axisTypes: ['time', 'number'],
-            seriesTypes: ['line', 'line', 'line', 'line'],
+            seriesTypes: repeat('line', 4),
         }),
     },
     COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES: {
@@ -154,6 +157,40 @@ const EXAMPLES_NO_SERIES: Record<string, TestCase> = {
     },
 };
 
+const EXAMPLES_TICK_VALUES: Record<string, TestCase> = {
+    NUMBER_AXIS_TICK_VALUES: {
+        options: axesExamples.NUMBER_AXIS_TICK_VALUES,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['scatter'] }),
+    },
+    TIME_AXIS_TICK_VALUES: {
+        options: axesExamples.TIME_AXIS_TICK_VALUES,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 4) }),
+    },
+    LOG_AXIS_TICK_VALUES: {
+        options: axesExamples.LOG_AXIS_TICK_VALUES,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'log'], seriesTypes: ['line'] }),
+    },
+    CATEGORY_AXIS_TICK_VALUES: {
+        options: axesExamples.CATEGORY_AXIS_TICK_VALUES,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['bar'] }),
+    },
+};
+
+const EXAMPLES_TICK_SPACING: Record<string, TestCase> = {
+    AXIS_TICK_MIN_SPACING: {
+        options: axesExamples.AXIS_TICK_MIN_SPACING,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 4) }),
+    },
+    AXIS_TICK_MAX_SPACING: {
+        options: axesExamples.AXIS_TICK_MAX_SPACING,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['scatter'] }),
+    },
+    AXIS_TICK_MIN_MAX_SPACING: {
+        options: axesExamples.AXIS_TICK_MIN_MAX_SPACING,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['bar'] }),
+    },
+};
+
 function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, TestCase> {
     const result = { ...baseCases };
 
@@ -175,7 +212,7 @@ function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, 
 }
 
 function calculateAxisBBox(axis: ChartAxis<any>): { x: number; y: number; width: number; height: number } {
-    let bbox = axis.computeBBox();
+    const bbox = axis.computeBBox();
 
     const { x, y, width, height } = bbox;
     return { x, y, width, height };
@@ -191,7 +228,7 @@ describe('Axis Examples', () => {
         }
     });
 
-    let ctx = setupMockCanvas();
+    const ctx = setupMockCanvas();
 
     beforeEach(() => {
         console.warn = jest.fn();
@@ -343,5 +380,71 @@ describe('Axis Examples', () => {
             const afterFinalUpdate = await snapshot();
             (expect(afterFinalUpdate) as any).toMatchImage(reference);
         });
+    });
+
+    describe('configured tick values cases', () => {
+        for (const [exampleName, example] of Object.entries(EXAMPLES_TICK_VALUES)) {
+            it(`for ${exampleName} it should create chart instance as expected`, async () => {
+                const options: AgChartOptions = example.options;
+                chart = deproxy(AgChart.create(options)) as Chart;
+                await waitForChartStability(chart);
+                await example.assertions(chart);
+            });
+
+            it(`for ${exampleName} it should render to canvas as expected`, async () => {
+                const compare = async () => {
+                    await waitForChartStability(chart);
+
+                    const newImageData = extractImageData({ ...ctx });
+                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+                };
+
+                const options: AgChartOptions = { ...example.options };
+                options.autoSize = false;
+                options.width = CANVAS_WIDTH;
+                options.height = CANVAS_HEIGHT;
+
+                chart = deproxy(AgChart.create(options)) as Chart;
+                await compare();
+
+                if (example.extraScreenshotActions) {
+                    await example.extraScreenshotActions(chart);
+                    await compare();
+                }
+            });
+        }
+    });
+
+    describe('configured tick spacing cases', () => {
+        for (const [exampleName, example] of Object.entries(EXAMPLES_TICK_SPACING)) {
+            it(`for ${exampleName} it should create chart instance as expected`, async () => {
+                const options: AgChartOptions = example.options;
+                chart = deproxy(AgChart.create(options)) as Chart;
+                await waitForChartStability(chart);
+                await example.assertions(chart);
+            });
+
+            it(`for ${exampleName} it should render to canvas as expected`, async () => {
+                const compare = async () => {
+                    await waitForChartStability(chart);
+
+                    const newImageData = extractImageData({ ...ctx });
+                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+                };
+
+                const options: AgChartOptions = { ...example.options };
+                options.autoSize = false;
+                options.width = CANVAS_WIDTH;
+                options.height = CANVAS_HEIGHT;
+
+                chart = deproxy(AgChart.create(options)) as Chart;
+                await compare();
+
+                if (example.extraScreenshotActions) {
+                    await example.extraScreenshotActions(chart);
+                    await compare();
+                }
+            });
+        }
     });
 });

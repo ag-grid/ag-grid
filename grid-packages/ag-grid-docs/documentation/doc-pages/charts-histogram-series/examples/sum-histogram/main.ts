@@ -1,5 +1,4 @@
-import * as agCharts from 'ag-charts-community';
-import { AgChartOptions } from 'ag-charts-community';
+import { AgChart, AgChartOptions } from 'ag-charts-community';
 import { getData } from "./data";
 
 const options: AgChartOptions = {
@@ -29,6 +28,7 @@ const options: AgChartOptions = {
       type: 'number',
       position: 'bottom',
       title: { text: 'Age band (years)' },
+      tick: { interval: 2 },
     },
     {
       type: 'number',
@@ -38,4 +38,4 @@ const options: AgChartOptions = {
   ],
 }
 
-agCharts.AgChart.create(options)
+AgChart.create(options)

@@ -59,8 +59,8 @@ gridOptions.api.forEachLeafNode((rowNode, index) => {
 </snippet>
 
 [[note]]
-| All of the methods above work with the [Client-Side](/client-side-model/)
-| row model. For all the other row models ([Viewport](/viewport/),
+| All the methods above work with the Client-Side Row Model, i.e. the default [Row Model](/row-models/).
+| For all the other row models (i.e. [Viewport](/viewport/),
 | [Infinite](/infinite-scrolling/) and [Server-Side](/server-side-model/)) the only method
 | that is supported is `api.forEachNode()` and that will return back Row Nodes that are loaded into
 | browser memory only (as each of these row models use a data source to lazy load rows).

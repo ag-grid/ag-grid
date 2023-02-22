@@ -7,26 +7,20 @@ export const UPDATE_INTERVAL = 60;
  * All stock names for generated data
  */
 export const STOCK_NAMES = [
-    'Cow Moans',
-    'Nasraq 500',
-    'Fang Peng',
+    'SID capital',
+    'Uptick 500',
+    'Xingyun BA',
     'Wiltshire 4500-kbm',
     'DT PI',
-    'Footsie MID',
+    'ESTA-MID',
     'Capra ibex',
-    'NY composte index',
+    'NY composite index',
 ];
 
 /**
  * Priority of showing the columns, if they fit on the screen
  */
-export const COLUMN_ID_PRIORITIES = [
-    "stock",
-    "current",
-    "timeline",
-    "percentageChange",
-    "last"
-];
+export const COLUMN_ID_PRIORITIES = ['stock', 'current', 'timeline', 'percentageChange', 'last'];
 
 /**
  * When to filter rows for smaller screens

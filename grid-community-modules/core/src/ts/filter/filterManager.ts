@@ -8,7 +8,7 @@ import { IRowModel } from '../interfaces/iRowModel';
 import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent } from '../events';
 import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
-import { UserComponentFactory } from '../components/framework/userComponentFactory';
+import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { BeanStub } from '../context/beanStub';
@@ -19,6 +19,9 @@ import { loadTemplate } from '../utils/dom';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyChangedEvent } from '../gridOptionsService';
+import { FilterComponent } from '../components/framework/componentTypes';
+import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
+import { unwrapUserComp } from '../gridApi';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -59,6 +62,7 @@ export class FilterManager extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.refreshFiltersForAggregations());
 
         this.addManagedPropertyListener('quickFilterText', (e: PropertyChangedEvent) => this.setQuickFilter(e.currentValue));
+        this.addManagedPropertyListener('excludeHiddenColumnsFromQuickFilter', () => this.onExcludeHiddenColumnsFromQuickFilterChanged());
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsService.get('quickFilterText'));
         this.setQuickFilterParts();
@@ -303,7 +307,7 @@ export class FilterManager extends BeanStub {
         return newFilter.toUpperCase();
     }
 
-    public setQuickFilter(newFilter: string): void {
+    private setQuickFilter(newFilter: string): void {
         if (newFilter != null && typeof newFilter !== 'string') {
             console.warn(`AG Grid - setQuickFilter() only supports string inputs, received: ${typeof newFilter}`);
             return;
@@ -314,6 +318,18 @@ export class FilterManager extends BeanStub {
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
             this.setQuickFilterParts();
+            this.onFilterChanged();
+        }
+    }
+
+    public resetQuickFilterCache(): void {
+        this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
+    }
+
+    private onExcludeHiddenColumnsFromQuickFilterChanged(): void {
+        this.columnModel.refreshQuickFilterColumns();
+        this.resetQuickFilterCache();
+        if (this.isQuickFilterPresent()) {
             this.onFilterChanged();
         }
     }
@@ -343,6 +359,7 @@ export class FilterManager extends BeanStub {
     public onFilterChanged(params: { filterInstance?: IFilterComp, additionalEventAttributes?: any, columns?: Column[] } = {}): void {
         const { filterInstance, additionalEventAttributes, columns } = params;
 
+        this.updateDependantFilters();
         this.updateActiveFilters();
         this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes);
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
@@ -465,9 +482,9 @@ export class FilterManager extends BeanStub {
                 data: node.data,
                 column,
                 colDef,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context')
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context
             };
 
             value = colDef.getQuickFilterText(params);
@@ -591,9 +608,9 @@ export class FilterManager extends BeanStub {
             filterModifiedCallback: () => { },
             valueGetter: this.createValueGetter(column),
             doesRowPassOtherFilter: () => true,
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            context: this.gridOptionsService.get('context'),
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context,
         };
 
         return params;
@@ -669,7 +686,76 @@ export class FilterManager extends BeanStub {
 
         if (columns.length > 0) {
             this.onFilterChanged({ columns });
+        } else {
+            // onFilterChanged does this already
+            this.updateDependantFilters();
         }
+    }
+
+    private updateDependantFilters(): void {
+        // Group column filters can be dependant on underlying column filters, but don't normally get created until they're used for the first time.
+        // Instead, create them by default when any filter changes.
+        const groupColumns = this.columnModel.getGroupAutoColumns();
+        groupColumns?.forEach(groupColumn => {
+            if (groupColumn.getColDef().filter === 'agGroupColumnFilter') {
+                this.getOrCreateFilterWrapper(groupColumn, 'NO_UI');
+            }
+        });
+    }
+
+    // for group filters, can change dynamically whether they are allowed or not
+    public isFilterAllowed(column: Column): boolean {
+        const isFilterAllowed = column.isFilterAllowed();
+        if (!isFilterAllowed) {
+            return false;
+        }
+        const filterWrapper = this.allColumnFilters.get(column.getColId());
+        return filterWrapper?.filterPromise?.resolveNow(
+            true,
+            // defer to filter component isFilterAllowed if it exists
+            filter => (typeof (filter as any)?.isFilterAllowed === 'function')
+                ? (filter as any)?.isFilterAllowed()
+                : true
+        ) ?? true;
+    }
+
+    public getFloatingFilterCompDetails(column: Column, showParentFilter: () => void): UserCompDetails | undefined {
+        const colDef = column.getColDef();
+        const filterParams = this.createFilterParams(column, colDef);
+        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
+
+        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef);
+
+        if (defaultFloatingFilterType == null) {
+            defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
+        }
+
+        const parentFilterInstance = (callback: IFloatingFilterParentCallback<IFilter>) => {
+            const filterComponent = this.getFilterComponent(column, 'NO_UI');
+    
+            if (filterComponent == null) { return; }
+    
+            filterComponent.then(instance => {
+                callback(unwrapUserComp(instance!));
+            });
+        }
+
+        const params: WithoutGridCommon<IFloatingFilterParams<IFilter>> = {
+            column: column,
+            filterParams: finalFilterParams,
+            currentParentModel: () => this.getCurrentFloatingFilterParentModel(column),
+            parentFilterInstance,
+            showParentFilter,
+            suppressFilterButton: false // This one might be overridden from the colDef
+        };
+
+        return this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
+    }
+
+    public getCurrentFloatingFilterParentModel(column: Column): any {
+        const filterComponent = this.getFilterComponent(column, 'NO_UI', false);
+
+        return filterComponent ? filterComponent.resolveNow(null, filter => filter && filter.getModel()) : null;
     }
 
     // destroys the filter, so it not longer takes part
@@ -687,9 +773,8 @@ export class FilterManager extends BeanStub {
             (filter!.setModel(null) || AgPromise.resolve()).then(() => {
                 this.getContext().destroyBean(filter);
 
-                filterWrapper.column.setFilterActive(false, source);
-
                 this.allColumnFilters.delete(filterWrapper.column.getColId());
+                filterWrapper.column.setFilterActive(false, source);
             });
         });
     }

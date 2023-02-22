@@ -1,11 +1,10 @@
 import React from "react";
 import {Helmet} from "react-helmet";
 import styles from "../assets/homepage/homepage.module.scss";
-import {rootLocalPrefix, localPrefix} from '../../../utils/consts';
-import isDevelopment from '../../../utils/is-development';
+import {rootLocalPrefix, localPrefix, isProductionBuild} from '../../../utils/consts';
 
 const helmet = [];
-if(isDevelopment()) {
+if(!isProductionBuild()) {
     helmet.push(<link key="best-html-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/styles/ag-theme-material.css`} crossOrigin="anonymous"/>);
     helmet.push(<script key="enterprise-lib" src={`${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`} type="text/javascript"/>);
 } else {

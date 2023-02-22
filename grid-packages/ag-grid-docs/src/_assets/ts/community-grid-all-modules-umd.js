@@ -16,3 +16,4 @@ const InfiniteRowModelModule = require("../../../../../grid-community-modules/in
 ModuleRegistry.ModuleRegistry.register(ClientSideRowModelModule);
 ModuleRegistry.ModuleRegistry.register(CsvExportModule);
 ModuleRegistry.ModuleRegistry.register(InfiniteRowModelModule);
+ModuleRegistry.ModuleRegistry.setIsBundled();

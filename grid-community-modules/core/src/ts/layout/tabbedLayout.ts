@@ -42,6 +42,8 @@ export class TabbedLayout extends Component {
                 handleKeyDown: this.handleKeyDown.bind(this)
             }
         ));
+
+        this.addDestroyFunc(() => this.activeItem?.tabbedItem?.afterDetachedCallback?.());
     }
 
     private static getTemplate(cssClass?: string) {
@@ -84,28 +86,38 @@ export class TabbedLayout extends Component {
         const { focusService, eHeader, eBody, activeItem } = this;
         const eDocument = this.gridOptionsService.getDocument();
         const activeElement = eDocument.activeElement as HTMLElement;
+        const target = e.target as HTMLElement;
 
         e.preventDefault();
 
         if (eHeader.contains(activeElement)) {
             // focus is in header, move into body of popup
             focusService.focusInto(eBody, e.shiftKey);
-        } else {
-            // focus is in body, establish if it should return to header
-            if (focusService.isFocusUnderManagedComponent(eBody)) {
-                // focus was in a managed focus component and has now left, so we can return to the header
-                activeItem.eHeaderButton.focus();
-            } else {
-                const nextEl = focusService.findNextFocusableElement(eBody, false, e.shiftKey);
+            return;
+        }
 
-                if (nextEl) {
-                    // if another element exists in the body that can be focussed, go to that
-                    nextEl.focus();
-                } else {
-                    // otherwise return to the header
-                    activeItem.eHeaderButton.focus();
-                }
+        let nextEl: HTMLElement | null = null;
+
+        if (focusService.isTargetUnderManagedComponent(eBody, target)) {
+            if (e.shiftKey) {
+                nextEl = this.focusService.findFocusableElementBeforeTabGuard(eBody, target);
             }
+
+            if (!nextEl) {
+                nextEl = activeItem.eHeaderButton;
+            }
+        }
+
+        if (!nextEl && eBody.contains(activeElement)) {
+            nextEl = focusService.findNextFocusableElement(eBody, false, e.shiftKey);
+
+            if (!nextEl) {
+                nextEl = activeItem.eHeaderButton;
+            }
+        }
+
+        if (nextEl) {
+            nextEl.focus();
         }
     }
 
@@ -192,6 +204,7 @@ export class TabbedLayout extends Component {
 
         if (this.activeItem) {
             this.activeItem.eHeaderButton.classList.remove('ag-tab-selected');
+            this.activeItem.tabbedItem.afterDetachedCallback?.();
         }
 
         eHeaderButton.classList.add('ag-tab-selected');
@@ -215,6 +228,7 @@ export interface TabbedItem {
     name: string;
     getScrollableContainer?: () => HTMLElement;
     afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;
+    afterDetachedCallback?: () => void;
 }
 
 interface TabbedItemWrapper {

@@ -39,7 +39,7 @@ The following example shows the following features of floating filters:
 - The user can configure when to show/hide the button that shows the full filter (Silver and Bronze columns)
 - The Year column has a filter, but has the floating filter disabled
 - The Total column has no filter and therefore no floating filter either
-- Combining `suppressMenu = true` and `filter = false` lets you control where the user can access the full filter. In this example `suppressMenu = true` for all the columns except Year, Silver and Bronze
+- Combining `suppressMenu = true` and `filter = false` lets you control where the user can access the full filter. In this example `suppressMenu = true` for all the columns except Year, Silver, Bronze and Total.
 
 <grid-example title='Floating Filter' name='floating-filter' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["clientside", "setfilter", "menu"] }'></grid-example>
 

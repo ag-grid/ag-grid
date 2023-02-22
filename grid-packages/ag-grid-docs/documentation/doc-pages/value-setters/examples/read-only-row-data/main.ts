@@ -29,8 +29,14 @@ function onCellEditRequest(event: CellEditRequestEvent) {
   const data = event.data;
   const field = event.colDef.field;
   const newValue = event.newValue;
-  const newItem = { ...data };
-  newItem[field!] = event.newValue;
+
+  const oldItem = rowImmutableStore.find(row => row.id === data.id);
+
+  if (!oldItem || !field) { return; }
+
+  const newItem = {...oldItem };
+
+  newItem[field] = newValue;
 
   console.log('onCellEditRequest, updating ' + field + ' to ' + newValue);
 

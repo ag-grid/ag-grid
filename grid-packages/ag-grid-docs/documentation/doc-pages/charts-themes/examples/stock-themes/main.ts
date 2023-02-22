@@ -1,5 +1,4 @@
-import { AgChartOptions, AgChartTheme } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import { AgChartOptions, AgChartTheme, AgChart } from 'ag-charts-community'
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
@@ -29,9 +28,9 @@ const options: AgChartOptions = {
   ],
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)
 
-function applyTheme(theme: AgChartTheme) {
+function applyTheme(theme: string | AgChartTheme) {
   options.theme = theme
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }

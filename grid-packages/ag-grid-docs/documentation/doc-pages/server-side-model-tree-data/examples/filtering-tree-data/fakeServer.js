@@ -7,24 +7,25 @@ function FakeServer(allData) {
 
     return {
         getData: function(request) {
-            var results = executeQuery(request);
+            const hasFilter = request.filterModel && Object.keys(request.filterModel).length;
+            var results = executeQuery(request, hasFilter);
 
-            if (request.filterModel && Object.keys(request.filterModel).length) {
+            if (hasFilter) {
                 results = recursiveFilter(request, results);
             }
 
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request, results)
+                lastRow: getLastRowIndex(request)
             };
         },
-        getDates() {
+        getDates: function() {
             var sql = 'SELECT DISTINCT startDate FROM ? ORDER BY startDate ASC';
 
             return alasql(sql, [processedData]).map(row => row.startDate);
         },
-        getEmployees() {
+        getEmployees: function() {
             // get children only
             var sql = 'SELECT DISTINCT dataPath FROM ? WHERE underlings = FALSE ORDER BY dataPath ASC';
 
@@ -32,16 +33,16 @@ function FakeServer(allData) {
         }
     };
 
-    function executeQuery(request) {
-        var sql = buildSql(request);
+    function executeQuery(request, ignoreLimit) {
+        var sql = buildSql(request, ignoreLimit);
 
         console.log('[FakeServer] - about to execute query:', sql);
 
         return alasql(sql, [processedData]);
     }
 
-    function buildSql(request) {
-        return 'SELECT * FROM ?' + whereSql(request) + orderBySql(request) + limitSql(request);
+    function buildSql(request, ignoreLimit) {
+        return 'SELECT * FROM ?' + whereSql(request) + orderBySql(request) + limitSql(request, ignoreLimit);
     }
 
     function whereSql(request) {
@@ -49,7 +50,7 @@ function FakeServer(allData) {
 
         var filterModel = request.filterModel;
 
-        if (filterModel && Object.keys(request.filterModel).length) {
+        if (filterModel && Object.keys(filterModel).length) {
             Object.keys(filterModel).forEach(function(key) {
                 var item = filterModel[key];
                 if (key === 'ag-Grid-AutoColumn') {
@@ -157,22 +158,21 @@ function FakeServer(allData) {
         return ' ORDER BY ' + sorts.join(', ');
     }
 
-    function limitSql(request) {
-        if (request.endRow == undefined || request.startRow == undefined) { return ''; }
+    function limitSql(request, ignoreLimit) {
+        if (ignoreLimit || request.endRow == undefined || request.startRow == undefined) { return ''; }
         var blockSize = request.endRow - request.startRow;
 
-        return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
+        return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }
 
-    function getLastRowIndex(request, results) {
-        if (!results || results.length === 0) {
-            return request.startRow;
+    function getLastRowIndex(request) {
+        const hasFilter = request.filterModel && Object.keys(request.filterModel).length;
+        var results = executeQuery(request, hasFilter);
+
+        if (hasFilter) {
+            results = recursiveFilter(request, results);
         }
-        if (request.endRow == undefined || request.startRow == undefined) { return results.length; }
-
-        var currentLastRow = request.startRow + results.length;
-
-        return currentLastRow <= request.endRow ? currentLastRow : -1;
+        return results.length;
     }
 
     function processData(data) {
@@ -195,46 +195,35 @@ function FakeServer(allData) {
 
     function recursiveFilter(request, results) {
         // tree data filter returns rows where the row itself matches, parent matches, or a child matches.
-        // paths for parents and self
-        let exactPaths = [];
-        // paths for children
-        let startsWithPaths = [];
-        results.forEach(result => {
-            exactPaths.push(...getParentPaths(result.parentPath));
-            exactPaths.push(result.dataPath)
-            startsWithPaths.push(result.dataPath + ',');
-        });
+        // matches for row itself
+        const allResults = [...results];
+        // parents of matching rows
+        recursiveFilterParentMatches(allResults, results);
+        // children of matching rows
+        recursiveFilterChildMatches(allResults, results);
+
         const requestPath = request.groupKeys.join(',');
-        exactPaths = Array.from(new Set(exactPaths.filter(path => path.startsWith(requestPath))));
-        startsWithPaths = Array.from(new Set(startsWithPaths.filter(path => path.startsWith(requestPath) || requestPath.startsWith(path))));
-        if (exactPaths.length || startsWithPaths.length) {
-            const sql = buildTreeFilterSql(request, requestPath, exactPaths, startsWithPaths);
-            return alasql(sql, [processedData]);
-        }
-        return [];
+        const sql = "SELECT DISTINCT processedData.* FROM ? processedData INNER JOIN ? allResults ON processedData.dataPath = allResults.dataPath WHERE parentPath = '" + requestPath + "'" + orderBySql(request) + limitSql(request);
+        return alasql(sql, [processedData, allResults]);
     }
 
-    function buildTreeFilterSql(request, requestPath, exactPaths, startsWithPaths) {
-        const pathsSql = [];
-        if (exactPaths.length) {
-            pathsSql.push('dataPath IN (' + exactPaths.map(path => "'" + path + "'").join(',') + ')');
+    function recursiveFilterParentMatches(allResults, childResults) {
+        if (!childResults.length) {
+            return;
         }
-        if (startsWithPaths.length) {
-            pathsSql.push('(' + startsWithPaths.map(path => "dataPath LIKE '" + path + "%'").join(' OR ') + ')');
-        }
-
-        return 'SELECT * FROM ? WHERE (' + pathsSql.join(' OR ') + ") AND parentPath = '" + requestPath + "'" + orderBySql(request) + limitSql(request);
+        const sql = 'SELECT DISTINCT processedData.* FROM ? processedData INNER JOIN ? parentResults ON processedData.dataPath = parentResults.parentPath';
+        const newMatches = alasql(sql, [processedData, childResults]).filter(newResult => !allResults.some(existingResult => newResult.dataPath === existingResult.dataPath));
+        allResults.push(...newMatches);
+        recursiveFilterParentMatches(allResults, newMatches);
     }
 
-    function getParentPaths(parentPath) {
-        const paths = [];
-        let path = parentPath;
-        let index = parentPath.length;
-        while (index >= 0) {
-            path = path.slice(0, index);
-            paths.push(path);
-            index = path.lastIndexOf(',');
-        };
-        return paths;
+    function recursiveFilterChildMatches(allResults, parentResults) {
+        if (!parentResults.length) {
+            return;
+        }
+        const sql = 'SELECT DISTINCT processedData.* FROM ? processedData INNER JOIN ? parentResults ON processedData.parentPath = parentResults.dataPath';
+        const newMatches = alasql(sql, [processedData, parentResults]).filter(newResult => !allResults.some(existingResult => newResult.dataPath === existingResult.dataPath));
+        allResults.push(...newMatches);
+        recursiveFilterChildMatches(allResults, newMatches);
     }
 }

@@ -216,7 +216,7 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
     });
 
     // For React we need to identify the external dependencies for callbacks to prevent stale closures
-    const GLOBAL_DEPS = new Set(['console', 'document', 'Error'])
+    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this'])
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelFunction(node),
         apply: (bindings, node: ts.SignatureDeclaration) => {

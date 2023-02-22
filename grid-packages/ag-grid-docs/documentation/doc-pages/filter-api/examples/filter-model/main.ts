@@ -24,7 +24,6 @@ var filterParams: IDateFilterParams = {
     }
     return 0;
   },
-  // browserDatePicker: true,
 }
 
 const columnDefs: ColDef[] = [
@@ -93,9 +92,6 @@ function restoreFromHardCoded() {
 
 function destroyFilter() {
   gridOptions.api!.destroyFilter('athlete');
-  const filtersToolPanel = gridOptions.api!.getToolPanelInstance('filters');
-  filtersToolPanel!.collapseFilters(['athlete']);
-  filtersToolPanel!.expandFilters(['athlete']);
 }
 
 // setup the grid after the page has finished loading

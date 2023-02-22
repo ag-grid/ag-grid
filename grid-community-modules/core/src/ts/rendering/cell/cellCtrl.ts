@@ -1,17 +1,16 @@
 import { Beans } from "./../beans";
 import { Column } from "../../entities/column";
-import { NewValueParams } from "../../entities/colDef";
+import { CellStyle, NewValueParams } from "../../entities/colDef";
 import { RowNode } from "../../entities/rowNode";
 import { CellChangedEvent } from "../../interfaces/iRowNode";
-import { CellPosition } from "../../entities/cellPosition";
+import { CellPosition } from "../../entities/cellPositionUtils";
 import {
     CellContextMenuEvent,
     CellEditingStartedEvent,
     CellEvent,
     CellFocusedEvent,
     Events,
-    FlashCellsEvent,
-    CellEditRequestEvent
+    FlashCellsEvent
 } from "../../events";
 import { CellRangeFeature } from "./cellRangeFeature";
 import { exists, makeNull } from "../../utils/generic";
@@ -20,7 +19,7 @@ import { CellPositionFeature } from "./cellPositionFeature";
 import { escapeString } from "../../utils/string";
 import { CellCustomStyleFeature } from "./cellCustomStyleFeature";
 import { TooltipFeature, ITooltipFeatureCtrl } from "../../widgets/tooltipFeature";
-import { RowPosition } from "../../entities/rowPosition";
+import { RowPosition } from "../../entities/rowPositionUtils";
 import { RowCtrl } from "../row/rowCtrl";
 import { CellMouseListenerFeature } from "./cellMouseListenerFeature";
 import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";
@@ -48,7 +47,7 @@ const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
 
 export interface ICellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setUserStyles(styles: any): void;
+    setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
 
     setTabIndex(tabIndex: number): void;
@@ -160,9 +159,9 @@ export class CellCtrl extends BeanStub {
             if (valueGetter) {
                 return valueGetter({
                     location: 'cell',
-                    api: this.beans.gridOptionsService.get('api')!,
-                    columnApi: this.beans.gridOptionsService.get('columnApi')!,
-                    context: this.beans.gridOptionsService.get('context'),
+                    api: this.beans.gridOptionsService.api,
+                    columnApi: this.beans.gridOptionsService.columnApi,
+                    context: this.beans.gridOptionsService.context,
                     colDef: this.column.getColDef(),
                     column: this.column,
                     rowIndex: this.cellPosition.rowIndex,
@@ -369,7 +368,7 @@ export class CellCtrl extends BeanStub {
         const position: 'over' | 'under' | undefined = compDetails?.popupPositionFromSelector != null ? compDetails.popupPositionFromSelector : colDef.cellEditorPopupPosition;
 
         this.setEditing(true);
-        this.cellComp.setEditDetails(compDetails!, popup, position);
+        this.cellComp.setEditDetails(compDetails, popup, position);
 
         const e: CellEditingStartedEvent = this.createEvent(event, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(e);
@@ -426,42 +425,15 @@ export class CellCtrl extends BeanStub {
     private saveNewValue(oldValue: any, newValue: any): boolean {
         if (newValue === oldValue) { return false; }
 
-        if (this.beans.gridOptionsService.is('readOnlyEdit')) {
-            this.dispatchEventForSaveValueReadOnly(oldValue, newValue);
-            return false;
-        }
-
         // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
         // getting triggered, which results in all cells getting refreshed. we do not want this refresh
         // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
         // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
         this.suppressRefreshCell = true;
-        const valueChanged = this.rowNode.setDataValue(this.column, newValue);
+        const valueChanged = this.rowNode.setDataValue(this.column, newValue, 'edit');
         this.suppressRefreshCell = false;
 
         return valueChanged;
-    }
-
-    private dispatchEventForSaveValueReadOnly(oldValue: any, newValue: any): void {
-        const rowNode = this.rowNode;
-        const event: CellEditRequestEvent = {
-            type: Events.EVENT_CELL_EDIT_REQUEST,
-            event: null,
-            rowIndex: rowNode.rowIndex!,
-            rowPinned: rowNode.rowPinned,
-            column: this.column,
-            api: this.beans.gridApi,
-            columnApi: this.beans.columnApi,
-            colDef: this.column.getColDef(),
-            context: this.beans.gridOptionsService.get('context'),
-            data: rowNode.data,
-            node: rowNode,
-            oldValue,
-            newValue,
-            value: newValue,
-            source: undefined
-        };
-        this.beans.eventService.dispatchEvent(event);
     }
 
     /**
@@ -511,10 +483,10 @@ export class CellCtrl extends BeanStub {
             rowIndex: this.getCellPosition().rowIndex,
             node: this.rowNode,
             data: this.rowNode.data,
-            api: this.beans.gridOptionsService.get('api')!,
+            api: this.beans.gridOptionsService.api,
             cellStartedEdit: cellStartedEdit,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
-            context: this.beans.gridOptionsService.get('context'),
+            columnApi: this.beans.gridOptionsService.columnApi,
+            context: this.beans.gridOptionsService.context,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.getGui(),
@@ -537,9 +509,9 @@ export class CellCtrl extends BeanStub {
             colDef: this.column.getColDef(),
             column: this.column,
             rowIndex: this.getCellPosition().rowIndex,
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
-            context: this.beans.gridOptionsService.get('context'),
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
+            context: this.beans.gridOptionsService.context,
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.getGui(),
             eParentOfValue: this.cellComp.getParentOfValue(),
@@ -560,14 +532,20 @@ export class CellCtrl extends BeanStub {
             newValue: newValue,
             colDef: colDef,
             column: this.column,
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
-            context: this.beans.gridOptionsService.get('context')
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
+            context: this.beans.gridOptionsService.context
         };
 
         const valueParser = colDef.valueParser;
 
-        return exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
+        if (exists(valueParser)) {
+            if (typeof valueParser === 'function') {
+                return valueParser(params);
+            }
+            return this.beans.expressionService.evaluate(valueParser, params);
+        }
+        return newValue;
     }
 
     public setFocusOutOnEditor(): void {
@@ -827,7 +805,7 @@ export class CellCtrl extends BeanStub {
             value: this.value,
             column: this.column,
             colDef: this.column.getColDef(),
-            context: this.beans.gridOptionsService.get('context'),
+            context: this.beans.gridOptionsService.context,
             api: this.beans.gridApi,
             columnApi: this.beans.columnApi,
             rowPinned: this.rowNode.rowPinned,

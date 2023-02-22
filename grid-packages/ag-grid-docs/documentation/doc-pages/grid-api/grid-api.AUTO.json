@@ -179,6 +179,15 @@
       }
     }
   },
+  "setColumnTypes": {
+    "description": "/** Call to set new Column Types. */",
+    "type": {
+      "arguments": {
+        "columnTypes": "{ string: ColDef<TData>; }",
+        "source": "ColumnEventType = \"api\""
+      }
+    }
+  },
   "expireValueCache": { "type": { "arguments": {}, "returnType": "void" } },
   "getVerticalPixelRange": {
     "description": "/** Returns an object with two properties:\n     *  - `top`: The top pixel position of the current scroll in the grid\n     *  - `bottom`: The bottom pixel position of the current scroll in the grid\n     */",
@@ -239,7 +248,7 @@
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "isQuickFilterPresent": {
-    "description": "/** Returns `true` if the quick filter is set, otherwise `false`. */",
+    "description": "/** Returns `true` if the Quick Filter is set, otherwise `false`. */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "getModel": {
@@ -247,9 +256,13 @@
     "type": { "arguments": {}, "returnType": "IRowModel" }
   },
   "setRowNodeExpanded": {
-    "description": "/** Expand or collapse a specific row node. */",
+    "description": "/** Expand or collapse a specific row node, optionally expanding/collapsing all of its parent nodes. */",
     "type": {
-      "arguments": { "rowNode": "IRowNode", "expanded": "boolean" },
+      "arguments": {
+        "rowNode": "IRowNode",
+        "expanded": "boolean",
+        "expandParents?": "boolean"
+      },
       "returnType": "void"
     }
   },
@@ -300,9 +313,17 @@
       }
     }
   },
+  "getQuickFilter": {
+    "description": "/** Get the current Quick Filter text from the grid, or `undefined` if none is set. */",
+    "type": { "arguments": {}, "returnType": "string | undefined" }
+  },
   "setQuickFilter": {
-    "description": "/** Pass a quick filter text into the grid for filtering. */",
+    "description": "/** Pass a Quick Filter text into the grid for filtering. */",
     "type": { "arguments": { "newFilter": "string" }, "returnType": "void" }
+  },
+  "setExcludeHiddenColumnsFromQuickFilter": {
+    "description": "/** \n     * Updates the `excludeHiddenColumnsFromQuickFilter` grid option.\n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter (or `false` to include them).\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible.\n     */",
+    "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
   },
   "selectAll": {
     "description": "/** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`\n     */",
@@ -329,6 +350,22 @@
     "type": {
       "arguments": {
         "source": "SelectionEventSourceType = 'apiSelectAllFiltered'"
+      }
+    }
+  },
+  "selectAllOnCurrentPage": {
+    "description": "/** Select all rows on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`\n     */",
+    "type": {
+      "arguments": {
+        "source": "SelectionEventSourceType = 'apiSelectAllCurrentPage'"
+      }
+    }
+  },
+  "deselectAllOnCurrentPage": {
+    "description": "/** Clear all filtered on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`\n     */",
+    "type": {
+      "arguments": {
+        "source": "SelectionEventSourceType = 'apiSelectAllCurrentPage'"
       }
     }
   },
@@ -1007,7 +1044,7 @@
     "type": { "arguments": {}, "returnType": "void" }
   },
   "resetQuickFilter": {
-    "description": "/** Reset the quick filter cache text on every rowNode. */",
+    "description": "/** Reset the Quick Filter cache text on every rowNode. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
   "getCellRanges": {
@@ -1053,14 +1090,14 @@
     }
   },
   "getChartImageDataURL": {
-    "description": "/** Returns a string containing the requested data URL which contains a representation of the chart image. */",
+    "description": "/** Returns a base64-encoded image data URL for the referenced chartId. */",
     "type": {
       "arguments": { "params": "GetChartImageDataUrlParams" },
       "returnType": "string | undefined"
     }
   },
   "downloadChart": {
-    "description": "/** Downloads the chart image in the browser. */",
+    "description": "/** Starts a browser-based image download for the referenced chartId. */",
     "type": { "arguments": { "params": "ChartDownloadParams" } }
   },
   "openChartToolPanel": {
@@ -1104,6 +1141,10 @@
   },
   "copyToClipboard": {
     "description": "/** Copies data to clipboard by following the same rules as pressing Ctrl+C. */",
+    "type": { "arguments": { "params?": "IClipboardCopyParams" } }
+  },
+  "cutToClipboard": {
+    "description": "/** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */",
     "type": { "arguments": { "params?": "IClipboardCopyParams" } }
   },
   "copySelectedRowsToClipboard": {
@@ -1306,7 +1347,7 @@
     "type": { "arguments": {}, "returnType": "boolean | undefined" }
   },
   "getCacheBlockState": {
-    "description": "/** Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.\n     * @deprecated v29\n     */",
+    "description": "/** Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.\n     */",
     "type": { "arguments": {}, "returnType": "any" }
   },
   "getFirstDisplayedRow": {

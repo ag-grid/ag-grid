@@ -66,16 +66,16 @@ represent the same percentage increase. Whereas, if the `number` axis was used, 
 The above property of the log axis can also be useful in financial charts. For example, if your rate of
 return on an investment stays consistent over time, the investment value chart will look like a straight line.
 
-By default, the `log` axis attempts to render 10 ticks (and grid lines) per order of magnitude, depending
-on available space. If your range is wide enough, you may start getting too many ticks, in which case
-using a smaller value for the `tick: { count: xxx }` config might be necessary:
+By default, if the data domain has `5` or more orders of magnitude, the `log` axis attempts to render `5` ticks. Otherwise, `10` ticks (the logarithm base) is rendered per order of magnitude. For example a data domain of `[1, 100]` with `2` orders of magnitude, will show `1`, `2`, `3`, `4`,`5`, `6`, `7`, `8`, `9`, `10`, `20`, `30`, `40`, `50`, `60`, `70`, `80`, `90`, `100`.
+
+Depending on the data domain and chart size, using a larger value for the `tick: { minSpacing: xxx }` config might be necessary to reduce the number of ticks.
 
 ```js
 {
     type: 'log',
     position: 'left',
     tick: {
-      count: 3
+      minSpacing: 200,
     }
 }
 ```
@@ -98,7 +98,7 @@ All of the above points are demonstrated by the example below.
 <chart-example title='Number Axis vs Log Axis' name='number-vs-log' type='generated'></chart-example>
 
 [[note]]
-| The range of a log axis should be strictly positive or strictly negative (because there's no power you can raise a number to that will yield zero). For that reason, any non-conforming range will be clipped to conformity, leaving only the larger segment. For example, `[0, 10]` will be clipped to  `[Number.EPSILON, 10]`, while `[-10, 5]` will be clipped to `[-10, -Number.EPSILON]`. Since there can be orders of magnitude difference between `Number.EPSILON` and the other range value, it is often desirable to set the `min` or `max` property of the axis manually. In this case it can be `min: 1` and `max: -1`, respectively.
+| The domain of a log axis should be strictly positive or strictly negative (because there's no power you can raise a number to that will yield zero). For that reason, any non-conforming domain will be clipped to conformity. For example, `[0, 10]` will be clipped to  `[1, 10]`. If the data domain crosses `0`, for example `[-10, 5]`, no data will be rendered. It is often desirable to set the `min` or `max` property of the axis manually. In this case it can be `max: -1`.
 ## Time Axis
 
 The time axis is similar to the number axis in the sense that it is also used to plot continuous values. The time axis can even be used with numeric data (in addition to `Date` objects), but the numbers will be interpreted as Unix timestamps. The time axis differs from the number axis in tick segmentation and label formatting. For example, you could choose to place a tick every 5 minutes, every month, or every Friday.
@@ -129,38 +129,100 @@ Please see the [API reference](#reference-AgBaseCartesianAxisOptions-title) for 
 
 ## Axis Ticks
 
-Category axes show a tick for every category. Number and time axes try to segment the whole range into a certain number of intervals depending on the available rendering space.
+Axis ticks are displayed at intervals along each axis, and are also used to determine the position and frequency of the axis labels and grid lines.
 
-The `width`, `size` and `color` of chart axis ticks can be configured as explained in the [API reference](#reference-AgNumberAxisOptions-tick) below. These configs apply to all axis types.
+### Tick Placement
 
-With number and time axes you can additionally set the `count` property - this will override the dynamic
-calculation based upon available rendering space:
+Category axes show a tick for every category. Number and time axes will display around 5 ticks depending on the available space.
 
-- In number axes the `count` means the desired number of ticks for the axis to use. Note that this value only serves as a hint and doesn't guarantee that this number of ticks is going to be used.
-- In time axes the `count` property can be set to a time interval, for example `agCharts.time.month`, to make an axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `agCharts.time.month.every(3)`.
+It is possible to customise or override this default behaviour by using one of the following options.
 
-The example below demonstrates how the `count` property of the number axis can be used to reduce or increase the amount of ticks.
+- [Min and Max Spacing](#tick-min-and-max-spacing) - used to control the pixel gap between ticks
+- [Interval](#tick-interval) - used to place a tick at regular intervals
+- [Values](#tick-values) - used to place a tick at specified values
 
-<chart-example title='Axis Tick Styling' name='axis-tick-count' type='generated'></chart-example>
+### Tick Min and Max Spacing
 
-Please see the documentation for the numeric axis ticks in the [API reference](#number-axis-1) to learn about other available properties.
+`tick.minSpacing` and `tick.maxSpaxing` modify the default behaviour by specifying the approximate
+minimum and maximum pixel gap which should be present between ticks. One or both options can be
+provided. An appropriate number of ticks will be generated to satisfy the provided `tick.minSpacing`
+and `tick.maxSpacing` constraints. This number will vary depending on the rendered size of the chart.
+
+```js
+tick: {
+    minSpacing: 50,
+    maxSpacing: 200,
+}
+```
+
+### Tick Interval
+
+`tick.interval` is the exact step value between ticks, specified in the units of the axis.
+
+For `number` axes, the interval property should be a `number`. A tick will be shown every `interval` value in the axis range. For example, an interval of `30` will show `0`, `30`, `60`, `90` etc.
+
+```js
+tick: {
+    interval: 30,
+}
+```
+
+For `log` axes, the `interval` property should be a `number`. This is used to step the exponent that the logarithm base is raised to. For example an interval of `2` will show `10^0`, `10^2`, `10^4` etc.
+
+For `time` axes the `interval` property should be a time interval such as `time.month`, to show a tick every month, or an interval derived from one of the predefined intervals, such as `time.month.every(3)`.
+
+```js
+tick: {
+    interval: time.month,
+}
+```
+
+Other available `time` intervals are: `year`, `month`, `day`, `hour`, `minute`, `second`, `millisecond`. There are also some UTC time intervals available: `utcYear`, `utcMonth`, `utcDay`, `utcYear`, `utcMinute`.
+
+If the `interval` property of a time axis is set to a `number`, this will be interpreted as milliseconds.
+
+[[note]]
+| If the configured `interval` results in too many ticks given the data domain and chart size, it will be ignored and the default tick behaviour will be applied.
 
 The example below demonstrates the usage of time intervals:
-- `agCharts.time.month` will produce monthly ticks.
-- `agCharts.time.month.every(2)` will generate ticks for every second month.
+- `time.month` will produce monthly ticks.
+- `time.month.every(2)` will generate ticks for every second month.
 
 ```js
 {
     type: 'time',
     tick: {
-        count: agCharts.time.month.every(2)
+        interval: time.month.every(2)
     }
 }
 ```
 
 <chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
 
-Other available time intervals are: `year`, `month`, `day`, `hour`, `minute`, `second`, `millisecond`. There are some UTC time intervals: `utcYear`, `utcMonth`, `utcDay`, `utcYear`, `utcMinute`.
+### Tick Values
+
+`tick.values` can be used to configure the exact array of tick values to display. This should either be an array of `number`, `date` or `string` values depending on the axis type.
+
+These values will also be used as the tick labels unless a `label.format` or `label.formatter` is configured.
+
+```js
+tick: {
+    values: [-50, -25, 0, 25, 50],
+}
+```
+
+### Example: Axis Tick Placement
+
+The example below demonstrates how the `tick.minSpacing`, `tick.maxSpacing`, `tick.interval` and `tick.values` properties can be used to control the placement of the ticks.
+
+- There are buttons at the top to change between the different options.
+- There is a grab handle in the bottom right to allow resizing of the chart to see how the ticks change with available space.
+
+<chart-example title='Axis Tick Placement' name='axis-tick-placement' type='generated'></chart-example>
+
+### Tick Styling
+
+The `width`, `size` and `color` of chart axis ticks can be configured as explained in the [API reference](#reference-AgNumberAxisOptions-tick) below. These configs apply to all axis types.
 
 ## Axis Labels
 
@@ -213,7 +275,7 @@ The following example demonstrates label rotation and skipping:
 
 ### Label Formatting
 
-A label formatter function can be used to change the value displayed in the label. It's a handy feature when you need to show units next to values or format number values to a certain precision, for example.
+A label formatter function can be used to change the value displayed in the label. It's a handy feature when you need to show units next to values or format number values to a certain precision.
 
 A label formatter function receives a single `params` object which contains:
 
@@ -362,9 +424,9 @@ If no padding modifier is specified, the default is `0` for all directives excep
 
 The `label` config of the bottom axis in the example below uses the `'%b&nbsp;%Y'` specifier string for the `format` property to format dates as the abbreviated name of the month followed by the full year.
 
-Notice that the `label.format` property only affects label formatting but not segmentation. The fact that axis labels were configured to show the name of the month and the year doesn't mean that the axis will show a tick every month. To ensure that it does, we also set the `tick.count` config to use the `agCharts.time.month` interval.
+Notice that the `label.format` property only affects label formatting but not segmentation. The fact that axis labels were configured to show the name of the month and the year doesn't mean that the axis will show a tick every month. To ensure that it does, we also set the `tick.interval` config to use the `time.month` interval.
 
-Please see the [Axis Ticks](#axis-ticks) section to learn more about tick count and tick intervals.
+Please see the [Axis Ticks](#axis-ticks) section to learn more about tick intervals.
 
 ## Axis Grid Lines
 

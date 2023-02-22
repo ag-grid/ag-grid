@@ -22,19 +22,19 @@
             "behaviour": "Apply the filter when the Apply button is clicked",
             "agGrid": "when button enabled",
             "windowsExcel": true,
-            "macExcel": null
+            "macExcel": "N/A"
         },
         {
             "behaviour": "Close the filter when the Apply button is clicked",
             "agGrid": false,
             "windowsExcel": true,
-            "macExcel": null
+            "macExcel": "N/A"
         },
         {
             "behaviour": "Press <kbd>Enter</kbd> to apply the filter",
             "agGrid": false,
             "windowsExcel": true,
-            "macExcel": null
+            "macExcel": "N/A"
         },
         {
             "behaviour": "Close the filter when <kbd>Enter</kbd> is pressed",
@@ -69,8 +69,8 @@
         {
             "behaviour": "Press <kbd>Enter</kbd> in the search box to apply the filter using all visible values",
             "agGrid": true,
-            "windowsExcel": false,
-            "macExcel": false
+            "windowsExcel": "unless search box is empty",
+            "macExcel": "N/A"
         },
         {
             "behaviour": "Apply the filter immediately using all visible values while typing in the search box",
@@ -88,7 +88,7 @@
             "behaviour": "Restore the applied filter state when the search box is cleared",
             "agGrid": false,
             "windowsExcel": true,
-            "macExcel": null
+            "macExcel": "N/A"
         },
         {
             "behaviour": "Clear the search box when the filter is closed",
@@ -100,19 +100,19 @@
             "behaviour": "Discard un-applied changes when the filter is closed",
             "agGrid": false,
             "windowsExcel": true,
-            "macExcel": null
+            "macExcel": "N/A"
         },
         {
             "behaviour": "Discard un-applied changes when the Cancel button is clicked",
             "agGrid": true,
             "windowsExcel": true,
-            "macExcel": null
+            "macExcel": "N/A"
         },
         {
             "behaviour": "Close the filter when the Cancel button is clicked",
             "agGrid": false,
             "windowsExcel": true,
-            "macExcel": null
+            "macExcel": "N/A"
         },
         {
             "behaviour": "Allow blank values to be selected",

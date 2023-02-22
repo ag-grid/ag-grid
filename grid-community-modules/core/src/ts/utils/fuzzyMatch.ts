@@ -26,7 +26,9 @@ export function fuzzyCheckStrings(
  */
 export function fuzzySuggestions(
     inputValue: string,
-    allSuggestions: string[]
+    allSuggestions: string[],
+    hideIrrelevant?: boolean,
+    filterByPercentageOfBestMatch?: number,
 ): string[] {
     let thisSuggestions: { value: string, relevance: number; }[] = allSuggestions.map((text) => ({
         value: text,
@@ -34,6 +36,15 @@ export function fuzzySuggestions(
     }));
 
     thisSuggestions.sort((a, b) => b.relevance - a.relevance);
+
+    if (hideIrrelevant) {
+        thisSuggestions = thisSuggestions.filter(suggestion => suggestion.relevance !== 0);
+    }
+    if (filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {
+        const bestMatch = thisSuggestions[0].relevance;
+        const limit = bestMatch * filterByPercentageOfBestMatch;
+        thisSuggestions = thisSuggestions.filter(suggestion => limit - suggestion.relevance < 0);
+    }
 
     return thisSuggestions.map(suggestion => suggestion.value);
 }

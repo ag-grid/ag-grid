@@ -1,5 +1,4 @@
-import * as agCharts from "ag-charts-community"
-import { AgChartLegendPosition, AgChartOptions } from "ag-charts-community"
+import { AgChart, AgChartLegendPosition, AgChartOptions } from "ag-charts-community"
 import { getData } from "./data"
 
 const colors = [
@@ -76,7 +75,7 @@ const options: AgChartOptions = {
     {
       type: "line",
       xKey: "year",
-      yKey: "Small cale Hydro",
+      yKey: "Small scale Hydro",
       yName: "Small Scale Hydro",
     },
     {
@@ -128,9 +127,6 @@ const options: AgChartOptions = {
       line: {
         width: 0,
       },
-      tick: {
-        count: 5,
-      },
     },
   ],
   legend: {
@@ -157,7 +153,7 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)
 
 function updateLegendPosition(value: AgChartLegendPosition) {
   options.legend!.position = value
@@ -174,5 +170,5 @@ function updateLegendPosition(value: AgChartLegendPosition) {
       break
   }
 
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }

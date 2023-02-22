@@ -3,6 +3,12 @@ import { Autowired, PostConstruct } from "../context/context";
 import { FocusService } from "../focusService";
 import { ManagedFocusFeature } from "./managedFocusFeature";
 
+export enum TabGuardClassNames {
+    TAB_GUARD = 'ag-tab-guard',
+    TAB_GUARD_TOP = 'ag-tab-guard-top',
+    TAB_GUARD_BOTTOM = 'ag-tab-guard-bottom'
+};
+
 export interface ITabGuard {
     setTabIndex(tabIndex?: string): void;
 }

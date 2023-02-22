@@ -1,9 +1,9 @@
-$filter-rows-breakpoint: 1020px;
+@use '../../../design-system' as *;
 
 :global(#heroGrid.ag-theme-alpine-dark) {
     --ag-background-color: #001223;
     --ag-foreground-color: #94b2d0;
-    
+
     --ag-borders: none;
     --ag-row-border-style: none;
 
@@ -17,7 +17,10 @@ $filter-rows-breakpoint: 1020px;
     --ag-header-background-color: #00162d;
     --ag-header-foreground-color: #527497;
 
-    @media screen and ( max-width: 620px ) {
+    --input-background-color: #001223;
+    --input-focus-box-shadow-color: rgba(255, 255, 255, 0.25);
+
+    @media screen and (max-width: $breakpoint-hero-small) {
         --ag-range-selection-border-color: transparent;
     }
 
@@ -45,7 +48,11 @@ $filter-rows-breakpoint: 1020px;
         background-color: #07161b;
     }
 
-    svg[class*="logo-mark"] {
+    :global(.ag-icon.ag-icon-filter) {
+        display: none;
+    }
+
+    svg[class*='logo-mark'] {
         position: absolute;
         display: block;
         width: 64px * 2;
@@ -55,7 +62,7 @@ $filter-rows-breakpoint: 1020px;
         transform: translate(-60px, -48px);
     }
 
-    &:global(.loaded) svg[class*="logo-mark"] {
+    &:global(.loaded) svg[class*='logo-mark'] {
         display: none;
     }
 }

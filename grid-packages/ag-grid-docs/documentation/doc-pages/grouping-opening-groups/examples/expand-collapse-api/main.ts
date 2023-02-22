@@ -28,18 +28,17 @@ function collapseAll() {
 function expandCountries() {
   gridOptions.api!.forEachNode(node => {
     if (node.level === 0) {
-      node.setExpanded(true)
+      gridOptions.api!.setRowNodeExpanded(node, true);
     }
-  })
+  });
 }
 
-function expand2000() {
+function expandAustralia2000() {
   gridOptions.api!.forEachNode(node => {
-    if (node.key === '2000') {
-      node.parent!.setExpanded(true) // ensure parent 'country' group is also expanded
-      node.setExpanded(true)
+    if (node.key === '2000' && node.parent && node.parent.key === 'Australia') {
+      gridOptions.api!.setRowNodeExpanded(node, true, true);
     }
-  })
+  });
 }
 
 // setup the grid after the page has finished loading

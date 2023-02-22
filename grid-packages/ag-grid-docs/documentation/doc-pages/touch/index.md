@@ -12,6 +12,7 @@ The following touch gestures are supported by AG Grid Community.
 - Move column groups by touch-dragging the column group header with a touch.
 - Tap the column header to sort by that column.
 - Tap and hold the column header for 500ms to bring up the column menu.
+- Tap and drag the column header resize handle to resize it
 
 ## Touch Gestures for AG Grid Enterprise
 

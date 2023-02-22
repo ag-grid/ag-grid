@@ -1,18 +1,31 @@
-type FloorFn = (date: Date) => void; // mutates the passed date
-type OffsetFn = (date: Date, step: number) => void; // mutates the passed date
-/** A function to test if a date tick corresponds to a given step. */
-type StepTestFn = (date: Date, step: number) => boolean;
+/**
+ * Converts the specified Date into a count of years,
+ * days, hours etc. passed since some base date.
+ */
+type EncodeFn = (date: Date) => number;
+/**
+ * Converts the count of years, days, hours etc.
+ * since a base date into another Date.
+ */
+type DecodeFn = (encoded: number) => Date;
+/**
+ * A function to be executed before the range calculation.
+ * Returns a callback to be executed after the range calculation.
+ */
+type RangeFn = (start: Date, end: Date) => () => void;
 
 /**
  * The interval methods don't mutate Date parameters.
  */
 export class TimeInterval {
-    protected readonly _floor: FloorFn;
-    protected readonly _offset: OffsetFn;
+    protected readonly _encode: EncodeFn;
+    protected readonly _decode: DecodeFn;
+    protected readonly _rangeCallback?: RangeFn;
 
-    constructor(floor: FloorFn, offset: OffsetFn) {
-        this._floor = floor;
-        this._offset = offset;
+    constructor(encode: EncodeFn, decode: DecodeFn, rangeCallback?: RangeFn) {
+        this._encode = encode;
+        this._decode = decode;
+        this._rangeCallback = rangeCallback;
     }
 
     /**
@@ -21,9 +34,9 @@ export class TimeInterval {
      * @param date
      */
     floor(date: Date | number): Date {
-        const result = new Date(date);
-        this._floor(result);
-        return result;
+        const d = new Date(date);
+        const e = this._encode(d);
+        return this._decode(e);
     }
 
     /**
@@ -31,37 +44,46 @@ export class TimeInterval {
      * @param date
      */
     ceil(date: Date | number): Date {
-        const result = new Date(Number(date) - 1);
-        this._floor(result);
-        this._offset(result, 1);
-        return result;
+        const d = new Date(Number(date) - 1);
+        const e = this._encode(d);
+        return this._decode(e + 1);
     }
 
     /**
      * Returns an array of dates representing every interval boundary after or equal to start (inclusive) and before stop (exclusive).
-     * @param start
-     * @param stop
+     * @param start Range start.
+     * @param stop Range end.
+     * @param extend If specified, the requested range will be extended to the closest "nice" values.
      */
-    range(start: Date, stop: Date): Date[] {
-        let date = this.ceil(start);
-        const range: Date[] = [];
+    range(start: Date, stop: Date, extend?: boolean): Date[] {
+        const rangeCallback = this._rangeCallback?.(start, stop);
 
-        while (date <= stop) {
-            range.push(date);
-            date = new Date(date);
-            this._offset(date, 1);
+        const e0 = this._encode(extend ? this.floor(start) : this.ceil(start));
+        const e1 = this._encode(extend ? this.ceil(stop) : this.floor(stop));
+        if (e1 < e0) {
+            return [];
         }
+
+        const range: Date[] = [];
+        for (let e = e0; e <= e1; e++) {
+            const d = this._decode(e);
+            range.push(d);
+        }
+
+        rangeCallback?.();
 
         return range;
     }
 }
 
-export class CountableTimeInterval extends TimeInterval {
-    private readonly _stepTest: StepTestFn;
+interface CountableTimeIntervalOptions {
+    snapTo?: Date | number | 'start' | 'end';
+}
 
-    constructor(floor: FloorFn, offset: OffsetFn, stepTest: StepTestFn) {
-        super(floor, offset);
-        this._stepTest = stepTest;
+export class CountableTimeInterval extends TimeInterval {
+    private getOffset(snapTo: Date, step: number) {
+        const s = typeof snapTo === 'number' || snapTo instanceof Date ? this._encode(new Date(snapTo)) : 0;
+        return Math.floor(s) % step;
     }
 
     /**
@@ -70,20 +92,35 @@ export class CountableTimeInterval extends TimeInterval {
      * Must be a positive integer.
      * @param step
      */
-    every(step: number): TimeInterval {
-        const test = this._stepTest;
-        const floor = (date: Date): Date => {
-            this._floor(date);
-            while (!test(date, step)) {
-                date.setTime(date.getTime() - 1);
-                this._floor(date);
-            }
-            return date;
+    every(step: number, options?: CountableTimeIntervalOptions): TimeInterval {
+        let offset = 0;
+        let rangeCallback: RangeFn | undefined;
+
+        const { snapTo = 'start' } = options ?? {};
+        if (typeof snapTo === 'string') {
+            const initialOffset = offset;
+            rangeCallback = (start, stop) => {
+                const s = snapTo === 'start' ? start : stop;
+                offset = this.getOffset(s, step);
+                return () => (offset = initialOffset);
+            };
+        } else if (typeof snapTo === 'number') {
+            offset = this.getOffset(new Date(snapTo), step);
+        } else if (snapTo instanceof Date) {
+            offset = this.getOffset(snapTo, step);
+        }
+
+        const encode = (date: Date) => {
+            const e = this._encode(date);
+            return Math.floor((e - offset) / step);
         };
-        const offset = (date: Date): Date => {
-            this._offset(date, step);
-            return date;
+
+        const decode = (encoded: number) => {
+            return this._decode(encoded * step + offset);
         };
-        return new TimeInterval(floor, offset);
+
+        const interval = new TimeInterval(encode, decode, rangeCallback);
+
+        return interval;
     }
 }

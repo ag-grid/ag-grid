@@ -1,24 +1,23 @@
 import { IFloatingFilterParams } from '../floatingFilter';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { IFilterOptionDef, ProvidedFilterModel } from '../../../interfaces/iFilter';
+import { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { debounce } from '../../../utils/function';
 import { ProvidedFilter } from '../../provided/providedFilter';
 import { PostConstruct, Autowired } from '../../../context/context';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
-import { SimpleFilter } from '../../provided/simpleFilter';
 import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
 import { TextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
-import { NumberFilterModel, NumberFilterParams } from '../../provided/number/numberFilter';
+import { NumberFilter, NumberFilterModel, NumberFilterParams } from '../../provided/number/numberFilter';
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @RefSelector('eFloatingFilterInput') private readonly eFloatingFilterInput: AgInputTextField;
 
-    protected params: IFloatingFilterParams;
+    protected params: IFloatingFilterParams<TextFilter | NumberFilter>;
 
     private applyActive: boolean;
 
@@ -47,11 +46,11 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         }
 
         this.setLastTypeFromModel(model);
-        this.eFloatingFilterInput.setValue(this.getTextFromModel(model));
+        this.eFloatingFilterInput.setValue(this.getFilterModelFormatter().getModelAsString(model));
         this.setEditable(this.canWeEditAfterModelFromParentFilter(model));
     }
 
-    public init(params: IFloatingFilterParams): void {
+    public init(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
         super.init(params);
 
         this.params = params;
@@ -101,25 +100,10 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
 
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
-                filterInstance.onFloatingFilterChanged(this.getLastType() || null, value || null);
+                // NumberFilter is typed as number, but actually receives string values
+                filterInstance.onFloatingFilterChanged(this.getLastType() || null, value as any || null);
             }
         });
-    }
-
-    protected conditionToString(condition: M, options?: IFilterOptionDef): string {
-        const { numberOfInputs } = options || {};
-        const isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
-
-        if (isRange) {
-            return `${condition.filter}-${condition.filterTo}`;
-        }
-
-        // cater for when the type doesn't need a value
-        if (condition.filter != null) {
-            return `${condition.filter}`;
-        }
-
-        return `${condition.type}`;
     }
 
     protected setEditable(editable: boolean): void {

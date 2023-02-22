@@ -6,24 +6,27 @@ import {
     SeriesNodePickMatch,
     SeriesNodeClickEvent,
 } from '../series';
-import { ChartAxis, ChartAxisDirection } from '../../chartAxis';
+import { ChartAxis } from '../../chartAxis';
 import { SeriesMarker } from '../seriesMarker';
+import { doOnce } from '../../../util/function';
 import { isContinuous, isDiscrete } from '../../../util/value';
+import { ContinuousScale } from '../../../scale/continuousScale';
 import { Path } from '../../../scene/shape/path';
 import { Selection } from '../../../scene/selection';
 import { Marker } from '../../marker/marker';
 import { Group } from '../../../scene/group';
 import { Text } from '../../../scene/shape/text';
 import { Node } from '../../../scene/node';
-import { RedrawType } from '../../../scene/changeDetectable';
+import { RedrawType, SceneChangeDetection } from '../../../scene/changeDetectable';
 import { CategoryAxis } from '../../axis/categoryAxis';
 import { PointLabelDatum } from '../../../util/labelPlacement';
 import { Layers } from '../../layers';
 import { Point } from '../../../scene/point';
-import { OPT_FUNCTION, ValidateAndChangeDetection } from '../../../util/validation';
+import { OPT_FUNCTION, Validate } from '../../../util/validation';
 import { jsonDiff } from '../../../util/json';
 import { BBox } from '../../../scene/bbox';
 import { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -53,6 +56,11 @@ interface SeriesOpts {
     hasMarkers: boolean;
     renderLayerPerSubSeries: boolean;
 }
+
+const DEFAULT_DIRECTION_KEYS: { [key in ChartAxisDirection]?: string[] } = {
+    [ChartAxisDirection.X]: ['xKey'],
+    [ChartAxisDirection.Y]: ['yKey'],
+};
 
 export class CartesianSeriesNodeClickEvent<Datum extends { datum: any }> extends SeriesNodeClickEvent<Datum> {
     readonly xKey: string;
@@ -92,8 +100,17 @@ export abstract class CartesianSeries<
      */
     protected readonly seriesItemEnabled = new Map<string, boolean>();
 
-    protected constructor(opts: Partial<SeriesOpts> & { pickModes?: SeriesNodePickMode[] } = {}) {
-        super({ useSeriesGroupLayer: true, pickModes: opts.pickModes });
+    protected constructor(
+        opts: Partial<SeriesOpts> & {
+            pickModes?: SeriesNodePickMode[];
+            directionKeys?: { [key in ChartAxisDirection]?: string[] };
+        } = {}
+    ) {
+        super({
+            useSeriesGroupLayer: true,
+            pickModes: opts.pickModes,
+            directionKeys: opts.directionKeys ?? DEFAULT_DIRECTION_KEYS,
+        });
 
         const {
             pathsPerSeries = 1,
@@ -110,11 +127,6 @@ export abstract class CartesianSeries<
         this._contextNodeData.splice(0, this._contextNodeData.length);
         this.subGroups.splice(0, this.subGroups.length);
     }
-
-    directionKeys: { [key in ChartAxisDirection]?: string[] } = {
-        [ChartAxisDirection.X]: ['xKey'],
-        [ChartAxisDirection.Y]: ['yKey'],
-    };
 
     /**
      * Note: we are passing `isContinuousX` and `isContinuousY` into this method because it will
@@ -401,7 +413,7 @@ export abstract class CartesianSeries<
     }
 
     protected pickNodeExactShape(point: Point): SeriesNodePickMatch | undefined {
-        let result = super.pickNodeExactShape(point);
+        const result = super.pickNodeExactShape(point);
 
         if (result) {
             return result;
@@ -483,7 +495,7 @@ export abstract class CartesianSeries<
         const hitPointCoords =
             primaryDirection === ChartAxisDirection.X ? [hitPoint.x, hitPoint.y] : [hitPoint.y, hitPoint.x];
 
-        let minDistance = [Infinity, Infinity];
+        const minDistance = [Infinity, Infinity];
         let closestDatum: SeriesNodeDatum | undefined = undefined;
 
         for (const context of contextNodeData) {
@@ -558,6 +570,62 @@ export abstract class CartesianSeries<
 
     getLabelData(): PointLabelDatum[] {
         return [];
+    }
+
+    protected isAnySeriesVisible() {
+        for (const visible of this.seriesItemEnabled.values()) {
+            if (visible) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected validateXYData(
+        xKey: string,
+        yKey: string,
+        data: any[],
+        xAxis: ChartAxis,
+        yAxis: ChartAxis,
+        xData: number[],
+        yData: any[],
+        yDepth = 1
+    ) {
+        if (this.chart?.mode === 'integrated') {
+            // Integrated Charts use-cases do not require this validation.
+            return true;
+        }
+
+        if (!xAxis || !yAxis || data.length === 0 || (this.seriesItemEnabled.size > 0 && !this.isAnySeriesVisible())) {
+            return true;
+        }
+
+        const hasNumber = (items: any[], depth = 0, maxDepth = 0): boolean => {
+            return items.some(
+                depth === maxDepth ? (y) => isContinuous(y) : (arr) => hasNumber(arr, depth + 1, maxDepth)
+            );
+        };
+
+        const isContinuousX = xAxis.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis.scale instanceof ContinuousScale;
+
+        let validationResult = true;
+        if (isContinuousX && !hasNumber(xData)) {
+            doOnce(
+                () => console.warn(`AG Charts - The number axis has no numeric data supplied for xKey: [${xKey}].`),
+                'series has no numeric data on number axis - ' + xKey
+            );
+            validationResult = false;
+        }
+        if (isContinuousY && !hasNumber(yData, 0, yDepth - 1)) {
+            doOnce(
+                () => console.warn(`AG Charts - The number axis has no numeric data supplied for yKey: [${yKey}].`),
+                'series has no numeric data on number axis - ' + yKey
+            );
+            validationResult = false;
+        }
+
+        return validationResult;
     }
 
     protected async updatePaths(opts: {
@@ -655,9 +723,7 @@ export abstract class CartesianSeries<
 }
 
 export class CartesianSeriesMarker extends SeriesMarker {
-    @ValidateAndChangeDetection({
-        validatePredicate: OPT_FUNCTION,
-        sceneChangeDetectionOpts: { redraw: RedrawType.MAJOR },
-    })
+    @Validate(OPT_FUNCTION)
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
     formatter?: (params: AgCartesianSeriesMarkerFormatterParams<any>) => AgCartesianSeriesMarkerFormat = undefined;
 }

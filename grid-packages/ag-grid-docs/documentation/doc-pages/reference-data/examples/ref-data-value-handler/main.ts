@@ -22,12 +22,12 @@ const colourMappings = {
     fg: 'Forest Green',
 };
 
-function extractValues(mappings: Record<string, string>) {
+function extractKeys(mappings: Record<string, string>) {
     return Object.keys(mappings)
 }
 
-const carBrands = extractValues(carMappings);
-const colours = extractValues(colourMappings);
+const carCodes = extractKeys(carMappings);
+const colourCodes = extractKeys(colourMappings);
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -36,7 +36,7 @@ const gridOptions: GridOptions = {
             minWidth: 100,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-                values: carBrands,
+                values: carCodes,
             },
             filterParams: {
                 valueFormatter: (params: ValueFormatterParams) => {
@@ -53,12 +53,12 @@ const gridOptions: GridOptions = {
             cellEditor: 'agRichSelectCellEditor',
             cellEditorPopup: true,
             cellEditorParams: {
-                values: colours,
+                values: colourCodes,
                 cellRenderer: ColourCellRenderer,
             },
             filter: 'agSetColumnFilter',
             filterParams: {
-                values: colours,
+                values: colourCodes,
                 valueFormatter: (params) => {
                     return lookupValue(colourMappings, params.value)
                 },
@@ -81,7 +81,7 @@ const gridOptions: GridOptions = {
             },
             filter: 'agSetColumnFilter',
             filterParams: {
-                values: colours,
+                values: colourCodes,
                 valueFormatter: (params: ValueFormatterParams) => {
                     return lookupValue(colourMappings, params.value)
                 },

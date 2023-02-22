@@ -2,11 +2,13 @@ const { JSDOM } = require('jsdom');
 const { window, document } = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
 const sucrase = require("sucrase");
 
-const agGridVersion = "^" + require('../../grid-community-modules/core/package.json').version;
-const agChartsVersion = "^" + require('../../charts-community-modules/ag-charts-community/package.json').version;
-const agGridEnterpriseVersion = "^" + require('../../grid-enterprise-modules/core/package.json').version;
-const agGridReactVersion = "^" + require('../../grid-community-modules/react/package.json').version;
-const agGridAngularVersion = "^" + require('../../grid-community-modules/angular/package.json').version;
+const agGridVersion = "^" + require('../../community-modules/core/package.json').version;
+const agChartsVersion = "^" + require('../../charts-packages/ag-charts-community/package.json').version;
+const agChartsAngularVersion = "^" + require('../../charts-packages/ag-charts-angular/package.json').version;
+const agChartsReactVersion = "^" + require('../../charts-packages/ag-charts-react/package.json').version;
+const agGridEnterpriseVersion = "^" + require('../../enterprise-modules/core/package.json').version;
+const agGridReactVersion = "^" + require('../../community-modules/react/package.json').version;
+const agGridAngularVersion = "^" + require('../../community-modules/angular/package.json').version;
 
 const getGenericInterface = require('./documentation/shared-types/generators')
 
@@ -230,7 +232,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
         const getMatchingPaths = (pattern, options = {}) => glob.sync(createExamplePath(pattern), options);
 
         function addRawScripts(fileMap, convertToJs, fileExtension = '.ts') {
-            const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3,typescript}.ts', '**/main.ts'] });
+            const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3,typescript}.ts', '**/main.ts', '**/interfaces.ts'] });
             tsScripts.forEach(tsFile => {
 
                 let fileContents, fileName;
@@ -246,6 +248,22 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
             });
 
             return fileMap;
+        }
+        function getInterfaceFileContents(tsBindings) {
+            let interfaces = [];
+            const interfaceFile = getMatchingPaths('*interfaces.ts');
+            // If the example has an existing interface file then merge that with our globally shared interfaces
+            if (interfaceFile.length === 1) {
+                const exampleInterfaces = getFileContents(interfaceFile[0]);
+                interfaces.push(exampleInterfaces);
+            }
+            if (tsBindings.tData && !interfaces.some(i => i.includes(tsBindings.tData))) {
+                interfaces.push(getGenericInterface(tsBindings.tData));
+            }
+            if (interfaces.length > 0) {
+                return interfaces.join('\n');
+            }
+            return undefined;
         }
 
         const providedExamples = {};
@@ -407,17 +425,14 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                         importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.tsx': getSource(importType) }));
                         reactDeclarativeConfigs = addRawScripts(reactDeclarativeConfigs, false, '.tsx');
 
-                        if (typedBindings.tData) {
-                            const interfaces = getGenericInterface(typedBindings.tData);
-                            if (interfaces) {
-                                importTypes.forEach(importType =>
-                                    reactDeclarativeConfigs.set(importType,
-                                        {
-                                            ...reactDeclarativeConfigs.get(importType),
-                                            'interfaces.ts': interfaces
-                                        }));
-
-                            }
+                        const interfaces = getInterfaceFileContents(typedBindings);
+                        if (interfaces) {
+                            importTypes.forEach(importType =>
+                                reactDeclarativeConfigs.set(importType,
+                                    {
+                                        ...reactDeclarativeConfigs.get(importType),
+                                        'interfaces.ts': interfaces
+                                    }));
                         }
 
                     } catch (e) {
@@ -443,11 +458,9 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                             'app.component.ts': getSource(importType),
                             'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames, typedBindings),
                         };
-                        if (typedBindings.tData) {
-                            const interfaces = getGenericInterface(typedBindings.tData);
-                            if (interfaces) {
-                                frameworkFiles = { ...frameworkFiles, 'interfaces.ts': interfaces }
-                            }
+                        const interfaces = getInterfaceFileContents(typedBindings);
+                        if (interfaces) {
+                            frameworkFiles = { ...frameworkFiles, 'interfaces.ts': interfaces }
                         }
                         angularConfigs.set(importType, frameworkFiles);
                     });
@@ -516,8 +529,17 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     let jsFile = readAsJsFile(tsFile);
                     // replace Typescript new Grid( with Javascript new agGrid.Grid(
                     jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
-                    // replace Typescript AgChart. with Javascript agCharts.AgChart.
-                    jsFile = jsFile.replace(/(?<!\.)AgChart\./g, 'agCharts.AgChart.');
+
+                    // Chart classes that need scoping
+                    const chartImports = typedBindings.imports.find(i => i.module.includes('ag-charts-community'));
+                    if (chartImports) {
+                        chartImports.imports.forEach(i => {
+                            const toReplace = `(?<!\\.)${i}([\\s\/.])`
+                            const reg = new RegExp(toReplace, "g");
+                            jsFile = jsFile.replace(reg, `agCharts.${i}$1`);
+                        })
+                    }
+
                     // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
                     jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
 
@@ -539,7 +561,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
         } else {
 
             const htmlScripts = getMatchingPaths('*.html');
-            const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
+            const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts', '**/interfaces.ts'] });
             const tsConfigs = new Map();
             try {
                 const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript, allStylesheets);
@@ -548,14 +570,12 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                         'main.ts': getSource(importType),
                     });
 
-                    if (typedBindings.tData) {
-                        const interfaces = getGenericInterface(typedBindings.tData);
-                        if (interfaces) {
-                            tsConfigs.set(importType, {
-                                ...tsConfigs.get(importType),
-                                'interfaces.ts': interfaces
-                            });
-                        }
+                    const interfaces = getInterfaceFileContents(typedBindings);
+                    if (interfaces) {
+                        tsConfigs.set(importType, {
+                            ...tsConfigs.get(importType),
+                            'interfaces.ts': interfaces
+                        });
                     }
 
                 });
@@ -593,7 +613,8 @@ function addPackageJson(type, framework, importType, basePath) {
     };
 
     if (framework === 'angular') {
-        addDependency('@angular/core', "^13");
+        addDependency('@angular/core', "^14");
+        addDependency('@angular/platform-browser', "^14");
     }
 
     if (framework === 'reactFunctionalTs') {
@@ -622,6 +643,12 @@ function addPackageJson(type, framework, importType, basePath) {
         }
         if (type === 'chart') {
             addDependency('ag-charts-community', agChartsVersion);
+            if (framework === 'angular') {
+                addDependency('ag-charts-angular', agChartsAngularVersion);
+            }
+            if (framework === 'reactFunctionalTs') {
+                addDependency('ag-charts-react', agChartsReactVersion);
+            }
         }
     }
 
@@ -629,21 +656,13 @@ function addPackageJson(type, framework, importType, basePath) {
 }
 
 function getGeneratorCode(prefix) {
-    const gridExamples = prefix === './src/example-generation/grid-' || false;
-
     const { parser } = require(`${prefix}vanilla-src-parser.ts`);
     const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
     const { vanillaToTypescript } = require(`${prefix}vanilla-to-typescript.ts`);
     const { vanillaToReact } = require(`${prefix}vanilla-to-react.ts`);
     const { vanillaToVue3 } = require(`${prefix}vanilla-to-vue3.ts`);
-
-    let vanillaToReactFunctional = null;
-    let vanillaToReactFunctionalTs = null;
-    if (gridExamples) {
-        vanillaToReactFunctional = require(`${prefix}vanilla-to-react-functional.ts`).vanillaToReactFunctional;
-        vanillaToReactFunctionalTs = require(`${prefix}vanilla-to-react-functional-ts.ts`).vanillaToReactFunctionalTs;
-    }
-
+    const { vanillaToReactFunctional } = require(`${prefix}vanilla-to-react-functional.ts`);
+    const { vanillaToReactFunctionalTs } = require(`${prefix}vanilla-to-react-functional-ts.ts`);
     const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
 
     return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript];
@@ -699,6 +718,6 @@ module.exports.generateDocumentationExamples = async (chartsOnly, scope, trigger
 
     return new Promise(resolve => {
         module.exports.generateChartExamples(scope, trigger, chartsOnly ? () => resolve() :
-            () => module.exports.generateGridExamples(scope, trigger, () => resolve() , true), true)
+            () => module.exports.generateGridExamples(scope, trigger, () => resolve(), true), true)
     });
 };

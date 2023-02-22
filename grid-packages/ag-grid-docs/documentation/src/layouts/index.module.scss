@@ -1,7 +1,5 @@
-@import "~bootstrap/scss/type";
-@import "~bootstrap/scss/alert";
-
-$mobile-header-breakpoint: 768px;
+@import '~bootstrap/scss/type';
+@import '~bootstrap/scss/alert';
 
 html {
     @include media-breakpoint-up(lg) {
@@ -17,7 +15,9 @@ main {
 
 .main-container {
     composes: container-fluid p-0 d-flex flex-column from global;
+
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
 }
 
@@ -25,41 +25,14 @@ main {
     composes: d-flex flex-column flex-lg-row flex-grow-1 from global;
 }
 
-.header {
-    display: flex;
-    align-items: center;
-    position: relative;
-    background-color: $ag-site-header-background;
-
-    &__wrapper {
-        display: flex;
-        flex-wrap: wrap;
-        width: 100%;
-
-        @media screen and (min-width: $mobile-header-breakpoint) {
-            flex-wrap: unset;
-            max-width: 1400px + 30px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 16px;
-            padding-right: 24px;
-        }
-    }
-}
-
-.header__logo {
-    display: block;
-    padding: 8px;
-}
-
 .top-bar {
     composes: px-2 px-md-3 from global;
     position: relative;
-    background-color: $ag-site-fw-background;
+    background-color: var(--bright-blue-gray);
     border-bottom: 1px solid $ag-light-grey;
 
     @supports (backdrop-filter: none) {
-        background-color: rgba(darken($ag-site-fw-background, 16), 0.3);
+        background-color: rgba(#dbe5f0, 0.7);
         backdrop-filter: blur(20px);
     }
 
@@ -103,14 +76,9 @@ main {
         padding-top: 8px;
         padding-bottom: 8px;
 
-        @media screen and ( min-width: 880px ) {
+        @media screen and (min-width: 880px) {
             flex-grow: unset;
         }
-    }
-
-    &__framework-label {
-        margin-right: 8px;
-        color: darken($secondary, 10%);
     }
 }
 
@@ -168,7 +136,7 @@ main {
     &:global(.note) {
         @extend .alert, .alert-primary;
 
-        background-image: url("../images/info.svg");
+        background-image: url('../images/info.svg');
         background-size: 3rem;
         background-repeat: no-repeat;
         background-position: 1rem 1rem;
@@ -194,7 +162,7 @@ main {
 
         &:global(.warning) {
             @extend .alert-warning;
-            background-image: url("../images/warning.svg");
+            background-image: url('../images/warning.svg');
         }
     }
 

@@ -707,8 +707,8 @@ export class PositionableFeature extends BeanStub {
 
         const params = {
             type: 'resize',
-            api: this.gridOptionsService.get('api'),
-            columnApi: this.gridOptionsService.get('columnApi')
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi
         };
 
         this.element.classList.remove('ag-resizing');

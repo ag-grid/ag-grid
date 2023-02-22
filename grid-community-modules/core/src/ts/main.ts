@@ -24,6 +24,7 @@ export { AgStackComponentsRegistry } from "./components/agStackComponentsRegistr
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";
 export { ComponentType } from "./components/framework/componentTypes";
+export { ColDefUtil } from "./components/colDefUtil";
 
 // context
 export { BeanStub } from "./context/beanStub";
@@ -87,7 +88,7 @@ export {
     DragSource,
     DraggingEvent
 } from "./dragAndDrop/dragAndDropService";
-export { RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
+export { RowDropZoneParams, RowDropZoneEvents } from "./gridBodyComp/rowDragFeature";
 export { DragService, DragListenerParams } from "./dragAndDrop/dragService";
 export { IRowDragItem } from "./rendering/row/rowDragComp";
 
@@ -151,6 +152,7 @@ export { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu
 export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
 
 // misc
+export { simpleHttpRequest } from "./misc/simpleHttpRequest";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
@@ -195,7 +197,7 @@ export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionCompone
 export { CellComp } from "./rendering/cell/cellComp";
 export { CellCtrl, ICellComp } from "./rendering/cell/cellCtrl";
 export { RowCtrl, IRowComp } from "./rendering/row/rowCtrl";
-export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams } from "./rendering/rowRenderer";
+export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams, RedrawRowsParams, GetCellEditorInstancesParams } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 export { CssClassManager } from "./rendering/cssClassManager";
@@ -246,7 +248,7 @@ export { ListOption } from "./widgets/agList";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { ManagedFocusFeature, ManagedFocusCallbacks } from "./widgets/managedFocusFeature";
 export { TabGuardComp } from "./widgets/tabGuardComp";
-export { TabGuardCtrl, ITabGuard } from "./widgets/tabGuardCtrl";
+export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from "./widgets/tabGuardCtrl";
 export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService, AgPopup, PopupPositionParams } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
@@ -315,8 +317,8 @@ export { IRowModel, RowBounds, RowModelType } from "./interfaces/iRowModel";
 export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
-export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
-export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
+export { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
+export { RowPosition, RowPositionUtils } from "./entities/rowPositionUtils";
 export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/common/headerNavigationService";
 export {

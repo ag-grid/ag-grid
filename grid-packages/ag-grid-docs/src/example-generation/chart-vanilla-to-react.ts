@@ -1,7 +1,7 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
 import { isInstanceMethod, convertFunctionToProperty } from './parser-utils';
 import { convertTemplate, getImport } from './react-utils';
-import { wrapOptionsUpdateCode } from './chart-utils';
+import { wrapOptionsUpdateCode, getChartImports } from './chart-utils';
 
 export function processFunction(code: string): string {
     return wrapOptionsUpdateCode(
@@ -10,13 +10,17 @@ export function processFunction(code: string): string {
         'this.setState({ options });');
 }
 
-function getImports(componentFilenames: string[]): string[] {
+function getImports(componentFilenames: string[], bindings): string[] {
     const imports = [
         "import React, { Component } from 'react';",
         "import { render } from 'react-dom';",
-        "import * as agCharts from 'ag-charts-community';",
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
+
+    const chartImport = getChartImports(bindings.imports, bindings.usesChartApi)
+    if (chartImport) {
+        imports.push(chartImport);
+    }
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
@@ -27,6 +31,7 @@ function getImports(componentFilenames: string[]): string[] {
 
 function getTemplate(bindings: any, componentAttributes: string[]): string {
     const agChartTag = `<AgChartsReact
+    ${bindings.usesChartApi ? `ref={this.chartRef}` : ''}
     ${componentAttributes.join('\n')}
 />`;
 
@@ -37,8 +42,8 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
 
 export function vanillaToReact(bindings: any, componentFilenames: string[]): () => string {
     return () => {
-        const { properties } = bindings;
-        const imports = getImports(componentFilenames);
+        const { properties, imports: bindingImports } = bindings;
+        const imports = getImports(componentFilenames, bindings);
         const stateProperties = [];
         const componentAttributes = [];
         const instanceBindings = [];
@@ -66,14 +71,15 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): () 
         const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(handler.body));
         const instanceMethods = bindings.instanceMethods.map(processFunction);
 
-        return `'use strict';
+        let indexFile = `'use strict';
 
 ${imports.join('\n')}
 
 class ChartExample extends Component {
     constructor(props) {
         super(props);
-
+        ${bindings.usesChartApi ? `
+        this.chartRef = React.createRef();` : ''}
         this.state = {
             ${stateProperties.join(',\n            ')}
         };
@@ -99,6 +105,14 @@ render(
     document.querySelector('#root')
 )
 `;
+
+        if (bindings.usesChartApi) {
+            indexFile = indexFile.replace(/AgChart.(\w*)\((\w*)(,|\))/g, 'AgChart.$1(this.chartRef.current.chart$3');
+            indexFile = indexFile.replace(/\(this.chartRef.current.chart, options/g, '(this.chartRef.current.chart, this.state.options');
+        }
+
+        return indexFile;
+
     };
 }
 

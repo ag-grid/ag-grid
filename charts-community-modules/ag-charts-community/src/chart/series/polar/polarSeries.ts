@@ -1,14 +1,9 @@
 import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { BBox } from '../../../scene/bbox';
-import { ChartAxisDirection } from '../../chartAxis';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 import { PointLabelDatum } from '../../../util/labelPlacement';
 
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
-    directionKeys = {
-        [ChartAxisDirection.X]: ['angleKey'],
-        [ChartAxisDirection.Y]: ['radiusKey'],
-    };
-
     /**
      * The center of the polar series (for example, the center of a pie).
      * If the polar chart has multiple series, all of them will have their
@@ -26,7 +21,14 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
     radius: number = 0;
 
     constructor({ useLabelLayer = false }) {
-        super({ useLabelLayer, pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH] });
+        super({
+            useLabelLayer,
+            pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
+            directionKeys: {
+                [ChartAxisDirection.X]: ['angleKey'],
+                [ChartAxisDirection.Y]: ['radiusKey'],
+            },
+        });
     }
 
     getLabelData(): PointLabelDatum[] {

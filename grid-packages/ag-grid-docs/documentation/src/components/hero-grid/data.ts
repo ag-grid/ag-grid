@@ -1,7 +1,5 @@
 import {
-    AreaSparklineOptions,
     ColDef,
-    ColumnSparklineOptions,
     SparklineColumnFormatter,
     SparklineMarkerFormatter,
     TooltipRendererParams,
@@ -63,7 +61,7 @@ interface ChangeValue {
     value: Change;
     prevValue: Change;
     change: number;
-};
+}
 const changeValueGetter = ({ data }) => {
     const { timeline } = data as Stock;
     const changes: ChangeValue[] = timeline.reduce((acc: ChangeValue[], value, index, array) => {
@@ -97,12 +95,13 @@ export const columnDefs: ColDef[] = [
         filter: 'agSetColumnFilter',
         flex: 1,
         initialWidth: 180,
-        minWidth: 180
+        minWidth: 180,
     },
     {
         field: 'timeline',
         flex: 1,
         minWidth: 150,
+        sortable: false,
         cellRenderer: 'agSparklineCellRenderer',
         cellRendererParams: {
             sparklineOptions: {
@@ -122,7 +121,7 @@ export const columnDefs: ColDef[] = [
                 },
                 axis: {
                     type: 'category',
-                    stroke: '#294056'
+                    stroke: '#294056',
                 },
                 tooltip: {
                     renderer: timelineTooltipRenderer,
@@ -137,7 +136,7 @@ export const columnDefs: ColDef[] = [
         cellRenderer: CurrentCellRenderer,
         flex: 1,
         initialWidth: 130,
-        minWidth: 130
+        minWidth: 130,
     },
     {
         headerName: 'Last',
@@ -148,7 +147,7 @@ export const columnDefs: ColDef[] = [
         },
         valueFormatter: toCurrency,
         initialWidth: 110,
-        minWidth: 110
+        minWidth: 110,
     },
     {
         headerName: '% Change',
@@ -161,7 +160,7 @@ export const columnDefs: ColDef[] = [
         cellRenderer: ChangeCellRenderer,
         initialWidth: 150,
         minWidth: 150,
-    }
+    },
 ];
 
 function randomValue() {

@@ -157,7 +157,8 @@ export abstract class ChartProxy {
                 ...createAgChartTheme(this.chartProxyParams, this),
                 ...formattingPanelOverrides,
             },
-            container: this.chartProxyParams.parentElement
+            container: this.chartProxyParams.parentElement,
+            mode: 'integrated',
         }
     }
 

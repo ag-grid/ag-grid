@@ -31,6 +31,7 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 import { SetFilterDisplayValue, SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import { SetFilterModelFormatter } from './setFilterModelFormatter';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
@@ -61,6 +62,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private createKey: (value: V | null, node?: IRowNode | null) => string | null;
 
     private valueFormatter?: (params: ValueFormatterParams) => string;
+    private readonly filterModelFormatter = new SetFilterModelFormatter();
 
     constructor() {
         super('setFilter');
@@ -289,11 +291,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     public getFormattedValue(key: string | null): string | null {
-        let value: V | string | null = this.valueModel!.getValue(key);
-        // essentially get back the cell value
-        if ((this.treeDataTreeList || this.groupingTreeList) && Array.isArray(value)) {
-            value = value[value.length - 1] as string;
-        }
+        const value: V | null = this.valueModel!.getValue(key);
+
         const formattedValue = this.valueFormatterService.formatValue(
             this.setFilterParams!.column, null, value, this.valueFormatter, false);
 
@@ -441,13 +440,13 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 expandedListener = (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) => this.onExpandAll(e.item, e.isExpanded);
             } else if (item.children) {
                 // group
-                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey;
+                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey;
                 isGroup = true;
                 selectedListener = (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) => this.onGroupItemSelected(e.item, e.isSelected);
                 expandedListener = (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) => this.onExpandedChanged(e.item, e.isExpanded);
             } else {
                 // leaf
-                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey;
+                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey;
                 selectedListener = (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) => this.onItemSelected(e.item.key!, e.isSelected);
             }
         } else {
@@ -539,11 +538,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         super.afterGuiAttached(params);
 
-        if (this.setFilterParams.excelMode) {
-            this.resetUiToActiveModel();
-            this.showOrHideResults();
-        }
-
         // collapse all tree list items (if tree list)
         this.resetExpansion();
 
@@ -572,6 +566,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         } else {
             this.positionableFeature.removeSizeFromEl();
             this.positionableFeature.setResizable(false);
+        }
+    }
+
+    public afterGuiDetached(): void {
+        // discard any unapplied UI state (reset to model)
+        if (this.setFilterParams?.excelMode) {
+            this.resetUiToActiveModel();
+            this.showOrHideResults();
         }
     }
 
@@ -1076,6 +1078,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             recursiveCollapse(selectAllItem);
             this.valueModel!.updateDisplayedValues('expansion');
         }
+    }
+
+    public getModelAsString(model: SetFilterModel): string {
+        return this.filterModelFormatter.getModelAsString(model, this);
     }
 }
 

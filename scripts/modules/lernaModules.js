@@ -3,7 +3,7 @@ const path = require('path');
 const {spawn} = require('child_process');
 const docsLock = require('./../docsLock');
 
-const getModuleDirNames = (type, postfix = '-modules') => fs.readdirSync(path.resolve(__dirname, `${type}${postfix}`)).filter(entry => entry !== '.DS_Store');
+const getModuleDirNames = (type, postfix = '-modules') => fs.readdirSync(path.resolve(__dirname, `${type}${postfix}`)).filter(entry => entry !== '.DS_Store' && entry !== '.scannerwork');
 
 const flattenArray = array => [].concat.apply([], array);
 

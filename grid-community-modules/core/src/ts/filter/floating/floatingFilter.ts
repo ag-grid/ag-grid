@@ -16,7 +16,7 @@ export interface IFloatingFilterParent {
 type InbuiltParentType = IFloatingFilterParent & IFilter;
 export type IFloatingFilterParentCallback<P = InbuiltParentType> = (parentFilterInstance: P) => void;
 
-export interface IFloatingFilterParams<P = InbuiltParentType, TData = any> extends AgGridCommon<TData> {
+export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column this filter is for. */
     column: Column;
     /**

@@ -1,6 +1,5 @@
-import * as agCharts from "ag-charts-community";
-import { AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import { AgChart, AgChartOptions, time } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -61,7 +60,7 @@ const options: AgChartOptions = {
       position: "top",
       type: "time",
       tick: {
-        count: agCharts.time.year.every(10),
+        interval: time.year.every(10),
         width: 3,
         color: "#3f7cbf",
       },
@@ -85,7 +84,6 @@ const options: AgChartOptions = {
       position: "right",
       type: "number",
       tick: {
-        count: 20,
         size: 10,
       },
       nice: false,
@@ -94,8 +92,6 @@ const options: AgChartOptions = {
         fontWeight: "bold",
         fontSize: 14,
         fontFamily: "Impact, Charcoal, Sans-Serif",
-        formatter: params =>
-          params.index % 2 === 1 ? params.value / 1000 + "k" : "",
       },
       title: {
         enabled: true,
@@ -132,4 +128,4 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

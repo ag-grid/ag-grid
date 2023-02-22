@@ -97,6 +97,8 @@
         "deselectAll": {},
         "selectAllFiltered": {},
         "deselectAllFiltered": {},
+        "selectAllOnCurrentPage": {},
+        "deselectAllOnCurrentPage": {},
         "getSelectedNodes": {},
         "getSelectedRows": {},
         "getBestCostNodeSelection": {},
@@ -169,10 +171,16 @@
                 "url": "/filtering-overview/"
             }
         },
+        "getQuickFilter": {
+            "more": {
+                "name": "Checking the Quick Filter",
+                "url": "/filter-quick/#checking-the-quick-filter"
+            }
+        },
         "setQuickFilter": {
             "more": {
-                "name": "Quick Filter",
-                "url": "/filter-quick/"
+                "name": "Setting the Quick Filter",
+                "url": "/filter-quick/#setting-the-quick-filter"
             }
         },
         "resetQuickFilter": {
@@ -181,7 +189,18 @@
                 "url": "/filter-quick/#reset-cache-text"
             }
         },
-        "isQuickFilterPresent": {},
+        "isQuickFilterPresent": {
+            "more": {
+                "name": "Checking the Quick Filter",
+                "url": "/filter-quick/#checking-the-quick-filter"
+            }
+        },
+        "setExcludeHiddenColumnsFromQuickFilter": {
+            "more": {
+                "name": "Exclude Hidden Columns",
+                "url": "/filter-quick/#exclude-hidden-columns"
+            }
+        },
         "isColumnFilterPresent": {},
         "isAnyFilterPresent": {},
         "getFilterInstance": {
@@ -412,7 +431,8 @@
         "purgeInfiniteCache": {},
         "getInfiniteRowCount": {},
         "isLastRowIndexKnown": {},
-        "setRowCount": {}
+        "setRowCount": {},
+        "getCacheBlockState": {}
     },
     "viewportRowModel": {
         "meta": {
@@ -724,6 +744,7 @@
         },
         "setServerSideDatasource": {},
         "setCacheBlockSize": {},
+        "setRowCount": {},
         "refreshServerSide": {
             "more": {
                 "name": "Purging Groups",
@@ -752,6 +773,12 @@
             "more": {
                 "name": "Transactions",
                 "url": "/server-side-model-updating-transactions/#asynchronous-updates"
+            }
+        },
+        "getCacheBlockState": {
+            "more": {
+                "name": "Cache Block State",
+                "url": "/server-side-model-configuration/#debug-info"
             }
         }
     }

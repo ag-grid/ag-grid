@@ -31,6 +31,36 @@ export const DATA_REVENUE = (() => {
     return revenueData;
 })();
 
+export const DATA_POSITIVE_LOG_AXIS = [
+    { os: 'Windows', share: 1088.07 },
+    { os: 'macOS', share: 9.44 },
+    { os: 'Linux', share: 1.87 },
+];
+
+export const DATA_NEGATIVE_LOG_AXIS = [
+    { os: 'Windows', share: -1088.07 },
+    { os: 'macOS', share: -9.44 },
+    { os: 'Linux', share: -1.87 },
+];
+
+export const DATA_FRACTIONAL_LOG_AXIS = [
+    { os: 'Windows', share: 0.108807 },
+    { os: 'macOS', share: 0.0000944 },
+    { os: 'Linux', share: 0.0187 },
+];
+
+export const DATA_ZERO_EXTENT_LOG_AXIS = [
+    { os: 'Windows', share: 0 },
+    { os: 'macOS', share: 0 },
+    { os: 'Linux', share: 0 },
+];
+
+export const DATA_INVALID_DOMAIN_LOG_AXIS = [
+    { os: 'Windows', share: 2 },
+    { os: 'macOS', share: 0 },
+    { os: 'Linux', share: -2 },
+];
+
 export const DATA_APPLE_REVENUE_BY_PRODUCT = [
     {
         quarter: "Q1'18",

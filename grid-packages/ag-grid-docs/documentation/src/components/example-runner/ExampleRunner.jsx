@@ -139,6 +139,21 @@ const saveChartIndexHtmlPermutations = (nodes, library, pageName, name, title, t
 
             writeIndexHtmlFile(vue3PackagesExampleInfo);
         }
+
+        // 3. For React, the different styles
+        if (framework === 'react') {
+
+            const alternativeStylePackagesExampleInfo =
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, false, 'packages');
+            writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
+
+            // Add the typescript versions for functional
+            if (useFunctionalReact) {
+                const reactTsStylePackages = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, true, 'packages');
+                writeIndexHtmlFile(reactTsStylePackages);
+            }
+        }
+
     } else if (type === 'multi' && framework === 'vue') {
         const vue3ExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, false, true, false);
 
@@ -147,6 +162,16 @@ const saveChartIndexHtmlPermutations = (nodes, library, pageName, name, title, t
         const typescriptExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, true);
 
         writeIndexHtmlFile(typescriptExampleInfo);
+    } else if (type === 'multi' && framework === 'react') {
+        // Also generate the alternative React style
+        const functionalExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, false);
+        writeIndexHtmlFile(functionalExampleInfo);
+
+        // Add the typescript versions for functional
+        if (useFunctionalReact) {
+            const reactTsStyle = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, true);
+            writeIndexHtmlFile(reactTsStyle);
+        }
     }
 };
 
@@ -190,7 +215,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
             <div></div>
             <div className={`anchor ${styles['example-runner__options']}`}>
                 {/* perversely we don't show the hook/class when the type is react as the example provided will be displayed "as is" */}
-                {library === 'grid' && exampleInfo.framework === 'react' && exampleInfo.type !== 'react' &&
+                {exampleInfo.framework === 'react' && exampleInfo.type !== 'react' &&
                     <ReactStyleSelector
                         useFunctionalReact={useFunctionalReact}
                         useTypescript={useTypescript}
@@ -257,11 +282,9 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                     tabIndex="0">
                     <FontAwesomeIcon icon={faCode} fixedWidth />
                 </div>
-                <div className={styles['example-runner__menu-item']} title='Open example in new tab'>
-                    <a href={getIndexHtmlUrl(exampleInfo)} target="_blank" rel="noreferrer">
-                        <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
-                    </a>
-                </div>
+                <a className={styles['example-runner__menu-item']} title='Open example in new tab' href={getIndexHtmlUrl(exampleInfo)} target="_blank" rel="noreferrer">
+                    <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
+                </a>
                 {!exampleInfo.options.noPlunker &&
                     <div
                         className={styles['example-runner__menu-item']}

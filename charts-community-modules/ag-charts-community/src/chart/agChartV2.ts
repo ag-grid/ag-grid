@@ -31,7 +31,8 @@ import { NumberAxis } from './axis/numberAxis';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
 import { TimeAxis } from './axis/timeAxis';
-import { Chart, ChartUpdateType } from './chart';
+import { Chart } from './chart';
+import { ChartUpdateType } from './chartUpdateType';
 import { TypedEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
 import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
@@ -46,6 +47,8 @@ import {
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
+import { REGISTERED_MODULES } from '../module-support';
+import { Module } from '../util/module';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -73,13 +76,19 @@ type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgTreemapSeriesOptions
     : never;
 
-type DownloadOptions = {
-    width?: number;
-    height?: number;
+export interface DownloadOptions extends ImageDataUrlOptions {
+    /** Name of downloaded image file. Defaults to `image`.  */
     fileName?: string;
-    /** The standard MIME type for the image format to return. If you do not specify this parameter, the default value is a PNG format image. See `Canvas.toDataURL()` */
+}
+
+export interface ImageDataUrlOptions {
+    /** Width of downloaded chart image in pixels. Defaults to current chart width. */
+    width?: number;
+    /** Height of downloaded chart image in pixels. Defaults to current chart height. */
+    height?: number;
+    /** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */
     fileFormat?: string;
-};
+}
 
 function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian' | 'polar' | 'hierarchy' {
     if (isAgCartesianChartOptions(options)) {
@@ -116,7 +125,8 @@ export abstract class AgChart {
     /**
      * Update an existing `AgChartInstance`. Options provided should be complete and not
      * partial.
-     *
+     * <br/>
+     * <br/>
      * **NOTE**: As each call could trigger a chart redraw, multiple calls to update options in
      * quick succession could result in undesirable flickering, so callers should batch up and/or
      * debounce changes to avoid unintended partial update renderings.
@@ -130,7 +140,8 @@ export abstract class AgChart {
 
     /**
      * Update an existing `AgChartInstance` by applying a partial set of option changes.
-     *
+     * <br/>
+     * <br/>
      * **NOTE**: As each call could trigger a chart redraw, each individual delta options update
      * should leave the chart in a valid options state. Also, multiple calls to update options in
      * quick succession could result in undesirable flickering, so callers should batch up and/or
@@ -144,13 +155,23 @@ export abstract class AgChart {
     }
 
     /**
-     * Initiate a browser-based image download for the given `AgChartInstance`s rendering.
+     * Starts a browser-based image download for the given `AgChartInstance`.
      */
     public static download(chart: AgChartInstance, options?: DownloadOptions) {
         if (!(chart instanceof AgChartInstanceProxy)) {
             throw new Error('AG Charts - invalid chart reference passed');
         }
         return AgChartInternal.download(chart, options);
+    }
+
+    /**
+     * Returns a base64-encoded image data URL for the given `AgChartInstance`.
+     */
+    public static getImageDataURL(chart: AgChartInstance, options?: ImageDataUrlOptions): Promise<string> {
+        if (!(chart instanceof AgChartInstanceProxy)) {
+            throw new Error('AG Charts - invalid chart reference passed');
+        }
+        return AgChartInternal.getImageDataURL(chart, options);
     }
 }
 
@@ -213,7 +234,7 @@ abstract class AgChartInternal {
         const { overrideDevicePixelRatio } = userOptions;
         delete userOptions['overrideDevicePixelRatio'];
 
-        let processedOptions = prepareOptions(userOptions, mixinOpts);
+        const processedOptions = prepareOptions(userOptions, mixinOpts);
         let chart = proxy?.chart;
         if (chart == null || chartType(userOptions as any) !== chartType(chart.processedOptions as any)) {
             chart = AgChartInternal.createChartInstance(processedOptions, overrideDevicePixelRatio, chart);
@@ -269,9 +290,40 @@ abstract class AgChartInternal {
      * @param opts The download options including `width` and `height` of the image as well as `fileName` and `fileFormat`.
      */
     static download(proxy: AgChartInstanceProxy, opts?: DownloadOptions) {
+        const asyncDownload = async () => {
+            const maybeClone = await AgChartInternal.prepareResizedChart(proxy, opts);
+
+            const { chart } = maybeClone;
+            chart.scene.download(opts?.fileName, opts?.fileFormat);
+
+            if (maybeClone !== proxy) {
+                maybeClone.destroy();
+            }
+        };
+
+        asyncDownload();
+    }
+
+    static async getImageDataURL(proxy: AgChartInstanceProxy, opts?: ImageDataUrlOptions): Promise<string> {
+        const maybeClone = await AgChartInternal.prepareResizedChart(proxy, opts);
+
+        const { chart } = maybeClone;
+        const result = chart.scene.canvas.getDataURL(opts?.fileFormat);
+
+        if (maybeClone !== proxy) {
+            maybeClone.destroy();
+        }
+
+        return result;
+    }
+
+    private static async prepareResizedChart(
+        proxy: AgChartInstanceProxy,
+        opts?: DownloadOptions | ImageDataUrlOptions
+    ) {
         const { chart } = proxy;
 
-        let { width, height, fileName, fileFormat } = opts || {};
+        let { width, height } = opts || {};
         const currentWidth = chart.width;
         const currentHeight = chart.height;
 
@@ -280,8 +332,7 @@ abstract class AgChartInternal {
             (chart.scene.canvas.pixelRatio === 1 && currentWidth === width && currentHeight === height);
 
         if (unchanged) {
-            chart.scene.download(fileName, fileFormat);
-            return;
+            return proxy;
         }
 
         width = width ?? currentWidth;
@@ -298,10 +349,8 @@ abstract class AgChartInternal {
 
         const clonedChart = AgChartInternal.createOrUpdate(options as any);
 
-        clonedChart.chart.waitForUpdate().then(() => {
-            clonedChart.chart.scene.download(fileName, fileFormat);
-            clonedChart.destroy();
-        });
+        await clonedChart.chart.waitForUpdate();
+        return clonedChart;
     }
 
     private static createChartInstance(
@@ -319,7 +368,7 @@ abstract class AgChartInternal {
             return new PolarChart(document, overrideDevicePixelRatio, transferableResource);
         }
 
-        throw new Error(`AG Charts - couldn\'t apply configuration, check type of options: ${options['type']}`);
+        throw new Error(`AG Charts - couldn't apply configuration, check type of options: ${options['type']}`);
     }
 
     private static async updateDelta(
@@ -350,19 +399,22 @@ function debug(message?: any, ...optionalParams: any[]): void {
 }
 
 function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOptions>, userOptions: AgChartOptions): void {
+    const completeOptions = jsonMerge([chart.processedOptions ?? {}, processedOptions], noDataCloneMergeOptions);
+    const modulesChanged = applyModules(chart, completeOptions);
+
+    const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
     if (isAgCartesianChartOptions(processedOptions)) {
-        applyOptionValues(chart, processedOptions, {
-            skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'],
-        });
+        // Append axes to defaults.
+        skip.push('axes');
     } else if (isAgPolarChartOptions(processedOptions) || isAgHierarchyChartOptions(processedOptions)) {
-        applyOptionValues(chart, processedOptions, {
-            skip: ['type', 'data', 'series', 'autoSize', 'listeners', 'theme'],
-        });
+        // Use defaults.
     } else {
         throw new Error(
             `AG Charts - couldn\'t apply configuration, check type of options and chart: ${processedOptions['type']}`
         );
     }
+
+    applyOptionValues(chart, processedOptions, { skip });
 
     let forceNodeDataRefresh = false;
     if (processedOptions.series && processedOptions.series.length > 0) {
@@ -392,15 +444,43 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         registerListeners(chart, processedOptions.listeners);
     }
     if (processedOptions.legend?.listeners) {
-        Object.assign(chart.legend.listeners, processedOptions.legend.listeners);
+        Object.assign(chart.legend.listeners, processedOptions.legend.listeners ?? {});
     }
 
-    chart.processedOptions = jsonMerge([chart.processedOptions ?? {}, processedOptions], noDataCloneMergeOptions);
+    chart.processedOptions = completeOptions;
     chart.userOptions = jsonMerge([chart.userOptions ?? {}, userOptions], noDataCloneMergeOptions);
 
-    const updateType = forceNodeDataRefresh ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
+    const majorChange = forceNodeDataRefresh || modulesChanged;
+    const updateType = majorChange ? ChartUpdateType.PROCESS_DATA : ChartUpdateType.PERFORM_LAYOUT;
     debug('chart update type', { updateType: ChartUpdateType[updateType] });
     chart.update(updateType, { forceNodeDataRefresh });
+}
+
+function applyModules(chart: Chart, options: AgChartOptions) {
+    const matchingChartType = (module: Module) => {
+        return (
+            (chart instanceof CartesianChart && module.chartTypes.includes('cartesian')) ||
+            (chart instanceof PolarChart && module.chartTypes.includes('polar')) ||
+            (chart instanceof HierarchyChart && module.chartTypes.includes('hierarchy'))
+        );
+    };
+
+    let modulesChanged = false;
+    for (const next of REGISTERED_MODULES) {
+        const shouldBeEnabled = matchingChartType(next) && (options as any)[next.optionsKey] != null;
+        const isEnabled = chart.isModuleEnabled(next);
+
+        if (shouldBeEnabled === isEnabled) continue;
+        modulesChanged = true;
+
+        if (shouldBeEnabled) {
+            chart.addModule(next);
+        } else {
+            chart.removeModule(next);
+        }
+    }
+
+    return modulesChanged;
 }
 
 function applySeries(chart: Chart, options: AgChartOptions) {
@@ -476,7 +556,8 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
                 series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path }));
                 break;
             case 'bar':
-            // fall-through - bar and column are synonyms.
+                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path }));
+                break;
             case 'column':
                 series.push(applySeriesValues(new BarSeries(), seriesOptions, { path }));
                 break;
@@ -541,7 +622,10 @@ type ObservableLike = {
 function registerListeners<T extends ObservableLike>(source: T, listeners?: {}) {
     source.clearEventListeners();
     for (const property in listeners) {
-        source.addEventListener(property, (listeners as any)[property] as TypedEventListener);
+        const listener = (listeners as any)[property] as TypedEventListener;
+        if (typeof listener !== 'function') continue;
+
+        source.addEventListener(property, listener);
     }
 }
 

@@ -110,7 +110,10 @@ The text shown as a placeholder in the Mini Filter textbox can be customised by 
 
 When no matching values are found when typing in the Mini Filter, a message is displayed. This can be customised by setting `'noMatches'`.
 
-The example below shows this text being customised.
+The example below shows this text being customised:
+
+- `searchOOO` is set so that the Mini Filter textbox displays `'Search values...'` instead of the default text `'Search...'`
+- `noMatches` is set so that when no matches are found for the Mini Filter search, the message displays `'No matches could be found.'` instead of `'No matches.'`
 
 <grid-example title='Text Customisation' name='text-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu"] }'></grid-example>
 

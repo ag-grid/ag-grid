@@ -3,19 +3,21 @@ import { Group } from '../scene/group';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 import { Background } from './background';
-import { Legend, LegendDatum } from './legend';
+import { Legend } from './legend';
+
 import { BBox } from '../scene/bbox';
 import { SizeMonitor } from '../util/sizeMonitor';
 import { Caption } from '../caption';
 import { Observable, TypedEvent } from '../util/observable';
-import { ChartAxis, ChartAxisDirection } from './chartAxis';
+import { ChartAxis } from './chartAxis';
+import { ChartAxisDirection } from './chartAxisDirection';
 import { createId } from '../util/id';
 import { isPointLabelDatum, PlacedLabel, placeLabels, PointLabelDatum } from '../util/labelPlacement';
-import { AgChartOptions, AgChartClickEvent, AgChartInstance } from './agChartOptions';
+import { AgChartOptions, AgChartClickEvent, AgChartDoubleClickEvent, AgChartInstance } from './agChartOptions';
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
-import { BOOLEAN, Validate } from '../util/validation';
+import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
@@ -26,16 +28,11 @@ import { Layers } from './layers';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
 import { TooltipManager } from './interaction/tooltipManager';
-
-/** Types of chart-update, in pipeline execution order. */
-export enum ChartUpdateType {
-    FULL,
-    PROCESS_DATA,
-    PERFORM_LAYOUT,
-    SERIES_UPDATE,
-    SCENE_RENDER,
-    NONE,
-}
+import { Module, ModuleInstanceMeta } from '../util/module';
+import { ZoomManager } from './interaction/zoomManager';
+import { LayoutService } from './layout/layoutService';
+import { ChartUpdateType } from './chartUpdateType';
+import { LegendDatum } from './legendDatum';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -186,6 +183,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._subtitle;
     }
 
+    @Validate(STRING_UNION('standalone', 'integrated'))
+    mode: 'standalone' | 'integrated' = 'standalone';
+
     private _destroyed: boolean = false;
     get destroyed() {
         return this._destroyed;
@@ -195,7 +195,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected readonly cursorManager: CursorManager;
     protected readonly highlightManager: HighlightManager;
     protected readonly tooltipManager: TooltipManager;
+    protected readonly zoomManager: ZoomManager;
+    protected readonly layoutService: LayoutService;
     protected readonly axisGroup: Group;
+    protected readonly modules: Record<string, ModuleInstanceMeta> = {};
 
     protected constructor(
         document = window.document,
@@ -234,6 +237,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager = new InteractionManager(element);
         this.cursorManager = new CursorManager(element);
         this.highlightManager = new HighlightManager();
+        this.zoomManager = new ZoomManager();
+        this.layoutService = new LayoutService();
 
         background.width = this.scene.width;
         background.height = this.scene.height;
@@ -270,11 +275,54 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         // Add interaction listeners last so child components are registered first.
         this.interactionManager.addListener('click', (event) => this.onClick(event));
+        this.interactionManager.addListener('dblclick', (event) => this.onDoubleClick(event));
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
         this.interactionManager.addListener('leave', () => this.disablePointer());
         this.interactionManager.addListener('page-left', () => this.destroy());
 
+        this.zoomManager.addListener('zoom-change', (_) =>
+            this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true })
+        );
+
         this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
+    }
+
+    addModule(module: Module) {
+        if (this.modules[module.optionsKey] != null) {
+            throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
+        }
+
+        const {
+            scene,
+            interactionManager,
+            zoomManager,
+            cursorManager,
+            highlightManager,
+            tooltipManager,
+            layoutService,
+        } = this;
+        const moduleMeta = module.initialiseModule({
+            scene,
+            interactionManager,
+            zoomManager,
+            cursorManager,
+            highlightManager,
+            tooltipManager,
+            layoutService,
+        });
+        this.modules[module.optionsKey] = moduleMeta;
+
+        (this as any)[module.optionsKey] = moduleMeta.instance;
+    }
+
+    removeModule(module: Module) {
+        this.modules[module.optionsKey]?.instance?.destroy();
+        delete this.modules[module.optionsKey];
+        delete (this as any)[module.optionsKey];
+    }
+
+    isModuleEnabled(module: Module) {
+        return this.modules[module.optionsKey] != null;
     }
 
     destroy(opts?: { keepTransferableResources: boolean }): TransferableResources | undefined {
@@ -290,6 +338,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.tooltip.destroy();
         SizeMonitor.unobserve(this.element);
+
+        for (const [key, module] of Object.entries(this.modules)) {
+            module.instance.destroy();
+            delete this.modules[key];
+            delete (this as any)[key];
+        }
 
         this.interactionManager.destroy();
 
@@ -315,8 +369,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
     }
 
-    disablePointer() {
-        this.tooltipManager.updateTooltip(this.id);
+    disablePointer(highlightOnly = false) {
+        if (!highlightOnly) {
+            this.tooltipManager.updateTooltip(this.id);
+        }
         this.highlightManager.updateHighlight(this.id);
         if (this.lastInteractionEvent) {
             this.lastInteractionEvent = undefined;
@@ -409,10 +465,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             case ChartUpdateType.FULL:
             case ChartUpdateType.PROCESS_DATA:
                 await this.processData();
+                this.disablePointer(true);
                 splits.push(performance.now());
-
-                // Disable tooltip/highlight if the data fundamentally shifted.
-                this.disablePointer();
             // Fall-through to next pipeline stage.
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (this._autoSize && !this._lastAutoSize) {
@@ -433,6 +487,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
                 await this.performLayout();
                 splits.push(performance.now());
+
             // Fall-through to next pipeline stage.
             case ChartUpdateType.SERIES_UPDATE:
                 const { seriesRect } = this;
@@ -441,6 +496,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 await Promise.all(seriesUpdates);
 
                 splits.push(performance.now());
+            // Fall-through to next pipeline stage.
+            case ChartUpdateType.TOOLTIP_RECALCULATION:
+                const tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
+                if (performUpdateType < ChartUpdateType.SERIES_UPDATE && tooltipMeta?.event?.type === 'hover') {
+                    this.handlePointer(tooltipMeta.event as InteractionEvent<'hover'>);
+                }
+
             // Fall-through to next pipeline stage.
             case ChartUpdateType.SCENE_RENDER:
                 await this.scene.render({ debugSplitTimes: splits, extraDebugStats });
@@ -626,7 +688,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 continue;
             }
 
-            let labelData: PointLabelDatum[] = series.getLabelData();
+            const labelData: PointLabelDatum[] = series.getLabelData();
 
             if (!(labelData && isPointLabelDatum(labelData[0]))) {
                 continue;
@@ -825,20 +887,20 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
-    private pickSeriesNode(point: Point):
+    private pickSeriesNode(
+        point: Point,
+        exactMatchOnly: boolean
+    ):
         | {
               series: Series<any>;
               datum: SeriesNodeDatum;
+              distance: number;
           }
         | undefined {
-        const {
-            tooltip: { tracking },
-        } = this;
-
         const start = performance.now();
 
         // Disable 'nearest match' options if tooltip.tracking is enabled.
-        const pickModes = tracking ? undefined : [SeriesNodePickMode.EXACT_SHAPE_MATCH];
+        const pickModes = exactMatchOnly ? [SeriesNodePickMode.EXACT_SHAPE_MATCH] : undefined;
 
         // Iterate through series in reverse, as later declared series appears on top of earlier
         // declared series.
@@ -849,7 +911,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             if (!series.visible || !series.rootGroup.visible) {
                 continue;
             }
-            let { match, distance } = series.pickNode(point, pickModes) ?? {};
+            const { match, distance } = series.pickNode(point, pickModes) ?? {};
             if (!match || distance == null) {
                 continue;
             }
@@ -905,14 +967,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
             return;
         }
 
-        const pick = this.pickSeriesNode({ x: offsetX, y: offsetY });
+        const pick = this.pickSeriesNode({ x: offsetX, y: offsetY }, !this.tooltip.tracking);
 
         if (!pick) {
             disablePointer();
             return;
         }
 
-        const meta = { pageX, pageY, offsetX, offsetY, event: event.sourceEvent };
+        const meta = { pageX, pageY, offsetX, offsetY, event: event };
         if (!lastPick || lastPick.datum !== pick.datum) {
             this.onSeriesDatumPick(meta, pick.datum);
             return;
@@ -936,20 +998,19 @@ export abstract class Chart extends Observable implements AgChartInstance {
         });
     }
 
+    protected onDoubleClick(event: InteractionEvent<'dblclick'>) {
+        this.fireEvent<AgChartDoubleClickEvent>({
+            type: 'doubleClick',
+            event: event.sourceEvent,
+        });
+    }
+
     private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
-        const { lastPick } = this;
+        const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, true);
 
-        if (lastPick?.datum) {
-            const { datum } = lastPick;
-            datum.series.fireNodeClickEvent(event.sourceEvent, datum);
+        if (pick) {
+            pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
             return true;
-        } else if (event.sourceEvent.type.startsWith('touch')) {
-            const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY });
-
-            if (pick) {
-                pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
-                return true;
-            }
         }
 
         return false;
@@ -1030,7 +1091,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.lastPick = event.currentHighlight ? { datum: event.currentHighlight } : undefined;
 
-        let updateAll = newSeries == null || lastSeries == null;
+        const updateAll = newSeries == null || lastSeries == null;
         if (updateAll) {
             this.update(ChartUpdateType.SERIES_UPDATE);
         } else {

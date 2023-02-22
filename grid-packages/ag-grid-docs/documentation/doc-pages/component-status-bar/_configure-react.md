@@ -18,3 +18,5 @@
 |       ...other props...
 |/>
 |```
+|
+|In the configuration above we've specified a custom component (`MyStatusBarComponent`) as well as the provided `agAggregationComponent` component.

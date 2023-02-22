@@ -1,12 +1,12 @@
 import { Autowired, Bean, Optional, PostConstruct } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
-import { CellFocusedParams, CellFocusedEvent, Events } from "./events";
+import { CellFocusedParams, CellFocusedEvent, Events, CellFocusClearedEvent, CommonCellFocusParams } from "./events";
 import { ColumnModel } from "./columns/columnModel";
-import { CellPosition } from "./entities/cellPosition";
+import { CellPosition } from "./entities/cellPositionUtils";
 import { RowNode } from "./entities/rowNode";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
-import { RowPositionUtils } from "./entities/rowPosition";
+import { RowPositionUtils } from "./entities/rowPositionUtils";
 import { IRangeService } from "./interfaces/IRangeService";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { HeaderNavigationService } from "./headerRendering/common/headerNavigationService";
@@ -24,6 +24,7 @@ import { last } from "./utils/array";
 import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./interfaces/iCallbackParams";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR } from "./utils/dom";
+import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
 
 
 @Bean('focusService')
@@ -219,13 +220,40 @@ export class FocusService extends BeanStub {
         return true;
     }
 
-    public clearFocusedCell(): void {
-        this.focusedCellPosition = null;
-        this.onCellFocused(false, false);
-    }
-
     public getFocusedCell(): CellPosition | null {
         return this.focusedCellPosition;
+    }
+
+    private getFocusEventParams(): CommonCellFocusParams {
+        const { rowIndex, rowPinned, column } = this.focusedCellPosition!;
+
+        const params: CommonCellFocusParams = {
+            rowIndex: rowIndex,
+            rowPinned:rowPinned,
+            column: column,
+            isFullWidthCell: false
+        };
+
+        const rowCtrl = this.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
+
+        if (rowCtrl) {
+            params.isFullWidthCell = rowCtrl.isFullWidth();
+        }
+
+        return params;
+    }
+
+    public clearFocusedCell(): void {
+        if (this.focusedCellPosition == null) { return; }
+
+        const event: WithoutGridCommon<CellFocusClearedEvent> = {
+            type: Events.EVENT_CELL_FOCUS_CLEARED,
+            ... this.getFocusEventParams(),
+        }
+
+        this.focusedCellPosition = null;
+
+        this.eventService.dispatchEvent(event);
     }
 
     public setFocusedCell(params: CellFocusedParams): void {
@@ -253,7 +281,15 @@ export class FocusService extends BeanStub {
             column: gridColumn
         } : null;
 
-        this.onCellFocused(forceBrowserFocus, preventScrollOnBrowserFocus);
+        const event: WithoutGridCommon<CellFocusedEvent> = {
+            type: Events.EVENT_CELL_FOCUSED,
+            ... this.getFocusEventParams(),
+            forceBrowserFocus,
+            preventScrollOnBrowserFocus,
+            floating: null
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
@@ -417,6 +453,27 @@ export class FocusService extends BeanStub {
         return false;
     }
 
+    public findFocusableElementBeforeTabGuard(rootNode: HTMLElement, referenceElement?: HTMLElement): HTMLElement | null {
+        if (!referenceElement) { return null; }
+
+        const focusableElements = this.findFocusableElements(rootNode);
+        const referenceIndex = focusableElements.indexOf(referenceElement);
+
+        if (referenceIndex === -1) { return null; }
+
+        let lastTabGuardIndex = -1;
+        for (let i = referenceIndex - 1; i >= 0; i--) {
+            if (focusableElements[i].classList.contains(TabGuardClassNames.TAB_GUARD_TOP)) {
+                lastTabGuardIndex = i;
+                break;
+            }
+        }
+
+        if (lastTabGuardIndex <= 0) { return null; }
+
+        return focusableElements[lastTabGuardIndex - 1];
+    }
+
     public findNextFocusableElement(rootNode: HTMLElement = this.eGridDiv, onlyManaged?: boolean | null, backwards?: boolean): HTMLElement | null {
         const focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
         const eDocument = this.gridOptionsService.getDocument();
@@ -438,14 +495,15 @@ export class FocusService extends BeanStub {
         return focusable[nextIndex];
     }
 
-    public isFocusUnderManagedComponent(rootNode: HTMLElement): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
+    public isTargetUnderManagedComponent(rootNode: HTMLElement, target?: HTMLElement): boolean {
+        if (!target) { return false; }
+
         const managedContainers = rootNode.querySelectorAll(`.${ManagedFocusFeature.FOCUS_MANAGED_CLASS}`);
 
         if (!managedContainers.length) { return false; }
 
         for (let i = 0; i < managedContainers.length; i++) {
-            if (managedContainers[i].contains(eDocument.activeElement)) {
+            if (managedContainers[i].contains(target)) {
                 return true;
             }
         }
@@ -463,34 +521,6 @@ export class FocusService extends BeanStub {
         if (getTabIndex(node) === null) { return null; }
 
         return node;
-    }
-
-    private onCellFocused(forceBrowserFocus: boolean, preventScrollOnBrowserFocus: boolean): void {
-        const event: WithoutGridCommon<CellFocusedEvent> = {
-            type: Events.EVENT_CELL_FOCUSED,
-            forceBrowserFocus: forceBrowserFocus,
-            preventScrollOnBrowserFocus: preventScrollOnBrowserFocus,
-            rowIndex: null,
-            column: null,
-            floating: null,
-            rowPinned: null,
-            isFullWidthCell: false
-        };
-
-        if (this.focusedCellPosition) {
-            const rowIndex = event.rowIndex = this.focusedCellPosition.rowIndex;
-            const rowPinned = event.rowPinned = this.focusedCellPosition.rowPinned;
-
-            event.column = this.focusedCellPosition.column;
-
-            const rowCtrl = this.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
-
-            if (rowCtrl) {
-                event.isFullWidthCell = rowCtrl.isFullWidth();
-            }
-        }
-
-        this.eventService.dispatchEvent(event);
     }
 
     public focusGridView(column?: Column, backwards?: boolean): boolean {

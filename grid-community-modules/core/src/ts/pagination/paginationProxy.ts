@@ -4,7 +4,7 @@ import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { missing, exists } from "../utils/generic";
-import { RowPosition } from "../entities/rowPosition";
+import { RowPosition } from "../entities/rowPositionUtils";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
 @Bean('paginationProxy')
@@ -146,6 +146,17 @@ export class PaginationProxy extends BeanStub {
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         return this.rowModel.forEachNode(callback);
+    }
+
+    public forEachNodeOnPage(callback: (rowNode: RowNode) => void) {
+        const firstRow = this.getPageFirstRow();
+        const lastRow = this.getPageLastRow();
+        for (let i = firstRow; i <= lastRow; i++) {
+            const node = this.getRow(i);
+            if (node) {
+                callback(node);
+            }
+        }
     }
 
     public getType(): RowModelType {

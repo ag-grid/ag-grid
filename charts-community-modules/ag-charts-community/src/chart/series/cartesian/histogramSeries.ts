@@ -6,9 +6,9 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesNodeDatum, SeriesTooltip, Series, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum } from '../../legend';
+import { LegendDatum } from '../../legendDatum';
 import { CartesianSeries, CartesianSeriesNodeClickEvent } from './cartesianSeries';
-import { ChartAxisDirection } from '../../chartAxis';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import ticks, { tickStep } from '../../../util/ticks';
@@ -162,33 +162,6 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         this.label.enabled = false;
     }
 
-    directionKeys = {
-        [ChartAxisDirection.X]: ['xKey'],
-        [ChartAxisDirection.Y]: ['yKey'],
-    };
-
-    getKeys(direction: ChartAxisDirection): string[] {
-        const { directionKeys } = this;
-        const keys = directionKeys && directionKeys[direction];
-        const values: string[] = [];
-
-        if (keys) {
-            keys.forEach((key) => {
-                const value = (this as any)[key];
-
-                if (value) {
-                    if (Array.isArray(value)) {
-                        values.push(...value);
-                    } else {
-                        values.push(value);
-                    }
-                }
-            });
-        }
-
-        return values;
-    }
-
     @Validate(STRING)
     xKey: string = '';
 
@@ -251,7 +224,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
     private calculateNiceBins(domain: number[], binCount: number): [number, number][] {
         let start = Math.floor(domain[0]);
-        let stop = domain[1];
+        const stop = domain[1];
         let binSize;
 
         const segments = binCount || 1;
@@ -264,7 +237,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         const bins: [number, number][] = [];
 
         for (let i = 0; i < count; i++) {
-            let a = Math.round((start + i * step) * 10) / 10;
+            const a = Math.round((start + i * step) * 10) / 10;
             let b = Math.round((start + (i + 1) * step) * 10) / 10;
             if (i === count - 1) {
                 b = Math.max(b, stop);

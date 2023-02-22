@@ -25,7 +25,6 @@ Since treemaps are used to render tree data, to create a basic treemap, we need 
 A basic treemap configuration would look like this:
 
 ```js
-type: 'hierarchy',
 data, // the root node of the hierarchy
 series: [{
     type: 'treemap',
@@ -248,6 +247,17 @@ Please see the API reference for more information.
 ## Complex Colouring Chart Example
 
 <chart-example title='Complex Colouring Chart' name='custom-colors' type='generated'></chart-example>
+
+## Tooltips
+
+With no `tooltip` or `series[].tooltip` configuration, tooltip content will be taken from series
+values:
+- `series[].labelKey` will be displayed as tooltip title.
+- `series[].labels.value.name` will be displayed as tooltip content.
+- `series[].labels.value.key` will be displayed as additional tooltip content with a `: ` prefix to separate it from the previous content.
+- `series[].labels.value.formatter` allows formatting of the additional tooltip content.
+
+For more advanced configuration see the [Tooltips](../tooltips/) section.
 
 ## API Reference
 

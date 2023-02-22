@@ -37,6 +37,20 @@ test('UTC month.every', () => {
         new Date(Date.UTC(2023, 11, 18, 8, 31, 5, 127))
     );
     expect(range).toEqual([
+        new Date(Date.UTC(2023, 4, 1, 0, 0, 0, 0)),
+        new Date(Date.UTC(2023, 7, 1, 0, 0, 0, 0)),
+        new Date(Date.UTC(2023, 10, 1, 0, 0, 0, 0)),
+    ]);
+});
+
+test('UTC month.every with snapTo: null', () => {
+    const interval = utcMonth.every(3, { snapTo: null! });
+
+    const range = interval.range(
+        new Date(Date.UTC(2023, 1, 18, 8, 31, 5, 125)),
+        new Date(Date.UTC(2023, 11, 18, 8, 31, 5, 127))
+    );
+    expect(range).toEqual([
         new Date(Date.UTC(2023, 3, 1, 0, 0, 0, 0)),
         new Date(Date.UTC(2023, 6, 1, 0, 0, 0, 0)),
         new Date(Date.UTC(2023, 9, 1, 0, 0, 0, 0)),

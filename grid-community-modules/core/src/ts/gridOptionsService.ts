@@ -32,12 +32,12 @@ type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
 type NumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
-type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any>) => any>, NoArgFuncs | AnyArgFuncs>;
-type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>;
+type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any, any>) => any>, NoArgFuncs | AnyArgFuncs>;
+type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps | 'api' | 'columnApi' | 'context'>;
 
 
 type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
-type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any>) => infer RT ? RT : never;
+type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any, any>) => infer RT ? RT : never;
 type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptions[K]> = undefined | ((params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>) => ExtractReturnTypeFromCallback<OriginalCallback>)
 export interface PropertyChangedEvent extends AgEvent {
     type: keyof GridOptions,
@@ -74,12 +74,22 @@ export class GridOptionsService {
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
 
+    // Store locally to avoid retrieving many times as these are requested for every callback
+    public api: GridApi;
+    public columnApi: ColumnApi;
+    // This is quicker then having code call gridOptionsService.get('context')
+    public get context() {
+        return this.gridOptions['context'];
+    }
+
     private propertyEventService: EventService = new EventService();
     private gridOptionLookup: Set<string>;
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
+        this.api = gridApi;
+        this.columnApi = columnApi;
     }
 
     @PostConstruct
@@ -148,11 +158,15 @@ export class GridOptionsService {
     * @param callback User provided callback
     * @returns Wrapped callback where the params object not require api, columnApi and context
     */
-    private mergeGridCommonParams<P extends AgGridCommon<any>, T>(callback: ((params: P) => T) | undefined):
+    private mergeGridCommonParams<P extends AgGridCommon<any, any>, T>(callback: ((params: P) => T) | undefined):
         ((params: WithoutGridCommon<P>) => T) | undefined {
         if (callback) {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
-                const mergedParams = { ...callbackParams, api: this.gridOptions.api!, columnApi: this.gridOptions.columnApi!, context: this.gridOptions.context } as P;
+                const mergedParams = callbackParams as P;
+                mergedParams.api = this.api;
+                mergedParams.columnApi = this.columnApi;
+                mergedParams.context = this.context;
+
                 return callback(mergedParams);
             };
             return wrapped;
@@ -233,7 +247,7 @@ export class GridOptionsService {
     }
 
     public isDomLayout(domLayout: DomLayoutType) {
-        const gridLayout = this.get('domLayout') ?? 'normal';
+        const gridLayout = this.gridOptions.domLayout ?? 'normal';
         return gridLayout === domLayout;
     }
 
@@ -279,23 +293,27 @@ export class GridOptionsService {
         }
 
         if (rowNode.detail && this.is('masterDetail')) {
-            // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
-            // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
-            // (due to auto height) which looks bad, especially if doing row animation.
-            if (this.is('detailRowAutoHeight')) {
-                return { height: 1, estimated: false };
-            }
-
-            if (this.isNumeric(this.gridOptions.detailRowHeight)) {
-                return { height: this.gridOptions.detailRowHeight, estimated: false };
-            }
-
-            return { height: 300, estimated: false };
+            return this.getMasterDetailRowHeight();
         }
 
         const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
 
         return { height: rowHeight, estimated: false };
+    }
+
+    private getMasterDetailRowHeight(): { height: number, estimated: boolean } {
+        // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
+        // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
+        // (due to auto height) which looks bad, especially if doing row animation.
+        if (this.is('detailRowAutoHeight')) {
+            return { height: 1, estimated: false };
+        }
+
+        if (this.isNumeric(this.gridOptions.detailRowHeight)) {
+            return { height: this.gridOptions.detailRowHeight, estimated: false };
+        }
+
+        return { height: 300, estimated: false };
     }
 
     // we don't allow dynamic row height for virtual paging
@@ -368,7 +386,7 @@ export class GridOptionsService {
             return getRowId;
         }
         // this is the deprecated way, so provide a proxy to make it compatible
-        const getRowNodeId = this.get('getRowNodeId');
+        const getRowNodeId = this.gridOptions.getRowNodeId;
         if (getRowNodeId) {
             return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data);
         }
@@ -396,7 +414,7 @@ export class GridOptionsService {
     }
 
     public isColumnsSortingCoupledToGroup(): boolean {
-        const autoGroupColumnDef = this.get('autoGroupColumnDef');
+        const autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
         const isClientSideRowModel = this.isRowModelType('clientSide');
         return isClientSideRowModel && !autoGroupColumnDef?.comparator;
     }

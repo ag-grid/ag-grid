@@ -1,0 +1,182 @@
+@use "../../design-system/" as *;
+
+.license {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        max-width: calc(50% - $size-2);
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        max-width: 368px;
+    }
+
+    p {
+        margin: 0 !important; // !important for .ag-styles specificity
+    }
+
+    .top,
+    .bottom {
+        padding-left: $size-2 !important; // !important for .ag-styles specificity
+        padding-right: $size-2 !important; // !important for .ag-styles specificity
+    }
+
+    .top {
+        flex-grow: 1;
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto auto auto;
+        grid-template-areas: 'meta meta' 'price benefits' 'actions actions';
+        padding-top: $size-3 !important; // !important for .ag-styles specificity
+        padding-bottom: $size-2 !important; // !important for .ag-styles specificity
+    }
+
+    .bottom {
+        flex-grow: 0 !important; // !important for .ag-styles specificity
+        align-self: flex-end;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 'meta price' 'required required';
+        width: 100%;
+        padding-top: $size-2 !important; // !important for .ag-styles specificity
+        padding-bottom: $size-2 !important; // !important for .ag-styles specificity
+        border-top: 1px solid var(--border-color);
+
+        p {
+            font-size: 12px !important;
+        }
+    }
+}
+
+.licenseMeta {
+    grid-area: meta;
+    display: flex;
+    flex-direction: column;
+
+    svg {
+        position: relative;
+        top: -1px;
+        width: 16px;
+        opacity: 0.6666;
+
+        * {
+            fill: var(--secondary-text-color) !important;
+        }
+    }
+
+    .top & {
+        margin-bottom: $size-5 !important; // !important for .ag-styles specificity
+        text-align: center;
+    }
+
+    .bottom & p:last-child {
+        max-width: 13em;
+        line-height: $line-height-tight;
+    }
+}
+
+p.name {
+    .top & {
+        font-size: 46px !important; // !important for .ag-styles specificity
+        line-height: 1 !important; // !important for .ag-styles specificity
+        margin-top: $size-half !important; // !important for .ag-styles specificity
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+
+        @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
+            max-width: 340px;
+            margin-left: auto !important; // !important for .ag-styles specificity
+            margin-right: auto !important; // !important for .ag-styles specificity
+        }
+    }
+
+    .bottom & {
+        font-size: $font-size-large !important; // !important for .ag-styles specificity
+        line-height: 1 !important; // !important for .ag-styles specificity
+        margin-top: $size-half !important; // !important for .ag-styles specificity
+        margin-bottom: $size-half !important; // !important for .ag-styles specificity
+    }
+}
+
+.price {
+    grid-area: price;
+    align-self: end;
+
+    .bottom & {
+        justify-self: end;
+        text-align: right;
+    }
+
+    .bottom & p:last-child {
+        max-width: 13em;
+        line-height: $line-height-tight;
+    }
+}
+
+p.priceFullDollars {
+    line-height: 1.25 !important; // !important for .ag-styles specificity
+    letter-spacing: -0.05em;
+
+    &::before {
+        content: '$';
+    }
+
+    .top & {
+        font-size: 46px !important; // !important for .ag-styles specificity
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+    }
+
+    .bottom & {
+        font-size: 36px !important; // !important for .ag-styles specificity
+    }
+}
+
+.licenseBenefits {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-align: right;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
+        min-height: 130px;
+    }
+
+    a {
+        display: block;
+        margin-top: $size-half !important; // !important for .ag-styles specificity
+    }
+}
+
+.licenseActions {
+    grid-area: actions;
+    align-self: end;
+    margin-top: $size-5 !important; // !important for .ag-styles specificity
+
+    a {
+        width: 100%;
+        text-align: center;
+
+        &:not(:last-child) {
+            margin-bottom: $size-half;
+        }
+    }
+}
+
+.learnMoreLink {
+    &:hover::after {
+        transform: translateY(0.125em);
+    }
+
+    &::after {
+        content: '↓';
+        padding-left: 0.25em;
+        transition: transform $default-transition-timing;
+    }
+}
+
+.devLicenseRequired {
+    padding-top: $size-2 !important; // !important for .ag-styles specificity
+    grid-area: required;
+}

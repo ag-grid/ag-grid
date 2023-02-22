@@ -63,6 +63,11 @@
   color: transparent;
 }
 
+.ag-theme-alpine .ag-icon-cut {
+  background: transparent url("https://www.ag-grid.com/example-assets/svg-icons/cut.svg") center/contain no-repeat;
+  color: transparent;
+}
+
 .ag-theme-alpine .ag-icon-cross {
   background: transparent url("https://www.ag-grid.com/example-assets/svg-icons/cross.svg") center/contain no-repeat;
   color: transparent;

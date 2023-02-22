@@ -2,7 +2,8 @@ import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgPolarChartOptions } from '../../agChartOptions';
 import { AgChart } from '../../agChartV2';
-import { Chart, ChartUpdateType } from '../../chart';
+import { Chart } from '../../chart';
+import { ChartUpdateType } from '../../chartUpdateType';
 import * as examples from './test/examples';
 import {
     waitForChartStability,
@@ -85,7 +86,7 @@ describe('PolarSeries', () => {
         }
     });
 
-    let ctx = setupMockCanvas();
+    const ctx = setupMockCanvas();
 
     describe('#create', () => {
         beforeEach(() => {

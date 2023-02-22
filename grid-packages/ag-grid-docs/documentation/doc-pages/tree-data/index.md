@@ -177,13 +177,13 @@ Please note that Tree Data filtering behaves slightly differently to [Filtering 
 
 ### Filtering Aggregated Parent Rows
 
-The default behaviour of a Group Filter is to ignore aggregated group values that pass the filter, but this can be changed by enabling `groupAggFiltering`.
+The default behaviour of a group filter is to ignore aggregated group values that pass the filter, but this can be changed by enabling `groupAggFiltering`.
 
 The default behaviour of a Tree Data filter is to match aggregated group values as well, and setting the `groupAggFiltering` property to `true` or `false` will not change this. The one exception is that the Set Filter will not match a value in a parent row when `groupAggFiltering` is `false`. You can also change this behaviour by using [Custom Group Aggregation Filtering](/aggregation-filtering/#custom-group-aggregation-filtering) because passing a function to the `groupAggFiltering` property will work the same as without Tree Data filtering.
 
 ### Aggregated Values Based on Pre-Filtered Data
 
-The default behaviour of both Tree Data and Group Filters is to calculate aggregated values from the filtered results only. This can be changed by setting `suppressAggFilteredOnly = true`.
+The default behaviour of both Tree Data and group filters is to calculate aggregated values from the filtered results only. This can be changed by setting `suppressAggFilteredOnly = true`.
 
 This behaviour can also be achieved in the Tree Data filter by setting `groupAggFiltering = true`.
 
@@ -200,6 +200,8 @@ The following example demonstrates aggregated values based on pre-filtered data 
 When used with Tree Data, the [Set Filter](/filter-set/) will contain a list of all unique values across each level of the group hierarchy. The [File Browser](#example-file-browser) example above demonstrates how the Set Filter works with Tree Data.
 
 It is also possible to display the Set Filter List as a [Set Filter Tree List](/filter-set-tree-list/), which replicates the Tree Data structure. This can be seen in the [Tree List](#tree-list-example) example below.
+
+The Tree List also works with complex objects, which is demonstrated in the [Tree List Complex Objects Example](/filter-set-tree-list/#complex-objects).
 
 #### Tree List Example
 

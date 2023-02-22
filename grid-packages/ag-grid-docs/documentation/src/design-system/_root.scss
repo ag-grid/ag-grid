@@ -1,0 +1,28 @@
+@use 'core' as *;
+
+#{$css-variables-root} {
+    // create a CSS variable for every abstract color
+    @each $name, $hex in $abstract-colors {
+        --#{$name}: #{$hex};
+    }
+    // create a CSS variable for every semantic color
+    @each $name, $var-name in $semantic-colors {
+        --#{$name}: var(--#{$var-name});
+    }
+
+    --max-page-width: #{$max-page-width};
+
+    --border-radius: #{$border-radius};
+
+    --font-family: #{$font-family};
+    --monospace-font-family: #{$monospace-font-family};
+
+    --font-size: #{$font-size-medium};
+    --line-height: #{$line-height-normal};
+    --font-weight: #{$font-weight-normal};
+    --font-weight-thin: #{$font-weight-thin};
+    --font-weight-normal: #{$font-weight-normal};
+    --font-weight-bold: #{$font-weight-bold};
+
+    --icon-size: 2em;
+}

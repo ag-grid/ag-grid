@@ -140,7 +140,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         this.destroyDatasource();
 
         this.viewportDatasource = viewportDatasource;
-        this.rowCount = 0;
+        this.rowCount = -1;
 
         if (!viewportDatasource.init) {
             console.warn('AG Grid: viewport is missing init method.');
@@ -176,7 +176,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     public getRowCount(): number {
-        return this.rowCount;
+        return this.rowCount === -1 ? 0 : this.rowCount;
     }
 
     public getRowIndexAtPixel(pixel: number): number {

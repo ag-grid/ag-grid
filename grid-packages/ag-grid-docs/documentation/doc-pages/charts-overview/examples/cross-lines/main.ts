@@ -1,5 +1,4 @@
-import * as agCharts from "ag-charts-community";
-import { AgChartOptions } from "ag-charts-community";
+import { AgChart, AgChartOptions } from "ag-charts-community";
 import { getData } from "./data";
 
 const options: AgChartOptions = {
@@ -19,7 +18,6 @@ const options: AgChartOptions = {
           },
           number: {
             tick: {
-              count: 5,
             },
           },
         },
@@ -145,4 +143,4 @@ const options: AgChartOptions = {
   ],
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

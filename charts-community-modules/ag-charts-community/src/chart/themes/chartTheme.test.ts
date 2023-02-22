@@ -408,7 +408,7 @@ describe('ChartTheme', () => {
         };
 
         test('Cartesian chart instance properties', async () => {
-            let cartesianChart = deproxy(AgChart.create(cartesianChartOptions));
+            const cartesianChart = deproxy(AgChart.create(cartesianChartOptions));
             await waitForChartStability(cartesianChart);
 
             expect(cartesianChart!.title && cartesianChart!.title.enabled).toBe(true);
@@ -428,7 +428,7 @@ describe('ChartTheme', () => {
         });
 
         test('Polar chart intstance properties', async () => {
-            let polarChart = deproxy(AgChart.create(polarChartOptions));
+            const polarChart = deproxy(AgChart.create(polarChartOptions));
             await waitForChartStability(polarChart);
 
             expect(polarChart!.title && polarChart!.title.enabled).toBe(true);

@@ -12,6 +12,8 @@ import { ColDef, ICellEditorParams, ICellRendererParams, ModuleRegistry } from '
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
 const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
@@ -162,7 +164,10 @@ const NumericEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (props.charPress) {
+        if (props.eventKey === KEY_BACKSPACE) {
+            // if backspace or delete pressed, we clear the cell
+            startValue = '';
+        } else if (props.charPress) {
             // if a letter was pressed, we start with the letter
             startValue = props.charPress;
             highlightAllOnFocus = false;
@@ -222,13 +227,17 @@ const NumericEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
         return isCharNumeric(charStr);
     };
 
+    const isBackspace = (event: any) => {
+        return event.key === KEY_BACKSPACE;
+    };
+
     const finishedEditingPressed = (event: any) => {
         const key = event.key;
         return key === KEY_ENTER || key === KEY_TAB;
     };
 
     const onKeyDown = (event: any) => {
-        if (isLeftOrRight(event)) {
+        if (isLeftOrRight(event) || isBackspace(event)) {
             event.stopPropagation();
             return;
         }

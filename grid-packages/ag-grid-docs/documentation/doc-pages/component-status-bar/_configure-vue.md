@@ -18,3 +18,5 @@
 |    // ...other properties
 |}
 |```
+|
+|In the configuration above we've specified a custom component (`myStatusBarComponent`) as well as the provided `agAggregationComponent` component.

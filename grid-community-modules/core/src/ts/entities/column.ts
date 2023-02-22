@@ -342,7 +342,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         exists(colDefAny['menuTabs']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'menuTabs');
         exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams');
-        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.ColumnToolPanelModule, 'columnsMenuParams');
+        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams');
 
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
@@ -373,9 +373,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             data: rowNode.data,
             column: this,
             colDef: this.colDef,
-            context: this.gridOptionsService.get('context'),
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!
+            context: this.gridOptionsService.context,
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi
         };
     }
 
@@ -396,10 +396,8 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public isCellEditable(rowNode: IRowNode): boolean {
-        const isTreeData = this.gridOptionsService.is('treeData');
-
         // only allow editing of groups if the user has this option enabled
-        if (!isTreeData && rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
+        if (rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
             return false;
         }
 
@@ -465,9 +463,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             column: this,
             columns: [this],
             source: source,
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            context: this.gridOptionsService.get('context')
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context
         };
     }
 
@@ -689,9 +687,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             data: rowNode.data,
             colDef: this.colDef,
             column: this,
-            api: this.gridOptionsService.get('api')!,
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            context: this.gridOptionsService.get('context')
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context
         };
         return params;
     }

@@ -1,5 +1,8 @@
 import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
 
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
+
 export class NumericEditor implements ICellEditorComp {
     eInput!: HTMLInputElement;
     cancelBeforeStart!: boolean;
@@ -10,7 +13,9 @@ export class NumericEditor implements ICellEditorComp {
         this.eInput = document.createElement('input');
         this.eInput.classList.add('numeric-input');
 
-        if (this.isCharNumeric(params.charPress)) {
+        if (params.eventKey === KEY_BACKSPACE) {
+            this.eInput.value = '';
+        } else if (this.isCharNumeric(params.charPress)) {
             this.eInput.value = params.charPress!;
         } else {
             if (params.value !== undefined && params.value !== null) {
@@ -22,7 +27,7 @@ export class NumericEditor implements ICellEditorComp {
             if (!this.isKeyPressedNumeric(event)) {
                 this.eInput.focus();
                 if (event.preventDefault) event.preventDefault();
-            } else if (this.isKeyPressedNavigation(event)) {
+            } else if (this.isKeyPressedNavigation(event) || this.isBackspace(event)) {
                 event.stopPropagation();
             }
         });
@@ -30,6 +35,10 @@ export class NumericEditor implements ICellEditorComp {
         // only start edit if key pressed is a number, not a letter
         const charPressIsNotANumber = params.charPress && ('1234567890'.indexOf(params.charPress) < 0);
         this.cancelBeforeStart = !!charPressIsNotANumber;
+    }
+
+    isBackspace(event: any) {
+        return event.key === KEY_BACKSPACE;
     }
 
     isKeyPressedNavigation(event: any) {

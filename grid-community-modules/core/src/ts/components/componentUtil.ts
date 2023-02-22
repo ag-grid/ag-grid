@@ -6,6 +6,7 @@ import { iterateObject } from '../utils/object';
 import { includes } from '../utils/array';
 import { values } from '../utils/generic';
 import { WithoutGridCommon } from '../interfaces/iCommon';
+import { ColDefPropertyChangedEvent } from '../columns/columnModel';
 export class ComponentUtil {
 
     // all events
@@ -39,7 +40,10 @@ export class ComponentUtil {
         Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END,
         Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
         Events.EVENT_HEADER_HEIGHT_CHANGED,
-        Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED
+        Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
+        Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
+        Events.EVENT_CELL_FOCUS_CLEARED,
+        Events.EVENT_GRID_STYLES_CHANGED
     ];
 
     // events that are available for use by users of AG Grid and so should be documented
@@ -96,7 +100,7 @@ export class ComponentUtil {
                 case 'boolean': {
                     newValue = ComponentUtil.toBoolean(rawValue);
                     break;
-                }                    
+                }
                 case 'none': {
                     // if groupAggFiltering exists and isn't a function, handle as a boolean.
                     if (key === 'groupAggFiltering' && typeof rawValue !== 'function') {
@@ -151,6 +155,10 @@ export class ComponentUtil {
 
         // We manually call these updates so that we can provide a different source of gridOptionsChanged
         // We do not call setProperty as this will be called by the grid api methods
+        if (changesToApply.columnTypes) {
+            api.setColumnTypes(changesToApply.columnTypes.currentValue, "gridOptionsChanged");
+            delete changesToApply.columnTypes;
+        }
         if (changesToApply.autoGroupColumnDef) {
             api.setAutoGroupColumnDef(changesToApply.autoGroupColumnDef.currentValue, "gridOptionsChanged");
             delete changesToApply.autoGroupColumnDef;

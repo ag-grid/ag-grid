@@ -43,7 +43,7 @@ function dateFloatingFilterValueFormatter(params: ValueFormatterParams) {
   return params.value ? params.value.toLocaleDateString() : '(Blanks)';
 } 
 
-function treeListFormatter(pathKey: string | null, level: number): string {
+function treeListFormatter(pathKey: string | null, level: number, _parentPathKeys: (string | null)[]): string {
   if (level === 1) {
     const date = new Date();
     date.setMonth(Number(pathKey) -1);
@@ -52,7 +52,7 @@ function treeListFormatter(pathKey: string | null, level: number): string {
   return pathKey || '(Blanks)';
 }
 
-function groupTreeListFormatter(pathKey: string | null, level: number): string {
+function groupTreeListFormatter(pathKey: string | null, level: number, _parentPathKeys: (string | null)[]): string {
   if (level === 0 && pathKey) {
     return pathKey + ' (' + pathKey.substring(0, 2).toUpperCase() + ')';
   }

@@ -31,6 +31,18 @@ test('millisecond.every', () => {
 
     const range = interval.range(new Date(2023, 0, 18, 8, 31, 5, 125), new Date(2023, 0, 18, 8, 31, 5, 457));
     expect(range).toEqual([
+        new Date(2023, 0, 18, 8, 31, 5, 125),
+        new Date(2023, 0, 18, 8, 31, 5, 225),
+        new Date(2023, 0, 18, 8, 31, 5, 325),
+        new Date(2023, 0, 18, 8, 31, 5, 425),
+    ]);
+});
+
+test('millisecond.every with snapTo: null', () => {
+    const interval = millisecond.every(100, { snapTo: null! });
+
+    const range = interval.range(new Date(2023, 0, 18, 8, 31, 5, 125), new Date(2023, 0, 18, 8, 31, 5, 457));
+    expect(range).toEqual([
         new Date(2023, 0, 18, 8, 31, 5, 200),
         new Date(2023, 0, 18, 8, 31, 5, 300),
         new Date(2023, 0, 18, 8, 31, 5, 400),

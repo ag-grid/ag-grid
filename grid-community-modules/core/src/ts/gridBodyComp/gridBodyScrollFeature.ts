@@ -50,8 +50,8 @@ export class GridBodyScrollFeature extends BeanStub {
     constructor(eBodyViewport: HTMLElement) {
         super();
         this.eBodyViewport = eBodyViewport;
-        this.resetLastHScrollDebounced = debounce( ()=> this.eLastHScroll = null, 500);
-        this.resetLastVScrollDebounced = debounce( ()=> this.eLastVScroll = null, 500);
+        this.resetLastHScrollDebounced = debounce(() => this.eLastHScroll = null, 500);
+        this.resetLastVScrollDebounced = debounce(() => this.eLastVScroll = null, 500);
     }
 
     @PostConstruct
@@ -192,18 +192,20 @@ export class GridBodyScrollFeature extends BeanStub {
         this.animationFrameService.setScrollTop(scrollTop);
         this.nextScrollTop = scrollTop;
 
-        if (this.gridOptionsService.is('suppressAnimationFrame')) {
-            this.scrollTop = this.nextScrollTop;
-            this.redrawRowsAfterScroll();
-        } else {
-            this.animationFrameService.schedule();
-        }
-
-        if (eSource===this.eBodyViewport) {
+        if (eSource === this.eBodyViewport) {
             const fakeVScrollViewport = this.ctrlsService.getFakeVScrollComp().getViewport();
             fakeVScrollViewport.scrollTop = scrollTop;
         } else {
             this.eBodyViewport.scrollTop = scrollTop;
+        }
+
+        // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
+        // so it should only be called after `eBodyViewport` has been scrolled to the correct
+        // position, otherwise the `first` and `last` row could be miscalculated.
+        if (this.gridOptionsService.is('suppressAnimationFrame')) {
+            this.scrollGridIfNeeded();
+        } else {
+            this.animationFrameService.schedule();
         }
 
         this.resetLastVScrollDebounced();
@@ -236,9 +238,11 @@ export class GridBodyScrollFeature extends BeanStub {
         this.scrollTimer = undefined;
 
         this.scrollTimer = window.setTimeout(() => {
-            const bodyScrollEndEvent: WithoutGridCommon<BodyScrollEndEvent> = Object.assign({}, bodyScrollEvent, {
+            const bodyScrollEndEvent: WithoutGridCommon<BodyScrollEndEvent> = {
+                ...bodyScrollEvent,
                 type: Events.EVENT_BODY_SCROLL_END
-            });
+            };
+
             this.eventService.dispatchEvent(bodyScrollEndEvent);
         }, 100);
     }
@@ -258,24 +262,33 @@ export class GridBodyScrollFeature extends BeanStub {
         if (touchOnly && !isIOSUserAgent()) { return false; }
 
         if (direction === 'vertical') {
-            const clientHeight = getInnerHeight(this.eBodyViewport);
-            const { scrollHeight } = this.eBodyViewport;
-            if (scrollTo < 0 || (scrollTo + clientHeight > scrollHeight)) {
-                return true;
-            }
+            return this.shouldBlockVerticalScroll(scrollTo)
         }
 
-        if (direction === 'horizontal') {
-            const clientWidth = this.centerRowContainerCtrl.getCenterWidth();
-            const { scrollWidth } = this.centerRowContainerCtrl.getViewportElement();
+        return this.shouldBlockHorizontalScroll(scrollTo);
+    }
 
-            if (this.enableRtl && isRtlNegativeScroll()) {
-                if (scrollTo > 0) { return true; }
-            } else if (scrollTo < 0) { return true; }
+    private shouldBlockVerticalScroll(scrollTo: number): boolean {
+        const clientHeight = getInnerHeight(this.eBodyViewport);
+        const { scrollHeight } = this.eBodyViewport;
 
-            if (Math.abs(scrollTo) + clientWidth > scrollWidth) {
-                return true;
-            }
+        if (scrollTo < 0 || (scrollTo + clientHeight > scrollHeight)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private shouldBlockHorizontalScroll(scrollTo: number): boolean {
+        const clientWidth = this.centerRowContainerCtrl.getCenterWidth();
+        const { scrollWidth } = this.centerRowContainerCtrl.getViewportElement();
+
+        if (this.enableRtl && isRtlNegativeScroll()) {
+            if (scrollTo > 0) { return true; }
+        } else if (scrollTo < 0) { return true; }
+
+        if (Math.abs(scrollTo) + clientWidth > scrollWidth) {
+            return true;
         }
 
         return false;
@@ -301,7 +314,7 @@ export class GridBodyScrollFeature extends BeanStub {
         }
     }
 
-    public executeAnimationFrameScroll(): boolean {
+    public scrollGridIfNeeded(): boolean {
         const frameNeeded = this.scrollTop != this.nextScrollTop;
 
         if (frameNeeded) {

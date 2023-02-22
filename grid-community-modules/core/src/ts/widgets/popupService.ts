@@ -17,7 +17,6 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { IRowNode } from "../interfaces/iRowNode";
 
-
 export interface PopupPositionParams {
     ePopup: HTMLElement,
     column?: Column | null,
@@ -29,6 +28,7 @@ export interface PopupPositionParams {
     keepWithinBounds?: boolean;
     skipObserver?: boolean;
     updatePosition?: () => { x: number; y: number; };
+    postProcessCallback?: () => void;
 }
 
 export interface PopupEventParams {
@@ -183,10 +183,9 @@ export class PopupService extends BeanStub {
             nudgeY,
             keepWithinBounds: true,
             skipObserver,
-            updatePosition: () => this.calculatePointerAlign(params.mouseEvent)
+            updatePosition: () => this.calculatePointerAlign(params.mouseEvent),
+            postProcessCallback: () => this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode)
         });
-
-        this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode);
     }
 
     private calculatePointerAlign(e: MouseEvent | Touch): { x: number, y: number; } {
@@ -222,10 +221,9 @@ export class PopupService extends BeanStub {
             nudgeX: params.nudgeX,
             nudgeY: params.nudgeY,
             keepWithinBounds: params.keepWithinBounds,
-            updatePosition
+            updatePosition,
+            postProcessCallback: () => this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode)
         });
-
-        this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
     }
 
     private callPostProcessPopup(
@@ -279,6 +277,10 @@ export class PopupService extends BeanStub {
 
             ePopup.style.left = `${x}px`;
             ePopup.style.top = `${y}px`;
+
+            if (params.postProcessCallback) {
+                params.postProcessCallback();
+            }
         }
 
         updatePopupPosition();
@@ -729,8 +731,8 @@ export class PopupService extends BeanStub {
 
         const params = {
             type: 'popupToFront',
-            api: this.gridOptionsService.get('api'),
-            columnApi: this.gridOptionsService.get('columnApi'),
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
             eWrapper
         };
 

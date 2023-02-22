@@ -45,6 +45,8 @@ import {
     PasteStartEvent,
     PinnedRowDataChangedEvent,
     RangeSelectionChangedEvent,
+    RedoEndedEvent,
+    RedoStartedEvent,
     RowClickedEvent,
     RowDataChangedEvent,
     RowDataUpdatedEvent,
@@ -59,6 +61,8 @@ import {
     SortChangedEvent,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
+    UndoEndedEvent,
+    UndoStartedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent
@@ -80,7 +84,7 @@ import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
-import { CellPosition } from "./cellPosition";
+import { CellPosition } from "./cellPositionUtils";
 import { ColDef, ColGroupDef, IAggFunc, SortDirection } from "./colDef";
 import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "../interfaces/iCallbackParams";
 import { SideBarDef } from "../interfaces/iSideBar";
@@ -197,7 +201,7 @@ export interface GridOptions<TData = any> {
     /**
      * Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
      * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
-     * Default: `4`
+     * Default: `20`
      */
     autoSizePadding?: number;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */
@@ -224,7 +228,8 @@ export interface GridOptions<TData = any> {
     singleClickEdit?: boolean;
     /** Set to `true` so that neither single nor double click starts editing. Default: `false` */
     suppressClickEdit?: boolean;
-    /** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */
+
+    /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */
     readOnlyEdit?: boolean;
 
     /**
@@ -265,10 +270,16 @@ export interface GridOptions<TData = any> {
     excelStyles?: ExcelStyle[];
 
     // *** Filter *** //
-    /** Rows are filtered using this text as a quick filter. */
+    /** Rows are filtered using this text as a Quick Filter. */
     quickFilterText?: string;
-    /** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */
+    /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */
     cacheQuickFilter?: boolean;
+    /** 
+     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.
+     * This can give a significant performance improvement when there are a large number of hidden columns,
+     * and you are only interested in filtering on what's visible. Default: `false`
+     */
+    excludeHiddenColumnsFromQuickFilter?: boolean;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
 
@@ -670,11 +681,11 @@ export interface GridOptions<TData = any> {
      * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * Default: `false`
      */
-     serverSideSortOnServer?: boolean;
-     /**
-     * When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
-      * Default: `false`
-      */
+    serverSideSortOnServer?: boolean;
+    /**
+    * When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
+     * Default: `false`
+     */
     serverSideFilterOnServer?: boolean;
     /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */
     serverSideSortingAlwaysResets?: boolean;
@@ -981,10 +992,11 @@ export interface GridOptions<TData = any> {
     // *** Editing *** //
     /**
      * Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
-     *  if cell value has changed as a result of paste operation.
+     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
+     * fill handle, copy range down, undo and redo.
     */
     onCellValueChanged?(event: CellValueChangedEvent<TData>): void;
-    /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */
+    /** Value has changed after editing. Only fires when `readOnlyEdit=true`. */
     onCellEditRequest?(event: CellEditRequestEvent<TData>): void;
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */
     onRowValueChanged?(event: RowValueChangedEvent<TData>): void;
@@ -996,6 +1008,14 @@ export interface GridOptions<TData = any> {
     onRowEditingStarted?(event: RowEditingStartedEvent<TData>): void;
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */
     onRowEditingStopped?(event: RowEditingStoppedEvent<TData>): void;
+    /** Undo operation has started. */
+    onUndoStarted?(event: UndoStartedEvent<TData>): void;
+    /** Undo operation has ended. */
+    onUndoEnded?(event: UndoEndedEvent<TData>): void;
+    /** Redo operation has started. */
+    onRedoStarted?(event: RedoStartedEvent<TData>): void;
+    /** Redo operation has ended. */
+    onRedoEnded?(event: RedoEndedEvent<TData>): void;
 
     // *** Filtering *** //
     /** Filter has been opened. */
@@ -1165,7 +1185,7 @@ export interface RowClassRules<TData = any> {
 
 export interface RowStyle { [cssProperty: string]: string | number; }
 
-export interface RowClassParams<TData = any> extends AgGridCommon<TData> {
+export interface RowClassParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The data associated with this row from rowData. Data is `undefined` for row groups. */
     data: TData | undefined;
     /** The RowNode associated with this row */
@@ -1226,7 +1246,7 @@ export interface ChartRef {
     destroyChart: () => void;
 }
 
-export interface ChartRefParams<TData = any> extends AgGridCommon<TData>, ChartRef { }
+export interface ChartRefParams<TData = any> extends AgGridCommon<TData, any>, ChartRef { }
 
 export type ServerSideStoreType = 'full' | 'partial';
 
@@ -1259,7 +1279,7 @@ export interface ServerSideGroupLevelParams {
 }
 
 /** @deprecated use ServerSideGroupLevelParams instead */
-export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
+export interface ServerSideStoreParams extends ServerSideGroupLevelParams { }
 
 export interface LoadingCellRendererSelectorFunc<TData = any> {
     (params: ILoadingCellRendererParams<TData>): LoadingCellRendererSelectorResult | undefined;

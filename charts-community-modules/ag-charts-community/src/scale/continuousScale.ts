@@ -1,18 +1,31 @@
+import { TimeInterval } from '../util/time/interval';
 import { Scale } from './scale';
 
-export abstract class ContinuousScale implements Scale<any, any> {
-    domain: any[] = [0, 1];
-    range: any[] = [0, 1];
+export abstract class ContinuousScale<D extends number | Date, I = number> implements Scale<D, number, I> {
+    static readonly defaultTickCount = 5;
+
     nice = false;
-    tickCount = 10;
+    interval?: I;
+    tickCount = ContinuousScale.defaultTickCount;
     niceDomain: any[] = null as any;
 
-    protected transform(x: any) {
+    protected constructor(public domain: D[], public range: number[]) {}
+
+    protected transform(x: D) {
         return x;
     }
-    protected transformInvert(x: any) {
+    protected transformInvert(x: D) {
         return x;
     }
+
+    fromDomain(d: D): number {
+        if (d instanceof Date) {
+            return d.getTime();
+        }
+        return d as number;
+    }
+
+    abstract toDomain(d: number): D;
 
     protected getDomain() {
         if (this.nice) {
@@ -26,7 +39,7 @@ export abstract class ContinuousScale implements Scale<any, any> {
 
     strictClampByDefault = false;
 
-    convert(x: any, params?: { strict: boolean }) {
+    convert(x: D, params?: { strict: boolean }) {
         if (!this.domain || this.domain.length < 2) {
             return NaN;
         }
@@ -55,10 +68,12 @@ export abstract class ContinuousScale implements Scale<any, any> {
             return r1;
         }
 
-        return r0 + ((x - d0) / (d1 - d0)) * (r1 - r0);
+        return (
+            r0 + ((this.fromDomain(x) - this.fromDomain(d0)) / (this.fromDomain(d1) - this.fromDomain(d0))) * (r1 - r0)
+        );
     }
 
-    invert(x: number): any {
+    invert(x: number) {
         this.refresh();
         const domain = this.getDomain().map((d) => this.transform(d));
         const [d0, d1] = domain;
@@ -72,13 +87,15 @@ export abstract class ContinuousScale implements Scale<any, any> {
         } else if (x > r1) {
             d = d1;
         } else if (r0 === r1) {
-            d = (d0 + d1) / 2;
+            d = this.toDomain((this.fromDomain(d0) + this.fromDomain(d1)) / 2);
         } else if (x === r0) {
             d = d0;
         } else if (x === r1) {
             d = d1;
         } else {
-            d = d0 + ((x - r0) / (r1 - r0)) * (d1 - d0);
+            d = this.toDomain(
+                this.fromDomain(d0) + ((x - r0) / (r1 - r0)) * (this.fromDomain(d1) - this.fromDomain(d0))
+            );
         }
 
         return this.transformInvert(d);
@@ -104,5 +121,37 @@ export abstract class ContinuousScale implements Scale<any, any> {
         if (this.didChange()) {
             this.update();
         }
+    }
+
+    protected isDenseInterval({
+        start,
+        stop,
+        interval,
+        count,
+    }: {
+        start: number;
+        stop: number;
+        interval: number | TimeInterval;
+        count?: number;
+    }): boolean {
+        const { range } = this;
+        const domain = stop - start;
+
+        const min = Math.min(range[0], range[1]);
+        const max = Math.max(range[0], range[1]);
+
+        const availableRange = max - min;
+        const step = typeof interval === 'number' ? interval : 1;
+        count ??= domain / step;
+        if (count >= availableRange) {
+            console.warn(
+                `AG Charts - the configured tick interval, ${JSON.stringify(
+                    interval
+                )}, results in more than 1 tick per pixel, ignoring. Supply a larger tick interval or omit this configuration.`
+            );
+            return true;
+        }
+
+        return false;
     }
 }

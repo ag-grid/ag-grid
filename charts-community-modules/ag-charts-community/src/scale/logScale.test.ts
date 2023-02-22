@@ -1,4 +1,4 @@
-import { expect, test } from '@jest/globals';
+import { expect, test, describe, it } from '@jest/globals';
 import { NumericTicks } from '../util/ticks';
 import { LogScale } from './logScale';
 
@@ -6,11 +6,7 @@ test('ticks', () => {
     {
         const scale = new LogScale();
         scale.domain = [100, 1000000];
-        expect(scale.ticks()).toEqual([
-            100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000,
-            20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 200000, 300000, 400000, 500000, 600000,
-            700000, 800000, 900000, 1000000,
-        ]);
+        expect(scale.ticks()).toEqual([100, 1000, 10000, 100000, 1000000]);
         scale.tickCount = 4;
         expect(scale.ticks()).toEqual(new NumericTicks(5, [100, 1000, 10000, 100000, 1000000]));
     }
@@ -24,10 +20,97 @@ test('ticks', () => {
     {
         const scale = new LogScale();
         scale.domain = [-1000, -10];
-        expect(scale.ticks()).toEqual([
-            -1000, -900, -800, -700, -600, -500, -400, -300, -200, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10,
-        ]);
+        expect(scale.ticks()).toEqual([-1000, -300, -100, -30, -10]);
     }
+});
+
+describe('should create ticks', () => {
+    const CASES = [
+        {
+            interval: 0,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 1,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: -1,
+            domain: [-10000000, -0.1],
+        },
+        {
+            interval: 1,
+            domain: [-10000000, -0.1],
+        },
+        {
+            interval: 2,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 3,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 4,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 5,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 6,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 7,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 10,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 0.5,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 0.1,
+            domain: [0.1, 10000000],
+        },
+        {
+            interval: 2,
+            domain: [-10000000, -0.1],
+        },
+        {
+            interval: -2,
+            domain: [-10000000, -0.1],
+        },
+        {
+            interval: 10,
+            domain: [-10000000, -0.1],
+        },
+        {
+            interval: -10,
+            domain: [-10000000, -0.1],
+        },
+    ];
+
+    const TEST_CASES_MAP = CASES.reduce((map, obj) => {
+        map[`interval: ${obj.interval} domain: [${obj.domain[0]}, ${obj.domain[1]}]`] = obj;
+        return map;
+    }, {});
+
+    it.each(Object.keys(TEST_CASES_MAP))(`for %s case`, (caseName) => {
+        const { interval, domain } = TEST_CASES_MAP[caseName];
+        const scale = new LogScale();
+
+        scale.range = [0, 600];
+        scale.domain = domain;
+        scale.interval = interval;
+
+        expect(scale.ticks()).toMatchSnapshot();
+    });
 });
 
 test('convert', () => {

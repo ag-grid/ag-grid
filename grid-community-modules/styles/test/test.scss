@@ -75,6 +75,13 @@
     $error-message: "CSS border style"
 );
 
+@include test-suite(
+    --ag-borders,
+    $ok: (false, var(--anything)),
+    $error: ("solid", 4),
+    $error-message: "CSS border-style and size"
+);
+
 //
 // Border style and color validation
 //

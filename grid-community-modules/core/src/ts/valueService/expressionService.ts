@@ -13,17 +13,12 @@ export class ExpressionService extends BeanStub {
         this.logger = loggerFactory.create('ExpressionService');
     }
 
-    public evaluate(expressionOrFunc: Function | string | undefined, params: any): any {
-        if (typeof expressionOrFunc === 'function') {
-            // valueGetter is a function, so just call it
-            const func = expressionOrFunc;
-            return func(params);
-        } else if (typeof expressionOrFunc === 'string') {
+    public evaluate(expression: string | undefined, params: any): any {
+        if (typeof expression === 'string') {
             // valueGetter is an expression, so execute the expression
-            const expression = expressionOrFunc;
             return this.evaluateExpression(expression, params);
         } else {
-            console.error('AG Grid: value should be either a string or a function', expressionOrFunc);
+            console.error('AG Grid: value should be either a string or a function', expression);
         }
     }
 

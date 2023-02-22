@@ -1,0 +1,33 @@
+@use '../core' as *;
+
+table {
+    width: 100%;
+    margin-bottom: $size-2;
+    border-collapse: collapse;
+    border-bottom: 1px solid var(--border-color);
+}
+
+thead,
+table:not(.no-zebra) tr:nth-child(even) {
+    background-color: var(--table-odd-row-background-color);
+}
+
+tr {
+    border-top: 1px solid var(--border-color);
+}
+
+th,
+td {
+    padding: $size-1 $size-2;
+    text-align: left;
+}
+
+table.small-header th {
+    font-weight: $font-weight-normal;
+    padding-top: $size-half;
+    padding-bottom: $size-half;
+}
+
+table.stack {
+    @include stack-table();
+}

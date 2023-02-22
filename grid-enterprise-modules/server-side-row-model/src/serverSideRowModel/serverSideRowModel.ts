@@ -32,6 +32,8 @@ import {
 import { NodeManager } from "./nodeManager";
 import { SortListener } from "./listeners/sortListener";
 import { StoreFactory } from "./stores/storeFactory";
+import { FullStore } from "./stores/fullStore";
+import { LazyStore } from "./stores/lazy/lazyStore";
 
 export interface SSRMParams {
     sortModel: SortModelItem[];
@@ -149,15 +151,47 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
         const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
 
+        // compares two sets of columns, ensuring no columns have been added or removed (unless specified via allowRemovedColumns)
+        // if the columns are found, also ensures the field and aggFunc properties have not been changed.
+        const areColsSame = (params: { oldCols: ColumnVO[], newCols: ColumnVO[], allowRemovedColumns?: boolean }) => {
+            const oldColsMap: { [key: string]: ColumnVO } = {};
+            params.oldCols.forEach(col => oldColsMap[col.id] = col);
+
+            const allColsUnchanged = params.newCols.every(col => {
+                const equivalentCol = oldColsMap[col.id];
+                if (equivalentCol) {
+                    delete oldColsMap[col.id];
+                }
+                return equivalentCol && equivalentCol.field === col.field && equivalentCol.aggFunc === col.aggFunc;
+            });
+
+            const missingCols = !params.allowRemovedColumns && !!Object.values(oldColsMap).length;
+            return allColsUnchanged && !missingCols;
+        }
+
         const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortListener.extractSortModel());
-        const rowGroupDifferent = !_.jsonEquals(this.storeParams.rowGroupCols, rowGroupColumnVos);
-        const pivotDifferent = !_.jsonEquals(this.storeParams.pivotCols, pivotColumnVos);
-        const valuesDifferent = !_.jsonEquals(this.storeParams.valueCols, valueColumnVos);
+        const rowGroupDifferent = !areColsSame({
+            oldCols: this.storeParams.rowGroupCols,
+            newCols: rowGroupColumnVos,
+        });
+        const pivotDifferent = !areColsSame({
+            oldCols: this.storeParams.pivotCols,
+            newCols: pivotColumnVos,
+        });
+        const valuesDifferent = !!rowGroupColumnVos?.length && !areColsSame({
+            oldCols: this.storeParams.valueCols,
+            newCols: valueColumnVos,
+            allowRemovedColumns: true,
+        });
 
         const resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
 
         if (resetRequired) {
             this.resetRootStore();
+        } else {
+            // reset root store already does this, but regardless of whether resetting params should be updated
+            // as something has changed
+            this.storeParams = this.createStoreParams();
         }
     }
 
@@ -307,7 +341,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // engine to re-render (listens on ModelUpdated event)
         this.pauseStoreUpdateListening = true;
         this.forEachNode(node => {
-            if (node.group && !node.stub) {
+            if (node.stub) {
+                return;
+            }
+
+            if (node.hasChildren()) {
                 node.setExpanded(value);
             }
         });
@@ -361,6 +399,28 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             };
         }
         return rootStore.getRowBounds(index)!;
+    }
+
+    public getBlockStates() {
+        const root = this.getRootStore();
+        if (!root) {
+            return undefined;
+        }
+        
+        const states: any = {};
+        root.forEachStoreDeep(store => {
+            if (store instanceof FullStore) {
+                const { id, state } = store.getBlockStateJson();
+                states[id] = state;
+            } else if (store instanceof LazyStore) {
+                Object.entries(store.getBlockStates()).forEach(([block, state]) => {
+                    states[block] = state;
+                });
+            } else {
+                throw new Error('AG Grid: Unsupported store type');
+            }
+        });
+        return states;
     }
 
     public getRowIndexAtPixel(pixel: number): number {
@@ -442,5 +502,16 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public isRowPresent(rowNode: RowNode): boolean {
         const foundRowNode = this.getRowNode(rowNode.id!);
         return !!foundRowNode;
+    }
+
+    public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {
+        const rootStore = this.getRootStore();
+        if (rootStore) {
+            if (rootStore instanceof LazyStore) {
+                rootStore.setRowCount(rowCount, lastRowIndexKnown);
+                return;
+            }
+            console.error('AG Grid: Infinite scrolling must be enabled in order to set the row count.');
+        }
     }
 }

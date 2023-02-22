@@ -3,11 +3,11 @@ import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext } from '../series';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum } from '../../legend';
+import { LegendDatum } from '../../legendDatum';
 import { Path } from '../../../scene/shape/path';
 import { Marker } from '../../marker/marker';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent } from './cartesianSeries';
-import { ChartAxisDirection } from '../../chartAxis';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
@@ -40,6 +40,7 @@ import {
     AgTooltipRendererResult,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
+import { LogAxis } from '../../axis/logAxis';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -116,11 +117,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     private yDomain: any[] = [];
     private xDomain: any[] = [];
 
-    directionKeys = {
-        x: ['xKey'],
-        y: ['yKeys'],
-    };
-
     readonly marker = new CartesianSeriesMarker();
 
     readonly label = new AreaSeriesLabel();
@@ -149,6 +145,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             pathsZIndexSubOrderOffset: [0, 1000],
             hasMarkers: true,
             renderLayerPerSubSeries: false,
+            directionKeys: {
+                x: ['xKey'],
+                y: ['yKeys'],
+            },
         });
 
         const { marker, label } = this;
@@ -259,7 +259,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const xValues = [];
         const missingYKeys = new Set(yKeys);
 
-        for (let datum of data) {
+        for (const datum of data) {
             // X datum
             if (!(xKey in datum)) {
                 doOnce(
@@ -305,6 +305,23 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             );
         }
 
+        const xyValid = this.validateXYData(
+            this.xKey,
+            this.yKeys.join(', '),
+            data,
+            xAxis,
+            yAxis,
+            xData.map((x) => x.xDatum),
+            yData,
+            2
+        );
+        if (!xyValid) {
+            this.xData = [];
+            this.yData = [];
+            this.yDomain = [];
+            return;
+        }
+
         this.yData = yData;
         this.xData = xData;
 
@@ -323,7 +340,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
         for (let i = 0; i < xData.length; i++) {
             const total = { sum: 0, absSum: 0 };
-            for (let seriesYs of yData) {
+            for (const seriesYs of yData) {
                 if (seriesYs[i] === undefined || isNaN(seriesYs[i])) {
                     continue;
                 }
@@ -346,7 +363,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
             let normalizedTotal = undefined;
             // normalize y values using the absolute sum of y values in the stack
-            for (let seriesYs of yData) {
+            for (const seriesYs of yData) {
                 const normalizedY = (+seriesYs[i] / total.absSum) * normalizedTo;
                 seriesYs[i] = normalizedY;
 
@@ -372,6 +389,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             // set the yMin and yMax based on cumulative sum of normalized values
             yMin = (yMin ?? 0) < -normalizedTo * domainWhitespaceAdjustment ? -normalizedTo : yMin;
             yMax = (yMax ?? 0) > normalizedTo * domainWhitespaceAdjustment ? normalizedTo : yMax;
+        }
+
+        const isLogAxis = yAxis instanceof LogAxis;
+        if (yMin === undefined && isLogAxis) {
+            yMin = extent(yData[0])?.[0];
         }
 
         this.yDomain = this.fixNumericExtent(

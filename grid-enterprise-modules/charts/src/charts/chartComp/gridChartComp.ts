@@ -444,10 +444,10 @@ export class GridChartComp extends Component {
     }
 
     private raiseChartCreatedEvent(): void {
-        const event: WithoutGridCommon<ChartCreated> = Object.freeze({
+        const event: WithoutGridCommon<ChartCreated> = {
             type: Events.EVENT_CHART_CREATED,
             chartId: this.chartController.getChartId()
-        });
+        };
 
         this.chartProxy.getChart().waitForUpdate().then(() => {
             this.eventService.dispatchEvent(event);
@@ -455,10 +455,10 @@ export class GridChartComp extends Component {
     }
 
     private raiseChartDestroyedEvent(): void {
-        const event: WithoutGridCommon<ChartDestroyed> = Object.freeze({
+        const event: WithoutGridCommon<ChartDestroyed> = {
             type: Events.EVENT_CHART_DESTROYED,
             chartId: this.chartController.getChartId(),
-        });
+        };
 
         this.eventService.dispatchEvent(event);
     }

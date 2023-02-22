@@ -565,6 +565,7 @@
       "suppressMenu?": "boolean",
       "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData>",
       "headerCheckboxSelectionFilteredOnly?": "boolean",
+      "headerCheckboxSelectionCurrentPageOnly?": "boolean",
       "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
       "pinned?": "boolean | 'left' | 'right' | null",
       "initialPinned?": "boolean | 'left' | 'right'",
@@ -679,7 +680,7 @@
       "onCellClicked?": "/** Callback called when a cell is clicked. */",
       "onCellDoubleClicked?": "/** Callback called when a cell is double clicked. */",
       "onCellContextMenu?": "/** Callback called when a cell is right clicked. */",
-      "getQuickFilterText?": "/** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
+      "getQuickFilterText?": "/** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
       "filterValueGetter?": "/** Function or expression. Gets the value for filtering purposes. */",
       "floatingFilter?": "/** Whether to display a floating filter for this column. Default: `false` */",
       "wrapHeaderText?": "/** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */",
@@ -692,6 +693,7 @@
       "suppressMenu?": "/** Set to `true` if no menu should be shown for this column header. Default: `false` */",
       "headerCheckboxSelection?": "/** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */",
       "headerCheckboxSelectionFilteredOnly?": "/** If `true`, the header checkbox selection will only select filtered items. */",
+      "headerCheckboxSelectionCurrentPageOnly?": "/** If `true`, the header checkbox selection will only select nodes on the current page. */",
       "chartDataType?": "/** Defines the chart data type that should be used for a column. */",
       "pinned?": "/** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`. */",
       "initialPinned?": "/** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions. */",
@@ -1422,7 +1424,7 @@
       "rowIndex": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "column": "/** Column for this callback */",
@@ -1584,6 +1586,7 @@
       "excelStyles?": "ExcelStyle[]",
       "quickFilterText?": "string",
       "cacheQuickFilter?": "boolean",
+      "excludeHiddenColumnsFromQuickFilter?": "boolean",
       "excludeChildrenWhenTreeDataFiltering?": "boolean",
       "enableCharts?": "boolean",
       "chartThemes?": "string[]",
@@ -1841,6 +1844,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "void",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "void",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "void",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "void",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -1931,7 +1938,7 @@
       "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
-      "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "skipHeaderOnAutoSize?": "/** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */",
       "components?": "/** A map of component names to components. */",
       "frameworkComponents?": "/** @deprecated As of v27, use `components` for framework components too. */",
@@ -1940,7 +1947,7 @@
       "editType?": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
       "singleClickEdit?": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
       "suppressClickEdit?": "/** Set to `true` so that neither single nor double click starts editing. Default: `false` */",
-      "readOnlyEdit?": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "readOnlyEdit?": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n     * The default is that the grid stays editing until focus goes onto another cell.\n     * Default: `false`\n     */",
       "enterMovesDown?": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n     * i.e. pressing the `Enter` key will move down to the cell beneath.\n     * Default: `false`\n     */",
       "enterMovesDownAfterEdit?": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n     * i.e. pressing the Enter key will move down to the cell beneath.\n     * Default: `false`\n     */",
@@ -1952,8 +1959,9 @@
       "defaultExcelExportParams?": "/** A default configuration object used to export to Excel. */",
       "suppressExcelExport?": "/** Prevents the user from exporting the grid to Excel. Default: `false` */",
       "excelStyles?": "/** A list (array) of Excel styles to be used when exporting to Excel with styles. */",
-      "quickFilterText?": "/** Rows are filtered using this text as a quick filter. */",
-      "cacheQuickFilter?": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "quickFilterText?": "/** Rows are filtered using this text as a Quick Filter. */",
+      "cacheQuickFilter?": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
+      "excludeHiddenColumnsFromQuickFilter?": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "excludeChildrenWhenTreeDataFiltering?": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
       "enableCharts?": "/** Set to `true` to Enable Charts. Default: `false` */",
       "chartThemes?": "/** The list of chart themes to be used. */",
@@ -2085,7 +2093,7 @@
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
       "serverSideSortOnServer?": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
-      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "serverSideSortingAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
@@ -2200,13 +2208,17 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.\n     */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
-      "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
+      "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "/** Editing a cell has stopped. */",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "/** Undo operation has started. */",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
@@ -2311,14 +2323,14 @@
     "type": { "[cssProperty: string]": "string | number" }
   },
   "RowClassParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "data": "/** The data associated with this row from rowData. Data is `undefined` for row groups. */",
@@ -2522,7 +2534,7 @@
     "type": { "[key: string]": "{[key in SASS_PROPERTIES]?: number}" }
   },
   "ModelUpdatedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "animate": "boolean | undefined",
       "keepRenderedRows": "boolean | undefined",
@@ -2531,7 +2543,7 @@
       "keepUndoRedoStack?": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2547,7 +2559,7 @@
     }
   },
   "PaginationChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "animate?": "boolean",
       "keepRenderedRows?": "boolean",
@@ -2555,7 +2567,7 @@
       "newPage": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2575,11 +2587,11 @@
     "docs": { "type": "/** Event identifier */" }
   },
   "AgGridEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2590,12 +2602,12 @@
     }
   },
   "ToolPanelVisibleChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "source": "string | undefined",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2605,8 +2617,31 @@
       "type": "/** Event identifier */"
     }
   },
+  "InternalToolPanelVisibleChangedEvent": {
+    "meta": {
+      "typeParams": ["TData = any", "TContext = any"],
+      "doc": "/** \n * This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,\n * and the original ToolPanelVisibleChangedEvent will be dropped\n */"
+    },
+    "type": {
+      "source": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'",
+      "key": "string",
+      "visible": "boolean",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "key": "/** Key of tool panel. */",
+      "visible": "/** True if now visible; false if now hidden. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
   "ToolPanelSizeChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "'toolPanelSizeChanged'",
       "started": "boolean",
@@ -2614,7 +2649,7 @@
       "width": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "started": "/** True if this is the first change to the Tool Panel size. */",
@@ -2627,11 +2662,11 @@
     }
   },
   "ColumnPivotModeChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2642,11 +2677,11 @@
     }
   },
   "VirtualColumnsChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2657,12 +2692,12 @@
     }
   },
   "ColumnEverythingChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "source": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2673,11 +2708,11 @@
     }
   },
   "NewColumnsLoadedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2688,11 +2723,11 @@
     }
   },
   "GridColumnsChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2703,11 +2738,11 @@
     }
   },
   "DisplayedColumnsChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2719,13 +2754,13 @@
   },
   "RowDataChangedEvent": {
     "meta": {
-      "typeParams": ["TData = any"],
+      "typeParams": ["TData = any", "TContext = any"],
       "doc": "/** @deprecated v28 use RowDataUpdatedEvent instead */"
     },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2736,11 +2771,11 @@
     }
   },
   "RowDataUpdatedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2751,11 +2786,11 @@
     }
   },
   "PinnedRowDataChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2767,15 +2802,15 @@
   },
   "SelectionEventSourceType": {
     "meta": { "isTypeAlias": true },
-    "type": "'api' | 'apiSelectAll' | 'apiSelectAllFiltered' | 'checkboxSelected' | 'rowClicked' | 'rowDataChanged' | 'rowGroupChanged' | 'selectableChanged' | 'spacePressed' | 'uiSelectAll' | 'uiSelectAllFiltered'"
+    "type": "'api' | 'apiSelectAll' | 'apiSelectAllFiltered' | 'apiSelectAllCurrentPage' | 'checkboxSelected' | 'rowClicked' | 'rowDataChanged' | 'rowGroupChanged' | 'selectableChanged' | 'spacePressed' | 'uiSelectAll' | 'uiSelectAllFiltered' | 'uiSelectAllCurrentPage'"
   },
   "SelectionChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "source": "SelectionEventSourceType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2786,14 +2821,14 @@
     }
   },
   "FilterChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "afterDataChange?": "boolean",
       "afterFloatingFilter?": "boolean",
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2807,13 +2842,13 @@
     }
   },
   "FilterModifiedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "filterInstance": "IFilterComp",
       "column": "Column",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2824,14 +2859,14 @@
     }
   },
   "FilterOpenedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column": "Column | ProvidedColumnGroup",
       "source": "FilterRequestSource",
       "eGui": "HTMLElement",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2845,12 +2880,12 @@
     }
   },
   "SortChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "source": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2862,11 +2897,11 @@
     }
   },
   "GridReadyEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2877,11 +2912,11 @@
     }
   },
   "DisplayedColumnsWidthChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2892,11 +2927,11 @@
     }
   },
   "ColumnHoverChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2907,11 +2942,11 @@
     }
   },
   "BodyHeightChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2922,11 +2957,11 @@
     }
   },
   "ComponentStateChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2937,12 +2972,12 @@
     }
   },
   "ColumnPanelItemDragStartEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column": "Column | ProvidedColumnGroup",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2953,11 +2988,11 @@
     }
   },
   "ColumnPanelItemDragEndEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2968,12 +3003,12 @@
     }
   },
   "AgDragEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "target": "HTMLElement",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -2985,13 +3020,13 @@
     }
   },
   "DragStartedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "'dragStarted'",
       "target": "HTMLElement",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "target": "/** The DOM element that started the event. */",
@@ -3002,13 +3037,13 @@
     }
   },
   "DragStoppedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "'dragStopped'",
       "target": "HTMLElement",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "target": "/** The DOM element that started the event. */",
@@ -3030,13 +3065,13 @@
     "docs": { "type": "/** Event identifier */" }
   },
   "GridSizeChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "clientWidth": "number",
       "clientHeight": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3049,25 +3084,27 @@
     }
   },
   "RowDragEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "string",
       "node": "IRowNode<TData>",
       "nodes": "IRowNode<TData>[]",
       "event": "MouseEvent",
+      "eventPath?": "EventTarget[]",
       "vDirection": "string",
       "overIndex": "number",
       "overNode?": "IRowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "type": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
       "node": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/** The list of nodes being dragged. */",
       "event": "/** The underlying mouse move event associated with the drag. */",
+      "eventPath?": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "vDirection": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "overIndex": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "overNode?": "/** The row node the mouse is dragging over or undefined if over no row. */",
@@ -3078,25 +3115,27 @@
     }
   },
   "RowDragEnterEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "string",
       "node": "IRowNode<TData>",
       "nodes": "IRowNode<TData>[]",
       "event": "MouseEvent",
+      "eventPath?": "EventTarget[]",
       "vDirection": "string",
       "overIndex": "number",
       "overNode?": "IRowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "type": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
       "node": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/** The list of nodes being dragged. */",
       "event": "/** The underlying mouse move event associated with the drag. */",
+      "eventPath?": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "vDirection": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "overIndex": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "overNode?": "/** The row node the mouse is dragging over or undefined if over no row. */",
@@ -3107,25 +3146,27 @@
     }
   },
   "RowDragEndEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "string",
       "node": "IRowNode<TData>",
       "nodes": "IRowNode<TData>[]",
       "event": "MouseEvent",
+      "eventPath?": "EventTarget[]",
       "vDirection": "string",
       "overIndex": "number",
       "overNode?": "IRowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "type": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
       "node": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/** The list of nodes being dragged. */",
       "event": "/** The underlying mouse move event associated with the drag. */",
+      "eventPath?": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "vDirection": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "overIndex": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "overNode?": "/** The row node the mouse is dragging over or undefined if over no row. */",
@@ -3136,25 +3177,27 @@
     }
   },
   "RowDragMoveEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "string",
       "node": "IRowNode<TData>",
       "nodes": "IRowNode<TData>[]",
       "event": "MouseEvent",
+      "eventPath?": "EventTarget[]",
       "vDirection": "string",
       "overIndex": "number",
       "overNode?": "IRowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "type": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
       "node": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/** The list of nodes being dragged. */",
       "event": "/** The underlying mouse move event associated with the drag. */",
+      "eventPath?": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "vDirection": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "overIndex": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "overNode?": "/** The row node the mouse is dragging over or undefined if over no row. */",
@@ -3165,25 +3208,27 @@
     }
   },
   "RowDragLeaveEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "string",
       "node": "IRowNode<TData>",
       "nodes": "IRowNode<TData>[]",
       "event": "MouseEvent",
+      "eventPath?": "EventTarget[]",
       "vDirection": "string",
       "overIndex": "number",
       "overNode?": "IRowNode<TData>",
       "y": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "type": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
       "node": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/** The list of nodes being dragged. */",
       "event": "/** The underlying mouse move event associated with the drag. */",
+      "eventPath?": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "vDirection": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "overIndex": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "overNode?": "/** The row node the mouse is dragging over or undefined if over no row. */",
@@ -3194,12 +3239,12 @@
     }
   },
   "PasteStartEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "source": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3210,12 +3255,12 @@
     }
   },
   "PasteEndEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "source": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3226,11 +3271,11 @@
     }
   },
   "FillStartEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3241,13 +3286,13 @@
     }
   },
   "FillEndEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "initialRange": "CellRange",
       "finalRange": "CellRange",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3257,14 +3302,86 @@
       "type": "/** Event identifier */"
     }
   },
+  "UndoStartedEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "source": "'api' | 'ui'",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "source": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "UndoEndedEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "source": "'api' | 'ui'",
+      "operationPerformed": "boolean",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "source": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "operationPerformed": "/** `true` if any undo operations were performed. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "RedoStartedEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "source": "'api' | 'ui'",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "source": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "RedoEndedEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "source": "'api' | 'ui'",
+      "operationPerformed": "boolean",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "source": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "operationPerformed": "/** `true` if any redo operations were performed. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
   "ViewportChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "firstRow": "number",
       "lastRow": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3277,13 +3394,13 @@
     }
   },
   "FirstDataRenderedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "firstRow": "number",
       "lastRow": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3296,14 +3413,14 @@
     }
   },
   "RangeSelectionChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "id?": "string",
       "started": "boolean",
       "finished": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3316,13 +3433,13 @@
     }
   },
   "ChartCreated": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "string",
       "chartId": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "type": "/** Will always be `chartCreated`. */",
@@ -3333,7 +3450,7 @@
     }
   },
   "ChartRangeSelectionChanged": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "string",
       "chartId": "string",
@@ -3341,7 +3458,7 @@
       "cellRange": "CellRangeParams",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "type": "/** Will always be `chartRangeSelectionChanged`. */",
@@ -3354,7 +3471,7 @@
     }
   },
   "ChartOptionsChanged": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "string",
       "chartId": "string",
@@ -3363,7 +3480,7 @@
       "chartOptions": "AgChartThemeOverrides",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "type": "/** Will always be `chartOptionsChanged`. */",
@@ -3377,13 +3494,13 @@
     }
   },
   "ChartDestroyed": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "string",
       "chartId": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "type": "/** Will always be `chartDestroyed`. */",
@@ -3394,12 +3511,12 @@
     }
   },
   "ColumnGroupOpenedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "columnGroup": "ProvidedColumnGroup",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3410,12 +3527,12 @@
     }
   },
   "ItemsAddedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "items": "IRowNode<TData>[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3430,14 +3547,14 @@
     "type": "'horizontal' | 'vertical'"
   },
   "BodyScrollEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "direction": "ScrollDirection",
       "left": "number",
       "top": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3448,14 +3565,14 @@
     }
   },
   "BodyScrollEndEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "direction": "ScrollDirection",
       "left": "number",
       "top": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3466,12 +3583,12 @@
     }
   },
   "FlashCellsEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "cells": "any",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3482,11 +3599,11 @@
     }
   },
   "PaginationPixelOffsetChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3496,40 +3613,67 @@
       "type": "/** Event identifier */"
     }
   },
-  "CellFocusedParams": {
+  "CommonCellFocusParams": {
     "meta": {},
     "type": {
       "rowIndex": "number | null",
       "column": "Column | string | null",
       "rowPinned": "RowPinnedType",
-      "isFullWidthCell?": "boolean",
-      "forceBrowserFocus?": "boolean",
-      "preventScrollOnBrowserFocus?": "boolean",
-      "floating?": "string | null"
+      "isFullWidthCell?": "boolean"
     },
     "docs": {
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
       "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
-      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
-      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
-      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
     }
   },
-  "CellFocusedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+  "CellFocusClearedParams": {
+    "meta": {},
+    "type": {
+      "rowIndex": "number | null",
+      "column": "Column | string | null",
+      "rowPinned": "RowPinnedType",
+      "isFullWidthCell?": "boolean"
+    },
+    "docs": {
+      "rowIndex": "/** Row index of the focused cell */",
+      "column": "/** Column of the focused cell */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
+    }
+  },
+  "CellFocusedParams": {
+    "meta": {},
+    "type": {
+      "forceBrowserFocus?": "boolean",
+      "preventScrollOnBrowserFocus?": "boolean",
+      "floating?": "string | null",
+      "rowIndex": "number | null",
+      "column": "Column | string | null",
+      "rowPinned": "RowPinnedType",
+      "isFullWidthCell?": "boolean"
+    },
+    "docs": {
+      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
+      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
+      "rowIndex": "/** Row index of the focused cell */",
+      "column": "/** Column of the focused cell */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
+    }
+  },
+  "CellFocusClearedEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string",
       "rowIndex": "number | null",
       "column": "Column | string | null",
       "rowPinned": "RowPinnedType",
-      "isFullWidthCell?": "boolean",
-      "forceBrowserFocus?": "boolean",
-      "preventScrollOnBrowserFocus?": "boolean",
-      "floating?": "string | null"
+      "isFullWidthCell?": "boolean"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -3539,9 +3683,35 @@
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
       "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
-      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
+    }
+  },
+  "CellFocusedEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string",
+      "forceBrowserFocus?": "boolean",
+      "preventScrollOnBrowserFocus?": "boolean",
+      "floating?": "string | null",
+      "rowIndex": "number | null",
+      "column": "Column | string | null",
+      "rowPinned": "RowPinnedType",
+      "isFullWidthCell?": "boolean"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */",
       "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
-      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
+      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
+      "rowIndex": "/** Row index of the focused cell */",
+      "column": "/** Column of the focused cell */",
+      "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
     }
   },
   "FullWidthRowFocusedEvent": {
@@ -3550,36 +3720,36 @@
       "fromBelow": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string",
+      "forceBrowserFocus?": "boolean",
+      "preventScrollOnBrowserFocus?": "boolean",
+      "floating?": "string | null",
       "rowIndex": "number | null",
       "column": "Column | string | null",
       "rowPinned": "RowPinnedType",
-      "isFullWidthCell?": "boolean",
-      "forceBrowserFocus?": "boolean",
-      "preventScrollOnBrowserFocus?": "boolean",
-      "floating?": "string | null"
+      "isFullWidthCell?": "boolean"
     },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
       "type": "/** Event identifier */",
+      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
+      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
       "rowPinned": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
-      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */",
-      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
-      "preventScrollOnBrowserFocus?": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */"
+      "isFullWidthCell?": "/** Whether the cell a full width cell or a regular cell */"
     }
   },
   "ExpandCollapseAllEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "source": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3591,17 +3761,17 @@
   },
   "ColumnEventType": {
     "meta": { "isTypeAlias": true },
-    "type": "\"sizeColumnsToFit\" | \"autosizeColumns\" | \"autosizeColumnHeaderHeight\" | \"alignedGridChanged\" | \"filterChanged\" | \"filterDestroyed\" | \"gridOptionsChanged\" | \"gridInitializing\" | \"toolPanelDragAndDrop\" | \"toolPanelUi\" | \"uiColumnMoved\" | \"uiColumnResized\" | \"uiColumnDragged\" | \"uiColumnExpanded\" | \"uiColumnSorted\" | \"contextMenu\" | \"columnMenu\" | \"rowModelUpdated\" | \"rowDataUpdated\" | \"api\" | \"flex\" | \"pivotChart\""
+    "type": "\"sizeColumnsToFit\" | \"autosizeColumns\" | \"autosizeColumnHeaderHeight\" | \"alignedGridChanged\" | \"filterChanged\" | \"filterDestroyed\" | \"gridOptionsChanged\" | \"gridInitializing\" | \"toolPanelDragAndDrop\" | \"toolPanelUi\" | \"uiColumnMoved\" | \"uiColumnResized\" | \"uiColumnDragged\" | \"uiColumnExpanded\" | \"uiColumnSorted\" | \"contextMenu\" | \"columnMenu\" | \"rowModelUpdated\" | \"rowDataUpdated\" | \"api\" | \"flex\" | \"pivotChart\" | \"columnRowGroupChanged\""
   },
   "ColumnEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3615,7 +3785,7 @@
     }
   },
   "ColumnResizedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "finished": "boolean",
       "flexColumns": "Column[] | null",
@@ -3624,7 +3794,7 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3640,14 +3810,14 @@
     }
   },
   "ColumnPivotChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3661,14 +3831,14 @@
     }
   },
   "ColumnRowGroupChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3682,14 +3852,14 @@
     }
   },
   "ColumnValueChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3703,7 +3873,7 @@
     }
   },
   "ColumnMovedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "toIndex?": "number",
       "finished": "boolean",
@@ -3712,7 +3882,7 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3728,7 +3898,7 @@
     }
   },
   "ColumnVisibleEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "visible?": "boolean",
       "column": "Column | null",
@@ -3736,7 +3906,7 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3751,7 +3921,7 @@
     }
   },
   "ColumnPinnedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "pinned": "ColumnPinnedType",
       "column": "Column | null",
@@ -3759,7 +3929,7 @@
       "source": "ColumnEventType",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3775,7 +3945,7 @@
   },
   "BaseRowEvent": {
     "meta": {
-      "typeParams": ["TData"],
+      "typeParams": ["TData", "TContext"],
       "doc": "/**------------*/\n/** ROW EVENTS */\n/**------------*/"
     },
     "type": {
@@ -3783,9 +3953,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3793,6 +3964,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -3800,16 +3972,17 @@
     }
   },
   "RowEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3818,6 +3991,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -3826,7 +4000,7 @@
   },
   "RowWithDataEvent": {
     "meta": {
-      "typeParams": ["TData = any"],
+      "typeParams": ["TData = any", "TContext = any"],
       "doc": "/** Base interface for row events that always have data set. */"
     },
     "type": {
@@ -3835,9 +4009,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3846,6 +4021,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -3853,7 +4029,7 @@
     }
   },
   "RowGroupOpenedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "expanded": "boolean",
       "data": "TData | undefined",
@@ -3861,9 +4037,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3873,6 +4050,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -3880,16 +4058,17 @@
     }
   },
   "RowValueChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3898,6 +4077,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -3905,7 +4085,7 @@
     }
   },
   "RowSelectedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "source": "SelectionEventSourceType",
       "data": "TData | undefined",
@@ -3913,9 +4093,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3924,6 +4105,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -3931,16 +4113,17 @@
     }
   },
   "VirtualRowRemovedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3949,6 +4132,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -3956,16 +4140,17 @@
     }
   },
   "RowClickedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3974,6 +4159,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -3981,16 +4167,17 @@
     }
   },
   "RowDoubleClickedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -3999,6 +4186,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4006,16 +4194,17 @@
     }
   },
   "RowEditingStartedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4024,6 +4213,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4031,16 +4221,17 @@
     }
   },
   "RowEditingStoppedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4049,6 +4240,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4056,16 +4248,17 @@
     }
   },
   "FullWidthCellKeyDownEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4074,6 +4267,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4081,16 +4275,17 @@
     }
   },
   "FullWidthCellKeyPressEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4099,6 +4294,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4119,9 +4315,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4131,6 +4328,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4151,9 +4349,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4163,6 +4362,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4180,9 +4380,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4192,6 +4393,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4209,9 +4411,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4221,6 +4424,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4238,9 +4442,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4250,6 +4455,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4267,9 +4473,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4279,6 +4486,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4296,9 +4504,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4308,6 +4517,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4325,9 +4535,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4337,6 +4548,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4354,9 +4566,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4366,6 +4579,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4383,9 +4597,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4395,6 +4610,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4412,9 +4628,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4424,6 +4641,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4444,9 +4662,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4459,6 +4678,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4479,9 +4699,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4491,6 +4712,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4511,9 +4733,10 @@
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
       "event?": "Event | null",
+      "eventPath?": "EventTarget[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4523,6 +4746,7 @@
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "eventPath?": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -4530,12 +4754,12 @@
     }
   },
   "AsyncTransactionsFlushed": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "results": "(RowNodeTransaction<TData> | ServerSideTransactionResult)[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4547,12 +4771,12 @@
     }
   },
   "ColumnRequestEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4563,12 +4787,12 @@
     }
   },
   "ColumnRowGroupChangeRequestEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4579,12 +4803,12 @@
     }
   },
   "ColumnPivotChangeRequestEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4595,12 +4819,12 @@
     }
   },
   "ColumnValueChangeRequestEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4611,13 +4835,13 @@
     }
   },
   "ColumnAggFuncChangeRequestEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "aggFunc": "any",
       "columns": "Column[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4628,11 +4852,11 @@
     }
   },
   "ScrollVisibilityChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4643,11 +4867,11 @@
     }
   },
   "StoreUpdatedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4658,11 +4882,11 @@
     }
   },
   "LeftPinnedWidthChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4673,11 +4897,11 @@
     }
   },
   "RightPinnedWidthChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4688,11 +4912,11 @@
     }
   },
   "RowContainerHeightChanged": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4703,11 +4927,26 @@
     }
   },
   "DisplayedRowsChangedEvent": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "CssVariablesChanged": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
       "type": "string"
     },
     "docs": {
@@ -4786,7 +5025,9 @@
     "type": "(parentFilterInstance: P) => void"
   },
   "IFloatingFilterParams": {
-    "meta": { "typeParams": ["P = InbuiltParentType", "TData = any"] },
+    "meta": {
+      "typeParams": ["P = InbuiltParentType", "TData = any", "TContext = any"]
+    },
     "type": {
       "column": "Column",
       "filterParams": "IFilterParams",
@@ -4796,7 +5037,7 @@
       "showParentFilter": "() => void",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "column": "/** The column this filter is for. */",
@@ -4893,7 +5134,7 @@
     },
     "docs": {
       "comparator?": "/** Required if the data for the column are not native JS `Date` objects. */",
-      "browserDatePicker?": "/** If a date component is not provided then by default the grid will use the browser date picker if it is functionally complete and a plain text box if it is not.\n     *  - `true`: Force the browser date picker to be used.\n     *  - `false`: Force a plain text box to be used.\n     * Default: `undefined`\n     */",
+      "browserDatePicker?": "/** Defines whether the grid uses the browser date picker or a plain text box.\n     *  - `true`: Force the browser date picker to be used.\n     *  - `false`: Force a plain text box to be used.\n     * \n     * Default: `undefined` - If a date component is not provided, then the grid will use the browser date picker\n     * for all supported browsers and a plain text box for other browsers.\n     */",
       "minValidYear?": "/** This is the minimum year that may be entered in a date field for the value to be considered valid. Default: `1000` */",
       "maxValidYear?": "/** This is the maximum year that may be entered in a date field for the value to be considered valid. Default is no restriction. */",
       "inRangeFloatingFilterDateFormat?": "/** Defines the date format for the floating filter text when an in range filter has been applied.\n     * \n     * Default: `YYYY-MM-DD`\n     */",
@@ -5022,7 +5263,8 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "afterGuiDetached?()": "void"
     },
     "docs": {
       "applyModel(source?: 'api' | 'ui' | 'rowDataUpdated')": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
@@ -5034,7 +5276,8 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n     state after rows are loaded, it can do it here. For example the set filters uses this\n     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n     Country filter). To get the list of available values from within this method from the\n    Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.\n    */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n     * filter.\n     */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */",
+      "afterGuiDetached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */"
     }
   },
   "ScalarFilterParams": {
@@ -5103,6 +5346,7 @@
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "afterGuiDetached?()": "void",
       "onFloatingFilterChanged(type: string | null, value: any)": "void"
     },
     "docs": {
@@ -5116,6 +5360,7 @@
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n     * filter.\n     */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */",
+      "afterGuiDetached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
       "onFloatingFilterChanged(type: string | null, value: any)": "/** Notification that a new floating-filter value was input by the user.\n     *\n     * @param type operation type selected.\n     * @param value model-typed value entered.\n     */"
     }
   },
@@ -5512,11 +5757,11 @@
   },
   "CallbackProps": {
     "meta": { "isTypeAlias": true },
-    "type": "Exclude<KeysOfType<(params: AgGridCommon<any>) => any>, NoArgFuncs | AnyArgFuncs>"
+    "type": "Exclude<KeysOfType<(params: AgGridCommon<any, any>) => any>, NoArgFuncs | AnyArgFuncs>"
   },
   "NonPrimitiveProps": {
     "meta": { "isTypeAlias": true },
-    "type": "Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>"
+    "type": "Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps | 'api' | 'columnApi' | 'context'>"
   },
   "ExtractParamsFromCallback": {
     "meta": { "isTypeAlias": true, "typeParams": ["TCallback"] },
@@ -5524,7 +5769,7 @@
   },
   "ExtractReturnTypeFromCallback": {
     "meta": { "isTypeAlias": true, "typeParams": ["TCallback"] },
-    "type": "TCallback extends (params: AgGridCommon<any>) => infer RT ? RT : never"
+    "type": "TCallback extends (params: AgGridCommon<any, any>) => infer RT ? RT : never"
   },
   "WrappedCallback": {
     "meta": {
@@ -5571,7 +5816,7 @@
     }
   },
   "IHeaderParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column": "Column",
       "displayName": "string",
@@ -5584,7 +5829,7 @@
       "eGridHeader": "HTMLElement",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "column": "/** The column the header is for. */",
@@ -5640,14 +5885,14 @@
     }
   },
   "IHeaderGroupParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "columnGroup": "ColumnGroup",
       "displayName": "string",
       "setExpanded": "(expanded: boolean) => void",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "columnGroup": "/** The column group the header is for. */",
@@ -5942,12 +6187,12 @@
     }
   },
   "ShouldRowBeSkippedParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "node": "/** Row node. */",
@@ -5957,7 +6202,7 @@
     }
   },
   "ProcessCellForExportParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "value": "any",
       "accumulatedRowIndex?": "number",
@@ -5966,7 +6211,7 @@
       "type": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -5975,12 +6220,12 @@
     }
   },
   "ProcessHeaderForExportParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column": "Column",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -5989,12 +6234,12 @@
     }
   },
   "ProcessGroupHeaderForExportParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "columnGroup": "ColumnGroup",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6003,12 +6248,12 @@
     }
   },
   "ProcessRowGroupForExportParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "node": "/** Row node. */",
@@ -6058,7 +6303,7 @@
     }
   },
   "GetContextMenuItemsParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "defaultItems": "string[] | undefined",
       "column": "Column | null",
@@ -6066,7 +6311,7 @@
       "value": "any",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "defaultItems": "/** Names of the items that would be provided by default. */",
@@ -6079,13 +6324,13 @@
     }
   },
   "GetMainMenuItemsParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column": "Column",
       "defaultItems": "string[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "column": "/** The column that was clicked */",
@@ -6096,7 +6341,7 @@
     }
   },
   "PostProcessPopupParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "column?": "Column | null",
       "rowNode?": "IRowNode<TData> | null",
@@ -6106,7 +6351,7 @@
       "mouseEvent?": "MouseEvent | Touch | null",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "column?": "/** If popup is for a column, this gives the Column */",
@@ -6121,12 +6366,12 @@
     }
   },
   "SendToClipboardParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6135,12 +6380,12 @@
     }
   },
   "ProcessDataFromClipboardParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "string[][]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "data": "/** 2D array of all cells from the clipboard */",
@@ -6150,12 +6395,12 @@
     }
   },
   "GetChartToolbarItemsParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "defaultItems?": "ChartMenuOptions[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6164,7 +6409,7 @@
     }
   },
   "NavigateToNextHeaderParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "key": "string",
       "previousHeaderPosition": "HeaderPosition | null",
@@ -6173,7 +6418,7 @@
       "event": "KeyboardEvent",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "key": "/** The key for the arrow key pressed,\n     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
@@ -6186,7 +6431,7 @@
     }
   },
   "TabToNextHeaderParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "backwards": "boolean",
       "previousHeaderPosition": "HeaderPosition | null",
@@ -6194,7 +6439,7 @@
       "headerRowCount": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "backwards": "/** True if the Shift key is also down */",
@@ -6207,7 +6452,7 @@
     }
   },
   "TabToNextCellParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "backwards": "boolean",
       "editing": "boolean",
@@ -6215,7 +6460,7 @@
       "nextCellPosition": "CellPosition | null",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "backwards": "/** True if the Shift key is also down */",
@@ -6228,7 +6473,7 @@
     }
   },
   "NavigateToNextCellParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "key": "string",
       "previousCellPosition": "CellPosition",
@@ -6236,7 +6481,7 @@
       "event": "KeyboardEvent | null",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "key": "/** The keycode for the arrow key pressed:\n     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
@@ -6248,12 +6493,12 @@
     }
   },
   "PaginationNumberFormatterParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "value": "number",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6262,7 +6507,7 @@
     }
   },
   "IsGroupOpenByDefaultParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "rowNode": "IRowNode<TData>",
       "rowGroupColumn": "Column",
@@ -6271,7 +6516,7 @@
       "key": "string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "rowNode": "/** The row node being considered. */",
@@ -6369,14 +6614,14 @@
     }
   },
   "GetRowIdParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData",
       "level": "number",
       "parentKeys?": "string[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "data": "/** The data item provided to the grid for the row in question */",
@@ -6388,7 +6633,7 @@
     }
   },
   "ProcessRowParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "eRow": "HTMLElement",
       "ePinnedLeftRow?": "HTMLElement",
@@ -6398,7 +6643,7 @@
       "addRenderedRowListener": "(eventType: string, listener: Function) => void",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6407,7 +6652,7 @@
     }
   },
   "FillOperationParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "event": "MouseEvent",
       "values": "any[]",
@@ -6419,7 +6664,7 @@
       "direction": "'up' | 'down' | 'left' | 'right'",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "event": "/** The mouse event for the fill operation. */",
@@ -6436,13 +6681,13 @@
     }
   },
   "RowHeightParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "data": "/** The data associated with this row from rowData. Data is `undefined` for row groups. */",
@@ -6453,11 +6698,11 @@
     }
   },
   "IsExternalFilterPresentParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6466,13 +6711,13 @@
     }
   },
   "InitialGroupOrderComparatorParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "nodeA": "IRowNode<TData>",
       "nodeB": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6481,12 +6726,12 @@
     }
   },
   "GetGroupRowAggParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "nodes": "IRowNode<TData>[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6495,12 +6740,12 @@
     }
   },
   "PostSortRowsParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "nodes": "IRowNode<TData>[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6509,12 +6754,12 @@
     }
   },
   "IsFullWidthRowParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "rowNode": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6523,14 +6768,14 @@
     }
   },
   "GetLocaleTextParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "key": "string",
       "defaultValue": "string",
       "variableValues?": "string[]",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6539,12 +6784,12 @@
     }
   },
   "GetGroupAggFilteringParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -6576,7 +6821,7 @@
     }
   },
   "ICellEditorParams": {
-    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "type": {
       "value": "TValue",
       "eventKey": "string | null",
@@ -6594,7 +6839,7 @@
       "formatValue": "(value: any) => any",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -6709,7 +6954,7 @@
       "defaultToolPanel?": "ChartToolPanelName"
     },
     "docs": {
-      "settingsPanel?": "/** Customisations for the settings panel */",
+      "settingsPanel?": "/** Customisations for the settings panel and chart menu items in the Context Menu. */",
       "formatPanel?": "/** Customisations for the format panel */",
       "dataPanel?": "/** Customisations for the data panel */",
       "panels?": "/** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */",
@@ -7011,6 +7256,7 @@
     "type": {
       "pasteFromClipboard()": "void",
       "copyToClipboard(params?: IClipboardCopyParams)": "void",
+      "cutToClipboard(params?: IClipboardCopyParams)": "void",
       "copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams)": "void",
       "copySelectedRangeToClipboard(params?: IClipboardCopyParams)": "void",
       "copyRangeDown()": "void"
@@ -7042,16 +7288,16 @@
   "WithoutGridCommon": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": ["T extends AgGridCommon<any>"]
+      "typeParams": ["T extends AgGridCommon<any, any>"]
     },
-    "type": "Omit<T, keyof AgGridCommon<any>>"
+    "type": "Omit<T, keyof AgGridCommon<any, any>>"
   },
   "AgGridCommon": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": { "typeParams": ["TData", "TContext"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -7645,7 +7891,8 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "afterGuiDetached?()": "void"
     },
     "docs": {
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n     * If active then 1) the grid will show the filter icon in the column header \n     * and 2) the filter will be included in the filtering of the data.\n    */",
@@ -7655,7 +7902,8 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n     state after rows are loaded, it can do it here. For example the set filters uses this\n     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n     Country filter). To get the list of available values from within this method from the\n    Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.\n    */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n     * filter.\n     */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */",
+      "afterGuiDetached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */"
     }
   },
   "ProvidedFilterModel": { "meta": {}, "type": { "filterType?": "string" } },
@@ -7672,7 +7920,8 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "afterGuiDetached?()": "void"
     },
     "docs": {
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
@@ -7685,7 +7934,8 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n     state after rows are loaded, it can do it here. For example the set filters uses this\n     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n     Country filter). To get the list of available values from within this method from the\n    Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.\n    */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n     * filter.\n     */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */",
+      "afterGuiDetached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */"
     }
   },
   "IDoesFilterPassParams": {
@@ -7717,7 +7967,7 @@
   },
   "IFilterParams": {
     "meta": {
-      "typeParams": ["TData = any"],
+      "typeParams": ["TData = any", "TContext = any"],
       "doc": "/** Parameters provided by the grid to the `init` method of an `IFilterComp`\n */"
     },
     "type": {
@@ -7730,7 +7980,7 @@
       "doesRowPassOtherFilter": "(rowNode: IRowNode<TData>) => boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "column": "/** The column this filter is for. */",
@@ -7890,7 +8140,8 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "afterGuiDetached?()": "void"
     },
     "docs": {
       "getChildFilterInstance(index: number)": "/** @returns the child filter instance at the given index. */",
@@ -7903,7 +8154,8 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n     state after rows are loaded, it can do it here. For example the set filters uses this\n     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n     Country filter). To get the list of available values from within this method from the\n    Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.\n    */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n     * filter.\n     */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */",
+      "afterGuiDetached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */"
     }
   },
   "IMultiFilterDef": {
@@ -8022,7 +8274,7 @@
       "getRangeEndRow(cellRange: CellRange)": "RowPosition",
       "createCellRangeFromCellRangeParams(params: CellRangeParams)": "CellRange | undefined",
       "setCellRanges(cellRanges: CellRange[])": "void",
-      "clearCellRangeCellValues()": "void"
+      "clearCellRangeCellValues(cellRanges?: CellRange[], source?: string)": "void"
     }
   },
   "ISelectionHandle": {
@@ -8133,7 +8385,7 @@
       "parseValue": "(value: any) => any",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "values": "/** The list of values to be selected from. */",
@@ -8405,9 +8657,9 @@
       "resetQuickFilterAggregateText()": "/** The first time `quickFilter` runs, the grid creates a one-off string representation of the row.\n     * This string is then used for the quick filter instead of hitting each column separately.\n     * When you edit, using grid editing, this string gets cleared down.\n     * However if you edit without using grid editing, you will need to clear this string down for the row to be updated with the new values.\n     * Otherwise new values will not work with the `quickFilter`.\n     */",
       "depthFirstSearch(callback: (rowNode: IRowNode<TData>) => void)": "/** Perform a depth-first search of this node and its children. */",
       "setRowHeight(rowHeight: number | undefined | null, estimated?: boolean)": "/** Sets the row height.\n     * Call if you want to change the height initially assigned to the row.\n     * After calling, you must call `api.onRowHeightChanged()` so the grid knows it needs to work out the placement of the rows.\n     * @param rowHeight - new height of the row\n     * @param estimated - is this an estimated height. Default: `false`\n     */",
-      "setData(data: TData)": "/** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */",
-      "updateData(data: TData)": "/** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */",
-      "setDataValue(colKey: string | Column, newValue: any, eventSource?: string)": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     *\n     * @param colKey The column where the value should be updated.\n     * @param newValue The new value.\n     * @param eventSource The source of the event, optional.\n     * @returns `true` if the value was changed, otherwise `false`.\n     */",
+      "setData(data: TData)": "/** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.\n     */",
+      "updateData(data: TData)": "/** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.\n     */",
+      "setDataValue(colKey: string | Column, newValue: any, eventSource?: string)": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode.\n     *\n     * @param colKey The column where the value should be updated\n     * @param newValue The new value\n     * @param eventSource The source of the event\n     * @returns `True` if the value was changed, otherwise `False`.\n     */",
       "getRoute()": "/** Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.\n     * If the Row Node is not a group, it returns `undefined`.\n     */",
       "id": "/** Unique ID for the node. Either provided by the application, or generated by the grid if not. */",
       "data": "/** The data as provided by the application.\n     * Can be `undefined` when using row grouping or during grid initialisation.\n     */",
@@ -8476,7 +8728,7 @@
     },
     "docs": {
       "startRow": "/** First row requested or undefined for all rows. */",
-      "endRow": "/** Last row requested or undefined for all rows. */",
+      "endRow": "/** Index after the last row required row or undefined for all rows. */",
       "rowGroupCols": "/** Columns that are currently row grouped.  */",
       "valueCols": "/** Columns that have aggregations on them.  */",
       "pivotCols": "/** Columns that have pivot on them.  */",
@@ -8487,7 +8739,7 @@
     }
   },
   "IServerSideGetRowsParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "request": "IServerSideGetRowsRequest",
       "parentNode": "IRowNode",
@@ -8497,7 +8749,7 @@
       "fail()": "void",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "request": "/** Details for the request. A simple object that can be converted to JSON.\n     */",
@@ -8534,6 +8786,8 @@
       "setDatasource(datasource: IServerSideDatasource)": "void",
       "forEachNodeAfterFilterAndSort(callback: (node: IRowNode, index: number) => void)": "void",
       "resetRootStore()": "void",
+      "getBlockStates()": "void",
+      "setRowCount(rowCount: number, isLastRowIndexKnown?: boolean)": "void",
       "getRow(index: number)": "RowNode | undefined",
       "getRowNode(id: string)": "RowNode | undefined",
       "getRowCount()": "number",
@@ -8601,6 +8855,7 @@
       "getDisplayIndexEnd()": "number | undefined",
       "isDisplayIndexInStore(displayIndex: number)": "boolean",
       "setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number; })": "void",
+      "forEachStoreDeep(callback: (rowNode: IServerSideStore, index: number) => void, sequence?: NumberSequence)": "void",
       "forEachNodeDeep(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence)": "void",
       "forEachNodeDeepAfterFilterAndSort(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence)": "void",
       "retryLoads()": "void",
@@ -8704,7 +8959,8 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "afterGuiDetached?()": "void"
     },
     "docs": {
       "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n     * not active.\n     */",
@@ -8725,7 +8981,8 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n     state after rows are loaded, it can do it here. For example the set filters uses this\n     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n     Country filter). To get the list of available values from within this method from the\n    Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.\n    */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n     * filter.\n     */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */",
+      "afterGuiDetached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */"
     }
   },
   "SetFilterValuesFuncParams": {
@@ -8795,7 +9052,7 @@
       "convertValuesToStrings?": "boolean",
       "treeList?": "boolean",
       "treeListPathGetter?": "(value: V | null) => string[] | null",
-      "treeListFormatter?": "(pathKey: string | null, level: number) => string",
+      "treeListFormatter?": "(pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string",
       "buttons?": "FilterButtonType[]",
       "closeOnApply?": "boolean",
       "debounceMs?": "number",
@@ -8822,7 +9079,7 @@
       "convertValuesToStrings?": "/** @deprecated As of v29 the Filter Model and Filter List will accept and return complex objects,\n     * as well as maintaining the type of primitives (e.g. number, boolean) when not used as keys.\n     * \n     * If this option is set to `true`, values will instead be converted to strings within the Filter Model and Filter List.\n     * Complex objects will be converted via the Key Creator, and primitive types will be converted directly to strings.\n     */",
       "treeList?": "/** If `true`, the Set Filter List will be displayed in a tree format. If enabled, one of the following must be true:\n     * \n     * - A `treeListPathGetter` is provided to get the tree path for the column values.\n     * - The column values are of type `Date`, in which case the tree will be year -> month -> day.\n     * - Tree Data mode is enabled and the column is the group column. The Filter List will match the tree structure. A Key Creator must be supplied.\n     * - Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied.\n     */",
       "treeListPathGetter?": "/** Requires `treeList = true`. If provided, this gets the tree path to display in the Set Filter List based on the column values.\n     */",
-      "treeListFormatter?": "/** Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.\n     * `level` refers to the level of the tree (starting at 0).\n     */",
+      "treeListFormatter?": "/** Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.\n     * @param pathKey - The key for the current node in the tree.\n     * @param level - The level of the current node in the tree (starting at 0).\n     * @param parentPathKeys - The keys of the parent nodes up until the current node (exclusive).\n     * This will be an empty array if the node is at the root level.\n     */",
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n     * The options are:\n     * \n     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.\n     */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n     * or Reset button is clicked if this is set to `true`.\n     * \n     * Default: `false`\n     */",
       "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n     * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n     * - `DateFilter` and `SetFilter`: 0ms\n     */",
@@ -8845,7 +9102,7 @@
       "data?": "TData",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "level": "/** Level of the tree (starting at 0). */",
@@ -8869,9 +9126,9 @@
       "setDisplayed(show: boolean)": "void",
       "setSideBarPosition(position?: 'left' | 'right')": "void",
       "isToolPanelShowing()": "boolean",
-      "openToolPanel(key: string)": "void",
+      "openToolPanel(key: string, source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api')": "void",
       "getToolPanelInstance(key: string)": "IToolPanel | undefined",
-      "close()": "void",
+      "close(source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api')": "void",
       "openedItem()": "string | null",
       "isDisplayed()": "boolean",
       "getDef()": "SideBarDef | undefined"
@@ -8920,7 +9177,7 @@
     }
   },
   "ISparklineCellRendererParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "sparklineOptions?": "SparklineOptions",
       "value": "TValue",
@@ -8941,7 +9198,7 @@
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "value": "/** Value to be rendered. */",
@@ -9484,11 +9741,11 @@
     }
   },
   "IStatusPanelParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -9511,11 +9768,11 @@
     }
   },
   "IToolPanelParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -9553,7 +9810,7 @@
       "suppressSyncLayoutWithGrid": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "suppressColumnMove": "/** Suppress Column Move */",
@@ -9677,7 +9934,7 @@
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "detailGridOptions": "/** Provide Grid Options to use for the Detail Grid.\n     */",
@@ -9842,7 +10099,8 @@
       "bodyPromise": "AgPromise<HTMLElement>",
       "name": "string",
       "getScrollableContainer?": "() => HTMLElement",
-      "afterAttachedCallback?": "(params: IAfterGuiAttachedParams) => void"
+      "afterAttachedCallback?": "(params: IAfterGuiAttachedParams) => void",
+      "afterDetachedCallback?": "() => void"
     }
   },
   "TabbedItemWrapper": {
@@ -9857,18 +10115,17 @@
     "meta": {},
     "type": { "list": "TaskItem[]", "sorted": "boolean" }
   },
+  "SimpleHttpRequestParams": { "meta": {}, "type": { "url": "string" } },
   "ModuleNames": {
     "meta": { "isEnum": true },
     "type": [
       "CommunityCoreModule = \"@ag-grid-community/core\"",
-      "CommunityAllModules = \"@ag-grid-community/all\"",
       "InfiniteRowModelModule = \"@ag-grid-community/infinite-row-model\"",
       "ClientSideRowModelModule = \"@ag-grid-community/client-side-row-model\"",
       "CsvExportModule = \"@ag-grid-community/csv-export\"",
       "EnterpriseCoreModule = \"@ag-grid-enterprise/core\"",
-      "EnterpriseAllModules = \"@ag-grid-enterprise/all\"",
       "RowGroupingModule = \"@ag-grid-enterprise/row-grouping\"",
-      "ColumnToolPanelModule = \"@ag-grid-enterprise/column-tool-panel\"",
+      "ColumnsToolPanelModule = \"@ag-grid-enterprise/column-tool-panel\"",
       "FiltersToolPanelModule = \"@ag-grid-enterprise/filter-tool-panel\"",
       "MenuModule = \"@ag-grid-enterprise/menu\"",
       "SetFilterModule = \"@ag-grid-enterprise/set-filter\"",
@@ -9886,13 +10143,9 @@
       "SparklinesModule = \"@ag-grid-enterprise/sparklines\"",
       "AngularModule = \"@ag-grid-community/angular\"",
       "ReactModule = \"@ag-grid-community/react\"",
-      "VueModule = \"@ag-grid-community/vue\"",
-      "PolymerModule = \"@ag-grid-community/polymer\""
+      "VueModule = \"@ag-grid-community/vue\""
     ],
     "docs": [
-      null,
-      null,
-      null,
       null,
       null,
       null,
@@ -9934,7 +10187,7 @@
   },
   "CallbackKeys": {
     "meta": { "isTypeAlias": true },
-    "type": "KeysOfType<(any: AgGridCommon<any>) => any>"
+    "type": "KeysOfType<(any: AgGridCommon<any, any>) => any>"
   },
   "FunctionKeys": {
     "meta": { "isTypeAlias": true },
@@ -9944,7 +10197,7 @@
     "meta": {},
     "type": {
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "setUserStyles(styles: any)": "void",
+      "setUserStyles(styles: CellStyle)": "void",
       "getFocusableElement()": "HTMLElement",
       "setTabIndex(tabIndex: number)": "void",
       "setRole(role: string)": "void",
@@ -9982,7 +10235,7 @@
       "formatValue": "(value: any) => any",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "maxLength": "/** Max number of characters to allow. Default: `200` */",
@@ -10027,7 +10280,7 @@
       "formatValue": "(value: any) => any",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "values": "/** List of values to display */",
@@ -10073,7 +10326,7 @@
       "formatValue": "(value: any) => any",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "useFormatter": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor. */",
@@ -10184,7 +10437,7 @@
     "type": "IGroupCellRendererParams & ICellRendererParams<TData, TValue> & IGroupCellRendererFullRowParams"
   },
   "ICellRendererParams": {
-    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "type": {
       "value": "TValue",
       "valueFormatted": "string | null | undefined",
@@ -10204,7 +10457,7 @@
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "value": "/** Value to be rendered. */",
@@ -10229,7 +10482,7 @@
     }
   },
   "ISetFilterCellRendererParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "value": "any",
       "valueFormatted": "string | null | undefined",
@@ -10237,7 +10490,7 @@
       "column?": "Column",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "colDef?": "/** The cell's column definition. */",
@@ -10277,7 +10530,7 @@
     }
   },
   "ILoadingCellRendererParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "value": "TValue",
       "valueFormatted": "string | null | undefined",
@@ -10297,7 +10550,7 @@
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "value": "/** Value to be rendered. */",
@@ -10355,13 +10608,13 @@
     }
   },
   "IDateParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "onDateChanged": "() => void",
       "filterParams": "DateFilterParams",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "onDateChanged": "/** Method for component to tell AG Grid that the date has changed. */",
@@ -10426,11 +10679,11 @@
     "type": { "element": "HTMLElement", "dragSource?": "DragListenerParams" }
   },
   "ILoadingOverlayParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -10452,11 +10705,11 @@
     }
   },
   "INoRowsOverlayParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "api": "/** The grid api. */",
@@ -10524,7 +10777,7 @@
       "setRowId(rowId: string)": "void",
       "setRowBusinessKey(businessKey: string)": "void",
       "setTabIndex(tabIndex: number)": "void",
-      "setUserStyles(styles: any)": "void",
+      "setUserStyles(styles: RowStyle)": "void",
       "setRole(role: string)": "void"
     }
   },
@@ -10638,7 +10891,7 @@
     }
   },
   "ITooltipParams": {
-    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "type": {
       "location": "string",
       "value?": "TValue",
@@ -10650,7 +10903,7 @@
       "data?": "TData",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "location": "/** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */",
@@ -11024,7 +11277,8 @@
       "alignSide?": "'left' | 'right'",
       "keepWithinBounds?": "boolean",
       "skipObserver?": "boolean",
-      "updatePosition?": "() => { x: number; y: number; }"
+      "updatePosition?": "() => { x: number; y: number; }",
+      "postProcessCallback?": "() => void"
     }
   },
   "PopupEventParams": {
@@ -11082,6 +11336,15 @@
       "hideFunc": "() => void",
       "stopAnchoringPromise": "AgPromise<Function>"
     }
+  },
+  "TabGuardClassNames": {
+    "meta": { "isEnum": true },
+    "type": [
+      "TAB_GUARD = 'ag-tab-guard'",
+      "TAB_GUARD_TOP = 'ag-tab-guard-top'",
+      "TAB_GUARD_BOTTOM = 'ag-tab-guard-bottom'"
+    ],
+    "docs": [null, null, null]
   },
   "ITabGuard": {
     "meta": {},
@@ -11154,7 +11417,8 @@
       "available": "boolean",
       "expanded?": "boolean",
       "children?": "SetFilterModelTreeItem[]",
-      "key?": "string | null"
+      "key?": "string | null",
+      "parentTreeKeys": "(string | null)[]"
     }
   },
   "ISetFilterLocaleText": {
@@ -11235,7 +11499,7 @@
       "suppressSyncLayoutWithGrid": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context": "TContext"
     },
     "docs": {
       "suppressExpandAll": "/** To suppress Expand / Collapse All */",
@@ -11325,7 +11589,8 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "afterGuiDetached?()": "void"
     },
     "docs": {
       "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */",
@@ -11336,7 +11601,8 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n     state after rows are loaded, it can do it here. For example the set filters uses this\n     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n     Country filter). To get the list of available values from within this method from the\n    Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.\n    */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n     * filter.\n     */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */",
+      "afterGuiDetached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */"
     }
   },
   "ICellRendererAngularComp": {
@@ -11422,7 +11688,8 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "afterGuiDetached?()": "void"
     },
     "docs": {
       "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */",
@@ -11433,7 +11700,8 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n     state after rows are loaded, it can do it here. For example the set filters uses this\n     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n     Country filter). To get the list of available values from within this method from the\n    Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.\n    */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n     * filter.\n     */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */",
+      "afterGuiDetached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */"
     }
   },
   "AgFloatingFilterComponent": {
@@ -11573,6 +11841,7 @@
       "excelStyles?": "ExcelStyle[]",
       "quickFilterText?": "string",
       "cacheQuickFilter?": "boolean",
+      "excludeHiddenColumnsFromQuickFilter?": "boolean",
       "excludeChildrenWhenTreeDataFiltering?": "boolean",
       "enableCharts?": "boolean",
       "chartThemes?": "string[]",
@@ -11830,6 +12099,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "void",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "void",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "void",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "void",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -11921,7 +12194,7 @@
       "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
-      "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "skipHeaderOnAutoSize?": "/** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */",
       "components?": "/** A map of component names to components. */",
       "frameworkComponents?": "/** @deprecated As of v27, use `components` for framework components too. */",
@@ -11930,7 +12203,7 @@
       "editType?": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
       "singleClickEdit?": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
       "suppressClickEdit?": "/** Set to `true` so that neither single nor double click starts editing. Default: `false` */",
-      "readOnlyEdit?": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "readOnlyEdit?": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n     * The default is that the grid stays editing until focus goes onto another cell.\n     * Default: `false`\n     */",
       "enterMovesDown?": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n     * i.e. pressing the `Enter` key will move down to the cell beneath.\n     * Default: `false`\n     */",
       "enterMovesDownAfterEdit?": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n     * i.e. pressing the Enter key will move down to the cell beneath.\n     * Default: `false`\n     */",
@@ -11942,8 +12215,9 @@
       "defaultExcelExportParams?": "/** A default configuration object used to export to Excel. */",
       "suppressExcelExport?": "/** Prevents the user from exporting the grid to Excel. Default: `false` */",
       "excelStyles?": "/** A list (array) of Excel styles to be used when exporting to Excel with styles. */",
-      "quickFilterText?": "/** Rows are filtered using this text as a quick filter. */",
-      "cacheQuickFilter?": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "quickFilterText?": "/** Rows are filtered using this text as a Quick Filter. */",
+      "cacheQuickFilter?": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
+      "excludeHiddenColumnsFromQuickFilter?": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "excludeChildrenWhenTreeDataFiltering?": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
       "enableCharts?": "/** Set to `true` to Enable Charts. Default: `false` */",
       "chartThemes?": "/** The list of chart themes to be used. */",
@@ -12075,7 +12349,7 @@
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
       "serverSideSortOnServer?": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
-      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "serverSideSortingAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
@@ -12190,13 +12464,17 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.\n     */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
-      "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
+      "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "/** Editing a cell has stopped. */",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "/** Undo operation has started. */",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
@@ -12318,6 +12596,7 @@
       "excelStyles?": "ExcelStyle[]",
       "quickFilterText?": "string",
       "cacheQuickFilter?": "boolean",
+      "excludeHiddenColumnsFromQuickFilter?": "boolean",
       "excludeChildrenWhenTreeDataFiltering?": "boolean",
       "enableCharts?": "boolean",
       "chartThemes?": "string[]",
@@ -12575,6 +12854,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "void",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "void",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "void",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "void",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -12666,7 +12949,7 @@
       "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
-      "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "skipHeaderOnAutoSize?": "/** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */",
       "components?": "/** A map of component names to components. */",
       "frameworkComponents?": "/** @deprecated As of v27, use `components` for framework components too. */",
@@ -12675,7 +12958,7 @@
       "editType?": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
       "singleClickEdit?": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
       "suppressClickEdit?": "/** Set to `true` so that neither single nor double click starts editing. Default: `false` */",
-      "readOnlyEdit?": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "readOnlyEdit?": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n     * The default is that the grid stays editing until focus goes onto another cell.\n     * Default: `false`\n     */",
       "enterMovesDown?": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n     * i.e. pressing the `Enter` key will move down to the cell beneath.\n     * Default: `false`\n     */",
       "enterMovesDownAfterEdit?": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n     * i.e. pressing the Enter key will move down to the cell beneath.\n     * Default: `false`\n     */",
@@ -12687,8 +12970,9 @@
       "defaultExcelExportParams?": "/** A default configuration object used to export to Excel. */",
       "suppressExcelExport?": "/** Prevents the user from exporting the grid to Excel. Default: `false` */",
       "excelStyles?": "/** A list (array) of Excel styles to be used when exporting to Excel with styles. */",
-      "quickFilterText?": "/** Rows are filtered using this text as a quick filter. */",
-      "cacheQuickFilter?": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "quickFilterText?": "/** Rows are filtered using this text as a Quick Filter. */",
+      "cacheQuickFilter?": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
+      "excludeHiddenColumnsFromQuickFilter?": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "excludeChildrenWhenTreeDataFiltering?": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
       "enableCharts?": "/** Set to `true` to Enable Charts. Default: `false` */",
       "chartThemes?": "/** The list of chart themes to be used. */",
@@ -12820,7 +13104,7 @@
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
       "serverSideSortOnServer?": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
-      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "serverSideSortingAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
@@ -12935,13 +13219,17 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.\n     */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
-      "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
+      "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "/** Editing a cell has stopped. */",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "/** Undo operation has started. */",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
@@ -13065,6 +13353,7 @@
       "excelStyles?": "ExcelStyle[]",
       "quickFilterText?": "string",
       "cacheQuickFilter?": "boolean",
+      "excludeHiddenColumnsFromQuickFilter?": "boolean",
       "excludeChildrenWhenTreeDataFiltering?": "boolean",
       "enableCharts?": "boolean",
       "chartThemes?": "string[]",
@@ -13322,6 +13611,10 @@
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "void",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "void",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "void",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "void",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -13413,7 +13706,7 @@
       "suppressRowGroupHidesColumns?": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "colResizeDefault?": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "suppressAutoSize?": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
-      "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "autoSizePadding?": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "skipHeaderOnAutoSize?": "/** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */",
       "components?": "/** A map of component names to components. */",
       "frameworkComponents?": "/** @deprecated As of v27, use `components` for framework components too. */",
@@ -13422,7 +13715,7 @@
       "editType?": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
       "singleClickEdit?": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
       "suppressClickEdit?": "/** Set to `true` so that neither single nor double click starts editing. Default: `false` */",
-      "readOnlyEdit?": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "readOnlyEdit?": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n     * The default is that the grid stays editing until focus goes onto another cell.\n     * Default: `false`\n     */",
       "enterMovesDown?": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n     * i.e. pressing the `Enter` key will move down to the cell beneath.\n     * Default: `false`\n     */",
       "enterMovesDownAfterEdit?": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n     * i.e. pressing the Enter key will move down to the cell beneath.\n     * Default: `false`\n     */",
@@ -13434,8 +13727,9 @@
       "defaultExcelExportParams?": "/** A default configuration object used to export to Excel. */",
       "suppressExcelExport?": "/** Prevents the user from exporting the grid to Excel. Default: `false` */",
       "excelStyles?": "/** A list (array) of Excel styles to be used when exporting to Excel with styles. */",
-      "quickFilterText?": "/** Rows are filtered using this text as a quick filter. */",
-      "cacheQuickFilter?": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "quickFilterText?": "/** Rows are filtered using this text as a Quick Filter. */",
+      "cacheQuickFilter?": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
+      "excludeHiddenColumnsFromQuickFilter?": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "excludeChildrenWhenTreeDataFiltering?": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
       "enableCharts?": "/** Set to `true` to Enable Charts. Default: `false` */",
       "chartThemes?": "/** The list of chart themes to be used. */",
@@ -13567,7 +13861,7 @@
       "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
       "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
       "serverSideSortOnServer?": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
-      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "serverSideFilterOnServer?": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "serverSideSortingAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */",
       "serverSideFilteringAlwaysResets?": "/** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
@@ -13682,13 +13976,17 @@
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent<TData>)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.\n     */",
-      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
-      "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "onCellValueChanged?(event: CellValueChangedEvent<TData>)": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
+      "onCellEditRequest?(event: CellEditRequestEvent<TData>)": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent<TData>)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent<TData>)": "/** Editing a cell has started. */",
       "onCellEditingStopped?(event: CellEditingStoppedEvent<TData>)": "/** Editing a cell has stopped. */",
       "onRowEditingStarted?(event: RowEditingStartedEvent<TData>)": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
       "onRowEditingStopped?(event: RowEditingStoppedEvent<TData>)": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
+      "onUndoStarted?(event: UndoStartedEvent<TData>)": "/** Undo operation has started. */",
+      "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
+      "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
+      "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
@@ -13794,6 +14092,7 @@
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "afterGuiDetached?()": "void",
       "getReactContainerStyle?": "() => {}",
       "getReactContainerClasses?": "() => string[]"
     },
@@ -13805,7 +14104,8 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n     state after rows are loaded, it can do it here. For example the set filters uses this\n     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n     Country filter). To get the list of available values from within this method from the\n    Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.\n    */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n     * filter.\n     */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */",
+      "afterGuiDetached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */"
     }
   },
   "IFloatingFilterReactComp": {

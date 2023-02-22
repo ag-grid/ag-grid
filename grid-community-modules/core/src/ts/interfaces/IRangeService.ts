@@ -1,6 +1,6 @@
 import { Column } from "../entities/column";
-import { CellPosition } from "../entities/cellPosition";
-import { RowPosition } from "../entities/rowPosition";
+import { CellPosition } from "../entities/cellPositionUtils";
+import { RowPosition } from "../entities/rowPositionUtils";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 import { RowPinnedType } from "../interfaces/iRowNode";
 
@@ -29,7 +29,7 @@ export interface IRangeService {
     getRangeEndRow(cellRange: CellRange): RowPosition;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
     setCellRanges(cellRanges: CellRange[]): void;
-    clearCellRangeCellValues(): void;
+    clearCellRangeCellValues(cellRanges?: CellRange[], source?: string): void;
 }
 
 export interface ISelectionHandle {

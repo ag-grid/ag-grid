@@ -12,10 +12,10 @@ export interface BindingImport {
 
 const moduleMapping = require('../../documentation/doc-pages/modules/modules.json');
 
-export function readAsJsFile(srcFile) {
+export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
     const tsFile = srcFile
         // Remove imports that are not required in javascript
-        .replace(/import.*from.*\n/g, '')
+        .replace((options?.includeImports ? '' : /import ((.|\n)*?)from.*\n/g), '')
         // Remove export statement
         .replace(/export /g, "")
 
@@ -209,7 +209,7 @@ export function tsNodeIsGlobalFunctionCall(node: ts.Node) {
     // Get top level function calls like 
     // setInterval(callback, 500)
     // but don't match things like
-    // agCharts.AgChart.create(options)
+    // AgChart.create(options)
     if (ts.isExpressionStatement(node)) {
         return ts.isSourceFile(node.parent) && ts.isCallExpression(node.expression) && ts.isIdentifier(node.expression.expression);
     }
@@ -282,7 +282,7 @@ export function getTypes(node: ts.Node) {
     let typesToInclude = []
     if (ts.isIdentifier(node)) {
         const typeName = node.getText();
-        if (!['HTMLElement', 'Function', 'Partial', 'TData'].includes(typeName)) {
+        if (!['HTMLElement', 'Function', 'Partial', 'TData', 'TContext', 'TValue'].includes(typeName)) {
             typesToInclude.push(typeName);
         }
     }
@@ -295,6 +295,20 @@ export function getTypes(node: ts.Node) {
         }
     })
     return typesToInclude;
+}
+
+export function usesChartApi(node: ts.Node) {
+    let usesApi = false;
+    if (ts.isCallExpression(node)) {
+        if (node.getText()?.match(/AgChart.(?!create)/)) {
+            return true;
+        }
+    }
+
+    node.forEachChild(ct => {
+        usesApi = usesApi || usesChartApi(ct);
+    })
+    return usesApi;
 }
 
 export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[] {
@@ -376,8 +390,16 @@ export function tsNodeIsTopLevelFunction(node: any): boolean {
  */
 export function findAllVariables(node) {
     let allVariables = [];
-    if (ts.isVariableDeclaration(node) || ts.isClassDeclaration(node)) {
+    if (ts.isClassDeclaration(node)) {
         allVariables.push(node.name.getText());
+    }
+    if (ts.isVariableDeclaration(node)) {
+        if(ts.isObjectBindingPattern(node.name)){
+            // Code like this:  const { pageSetup, margins } = getSheetConfig();
+            node.name.elements.forEach(n => allVariables.push(n.getText()))
+        }else{
+            allVariables.push(node.name.getText());
+        }
     }
     if (ts.isFunctionDeclaration(node)) {
         // catch locally defined functions within the main function body
@@ -433,6 +455,10 @@ export function findAllAccessedProperties(node) {
         } else {
             properties.push(exp.getText())
         }
+        if (ts.isCallExpression(node) && node.arguments) {
+            // Check arguments
+            properties = [...properties, ...findAllAccessedProperties(node.arguments)];
+        }
     }
     else if (ts.isBinaryExpression(node)) {
         // In this function we set swimmingHeight but are not dependent on it,
@@ -465,11 +491,21 @@ export function findAllAccessedProperties(node) {
             properties = [...properties, ...findAllAccessedProperties(node.initializer)];
         }
     }
+    else if (ts.isExpressionStatement(node)) {
+        if (node.expression) {
+            properties = [...properties, ...findAllAccessedProperties(node.expression)];
+        }
+    }
     else if (ts.isClassDeclaration(node)) {
         // Do nothing for Class declarations as this is likely a cell renderer setup
     }
     else if (ts.isTypeReferenceNode(node)) {
         // Do nothing for Type references
+    }
+    else if (node instanceof Array) {
+        node.forEach(element => {
+            properties = [...properties, ...findAllAccessedProperties(element)];
+        });
     }
     else {
         // Recurse down the tree looking for more accessed properties
@@ -614,9 +650,7 @@ export function getModuleRegistration({ gridSettings, enterprise, exampleName })
 export function handleRowGenericInterface(fileTxt: string, tData: string): string {
     if (tData) {
         fileTxt = fileTxt
-        // Until we support this cleanly.
-            //.replace(/<TData>/g, `<${tData}>`)
-            .replace(/<TData>/g, '')
+            .replace(/<(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?>/g, '')
             .replace(/TData\[\]/g, `${tData}[]`);
     } else {
         fileTxt = fileTxt.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');

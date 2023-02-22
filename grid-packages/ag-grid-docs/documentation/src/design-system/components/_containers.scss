@@ -1,0 +1,40 @@
+@use '../core' as *;
+
+.ag-card {
+    --card-color: var(--border-color);
+    --header-tint: 0.775;
+    --content-tint: 0.95;
+
+    display: flex;
+    flex-direction: column;
+    border-radius: calc(var(--border-radius) * 2);
+    border: 3px solid var(--card-color);
+    background-color: var(--card-color);
+    overflow: hidden;
+
+    header,
+    .header,
+    .top {
+        padding: $size-1 $size-2;
+        background-color: rgba(255, 255, 255, var(--header-tint));
+    }
+
+    .content,
+    .bottom {
+        flex-grow: 1;
+        padding: $size-2;
+        background-color: rgba(255, 255, 255, var(--content-tint));
+    }
+
+    &.single-application {
+        --card-color: #0f5bce !important; // !important for .ag-styles specificity
+        --header-tint: 0.9 !important; // !important for .ag-styles specificity
+        --content-tint: 0.96 !important; // !important for .ag-styles specificity
+    }
+
+    &.multiple-application {
+        --card-color: #2aaa33 !important; // !important for .ag-styles specificity
+        --header-tint: 0.91 !important; // !important for .ag-styles specificity
+        --content-tint: 0.97 !important; // !important for .ag-styles specificity
+    }
+}

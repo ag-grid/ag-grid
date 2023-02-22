@@ -5,8 +5,7 @@ import { BBox } from '../../scene/bbox';
 import { Scale } from '../../scale/scale';
 import { ContinuousScale } from '../../scale/continuousScale';
 import { createId } from '../../util/id';
-import { normalizeAngle360, toRadians } from '../../util/angle';
-import { ChartAxisDirection } from '../chartAxis';
+import { ChartAxisDirection } from '../chartAxisDirection';
 import {
     CrossLineLabelPosition,
     labeldDirectionHandling,
@@ -33,6 +32,7 @@ import {
     predicateWithMessage,
 } from '../../util/validation';
 import { FontStyle, FontWeight, AgCrossLineLabelPosition } from '../agChartOptions';
+import { calculateLabelRotation } from '../label';
 
 const CROSSLINE_LABEL_POSITIONS = [
     'top',
@@ -341,13 +341,12 @@ export class CrossLine {
             return;
         }
 
-        const labelRotation = rotation ? normalizeAngle360(toRadians(rotation)) : 0;
-
-        const parallelFlipFlag =
-            !labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
-        const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
-
-        const autoRotation = parallel ? (parallelFlipFlag * Math.PI) / 2 : regularFlipFlag === -1 ? Math.PI : 0;
+        const { autoRotation, labelRotation } = calculateLabelRotation({
+            rotation,
+            parallel,
+            regularFlipRotation,
+            parallelFlipRotation,
+        });
 
         crossLineLabel.rotation = autoRotation + labelRotation;
 

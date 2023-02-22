@@ -123,6 +123,8 @@ import {
     ProcessHeaderForExportParams,
     ProcessRowParams,
     RangeSelectionChangedEvent,
+    RedoEndedEvent,
+    RedoStartedEvent,
     RowClassParams,
     RowClassRules,
     RowClickedEvent,
@@ -152,6 +154,8 @@ import {
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
     TreeDataDisplayType,
+    UndoEndedEvent,
+    UndoStartedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent
@@ -373,7 +377,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressAutoSize: boolean | undefined = undefined;
     /** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
          * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
-         * Default: `4`
+         * Default: `20`
          */
     @Input() public autoSizePadding: number | undefined = undefined;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false`     */
@@ -388,7 +392,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public singleClickEdit: boolean | undefined = undefined;
     /** Set to `true` so that neither single nor double click starts editing. Default: `false`     */
     @Input() public suppressClickEdit: boolean | undefined = undefined;
-    /** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid.     */
+    /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.         */
     @Input() public readOnlyEdit: boolean | undefined = undefined;
     /** Set this to `true` to stop cell editing when grid loses focus.
          * The default is that the grid stays editing until focus goes onto another cell.
@@ -421,10 +425,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressExcelExport: boolean | undefined = undefined;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.     */
     @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
-    /** Rows are filtered using this text as a quick filter.     */
+    /** Rows are filtered using this text as a Quick Filter.     */
     @Input() public quickFilterText: string | undefined = undefined;
-    /** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false`     */
+    /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false`     */
     @Input() public cacheQuickFilter: boolean | undefined = undefined;
+    /** 
+         * Set to `true` to exclude hidden columns from being checked by the Quick Filter.
+         * This can give a significant performance improvement when there are a large number of hidden columns,
+         * and you are only interested in filtering on what's visible. Default: `false`
+         */
+    @Input() public excludeHiddenColumnsFromQuickFilter: boolean | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
@@ -757,8 +767,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
     /** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
-          * Default: `false`
-          */
+         * Default: `false`
+         */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead.     */
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
@@ -1004,10 +1014,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent<TData>> = new EventEmitter<ComponentStateChangedEvent<TData>>();
     /** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
-         *  if cell value has changed as a result of paste operation.
+         *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
+         * fill handle, copy range down, undo and redo.
         */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<CellValueChangedEvent<TData>>();
-    /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`.     */
+    /** Value has changed after editing. Only fires when `readOnlyEdit=true`.     */
     @Output() public cellEditRequest: EventEmitter<CellEditRequestEvent<TData>> = new EventEmitter<CellEditRequestEvent<TData>>();
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only.     */
     @Output() public rowValueChanged: EventEmitter<RowValueChangedEvent<TData>> = new EventEmitter<RowValueChangedEvent<TData>>();
@@ -1019,6 +1030,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public rowEditingStarted: EventEmitter<RowEditingStartedEvent<TData>> = new EventEmitter<RowEditingStartedEvent<TData>>();
     /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
     @Output() public rowEditingStopped: EventEmitter<RowEditingStoppedEvent<TData>> = new EventEmitter<RowEditingStoppedEvent<TData>>();
+    /** Undo operation has started.     */
+    @Output() public undoStarted: EventEmitter<UndoStartedEvent<TData>> = new EventEmitter<UndoStartedEvent<TData>>();
+    /** Undo operation has ended.     */
+    @Output() public undoEnded: EventEmitter<UndoEndedEvent<TData>> = new EventEmitter<UndoEndedEvent<TData>>();
+    /** Redo operation has started.     */
+    @Output() public redoStarted: EventEmitter<RedoStartedEvent<TData>> = new EventEmitter<RedoStartedEvent<TData>>();
+    /** Redo operation has ended.     */
+    @Output() public redoEnded: EventEmitter<RedoEndedEvent<TData>> = new EventEmitter<RedoEndedEvent<TData>>();
     /** Filter has been opened.     */
     @Output() public filterOpened: EventEmitter<FilterOpenedEvent<TData>> = new EventEmitter<FilterOpenedEvent<TData>>();
     /** Filter has been modified and applied.     */
@@ -1195,6 +1214,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressScrollWhenPopupsAreOpen: boolean | null | '';
     static ngAcceptInputType_purgeClosedRowNodes: boolean | null | '';
     static ngAcceptInputType_cacheQuickFilter: boolean | null | '';
+    static ngAcceptInputType_excludeHiddenColumnsFromQuickFilter: boolean | null | '';
     static ngAcceptInputType_ensureDomOrder: boolean | null | '';
     static ngAcceptInputType_accentedSort: boolean | null | '';
     static ngAcceptInputType_suppressChangeDetection: boolean | null | '';

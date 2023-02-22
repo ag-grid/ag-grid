@@ -5,9 +5,10 @@
 // NOTE: Only typescript types should be imported from the AG Grid packages
 // to prevent AG Grid from loading the code twice
 import { GetRowIdParams, GridOptions, GridSizeChangedEvent, ISetFilter } from 'ag-grid-community';
+import { COLUMN_ID_PRIORITIES, FILTER_ROWS_BREAKPOINT, UPDATE_INTERVAL } from './constants';
 import { columnDefs, generateStocks, generateStockUpdate } from './data';
 import { createGenerator } from './generator-utils';
-import { COLUMN_ID_PRIORITIES, FILTER_ROWS_BREAKPOINT, UPDATE_INTERVAL } from './constants';
+import { fixtureData } from './rowDataFixture';
 
 const rowData = generateStocks();
 const generator = createGenerator({
@@ -22,11 +23,9 @@ const generator = createGenerator({
         const newStock = generateStockUpdate(stockToUpdate);
 
         rowData[randomIndex] = newStock;
-        gridOptions.api.applyTransactionAsync(
-            {
-                update: [newStock],
-            }
-        );
+        gridOptions.api.applyTransactionAsync({
+            update: [newStock],
+        });
     },
 });
 
@@ -43,9 +42,6 @@ const gridOptions: GridOptions = {
     getRowId: ({ data }: GetRowIdParams) => {
         return data.stock;
     },
-    onGridReady() {
-        generator.start();
-    },
     onGridSizeChanged(params: GridSizeChangedEvent) {
         const columnsToShow: string[] = [];
         const columnsToHide: string[] = [];
@@ -56,7 +52,7 @@ const gridOptions: GridOptions = {
             const minWidth = col?.getMinWidth() || 0;
             const newTotalWidth = totalWidth + minWidth;
 
-            if (!hasFilledColumns && (newTotalWidth <= params.clientWidth)) {
+            if (!hasFilledColumns && newTotalWidth <= params.clientWidth) {
                 columnsToShow.push(colId);
                 totalWidth = newTotalWidth;
             } else {
@@ -71,36 +67,59 @@ const gridOptions: GridOptions = {
 
         const stockFilter: ISetFilter = params.api.getFilterInstance('stock')!;
         const stocks = stockFilter.getFilterValues();
-        
+
         if (innerWidth < FILTER_ROWS_BREAKPOINT) {
             stockFilter.setModel({
-                values: stocks.slice(0, 6)
+                values: stocks.slice(0, 6),
             });
         } else {
             stockFilter.setModel({
-                values: stocks
+                values: stocks,
             });
         }
         params.api.onFilterChanged();
-    }
+    },
 };
 
 /*
  * Initialise the grid using plain JavaScript, so grid can be dynamically loaded.
-*/
-export function initGrid(selector: string) {
+ */
+export function initGrid({
+    selector,
+    suppressUpdates,
+    useStaticData,
+}: {
+    selector: string;
+    suppressUpdates?: boolean;
+    useStaticData?: boolean;
+}) {
     const init = () => {
         const gridDiv = document.querySelector(selector);
+        if (!gridDiv) {
+            return;
+        }
+
+        if (useStaticData) {
+            gridOptions.rowData = fixtureData;
+        }
+        gridOptions.popupParent = document.querySelector('body');
+        gridOptions.onGridReady = () => {
+            if (suppressUpdates) {
+                return;
+            }
+
+            generator.start();
+        };
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
 
-        gridDiv?.classList.add('loaded');
+        gridDiv.classList.add('loaded');
     };
 
     const loadGrid = function () {
         if (document.querySelector(selector) && globalThis.agGrid) {
             init();
         } else {
-            requestAnimationFrame(() => loadGrid())
+            requestAnimationFrame(() => loadGrid());
         }
     };
 

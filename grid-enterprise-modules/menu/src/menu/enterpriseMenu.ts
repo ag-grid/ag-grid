@@ -283,7 +283,7 @@ export class EnterpriseMenu extends BeanStub {
         this.tabFactories[EnterpriseMenu.TAB_COLUMNS] = this.createColumnsPanel.bind(this);
 
         this.includeChecks[EnterpriseMenu.TAB_GENERAL] = () => true;
-        this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => column.isFilterAllowed();
+        this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => this.filterManager.isFilterAllowed(column);
         this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = () => true;
         this.restrictTo = restrictTo;
     }
@@ -304,6 +304,8 @@ export class EnterpriseMenu extends BeanStub {
         if (this.mainMenuList) {
             this.mainMenuList.setParentComponent(this.tabbedLayout);
         }
+
+        this.addDestroyFunc(() => this.destroyBean(this.tabbedLayout));
     }
 
     private getTabsToCreate() {
@@ -317,7 +319,7 @@ export class EnterpriseMenu extends BeanStub {
 
     private isModuleLoaded(menuTabName: string): boolean {
         if (menuTabName === EnterpriseMenu.TAB_COLUMNS) {
-            return ModuleRegistry.isRegistered(ModuleNames.ColumnToolPanelModule);
+            return ModuleRegistry.isRegistered(ModuleNames.ColumnsToolPanelModule);
         }
 
         return true;
@@ -529,11 +531,15 @@ export class EnterpriseMenu extends BeanStub {
             });
         };
 
+        // see comment above
+        const afterDetachedCallback = () => filterWrapper?.filterPromise?.then(filter => filter?.afterGuiDetached?.());
+
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsService, this.column)!,
             titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
             bodyPromise: filterWrapper?.guiPromise as AgPromise<HTMLElement>,
             afterAttachedCallback: afterFilterAttachedCallback,
+            afterDetachedCallback,
             name: EnterpriseMenu.TAB_FILTER
         };
 
@@ -567,7 +573,7 @@ export class EnterpriseMenu extends BeanStub {
             suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsService.get('context')
+            context: this.gridOptionsService.context
         }, 'columnMenu');
 
         if (columnLayout) {

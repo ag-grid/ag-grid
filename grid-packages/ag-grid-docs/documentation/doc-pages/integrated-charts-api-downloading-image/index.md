@@ -20,14 +20,15 @@ Note that the downloaded chart image will be in a `PNG` format.
 
 ## Downloading Charts via Grid API
 
-There are 2 ways to download the chart image using the Grid API as shown below:
+There are two ways to download the chart image using the Grid API as shown below:
 
-<api-documentation source='grid-api/api.json' section='charts' names='["getChartImageDataURL", "downloadChart"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='charts' names='["downloadChart", "getChartImageDataURL"]'></api-documentation>
 
-The `getChartImageDataURL(params)` API returns a string (base64 encoded) containing the requested data URL which is
-ideal for saving to a database and downloading the chart image.
+You can use the `downloadChart(params)` API to download the chart image in the browser.
 
-Alternatively you can use the `downloadChart(params)` API which will download the chart image directly in the browser.
+Alternatively for programmatic use-cases, the `getChartImageDataURL(params)` API returns the chart
+image as string (base64 encoded); this is ideal for  persisting to a back-end, or opening/presenting
+the chart image statically.
 
 The example below demonstrates how you can retrieve images rendered from the chart in multiple formats.
 

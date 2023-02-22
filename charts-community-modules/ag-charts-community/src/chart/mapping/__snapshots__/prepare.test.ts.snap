@@ -42,9 +42,10 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "#3f7cbf",
-        "count": TimeInterval {
-          "_floor": [Function],
-          "_offset": [Function],
+        "interval": TimeInterval {
+          "_decode": [Function],
+          "_encode": [Function],
+          "_rangeCallback": [Function],
         },
         "size": 6,
         "width": 3,
@@ -78,7 +79,7 @@ Object {
         "fontSize": 14,
         "fontStyle": undefined,
         "fontWeight": "bold",
-        "formatter": [Function],
+        "formatter": undefined,
         "padding": 5,
         "rotation": undefined,
       },
@@ -91,7 +92,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 20,
         "size": 10,
         "width": 1,
       },
@@ -133,6 +133,7 @@ Object {
       "paddingX": 40,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -154,6 +155,7 @@ Object {
     "reverseOrder": false,
     "spacing": 10,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -581,6 +583,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -602,6 +605,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -945,6 +949,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -966,6 +971,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -1585,6 +1591,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -1606,6 +1613,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -1902,6 +1910,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -1923,6 +1932,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -2063,7 +2073,7 @@ Object {
         "format": "%d/%m",
         "formatter": undefined,
         "padding": 5,
-        "rotation": 30,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -2157,6 +2167,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -2178,6 +2189,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -2616,6 +2628,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -2637,6 +2650,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -3217,6 +3231,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -3238,6 +3253,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -3495,6 +3511,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -3516,6 +3533,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -3762,6 +3780,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -3783,6 +3802,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -4023,6 +4043,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -4044,6 +4065,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -4279,6 +4301,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -4300,6 +4323,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -4581,6 +4605,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -4602,6 +4627,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -4886,6 +4912,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -4907,6 +4934,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -5205,6 +5233,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -5226,6 +5255,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -5480,6 +5510,7 @@ Object {
       "paddingX": 16,
       "paddingY": 15,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -5501,6 +5532,7 @@ Object {
     "reverseOrder": false,
     "spacing": 30,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -6654,6 +6686,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -6675,6 +6708,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -6823,6 +6857,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -6844,6 +6879,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "padding": Object {
     "bottom": 20,
     "left": 20,
@@ -6987,7 +7023,7 @@ Object {
     "enabled": true,
     "tracking": true,
   },
-  "type": "hierarchy",
+  "type": "treemap",
 }
 `;
 
@@ -7112,6 +7148,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -7133,6 +7170,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -7435,6 +7473,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -7456,6 +7495,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -7745,6 +7785,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -7766,6 +7807,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -8072,6 +8114,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -8093,6 +8136,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -8577,6 +8621,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -8598,6 +8643,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -8755,6 +8801,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -8776,6 +8823,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "padding": Object {
     "bottom": 20,
     "left": 20,
@@ -8970,6 +9018,7 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
+        "interval": 20,
         "size": 6,
         "width": 1,
       },
@@ -9055,6 +9104,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -9076,6 +9126,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -9228,9 +9279,10 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": TimeInterval {
-          "_floor": [Function],
-          "_offset": [Function],
+        "interval": TimeInterval {
+          "_decode": [Function],
+          "_encode": [Function],
+          "_rangeCallback": [Function],
         },
         "size": 6,
         "width": 1,
@@ -9317,6 +9369,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -9338,6 +9391,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -9421,7 +9475,7 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "line",
       "visible": true,
@@ -9478,7 +9532,7 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "line",
       "visible": true,
@@ -9558,6 +9612,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -9579,6 +9634,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "padding": Object {
     "bottom": 32,
     "left": 20,
@@ -9837,6 +9893,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -9858,6 +9915,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -9988,7 +10046,7 @@ Object {
         },
       ],
       "label": Object {
-        "autoRotate": false,
+        "autoRotate": true,
         "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
@@ -10008,6 +10066,11 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
+        "interval": CountableTimeInterval {
+          "_decode": [Function],
+          "_encode": [Function],
+          "_rangeCallback": undefined,
+        },
         "size": 6,
         "width": 1,
       },
@@ -10093,6 +10156,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -10114,6 +10178,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -10387,6 +10452,7 @@ Object {
         "color": "rgb(195, 195, 195)",
         "width": 1,
       },
+      "nice": false,
       "position": "top",
       "thickness": 0,
       "tick": Object {
@@ -10432,6 +10498,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -10453,6 +10520,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -10734,6 +10802,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -10755,6 +10824,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,
@@ -10848,7 +10918,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "column",
       "visibles": Array [
@@ -11056,6 +11126,7 @@ Object {
       "paddingX": 16,
       "paddingY": 8,
     },
+    "listeners": Object {},
     "pagination": Object {
       "activeStyle": Object {
         "fill": "rgb(70, 70, 70)",
@@ -11077,6 +11148,7 @@ Object {
     "reverseOrder": false,
     "spacing": 20,
   },
+  "listeners": Object {},
   "navigator": Object {
     "enabled": false,
     "height": 30,

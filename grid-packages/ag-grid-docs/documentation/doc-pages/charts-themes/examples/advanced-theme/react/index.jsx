@@ -10,7 +10,6 @@ class Chart1 extends Component {
 
     this.state = {
       options: {
-        type: "cartesian",
         theme: myTheme,
         autoSize: true,
         title: {

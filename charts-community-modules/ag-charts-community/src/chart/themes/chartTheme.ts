@@ -217,6 +217,7 @@ export class ChartTheme {
                 enabled: true,
                 position: RIGHT,
                 spacing: 20,
+                listeners: {},
                 item: {
                     paddingX: 16,
                     paddingY: 8,
@@ -260,6 +261,7 @@ export class ChartTheme {
                 delay: 0,
                 class: DEFAULT_TOOLTIP_CLASS,
             },
+            listeners: {},
         };
     }
 
@@ -616,7 +618,7 @@ export class ChartTheme {
         options = deepMerge({}, options || {}) as AgChartThemeOptions;
         const { overrides = null, palette = null } = options;
 
-        let defaults = this.createChartConfigPerChartType(this.getDefaults());
+        const defaults = this.createChartConfigPerChartType(this.getDefaults());
 
         if (overrides) {
             const { common, cartesian, polar, hierarchy } = overrides;

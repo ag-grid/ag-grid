@@ -40,16 +40,11 @@ which means that it needs to know the size of various elements like columns and 
 
 3. If neither of the above methods will work for your app (you do not want to delay app initialisation until after CSS has loaded, and are not using a provided theme with heights unchanged) then you should inform the grid about your custom element heights using [grid properties](/grid-options/). The minimal set of properties you need to set to ensure correct functioning are: `rowHeight`, `headerHeight` and `minWidth`.
 
-
 ### Changing Row and Header Heights at Runtime
 
-The grid performs its measurement of elements as described above when it starts up. This means that if you change the size of grid rows after initialisation - either by setting a CSS variable like `--ag-grid-size` or by changing the theme - you need to reinitialise the grid.
+The grid performs its measurement of elements as described above when it starts up and it caches the calculated values internally so it won't have to recalculate the size of rows and headers while the Grid is scrolled. To force the grid to refresh this cache, you should simply change the CSS class applied to the Grid element as shown in the example below:
 
-[[only-javascript]]
-| You can do this by calling the `grid.api.destroy()` API method on the old grid instance and then creating a new instance.
-
-[[only-react]]
-| You can do this by changing the `key` property of the `<AgGridReact>` element, which will cause it to be unmounted and re-mounted, destroying the old grid and creating a new one.
+<grid-example title='Dynamic Height' name='dynamic-height' type='generated' options='{ "exampleHeight": 450, "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"]  }'></grid-example>
 
 ## Key compactness variables
 

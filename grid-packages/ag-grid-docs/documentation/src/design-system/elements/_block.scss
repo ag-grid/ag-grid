@@ -1,0 +1,35 @@
+@use '../core' as *;
+
+ul,
+ol {
+    padding-left: 1.125em;
+}
+
+li > ol,
+li > ul {
+    padding-left: 1.5em;
+}
+
+ul.list-style-none,
+ol.list-style-none,
+.list-style-none > li ul,
+.list-style-none > li ol {
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+pre {
+    --font-family: #{$monospace-font-family};
+
+    background-color: var(--platinum-gray);
+    padding: $size-1 $size-2;
+    border-radius: var(--border-radius);
+}
+
+hr {
+    height: 2px;
+    border-radius: 1px;
+    background-color: var(--border-color);
+    border: 0;
+}

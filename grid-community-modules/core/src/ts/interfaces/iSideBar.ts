@@ -5,9 +5,9 @@ export interface ISideBar {
     setDisplayed(show:boolean): void;
     setSideBarPosition(position?: 'left' | 'right'): void;
     isToolPanelShowing(): boolean;
-    openToolPanel(key:string): void;
+    openToolPanel(key: string, source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;
     getToolPanelInstance(key:string): IToolPanel | undefined;
-    close(): void;
+    close(source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;
     openedItem(): string | null;
     isDisplayed(): boolean;
     getDef(): SideBarDef | undefined;

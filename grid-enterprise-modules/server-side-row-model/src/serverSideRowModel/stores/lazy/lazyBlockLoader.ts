@@ -32,7 +32,7 @@ export class LazyBlockLoader extends BeanStub {
     }
 
     public isRowLoading(index: number) {
-        return index in this.loadingNodes;
+        return this.loadingNodes.has(index);
     }
 
     private doesRowNeedLoaded(index: number) {
@@ -146,7 +146,7 @@ export class LazyBlockLoader extends BeanStub {
             parentNode: this.parentNode,
             api: this.api,
             columnApi: this.columnApi,
-            context: this.gridOptionsService.get('context')
+            context: this.gridOptionsService.context
         };
 
         addNodesToLoadingMap();

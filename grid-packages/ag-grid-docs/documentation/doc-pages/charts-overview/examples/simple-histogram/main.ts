@@ -1,5 +1,4 @@
-import * as agCharts from 'ag-charts-community';
-import { AgChartOptions } from 'ag-charts-community';
+import { AgChart, AgChartOptions } from 'ag-charts-community';
 import { getData } from "./data";
 
 const options: AgChartOptions = {
@@ -28,6 +27,9 @@ const options: AgChartOptions = {
       title: {
         text: 'Engine Size (Cubic inches)',
       },
+      tick: {
+        interval: 20,
+      },
     },
     {
       position: 'left',
@@ -42,4 +44,4 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

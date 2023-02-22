@@ -6,7 +6,7 @@ import { KeyCode } from '../constants/keyCode';
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { waitUntil } from '../utils/function';
 import { TabGuardComp } from './tabGuardComp';
-import { FocusService } from '../focusService';
+import { Events } from '../eventKeys';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -25,7 +25,6 @@ export class VirtualList extends TabGuardComp {
     private lastFocusedRowIndex: number | null;
 
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('focusService') private readonly focusService: FocusService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(
@@ -51,6 +50,13 @@ export class VirtualList extends TabGuardComp {
         });
 
         this.setAriaProperties();
+
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanged.bind(this));
+    }
+
+    private onGridStylesChanged(): void {
+        this.rowHeight = this.getItemHeight();
+        this.refresh();
     }
 
     private setAriaProperties(): void {
@@ -106,8 +112,7 @@ export class VirtualList extends TabGuardComp {
         if (this.navigate(e.shiftKey)) {
             e.preventDefault();
         } else {
-            // focus on the first or last focusable element to ensure that any other handlers start from there
-            this.focusService.focusInto(this.getGui(), !e.shiftKey);
+            this.forceFocusOutOfContainer(e.shiftKey);
         }
     }
 

@@ -2,10 +2,10 @@ import { Selection } from '../../../scene/selection';
 import { Group } from '../../../scene/group';
 import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { extent } from '../../../util/array';
-import { LegendDatum } from '../../legend';
+import { LegendDatum } from '../../legendDatum';
 import { LinearScale } from '../../../scale/linearScale';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent } from './cartesianSeries';
-import { ChartAxisDirection } from '../../chartAxis';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { ContinuousScale } from '../../../scale/continuousScale';
@@ -148,6 +148,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         );
         this.xData = this.validData.map((d) => d[xKey]);
         this.yData = this.validData.map((d) => d[yKey]);
+        this.validateXYData(this.xKey, this.yKey, data, xAxis, yAxis, this.xData, this.yData, 1);
 
         this.sizeData = sizeKey ? this.validData.map((d) => d[sizeKey]) : [];
 
@@ -177,9 +178,9 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     async createNodeData() {
-        const { chart, data, visible, xAxis, yAxis, yKey, label, labelKey } = this;
+        const { data, visible, xAxis, yAxis, yKey, label, labelKey } = this;
 
-        if (!(chart && data && visible && xAxis && yAxis)) {
+        if (!(data && visible && xAxis && yAxis)) {
             return [];
         }
 

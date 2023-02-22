@@ -48,12 +48,10 @@ function toNumber(x: any) {
     return x instanceof Date ? x.getTime() : x;
 }
 
-export class TimeScale extends ContinuousScale {
+export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
     readonly type = 'time';
 
-    domain: Date[] = [new Date(2022, 11, 7), new Date(2022, 11, 8)];
-    tickInterval: CountableTimeInterval | undefined;
-    protected cacheProps: Array<keyof this> = ['domain', 'range', 'nice', 'tickCount', 'tickInterval'];
+    protected cacheProps: Array<keyof this> = ['domain', 'range', 'nice', 'tickCount', 'interval'];
 
     private year: CountableTimeInterval = timeYear;
     private month: CountableTimeInterval = timeMonth;
@@ -99,7 +97,15 @@ export class TimeScale extends ContinuousScale {
         [this.year, 1, durationYear],
     ];
 
-    calculateDefaultTickFormat(ticks?: any[]) {
+    public constructor() {
+        super([new Date(2022, 11, 7), new Date(2022, 11, 8)], [0, 1]);
+    }
+
+    toDomain(d: number): Date {
+        return new Date(d);
+    }
+
+    calculateDefaultTickFormat(ticks: any[] | undefined = []) {
         let defaultTimeFormat = DefaultTimeFormats.YEAR as DefaultTimeFormats;
 
         const updateFormat = (format: DefaultTimeFormats) => {
@@ -108,26 +114,27 @@ export class TimeScale extends ContinuousScale {
             }
         };
 
-        for (let value of ticks ?? []) {
+        for (const value of ticks) {
             const format = this.getLowestGranularityFormat(value);
             updateFormat(format);
         }
 
-        return this.buildFormatString(defaultTimeFormat);
+        const firstTick = toNumber(ticks[0]);
+        const lastTick = toNumber(ticks[ticks.length - 1]);
+        const startYear = new Date(firstTick).getFullYear();
+        const stopYear = new Date(lastTick).getFullYear();
+        const yearChange = stopYear - startYear > 0;
+
+        return this.buildFormatString(defaultTimeFormat, yearChange);
     }
 
-    buildFormatString(defaultTimeFormat: DefaultTimeFormats): string {
+    buildFormatString(defaultTimeFormat: DefaultTimeFormats, yearChange: boolean): string {
         let formatStringArray: string[] = [formatStrings[defaultTimeFormat]];
         let timeEndIndex = 0;
 
         const domain = this.getDomain();
         const start = Math.min(...domain.map(toNumber));
         const stop = Math.max(...domain.map(toNumber));
-
-        const startYear = new Date(start).getFullYear();
-        const stopYear = new Date(stop).getFullYear();
-        const yearChange = stopYear - startYear > 0;
-
         const extent = stop - start;
 
         switch (defaultTimeFormat) {
@@ -217,25 +224,26 @@ export class TimeScale extends ContinuousScale {
     }
 
     /**
-     * @param start The start time (timestamp).
-     * @param stop The end time (timestamp).
-     * @param step Number of intervals between ticks.
+     * @param options Tick interval options.
+     * @param options.start The start time (timestamp).
+     * @param options.stop The end time (timestamp).
+     * @param options.count Number of intervals between ticks.
      */
     private getTickInterval({
         start,
         stop,
+        count,
     }: {
         start: number;
         stop: number;
+        count: number;
     }): CountableTimeInterval | TimeInterval | undefined {
-        let interval = this.tickInterval;
-        if (interval) {
-            return interval;
-        }
+        const { tickIntervals } = this;
 
+        let countableTimeInterval;
         let step;
-        const tickCount = this.tickCount ?? 10;
-        const tickIntervals = this.tickIntervals;
+
+        const tickCount = count ?? ContinuousScale.defaultTickCount;
         const target = Math.abs(stop - start) / Math.max(tickCount - 1, 1);
         let i = 0;
         while (i < tickIntervals.length && target > tickIntervals[i][2]) {
@@ -244,20 +252,20 @@ export class TimeScale extends ContinuousScale {
 
         if (i === 0) {
             step = Math.max(tickStep(start, stop, tickCount), 1);
-            interval = this.millisecond;
+            countableTimeInterval = this.millisecond;
         } else if (i === tickIntervals.length) {
             const y0 = start / durationYear;
             const y1 = stop / durationYear;
             step = tickStep(y0, y1, tickCount);
-            interval = this.year;
+            countableTimeInterval = this.year;
         } else {
             const diff0 = target - tickIntervals[i - 1][2];
             const diff1 = tickIntervals[i][2] - target;
             const index = diff0 < diff1 ? i - 1 : i;
-            [interval, step] = tickIntervals[index];
+            [countableTimeInterval, step] = tickIntervals[index];
         }
 
-        return interval.every(step);
+        return countableTimeInterval.every(step);
     }
 
     invert(y: number): Date {
@@ -273,6 +281,12 @@ export class TimeScale extends ContinuousScale {
         }
         this.refresh();
 
+        const [t0, t1] = this.getDomain().map(toNumber);
+
+        if (this.interval !== undefined) {
+            return this.getTicksForInterval({ start: t0, stop: t1 });
+        }
+
         if (this.nice) {
             const { tickCount } = this;
             if (tickCount === 2) {
@@ -283,9 +297,56 @@ export class TimeScale extends ContinuousScale {
             }
         }
 
-        const [t0, t1] = this.getDomain().map(toNumber);
-        const t = this.getTickInterval({ start: t0, stop: t1 });
-        return t ? t.range(new Date(t0 - 1), new Date(t1 + 1)) : []; // inclusive stop
+        return this.getDefaultTicks({ start: t0, stop: t1 });
+    }
+
+    private getDefaultTicks({ start, stop }: { start: number; stop: number }) {
+        const t = this.getTickInterval({ start, stop, count: this.tickCount });
+        return t ? t.range(new Date(start), new Date(stop)) : []; // inclusive stop
+    }
+
+    private getTicksForInterval({ start, stop }: { start: number; stop: number }): Date[] {
+        const { interval, tickIntervals } = this;
+
+        if (!interval) {
+            return [];
+        }
+
+        if (interval instanceof TimeInterval) {
+            const ticks = interval.range(new Date(start), new Date(stop));
+            if (this.isDenseInterval({ start, stop, interval, count: ticks.length })) {
+                return this.getDefaultTicks({ start, stop });
+            }
+
+            return ticks;
+        }
+
+        const absInterval = Math.abs(interval);
+
+        if (this.isDenseInterval({ start, stop, interval: absInterval })) {
+            return this.getDefaultTicks({ start, stop });
+        }
+
+        const reversedInterval = [...tickIntervals];
+        reversedInterval.reverse();
+
+        const timeInterval = reversedInterval.find((tickInterval) => absInterval % tickInterval[2] === 0);
+
+        if (timeInterval) {
+            const i = timeInterval[0].every(absInterval / (timeInterval[2] / timeInterval[1]));
+            return i.range(new Date(start), new Date(stop));
+        }
+
+        let date = new Date(start);
+        const stopDate = new Date(stop);
+        const ticks = [];
+        while (date <= stopDate) {
+            ticks.push(date);
+            date = new Date(date);
+            date.setMilliseconds(date.getMilliseconds() + absInterval);
+        }
+
+        return ticks;
     }
 
     /**
@@ -315,11 +376,21 @@ export class TimeScale extends ContinuousScale {
         const [d0, d1] = this.domain;
         const start = toNumber(d0);
         const stop = toNumber(d1);
-        const i = this.getTickInterval({ start, stop });
+
+        const { interval } = this;
+        let i;
+
+        if (interval instanceof TimeInterval) {
+            i = interval;
+        } else {
+            const tickCount = typeof interval === 'number' ? (stop - start) / Math.max(interval, 1) : this.tickCount;
+            i = this.getTickInterval({ start, stop, count: tickCount });
+        }
 
         if (i) {
-            const n0 = i.floor(d0);
-            const n1 = i.ceil(d1);
+            const intervalRange = i.range(d0, d1, true);
+            const n0 = intervalRange[0];
+            const n1 = intervalRange[intervalRange.length - 1];
             this.niceDomain = [n0, n1];
         }
     }

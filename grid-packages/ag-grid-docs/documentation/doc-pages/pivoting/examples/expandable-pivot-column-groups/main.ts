@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, ColumnGroup } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -6,6 +6,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'athlete' },
     { field: 'sport', pivot: true, enablePivot: true },
     { field: 'year', pivot: true, enablePivot: true },
+    { field: 'date', pivot: true, enablePivot: true },
     { field: 'gold', aggFunc: 'sum' },
     { field: 'silver', aggFunc: 'sum' },
     { field: 'bronze', aggFunc: 'sum' },
@@ -19,6 +20,29 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 180,
   },
   pivotMode: true,
+}
+
+function expandAll(expand: boolean) {
+  const state = gridOptions.columnApi!.getColumnGroupState();
+  const expandedState = state.map((group) => ({
+    groupId: group.groupId,
+    open: expand,
+  }));
+  gridOptions.columnApi!.setColumnGroupState(expandedState);
+}
+
+function expandRoute(route: string[]) {
+  const expand = (columnGroup: ColumnGroup) => {
+    if (columnGroup) {
+      expand(columnGroup.getParent());
+      gridOptions.columnApi!.setColumnGroupOpened(columnGroup.getGroupId(), true);
+    }
+  }
+
+  const targetCol = gridOptions.columnApi!.getPivotResultColumn(route, 'gold');
+  if (targetCol) {
+    expand(targetCol.getParent());
+  }
 }
 
 // setup the grid after the page has finished loading

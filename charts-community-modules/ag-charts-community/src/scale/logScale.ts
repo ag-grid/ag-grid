@@ -1,14 +1,20 @@
 import { ContinuousScale } from './continuousScale';
-import generateTicks from '../util/ticks';
+import generateTicks, { range } from '../util/ticks';
 import { format } from '../util/numberFormat';
 import { NUMBER, Validate } from '../util/validation';
 
 const identity = (x: any) => x;
 
-export class LogScale extends ContinuousScale {
+export class LogScale extends ContinuousScale<number> {
     readonly type = 'log';
 
-    domain = [1, 10];
+    public constructor() {
+        super([1, 10], [0, 1]);
+    }
+
+    toDomain(d: number): number {
+        return d;
+    }
 
     @Validate(NUMBER(0))
     base = 10;
@@ -96,6 +102,19 @@ export class LogScale extends ContinuousScale {
 
         let p0 = this.log(d0);
         let p1 = this.log(d1);
+
+        if (this.interval) {
+            const step = Math.abs(this.interval);
+            const absDiff = Math.abs(p1 - p0);
+            const ticks = range(p0, p1, Math.min(absDiff, step))
+                .map((x) => this.pow(x))
+                .filter((t) => t >= d0 && t <= d1);
+
+            if (!this.isDenseInterval({ start: d0, stop: d1, interval: step, count: ticks.length })) {
+                return ticks;
+            }
+        }
+
         const isBaseInteger = base % 1 === 0;
         const isDiffLarge = p1 - p0 >= count;
 
@@ -108,12 +127,24 @@ export class LogScale extends ContinuousScale {
         const isPositive = d0 > 0;
         p0 = Math.floor(p0) - 1;
         p1 = Math.round(p1) + 1;
+
+        const min = Math.min(...this.range);
+        const max = Math.max(...this.range);
+
+        const availableSpacing = (max - min) / count;
+        let lastTickPosition = Infinity;
         for (let p = p0; p <= p1; p++) {
+            const nextMagnitudeTickPosition = this.convert(this.pow(p + 1));
             for (let k = 1; k < base; k++) {
                 const q = isPositive ? k : base - k + 1;
                 const t = this.pow(p) * q;
-                if (t >= d0 && t <= d1) {
+                const tickPosition = this.convert(t);
+                const prevSpacing = Math.abs(lastTickPosition - tickPosition);
+                const nextSpacing = Math.abs(tickPosition - nextMagnitudeTickPosition);
+                const fits = prevSpacing >= availableSpacing && nextSpacing >= availableSpacing;
+                if (t >= d0 && t <= d1 && (k === 1 || fits)) {
                     ticks.push(t);
+                    lastTickPosition = tickPosition;
                 }
             }
         }
@@ -122,6 +153,7 @@ export class LogScale extends ContinuousScale {
 
     tickFormat({
         count,
+        ticks,
         specifier,
     }: {
         count?: any;
@@ -146,7 +178,8 @@ export class LogScale extends ContinuousScale {
             count = 10;
         }
 
-        const k = Math.max(1, (base * count) / this.ticks().length);
+        ticks = ticks ?? this.ticks();
+        const k = Math.max(1, (base * count) / ticks.length);
 
         return (d) => {
             let i = d / this.pow(Math.round(this.log(d)));

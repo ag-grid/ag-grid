@@ -1,0 +1,134 @@
+@use '../../design-system' as *;
+
+.ag-styles {
+    @include design-system-styles();
+
+    font-family: var(--font-family); // Needed as we can't set styles for <html> yet
+    font-size: var(--font-size); // Needed as we can't set styles for <html> yet
+    line-height: var(--line-height); // Needed as we can't set styles for <html> yet
+    font-weight: var(--font-weight); // Needed as we can't set styles for <html> yet
+
+    color: var(--text-color); // Needed as we can't set styles for <html> yet
+}
+
+.ag-styles .style-guide {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-areas:
+        'sidebar header'
+        'sidebar main';
+
+    > header {
+        grid-area: header;
+        margin-bottom: 2rem;
+    }
+
+    main {
+        grid-area: main;
+    }
+
+    main > section {
+        margin-bottom: 128px;
+
+        h2:first-child + .item-label {
+            margin-top: 0;
+        }
+    }
+
+    aside {
+        grid-area: sidebar;
+        position: fixed;
+        padding: $size-3 $size-3 $size-3 0;
+    }
+
+    .group-name:not(:first-child) {
+        margin-top: $size-2;
+    }
+
+    .grid {
+        display: flex;
+        gap: $size-6;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: $size-2;
+    }
+
+    .item-label {
+        margin-top: $size-4;
+        margin-bottom: $size-half;
+
+        span {
+            text-transform: capitalize;
+        }
+
+        code {
+            margin-left: $size-half;
+            white-space: nowrap;
+        }
+    }
+
+    .text-elements-list,
+    .size-examples-list {
+        display: flex;
+        flex-wrap: wrap;
+
+        p,
+        > div {
+            min-width: 20%;
+        }
+    }
+
+    .size-examples-list {
+        margin-top: -$size-4;
+    }
+
+    .size-example {
+        height: $size-4;
+        width: var(--size-example-size);
+        background-color: var(--ag-grid-dark-blue);
+
+        &.size-half {
+            --size-example-size: #{$size-half};
+        }
+        &.size-1 {
+            --size-example-size: #{$size-1};
+        }
+        &.size-2 {
+            --size-example-size: #{$size-2};
+        }
+        &.size-3 {
+            --size-example-size: #{$size-3};
+        }
+        &.size-4 {
+            --size-example-size: #{$size-4};
+        }
+        &.size-5 {
+            --size-example-size: #{$size-5};
+        }
+        &.size-6 {
+            --size-example-size: #{$size-6};
+        }
+        &.size-7 {
+            --size-example-size: #{$size-7};
+        }
+        &.size-8 {
+            --size-example-size: #{$size-8};
+        }
+        &.size-9 {
+            --size-example-size: #{$size-9};
+        }
+        &.size-10 {
+            --size-example-size: #{$size-10};
+        }
+    }
+
+    .buttons-list > div {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $size-1;
+    }
+}

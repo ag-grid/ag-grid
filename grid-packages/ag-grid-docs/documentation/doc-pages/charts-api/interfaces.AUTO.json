@@ -8,14 +8,13 @@
     "meta": {},
     "type": { "tick": "any", "translationY": "number" }
   },
-  "TimeTickCount": {
-    "meta": { "isTypeAlias": true },
-    "type": "number | CountableTimeInterval"
-  },
-  "NumberTickCount": { "meta": { "isTypeAlias": true }, "type": "number" },
-  "TickCountType": {
+  "TickCount": {
     "meta": { "isTypeAlias": true, "typeParams": ["S"] },
-    "type": "S extends TimeScale ? TimeTickCount : NumberTickCount"
+    "type": "S extends TimeScale ? number | TimeInterval : number"
+  },
+  "TickInterval": {
+    "meta": { "isTypeAlias": true, "typeParams": ["S"] },
+    "type": "S extends TimeScale ? number | TimeInterval : number"
   },
   "Size": {
     "meta": { "isTypeAlias": true },
@@ -337,8 +336,8 @@
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
-      "min?": "/** User override for the automatically determined min value (based on series data). */",
-      "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "min?": "/** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */",
+      "max?": "/** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */",
       "base?": "/** The base of the logarithm used. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -360,7 +359,7 @@
       "paddingInner?": "Ratio",
       "paddingOuter?": "Ratio",
       "groupPaddingInner?": "Ratio",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "top?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "right?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "bottom?": "Omit<AgCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
@@ -395,7 +394,7 @@
   "AgGroupedCategoryAxisThemeOptions": {
     "meta": {},
     "type": {
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "top?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "right?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
       "bottom?": "Omit<AgGroupedCategoryAxisOptions, AgCartesianAxisThemeSpecialOptions>",
@@ -816,9 +815,42 @@
       "toggleSeriesVisible?": "/** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */"
     }
   },
+  "AgChartLegendEvent": {
+    "meta": { "typeParams": ["T extends string"] },
+    "type": {
+      "type": "T",
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean"
+    },
+    "docs": {
+      "seriesId": "/** Series id */",
+      "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
+      "enabled": "/** Whether the legend item is currently enabled or not. */"
+    }
+  },
   "AgChartLegendClickEvent": {
     "meta": {},
-    "type": { "seriesId": "string", "itemId": "string", "enabled": "boolean" },
+    "type": {
+      "type": "T",
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean"
+    },
+    "docs": {
+      "seriesId": "/** Series id */",
+      "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
+      "enabled": "/** Whether the legend item is currently enabled or not. */"
+    }
+  },
+  "AgChartLegendDoubleClickEvent": {
+    "meta": {},
+    "type": {
+      "type": "T",
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean"
+    },
     "docs": {
       "seriesId": "/** Series id */",
       "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
@@ -827,9 +859,13 @@
   },
   "AgChartLegendListeners": {
     "meta": {},
-    "type": { "legendItemClick?": "(event: AgChartLegendClickEvent) => void" },
+    "type": {
+      "legendItemClick?": "(event: AgChartLegendClickEvent) => void",
+      "legendItemDoubleClick?": "(event: AgChartLegendDoubleClickEvent) => void"
+    },
     "docs": {
-      "legendItemClick?": "/** The listener to call when a legend item is clicked. */"
+      "legendItemClick?": "/** The listener to call when a legend item is clicked. */",
+      "legendItemDoubleClick?": "/** The listener to call when a legend item is double clicked. */"
     }
   },
   "AgChartLegendOptions": {
@@ -987,15 +1023,21 @@
     "meta": {},
     "type": { "type": "T", "event": "Event" }
   },
+  "AgChartDoubleClickEvent": {
+    "meta": {},
+    "type": { "type": "T", "event": "Event" }
+  },
   "AgBaseChartListeners": {
     "meta": {},
     "type": {
       "seriesNodeClick?": "(event: AgNodeClickEvent) => any",
-      "click?": "(event: AgChartClickEvent) => any"
+      "click?": "(event: AgChartClickEvent) => any",
+      "doubleClick?": "(event: AgChartDoubleClickEvent) => any"
     },
     "docs": {
       "seriesNodeClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
-      "click?": "/** The listener to call to signify a general click on the chart by the user. */"
+      "click?": "/** The listener to call to signify a general click on the chart by the user. */",
+      "doubleClick?": "/** The listener to call to signify a double click on the chart by the user. */"
     }
   },
   "AgBaseChartOptions": {
@@ -1055,42 +1097,83 @@
     "type": {
       "width?": "PixelSize",
       "size?": "PixelSize",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "values?": "any[]",
+      "minSpacing?": "number",
+      "maxSpacing?": "number"
     },
     "docs": {
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
-      "color?": "/** The colour of the axis ticks. */"
+      "color?": "/** The colour of the axis ticks. */",
+      "values?": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
+      "minSpacing?": "/** Minimum gap in pixels between tick lines.\n     */",
+      "maxSpacing?": "/** Maximum gap in pixels between tick lines.\n     */"
+    }
+  },
+  "AgAxisCategoryTickOptions": {
+    "meta": {},
+    "type": {
+      "width?": "PixelSize",
+      "size?": "PixelSize",
+      "color?": "CssColor",
+      "values?": "any[]",
+      "minSpacing?": "number",
+      "maxSpacing?": "number"
+    },
+    "docs": {
+      "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "size?": "/** The length in pixels of the axis ticks. */",
+      "color?": "/** The colour of the axis ticks. */",
+      "values?": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
+      "minSpacing?": "/** Minimum gap in pixels between tick lines.\n     */",
+      "maxSpacing?": "/** Maximum gap in pixels between tick lines.\n     */"
     }
   },
   "AgAxisNumberTickOptions": {
     "meta": {},
     "type": {
       "count?": "number",
+      "interval?": "number",
       "width?": "PixelSize",
       "size?": "PixelSize",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "values?": "any[]",
+      "minSpacing?": "number",
+      "maxSpacing?": "number"
     },
     "docs": {
-      "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     */",
+      "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.\n     */",
+      "interval?": "/** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.\n     */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
-      "color?": "/** The colour of the axis ticks. */"
+      "color?": "/** The colour of the axis ticks. */",
+      "values?": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
+      "minSpacing?": "/** Minimum gap in pixels between tick lines.\n     */",
+      "maxSpacing?": "/** Maximum gap in pixels between tick lines.\n     */"
     }
   },
   "AgAxisTimeTickOptions": {
     "meta": {},
     "type": {
       "count?": "any",
+      "interval?": "any",
       "width?": "PixelSize",
       "size?": "PixelSize",
-      "color?": "CssColor"
+      "color?": "CssColor",
+      "values?": "any[]",
+      "minSpacing?": "number",
+      "maxSpacing?": "number"
     },
     "docs": {
       "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * The following intervals from the `agCharts.time` namespace can be used:\n     * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.\n     * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */",
+      "interval?": "/** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
-      "color?": "/** The colour of the axis ticks. */"
+      "color?": "/** The colour of the axis ticks. */",
+      "values?": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
+      "minSpacing?": "/** Minimum gap in pixels between tick lines.\n     */",
+      "maxSpacing?": "/** Maximum gap in pixels between tick lines.\n     */"
     }
   },
   "AgAxisLabelFormatterParams": {
@@ -1131,7 +1214,7 @@
       "autoRotateAngle?": "/** If autoRotate is enabled, specifies the rotation angle to use when autoRotate is activated. Defaults to an angle of 335 degrees if unspecified. */",
       "avoidCollisions?": "/** Avoid axis label collision by automatically reducing the number of ticks displayed. If set to `false`, axis labels may collide. */",
       "minSpacing?": "/** Minimum gap in pixels between the axis labels before being removed to avoid collisions. */",
-      "format?": "/** Format string used when rendering labels for time axes. */",
+      "format?": "/** Format string used when rendering labels. */",
       "formatter?": "/** Function used to render axis labels. If `value` is a number, `fractionDigits` will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of `0.0005` would have `fractionDigits` set to `4` */"
     }
   },
@@ -1280,8 +1363,8 @@
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
-      "min?": "/** User override for the automatically determined min value (based on series data). */",
-      "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "min?": "/** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */",
+      "max?": "/** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */",
       "base?": "/** The base of the logarithm used. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "position?": "/** The position on the chart where the axis should be rendered. */",
@@ -1300,7 +1383,7 @@
       "paddingInner?": "Ratio",
       "paddingOuter?": "Ratio",
       "groupPaddingInner?": "Ratio",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
@@ -1328,7 +1411,7 @@
     "meta": {},
     "type": {
       "type": "'groupedCategory'",
-      "tick?": "AgAxisNumberTickOptions",
+      "tick?": "AgAxisCategoryTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgAxisCaptionOptions",
       "line?": "AgAxisLineOptions",
@@ -2822,7 +2905,7 @@
   "AgCartesianChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
+      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
       "axes?": "AgCartesianAxisOptions[]",
       "series?": "AgCartesianSeriesOptions[]",
       "navigator?": "AgNavigatorOptions",
@@ -2841,7 +2924,7 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "type?": "/** If specified overrides the default series type. */",
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
       "navigator?": "/** Configuration for the chart navigator. */",
@@ -2863,7 +2946,7 @@
   "AgPolarChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'polar' | 'pie'",
+      "type?": "'pie'",
       "series?": "AgPolarSeriesOptions[]",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -2880,7 +2963,7 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -2900,7 +2983,7 @@
   "AgHierarchyChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'hierarchy' | 'treemap'",
+      "type?": "'treemap'",
       "data?": "any",
       "series?": "AgHierarchySeriesOptions[]",
       "container?": "HTMLElement | null",
@@ -2917,7 +3000,7 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -2959,8 +3042,32 @@
     "type": "T extends LineSeries ? AgLineSeriesOptions : T extends BarSeries ? AgBarSeriesOptions : T extends AreaSeries ? AgAreaSeriesOptions : T extends ScatterSeries ? AgScatterSeriesOptions : T extends HistogramSeries ? AgHistogramSeriesOptions : T extends PieSeries ? AgPieSeriesOptions : T extends TreemapSeries ? AgTreemapSeriesOptions : never"
   },
   "DownloadOptions": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ width?: number; height?: number; fileName?: string; fileFormat?: string; }"
+    "meta": {},
+    "type": {
+      "fileName?": "string",
+      "width?": "number",
+      "height?": "number",
+      "fileFormat?": "string"
+    },
+    "docs": {
+      "fileName?": "/** Name of downloaded image file. Defaults to `image`.  */",
+      "width?": "/** Width of downloaded chart image in pixels. Defaults to current chart width. */",
+      "height?": "/** Height of downloaded chart image in pixels. Defaults to current chart height. */",
+      "fileFormat?": "/** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */"
+    }
+  },
+  "ImageDataUrlOptions": {
+    "meta": {},
+    "type": {
+      "width?": "number",
+      "height?": "number",
+      "fileFormat?": "string"
+    },
+    "docs": {
+      "width?": "/** Width of downloaded chart image in pixels. Defaults to current chart width. */",
+      "height?": "/** Height of downloaded chart image in pixels. Defaults to current chart height. */",
+      "fileFormat?": "/** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */"
+    }
   },
   "DeepPartialDepth": {
     "meta": { "isTypeAlias": true },
@@ -2975,13 +3082,15 @@
       "doc": "/** Factory for creating and updating instances of AgChartInstance.\n *\n * @docsInterface\n */"
     },
     "type": {
-      "public static create(options: AgChartOptions): AgChartInstance { return AgChartInternal.createOrUpdate(options as any); }": "AgChartInstance"
+      "public static create(options: AgChartOptions): AgChartInstance { return AgChartInternal.createOrUpdate(options as any); }": "AgChartInstance",
+      "public static getImageDataURL(chart: AgChartInstance, options?: ImageDataUrlOptions): Promise<string> { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.getImageDataURL(chart, options); }": "Promise<string>"
     },
     "docs": {
       "public static create(options: AgChartOptions): AgChartInstance { return AgChartInternal.createOrUpdate(options as any); }": "/** Create a new `AgChartInstance` based upon the given configuration options.\n     */",
-      "public static update(chart: AgChartInstance, options: AgChartOptions) { if (!AgChartInstanceProxy.isInstance(chart)) { throw new Error('AG Charts - invalid chart reference passed'); } AgChartInternal.createOrUpdate(options as any, chart); }": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     *\n     * **NOTE**: As each call could trigger a chart redraw, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
-      "public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) { if (!AgChartInstanceProxy.isInstance(chart)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.updateUserDelta(chart, deltaOptions as any); }": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     *\n     * **NOTE**: As each call could trigger a chart redraw, each individual delta options update\n     * should leave the chart in a valid options state. Also, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
-      "public static download(chart: AgChartInstance, options?: DownloadOptions) { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.download(chart, options); }": "/** Initiate a browser-based image download for the given `AgChartInstance`s rendering.\n     */"
+      "public static update(chart: AgChartInstance, options: AgChartOptions) { if (!AgChartInstanceProxy.isInstance(chart)) { throw new Error('AG Charts - invalid chart reference passed'); } AgChartInternal.createOrUpdate(options as any, chart); }": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     * <br/>\n     * <br/>\n     * **NOTE**: As each call could trigger a chart redraw, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
+      "public static updateDelta(chart: AgChartInstance, deltaOptions: DeepPartial<AgChartOptions>) { if (!AgChartInstanceProxy.isInstance(chart)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.updateUserDelta(chart, deltaOptions as any); }": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     * <br/>\n     * <br/>\n     * **NOTE**: As each call could trigger a chart redraw, each individual delta options update\n     * should leave the chart in a valid options state. Also, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
+      "public static download(chart: AgChartInstance, options?: DownloadOptions) { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.download(chart, options); }": "/** Starts a browser-based image download for the given `AgChartInstance`.\n     */",
+      "public static getImageDataURL(chart: AgChartInstance, options?: ImageDataUrlOptions): Promise<string> { if (!(chart instanceof AgChartInstanceProxy)) { throw new Error('AG Charts - invalid chart reference passed'); } return AgChartInternal.getImageDataURL(chart, options); }": "/** Returns a base64-encoded image data URL for the given `AgChartInstance`.\n     */"
     }
   },
   "ObservableLike": {
@@ -2992,18 +3101,6 @@
     "meta": { "isTypeAlias": true },
     "type": "{ crossLines: boolean; series: boolean; }"
   },
-  "ChartUpdateType": {
-    "meta": { "isEnum": true },
-    "type": [
-      "FULL",
-      "PROCESS_DATA",
-      "PERFORM_LAYOUT",
-      "SERIES_UPDATE",
-      "SCENE_RENDER",
-      "NONE"
-    ],
-    "docs": [null, null, null, null, null, null]
-  },
   "OptionalHTMLElement": {
     "meta": { "isTypeAlias": true },
     "type": "HTMLElement | undefined | null"
@@ -3012,10 +3109,32 @@
     "meta": { "isTypeAlias": true },
     "type": "{ container?: OptionalHTMLElement; scene: Scene; element: HTMLElement; }"
   },
+  "BoundSeries": {
+    "meta": {},
+    "type": {
+      "type": "string",
+      "getDomain(direction: ChartAxisDirection)": "any[]",
+      "isEnabled()": "boolean",
+      "visible": "boolean"
+    }
+  },
   "ChartAxisDirection": {
     "meta": { "isEnum": true },
     "type": ["X = 'x'", "Y = 'y'"],
     "docs": [null, null]
+  },
+  "ChartUpdateType": {
+    "meta": { "isEnum": true },
+    "type": [
+      "FULL",
+      "PROCESS_DATA",
+      "PERFORM_LAYOUT",
+      "SERIES_UPDATE",
+      "TOOLTIP_RECALCULATION",
+      "SCENE_RENDER",
+      "NONE"
+    ],
+    "docs": [null, null, null, null, null, null, null]
   },
   "NodeData": { "meta": { "isTypeAlias": true }, "type": "number[]" },
   "CrossLineType": {
@@ -3066,30 +3185,35 @@
       "padding": "number"
     }
   },
-  "Listener": {
-    "meta": { "isTypeAlias": true, "typeParams": ["E"] },
-    "type": "{ symbol?: Symbol; handler: (event: E) => void; }"
-  },
   "CursorState": { "meta": {}, "type": { "style": "string" } },
   "HighlightState": {
     "meta": {},
-    "type": { "highlightedDatum": "SeriesNodeDatum" }
+    "type": { "highlightedDatum": "HighlightNodeDatum" }
+  },
+  "HighlightNodeDatum": {
+    "meta": {},
+    "type": {
+      "series": "any",
+      "itemId?": "any",
+      "datum": "any",
+      "point?": "Readonly<SizedPoint>"
+    }
   },
   "HighlightChangeEvent": {
     "meta": {},
     "type": {
       "type": "'highlight-change'",
-      "previousHighlight?": "SeriesNodeDatum",
-      "currentHighlight?": "SeriesNodeDatum"
+      "previousHighlight?": "HighlightNodeDatum",
+      "currentHighlight?": "HighlightNodeDatum"
     }
   },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
+    "type": "'click' | 'dblclick' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
+    "type": "'click' | 'dblclick' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
   },
   "InteractionEvent": {
     "meta": {
@@ -3117,6 +3241,15 @@
     "meta": {},
     "type": { "content": "string", "meta": "TooltipMeta" }
   },
+  "ZoomState": { "meta": {}, "type": { "min": "number", "max": "number" } },
+  "AxisZoomState": {
+    "meta": {},
+    "type": { "x?": "ZoomState", "y?": "ZoomState" }
+  },
+  "ZoomChangeEvent": {
+    "meta": {},
+    "type": { "type": "'zoom-change'", "x?": "ZoomState", "y?": "ZoomState" }
+  },
   "Layers": {
     "meta": { "isEnum": true },
     "type": [
@@ -3130,6 +3263,32 @@
       "LEGEND_ZINDEX = 3000"
     ],
     "docs": [null, null, null, null, null, null, null, null]
+  },
+  "LayoutStage": { "meta": { "isTypeAlias": true }, "type": "'before-series'" },
+  "LayoutCompleteEvent": {
+    "meta": {},
+    "type": {
+      "type": "'layout-complete'",
+      "series": "{ rect: BBox; visible: boolean; }"
+    }
+  },
+  "LayoutContext": { "meta": {}, "type": { "shrinkRect": "BBox" } },
+  "LayoutResult": { "meta": {}, "type": { "shrinkRect": "BBox" } },
+  "EventTypes": {
+    "meta": { "isTypeAlias": true },
+    "type": "LayoutStage | 'layout-complete'"
+  },
+  "LayoutListener": {
+    "meta": { "isTypeAlias": true },
+    "type": "(event: LayoutCompleteEvent) => void"
+  },
+  "LayoutProcessor": {
+    "meta": { "isTypeAlias": true },
+    "type": "(ctx: LayoutContext) => LayoutResult"
+  },
+  "Handler": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends EventTypes"] },
+    "type": "T extends LayoutStage ? LayoutProcessor : LayoutListener"
   },
   "LegendDatum": {
     "meta": {},
@@ -3413,6 +3572,10 @@
     "meta": { "isTypeAlias": true },
     "type": "{ text: string; style: Label; x: number; y: number; hAlign: CanvasTextAlign; vAlign: CanvasTextBaseline; }"
   },
+  "LabelMeta": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ label?: TextMeta; value?: TextMeta; }"
+  },
   "PieNodeDatum": {
     "meta": {},
     "type": {
@@ -3531,15 +3694,16 @@
   },
   "ScaleTickFormatParams": {
     "meta": {},
-    "type": { "count?": "any", "ticks?": "any[]", "specifier?": "any" }
+    "type": { "ticks?": "any[]", "specifier?": "any" }
   },
   "Scale": {
-    "meta": { "typeParams": ["D", "R"] },
+    "meta": { "typeParams": ["D", "R", "I = number"] },
     "type": {
       "domain": "D[]",
       "range": "R[]",
       "nice?": "boolean",
       "tickCount?": "number",
+      "interval?": "I",
       "convert(value: D, params?: ScaleClampParams)": "R",
       "invert?(value: R)": "D",
       "ticks?()": "D[]",
@@ -3584,20 +3748,25 @@
     "meta": { "isTypeAlias": true },
     "type": "{ ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D; forceRender: boolean; resized: boolean; clipBBox?: BBox; stats?: { nodesRendered: number; nodesSkipped: number; layersRendered: number; layersSkipped: number; }; debugNodes: Record<string, Node>; }"
   },
+  "Layer": {
+    "meta": { "isTypeAlias": true },
+    "type": "HdpiCanvas | HdpiOffscreenCanvas"
+  },
+  "LayerManager": {
+    "meta": {},
+    "type": {
+      "debug": "SceneDebugOptions",
+      "canvas": "Layer",
+      "markDirty()": "void",
+      "addLayer(opts: { zIndex?: number; zIndexSubOrder?: [ string, number ]; name?: string; getComputedOpacity: () => number; getVisibility: () => boolean; })": "Layer | undefined",
+      "moveLayer(canvas: Layer, zIndex: number, zIndexSubOrder?: [ string, number ])": "void",
+      "removeLayer(canvas: Layer)": "void"
+    }
+  },
   "Point": { "meta": {}, "type": { "x": "number", "y": "number" } },
   "SizedPoint": {
     "meta": {},
     "type": { "size": "number", "x": "number", "y": "number" }
-  },
-  "DebugOptions": {
-    "meta": {},
-    "type": {
-      "stats": "false | 'basic' | 'detailed'",
-      "dirtyTree": "boolean",
-      "renderBoundingBoxes": "boolean",
-      "consoleLog": "boolean",
-      "sceneNodeHighlight": "(string | RegExp)[]"
-    }
   },
   "SceneOptions": {
     "meta": {},
@@ -3616,6 +3785,16 @@
       "canvas": "HdpiOffscreenCanvas | HdpiCanvas",
       "getComputedOpacity": "() => number",
       "getVisibility": "() => boolean"
+    }
+  },
+  "SceneDebugOptions": {
+    "meta": {},
+    "type": {
+      "stats": "false | 'basic' | 'detailed'",
+      "dirtyTree": "boolean",
+      "renderBoundingBoxes": "boolean",
+      "consoleLog": "boolean",
+      "sceneNodeHighlight": "(string | RegExp)[]"
     }
   },
   "ValueFn": {
@@ -3642,6 +3821,14 @@
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"
+  },
+  "TransformFn": {
+    "meta": { "isTypeAlias": true },
+    "type": "(target: any, key: string | symbol, value: any) => any | typeof BREAK_TRANSFORM_CHAIN"
+  },
+  "TransformConfig": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ setters: TransformFn[]; getters: TransformFn[]; }"
   },
   "LiteralProperties": {
     "meta": { "isTypeAlias": true },
@@ -3699,58 +3886,53 @@
       "y": "number"
     }
   },
-  "FormatType": {
-    "meta": { "isTypeAlias": true },
-    "type": "'' | '%' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'o' | 'p' | 'r' | 's' | 'X' | 'x'"
+  "Listener": {
+    "meta": { "isTypeAlias": true, "typeParams": ["H extends Function"] },
+    "type": "{ symbol?: Symbol; handler: H; }"
   },
-  "FormatSpecifierOptions": {
+  "ModuleContext": {
     "meta": {},
     "type": {
+      "scene": "Scene",
+      "interactionManager": "InteractionManager",
+      "highlightManager": "HighlightManager",
+      "cursorManager": "CursorManager",
+      "zoomManager": "ZoomManager",
+      "tooltipManager": "TooltipManager",
+      "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>"
+    }
+  },
+  "ModuleInstance": {
+    "meta": {},
+    "type": { "update()": "void", "destroy()": "void" }
+  },
+  "ModuleInstanceMeta": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": { "instance": "M" }
+  },
+  "Module": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "optionsKey": "string",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>"
+    }
+  },
+  "FormatterOptions": {
+    "meta": {},
+    "type": {
+      "prefix?": "string",
       "fill?": "string",
       "align?": "string",
       "sign?": "string",
       "symbol?": "string",
       "zero?": "string",
-      "width?": "string",
+      "width?": "number",
       "comma?": "string",
-      "precision?": "string",
-      "trim?": "string",
-      "type?": "FormatType",
-      "string?": "string"
-    }
-  },
-  "FormatLocaleOptions": {
-    "meta": {},
-    "type": {
-      "decimal": "string",
-      "thousands": "string",
-      "grouping": "number[]",
-      "currency": "[ string, string ]",
-      "numerals?": "string[]",
-      "percent?": "string",
-      "minus?": "string",
-      "nan?": "string"
-    },
-    "docs": {
-      "decimal": "/** The decimal point (e.g., '.')\n     */",
-      "thousands": "/** The group separator (e.g., ','). Note that the thousands property is a misnomer,\n     * as the grouping definition allows groups other than thousands.\n     */",
-      "grouping": "/** The array of group sizes (e.g., [3]), cycled as needed.\n     */",
-      "currency": "/** The currency prefix and suffix (e.g., ['$', '']).\n     */",
-      "numerals?": "/** Array of ten strings to replace the numerals 0-9.\n     */",
-      "percent?": "/** Symbol to replace the `percent` suffix; the percent suffix (defaults to '%').\n     */",
-      "minus?": "/** The minus sign (defaults to '−').\n     */",
-      "nan?": "/** The not-a-number value (defaults 'NaN').\n     */"
-    }
-  },
-  "FormatLocale": {
-    "meta": {},
-    "type": {
-      "format(specifier: string | FormatSpecifier)": "(n: number | { valueOf(): number; }) => string",
-      "formatPrefix(specifier: string | FormatSpecifier, value: number)": "(n: number | { valueOf(): number; }) => string"
-    },
-    "docs": {
-      "format(specifier: string | FormatSpecifier)": "/** Returns a new format function for the given string specifier. The returned function\n     * takes a number as the only argument, and returns a string representing the formatted number.\n     *\n     * @param specifier A Specifier string.\n     * @throws Error on invalid format specifier.\n     */",
-      "formatPrefix(specifier: string | FormatSpecifier, value: number)": "/** Returns a new format function for the given string specifier. The returned function\n     * takes a number as the only argument, and returns a string representing the formatted number.\n     * The returned function will convert values to the units of the appropriate SI prefix for the\n     * specified numeric reference value before formatting in fixed point notation.\n     *\n     * @param specifier A Specifier string.\n     * @param value The reference value to determine the appropriate SI prefix.\n     * @throws Error on invalid format specifier.\n     */"
+      "precision?": "number",
+      "trim?": "boolean",
+      "type?": "string",
+      "suffix?": "string"
     }
   },
   "TypedEvent": { "meta": {}, "type": { "type": "string" } },
@@ -3779,17 +3961,21 @@
     "meta": { "isTypeAlias": true },
     "type": "NumberFormat | DateFormat"
   },
-  "FloorFn": {
+  "EncodeFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(date: Date) => void"
+    "type": "(date: Date) => number"
   },
-  "OffsetFn": {
+  "DecodeFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(date: Date, step: number) => void"
+    "type": "(encoded: number) => Date"
   },
-  "StepTestFn": {
+  "RangeFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(date: Date, step: number) => boolean"
+    "type": "(start: Date, end: Date) => () => void"
+  },
+  "CountableTimeIntervalOptions": {
+    "meta": {},
+    "type": { "snapTo?": "Date | number | 'start' | 'end'" }
   },
   "FormattingFn": {
     "meta": { "isTypeAlias": true },

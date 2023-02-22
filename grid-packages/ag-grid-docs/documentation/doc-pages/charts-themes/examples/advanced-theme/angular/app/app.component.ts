@@ -15,7 +15,6 @@ import { AgChartOptions, AgChartTheme } from "ag-charts-community"
 })
 export class AppComponent {
   chartOptions1: AgChartOptions = {
-    type: "cartesian",
     theme: myTheme,
     autoSize: true,
     title: {

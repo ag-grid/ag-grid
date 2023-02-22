@@ -148,7 +148,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             },
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsService.get('context'),
+            context: this.gridOptionsService.context,
             eGridHeader: this.getGui()
         } as IHeaderParams;
 

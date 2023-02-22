@@ -13,3 +13,4 @@ Object.keys(agGrid).forEach(function(key) {
 agGrid.ModuleRegistry.register(ClientSideRowModelModule.ClientSideRowModelModule);
 agGrid.ModuleRegistry.register(CsvExportModule.CsvExportModule);
 agGrid.ModuleRegistry.register(InfiniteRowModelModule.InfiniteRowModelModule);
+agGrid.ModuleRegistry.setIsBundled();

@@ -1,0 +1,37 @@
+@use "../variables" as *;
+
+@mixin stack-table() {
+    thead {
+        display: none;
+    }
+
+    tr,
+    td {
+        display: block;
+        text-align: left;
+    }
+
+    tr {
+        padding: $size-2 0;
+
+        &:nth-child(even) {
+            background-color: unset;
+        }
+    }
+
+    td {
+        padding: 0;
+        line-height: $line-height-tight;
+        font-weight: var(--font-weight-bold);
+
+        &:not(:last-child) {
+            margin-bottom: $size-1;
+        }
+    }
+
+    td::before {
+        content: attr(data-column) ': ';
+        font-weight: var(--font-weight-normal);
+        color: var(--secondary-text-color);
+    }
+}

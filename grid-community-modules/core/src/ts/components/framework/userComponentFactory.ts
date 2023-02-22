@@ -166,7 +166,7 @@ export class UserComponentFactory extends BeanStub {
         let { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector } = this.getCompKeys(defObject, type, params);
 
         const lookupFromRegistry = (key: string) => {
-            const item = this.userComponentRegistry.retrieve(key);
+            const item = this.userComponentRegistry.retrieve(propertyName, key);
             if (item) {
                 jsComp = !item.componentFromFramework ? item.component : undefined;
                 fwComp = item.componentFromFramework ? item.component : undefined;
@@ -318,7 +318,7 @@ export class UserComponentFactory extends BeanStub {
         if (deferredInit == null) {
             return AgPromise.resolve(instance);
         }
-        return (deferredInit as AgPromise<void>).then(() => instance);
+        return deferredInit.then(() => instance);
     }
 
     // used by Floating Filter
@@ -328,10 +328,10 @@ export class UserComponentFactory extends BeanStub {
         paramsFromGrid: any,
         paramsFromSelector: any = null
     ): any {
-        const params: AgGridCommon<any> = {
-            context: this.gridOptionsService.get('context'),
-            columnApi: this.gridOptionsService.get('columnApi')!,
-            api: this.gridOptionsService.get('api')!
+        const params: AgGridCommon<any, any> = {
+            context: this.gridOptionsService.context,
+            columnApi: this.gridOptionsService.columnApi,
+            api: this.gridOptionsService.api
         };
 
         mergeDeep(params, paramsFromGrid);

@@ -10,7 +10,8 @@ import {
     IFilterComp,
     KeyCode,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    ColumnEvent
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
@@ -101,8 +102,18 @@ export class ToolPanelFilterComp extends Component {
         return this.filterManager.isFilterActive(this.column);
     }
 
-    private onFilterChanged(): void {
+    private onFilterChanged(event: ColumnEvent): void {
         _.setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
+        if (
+            this.expanded &&
+            event.source === 'filterDestroyed' &&
+            event.columns?.some((col) => col.getId() === this.column.getId()) &&
+            this.columnModel.getPrimaryColumn(this.column)
+        ) {
+            // filter was visible and is now destroyed. If the column still exists, need to recreate UI component
+            this.removeFilterElement();
+            this.addFilterElement();
+        }
         this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }
 
@@ -119,6 +130,10 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandChecked, true);
         _.setDisplayed(this.eExpandUnchecked, false);
 
+        this.addFilterElement();
+    }
+
+    private addFilterElement(): void {
         const filterPanelWrapper = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
         const filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR');
 
@@ -142,6 +157,7 @@ export class ToolPanelFilterComp extends Component {
                 }
             });
         });
+        
     }
 
     public collapse(): void {
@@ -149,24 +165,39 @@ export class ToolPanelFilterComp extends Component {
 
         this.expanded = false;
         _.setAriaExpanded(this.eFilterToolPanelHeader, false);
-        this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
+        this.removeFilterElement();
 
         _.setDisplayed(this.eExpandChecked, false);
         _.setDisplayed(this.eExpandUnchecked, true);
+
+        this.underlyingFilter?.afterGuiDetached?.();
     }
 
-    public refreshFilter(): void {
+    private removeFilterElement(): void {
+        _.clearElement(this.agFilterToolPanelBody);
+    }
+
+
+    public isExpanded(): boolean {
+        return this.expanded;
+    }
+
+    public refreshFilter(isDisplayed: boolean): void {
         if (!this.expanded) { return; }
 
         const filter = this.underlyingFilter as any;
 
         if (!filter) { return; }
 
-        // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
-        // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
-        // scroll position in the filter list panel
-        if (typeof filter.refreshVirtualList === 'function') {
-            filter.refreshVirtualList();
+        if (isDisplayed) {
+            // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
+            // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
+            // scroll position in the filter list panel
+            if (typeof filter.refreshVirtualList === 'function') {
+                filter.refreshVirtualList();
+            }
+        } else {
+            filter.afterGuiDetached?.();
         }
     }
 

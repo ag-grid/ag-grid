@@ -132,14 +132,14 @@ export class Text extends Shape {
     }
 
     render(renderCtx: RenderContext): void {
-        let { ctx, forceRender, stats } = renderCtx;
+        const { ctx, forceRender, stats } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
             if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
-        if (!this.lines.length || !this.scene) {
+        if (!this.lines.length || !this.layerManager) {
             if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
@@ -153,7 +153,7 @@ export class Text extends Shape {
         ctx.textAlign = this.textAlign;
         ctx.textBaseline = this.textBaseline;
 
-        const pixelRatio = this.scene.canvas.pixelRatio || 1;
+        const pixelRatio = this.layerManager.canvas.pixelRatio || 1;
         const { globalAlpha } = ctx;
 
         if (fill) {

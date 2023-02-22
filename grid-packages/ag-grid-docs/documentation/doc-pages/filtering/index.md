@@ -107,7 +107,7 @@ const gridOptions = {
 
 ## Filter Values
 
-By default, the values supplied to the filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition as shown below. This is similar to using a [Value Getter](/value-getters), but is specific to the filter. This parameter is required when [filtering on row group columns](/grouping-filtering/#enabling-group-filtering).
+By default, the values supplied to the filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition as shown below. This is similar to using a [Value Getter](/value-getters), but is specific to the filter.
 
 <api-documentation source='column-properties/properties.json' section='filtering' names='["filterValueGetter"]'></api-documentation>
 

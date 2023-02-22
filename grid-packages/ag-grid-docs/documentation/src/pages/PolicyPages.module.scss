@@ -1,0 +1,157 @@
+@use '../design-system' as ds;
+
+.policyPage {
+    margin-top: ds.$size-6;
+    margin-bottom: calc(ds.$size-6 * 4);
+
+    nav {
+        margin-top: ds.$size-4;
+        margin-bottom: ds.$size-4;
+    }
+
+    nav li:not(:last-child) {
+        margin-bottom: ds.$size-half;
+    }
+
+    hr {
+        margin-bottom: ds.$size-1;
+    }
+
+    @media screen and (min-width: ds.$max-page-width) {
+        header {
+            display: flex;
+            gap: ds.$size-4;
+        }
+
+        nav {
+            display: inline-block;
+            order: -1;
+        }
+
+        nav li:not(:last-child) {
+            margin-bottom: ds.$size-1;
+            line-height: ds.$line-height-tight;
+        }
+    }
+}
+
+.introduction {
+    margin-top: ds.$size-4 !important; // !important needed because of .ag-styles specificity
+}
+
+.policyList {
+    counter-reset: policy-count;
+
+    list-style: none;
+    padding-left: 0 !important; // !important needed because of .ag-styles specificity
+
+    > li {
+        counter-increment: policy-count;
+        margin-bottom: ds.$size-6;
+    }
+
+    li > h3:first-child:before {
+        content: counter(policy-count, decimal) '. ';
+        font-weight: ds.$font-weight-normal;
+    }
+
+    li::marker {
+        font-size: ds.$font-size-large;
+    }
+
+    @media screen and (min-width: (ds.$max-page-width + ds.$size-4)) {
+        list-style: decimal;
+        padding-left: unset;
+
+        li h3::before {
+            display: none;
+        }
+    }
+}
+
+.settingsButton {
+    margin-bottom: ds.$size-2 !important; // !important needed because of .ag-styles specificity
+}
+
+// Overrides for OneTrust 3rd party styles on cookies page
+// =======================================================
+:global(.ot-sdk-cookie-policy) {
+    * {
+        font-family: var(--font-family) !important;
+        font-size: var(--font-size) !important;
+        line-height: var(--line-height) !important;
+        font-weight: var(--font-weight) !important;
+        color: var(--text-color) !important;
+    }
+
+    h3,
+    h4 {
+        font-weight: var(--font-weight-bold) !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    table {
+        margin-bottom: 16px !important;
+        border-collapse: collapse !important;
+        border-radius: 0 !important;
+        border: none !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        border-top: 1px solid var(--border-color) !important;
+    }
+
+    thead,
+    tr:nth-child(even) {
+        background-color: var(--table-odd-row-background-color) !important;
+    }
+
+    thead {
+        font-weight: var(--font-weight-bold) !important;
+    }
+
+    tr {
+        border-top: 1px solid var(--border-color) !important;
+    }
+
+    th,
+    td {
+        padding: 8px 16px !important;
+        background-color: transparent !important;
+        border-right: none !important;
+        border-bottom: none !important;
+    }
+
+    a {
+        color: var(--link-color) !important;
+    }
+
+    a:hover {
+        color: var(--link-hover-color) !important;
+    }
+}
+
+:global(.ot-sdk-show-settings) {
+    appearance: none !important;
+
+    font-size: var(--font-size) !important;
+    padding: 0.5em 1em !important;
+    letter-spacing: 0.025em !important;
+    border-radius: var(--border-radius) !important;
+    background-color: var(--button-color) !important;
+    color: var(--button-text-color) !important;
+    border: none !important;
+    transition: background-color 0.25s ease-in-out !important;
+
+    &:not(:disabled) {
+        cursor: pointer !important;
+    }
+
+    &:hover {
+        background-color: var(--button-hover-color) !important;
+    }
+
+    &:active {
+        background-color: var(--button-active-color) !important;
+        transition: background-color 0.125s ease-in-out !important;
+    }
+}
+// End OneTrust overrides

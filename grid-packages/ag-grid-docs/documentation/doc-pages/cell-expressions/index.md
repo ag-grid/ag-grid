@@ -10,7 +10,7 @@ Expressions can be used in two different ways as follows:
 
 ## Column Definition Expressions
 
-Expressions can be used inside column definitions instead of using functions for the getters, setters, formatters and parsers. To use an expression instead of a function, just put what the body of the function into a string.
+Expressions can be used inside column definitions instead of using functions for the getters, setters, formatters and parsers. To use an expression instead of a function, just put the body of the function into a string.
 
 <snippet>
 const gridOptions = {
@@ -41,20 +41,19 @@ In this example string expressions are used instead of functions for `valueGette
 
 The following variables are available to the expression with the following params mapping:
 
-- `x` => Mapped from params.value
-- `value` => Mapped from params.value
-- `oldValue` => Mapped from params.oldValue
-- `newValue` => Mapped from params.newValue
-- `node` => Mapped from params.node
-- `data` => Mapped from params.data
-- `colDef` => Mapped from params.colDef
-- `column` => Mapped from params.column
-- `columnGroup` => Mapped from params.columnGroup
-- `getValue` => Mapped from params.getValue
-- `api` => Mapped from params.api
-- `columnApi` => Mapped from params.columnApi
-- `ctx` => Mapped from params.context
-
+- `x` => params.value
+- `value` => params.value
+- `oldValue` => params.oldValue
+- `newValue` => params.newValue
+- `node` => params.node
+- `data` => params.data
+- `colDef` => params.colDef
+- `column` => params.column
+- `columnGroup` => params.columnGroup
+- `getValue` => params.getValue
+- `api` => params.api
+- `columnApi` => params.columnApi
+- `ctx` => params.context
 
 For example, for `valueFormatter`'s, you can access to the value via the 'x' and 'value' attributes. However in `valueGetter`'s, the 'x' and 'value' will be undefined as these are not part of the `valueGetter` params.
 
@@ -62,13 +61,11 @@ For example, for `valueFormatter`'s, you can access to the value via the 'x' and
 
 Expressions and functions are two ways of achieving identical results. So why have two methods?
 
-The advantage of functions is that they are easier to work with for you. Functions will be treated by your IDE as functions and thus benefit from compile time checks, debugging e.t.c.
+The advantage of functions is that they are easier to work with for you. Functions will be treated by your IDE as 
+functions and thus benefit from compile time checks, debugging etc.
 
-
-The advantage of expressions are:
-
-- They keep your column definitions as simple JSON objects (just strings, no functions) which makes them candidates for saving in offline storage (eg storing a report definition in a database).
-- They make the definitions more compact, thus may make your code more maintainable.
+The advantage of expressions is that they are more compact, and it keeps your column definitions as simple JSON objects
+(just strings, no functions) which makes them candidates for saving in offline storage (e.g. storing a report definition in a database).
 
 ## Cell Expressions
 
@@ -96,13 +93,13 @@ This example demonstrates cell expressions. The second column values in the LHS 
 
 - 'Number Squared' and 'Number x 2' both take the number from the header as an input.
 - 'Today's Date' prints the date.
-- 'Sum A' and 'Sum B' both call a user provided function that is attached to the context.
+- 'Sum A' and 'Sum B' both call a user provided function that is attached to the context (Note that 'Sum A' and 'Sum B' are using values from the RHS grid).
 
 <grid-example title='Cell Expressions' name='cell-expressions' type='typescript' options='{ "exampleHeight": 455, "theme": "ag-theme-alpine-dark" }'></grid-example>
 
 ## How Expressions Work
 
-When you provide and expression to the grid, the grid converts the expression into a function for you and then executes the function. Consider the example below, the example provides `data.firstName` as the expression. This snippet of code then gets wrapped into a function with all the params attributes as function attributes.
+When you provide an expression to the grid, the grid converts the expression into a function for you and then executes the function. Consider the example below, the example provides `data.firstName` as the expression. This snippet of code then gets wrapped into a function with all the params attributes as function attributes.
 
 ```js
 // this is a simple expression on the column definition

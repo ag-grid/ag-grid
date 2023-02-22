@@ -7,9 +7,10 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesNodeDatum, SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum } from '../../legend';
+import { LegendDatum } from '../../legendDatum';
 import { CartesianSeries, CartesianSeriesNodeClickEvent } from './cartesianSeries';
-import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from '../../chartAxis';
+import { ChartAxis, flipChartAxisDirection } from '../../chartAxis';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent, findMinMax } from '../../../util/array';
 import { areArrayItemsStrictlyEqual } from '../../../util/equal';
@@ -44,6 +45,7 @@ import {
     FontStyle,
     FontWeight,
 } from '../../agChartOptions';
+import { LogAxis } from '../../axis/logAxis';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -87,17 +89,6 @@ class BarSeriesLabel extends Label {
 class BarSeriesTooltip extends SeriesTooltip {
     @Validate(OPT_FUNCTION)
     renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
-}
-
-function flat(arr: any[], target: any[] = []): any[] {
-    arr.forEach((v) => {
-        if (Array.isArray(v)) {
-            flat(v, target);
-        } else {
-            target.push(v);
-        }
-    });
-    return target;
 }
 
 function is2dArray<E>(array: E[] | E[][]): array is E[][] {
@@ -144,6 +135,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         super({
             pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
+            directionKeys: {
+                [ChartAxisDirection.X]: ['xKey'],
+                [ChartAxisDirection.Y]: ['yKeys'],
+            },
         });
 
         this.label.enabled = false;
@@ -154,31 +149,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
      */
     private groupScale = new BandScale<string>();
 
-    directionKeys = {
-        [ChartAxisDirection.X]: ['xKey'],
-        [ChartAxisDirection.Y]: ['yKeys'],
-    };
-
-    getKeys(direction: ChartAxisDirection): string[] {
-        const { directionKeys } = this;
-        const keys = directionKeys && directionKeys[this.flipXY ? flipChartAxisDirection(direction) : direction];
-        let values: string[] = [];
-
-        if (keys) {
-            keys.forEach((key) => {
-                const value = (this as any)[key];
-
-                if (value) {
-                    if (Array.isArray(value)) {
-                        values = values.concat(flat(value));
-                    } else {
-                        values.push(value);
-                    }
-                }
-            });
-        }
-
-        return values;
+    protected resolveKeyDirection(direction: ChartAxisDirection) {
+        return this.flipXY ? flipChartAxisDirection(direction) : direction;
     }
 
     @Validate(STRING)
@@ -374,10 +346,47 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             })
         );
 
+        const xyValid = this.validateXYData(
+            this.xKey,
+            this.yKeys.join(', '),
+            data,
+            xAxis,
+            yAxis,
+            this.xData,
+            this.yData,
+            3
+        );
+        if (!xyValid) {
+            this.xData = [];
+            this.yData = [];
+            this.yDomain = [];
+            return;
+        }
+
         // Contains min/max values for each stack in each group,
         // where min is zero and max is a positive total of all values in the stack
         // or min is a negative total of all values in the stack and max is zero.
-        const yMinMax = this.yData.map((group) => group.map((stack) => findMinMax(stack)));
+        const isLogAxis = yAxis instanceof LogAxis;
+        let yMinMax: {
+            min?: number;
+            max?: number;
+        }[][];
+
+        if (!isLogAxis) {
+            yMinMax = this.yData.map((group) => group.map((stack) => findMinMax(stack)));
+        } else {
+            yMinMax = this.yData.map((group) =>
+                group.map((stack) => {
+                    const stackExtent = extent(stack) ?? [];
+
+                    return {
+                        min: stackExtent[0],
+                        max: stackExtent[1],
+                    };
+                })
+            );
+        }
+
         const { yData, normalizedTo } = this;
 
         // Calculate the sum of the absolute values of all items in each stack in each group. Used for normalization of stacked bars.
@@ -391,6 +400,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         );
 
         let { min: yMin, max: yMax } = this.findLargestMinMax(yMinMax);
+
         if (yMin === Infinity && yMax === -Infinity) {
             // There's no data in the domain.
             this.yDomain = [];
@@ -398,8 +408,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         if (normalizedTo && isFinite(normalizedTo)) {
-            yMin = yMin < 0 ? -normalizedTo : 0;
-            yMax = yMax > 0 ? normalizedTo : 0;
+            yMin = yMin < 0 ? -normalizedTo : isLogAxis ? 1 : 0;
+            yMax = yMax > 0 ? normalizedTo : isLogAxis ? -1 : 0;
             yData.forEach((group, i) => {
                 group.forEach((stack, j) => {
                     stack.forEach((y, k) => {
@@ -418,7 +428,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         for (const group of groups) {
             for (const stack of group) {
-                let { min = Infinity, max = -Infinity } = stack;
+                const { min = Infinity, max = -Infinity } = stack;
                 if (min < tallestStackMin) {
                     tallestStackMin = min;
                 }
@@ -476,8 +486,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         // calculate step
-        let domainLength = xAxis.dataDomain[1] - xAxis.dataDomain[0];
-        let intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
+        const domainLength = xAxis.dataDomain[1] - xAxis.dataDomain[0];
+        const intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
 
         // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
         // Allow a maximum number of bands to ensure the step does not fall below 1 pixel.

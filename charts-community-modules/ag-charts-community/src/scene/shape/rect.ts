@@ -96,7 +96,7 @@ export class Rect extends Path {
     updatePath() {
         const { path, borderPath, crisp } = this;
         let { x, y, width: w, height: h, strokeWidth } = this;
-        const pixelRatio = this.scene?.canvas.pixelRatio ?? 1;
+        const pixelRatio = this.layerManager?.canvas.pixelRatio ?? 1;
         const pixelSize = 1 / pixelRatio;
         let microPixelEffectOpacity = 1;
 
@@ -205,7 +205,7 @@ export class Rect extends Path {
             // has no effect on shadows, so we have to account for the pixel ratio
             // manually here.
             if (fillShadow && fillShadow.enabled) {
-                const pixelRatio = this.scene?.canvas.pixelRatio ?? 1;
+                const pixelRatio = this.layerManager?.canvas.pixelRatio ?? 1;
 
                 ctx.shadowColor = fillShadow.color;
                 ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;

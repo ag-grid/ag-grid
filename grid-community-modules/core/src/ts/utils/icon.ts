@@ -94,6 +94,8 @@ export const iconNameClassMap: { [key: string]: string; } = {
     menuRemoveRowGroup: 'group',
     // context menu copy item
     clipboardCopy: 'copy',
+    // context menu cut item
+    clipboardCut: 'cut',
     // context menu paste item
     clipboardPaste: 'paste',
     // identifies the pivot drop zone

@@ -1,0 +1,7 @@
+html {
+    color: var(--text-color);
+}
+
+.text-secondary {
+    color: var(--secondary-text-color) !important; // !important to prevent bootstrap clash
+}

@@ -31,8 +31,6 @@ md-include:configure-javascript.md
 md-include:configure-angular.md
 md-include:configure-react.md
 md-include:configure-vue.md
-  
-In the configuration above we've specified a custom component (`statusBarComponent`) as well as the provided `agAggregationComponent` component.
 
 Order is important here - the order of the components provided will determine the order in which they're rendered, from left to right.
 

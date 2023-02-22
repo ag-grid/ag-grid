@@ -1,14 +1,9 @@
 import { Scale } from '../scale/scale';
-import { Axis } from '../axis';
-import { Series } from './series/series';
+import { Axis, TickInterval } from '../axis';
+import { ChartAxisDirection } from './chartAxisDirection';
 import { LinearScale } from '../scale/linearScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
 import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
-
-export enum ChartAxisDirection {
-    X = 'x', // means 'angle' in polar charts
-    Y = 'y', // means 'radius' in polar charts
-}
 
 export function flipChartAxisDirection(direction: ChartAxisDirection): ChartAxisDirection {
     if (direction === ChartAxisDirection.X) {
@@ -18,12 +13,29 @@ export function flipChartAxisDirection(direction: ChartAxisDirection): ChartAxis
     }
 }
 
-export class ChartAxis<S extends Scale<any, number> = Scale<any, number>, D = any> extends Axis<S, D> {
+interface BoundSeries {
+    type: string;
+    getDomain(direction: ChartAxisDirection): any[];
+    isEnabled(): boolean;
+    visible: boolean;
+}
+
+interface BoundSeries {
+    type: string;
+    getDomain(direction: ChartAxisDirection): any[];
+    isEnabled(): boolean;
+    visible: boolean;
+}
+
+export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, number, any>, D = any> extends Axis<
+    S,
+    D
+> {
     @Validate(STRING_ARRAY)
     keys: string[] = [];
 
     direction: ChartAxisDirection = ChartAxisDirection.Y;
-    boundSeries: Series[] = [];
+    boundSeries: BoundSeries[] = [];
     linkedTo?: ChartAxis;
     includeInvisibleDomains: boolean = false;
 

@@ -31,21 +31,21 @@
 |    }
 |}
 |```
-|And finally here is an example using modules, hooks and TypeScript:
+|And finally here is an example using AG Grid [Packages](/packages/), hooks and TypeScript:
 |
-|```ts
+|```jsx
 |import React, {useMemo} from 'react';
-|import {ITooltipParams} from "@ag-grid-community/core";
-|import {ITooltipReactComp} from "@ag-grid-community/react";
+|import {ITooltipParams} from "ag-grid-community";
+|import {ITooltipReactComp} from "ag-grid-react";
 |
 |const CustomTooltip = (props: ITooltipParams) => {
 |    const data = useMemo(props.api.getDisplayedRowAtIndex(props.rowIndex).data, []);
 |    
 |    return (
 |        <div style={{backgroundColor: props.color || 'white'}}>
-|            <p>
-|                <span>{data.athlete}</span>
-|            </p>
+|                <p><span>{data.athlete}</span></p>
+|                <p><span>Country: </span> {data.country}</p>
+|                <p><span>Total: </span> {data.total}</p>
 |        </div>
 |    );
 |};

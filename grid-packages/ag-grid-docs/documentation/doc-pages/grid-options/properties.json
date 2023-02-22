@@ -262,7 +262,7 @@
         "readOnlyEdit": {
             "more": {
                 "name": "Read Only Edit",
-                "url": "/value-setters/#read-only-edit/"
+                "url": "/value-setters/#read-only-edit"
             }
         }
     },
@@ -313,6 +313,12 @@
             "more": {
                 "name": "Quick Filter Cache",
                 "url": "/filter-quick/#quick-filter-cache"
+            }
+        },
+        "excludeHiddenColumnsFromQuickFilter": {
+            "more": {
+                "name": "Exclude Hidden Columns",
+                "url": "/filter-quick/#exclude-hidden-columns"
             }
         },
         "isExternalFilterPresent": {

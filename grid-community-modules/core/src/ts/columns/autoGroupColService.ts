@@ -61,7 +61,11 @@ export class AutoGroupColService extends BeanStub {
         if (!this.gridOptionsService.isTreeData()) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
-            const noFieldOrValueGetter = missing(defaultAutoColDef.field) && missing(defaultAutoColDef.valueGetter) && missing(defaultAutoColDef.filterValueGetter);
+            const noFieldOrValueGetter =
+                missing(defaultAutoColDef.field) &&
+                missing(defaultAutoColDef.valueGetter) &&
+                missing(defaultAutoColDef.filterValueGetter) &&
+                defaultAutoColDef.filter !== 'agGroupColumnFilter';
             if (noFieldOrValueGetter) {
                 defaultAutoColDef.filter = false;
             }
@@ -78,6 +82,12 @@ export class AutoGroupColService extends BeanStub {
             existingCol.setColDef(defaultAutoColDef, null);
             this.columnFactory.applyColumnState(existingCol, defaultAutoColDef);
             return existingCol;
+        }
+
+        const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+        if (isSortingCoupled && (defaultAutoColDef.sort || defaultAutoColDef.initialSort) && !defaultAutoColDef.field) {
+            // if no field, then this column cannot hold its own sort state
+            mergeDeep(defaultAutoColDef, { sort: null, initialSort: null } as ColDef, true, true);
         }
 
         const newCol = new Column(defaultAutoColDef, null, colId, true);

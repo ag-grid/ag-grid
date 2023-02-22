@@ -1,12 +1,15 @@
 import { RowNodeBlock } from "./rowNodeBlock";
-import { Bean, PostConstruct, Qualifier } from "../context/context";
+import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { Logger, LoggerFactory } from "../logger";
 import { _ } from "../utils";
+import { IRowModel } from "../interfaces/iRowModel";
+import { IServerSideRowModel } from "../main";
 
 @Bean('rowNodeBlockLoader')
 export class RowNodeBlockLoader extends BeanStub {
-
+    @Autowired('rowModel') private rowModel: IRowModel;
+    
     public static BLOCK_LOADED_EVENT = 'blockLoaded';
     public static BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
 
@@ -96,8 +99,13 @@ export class RowNodeBlockLoader extends BeanStub {
         this.printCacheStatus();
     }
 
-    public getBlockState(): any {
-        const result: any = {};
+    public getBlockState() {
+        if (this.gridOptionsService.isRowModelType('serverSide')) {
+            const ssrm = this.rowModel as IServerSideRowModel;
+            return ssrm.getBlockStates();
+        }
+
+        const result: { [key: string]: any } = {};
         this.blocks.forEach((block: RowNodeBlock) => {
             const {id, state} = block.getBlockStateJson();
             result[id] = state;

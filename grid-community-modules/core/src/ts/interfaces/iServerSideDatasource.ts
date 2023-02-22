@@ -10,7 +10,7 @@ import { IRowNode } from "./iRowNode";
 export interface IServerSideGetRowsRequest {
     /** First row requested or undefined for all rows. */
     startRow: number | undefined;
-    /** Last row requested or undefined for all rows. */
+    /** Index after the last row required row or undefined for all rows. */
     endRow: number | undefined;
     /** Columns that are currently row grouped.  */
     rowGroupCols: ColumnVO[];
@@ -28,7 +28,7 @@ export interface IServerSideGetRowsRequest {
     sortModel: SortModelItem[];
 }
 
-export interface IServerSideGetRowsParams<TData = any> extends AgGridCommon<TData> {
+export interface IServerSideGetRowsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
      * Details for the request. A simple object that can be converted to JSON.
      */

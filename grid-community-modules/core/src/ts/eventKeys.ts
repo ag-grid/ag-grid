@@ -79,7 +79,12 @@ export class Events {
     /** For when the tool panel is shown / hidden */
     public static EVENT_TOOL_PANEL_VISIBLE_CHANGED: 'toolPanelVisibleChanged' = 'toolPanelVisibleChanged';
     public static EVENT_TOOL_PANEL_SIZE_CHANGED: 'toolPanelSizeChanged' = 'toolPanelSizeChanged';
-
+    /**
+     * This is a replacement event for EVENT_TOOL_PANEL_VISIBLE_CHANGED. In v30, the original event interface will be dropped
+     * and replaced with the new event (but using the old event type and interface name)
+     */
+    public static EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED: 'internalToolPanelVisibleChanged' = 'internalToolPanelVisibleChanged';
+    
     public static EVENT_COLUMN_PANEL_ITEM_DRAG_START: 'columnPanelItemDragStart' = 'columnPanelItemDragStart';
     public static EVENT_COLUMN_PANEL_ITEM_DRAG_END: 'columnPanelItemDragEnd' = 'columnPanelItemDragEnd';
 
@@ -92,6 +97,15 @@ export class Events {
     public static EVENT_FILL_START: 'fillStart' = 'fillStart';
     public static EVENT_FILL_END: 'fillEnd' = 'fillEnd';
 
+    /** Undo operation has started. */
+    public static EVENT_UNDO_STARTED: 'undoStarted' = 'undoStarted';
+    /** Undo operation has ended. */
+    public static EVENT_UNDO_ENDED: 'undoEnded' = 'undoEnded';
+    /** Redo operation has started. */
+    public static EVENT_REDO_STARTED: 'redoStarted' = 'redoStarted';
+    /** Redo operation has ended. */
+    public static EVENT_REDO_ENDED: 'redoEnded' = 'redoEnded';
+
     public static EVENT_KEY_SHORTCUT_CHANGED_CELL_START: 'keyShortcutChangedCellStart' = 'keyShortcutChangedCellStart';
     public static EVENT_KEY_SHORTCUT_CHANGED_CELL_END: 'keyShortcutChangedCellEnd' = 'keyShortcutChangedCellEnd';
 
@@ -103,6 +117,7 @@ export class Events {
     public static EVENT_CELL_EDIT_REQUEST: 'cellEditRequest' = 'cellEditRequest';
     public static EVENT_ROW_VALUE_CHANGED: 'rowValueChanged' = 'rowValueChanged';
     public static EVENT_CELL_FOCUSED: 'cellFocused' = 'cellFocused';
+    public static EVENT_CELL_FOCUS_CLEARED: 'cellFocusCleared' = 'cellFocusCleared';
     public static EVENT_FULL_WIDTH_ROW_FOCUSED: 'fullWidthRowFocused' = 'fullWidthRowFocused';
     public static EVENT_ROW_SELECTED: 'rowSelected' = 'rowSelected';
     public static EVENT_SELECTION_CHANGED: 'selectionChanged' = 'selectionChanged';
@@ -194,6 +209,9 @@ export class Events {
     public static EVENT_ROW_DRAG_MOVE: 'rowDragMove' = 'rowDragMove';
     public static EVENT_ROW_DRAG_LEAVE: 'rowDragLeave' = 'rowDragLeave';
     public static EVENT_ROW_DRAG_END: 'rowDragEnd' = 'rowDragEnd';
+
+    // environment
+    public static EVENT_GRID_STYLES_CHANGED: 'gridStylesChanged' = 'gridStylesChanged';
 
     // primarily for charts
     public static EVENT_POPUP_TO_FRONT: 'popupToFront' = 'popupToFront';

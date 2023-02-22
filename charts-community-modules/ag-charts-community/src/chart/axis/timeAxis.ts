@@ -3,7 +3,7 @@ import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { ChartAxis } from '../chartAxis';
 
-export class TimeAxis extends ChartAxis<TimeScale> {
+export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
     static className = 'TimeAxis';
     static type = 'time' as const;
 

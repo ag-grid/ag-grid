@@ -211,12 +211,18 @@ export class RowContainerEventsFeature extends BeanStub {
             const key = keyboardEvent.key;
             if (eventName === 'keydown') {
                 switch (key) {
+                    case KeyCode.PAGE_HOME:
+                    case KeyCode.PAGE_END:
+                        this.navigationService.handlePageScrollingKey(keyboardEvent);
+                        break;
+    
                     case KeyCode.UP:
                     case KeyCode.DOWN:
                         rowComp.onKeyboardNavigate(keyboardEvent);
                         break;
                     case KeyCode.TAB:
                         rowComp.onTabKeyDown(keyboardEvent);
+                        break;
                     default:
                 }
             }
@@ -250,6 +256,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         if (keyCode === KeyCode.A) { return this.onCtrlAndA(keyboardEvent); }
         if (keyCode === KeyCode.C) { return this.onCtrlAndC(keyboardEvent); }
+        if (keyCode === KeyCode.X) { return this.onCtrlAndX(keyboardEvent); }
         if (keyCode === KeyCode.V) { return this.onCtrlAndV(); }
         if (keyCode === KeyCode.D) { return this.onCtrlAndD(keyboardEvent); }
         if (keyCode === KeyCode.Z) { return this.onCtrlAndZ(keyboardEvent); }
@@ -294,10 +301,16 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndC(event: KeyboardEvent): void {
-
         if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) { return; }
 
         this.clipboardService.copyToClipboard();
+        event.preventDefault();
+    }
+
+    private onCtrlAndX(event: KeyboardEvent): void {
+        if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) { return; }
+
+        this.clipboardService.cutToClipboard();
         event.preventDefault();
     }
 
@@ -319,14 +332,14 @@ export class RowContainerEventsFeature extends BeanStub {
         event.preventDefault();
 
         if (event.shiftKey) {
-            this.undoRedoService.redo();
+            this.undoRedoService.redo('ui');
         } else {
-            this.undoRedoService.undo();
+            this.undoRedoService.undo('ui');
         }
     }
 
     private onCtrlAndY(): void {
-        this.undoRedoService.redo();
+        this.undoRedoService.redo('ui');
     }
 
 }

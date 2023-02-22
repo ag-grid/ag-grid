@@ -20,7 +20,6 @@
         margin-top: 0;
     }
 
-
     @include media-breakpoint-down(md) {
         h2 {
             font-size: 1.5rem;
@@ -101,7 +100,6 @@
     }
 
     &__video-panel {
-
         &__videos {
             &__video-player {
                 &__title {

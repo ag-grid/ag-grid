@@ -1,9 +1,7 @@
-import { AgChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import { AgChartOptions, AgChart } from 'ag-charts-community'
 import { data } from './data'
 
 const options: AgChartOptions = {
-  type: 'hierarchy',
   container: document.getElementById('myChart'),
   data,
   series: [
@@ -33,4 +31,4 @@ const options: AgChartOptions = {
   },
 }
 
-agCharts.AgChart.create(options)
+AgChart.create(options)

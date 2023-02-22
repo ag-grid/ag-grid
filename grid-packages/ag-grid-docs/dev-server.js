@@ -306,6 +306,7 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
         .filter(module => module.moduleDirName !== 'core')
         .filter(module => module.moduleDirName !== 'all-modules')
         .map(module => `ModuleRegistry.register(${module.moduleName});`);
+    const moduleIsUmdLine = `ModuleRegistry.setIsBundled();`
 
     const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd-beta.js';
     const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd-beta.js';
@@ -320,7 +321,7 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
         }
     });
     const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries).concat(communityModulesEntries);
-    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).join(EOL), 'UTF-8');
+    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).concat(moduleIsUmdLine).join(EOL), 'UTF-8');
 
     const existingCommunityLines = fs.readFileSync(communityFilename).toString().split(EOL);
     modulesLineFound = false;
@@ -331,7 +332,7 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
             newCommunityLines.push(line);
         }
     });
-    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join(EOL), 'UTF-8');
+    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).concat(moduleIsUmdLine).join(EOL), 'UTF-8');
 };
 
 function updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules) {
@@ -576,6 +577,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
         './documentation/static/example-runner/grid-typescript-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-angular-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-react-boilerplate/systemjs.config.dev.js',
+        './documentation/static/example-runner/grid-react-ts-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-vue-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-vue3-boilerplate/systemjs.config.dev.js'];
 

@@ -1,3 +1,4 @@
+import { normalizeAngle360 } from '../util/angle';
 import { cubicRoots } from './polyRoots';
 
 /**
@@ -110,4 +111,65 @@ function bezierCoefficients(P1: number, P2: number, P3: number, P4: number) {
         -3 * P1 + 3 * P2, //                 |-3  3  0  0| |P3|
         P1, //                 | 1  0  0  0| |P4|
     ];
+}
+/**
+ * Returns intersection points of the arc and the line segment.
+ * Takes in arc parameters and line segment start/end points.
+ */
+export function arcIntersections(
+    cx: number,
+    cy: number,
+    r: number,
+    startAngle: number,
+    endAngle: number,
+    counterClockwise: boolean,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number
+): Array<{ x: number; y: number }> {
+    // Solving the quadratic equation:
+    // 1. y = k * x + y0
+    // 2. (x - cx)^2 + (y - cy)^2 = r^2
+    const k = (y2 - y1) / (x2 - x1);
+    const y0 = y1 - k * x1;
+
+    const a = Math.pow(k, 2) + 1;
+    const b = 2 * (k * (y0 - cy) - cx);
+    const c = Math.pow(cx, 2) + Math.pow(y0 - cy, 2) - Math.pow(r, 2);
+    const d = Math.pow(b, 2) - 4 * a * c;
+    if (d < 0) {
+        return [];
+    }
+
+    const i1x = (-b + Math.sqrt(d)) / 2 / a;
+    const i2x = (-b - Math.sqrt(d)) / 2 / a;
+
+    const intersections: { x: number; y: number }[] = [];
+    [i1x, i2x].forEach((x) => {
+        const isXInsideLine = x >= Math.min(x1, x2) && x <= Math.max(x1, x2);
+        if (!isXInsideLine) {
+            return;
+        }
+
+        const y = k * x;
+
+        const a1 = normalizeAngle360(counterClockwise ? endAngle : startAngle);
+        let a2 = normalizeAngle360(counterClockwise ? startAngle : endAngle);
+        let intersectionAngle = normalizeAngle360(Math.atan2(y, x));
+
+        // Order angles clockwise after the start angle
+        // (end angle if counter-clockwise)
+        if (a2 <= a1) {
+            a2 += 2 * Math.PI;
+        }
+        if (intersectionAngle < a1) {
+            intersectionAngle += 2 * Math.PI;
+        }
+        if (intersectionAngle >= a1 && intersectionAngle <= a2) {
+            intersections.push({ x, y });
+        }
+    });
+
+    return intersections;
 }

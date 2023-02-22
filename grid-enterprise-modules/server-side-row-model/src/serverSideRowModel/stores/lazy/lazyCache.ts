@@ -132,10 +132,20 @@ export class LazyCache extends BeanStub {
         return newNode;
     }
 
+    /**
+     * @param index The row index relative to this store
+     * @returns A rowNode at the given store index
+     */
     public getRowByStoreIndex(index: number) {
         return this.nodeIndexMap[index];
     }
 
+    /**
+     * Given a number of rows, skips through the given sequence & row top reference (using default row height)
+     * @param numberOfRowsToSkip number of rows to skip over in the given sequence
+     * @param displayIndexSeq the sequence in which to skip
+     * @param nextRowTop the row top reference in which to skip
+     */
     private skipDisplayIndexes(numberOfRowsToSkip: number, displayIndexSeq: NumberSequence, nextRowTop: { value: number; }) {
         const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         displayIndexSeq.skip(numberOfRowsToSkip);
@@ -173,6 +183,20 @@ export class LazyCache extends BeanStub {
 
     public getRowCount(): number {
         return this.numberOfRows;
+    }
+    
+    setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void {
+        if (rowCount < 0) {
+            throw new Error('AG Grid: setRowCount can only accept a positive row count.');
+        }
+
+        this.numberOfRows = rowCount;
+
+        if (isLastRowIndexKnown != null) {
+            this.isLastRowKnown = isLastRowIndexKnown;
+        }
+
+        this.fireStoreUpdatedEvent();
     }
 
     public getNodeMapEntries(): [string, RowNode][] {
@@ -306,6 +330,66 @@ export class LazyCache extends BeanStub {
         }
 
         return newNode;
+    }
+
+    public getBlockStates() {
+        const blockCounts: { [key: string]: number } = {};
+        const blockStates: { [key: string]: Set<string> } = {};
+        const dirtyBlocks = new Set<number>();
+
+        this.getNodeMapEntries().forEach(([stringIndex, node]) => {
+            const index = Number(stringIndex);
+            const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
+
+            if (!node.stub && !node.failedLoad) {
+                blockCounts[blockStart] = (blockCounts[blockStart] ?? 0) + 1;
+            }
+
+            let rowState = 'loaded';
+            if (node.failedLoad) {
+                rowState = 'failed';
+            } else if (this.rowLoader.isRowLoading(blockStart)) {
+                rowState = 'loading';
+            } else if (node.__needsRefresh) {
+                rowState = 'needsLoading';
+            }
+            
+            if (node.__needsRefreshWhenVisible || node.stub) {
+                dirtyBlocks.add(blockStart);
+            }
+
+            if (!blockStates[blockStart]) {
+                blockStates[blockStart] = new Set<string>();
+            }
+            blockStates[blockStart].add(rowState);
+        });
+
+        const statePriorityMap: { [key: string]: number } = {
+            loading: 4,
+            failed: 3,
+            needsLoading: 2,
+            loaded: 1,
+        };
+
+        const blockPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
+
+        const results: { [key: string]: any } = {};
+        Object.entries(blockStates).forEach(([blockStart, uniqueStates]) => {
+            const sortedStates = [...uniqueStates].sort((a, b) => (statePriorityMap[a] ?? 0) - (statePriorityMap[b] ?? 0));
+            const priorityState = sortedStates[0];
+
+            const blockNumber = Number(blockStart) / this.rowLoader.getBlockSize();
+
+            const blockId = blockPrefix ? `${blockPrefix}-${blockNumber}` : String(blockNumber);
+            results[blockId] = {
+                blockNumber,
+                startRow: Number(blockStart),
+                endRow: Number(blockStart) + this.rowLoader.getBlockSize(),
+                pageStatus: priorityState,
+                loadedRowCount: blockCounts[blockStart] ?? 0,
+            };
+        });
+        return results;
     }
 
     public destroyRowAtIndex(atStoreIndex: number) {
@@ -673,7 +757,7 @@ export class LazyCache extends BeanStub {
             const newIndex = numericStoreIndex + numberOfInserts;
             if (this.getRowByStoreIndex(newIndex)) {
                 // this shouldn't happen, why would a row already exist here
-                throw new Error('Ag Grid: Something went wrong, node in wrong place.');
+                throw new Error('AG Grid: Something went wrong, node in wrong place.');
             } else {
                 this.nodeIndexMap[numericStoreIndex + numberOfInserts] = node;
                 delete this.nodeIndexMap[numericStoreIndex];

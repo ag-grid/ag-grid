@@ -18,7 +18,7 @@ import { ColumnModel } from "../../../columns/columnModel";
 import { Events } from "../../../eventKeys";
 import { SortDirection } from "../../../entities/colDef";
 
-export interface IHeaderParams<TData = any> extends AgGridCommon<TData> {
+export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column the header is for. */
     column: Column;
     /**
@@ -196,7 +196,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (this.params.enableMenu) {
             const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
-                gridOptionsService.get('api')!.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
+                gridOptionsService.api.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
             this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }

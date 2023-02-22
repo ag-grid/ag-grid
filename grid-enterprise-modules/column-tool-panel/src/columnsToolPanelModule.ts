@@ -12,7 +12,7 @@ import { VERSION } from "./version";
 
 export const ColumnsToolPanelModule: Module = {
     version: VERSION,
-    moduleName: ModuleNames.ColumnToolPanelModule,
+    moduleName: ModuleNames.ColumnsToolPanelModule,
     beans: [ModelItemUtils],
     agStackComponents: [
         { componentName: 'AgPrimaryColsHeader', componentClass: PrimaryColsHeaderPanel },

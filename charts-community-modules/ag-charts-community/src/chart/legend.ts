@@ -7,6 +7,7 @@ import { getFont } from '../scene/shape/text';
 import { Marker } from './marker/marker';
 import {
     AgChartLegendClickEvent,
+    AgChartLegendDoubleClickEvent,
     AgChartLegendListeners,
     AgChartLegendLabelFormatterParams,
     AgChartLegendPosition,
@@ -19,7 +20,6 @@ import { createId } from '../util/id';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import {
     BOOLEAN,
-    FUNCTION,
     NUMBER,
     OPT_BOOLEAN,
     OPT_FONT_STYLE,
@@ -35,7 +35,7 @@ import {
 } from '../util/validation';
 import { Layers } from './layers';
 import { Series } from './series/series';
-import { ChartUpdateType } from './chart';
+import { ChartUpdateType } from './chartUpdateType';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightManager } from './interaction/highlightManager';
@@ -43,29 +43,13 @@ import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
 import { TooltipManager } from './interaction/tooltipManager';
 import { toTooltipHtml } from './tooltip/tooltip';
+import { LegendDatum } from './legendDatum';
 
 const ORIENTATIONS = ['horizontal', 'vertical'];
 export const OPT_ORIENTATION = predicateWithMessage(
     (v: any, ctx) => OPTIONAL(v, ctx, (v) => ORIENTATIONS.includes(v)),
     `expecting an orientation keyword such as 'horizontal' or 'vertical'`
 );
-
-export interface LegendDatum {
-    id: string; // component ID
-    itemId: any; // sub-component ID
-    seriesId: string;
-    enabled: boolean; // the current state of the sub-component
-    marker: {
-        shape?: string | (new () => Marker);
-        fill: string;
-        stroke: string;
-        fillOpacity: number;
-        strokeOpacity: number;
-    };
-    label: {
-        text: string; // display name for the sub-component
-    };
-}
 
 class LegendLabel {
     @Validate(OPT_NUMBER(0))
@@ -147,13 +131,10 @@ class LegendItem {
     toggleSeriesVisible: boolean = true;
 }
 
-const NO_OP_LISTENER = () => {
-    // Default listener that does nothing.
-};
-
-class LegendListeners implements Required<AgChartLegendListeners> {
-    @Validate(FUNCTION)
-    legendItemClick: (event: AgChartLegendClickEvent) => void = NO_OP_LISTENER;
+class LegendListeners implements AgChartLegendListeners {
+    @Validate(OPT_FUNCTION)
+    legendItemClick?: (event: AgChartLegendClickEvent) => void = undefined;
+    legendItemDoubleClick?: (event: AgChartLegendDoubleClickEvent) => void = undefined;
 }
 
 export class Legend {
@@ -272,6 +253,7 @@ export class Legend {
         this.item.marker.parent = this;
 
         this.interactionManager.addListener('click', (e) => this.checkLegendClick(e));
+        this.interactionManager.addListener('dblclick', (e) => this.checkLegendDoubleClick(e));
         this.interactionManager.addListener('hover', (e) => this.handleLegendMouseMove(e));
     }
 
@@ -491,7 +473,7 @@ export class Legend {
         this.pagination.translationX = 0;
         this.pagination.translationY = 0;
 
-        const { pages, maxPageHeight, maxPageWidth, paginationBBox, verticalOrientation } = this.calculatePagination(
+        const { pages, maxPageHeight, maxPageWidth, paginationBBox, paginationVertical } = this.calculatePagination(
             bboxes,
             width,
             height
@@ -507,7 +489,7 @@ export class Legend {
 
         let paginationX = 0;
         let paginationY = -paginationBBox.y - this.item.marker.size / 2;
-        if (verticalOrientation) {
+        if (paginationVertical) {
             paginationY += legendItemsHeight + paginationComponentPadding;
         } else {
             paginationX += -paginationBBox.x + legendItemsWidth + paginationComponentPadding;
@@ -530,7 +512,7 @@ export class Legend {
         const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
 
         const orientation = this.getOrientation();
-        const verticalOrientation = orientation === 'vertical';
+        const paginationVertical = ['left', 'right'].includes(this.position);
 
         let paginationBBox: BBox = this.pagination.computeBBox();
         let lastPassPaginationBBox: BBox = new BBox(0, 0, 0, 0);
@@ -553,8 +535,8 @@ export class Legend {
             }
 
             paginationBBox = lastPassPaginationBBox;
-            const maxWidth = width - (verticalOrientation ? 0 : paginationBBox.width);
-            const maxHeight = height - (verticalOrientation ? paginationBBox.height : 0);
+            const maxWidth = width - (paginationVertical ? 0 : paginationBBox.width);
+            const maxHeight = height - (paginationVertical ? paginationBBox.height : 0);
 
             const layout = gridLayout({
                 orientation,
@@ -582,7 +564,7 @@ export class Legend {
             }
         } while (!stableOutput(lastPassPaginationBBox));
 
-        return { maxPageWidth, maxPageHeight, pages, paginationBBox, verticalOrientation };
+        return { maxPageWidth, maxPageHeight, pages, paginationBBox, paginationVertical };
     }
 
     updatePositions(pageNumber: number = 0) {
@@ -628,7 +610,7 @@ export class Legend {
             }
 
             markerLabel.visible = true;
-            let column = columns[columnIndex];
+            const column = columns[columnIndex];
 
             if (!column) {
                 return;
@@ -775,7 +757,44 @@ export class Legend {
 
         this.chart.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
 
-        legendItemClick({ enabled: newEnabled, itemId, seriesId: series.id });
+        legendItemClick?.({ type: 'click', enabled: newEnabled, itemId, seriesId: series.id });
+    }
+
+    private checkLegendDoubleClick(event: InteractionEvent<'dblclick'>) {
+        const {
+            listeners: { legendItemDoubleClick },
+            chart,
+            item: { toggleSeriesVisible },
+        } = this;
+        const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
+        if (!datum) {
+            return;
+        }
+
+        const { id, itemId } = datum;
+        const series = chart.series.find((s) => s.id === id);
+        if (!series) {
+            return;
+        }
+        event.consume();
+
+        if (toggleSeriesVisible) {
+            const singleItemVisible =
+                chart.series.reduce((count, s) => count + s.getLegendData().filter((d) => d.enabled).length, 0) === 1;
+
+            chart.series.forEach((s) => {
+                const legendData = s.getLegendData();
+
+                legendData.forEach((d) => {
+                    const newEnabled = d.itemId === itemId || singleItemVisible;
+                    s.toggleSeriesItem(d.itemId, newEnabled);
+                });
+            });
+        }
+
+        this.chart.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
+
+        legendItemDoubleClick?.({ type: 'dblclick', enabled: true, itemId, seriesId: series.id });
     }
 
     private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
@@ -822,7 +841,7 @@ export class Legend {
             this.tooltipManager.updateTooltip(this.id);
         }
 
-        if (toggleSeriesVisible || listeners.legendItemClick !== NO_OP_LISTENER) {
+        if (toggleSeriesVisible || listeners.legendItemClick != null) {
             this.cursorManager.updateCursor(this.id, 'pointer');
         }
 

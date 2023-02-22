@@ -266,16 +266,18 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
         if (model == null) {
             promises = this.filters!.map((filter: IFilterComp, index: number) => {
-                const res = setFilterModel(filter, null);
-                this.updateActiveList(index);
+                const res = setFilterModel(filter, null).then(() => {
+                    this.updateActiveList(index);
+                });
                 return res;
             })!;
         } else {
             this.filters!.forEach((filter, index) => {
                 const filterModel = model.filterModels!.length > index ? model.filterModels![index] : null;
-                const res = setFilterModel(filter, filterModel);
+                const res = setFilterModel(filter, filterModel).then(() => {
+                    this.updateActiveList(index);
+                });
                 promises.push(res);
-                this.updateActiveList(index);
             });
         }
 
@@ -319,6 +321,10 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             // reset focus to the top of the container, and blur
             this.forceFocusOutOfContainer(true);
         }
+    }
+
+    public afterGuiDetached(): void {
+        this.executeFunctionIfExists('afterGuiDetached');
     }
 
     public onAnyFilterChanged(): void {
@@ -419,5 +425,14 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         }
 
         return true;
+    }
+
+    getModelAsString(model: IMultiFilterModel): string {
+        if (!this.filters || !model?.filterModels?.length) {
+            return '';
+        }
+        const lastActiveIndex = this.getLastActiveFilterIndex() ?? 0;
+        const activeFilter = this.filters[lastActiveIndex];
+        return activeFilter.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
     }
 }

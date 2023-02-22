@@ -1,5 +1,4 @@
-import { AgCartesianChartOptions, AgBarSeriesOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import { AgCartesianChartOptions, AgBarSeriesOptions, AgChart } from 'ag-charts-community'
 import { getData } from './data';
 
 const options: AgCartesianChartOptions = {
@@ -19,11 +18,7 @@ const options: AgCartesianChartOptions = {
     {
       type: 'number',
       position: 'left',
-      label: {
-        formatter: (params) => {
-          return params.value + '%'
-        },
-      },
+      label: {},
     },
   ],
   legend: {
@@ -31,7 +26,7 @@ const options: AgCartesianChartOptions = {
   },
 }
 
-const chart = agCharts.AgChart.create(options);
+const chart = AgChart.create(options);
 
 function reset() {
   const element = document.getElementsByClassName('ag-chart-wrapper')![0]! as HTMLElement;
@@ -46,7 +41,7 @@ function reset() {
   delete options.axes![1].label!.avoidCollisions;
 
   options.series![0].xKey = 'year';
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }
 
 function disableRotation() {
@@ -55,7 +50,7 @@ function disableRotation() {
   options.axes![0].label!.autoRotate = false;
   options.axes![1].label!.autoRotate = false;
 
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }
 
 function fixedRotation() {
@@ -64,7 +59,7 @@ function fixedRotation() {
   options.axes![0].label!.autoRotate = false;
   options.axes![1].label!.autoRotate = false;
 
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }
 
 function autoRotation() {
@@ -73,29 +68,29 @@ function autoRotation() {
   options.axes![0].label!.autoRotate = true;
   options.axes![1].label!.autoRotate = true;
 
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }
 
 function uniformLabels() {
   options.series![0].xKey = 'year';
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }
 
 function irregularLabels() {
   options.series![0].xKey = 'country';
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }
 
 function noCollisionDetection() {
   options.axes![0].label!.avoidCollisions = false;
   options.axes![1].label!.avoidCollisions = false;
 
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }
 
 function autoCollisionDetection() {
   options.axes![0].label!.avoidCollisions = true;
   options.axes![1].label!.avoidCollisions = true;
 
-  agCharts.AgChart.update(chart, options);
+  AgChart.update(chart, options);
 }

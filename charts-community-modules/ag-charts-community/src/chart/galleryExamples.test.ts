@@ -148,7 +148,7 @@ describe('Gallery Examples', () => {
     });
 
     describe('AgChartV2#create', () => {
-        let ctx = setupMockCanvas();
+        const ctx = setupMockCanvas();
 
         beforeEach(() => {
             console.warn = jest.fn();
@@ -191,7 +191,7 @@ describe('Gallery Examples', () => {
     });
 
     describe('AgChartV2#update', () => {
-        let ctx = setupMockCanvas();
+        const ctx = setupMockCanvas();
 
         beforeEach(() => {
             console.warn = jest.fn();

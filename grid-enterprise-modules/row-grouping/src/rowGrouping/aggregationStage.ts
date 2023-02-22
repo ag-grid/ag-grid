@@ -291,7 +291,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             data: rowNode ? rowNode.data : undefined,
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsService.get('context'),
+            context: this.gridOptionsService.context,
         } as any; // the "as any" is needed to allow the deprecation warning messages
 
         return aggFuncAny(params);

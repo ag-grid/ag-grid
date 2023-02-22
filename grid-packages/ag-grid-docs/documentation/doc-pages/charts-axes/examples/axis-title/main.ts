@@ -1,5 +1,4 @@
-import { AgCartesianChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import { AgCartesianChartOptions, AgChart } from 'ag-charts-community'
 
 const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
@@ -38,16 +37,16 @@ const options: AgCartesianChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)
 
 function showAxisTitles() {
   options.axes![0].title!.enabled = true
   options.axes![1].title!.enabled = true
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 
 function hideAxisTitles() {
   options.axes![0].title!.enabled = false
   options.axes![1].title!.enabled = false
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }

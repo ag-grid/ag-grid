@@ -85,3 +85,4 @@ ModuleRegistry.ModuleRegistry.register(ViewportRowModelModule);
 ModuleRegistry.ModuleRegistry.register(ClientSideRowModelModule);
 ModuleRegistry.ModuleRegistry.register(CsvExportModule);
 ModuleRegistry.ModuleRegistry.register(InfiniteRowModelModule);
+ModuleRegistry.ModuleRegistry.setIsBundled();

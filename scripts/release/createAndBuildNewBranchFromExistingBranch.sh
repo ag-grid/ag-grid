@@ -44,7 +44,7 @@ echo "########################################################################"
 echo "####### Updating lerna.json, package.json, bower.json and version.ts files #########"
 if [ $PROJECTS_TO_VERSION == "all" ] || [ $PROJECTS_TO_VERSION == "charts" ]; then
   echo "Versioning Charts Packages"
-  node scripts/release/versionModules.js "6.2.1" "~6.2.1" '["charts-community-modules", "examples-charts"]' "all"
+  node scripts/release/versionModules.js $NEW_CHARTS_VERSION $PEER_CHARTS_VERSION '["charts-packages", "examples-charts"]' $MODULES_TO_VERSION
 fi
 if [ $PROJECTS_TO_VERSION == "all" ] || [ $PROJECTS_TO_VERSION == "grid" ]; then
   echo "Versioning Grid Packages"

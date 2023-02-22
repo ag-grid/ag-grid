@@ -92,16 +92,14 @@ export class EventService implements IEventEmitter {
     }
 
     public dispatchEvent(event: AgEvent): void {
-        let agEvent = event;
+        let agEvent = event as AgGridEvent<any>;
         if (this.gridOptionsService) {
             // Apply common properties to all dispatched events if this event service has had its beans set with gridOptionsService.
-            // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsService. 
-            agEvent = {
-                ...event,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context'),
-            } as AgGridEvent<any>;
+            // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsService.
+            const { api, columnApi, context } = this.gridOptionsService;
+            agEvent.api = api;
+            agEvent.columnApi = columnApi;
+            agEvent.context = context;
         }
 
         this.dispatchToListeners(agEvent, true);
@@ -118,6 +116,16 @@ export class EventService implements IEventEmitter {
 
     private dispatchToListeners(event: AgEvent, async: boolean) {
         const eventType = event.type;
+
+        if (async && 'event' in event) {
+            const browserEvent = (event as any).event;
+            if (browserEvent instanceof Event) {
+                // AG-7893 - Persist composedPath() so that its result can still be accessed by the user asynchronously.
+                // Within an async event handler if they call composedPath() on the event it will always return an empty [].
+                (event as any).eventPath = browserEvent.composedPath();
+            }
+        }
+
         const processEventListeners = (listeners: Set<Function>) => listeners.forEach(listener => {
             if (async) {
                 this.dispatchAsync(() => listener(event));

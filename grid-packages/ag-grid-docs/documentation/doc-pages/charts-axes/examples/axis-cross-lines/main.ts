@@ -1,5 +1,4 @@
-import * as agCharts from 'ag-charts-community';
-import { AgChartOptions } from 'ag-charts-community';
+import { AgChart, AgChartOptions, time } from 'ag-charts-community';
 import { getData } from './data';
 
 const options: AgChartOptions = {
@@ -54,8 +53,11 @@ const options: AgChartOptions = {
     {
       position: 'bottom',
       type: 'time',
+      label: {
+        autoRotate: true,
+      },
       tick: {
-        count: agCharts.time.month.every(2),
+        interval: time.month.every(2),
       },
       title: {
         text: 'Date',
@@ -135,4 +137,4 @@ const options: AgChartOptions = {
   ],
 };
 
-var chart = agCharts.AgChart.create(options);
+var chart = AgChart.create(options);

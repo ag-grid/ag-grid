@@ -1,16 +1,8 @@
 import { MD5 } from './md5';
 
-// move to general utils
-function missingOrEmpty<T>(value?: T[] | string | null): boolean {
-    return value == null || value.length === 0;
-}
-
-function exists(value: any, allowEmptyString = false): boolean {
-    return value != null && (value !== '' || allowEmptyString);
-}
-
-export class LicenseManager {
-    private static RELEASE_INFORMATION: string = 'MTY3MzM3ODMwNzAyMA==';
+@Bean('licenseManager')
+export class LicenseManager extends BeanStub {
+    private static RELEASE_INFORMATION: string = 'MTY3NjUzMjQzNzkwMg==';
     private static licenseKey: string;
     private watermarkMessage: string | undefined = undefined;
 

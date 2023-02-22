@@ -2,6 +2,8 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } f
 
 import { ICellEditorParams } from "@ag-grid-community/core";
 
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
@@ -9,7 +11,10 @@ export default forwardRef((props: ICellEditorParams, ref) => {
     const createInitialState = () => {
         let startValue;
 
-        if (props.charPress) {
+        if (props.eventKey === KEY_BACKSPACE) {
+            // if backspace or delete pressed, we clear the cell
+            startValue = '';
+        } else if (props.charPress) {
             // if a letter was pressed, we start with the letter
             startValue = props.charPress;
         } else {
@@ -51,13 +56,17 @@ export default forwardRef((props: ICellEditorParams, ref) => {
         return isCharNumeric(charStr);
     };
 
+    const isBackspace = (event: any) => {
+        return event.key === KEY_BACKSPACE;
+    };
+
     const finishedEditingPressed = (event: any) => {
         const key = event.key;
         return key === KEY_ENTER || key === KEY_TAB;
     };
 
     const onKeyDown = (event: any) => {
-        if (isLeftOrRight(event)) {
+        if (isLeftOrRight(event) || isBackspace(event)) {
             event.stopPropagation();
             return;
         }

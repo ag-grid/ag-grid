@@ -39,12 +39,14 @@ The following is a list of all the default built in menu items with the rules ab
 - `copy`: Copy selected value to clipboard. Shown by default.
 - `copyWithHeaders`: Copy selected value to clipboard with headers. Shown by default.
 - `copyWithGroupHeaders`: Copy selected value to clipboard with headers and header groups. Shown by default.
+- `cut`: Cut the selected value to clipboard. Not shown by default.
 - `paste`: Always disabled (see note in clipboard section). Always disabled. Shown by default.
 - `resetColumns`: Reset all columns. Not shown by default.
 - `export`: Export sub menu (containing csvExport and excelExport). Shown by default.
 - `csvExport`: Export to CSV using all default export values. Shown by default.
 - `excelExport`: Export to Excel (.xlsx) using all default export values. Shown by default.
-- `chartRange`: Chart a range of selected cells. Only shown if charting is enabled.
+- `chartRange`: Chart a range of selected cells. Only shown if charting is enabled. Configured via [chartToolPanelsDef](/integrated-charts-chart-tool-panels/#settings-tool-panel).
+- `pivotChart`: Chart all grouped and pivoted data from the grid. Only shown if charting is enabled and in [pivot mode](/integrated-charts-pivot-chart/). Configured via [chartToolPanelsDef](/integrated-charts-chart-tool-panels/#settings-tool-panel).
 
 ## Default Context Menu
 

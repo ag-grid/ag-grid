@@ -18,7 +18,7 @@ export function isBrowserSafari(): boolean {
     return isSafari;
 }
 
-function getSafariVersion(): number {
+export function getSafariVersion(): number {
     if (safariVersion === undefined) {
         if (isBrowserSafari()) {
             const versionMatch = navigator.userAgent.match(/version\/(\d+)/i);
@@ -67,9 +67,7 @@ export function isIOSUserAgent(): boolean {
     if (isIOS === undefined) {
         isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
             // eslint-disable-next-line
-            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
-            // @ts-ignore
-            !window.MSStream;
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
     }
 
     return isIOS;

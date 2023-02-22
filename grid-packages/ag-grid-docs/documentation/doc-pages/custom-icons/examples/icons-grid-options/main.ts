@@ -101,6 +101,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     menuAddRowGroup: 'A',
     menuRemoveRowGroup: 'R',
     clipboardCopy: '>>',
+    clipboardCut: '<<',
     clipboardPaste: '>>',
     rowDrag: '<i class="fa fa-circle"/>',
   },

@@ -1,5 +1,4 @@
-import { AgCartesianChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import { AgCartesianChartOptions, AgChart } from 'ag-charts-community'
 
 const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
@@ -25,10 +24,7 @@ const options: AgCartesianChartOptions = {
       position: 'left',
       label: {
         format: '.0f',
-      },
-      tick: {
-        count: 10,
-      },
+      }
     },
   ],
   legend: {
@@ -36,7 +32,7 @@ const options: AgCartesianChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)
 
 function useNumberAxis() {
   options.axes = [
@@ -50,13 +46,10 @@ function useNumberAxis() {
       min: 1,
       label: {
         format: '.0f',
-      },
-      tick: {
-        count: 10,
-      },
+      }
     },
   ]
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 
 function useLogAxis() {
@@ -71,13 +64,10 @@ function useLogAxis() {
       min: 10,
       label: {
         format: '.0f',
-      },
-      tick: {
-        count: 10,
-      },
+      }
     },
   ]
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 
 function useBaseTwoLogAxis() {
@@ -93,13 +83,10 @@ function useBaseTwoLogAxis() {
       label: {
         format: '.0f',
       },
-      tick: {
-        count: 10,
-      },
       base: 2,
     },
   ]
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 
 function useLogAxisWithFewerTicks() {
@@ -116,9 +103,9 @@ function useLogAxisWithFewerTicks() {
         format: '.0f',
       },
       tick: {
-        count: 2, // a hint that we want a smaller tick count
+        minSpacing: 200,
       },
     },
   ]
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }

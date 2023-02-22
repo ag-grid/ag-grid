@@ -13,6 +13,7 @@ Object.keys(agGrid).forEach(function(key) {
 agGrid.ModuleRegistry.register(ClientSideRowModelModule.ClientSideRowModelModule);
 agGrid.ModuleRegistry.register(CsvExportModule.CsvExportModule);
 agGrid.ModuleRegistry.register(InfiniteRowModelModule.InfiniteRowModelModule);
+agGrid.ModuleRegistry.setIsBundled();
 require('./styles/ag-grid-no-native-widgets.css');
 require('./styles/ag-grid.css');
 require('./styles/ag-theme-alpine-no-font.css');

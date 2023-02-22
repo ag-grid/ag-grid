@@ -1,0 +1,247 @@
+@use "../design-system/" as *;
+
+.container {
+    margin-top: $size-6 !important; // !important for .ag-styles specificity
+    margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
+}
+
+.topSection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-4;
+    margin-top: $size-6 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        flex-wrap: nowrap;
+    }
+
+    h1 {
+        font-size: 46px;
+    }
+
+    p {
+        font-size: 18px;
+    }
+
+    h1 svg {
+        --text-color: red;
+
+        display: inline-block;
+        position: relative;
+        width: 46px;
+        bottom: 4px;
+    }
+}
+
+.enterpriseExplainer {
+    margin-top: 76px !important; // !important for .ag-styles specificit
+    margin-bottom: $size-4 !important; // !important for .ag-styles specificit
+}
+
+.videoPrompt {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 $size-2;
+    margin-top: $size-6 !important; // !important for .ag-styles specificity
+
+    h3,
+    p {
+        margin: 0 !important; // !important for .ag-styles specificity
+        line-height: $line-height-tight;
+    }
+}
+
+.thumbnail {
+    width: 33.333%;
+    min-width: 160px;
+    max-width: 220px;
+    aspect-ratio: 16 / 9;
+    margin-top: $size-1 !important; // !important for .ag-styles specificity
+    object-fit: cover;
+    border-radius: var(--border-radius);
+}
+
+.bulkLicenses,
+.communityEnterprise,
+.videoExplainer,
+.licensesInDetail {
+    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
+}
+
+.bulkLicenses {
+    margin-top: $size-5 !important; // !important for .ag-styles specificity
+    text-align: center;
+
+    p {
+        max-width: 44em;
+    }
+
+    a {
+        margin-bottom: $size-1;
+        margin-left: $size-1;
+        margin-right: $size-1;
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        p {
+            margin: 0 !important; // !important for .ag-styles specificity
+            text-align: left;
+        }
+
+        a {
+            font-size: $font-size-large !important; // !important for .ag-styles specificity
+        }
+    }
+}
+
+.contactSalesButton {
+    display: inline-flex !important; // !important for .ag-styles specificity
+    align-items: center;
+    gap: $size-1;
+
+    :global(.icon) {
+        position: static !important; // !important for .ag-styles specificity
+        width: 54px !important; // !important for .ag-styles specificity
+        height: 54px !important; // !important for .ag-styles specificity
+        margin: 0 0 -0.1em !important; // !important for .ag-styles specificity
+    }
+
+    div > span {
+        display: block;
+        line-height: 1.125;
+        text-align: left;
+    }
+}
+
+.communityEnterprise {
+    grid-template-columns: 1fr 2fr;
+    gap: $size-3;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        display: grid;
+    }
+
+    :global(.button-secondary):not(:last-child) {
+        margin-bottom: $size-1;
+    }
+}
+
+.community {
+    margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
+    }
+}
+
+.enterprise svg {
+    --text-color: red;
+
+    position: relative;
+    width: 26px;
+    top: -1px;
+    left: 2px;
+}
+
+.NpmButton svg {
+    display: inline-block;
+    height: 2.5em;
+    margin: -1.15em 0.33em -1em 0;
+    fill: var(--button-text-color);
+}
+
+.videoExplainer {
+    display: grid;
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        grid-template-columns: 2fr 1fr;
+        grid-auto-flow: dense;
+        gap: $size-3;
+    }
+
+    div {
+        margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            grid-column: 2;
+        }
+    }
+
+    h3 {
+        line-height: $line-height-tight !important; // !important for .ag-styles specificity
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            margin-top: -$size-1 !important; // !important for .ag-styles specificity
+        }
+    }
+
+    iframe {
+        width: 100%;
+        aspect-ratio: 16/9;
+        border-radius: var(--border-radius);
+        border: none;
+    }
+}
+
+.licensesInDetail {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: $size-3;
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        flex-direction: row;
+    }
+
+    > h3 {
+        width: 100%;
+        text-align: center;
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+    }
+
+    ul {
+        line-height: $line-height-tight;
+    }
+
+    li:not(:last-child) {
+        margin-bottom: $size-half !important; // !important for .ag-styles specificity
+    }
+
+    .singleApplicationLicense,
+    .multipleApplicationsLicense {
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            width: calc(50% - $size-3 / 2);
+        }
+    }
+
+    // Needs review after <ul> styling
+    .deploymentLicense ul {
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            columns: 2;
+            gap: $size-3;
+        }
+    }
+}
+
+.contactSales {
+    margin-bottom: $size-10 !important; // !important for .ag-styles specificity
+    text-align: center;
+
+    p {
+        max-width: 740px;
+        margin-right: auto;
+        margin-bottom: $size-2;
+        margin-left: auto;
+    }
+
+    a {
+        font-size: $font-size-large !important; // !important for .ag-styles specificity
+        display: inline-block;
+    }
+}

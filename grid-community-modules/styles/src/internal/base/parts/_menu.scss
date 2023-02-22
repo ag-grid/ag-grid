@@ -184,5 +184,9 @@
         background-color: transparent;
     }
 
+    .ag-group-filter-field-select-wrapper {
+        @include ag.vertical-widget-container();
+    }
+
     @include ag.keyboard-focus((ag-multi-filter-group-title-bar), 4px);
 }

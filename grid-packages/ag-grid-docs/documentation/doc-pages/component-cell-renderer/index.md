@@ -177,6 +177,11 @@ The example below demonstrates custom methods on cell renderers called by the ap
 
 <grid-example title='Get Cell Renderer' name='get-cell-renderer' type='generated'></grid-example>
 
+[[only-react]]
+|[[note]]
+||Note that the hook version of the above example makes use of `useImperativeHandle` to expose methods to the grid (and other components). Please
+||refer to the [hook specific](/react-hooks/) documentation for more information.
+
 [[only-angular]]
 |### Example: Rendering using more complex Components
 |This example illustrates a few different ideas:
@@ -201,11 +206,6 @@ The example below demonstrates custom methods on cell renderers called by the ap
 |- Storing the Grid API via the "Grid Ready" event, and using it later
 |
 |<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
-
-[[only-react]]
-|[[note]]
-||Note that the hook version of this example makes use of `useImperativeHandle` to expose methods to the grid (and other components). Please
-||refer to the [hook specific](/react-hooks/) documentation for more information.
 
 [[only-angular]]
 |

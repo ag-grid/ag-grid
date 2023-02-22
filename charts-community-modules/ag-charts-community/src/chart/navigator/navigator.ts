@@ -1,22 +1,20 @@
 import { RangeSelector } from '../shapes/rangeSelector';
-import { BBox } from '../../scene/bbox';
 import { NavigatorMask } from './navigatorMask';
 import { NavigatorHandle } from './navigatorHandle';
-import { ChartUpdateType } from '../chart';
+import { BaseModuleInstance, ModuleContext, ModuleInstance } from '../../util/module';
 import { BOOLEAN, NUMBER, Validate } from '../../util/validation';
-import { InteractionManager } from '../interaction/interactionManager';
-import { CursorManager } from '../interaction/cursorManager';
-import { Scene } from '../../scene/scene';
-import { Series } from '../series/series';
+import { LayoutCompleteEvent, LayoutContext } from '../layout/layoutService';
+import { BBox } from '../../scene/bbox';
 
 interface Offset {
     offsetX: number;
     offsetY: number;
 }
 
-export class Navigator {
+export class Navigator extends BaseModuleInstance implements ModuleInstance {
     private readonly rs = new RangeSelector();
 
+    // Wrappers to allow option application to the scene graph nodes.
     readonly mask = new NavigatorMask(this.rs.mask);
     readonly minHandle = new NavigatorHandle(this.rs.minHandle);
     readonly maxHandle = new NavigatorHandle(this.rs.maxHandle);
@@ -36,20 +34,6 @@ export class Navigator {
         return this._enabled;
     }
 
-    set x(value: number) {
-        this.rs.x = value;
-    }
-    get x(): number {
-        return this.rs.x;
-    }
-
-    set y(value: number) {
-        this.rs.y = value;
-    }
-    get y(): number {
-        return this.rs.y;
-    }
-
     set width(value: number) {
         this.rs.width = value;
     }
@@ -65,13 +49,7 @@ export class Navigator {
     }
 
     @Validate(NUMBER(0))
-    private _margin = 10;
-    set margin(value: number) {
-        this._margin = value;
-    }
-    get margin(): number {
-        return this._margin;
-    }
+    margin = 10;
 
     set min(value: number) {
         this.rs.min = value;
@@ -100,24 +78,49 @@ export class Navigator {
         this.rs.visible = this.enabled && this.visible;
     }
 
-    constructor(
-        private readonly chart: {
-            scene: Scene;
-            update(
-                type: ChartUpdateType,
-                opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
-            ): void;
-        },
-        interactionManager: InteractionManager,
-        private readonly cursorManager: CursorManager
-    ) {
-        this.chart.scene.root!.append(this.rs);
-        this.rs.onRangeChange = () => chart.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
+    constructor(private readonly ctx: ModuleContext) {
+        super();
 
-        interactionManager.addListener('drag-start', (event) => this.onDragStart(event));
-        interactionManager.addListener('drag', (event) => this.onDrag(event));
-        interactionManager.addListener('hover', (event) => this.onDrag(event));
-        interactionManager.addListener('drag-end', () => this.onDragStop());
+        this.rs.onRangeChange = () =>
+            this.ctx.zoomManager.updateZoom('navigator', { x: { min: this.rs.min, max: this.rs.max } });
+
+        [
+            ctx.interactionManager.addListener('drag-start', (event) => this.onDragStart(event)),
+            ctx.interactionManager.addListener('drag', (event) => this.onDrag(event)),
+            ctx.interactionManager.addListener('hover', (event) => this.onDrag(event)),
+            ctx.interactionManager.addListener('drag-end', () => this.onDragStop()),
+        ].forEach((s) => this.destroyFns.push(() => ctx.interactionManager.removeListener(s)));
+        [
+            ctx.layoutService.addListener('before-series', (event) => this.layout(event)),
+            ctx.layoutService.addListener('layout-complete', (event) => this.layoutComplete(event)),
+        ].forEach((s) => this.destroyFns.push(() => ctx.layoutService.removeListener(s)));
+
+        ctx.scene.root!.appendChild(this.rs);
+        this.destroyFns.push(() => ctx.scene.root?.removeChild(this.rs));
+
+        this.updateGroupVisibility();
+    }
+
+    private layout({ shrinkRect }: LayoutContext) {
+        if (this.enabled) {
+            const navigatorTotalHeight = this.rs.height + this.margin;
+            shrinkRect.shrink(navigatorTotalHeight, 'bottom');
+            this.rs.y = shrinkRect.y + shrinkRect.height + this.margin;
+        }
+
+        return { shrinkRect };
+    }
+
+    private layoutComplete({ series: { rect, visible } }: LayoutCompleteEvent) {
+        if (this.enabled && visible) {
+            this.rs.x = rect.x;
+            this.rs.width = rect.width;
+        }
+        this.visible = visible;
+    }
+
+    public update(): void {
+        // Nothing to do!
     }
 
     private onDragStart(offset: Offset) {
@@ -153,16 +156,14 @@ export class Navigator {
         const maxX = x + width * rs.max;
         const visibleRange = new BBox(minX, y, maxX - minX, height);
 
-        function getRatio() {
-            return Math.min(Math.max((offsetX - x) / width, 0), 1);
-        }
+        const getRatio = () => Math.min(Math.max((offsetX - x) / width, 0), 1);
 
         if (minHandle.containsPoint(offsetX, offsetY) || maxHandle.containsPoint(offsetX, offsetY)) {
-            this.cursorManager.updateCursor('navigator', 'ew-resize');
+            this.ctx.cursorManager.updateCursor('navigator', 'ew-resize');
         } else if (visibleRange.containsPoint(offsetX, offsetY)) {
-            this.cursorManager.updateCursor('navigator', 'grab');
+            this.ctx.cursorManager.updateCursor('navigator', 'grab');
         } else {
-            this.cursorManager.updateCursor('navigator');
+            this.ctx.cursorManager.updateCursor('navigator');
         }
 
         if (this.minHandleDragging) {

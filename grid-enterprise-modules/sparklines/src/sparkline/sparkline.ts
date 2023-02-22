@@ -1,6 +1,7 @@
 import { HighlightStyleOptions } from '@ag-grid-community/core';
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
+import { SparklineFactoryOptions } from './agSparkline';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
 
@@ -37,6 +38,8 @@ export class SparklineAxis {
 }
 export abstract class Sparkline {
     readonly id: string = createId(this);
+
+    processedOptions?: SparklineFactoryOptions;
 
     readonly scene: _Scene.Scene;
     readonly canvasElement: HTMLCanvasElement;
@@ -108,7 +111,7 @@ export abstract class Sparkline {
     // Maximum y value in provided data.
     protected max: number | undefined = undefined;
 
-    protected xScale!: ScaleType;
+    protected xScale!: any;
     protected yScale: _Scale.LinearScale = new LinearScale();
 
     readonly axis = new SparklineAxis();
@@ -176,7 +179,7 @@ export abstract class Sparkline {
      * Produce data joins.
      * Update selection's nodes using node data.
      */
-    protected update() { }
+    protected update() {}
 
     // Update y scale based on processed data.
     protected updateYScale(): void {
@@ -185,7 +188,7 @@ export abstract class Sparkline {
     }
 
     // Update y scale domain based on processed data.
-    protected updateYScaleDomain() { }
+    protected updateYScaleDomain() {}
 
     // Update y scale range based on height and padding (seriesRect).
     protected updateYScaleRange(): void {
@@ -238,7 +241,7 @@ export abstract class Sparkline {
     }
 
     // Update axis line.
-    protected updateAxisLine(): void { }
+    protected updateAxisLine(): void {}
 
     // Update X and Y scales and the axis line.
     protected updateAxes(): void {
@@ -267,13 +270,13 @@ export abstract class Sparkline {
     }
 
     // Update the selection's nodes.
-    protected updateNodes(): void { }
+    protected updateNodes(): void {}
 
     // Update the vertical crosshair line.
-    protected updateXCrosshairLine(): void { }
+    protected updateXCrosshairLine(): void {}
 
     // Update the horizontal crosshair line.
-    protected updateYCrosshairLine(): void { }
+    protected updateYCrosshairLine(): void {}
 
     // Efficiently update sparkline nodes on hightlight changes.
     protected highlightedDatum?: SeriesNodeDatum;
@@ -329,7 +332,7 @@ export abstract class Sparkline {
         this.scene.render();
     }
 
-    protected smallestInterval?: { x: number, y: number } = undefined;
+    protected smallestInterval?: { x: number; y: number } = undefined;
     // Fetch required values from the data object and process them.
     private processData() {
         const { data, yData, xData } = this;
@@ -358,10 +361,10 @@ export abstract class Sparkline {
             const { x } = this.smallestInterval;
 
             const interval = Math.abs(curr - prev);
-            if (interval > 0 && interval < x ) {
+            if (interval > 0 && interval < x) {
                 this.smallestInterval.x = interval;
             }
-        }
+        };
 
         let prevX;
 
@@ -583,7 +586,7 @@ export abstract class Sparkline {
         const { clientX, clientY } = event;
 
         // confine tooltip to sparkline width if tooltip container not provided.
-        if (this.tooltip.container == undefined) {
+        if (this.processedOptions?.tooltip?.container == undefined && this.tooltip.container !== canvasElement) {
             this.tooltip.container = canvasElement;
         }
 

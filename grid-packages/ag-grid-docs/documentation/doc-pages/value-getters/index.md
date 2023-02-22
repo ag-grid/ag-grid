@@ -2,7 +2,7 @@
 title: "Value Getters"
 ---
 
-Normally columns are configured with `field` attributes, so the column knows what field to take values from in the data. Instead of providing `field` it is possible to provide `valueGetter` instead. A Value Getter is a function that gets called allowing values to be pulled from literally anywhere, including executing any expressions you wish along the way.
+Normally columns are configured with `field` attributes, so the column knows what field to take values from in the data. Instead of providing `field` it is possible to provide a `valueGetter` instead. A Value Getter is a function that gets called allowing values to be pulled from literally anywhere, including executing any expressions you wish along the way.
 
 You should use `colDef.field` most of the time. Use value getters when retrieving the data requires more logic, including executing your own expressions (similar to what a spreadsheet would do).
 
@@ -57,7 +57,7 @@ See the [Column Tool Panel Example](/tool-panel-columns/#column-tool-panel-examp
 
 ### Filter Value Getters
 
-See [Row Grouping Filtering](/grouping-filtering/) for more information on Filter Value Getters.
+See [Filter Values](/filtering/#filter-values) for more information on Filter Value Getters.
 
 <api-documentation source='column-properties/properties.json' section="filtering" names='["filterValueGetter"]' ></api-documentation>
 
@@ -161,11 +161,11 @@ If you have `valueCacheNeverExpires=true`, then the only event that will expire 
 This example is again almost identical to the example above. The difference here is the value cache is turned on but
 to never invalidate. Note the following:
 
-- When the grid initialises, there are 12 value getter calls. The values are getting cached.<p/>
+- When the grid initialises, there are 10 value getter calls. The values are getting cached.<p/>
 
 - After you edit a cell, either through the UI or through the API by pressing **'Update One Value'**,
-  the value getters are not called again, so the total columns are not correctly refreshed.
-  Because the grid already executed the value getters for this column, it will not do it again,
+  the value getters are not called again, so the **Total** and **Total x 10** columns are not correctly refreshed.
+  The grid already executed the value getters for this column, it will not do it again,
   it will instead take values from the value cache.<p/>
 
 - To get the total column to update after edits, press **'Expire Value Cache'**

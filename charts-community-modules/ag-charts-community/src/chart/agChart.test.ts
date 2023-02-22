@@ -363,7 +363,7 @@ describe('update', () => {
     });
 
     test('axes', async () => {
-        let chartProxy = AgChart.create({
+        const chartProxy = AgChart.create({
             data: revenueProfitData,
             series: [
                 {
@@ -378,7 +378,7 @@ describe('update', () => {
             data: revenueProfitData,
             series: [
                 {
-                    xKey: 'blah',
+                    xKey: 'profit',
                     yKey: 'revenue',
                 },
             ],
@@ -399,7 +399,7 @@ describe('update', () => {
         await waitForChartStability(chartProxy);
 
         const chart = deproxy(chartProxy);
-        let axes = chart.axes;
+        const axes = chart.axes;
         expect(axes.length).toBe(2);
         expect(axes[0] instanceof NumberAxis).toBe(true);
         expect(axes[1] instanceof NumberAxis).toBe(true);
@@ -418,7 +418,7 @@ describe('update', () => {
             data: revenueProfitData,
             series: [
                 {
-                    xKey: 'blah',
+                    xKey: 'profit',
                     yKey: 'revenue',
                 },
             ],

@@ -1,5 +1,4 @@
-import * as agCharts from "ag-charts-community"
-import { AgChartOptions, AgChartLegendLabelFormatterParams } from "ag-charts-community"
+import { AgChart, AgChartOptions, AgChartLegendLabelFormatterParams } from "ag-charts-community"
 
 function formatter({ value }: AgChartLegendLabelFormatterParams) {
   switch (value) {
@@ -63,4 +62,4 @@ const options: AgChartOptions = {
   },
 }
 
-agCharts.AgChart.create(options)
+AgChart.create(options)

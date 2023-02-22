@@ -1,5 +1,4 @@
-import { AgCartesianChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import { AgCartesianChartOptions, AgChart } from 'ag-charts-community'
 import { getData } from './data';
 
 const options: AgCartesianChartOptions = {
@@ -64,9 +63,9 @@ const options: AgCartesianChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)
 
 function toggleEnabled(value: boolean) {
   options.navigator!.enabled = value
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }

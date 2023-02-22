@@ -1,17 +1,24 @@
-import { SeriesNodeDatum } from '../series/series';
+import { SizedPoint } from '../../scene/point';
 import { BaseManager } from './baseManager';
 
 interface HighlightState {
-    highlightedDatum: SeriesNodeDatum;
+    highlightedDatum: HighlightNodeDatum;
+}
+
+interface HighlightNodeDatum {
+    readonly series: any;
+    readonly itemId?: any;
+    readonly datum: any;
+    readonly point?: Readonly<SizedPoint>;
 }
 
 export interface HighlightChangeEvent {
     type: 'highlight-change';
-    previousHighlight?: SeriesNodeDatum;
-    currentHighlight?: SeriesNodeDatum;
+    previousHighlight?: HighlightNodeDatum;
+    currentHighlight?: HighlightNodeDatum;
 }
 
-function isEqual(a?: SeriesNodeDatum, b?: SeriesNodeDatum) {
+function isEqual(a?: HighlightNodeDatum, b?: HighlightNodeDatum) {
     if (a === b) return true;
     if (a?.series !== b?.series) return false;
     if (a?.itemId !== b?.itemId) return false;
@@ -26,13 +33,13 @@ function isEqual(a?: SeriesNodeDatum, b?: SeriesNodeDatum) {
  */
 export class HighlightManager extends BaseManager<'highlight-change', HighlightChangeEvent> {
     private readonly states: Record<string, HighlightState> = {};
-    private activeHighlight?: SeriesNodeDatum = undefined;
+    private activeHighlight?: HighlightNodeDatum = undefined;
 
     public constructor() {
         super();
     }
 
-    public updateHighlight(callerId: string, highlightedDatum?: SeriesNodeDatum) {
+    public updateHighlight(callerId: string, highlightedDatum?: HighlightNodeDatum) {
         delete this.states[callerId];
 
         if (highlightedDatum != null) {
@@ -42,13 +49,13 @@ export class HighlightManager extends BaseManager<'highlight-change', HighlightC
         this.applyStates();
     }
 
-    public getActiveHighlight(): SeriesNodeDatum | undefined {
+    public getActiveHighlight(): HighlightNodeDatum | undefined {
         return this.activeHighlight;
     }
 
     private applyStates() {
         const previousHighlight = this.activeHighlight;
-        let highlightToApply: SeriesNodeDatum | undefined = undefined;
+        let highlightToApply: HighlightNodeDatum | undefined = undefined;
 
         // Last added entry wins.
         Object.entries(this.states)
@@ -60,13 +67,12 @@ export class HighlightManager extends BaseManager<'highlight-change', HighlightC
 
         const changed = !isEqual(previousHighlight, this.activeHighlight);
         if (changed) {
-            this.registeredListeners['highlight-change']?.forEach((listener) => {
-                listener.handler({
-                    type: 'highlight-change',
-                    previousHighlight,
-                    currentHighlight: this.activeHighlight,
-                });
-            });
+            const event: HighlightChangeEvent = {
+                type: 'highlight-change',
+                previousHighlight,
+                currentHighlight: this.activeHighlight,
+            };
+            this.listeners.dispatch('highlight-change', event);
         }
     }
 }

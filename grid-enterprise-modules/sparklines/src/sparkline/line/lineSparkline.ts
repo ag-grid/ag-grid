@@ -54,9 +54,8 @@ export class LineSparkline extends Sparkline {
 
     private lineSparklineGroup: _Scene.Group = new _Scene.Group();
     private markers: _Scene.Group = new _Scene.Group();
-    private markerSelection: _Scene.Selection<_Scene.Marker, _Scene.Group, LineNodeDatum, any> = _Scene.Selection.select(
-        this.markers
-    ).selectAll<_Scene.Marker>();
+    private markerSelection: _Scene.Selection<_Scene.Marker, _Scene.Group, LineNodeDatum, any> =
+        _Scene.Selection.select(this.markers).selectAll<_Scene.Marker>();
     private markerSelectionData: LineNodeDatum[] = [];
 
     readonly marker = new SparklineMarker();
@@ -127,7 +126,8 @@ export class LineSparkline extends Sparkline {
             return;
         }
 
-        const offsetX = xScale instanceof BandScale ? xScale.bandwidth / 2 : 0;
+        const continuous = !(xScale instanceof BandScale);
+        const offsetX = !continuous ? xScale.bandwidth / 2 : 0;
 
         const nodeData: LineNodeDatum[] = [];
 
@@ -139,8 +139,8 @@ export class LineSparkline extends Sparkline {
                 continue;
             }
 
-            const x = xScale.convert(xDatum) + offsetX;
-            const y = yScale.convert(yDatum);
+            const x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
+            const y = yDatum === undefined ? NaN : yScale.convert(yDatum);
 
             nodeData.push({
                 seriesDatum: { x: xDatum, y: yDatum },
@@ -229,9 +229,10 @@ export class LineSparkline extends Sparkline {
             return;
         }
 
+        const continuous = !(xScale instanceof BandScale);
         const path = linePath.path;
         const n = yData.length;
-        const offsetX = xScale instanceof BandScale ? xScale.bandwidth / 2 : 0;
+        const offsetX = !continuous ? xScale.bandwidth / 2 : 0;
         let moveTo = true;
 
         path.clear();
@@ -240,8 +241,8 @@ export class LineSparkline extends Sparkline {
             const xDatum = xData[i];
             const yDatum = yData[i];
 
-            const x = xScale.convert(xDatum) + offsetX;
-            const y = yScale.convert(yDatum);
+            const x = xScale.convert(continuous ? xScale.toDomain(xDatum) : xDatum) + offsetX;
+            const y = yDatum === undefined ? NaN : yScale.convert(yDatum);
 
             if (yDatum == undefined) {
                 moveTo = true;

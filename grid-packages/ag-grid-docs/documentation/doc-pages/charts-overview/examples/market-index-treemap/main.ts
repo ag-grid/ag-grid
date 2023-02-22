@@ -1,9 +1,7 @@
-import { AgChartOptions, AgTreemapSeriesTooltipRendererParams } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import { AgChartOptions, AgTreemapSeriesTooltipRendererParams, AgChart } from 'ag-charts-community'
 import { data } from './data'
 
 const options: AgChartOptions = {
-  type: 'hierarchy',
   container: document.getElementById('myChart'),
   data,
   series: [
@@ -65,4 +63,4 @@ function tooltipRenderer(params: AgTreemapSeriesTooltipRendererParams<any>) {
   }
 }
 
-agCharts.AgChart.create(options)
+AgChart.create(options)

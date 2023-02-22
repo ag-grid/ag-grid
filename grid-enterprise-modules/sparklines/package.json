@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/sparklines",
-  "version": "29.0.0",
+  "version": "29.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
@@ -55,9 +55,9 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@ag-grid-community/core": "~29.0.0",
-    "@ag-grid-enterprise/core": "~29.0.0",
-    "ag-charts-community": "~7.0.0"
+    "@ag-grid-community/core": "~29.1.0",
+    "@ag-grid-enterprise/core": "~29.1.0",
+    "ag-charts-community": "~7.1.0"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",

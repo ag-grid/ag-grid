@@ -31,6 +31,17 @@ test('minute.every', () => {
 
     const range = interval.range(new Date(2019, 7, 23, 15, 17, 5, 100), new Date(2019, 7, 23, 15, 32, 5, 100));
     expect(range).toEqual([
+        new Date(2019, 7, 23, 15, 22, 0, 0),
+        new Date(2019, 7, 23, 15, 27, 0, 0),
+        new Date(2019, 7, 23, 15, 32, 0, 0),
+    ]);
+});
+
+test('minute.every with snapTo: null', () => {
+    const interval = minute.every(5, { snapTo: null! })!;
+
+    const range = interval.range(new Date(2019, 7, 23, 15, 17, 5, 100), new Date(2019, 7, 23, 15, 32, 5, 100));
+    expect(range).toEqual([
         new Date(2019, 7, 23, 15, 20, 0, 0),
         new Date(2019, 7, 23, 15, 25, 0, 0),
         new Date(2019, 7, 23, 15, 30, 0, 0),

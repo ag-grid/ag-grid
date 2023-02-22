@@ -1,6 +1,6 @@
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
-import { RowPosition } from "../entities/rowPosition";
+import { RowPosition } from "../entities/rowPositionUtils";
 import { AgGridCommon } from "./iCommon";
 import { IRowNode } from "./iRowNode";
 
@@ -149,12 +149,12 @@ export interface CsvExportParams extends ExportParams<CsvCustomContent> {
     suppressQuotes?: boolean;
 }
 
-export interface ShouldRowBeSkippedParams<TData = any> extends AgGridCommon<TData> {
+export interface ShouldRowBeSkippedParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Row node. */
     node: IRowNode<TData>;
 }
 
-export interface ProcessCellForExportParams<TData = any> extends AgGridCommon<TData> {
+export interface ProcessCellForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     value: any;
     accumulatedRowIndex?: number;
     node?: IRowNode<TData> | null;
@@ -162,15 +162,15 @@ export interface ProcessCellForExportParams<TData = any> extends AgGridCommon<TD
     type: string; // clipboard, dragCopy (ctrl+D), export
 }
 
-export interface ProcessHeaderForExportParams<TData = any> extends AgGridCommon<TData> {
+export interface ProcessHeaderForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     column: Column;
 }
 
-export interface ProcessGroupHeaderForExportParams<TData = any> extends AgGridCommon<TData> {
+export interface ProcessGroupHeaderForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     columnGroup: ColumnGroup;
 }
 
-export interface ProcessRowGroupForExportParams<TData = any> extends AgGridCommon<TData> {
+export interface ProcessRowGroupForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Row node. */
     node: IRowNode<TData>;
 }

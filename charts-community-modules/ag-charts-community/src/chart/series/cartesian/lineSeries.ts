@@ -6,9 +6,9 @@ import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMo
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
 import { Text } from '../../../scene/shape/text';
-import { LegendDatum } from '../../legend';
+import { LegendDatum } from '../../legendDatum';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent } from './cartesianSeries';
-import { ChartAxisDirection } from '../../chartAxis';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { interpolate } from '../../../util/string';
@@ -186,6 +186,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 datum,
             });
         }
+
+        this.validateXYData(this.xKey, this.yKey, data, xAxis, yAxis, xData, yData, 1);
 
         this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData), xAxis) : xData;
         this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData), yAxis) : yData;

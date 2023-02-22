@@ -116,7 +116,7 @@ export interface IColumnLimit {
     maxWidth?: number
 }
 
-interface ColDefPropertyChangedEvent extends PropertyChangedEvent {
+export interface ColDefPropertyChangedEvent extends PropertyChangedEvent {
     source?: ColumnEventType;
 }
 
@@ -277,17 +277,18 @@ export class ColumnModel extends BeanStub {
 
         this.addManagedPropertyListener('groupDisplayType', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
-        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('defaultColDef', (params) => this.onDefaultColDefChanged(params.source));
+        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('defaultColDef', (params) => this.onSharedColDefChanged(params.source));
+        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('columnTypes', (params) => this.onSharedColDefChanged(params.source));
     }
 
-    public onAutoGroupColumnDefChanged() {
+    private onAutoGroupColumnDefChanged() {
         this.autoGroupsNeedBuilding = true;
         this.forceRecreateAutoGroups = true;
         this.updateGridColumns();
         this.updateDisplayedColumns('gridOptionsChanged');
     }
 
-    public onDefaultColDefChanged(source: ColumnEventType = 'api'): void {
+    private onSharedColDefChanged(source: ColumnEventType = 'api'): void {
         // likewise for autoGroupCol, the default col def impacts this
         this.forceRecreateAutoGroups = true;
         this.createColumnsFromColumnDefs(true, source);
@@ -2675,9 +2676,9 @@ export class ColumnModel extends BeanStub {
                 columnGroup: columnGroup,
                 providedColumnGroup: providedColumnGroup,
                 location: location,
-                api: this.gridOptionsService.get('api')!,
-                columnApi: this.gridOptionsService.get('columnApi')!,
-                context: this.gridOptionsService.get('context')
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context
             };
 
             if (typeof headerValueGetter === 'function') {
@@ -3175,32 +3176,10 @@ export class ColumnModel extends BeanStub {
 
     private processSecondaryColumnDefinitions(colDefs: (ColDef | ColGroupDef)[] | null) {
 
-        const predictPrimaryColumn = (colDef: ColDef) => {
-            const secondaryColField = colDef.field;
-            if(!secondaryColField) {
-                return;
-            }
-
-            let bestGuessCol: Column | null = null;
-            let bestGuessField: string;
-            this.primaryColumns?.forEach(col => {
-                const primaryColField = col.getColDef().field;
-                if (!primaryColField) {
-                    return;
-                }
-                if (secondaryColField.endsWith(primaryColField)) {
-                    if (!bestGuessField || bestGuessField.length < primaryColField.length) {
-                        bestGuessField = primaryColField;
-                        bestGuessCol = col;
-                    }
-                }
-            });
-
-            colDef.pivotValueColumn = bestGuessCol;
-        }
-
         const columnCallback = this.gridOptionsService.get('processPivotResultColDef') || this.gridOptionsService.get('processSecondaryColDef');
         const groupCallback = this.gridOptionsService.get('processPivotResultColGroupDef') || this.gridOptionsService.get('processSecondaryColGroupDef');
+
+        if (!columnCallback && !groupCallback) { return undefined; }
 
         const searchForColDefs = (colDefs2: (ColDef | ColGroupDef)[]): void => {
             colDefs2.forEach((abstractColDef: AbstractColDef) => {
@@ -3213,9 +3192,6 @@ export class ColumnModel extends BeanStub {
                     searchForColDefs(colGroupDef.children);
                 } else {
                     const colDef = abstractColDef as ColDef;
-                    if (!colDef.pivotValueColumn) {
-                        predictPrimaryColumn(colDef);
-                    }
                     if (columnCallback) {
                         columnCallback(colDef);
                     }
@@ -3283,7 +3259,7 @@ export class ColumnModel extends BeanStub {
 
 
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
-        this.setupQuickFilterColumns();
+        this.refreshQuickFilterColumns();
         this.clearDisplayedAndViewportColumns();
 
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
@@ -3391,12 +3367,17 @@ export class ColumnModel extends BeanStub {
     // a) user provides 'field' into autoGroupCol of normal grid, so now because a valid col to filter leafs on
     // b) using tree data and user depends on autoGroupCol for first col, and we also want to filter on this
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
-    private setupQuickFilterColumns(): void {
+    public refreshQuickFilterColumns(): void {
+        let columnsForQuickFilter;
         if (this.groupAutoColumns) {
-            this.columnsForQuickFilter = (this.primaryColumns || []).concat(this.groupAutoColumns);
+            columnsForQuickFilter = (this.primaryColumns ?? []).concat(this.groupAutoColumns);
         } else if (this.primaryColumns) {
-            this.columnsForQuickFilter = this.primaryColumns;
+            columnsForQuickFilter = this.primaryColumns;
         }
+        columnsForQuickFilter = columnsForQuickFilter ?? [];
+        this.columnsForQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')
+            ? columnsForQuickFilter.filter(col => col.isVisible())
+            : columnsForQuickFilter;
     }
 
     private placeLockedColumns(cols: Column[]): Column[] {
@@ -4084,7 +4065,7 @@ export class ColumnModel extends BeanStub {
         return this.gridOptionsService.getNum('headerHeight') ?? this.environment.getFromTheme(25, 'headerHeight');
     }
     public getFloatingFiltersHeight(): number | null | undefined {
-        return this.gridOptionsService.getNum('floatingFiltersHeight') ?? this.environment.getFromTheme(25, 'headerHeight');
+        return this.gridOptionsService.getNum('floatingFiltersHeight') ?? this.getHeaderHeight();
     }
     private getGroupHeaderHeight(): number | null | undefined {
         return this.gridOptionsService.getNum('groupHeaderHeight') ?? this.getHeaderHeight();

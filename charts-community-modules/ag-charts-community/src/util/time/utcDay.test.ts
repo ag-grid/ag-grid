@@ -42,3 +42,17 @@ test('UTC day.every', () => {
         new Date(Date.UTC(2023, 0, 23, 0, 0, 0, 0)),
     ]);
 });
+
+test('UTC day.every with snapTo: null', () => {
+    const interval = utcDay.every(2, { snapTo: null! });
+
+    const range = interval.range(
+        new Date(Date.UTC(2023, 0, 17, 8, 31, 5, 100)),
+        new Date(Date.UTC(2023, 0, 23, 21, 31, 5, 100))
+    );
+    expect(range).toEqual([
+        new Date(Date.UTC(2023, 0, 19, 0, 0, 0, 0)),
+        new Date(Date.UTC(2023, 0, 21, 0, 0, 0, 0)),
+        new Date(Date.UTC(2023, 0, 23, 0, 0, 0, 0)),
+    ]);
+});

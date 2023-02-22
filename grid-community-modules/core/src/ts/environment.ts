@@ -1,6 +1,9 @@
-import { Bean, Autowired } from './context/context';
+import { Bean, Autowired, PostConstruct } from './context/context';
 import { BeanStub } from "./context/beanStub";
 import { exists } from './utils/generic';
+import { Events } from './eventKeys';
+import { WithoutGridCommon } from './interfaces/iCommon';
+import { CssVariablesChanged } from './events';
 
 export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
 
@@ -68,54 +71,99 @@ const SASS_PROPERTY_BUILDER: { [key in SASS_PROPERTIES]: string[] } = {
     chartMenuPanelWidth: ['ag-chart-docked-container']
 };
 
-const CALCULATED_SIZES: HardCodedSize = {};
-
 @Bean('environment')
 export class Environment extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
-    public getSassVariable(theme: string, key: SASS_PROPERTIES): number | undefined {
-        const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
-        const defaultValue = HARD_CODED_SIZES[useTheme][key];
-        let calculatedValue = 0;
+    private calculatedSizes: HardCodedSize | null = {};
+    private mutationObserver: MutationObserver;
 
-        if (!CALCULATED_SIZES[theme]) {
-            CALCULATED_SIZES[theme] = {};
+    @PostConstruct
+    private postConstruct(): void {
+        const el = this.getTheme().el ?? this.eGridDiv;
+
+        this.mutationObserver = new MutationObserver(() => {
+            this.calculatedSizes = {};
+            this.fireGridStylesChangedEvent();
+        });
+
+        this.mutationObserver.observe(el || this.eGridDiv, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+    }
+
+    private fireGridStylesChangedEvent(): void {
+        const event: WithoutGridCommon<CssVariablesChanged> = {
+            type: Events.EVENT_GRID_STYLES_CHANGED
+        }
+        this.eventService.dispatchEvent(event);
+    }
+
+    private getSassVariable(key: SASS_PROPERTIES): number | undefined {
+        const { themeFamily, el } = this.getTheme();
+
+        if (!themeFamily || themeFamily.indexOf('ag-theme') !== 0) { return; }
+
+        if (!this.calculatedSizes) {
+            this.calculatedSizes = {};
         }
 
-        const size = CALCULATED_SIZES[theme][key];
+        if (!this.calculatedSizes[themeFamily]) {
+            this.calculatedSizes[themeFamily] = {};
+        }
+
+        const size = this.calculatedSizes[themeFamily][key];
 
         if (size != null) {
             return size;
         }
 
-        if (SASS_PROPERTY_BUILDER[key]) {
-            const classList = SASS_PROPERTY_BUILDER[key];
-            const div = document.createElement('div');
-            div.classList.add(theme);
-            div.style.position = 'absolute';
+        this.calculatedSizes[themeFamily][key] = this.calculateValueForSassProperty(key, themeFamily, el);
 
-            const el: HTMLDivElement = classList.reduce((prevEl: HTMLDivElement, currentClass: string) => {
-                const currentDiv = document.createElement('div');
-                currentDiv.style.position = 'static';
-                currentDiv.classList.add(currentClass);
-                prevEl.appendChild(currentDiv);
+        return this.calculatedSizes[themeFamily][key];
+    }
 
-                return currentDiv;
-            }, div);
+    private calculateValueForSassProperty(property: SASS_PROPERTIES, theme: string, themeElement?: HTMLElement): number | undefined {
+        const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
+        const defaultValue = HARD_CODED_SIZES[useTheme][property];
+        const eDocument = this.gridOptionsService.getDocument();
 
-            if (document.body) {
-                document.body.appendChild(div);
-                const sizeName = key.toLowerCase().indexOf('height') !== -1 ? 'height' : 'width';
-                calculatedValue = parseInt(window.getComputedStyle(el)[sizeName]!, 10);
-                document.body.removeChild(div);
-            }
+        if (!themeElement) {
+            themeElement = this.eGridDiv;
         }
 
-        CALCULATED_SIZES[theme][key] = calculatedValue || defaultValue;
+        if (!SASS_PROPERTY_BUILDER[property]) { return defaultValue; }
 
-        return CALCULATED_SIZES[theme][key];
+        const classList = SASS_PROPERTY_BUILDER[property];
+        const div = eDocument.createElement('div');
+        
+        // this will apply SASS variables that were manually added to the current theme
+        const classesFromThemeElement = Array.from(themeElement.classList)
+        div.classList.add(theme,...classesFromThemeElement);
+
+        div.style.position = 'absolute';
+
+        const el: HTMLDivElement = classList.reduce((prevEl: HTMLDivElement, currentClass: string) => {
+            const currentDiv = eDocument.createElement('div');
+            currentDiv.style.position = 'static';
+            currentDiv.classList.add(currentClass);
+            prevEl.appendChild(currentDiv);
+
+            return currentDiv;
+        }, div);
+
+        let calculatedValue = 0;
+
+        if (eDocument.body) {
+            eDocument.body.appendChild(div);
+            const sizeName = property.toLowerCase().indexOf('height') !== -1 ? 'height' : 'width';
+            calculatedValue = parseInt(window.getComputedStyle(el)[sizeName]!, 10);
+            eDocument.body.removeChild(div);
+        }
+
+        return calculatedValue || defaultValue;
     }
 
     public isThemeDark(): boolean {
@@ -123,9 +171,8 @@ export class Environment extends BeanStub {
         return !!theme && theme.indexOf('dark') >= 0;
     }
 
-    public chartMenuPanelWidth() {
-        const theme = this.getTheme().themeFamily;
-        return this.getSassVariable(theme!, 'chartMenuPanelWidth');
+    public chartMenuPanelWidth(): number | undefined {
+        return this.getSassVariable('chartMenuPanelWidth');
     }
 
     public getTheme(): { theme?: string; el?: HTMLElement; themeFamily?: string; allThemes: string[] } {
@@ -159,11 +206,7 @@ export class Environment extends BeanStub {
     public getFromTheme(defaultValue: number, sassVariableName: SASS_PROPERTIES): number;
     public getFromTheme(defaultValue: null, sassVariableName: SASS_PROPERTIES): number | null | undefined;
     public getFromTheme(defaultValue: any, sassVariableName: SASS_PROPERTIES): any {
-        const { theme } = this.getTheme();
-        if (theme && theme.indexOf('ag-theme') === 0) {
-            return this.getSassVariable(theme, sassVariableName);
-        }
-        return defaultValue;
+        return this.getSassVariable(sassVariableName) ?? defaultValue;
     }
 
     public getDefaultRowHeight(): number {
@@ -189,7 +232,12 @@ export class Environment extends BeanStub {
     }
 
     protected destroy(): void {
-        for (const prop in CALCULATED_SIZES) delete CALCULATED_SIZES[prop];
+        this.calculatedSizes = null;
+
+        if (this.mutationObserver) {
+            this.mutationObserver.disconnect();
+        }
+
         super.destroy();
     }
 }

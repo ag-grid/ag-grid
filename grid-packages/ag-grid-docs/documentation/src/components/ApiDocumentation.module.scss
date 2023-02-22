@@ -6,7 +6,6 @@
     }
 }
 
-
 .reference {
     height: 1px; // needed for divs to fit table cell heights correctly
 
@@ -31,6 +30,11 @@
         white-space: nowrap;
     }
 
+    &__property {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     &__property-type {
         color: $primary;
         font-size: 0.9rem;
@@ -41,7 +45,7 @@
         padding: 0 !important;
         width: 1.1rem !important;
         + td {
-           width: 280px;
+            width: 280px;
         }
     }
 

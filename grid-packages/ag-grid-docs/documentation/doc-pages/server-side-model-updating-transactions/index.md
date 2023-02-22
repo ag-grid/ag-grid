@@ -31,6 +31,7 @@ gridOptions.api.applyServerSideTransaction({
 
 The following example demonstrates add / update and remove operations via the Server-Side Transaction API. Note the following:
 
+- When clicking any of the buttons, the console logs each transaction as it is applied to the grid.
 - **Add Above Selected** - adds a row above the selected row using the`addIndex` property as rows are added at the end by default.
 - **Updated Selected** - updates the 'current' value on the selected row.
 - **Removed Selected** - removes the selected row.
@@ -58,6 +59,7 @@ The snippet below demonstrates creating a group row transaction for rows which a
 </snippet>
 
 In the example below, note the following:
+ - When clicking any of the buttons, the console logs each transaction as it is applied to the grid.
  - To add a new row, if the group didn't previously exist, then the route is omitted and the group row is added. If it did previously exist, then the group route is provided and the leaf node is added.
  - To delete a row, if the group row would be deleted then a transaction needs to be applied to remove this group row instead of the leaf row.
  - To move a row between groups, the row needs to be deleted from the old group with one transaction, and added to the new group with another.
@@ -104,6 +106,10 @@ In the example below, note the following:
  - The group child counts and aggregations update in sync with changes to the leaf rows.
 
 <grid-example title='Showcase Example' name='transactions-showcase' type='generated' options='{ "enterprise": true, "exampleHeight": 670, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+
+## Tree Data
+
+Transactions are also supported when using Tree data. See this documented on the [SSRM Tree Data](/server-side-model-tree-data/#transactions-with-tree-data) page.
 
 ## Next Up
 

@@ -26,17 +26,23 @@ var StatusBarModule = require('../../grid-enterprise-modules/status-bar');
 var ViewportRowModelModule = require('../../grid-enterprise-modules/viewport-row-model');
 require('./dist/esm/es5/main');
 
+var gridExports = {};
+
 // add in exports for AG Grid Enterprise
 var agGridEnterprise = require('./dist/esm/es5/main');
 Object.keys(agGridEnterprise).forEach(function(key) {
-    exports[key] = agGridEnterprise[key];
+    gridExports[key] = agGridEnterprise[key];
 });
+
 
 // also add in in exports for AG Grid Community, as it's webpack, we want both packed up
 var agGrid = require('@ag-grid-community/all-modules');
 Object.keys(agGrid).forEach(function(key) {
-    exports[key] = agGrid[key];
+    gridExports[key] = agGrid[key];
 });
+
+exports['agGrid'] = gridExports;
+exports['agCharts'] = agGridEnterprise['agCharts'];
 agGrid.ModuleRegistry.register(ClientSideRowModelModule.ClientSideRowModelModule);
 agGrid.ModuleRegistry.register(CsvExportModule.CsvExportModule);
 agGrid.ModuleRegistry.register(InfiniteRowModelModule.InfiniteRowModelModule);
@@ -57,6 +63,7 @@ agGrid.ModuleRegistry.register(SideBarModule.SideBarModule);
 agGrid.ModuleRegistry.register(SparklinesModule.SparklinesModule);
 agGrid.ModuleRegistry.register(StatusBarModule.StatusBarModule);
 agGrid.ModuleRegistry.register(ViewportRowModelModule.ViewportRowModelModule);
+agGrid.ModuleRegistry.setIsBundled();
 require('./styles/ag-grid-no-native-widgets.css');
 require('./styles/ag-grid.css');
 require('./styles/ag-theme-alpine-no-font.css');

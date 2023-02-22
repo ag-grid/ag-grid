@@ -74,7 +74,7 @@ export interface IAggFunc<TData = any, TValue = any> {
     (params: IAggFuncParams<TData, TValue>): any;
 }
 
-export interface IAggFuncParams<TData = any, TValue = any> extends AgGridCommon<TData> {
+export interface IAggFuncParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     /** Values to aggregate */
     values: TValue[];
     /** Column the aggregation function is working on */
@@ -87,13 +87,13 @@ export interface IAggFuncParams<TData = any, TValue = any> extends AgGridCommon<
     data: TData;
 }
 
-export interface HeaderClassParams<TData = any> extends AgGridCommon<TData> {
+export interface HeaderClassParams<TData = any> extends AgGridCommon<TData, any> {
     colDef: AbstractColDef<TData>;
     column?: Column | null;
     columnGroup?: ColumnGroup | null;
 }
 export type HeaderClass<TData = any> = string | string[] | ((params: HeaderClassParams<TData>) => string | string[] | undefined);
-export interface ToolPanelClassParams<TData = any> extends AgGridCommon<TData> {
+export interface ToolPanelClassParams<TData = any> extends AgGridCommon<TData, any> {
     colDef: AbstractColDef<TData>;
     column?: Column | null;
     columnGroup?: ProvidedColumnGroup | null;
@@ -225,7 +225,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
 
     // *** Columns: Filtering *** //
 
-    /** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */
+    /** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */
     getQuickFilterText?: (params: GetQuickFilterTextParams<TData>) => string;
     /** Function or expression. Gets the value for filtering purposes. */
     filterValueGetter?: string | ValueGetterFunc<TData>;
@@ -265,6 +265,8 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
     headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData>;
     /** If `true`, the header checkbox selection will only select filtered items. */
     headerCheckboxSelectionFilteredOnly?: boolean;
+    /** If `true`, the header checkbox selection will only select nodes on the current page. */
+    headerCheckboxSelectionCurrentPageOnly?: boolean;
 
     // *** Columns: Integrated Charts *** //
 
@@ -457,7 +459,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];
 }
-export interface ColumnFunctionCallbackParams<TData = any> extends AgGridCommon<TData> {
+export interface ColumnFunctionCallbackParams<TData = any> extends AgGridCommon<TData, any> {
     /** Row node for the given row */
     node: IRowNode<TData>;
     /** Data associated with the node. Will be `undefined` for group rows. */
@@ -478,7 +480,7 @@ export interface RowDragCallback<TData = any> {
 }
 export interface DndSourceCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 
-export interface DndSourceOnRowDragParams<TData = any> extends AgGridCommon<TData> {
+export interface DndSourceOnRowDragParams<TData = any> extends AgGridCommon<TData, any> {
     /** Row node for the given row */
     rowNode: IRowNode<TData>;
     /** The DOM event that represents a drag and drop interaction */
@@ -499,7 +501,7 @@ export interface SuppressNavigableCallbackParams<TData = any> extends ColumnFunc
 export interface SuppressNavigableCallback<TData = any> {
     (params: SuppressNavigableCallbackParams<TData>): boolean;
 }
-export interface HeaderCheckboxSelectionCallbackParams<TData = any> extends AgGridCommon<TData> {
+export interface HeaderCheckboxSelectionCallbackParams<TData = any> extends AgGridCommon<TData, any> {
     column: Column;
     colDef: ColDef<TData>;
 }
@@ -521,7 +523,7 @@ export interface IsColumnFunc<TData = any> {
  */
 export interface IsColumnFuncParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 
-export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgGridCommon<TData> {
+export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     /** Value for the cell. */
     value: TValue;
     /** Row node for the given row */
@@ -552,7 +554,7 @@ export interface ColumnsMenuParams {
     columnLayout?: (ColDef | ColGroupDef)[];
 }
 
-export interface BaseColDefParams<TData = any> extends AgGridCommon<TData> {
+export interface BaseColDefParams<TData = any> extends AgGridCommon<TData, any> {
     /** Row node for the given row */
     node: IRowNode<TData> | null;
     /** Data associated with the node */
@@ -563,7 +565,7 @@ export interface BaseColDefParams<TData = any> extends AgGridCommon<TData> {
     colDef: ColDef<TData>;
 }
 
-export interface BaseColDefOptionalDataParams<TData = any> extends AgGridCommon<TData> {
+export interface BaseColDefOptionalDataParams<TData = any> extends AgGridCommon<TData, any> {
     /** Row node for the given row */
     node: IRowNode<TData> | null;
     /** Data associated with the node */
@@ -581,7 +583,7 @@ export interface ValueGetterParams<TData = any> extends BaseColDefOptionalDataPa
 export interface ValueGetterFunc<TData = any> {
     (params: ValueGetterParams<TData>): any;
 }
-export interface HeaderValueGetterParams<TData = any> extends AgGridCommon<TData> {
+export interface HeaderValueGetterParams<TData = any> extends AgGridCommon<TData, any> {
     colDef: AbstractColDef<TData>;
     /** Column for this callback if applicable*/
     column?: Column | null;
@@ -641,7 +643,7 @@ export interface SuppressKeyboardEventParams<TData = any> extends ColumnFunction
     editing: boolean;
 }
 
-export interface SuppressHeaderKeyboardEventParams<TData = any> extends AgGridCommon<TData> {
+export interface SuppressHeaderKeyboardEventParams<TData = any> extends AgGridCommon<TData, any> {
     column: Column | ColumnGroup;
     colDef: ColDef<TData> | ColGroupDef<TData> | null;
     /** The index of the header row of the current focused header */

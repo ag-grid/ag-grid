@@ -49,6 +49,24 @@ It is also possible to programmatically control undo / redo and check the number
 
 <api-documentation source='grid-api/api.json' section='UndoRedo'></api-documentation>
 
+## Undo / Redo Events
+
+The following events are relevant to undo / redo:
+
+<api-documentation source='grid-events/events.json' section='editing' names='["undoStarted", "undoEnded", "redoStarted", "redoEnded", "cellValueChanged"]'></api-documentation>
+
+For an undo / redo, the events will be fired as:
+
+1. One `undoStarted` / `redoStarted` event.
+1. Zero to many `cellValueChanged` events.
+1. One `undoEnded` / `redoEnded` event.
+
+When there are no undo / redo operations to perform, the started and ended events will still fire. However, the ended event will have a value of `false` for the `operationPerformed` property (compared to `true` when an operation was performed).
+
+If the application is doing work each time it receives a `cellValueChanged` event, you can use the `undoStarted` / `redoStarted` and `undoEnded` / `redoEnded` events to suspend the application's work and then do the work for all cells impacted by the undo / redo operation afterwards.
+
+If [Read Only Edit](/value-setters/#read-only-edit) is enabled, undo / redo will not perform any operations. The started and ended events will still fire, which means that you can implement your own undo / redo by keeping track of the `cellEditRequest` events.
+
 ## Example: Undo / Redo
 
 The example below has the following grid options enabled to demonstrate undo / redo:

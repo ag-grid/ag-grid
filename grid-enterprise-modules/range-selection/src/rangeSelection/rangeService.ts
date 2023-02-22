@@ -337,7 +337,7 @@ export class RangeService extends BeanStub implements IRangeService {
         this.newestRangeStartCell = position;
     }
 
-    public clearCellRangeCellValues(cellRanges?: CellRange[]): void {
+    public clearCellRangeCellValues(cellRanges?: CellRange[], source: string = 'rangeService'): void {
         if (!cellRanges) { cellRanges = this.cellRanges; }
 
         cellRanges.forEach(cellRange => {
@@ -347,7 +347,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 for (let i = 0; i < cellRange.columns.length; i++) {
                     const column = this.columnModel.getGridColumn(cellRange.columns[i]);
                     if (!column || !column.isCellEditable(rowNode)) { return; }
-                    rowNode.setDataValue(column, null, 'rangeService');
+                    rowNode.setDataValue(column, null, source);
                 }
             });
         });
@@ -787,12 +787,12 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
-        const event: WithoutGridCommon<RangeSelectionChangedEvent> = Object.freeze({
+        const event: WithoutGridCommon<RangeSelectionChangedEvent> = {
             type: Events.EVENT_RANGE_SELECTION_CHANGED,
             started,
             finished,
             id,
-        });
+        };
 
         this.eventService.dispatchEvent(event);
     }

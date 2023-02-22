@@ -36,6 +36,7 @@ const modules = glob.sync("../../grid-community-modules/*")
 const moduleRequireLines = modules.map(module => `var ${module.moduleName} = require('${module.directory}');`);
 const moduleRegisterLines = modules.filter(module => module.directory.indexOf('core') === -1) // exclude core - we don't register core
     .map(module => `agGrid.ModuleRegistry.register(${module.moduleName}.${module.moduleName});`);
+const moduleIsUmdLine = `agGrid.ModuleRegistry.setIsBundled();`
 
 const css = glob.sync("./styles/*.css")
     .filter(css => css.indexOf('.min.css') === -1)
@@ -52,6 +53,7 @@ const generatedFileTemplate = `/**
 const webpackNoStyles = generatedFileTemplate + moduleRequireLines.join('\n').concat('\n')
     .concat(webpackBase)
     .concat(moduleRegisterLines.join('\n').concat('\n'))
+    .concat(moduleIsUmdLine.concat('\n'))
 fs.writeFileSync('./webpack-no-styles.js', webpackNoStyles);
 
 const webpackStyles = webpackNoStyles.concat(css.join('\n'));

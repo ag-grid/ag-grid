@@ -37,6 +37,12 @@
 |    // if you have an 'Apply' button and you want to hide the popup after it is pressed.
 |    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 |
+|    // Gets called every time the popup is hidden, after the GUI returned in getGui is detached
+|    // from the DOM. If the filter popup is closed and re-opened, this method is called each time
+|    // the filter is hidden. This is useful for any logic to reset the UI state back to the model
+|    // before the component is reopened.
+|    afterGuiDetached?(): void;
+|
 |    // Gets called when new rows are inserted into the grid. If the filter needs to change its
 |    // state after rows are loaded, it can do it here. For example the set filters uses this
 |    // to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for

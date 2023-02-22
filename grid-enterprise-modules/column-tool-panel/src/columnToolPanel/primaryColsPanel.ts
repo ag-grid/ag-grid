@@ -1,18 +1,17 @@
 import {
     ColDef,
     ColGroupDef,
+    Component,
     ToolPanelColumnCompParams,
     RefSelector,
     IPrimaryColsPanel,
-    TabGuardComp,
     ColumnEventType,
-    PositionableFeature,
-    PostConstruct
+    PositionableFeature
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
 
-export class PrimaryColsPanel extends TabGuardComp implements IPrimaryColsPanel {
+export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
 
     private static TEMPLATE = /* html */
         `<div class="ag-column-select">
@@ -30,11 +29,6 @@ export class PrimaryColsPanel extends TabGuardComp implements IPrimaryColsPanel 
 
     constructor() {
         super(PrimaryColsPanel.TEMPLATE);
-    }
-
-    @PostConstruct
-    private postConstruct() {
-        this.initialiseTabGuard({});
     }
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu

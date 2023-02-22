@@ -102,7 +102,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             },
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsService.get('context')
+            context: this.gridOptionsService.context
         };
 
         if (!displayName) {

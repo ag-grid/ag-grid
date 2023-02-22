@@ -154,7 +154,7 @@ const plugins = [
         // This allows us to use SCSS
         resolve: 'gatsby-plugin-sass',
         options: {
-            additionalData: `@import './src/custom.module';`, // adds this import into every SCSS file
+            additionalData: `@use './src/custom.module' as *;`, // adds this import into every SCSS file
 
             cssLoaderOptions: {
                 esModule: false,
@@ -166,6 +166,10 @@ const plugins = [
             // cssLoaderOptions: {
             //   camelCase: false, // Preserve CSS names as-is, rather than converting to camelCase, when accessing in JS
             // },
+            sassOptions: {
+                // Don't show deprecations for dependencies eg, bootstrap
+                quietDeps: true
+            }
         }
     },
     'gatsby-plugin-minify-classnames', // This minifies classnames to reduce CSS size
