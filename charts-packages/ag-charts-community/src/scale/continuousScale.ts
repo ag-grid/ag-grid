@@ -7,6 +7,8 @@ export abstract class ContinuousScale<D extends number | Date, I = number> imple
     nice = false;
     interval?: I;
     tickCount = ContinuousScale.defaultTickCount;
+    minTickCount = 0;
+    maxTickCount = Infinity;
     niceDomain: any[] = null as any;
 
     protected constructor(public domain: D[], public range: number[]) {}
@@ -102,7 +104,7 @@ export abstract class ContinuousScale<D extends number | Date, I = number> imple
     }
 
     protected cache: any = null;
-    protected cacheProps: Array<keyof this> = ['domain', 'range', 'nice', 'tickCount'];
+    protected cacheProps: Array<keyof this> = ['domain', 'range', 'nice', 'tickCount', 'minTickCount', 'maxTickCount'];
     protected didChange() {
         const { cache } = this;
         const didChange = !cache || this.cacheProps.some((p) => this[p] !== cache[p]);
