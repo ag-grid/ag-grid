@@ -44,11 +44,11 @@ echo "########################################################################"
 echo "####### Updating lerna.json, package.json, bower.json and version.ts files #########"
 if [ $PROJECTS_TO_VERSION == "all" ] || [ $PROJECTS_TO_VERSION == "charts" ]; then
   echo "Versioning Charts Packages"
-  node scripts/release/versionModules.js $NEW_CHARTS_VERSION $PEER_CHARTS_VERSION '["charts-packages", "examples-charts"]' $MODULES_TO_VERSION
+  node scripts/release/versionModules.js $NEW_CHARTS_VERSION $PEER_CHARTS_VERSION '["charts-community-modules", "charts-enterprise-modules", "charts-examples"]' $MODULES_TO_VERSION
 fi
 if [ $PROJECTS_TO_VERSION == "all" ] || [ $PROJECTS_TO_VERSION == "grid" ]; then
   echo "Versioning Grid Packages"
-  node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION '["grid-packages", "community-modules", "enterprise-modules", "examples-grid"]' $MODULES_TO_VERSION $PEER_CHARTS_VERSION
+  node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION '["grid-packages", "grid-community-modules", "grid-enterprise-modules", "grid-examples"]' $MODULES_TO_VERSION $PEER_CHARTS_VERSION
 fi
 
 echo "########################################################################"

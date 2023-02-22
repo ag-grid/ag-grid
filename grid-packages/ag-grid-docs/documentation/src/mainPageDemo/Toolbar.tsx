@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import React from 'react';
+import { Icon } from '../components/Icon';
 import styles from './Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
 
@@ -75,6 +76,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
                         target="_blank"
                         rel="noreferrer"
                     >
+                        <Icon name="youtube" />
                         Take a video tour
                     </a>
                 </div>

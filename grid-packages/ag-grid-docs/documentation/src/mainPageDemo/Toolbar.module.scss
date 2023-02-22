@@ -47,15 +47,7 @@ $toolbar-width: 1024px;
     align-items: center;
     gap: $size-1;
 
-    &:hover {
-        text-decoration: none;
-    }
-    &::before {
-        content: '';
-        width: 26px;
-        height: 23px;
-        display: inline-block;
-        background: transparent url('/images/social-icons/youtube-red.svg') no-repeat;
-        background-size: contain;
+    :global(.icon) {
+        fill: #f00;
     }
 }

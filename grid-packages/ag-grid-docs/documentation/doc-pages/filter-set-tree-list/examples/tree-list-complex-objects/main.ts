@@ -16,6 +16,7 @@ const gridOptions: GridOptions = {
     minWidth: 200,
     resizable: true,
     filter: true,
+    floatingFilter: true,
   },
   autoGroupColumnDef: {
     headerName: 'Employee',
@@ -28,6 +29,7 @@ const gridOptions: GridOptions = {
       treeList: true,
       keyCreator: (params: KeyCreatorParams) => params.value.join('.'),
       treeListFormatter: treeListFormatter,
+      valueFormatter: valueFormatter,
     } as ISetFilterParams<any, string[]>,
     minWidth: 280,
     valueFormatter: (params: ValueFormatterParams) => params.value.displayValue
@@ -41,6 +43,10 @@ const gridOptions: GridOptions = {
 
 function treeListFormatter(pathKey: string | null, _level: number, parentPathKeys: (string | null)[]): string {
   return pathLookup[[...parentPathKeys, pathKey].join('.')];
+}
+
+function valueFormatter(params: ValueFormatterParams): string {
+  return params.value ? pathLookup[params.value.join('.')] : '(Blanks)';
 }
 
 // setup the grid after the page has finished loading

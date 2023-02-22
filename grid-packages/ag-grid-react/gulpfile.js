@@ -112,7 +112,7 @@ const linkUmdForE2E = (done) => {
         })
     }
     if (!fs.existsSync('./cypress/integration/ag-grid-community.min.js')) {
-        link('../../community-modules/all-modules/dist/ag-grid-community.min.js', './cypress/integration/', {
+        link('../../grid-community-modules/all-modules/dist/ag-grid-community.min.js', './cypress/integration/', {
             force: true,
             type: linkType
         })
@@ -126,13 +126,13 @@ const copyFromModuleSource = () => {
             "**/*",
             '!**/__tests__*/**/*',
             '!**/*Test*'
-        ], {cwd: '../../community-modules/react/src'})
+        ], {cwd: '../../grid-community-modules/react/src'})
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
         .pipe(replace('@ag-grid-enterprise', 'ag-grid-enterprise'))
         .pipe(gulp.dest("./src"), {cwd: '.'});
 
-    const copyMain = gulp.src(["../../community-modules/react/main.d.ts",
-        "../../community-modules/react/main.js"])
+    const copyMain = gulp.src(["../../grid-community-modules/react/main.d.ts",
+        "../../grid-community-modules/react/main.js"])
         .pipe(gulp.dest("./"));
 
     return merge(copySource, copyMain);

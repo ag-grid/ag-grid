@@ -415,7 +415,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                 <a href={`#reference-${id}-${name}`} className="anchor after" style={{ fontSize: 'small' }}>{anchorIcon}</a>
             </h6>
 
-            <div onClick={() => setExpanded(!isExpanded)}>
+            <div title={typeUrl && isObject ? getInterfaceName(name) : propertyType} className={styles['reference__property']} onClick={() => setExpanded(!isExpanded)}>
                 {typeUrl ?
                     <a className={styles['reference__property-type']} href={typeUrl} target={typeUrl.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
                         {isObject ? getInterfaceName(name) : propertyType}
@@ -730,13 +730,8 @@ function getPropertyType(type: string | PropertyType, config: Config) {
     // We hide generics from this part of the display for simplicity
     // Could be done with a Regex...
     propertyType = propertyType
-        .replace(/<TData>/g, '')
-        .replace(/<TData, TValue>/g, '')
-        .replace(/<TData, TValue, TContext>/g, '')
-        .replace(/<TData, TContext>/g, '')
-        .replace(/<TData, TContext, TValue>/g, '')
-        .replace(/<TValue>/g, '')
-        .replace(/<TContext>/g, '');
+        .replace(/<(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?>/g,'');
+        
 
     return propertyType;
 }

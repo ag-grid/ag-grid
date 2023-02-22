@@ -77,17 +77,17 @@
         &:hover {
             text-decoration-color: var(--white);
 
-            img {
+            :global(.icon) {
                 opacity: 1;
             }
         }
     }
 
-    img {
+    :global(.icon) {
         display: inline;
         position: relative;
-        width: 18px;
-        height: 18px;
+        width: 22px;
+        height: 22px;
         top: -1px;
         margin-right: $size-half;
         opacity: 0.6666;

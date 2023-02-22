@@ -815,9 +815,42 @@
       "toggleSeriesVisible?": "/** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */"
     }
   },
+  "AgChartLegendEvent": {
+    "meta": { "typeParams": ["T extends string"] },
+    "type": {
+      "type": "T",
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean"
+    },
+    "docs": {
+      "seriesId": "/** Series id */",
+      "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
+      "enabled": "/** Whether the legend item is currently enabled or not. */"
+    }
+  },
   "AgChartLegendClickEvent": {
     "meta": {},
-    "type": { "seriesId": "string", "itemId": "string", "enabled": "boolean" },
+    "type": {
+      "type": "T",
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean"
+    },
+    "docs": {
+      "seriesId": "/** Series id */",
+      "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
+      "enabled": "/** Whether the legend item is currently enabled or not. */"
+    }
+  },
+  "AgChartLegendDoubleClickEvent": {
+    "meta": {},
+    "type": {
+      "type": "T",
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean"
+    },
     "docs": {
       "seriesId": "/** Series id */",
       "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
@@ -826,9 +859,13 @@
   },
   "AgChartLegendListeners": {
     "meta": {},
-    "type": { "legendItemClick?": "(event: AgChartLegendClickEvent) => void" },
+    "type": {
+      "legendItemClick?": "(event: AgChartLegendClickEvent) => void",
+      "legendItemDoubleClick?": "(event: AgChartLegendDoubleClickEvent) => void"
+    },
     "docs": {
-      "legendItemClick?": "/** The listener to call when a legend item is clicked. */"
+      "legendItemClick?": "/** The listener to call when a legend item is clicked. */",
+      "legendItemDoubleClick?": "/** The listener to call when a legend item is double clicked. */"
     }
   },
   "AgChartLegendOptions": {
@@ -986,15 +1023,21 @@
     "meta": {},
     "type": { "type": "T", "event": "Event" }
   },
+  "AgChartDoubleClickEvent": {
+    "meta": {},
+    "type": { "type": "T", "event": "Event" }
+  },
   "AgBaseChartListeners": {
     "meta": {},
     "type": {
       "seriesNodeClick?": "(event: AgNodeClickEvent) => any",
-      "click?": "(event: AgChartClickEvent) => any"
+      "click?": "(event: AgChartClickEvent) => any",
+      "doubleClick?": "(event: AgChartDoubleClickEvent) => any"
     },
     "docs": {
       "seriesNodeClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
-      "click?": "/** The listener to call to signify a general click on the chart by the user. */"
+      "click?": "/** The listener to call to signify a general click on the chart by the user. */",
+      "doubleClick?": "/** The listener to call to signify a double click on the chart by the user. */"
     }
   },
   "AgBaseChartOptions": {
@@ -3166,11 +3209,11 @@
   },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
+    "type": "'click' | 'dblclick' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
+    "type": "'click' | 'dblclick' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
   },
   "InteractionEvent": {
     "meta": {
@@ -3528,6 +3571,10 @@
   "TextMeta": {
     "meta": { "isTypeAlias": true },
     "type": "{ text: string; style: Label; x: number; y: number; hAlign: CanvasTextAlign; vAlign: CanvasTextBaseline; }"
+  },
+  "LabelMeta": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ label?: TextMeta; value?: TextMeta; }"
   },
   "PieNodeDatum": {
     "meta": {},
