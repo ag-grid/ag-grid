@@ -64,7 +64,10 @@ export class LinearScale extends ContinuousScale<number> {
             return;
         }
 
-        for (let i = 0; i < 2; i++) {
+        const maxAttempts = 4;
+        let prev0 = start;
+        let prev1 = stop;
+        for (let i = 0; i < maxAttempts; i++) {
             const step = this.interval ?? tickStep(start, stop, count, this.minTickCount, this.maxTickCount);
             if (step >= 1) {
                 start = Math.floor(start / step) * step;
@@ -75,6 +78,11 @@ export class LinearScale extends ContinuousScale<number> {
                 start = Math.floor(start * s) / s;
                 stop = Math.ceil(stop * s) / s;
             }
+            if (start === prev0 && stop === prev1) {
+                break;
+            }
+            prev0 = start;
+            prev1 = stop;
         }
         this.niceDomain = [start, stop];
     }
