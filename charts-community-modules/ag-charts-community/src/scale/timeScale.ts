@@ -51,7 +51,15 @@ function toNumber(x: any) {
 export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
     readonly type = 'time';
 
-    protected cacheProps: Array<keyof this> = ['domain', 'range', 'nice', 'tickCount', 'interval'];
+    protected cacheProps: Array<keyof this> = [
+        'domain',
+        'range',
+        'nice',
+        'tickCount',
+        'interval',
+        'minTickCount',
+        'maxTickCount',
+    ];
 
     private year: CountableTimeInterval = timeYear;
     private month: CountableTimeInterval = timeMonth;
@@ -233,10 +241,14 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
         start,
         stop,
         count,
+        minCount,
+        maxCount,
     }: {
         start: number;
         stop: number;
         count: number;
+        minCount: number;
+        maxCount: number;
     }): CountableTimeInterval | TimeInterval | undefined {
         const { tickIntervals } = this;
 
@@ -244,19 +256,19 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
         let step;
 
         const tickCount = count ?? ContinuousScale.defaultTickCount;
-        const target = Math.abs(stop - start) / Math.max(tickCount - 1, 1);
+        const target = Math.abs(stop - start) / Math.max(tickCount, 1);
         let i = 0;
         while (i < tickIntervals.length && target > tickIntervals[i][2]) {
             i++;
         }
 
         if (i === 0) {
-            step = Math.max(tickStep(start, stop, tickCount), 1);
+            step = Math.max(tickStep(start, stop, tickCount, minCount, maxCount), 1);
             countableTimeInterval = this.millisecond;
         } else if (i === tickIntervals.length) {
             const y0 = start / durationYear;
             const y1 = stop / durationYear;
-            step = tickStep(y0, y1, tickCount);
+            step = tickStep(y0, y1, tickCount, minCount, maxCount);
             countableTimeInterval = this.year;
         } else {
             const diff0 = target - tickIntervals[i - 1][2];
@@ -301,7 +313,13 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
     }
 
     private getDefaultTicks({ start, stop }: { start: number; stop: number }) {
-        const t = this.getTickInterval({ start, stop, count: this.tickCount });
+        const t = this.getTickInterval({
+            start,
+            stop,
+            count: this.tickCount,
+            minCount: this.minTickCount,
+            maxCount: this.maxTickCount,
+        });
         return t ? t.range(new Date(start), new Date(stop)) : []; // inclusive stop
     }
 
@@ -373,7 +391,20 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
      * This method typically modifies the scale’s domain, and may only extend the bounds to the nearest round value.
      */
     protected updateNiceDomain(): void {
-        const [d0, d1] = this.domain;
+        const maxAttempts = 4;
+        let [d0, d1] = this.domain;
+        for (let i = 0; i < maxAttempts; i++) {
+            this.updateNiceDomainIteration(d0, d1);
+            const [n0, n1] = this.niceDomain;
+            if (toNumber(d0) === toNumber(n0) && toNumber(d1) === toNumber(n1)) {
+                break;
+            }
+            d0 = n0;
+            d1 = n1;
+        }
+    }
+
+    protected updateNiceDomainIteration(d0: Date, d1: Date) {
         const start = toNumber(d0);
         const stop = toNumber(d1);
 
@@ -384,7 +415,13 @@ export class TimeScale extends ContinuousScale<Date, TimeInterval | number> {
             i = interval;
         } else {
             const tickCount = typeof interval === 'number' ? (stop - start) / Math.max(interval, 1) : this.tickCount;
-            i = this.getTickInterval({ start, stop, count: tickCount });
+            i = this.getTickInterval({
+                start,
+                stop,
+                count: tickCount,
+                minCount: this.minTickCount,
+                maxCount: this.maxTickCount,
+            });
         }
 
         if (i) {
