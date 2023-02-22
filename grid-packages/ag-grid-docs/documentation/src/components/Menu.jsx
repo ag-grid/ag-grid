@@ -5,8 +5,28 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import Announcements from 'components/Announcements';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
-import menuData from '../../doc-pages/licensing/menu.json';
+import rawMenuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
+
+export const getHostName = () => {
+    if (typeof window !== 'undefined') {
+        return window?.location?.hostname || document?.location?.hostname;
+    }
+}
+const isDevelopment = ['localhost', 'build.ag-grid.com'].includes(getHostName());
+function filterMenuData(data) {
+    return data
+        // Filter out Charts Enterprise pages outside development environments.
+        .filter((item) => item.enterprise !== 'charts' || isDevelopment)
+        // Recursively filter children.
+        .map((item) => {
+            if (item.items == null) return item;
+
+            return { ...item, items: filterMenuData(item.items) };
+        });
+}
+
+const menuData = filterMenuData(rawMenuData);
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
     return <li key={title} className={styles['menu__section']}>
