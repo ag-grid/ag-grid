@@ -186,6 +186,9 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     pickModes: SeriesNodePickMode[];
 
+    // Does the series force node click matching to always use nearest, and not exact shape.
+    pickForceNearestMatching: boolean = false;
+
     @Validate(STRING)
     cursor = 'default';
 
