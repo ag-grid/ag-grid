@@ -663,7 +663,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                     primaryTickCount = ticks.length;
                 }
 
-                unchanged = checkForOverlap ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
+                unchanged = checkForOverlap ? ticks.length === prevTicks.length && ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
                 i++;
             }
 
@@ -800,13 +800,9 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     private getLabelSpacing(rotated?: boolean): number {
-        const { label, tick } = this;
-        if (!isNaN(label.minSpacing) && !isNaN(tick.minSpacing)) {
-            return Math.max(label.minSpacing, tick.minSpacing);
-        } else if (!isNaN(label.minSpacing)) {
+        const { label } = this;
+        if (!isNaN(label.minSpacing)) {
             return label.minSpacing;
-        } else if (!isNaN(tick.minSpacing)) {
-            return tick.minSpacing;
         }
         return rotated ? 0 : 10;
     }
