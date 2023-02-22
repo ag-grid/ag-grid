@@ -1006,11 +1006,17 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
-        const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, true);
+        const datum = this.lastPick?.datum;
 
-        if (pick) {
-            pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
+        if (datum && datum.series.pickForceNearestMatching) {
+            datum.series.fireNodeClickEvent(event.sourceEvent, datum);
             return true;
+        } else {
+            const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, true);
+            if (pick) {
+                pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
+                return true;
+            }
         }
 
         return false;

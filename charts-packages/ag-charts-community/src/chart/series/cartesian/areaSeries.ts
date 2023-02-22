@@ -121,6 +121,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
     readonly label = new AreaSeriesLabel();
 
+    pickForceNearestMatching = true;
+
     @Validate(COLOR_STRING_ARRAY)
     fills: string[] = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
 
