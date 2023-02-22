@@ -14,7 +14,7 @@ import { getMaxValue } from "../formatPanel";
 import { AgChartPaddingOptions } from "ag-charts-community";
 import { getSeriesType } from "../../../utils/seriesTypeMapper";
 import { ChartController } from "../../../chartController";
-import { AgChartOptions } from "ag-charts-community/typings/chart/agChartOptions";
+import { AgChartOptions } from "ag-charts-community";
 
 export class PaddingPanel extends Component {
 

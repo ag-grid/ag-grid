@@ -682,6 +682,7 @@ const watchAutoDocFiles = async () => {
         '../../grid-community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts',
         '../../grid-community-modules/react/src/shared/**/*.ts',
         '../../charts-community-modules/ag-charts-community/src/**/*.ts',
+        '../../charts-enterprise-modules/ag-charts-enterprise/src/**/*.ts',
     ];
 
     const ignoredFolders = [...defaultIgnoreFolders];
@@ -813,7 +814,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
                 console.log("Watch and Generate Examples");
                 await watchAndGenerateExamples(chartsOnly);
                 console.log("Examples Generated");
-    
+
                 console.log("Watch Typescript examples...");
                 await watchValidateExampleTypes();
 
