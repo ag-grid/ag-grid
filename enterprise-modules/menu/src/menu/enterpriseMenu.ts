@@ -319,7 +319,7 @@ export class EnterpriseMenu extends BeanStub {
 
     private isModuleLoaded(menuTabName: string): boolean {
         if (menuTabName === EnterpriseMenu.TAB_COLUMNS) {
-            return ModuleRegistry.isRegistered(ModuleNames.ColumnToolPanelModule);
+            return ModuleRegistry.isRegistered(ModuleNames.ColumnsToolPanelModule);
         }
 
         return true;

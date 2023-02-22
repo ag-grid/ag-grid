@@ -202,7 +202,7 @@ export class SideBarComp extends Component implements ISideBar {
             // helpers, in case user doesn't have the right module loaded
             if (def.toolPanel === 'agColumnsToolPanel') {
                 const moduleMissing =
-                    !ModuleRegistry.assertRegistered(ModuleNames.ColumnToolPanelModule, 'Column Tool Panel');
+                    !ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel');
                 if (moduleMissing) { return; }
             }
 

@@ -10120,14 +10120,12 @@
     "meta": { "isEnum": true },
     "type": [
       "CommunityCoreModule = \"@ag-grid-community/core\"",
-      "CommunityAllModules = \"@ag-grid-community/all\"",
       "InfiniteRowModelModule = \"@ag-grid-community/infinite-row-model\"",
       "ClientSideRowModelModule = \"@ag-grid-community/client-side-row-model\"",
       "CsvExportModule = \"@ag-grid-community/csv-export\"",
       "EnterpriseCoreModule = \"@ag-grid-enterprise/core\"",
-      "EnterpriseAllModules = \"@ag-grid-enterprise/all\"",
       "RowGroupingModule = \"@ag-grid-enterprise/row-grouping\"",
-      "ColumnToolPanelModule = \"@ag-grid-enterprise/column-tool-panel\"",
+      "ColumnsToolPanelModule = \"@ag-grid-enterprise/column-tool-panel\"",
       "FiltersToolPanelModule = \"@ag-grid-enterprise/filter-tool-panel\"",
       "MenuModule = \"@ag-grid-enterprise/menu\"",
       "SetFilterModule = \"@ag-grid-enterprise/set-filter\"",
@@ -10145,13 +10143,9 @@
       "SparklinesModule = \"@ag-grid-enterprise/sparklines\"",
       "AngularModule = \"@ag-grid-community/angular\"",
       "ReactModule = \"@ag-grid-community/react\"",
-      "VueModule = \"@ag-grid-community/vue\"",
-      "PolymerModule = \"@ag-grid-community/polymer\""
+      "VueModule = \"@ag-grid-community/vue\""
     ],
     "docs": [
-      null,
-      null,
-      null,
       null,
       null,
       null,

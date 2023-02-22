@@ -342,7 +342,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         exists(colDefAny['menuTabs']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'menuTabs');
         exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams');
-        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.ColumnToolPanelModule, 'columnsMenuParams');
+        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams');
 
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
