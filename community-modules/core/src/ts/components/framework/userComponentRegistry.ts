@@ -27,6 +27,7 @@ import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayCo
 import { TooltipComponent } from "../../rendering/tooltipComponent";
 import { doOnce } from "../../utils/function";
 import { iterateObject } from '../../utils/object';
+import { fuzzySuggestions } from '../../utils/fuzzyMatch';
 
 @Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
@@ -138,7 +139,7 @@ export class UserComponentRegistry extends BeanStub {
         this.fwComps[name] = component;
     }
 
-    public retrieve(name: string): { componentFromFramework: boolean, component: any } | null {
+    public retrieve(propertyName: string, name: string): { componentFromFramework: boolean, component: any } | null {
 
         const createResult = (component: any, componentFromFramework: boolean) => ({componentFromFramework, component});
 
@@ -168,14 +169,29 @@ export class UserComponentRegistry extends BeanStub {
 
         const moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
         if (moduleForComponent) {
-            ModuleRegistry.assertRegistered(moduleForComponent, `AG Grid component [${name}]`);
+            ModuleRegistry.assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`);
         } else if (this.deprecatedAgGridDefaults[name]) {
             doOnce(() => console.warn(this.deprecatedAgGridDefaults[name]), name)
         }
         else {
-            doOnce(() => console.warn(`AG Grid: Looking for component [${name}] but it wasn't found. Have you registered the component? See https://ag-grid.com/javascript-data-grid/components/`), "MissingComp" + name);
+            doOnce(() => { this.warnAboutMissingComponent(propertyName, name) }, "MissingComp" + name);
         }
 
         return null;
+    }
+
+    private warnAboutMissingComponent(propertyName: string, componentName: string) {
+        const validComponents = [
+            // Don't include the old names / internals in potential suggestions
+            ...Object.keys(this.agGridDefaults).filter(k => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)),
+            ...Object.keys(this.jsComps),
+            ...Object.keys(this.fwComps)];
+        const suggestions = fuzzySuggestions(componentName, validComponents, true, 0.8);
+
+        console.warn(`AG Grid: Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`);
+        if (suggestions.length > 0) {
+            console.warn(`         Did you mean: [${suggestions.slice(0, 3)}]?`);
+        }
+        console.warn(`If using a custom component check it has been registered as described in: https://ag-grid.com/javascript-data-grid/components/`);
     }
 }

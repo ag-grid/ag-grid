@@ -166,7 +166,7 @@ export class UserComponentFactory extends BeanStub {
         let { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector } = this.getCompKeys(defObject, type, params);
 
         const lookupFromRegistry = (key: string) => {
-            const item = this.userComponentRegistry.retrieve(key);
+            const item = this.userComponentRegistry.retrieve(propertyName, key);
             if (item) {
                 jsComp = !item.componentFromFramework ? item.component : undefined;
                 fwComp = item.componentFromFramework ? item.component : undefined;
