@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-enterprise",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
@@ -58,10 +58,10 @@
     "rimraf": "3.0.2",
     "typescript": "~4.0.8",
     "gulp": "^4.0.0",
-    "ag-charts-community": "~7.0.0"
+    "ag-charts-community": "~7.1.0"
   },
   "peerDependencies": {
-    "ag-charts-community": "~7.0.0"
+    "ag-charts-community": "~7.1.0"
   },
   "publishConfig": {
     "access": "private"
