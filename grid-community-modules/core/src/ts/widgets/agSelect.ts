@@ -132,12 +132,6 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         return super.setValue(value, silent);
     }
 
-    public onItemSelected(callbackFn: () => void): this {
-        this.addManagedListener(this, AgSelect.EVENT_ITEM_SELECTED, () => callbackFn());
-
-        return this;
-    }
-
     protected destroy(): void {
         if (this.hideList) {
             this.hideList();
