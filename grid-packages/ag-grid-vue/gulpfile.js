@@ -3,10 +3,10 @@ const replace = require('gulp-replace');
 const merge = require('merge-stream');
 
 const copyFromModuleSource = () => {
-    const srcCopy = gulp.src("../../community-modules/vue/src/**/*")
+    const srcCopy = gulp.src("../../grid-community-modules/vue/src/**/*")
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
         .pipe(gulp.dest("./src"));
-    const mainCopy = gulp.src("../../community-modules/vue/main*.*")
+    const mainCopy = gulp.src("../../grid-community-modules/vue/main*.*")
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
         .pipe(gulp.dest("./"));
 

@@ -3,7 +3,7 @@ const replace = require('gulp-replace');
 var childProcess = require('child_process');
 
 const copyFromModuleSource = () => {
-    return gulp.src(["**/*"], { cwd: '../../community-modules/angular-legacy/projects/ag-grid-angular/src' })
+    return gulp.src(["**/*"], { cwd: '../../grid-community-modules/angular-legacy/projects/ag-grid-angular/src' })
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
         .pipe(gulp.dest("./projects/ag-grid-angular/src", {cwd: '.'}));
 };

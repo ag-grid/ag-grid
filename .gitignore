@@ -34,21 +34,21 @@ archive*.zip
 # latest only
 dist
 
-community-modules/all-modules/styles/**
-enterprise-modules/all-modules/styles/**
+grid-community-modules/all-modules/styles/**
+grid-enterprise-modules/all-modules/styles/**
 grid-packages/ag-grid-community/styles/**
 grid-packages/ag-grid-enterprise/styles/**
 grid-packages/ag-grid-docs/documentation/cypress.config.AUTO.json
 
 
 # compiled CSS files
-community-modules/styles/*.css
+grid-community-modules/styles/*.css
 # compiled css files as SCSS
-community-modules/styles/_css-content.scss
+grid-community-modules/styles/_css-content.scss
 
-charts-packages/**/dist
-community-modules/**/dist
-enterprise-modules/**/dist
+charts-community-modules/**/dist
+grid-community-modules/**/dist
+grid-enterprise-modules/**/dist
 grid-packages/**/dist
 
 grid-packages/ag-grid-angular/aot/**
@@ -57,17 +57,17 @@ grid-packages/ag-grid-angular/main.js.map
 grid-packages/ag-grid-angular/main.js
 grid-packages/ag-grid-angular/main.d.ts
 grid-packages/ag-grid-angular/main.metadata.json
-community-modules/angular/aot/**
-community-modules/angular/dist/**
-community-modules/angular/main.js.map
-community-modules/angular/main.js
-community-modules/angular/main.d.ts
-community-modules/angular/main.metadata.json
+grid-community-modules/angular/aot/**
+grid-community-modules/angular/dist/**
+grid-community-modules/angular/main.js.map
+grid-community-modules/angular/main.js
+grid-community-modules/angular/main.d.ts
+grid-community-modules/angular/main.metadata.json
 
 grid-packages/ag-grid-react/lib/**
 grid-packages/ag-grid-react/bundles/**
-community-modules/react/lib/**
-community-modules/react/bundles/**
+grid-community-modules/react/lib/**
+grid-community-modules/react/bundles/**
 
 grid-packages/ag-grid-community/main.d.ts
 grid-packages/ag-grid-community/main.js
@@ -82,12 +82,12 @@ grid-packages/ag-grid-vue3/dist/**
 grid-packages/ag-grid-vue3/lib/**
 grid-packages/ag-grid-vue3/main.js
 grid-packages/ag-grid-vue3/main.d.ts
-community-modules/vue/lib/**
-community-modules/vue/dist/**
-community-modules/vue/main.js
-community-modules/vue3/lib/**
-community-modules/vue3/dist/**
-community-modules/vue3/main.js
+grid-community-modules/vue/lib/**
+grid-community-modules/vue/dist/**
+grid-community-modules/vue/main.js
+grid-community-modules/vue3/lib/**
+grid-community-modules/vue3/dist/**
+grid-community-modules/vue3/main.js
 
 grid-packages/ag-grid-angular/exports.d.ts
 grid-packages/ag-grid-angular/exports.js
@@ -96,20 +96,20 @@ grid-packages/ag-grid-angular/exports.metadata.json
 
 grid-packages/ag-grid-community/src/styles
 
-community-modules/core/typings
-community-modules/csv-export/typings
-enterprise-modules/core/typings
-enterprise-modules/set-filter/typings
-enterprise-modules/excel-export/typings
+grid-community-modules/core/typings
+grid-community-modules/csv-export/typings
+grid-enterprise-modules/core/typings
+grid-enterprise-modules/set-filter/typings
+grid-enterprise-modules/excel-export/typings
 
-charts-packages/ag-charts-react/lib
-charts-packages/ag-charts-react/umd
-charts-packages/ag-charts-vue/lib/**
-charts-packages/ag-charts-vue3/lib/**
-charts-packages/ag-charts-angular/dist
+charts-community-modules/ag-charts-react/lib
+charts-community-modules/ag-charts-react/umd
+charts-community-modules/ag-charts-vue/lib/**
+charts-community-modules/ag-charts-vue3/lib/**
+charts-community-modules/ag-charts-angular/dist
 
 
-###### Remove once Nx fix the deep nested .gitignore 
+###### Remove once Nx fix the deep nested .gitignore
 ###### This is just a copy of the documentation gitignore
 _gen
 _dev
@@ -190,4 +190,4 @@ package-lock.json
 
 .examplesHash
 
-###### Remove once Nx fix the deep nested .gitignore 
+###### Remove once Nx fix the deep nested .gitignore

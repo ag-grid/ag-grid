@@ -2,13 +2,13 @@ const { JSDOM } = require('jsdom');
 const { window, document } = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
 const sucrase = require("sucrase");
 
-const agGridVersion = "^" + require('../../community-modules/core/package.json').version;
-const agChartsVersion = "^" + require('../../charts-packages/ag-charts-community/package.json').version;
-const agChartsAngularVersion = "^" + require('../../charts-packages/ag-charts-angular/package.json').version;
-const agChartsReactVersion = "^" + require('../../charts-packages/ag-charts-react/package.json').version;
-const agGridEnterpriseVersion = "^" + require('../../enterprise-modules/core/package.json').version;
-const agGridReactVersion = "^" + require('../../community-modules/react/package.json').version;
-const agGridAngularVersion = "^" + require('../../community-modules/angular/package.json').version;
+const agGridVersion = "^" + require('../../grid-community-modules/core/package.json').version;
+const agChartsVersion = "^" + require('../../charts-community-modules/ag-charts-community/package.json').version;
+const agChartsAngularVersion = "^" + require('../../charts-community-modules/ag-charts-angular/package.json').version;
+const agChartsReactVersion = "^" + require('../../charts-community-modules/ag-charts-react/package.json').version;
+const agGridEnterpriseVersion = "^" + require('../../grid-enterprise-modules/core/package.json').version;
+const agGridReactVersion = "^" + require('../../grid-community-modules/react/package.json').version;
+const agGridAngularVersion = "^" + require('../../grid-community-modules/angular/package.json').version;
 
 const getGenericInterface = require('./documentation/shared-types/generators')
 
