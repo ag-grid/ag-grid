@@ -22,48 +22,48 @@
 	path = charts-examples/ag-charts-angular-example
 	url = https://github.com/ag-grid/ag-charts-angular-example.git
 	branch = latest
-[submodule "examples-grid/ag-grid-vue3-package-example"]
+[submodule "grid-examples/ag-grid-vue3-package-example"]
 	path = grid-examples/ag-grid-vue3-package-example
 	url = https://github.com/ag-grid/ag-grid-vue3-package-example.git
 	branch = latest
-[submodule "examples-grid/ag-grid-vue3-example"]
+[submodule "grid-examples/ag-grid-vue3-example"]
 	path = grid-examples/ag-grid-vue3-example
 	url = https://github.com/ag-grid/ag-grid-vue3-example.git
 	branch = latest
-[submodule "examples-charts/ag-charts-vue3-example"]
+[submodule "charts-examples/ag-charts-vue3-example"]
 	path = charts-examples/ag-charts-vue3-example
 	url = https://github.com/ag-grid/ag-charts-vue3-example.git
 	branch = latest
-[submodule "examples-grid/ag-grid-vue-package-example"]
+[submodule "grid-examples/ag-grid-vue-package-example"]
 	path = grid-examples/ag-grid-vue-package-example
 	url = https://github.com/ag-grid/ag-grid-vue-package-example.git
 	branch = latest
-[submodule "examples-grid/ag-grid-angular-cli-package-example"]
+[submodule "grid-examples/ag-grid-angular-cli-package-example"]
 	path = grid-examples/ag-grid-angular-cli-package-example
 	url = https://github.com/ag-grid/ag-grid-angular-cli-package-example.git
 	branch = latest
-[submodule "examples-grid/ag-grid-react-package-example"]
+[submodule "grid-examples/ag-grid-react-package-example"]
 	path = grid-examples/ag-grid-react-package-example
 	url = https://github.com/ag-grid/ag-grid-react-package-example.git
 	branch = latest
-[submodule "examples-grid/ag-grid-angular-cli-legacy-example"]
+[submodule "grid-examples/ag-grid-angular-cli-legacy-example"]
 	path = grid-examples/ag-grid-angular-cli-legacy-example
 	url = https://github.com/ag-grid/ag-grid-angular-cli-legacy-example.git
-[submodule "examples-grid/ag-grid-angular-cli-legacy-package-example"]
+[submodule "grid-examples/ag-grid-angular-cli-legacy-package-example"]
 	path = grid-examples/ag-grid-angular-cli-legacy-package-example
 	url = https://github.com/ag-grid/ag-grid-angular-cli-legacy-package-example.git
-[submodule "examples-charts/ag-charts-angular-legacy-example"]
+[submodule "charts-examples/ag-charts-angular-legacy-example"]
 	path = charts-examples/ag-charts-angular-legacy-example
 	url = https://github.com/ag-grid/ag-charts-angular-legacy-example.git
-[submodule "examples-grid/ag-grid-solid-example"]
+[submodule "grid-examples/ag-grid-solid-example"]
 	path = grid-examples/ag-grid-solid-example
 	url = https://github.com/ag-grid/ag-grid-solid-example.git
-[submodule "examples-grid/ag-grid-solid-package-example"]
+[submodule "grid-examples/ag-grid-solid-package-example"]
 	path = grid-examples/ag-grid-solid-package-example
 	url = https://github.com/ag-grid/ag-grid-solid-package-example.git
 [submodule "charts-enterprise-modules/ag-charts-enterprise"]
 	path = charts-enterprise-modules/ag-charts-enterprise
 	url = https://github.com/ag-grid/ag-charts-enterprise.git
-[submodule "examples-charts/ag-charts-enterprise-example"]
+[submodule "charts-examples/ag-charts-enterprise-example"]
 	path = charts-examples/ag-charts-enterprise-example
 	url = https://github.com/ag-grid/ag-charts-enterprise-example.git

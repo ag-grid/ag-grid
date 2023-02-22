@@ -313,7 +313,7 @@ function moduleChanged(moduleRoot) {
 const readModulesState = (buildChain) => {
     const agPackages = Object.keys(buildChain);
 
-    const moduleRootNames = ['grid-packages', 'grid-community-modules', 'grid-enterprise-modules', 'charts-community-modules', 'examples-grid', 'grid-packages/ag-grid-docs'];
+    const moduleRootNames = ['grid-packages', 'grid-community-modules', 'grid-enterprise-modules', 'charts-community-modules', 'grid-examples', 'grid-packages/ag-grid-docs'];
     const exclusions = ['ag-grid-dev', 'prettier-no-op'];
 
     const modulesState = {};

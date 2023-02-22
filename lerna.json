@@ -5,8 +5,8 @@
     "charts-community-modules/*",
     "charts-enterprise-modules/*",
     "grid-packages/*",
-    "examples-charts/*",
-    "examples-grid/*",
+    "charts-examples/*",
+    "grid-examples/*",
     "grid-packages/ag-grid-docs/documentation/"
   ],
   "useNx": false,
