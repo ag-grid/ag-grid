@@ -12,6 +12,7 @@ import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
 import { doOnce } from './util/function';
 import { TimeInterval } from './util/time/interval';
+import { areArrayNumbersEqual } from './util/equal';
 import { CrossLine } from './chart/crossline/crossLine';
 import {
     Validate,
@@ -663,7 +664,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                     primaryTickCount = ticks.length;
                 }
 
-                unchanged = checkForOverlap ? ticks.length === prevTicks.length && ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
+                unchanged = checkForOverlap ? areArrayNumbersEqual(ticks, prevTicks) : false;
                 i++;
             }
 
