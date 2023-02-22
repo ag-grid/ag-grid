@@ -887,20 +887,20 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
-    private pickSeriesNode(point: Point):
+    private pickSeriesNode(
+        point: Point,
+        exactMatchOnly: boolean
+    ):
         | {
               series: Series<any>;
               datum: SeriesNodeDatum;
+              distance: number;
           }
         | undefined {
-        const {
-            tooltip: { tracking },
-        } = this;
-
         const start = performance.now();
 
         // Disable 'nearest match' options if tooltip.tracking is enabled.
-        const pickModes = tracking ? undefined : [SeriesNodePickMode.EXACT_SHAPE_MATCH];
+        const pickModes = exactMatchOnly ? [SeriesNodePickMode.EXACT_SHAPE_MATCH] : undefined;
 
         // Iterate through series in reverse, as later declared series appears on top of earlier
         // declared series.
@@ -967,7 +967,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             return;
         }
 
-        const pick = this.pickSeriesNode({ x: offsetX, y: offsetY });
+        const pick = this.pickSeriesNode({ x: offsetX, y: offsetY }, !this.tooltip.tracking);
 
         if (!pick) {
             disablePointer();
@@ -1006,19 +1006,11 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
-        const { lastPick } = this;
+        const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, true);
 
-        if (lastPick?.datum) {
-            const { datum } = lastPick;
-            datum.series.fireNodeClickEvent(event.sourceEvent, datum);
+        if (pick) {
+            pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
             return true;
-        } else if (event.sourceEvent.type.startsWith('touch')) {
-            const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY });
-
-            if (pick) {
-                pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
-                return true;
-            }
         }
 
         return false;
