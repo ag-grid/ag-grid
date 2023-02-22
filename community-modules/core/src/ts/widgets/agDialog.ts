@@ -146,7 +146,6 @@ export class AgDialog extends AgPanel {
                 this.destroyBean(this.maximizeButtonComp);
                 this.maximizeButtonComp = this.maximizeIcon = this.minimizeIcon = undefined;
             }
-
             return;
         }
 
@@ -154,19 +153,9 @@ export class AgDialog extends AgPanel {
 
         if (!eTitleBar || maximizable === this.isMaximizable) { return; }
 
-        const maximizeButtonComp = this.maximizeButtonComp =
-            this.createBean(new Component(/* html */`<div class="ag-dialog-button"></span>`));
+        const maximizeButtonComp = this.buildMaximizeAndMinimizeElements();
 
-        const eGui = maximizeButtonComp.getGui();
-
-        eGui.appendChild(this.maximizeIcon = createIconNoSpan('maximize', this.gridOptionsService)!);
-        this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
-
-        eGui.appendChild(this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsService)!);
-        this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
-        setDisplayed(this.minimizeIcon, false);
-
-        maximizeButtonComp.addManagedListener(eGui, 'click', this.toggleMaximize.bind(this));
+        maximizeButtonComp.addManagedListener(maximizeButtonComp.getGui(), 'click', this.toggleMaximize.bind(this));
 
         this.addTitleBarButton(maximizeButtonComp, 0);
 
@@ -178,5 +167,22 @@ export class AgDialog extends AgPanel {
             this.isMaximized = false;
             this.refreshMaximizeIcon();
         });
+    }
+
+    private buildMaximizeAndMinimizeElements(): Component{
+        const maximizeButtonComp = this.maximizeButtonComp =
+        this.createBean(new Component(/* html */`<div class="ag-dialog-button"></span>`));
+
+        const eGui = maximizeButtonComp.getGui();
+
+        this.maximizeIcon = createIconNoSpan('maximize', this.gridOptionsService)!;
+        eGui.appendChild(this.maximizeIcon);
+        this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
+
+        this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsService)!
+        eGui.appendChild(this.minimizeIcon);
+        this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
+
+        return maximizeButtonComp;
     }
 }

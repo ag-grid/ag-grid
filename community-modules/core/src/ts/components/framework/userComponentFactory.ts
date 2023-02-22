@@ -318,7 +318,7 @@ export class UserComponentFactory extends BeanStub {
         if (deferredInit == null) {
             return AgPromise.resolve(instance);
         }
-        return (deferredInit as AgPromise<void>).then(() => instance);
+        return deferredInit.then(() => instance);
     }
 
     // used by Floating Filter

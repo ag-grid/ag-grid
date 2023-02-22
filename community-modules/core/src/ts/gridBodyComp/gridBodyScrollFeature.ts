@@ -262,24 +262,33 @@ export class GridBodyScrollFeature extends BeanStub {
         if (touchOnly && !isIOSUserAgent()) { return false; }
 
         if (direction === 'vertical') {
-            const clientHeight = getInnerHeight(this.eBodyViewport);
-            const { scrollHeight } = this.eBodyViewport;
-            if (scrollTo < 0 || (scrollTo + clientHeight > scrollHeight)) {
-                return true;
-            }
+            return this.shouldBlockVerticalScroll(scrollTo)
         }
 
-        if (direction === 'horizontal') {
-            const clientWidth = this.centerRowContainerCtrl.getCenterWidth();
-            const { scrollWidth } = this.centerRowContainerCtrl.getViewportElement();
+        return this.shouldBlockHorizontalScroll(scrollTo);
+    }
 
-            if (this.enableRtl && isRtlNegativeScroll()) {
-                if (scrollTo > 0) { return true; }
-            } else if (scrollTo < 0) { return true; }
+    private shouldBlockVerticalScroll(scrollTo: number): boolean {
+        const clientHeight = getInnerHeight(this.eBodyViewport);
+        const { scrollHeight } = this.eBodyViewport;
 
-            if (Math.abs(scrollTo) + clientWidth > scrollWidth) {
-                return true;
-            }
+        if (scrollTo < 0 || (scrollTo + clientHeight > scrollHeight)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private shouldBlockHorizontalScroll(scrollTo: number): boolean {
+        const clientWidth = this.centerRowContainerCtrl.getCenterWidth();
+        const { scrollWidth } = this.centerRowContainerCtrl.getViewportElement();
+
+        if (this.enableRtl && isRtlNegativeScroll()) {
+            if (scrollTo > 0) { return true; }
+        } else if (scrollTo < 0) { return true; }
+
+        if (Math.abs(scrollTo) + clientWidth > scrollWidth) {
+            return true;
         }
 
         return false;

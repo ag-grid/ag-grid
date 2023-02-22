@@ -293,23 +293,27 @@ export class GridOptionsService {
         }
 
         if (rowNode.detail && this.is('masterDetail')) {
-            // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
-            // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
-            // (due to auto height) which looks bad, especially if doing row animation.
-            if (this.is('detailRowAutoHeight')) {
-                return { height: 1, estimated: false };
-            }
-
-            if (this.isNumeric(this.gridOptions.detailRowHeight)) {
-                return { height: this.gridOptions.detailRowHeight, estimated: false };
-            }
-
-            return { height: 300, estimated: false };
+            return this.getMasterDetailRowHeight();
         }
 
         const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
 
         return { height: rowHeight, estimated: false };
+    }
+
+    private getMasterDetailRowHeight(): { height: number, estimated: boolean } {
+        // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
+        // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
+        // (due to auto height) which looks bad, especially if doing row animation.
+        if (this.is('detailRowAutoHeight')) {
+            return { height: 1, estimated: false };
+        }
+
+        if (this.isNumeric(this.gridOptions.detailRowHeight)) {
+            return { height: this.gridOptions.detailRowHeight, estimated: false };
+        }
+
+        return { height: 300, estimated: false };
     }
 
     // we don't allow dynamic row height for virtual paging

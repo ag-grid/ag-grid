@@ -241,7 +241,7 @@ export class RowCtrl extends BeanStub {
             setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
 
-        const rowIdSanitised = escapeString(this.rowNode.id!);
+        const rowIdSanitised = escapeString(this.rowNode.id);
 
         if (rowIdSanitised != null) {
             comp.setRowId(rowIdSanitised);
