@@ -222,6 +222,7 @@ export class RowContainerEventsFeature extends BeanStub {
                         break;
                     case KeyCode.TAB:
                         rowComp.onTabKeyDown(keyboardEvent);
+                        break;
                     default:
                 }
             }
