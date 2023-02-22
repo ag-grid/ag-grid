@@ -33,7 +33,7 @@ export class ModuleRegistry {
         if (module.validate) {
             const result = module.validate();
             if (!result.isValid) {
-                const errorResult = result;
+                const errorResult = result as ModuleValidationInvalidResult;
                 console.error(`AG Grid: ${errorResult.message}`);
             }
         }
