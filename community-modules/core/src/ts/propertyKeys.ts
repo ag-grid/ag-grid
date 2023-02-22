@@ -27,7 +27,7 @@ type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
  * Does not include `any` properties.
  */
 type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
-type CallbackKeys = KeysOfType<(any: AgGridCommon<any>) => any>;
+type CallbackKeys = KeysOfType<(any: AgGridCommon<any, any>) => any>;
 /** All function properties excluding those explicity match the common callback interface. */
 type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
 

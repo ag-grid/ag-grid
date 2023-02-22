@@ -129,7 +129,7 @@ export interface IFilterOptionDef {
 /**
  * Parameters provided by the grid to the `init` method of an `IFilterComp`
  */
-export interface IFilterParams<TData = any> extends AgGridCommon<TData> {
+export interface IFilterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column this filter is for. */
     column: Column;
     /** The column definition for the column. */

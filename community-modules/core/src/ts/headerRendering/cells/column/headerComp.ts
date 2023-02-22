@@ -18,7 +18,7 @@ import { ColumnModel } from "../../../columns/columnModel";
 import { Events } from "../../../eventKeys";
 import { SortDirection } from "../../../entities/colDef";
 
-export interface IHeaderParams<TData = any> extends AgGridCommon<TData> {
+export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column the header is for. */
     column: Column;
     /**

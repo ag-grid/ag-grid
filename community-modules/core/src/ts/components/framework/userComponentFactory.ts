@@ -328,7 +328,7 @@ export class UserComponentFactory extends BeanStub {
         paramsFromGrid: any,
         paramsFromSelector: any = null
     ): any {
-        const params: AgGridCommon<any> = {
+        const params: AgGridCommon<any, any> = {
             context: this.gridOptionsService.context,
             columnApi: this.gridOptionsService.columnApi,
             api: this.gridOptionsService.api

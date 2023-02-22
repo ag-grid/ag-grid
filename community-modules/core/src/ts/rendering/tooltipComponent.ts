@@ -7,7 +7,7 @@ import { ColGroupDef, ColDef } from '../entities/colDef';
 import { AgGridCommon } from '../interfaces/iCommon';
 import { IRowNode } from '../interfaces/iRowNode';
 
-export interface ITooltipParams<TData = any, TValue = any> extends AgGridCommon<TData> {
+export interface ITooltipParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */
     location: string;
     /** The value to be rendered by the tooltip. */
