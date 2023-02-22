@@ -569,7 +569,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     public checkAutoHeights(): void {
-        let notAllPresent = false;
         let nonePresent = true;
         let newRowHeight = 0;
 
@@ -577,19 +576,13 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         if (autoHeights == null) { return; }
 
         const displayedAutoHeightCols = this.beans.columnModel.getAllDisplayedAutoHeightCols();
-        displayedAutoHeightCols.forEach(col => {
+        for (const col of displayedAutoHeightCols) {
             const cellHeight = autoHeights[col.getId()];
-            if (cellHeight == null) {
-                notAllPresent = true;
-                return;
-            }
-            nonePresent = false;
-            if (cellHeight > newRowHeight) {
+            if (cellHeight && cellHeight > newRowHeight) {
+                nonePresent = false;
                 newRowHeight = cellHeight;
             }
-        });
-
-        if (notAllPresent) { return; }
+        }
 
         // we take min of 10, so we don't adjust for empty rows. if <10, we put to default.
         // this prevents the row starting very small when waiting for async components,
