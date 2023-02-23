@@ -21,6 +21,7 @@ import { SizedPoint, Point } from '../../scene/point';
 import { BBox } from '../../scene/bbox';
 import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
+import { AgChartInteractionRange } from '../agChartOptions';
 
 /**
  * Processed series datum used in node selections,
@@ -198,7 +199,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     cursor = 'default';
 
     @Validate(INTERACTION_RANGE)
-    nodeClickRange: number | 'exact' | 'nearest' = 'exact';
+    nodeClickRange: AgChartInteractionRange = 'exact';
 
     constructor({
         useSeriesGroupLayer = true,
