@@ -250,21 +250,21 @@ export class LicenseManager {
     }
 
     private outputInvalidLicenseKey() {
-        console.error('*****************************************************************************************************************');
-        console.error('***************************************** AG Grid Enterprise License ********************************************');
-        console.error('********************************************* Invalid License ***************************************************');
-        console.error('* Your license for AG Grid Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');
-        console.error('*****************************************************************************************************************');
-        console.error('*****************************************************************************************************************');
+        console.error('*******************************************************************************************************************');
+        console.error('***************************************** AG Charts Enterprise License ********************************************');
+        console.error('*********************************************** Invalid License ***************************************************');
+        console.error('* Your license for AG Charts Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');
+        console.error('*******************************************************************************************************************');
+        console.error('*******************************************************************************************************************');
 
         this.watermarkMessage = "Invalid License";
     }
 
     private outputExpiredTrialKey(formattedExpiryDate: string) {
         console.error('****************************************************************************************************************');
-        console.error('***************************************** AG Grid Enterprise License *******************************************');
+        console.error('***************************************** AG Charts Enterprise License *****************************************');
         console.error('*****************************************   Trial Period Expired.    *******************************************');
-        console.error(`* Your license for AG Grid Enterprise expired on ${formattedExpiryDate}.                                                *`);
+        console.error(`* Your license for AG Charts Enterprise expired on ${formattedExpiryDate}.                                              *`);
         console.error('* Please email info@ag-grid.com to purchase a license.                                                         *');
         console.error('****************************************************************************************************************');
         console.error('****************************************************************************************************************');
@@ -274,9 +274,9 @@ export class LicenseManager {
 
     private outputMissingLicenseKey() {
         console.error('****************************************************************************************************************');
-        console.error('***************************************** AG Grid Enterprise License *******************************************');
+        console.error('***************************************** AG Charts Enterprise License *****************************************');
         console.error('****************************************** License Key Not Found ***********************************************');
-        console.error('* All AG Grid Enterprise features are unlocked.                                                                *');
+        console.error('* All AG Charts Enterprise features are unlocked.                                                              *');
         console.error('* This is an evaluation only version, it is not licensed for development projects intended for production.     *');
         console.error('* If you want to hide the watermark, please email info@ag-grid.com for a trial license.                        *');
         console.error('****************************************************************************************************************');
@@ -288,17 +288,17 @@ export class LicenseManager {
     private outputIncompatibleVersion(formattedExpiryDate: string, formattedReleaseDate: string) {
         console.error('****************************************************************************************************************************');
         console.error('****************************************************************************************************************************');
-        console.error('*                                             AG Grid Enterprise License                                                   *');
-        console.error('*                           License not compatible with installed version of AG Grid Enterprise.                           *');
+        console.error('*                                             AG Charts Enterprise License                                                 *');
+        console.error('*                           License not compatible with installed version of AG Charts Enterprise.                         *');
         console.error('*                                                                                                                          *');
-        console.error(`* Your AG Grid License entitles you to all versions of AG Grid that we release within the time covered by your license     *`);
-        console.error(`* - typically we provide one year licenses which entitles you to all releases / updates of AG Grid within that year.       *`);
-        console.error(`* Your license has an end (expiry) date which stops the license key working with versions of AG Grid released after the    *`);
-        console.error(`* license end date. The license key that you have expires on ${formattedExpiryDate}, however the version of AG Grid you    *`);
+        console.error(`* Your AG Charts License entitles you to all versions of AG Charts that we release within the time covered by your license *`);
+        console.error(`* - typically we provide one year licenses which entitles you to all releases / updates of AG Charts within that year.     *`);
+        console.error(`* Your license has an end (expiry) date which stops the license key working with versions of AG Charts released after the  *`);
+        console.error(`* license end date. The license key that you have expires on ${formattedExpiryDate}, however the version of AG Charts you  *`);
         console.error(`* are trying to use was released on ${formattedReleaseDate}.                                                               *`);
         console.error('*                                                                                                                          *');
         console.error('* Please contact info@ag-grid.com to renew your subscription to new versions and get a new license key to work with this   *');
-        console.error('* version of AG Grid.                                                                                                      *');
+        console.error('* version of AG Charts.                                                                                                    *');
         console.error('****************************************************************************************************************************');
         console.error('****************************************************************************************************************************');
 
