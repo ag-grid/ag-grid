@@ -1,4 +1,3 @@
-import { RefSelector } from '../../../widgets/componentAnnotations';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { DateCompWrapper } from './dateCompWrapper';
@@ -111,15 +110,11 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         ScalarFilter.NOT_BLANK,
     ];
 
-    @RefSelector('eCondition1PanelFrom') private readonly eCondition1PanelFrom: HTMLElement;
-    @RefSelector('eCondition1PanelTo') private readonly eCondition1PanelTo: HTMLElement;
-    @RefSelector('eCondition2PanelFrom') private readonly eCondition2PanelFrom: HTMLElement;
-    @RefSelector('eCondition2PanelTo') private readonly eCondition2PanelTo: HTMLElement;
+    private readonly eConditionPanelsFrom: HTMLElement[] = [];
+    private readonly eConditionPanelsTo: HTMLElement[] = [];
 
-    private dateCondition1FromComp: DateCompWrapper;
-    private dateCondition1ToComp: DateCompWrapper;
-    private dateCondition2FromComp: DateCompWrapper;
-    private dateCondition2ToComp: DateCompWrapper;
+    private readonly dateConditionFromComps: DateCompWrapper[] = [];
+    private readonly dateConditionToComps: DateCompWrapper[] = [];
 
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
@@ -135,7 +130,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         super.afterGuiAttached(params);
 
-        this.dateCondition1FromComp.afterGuiAttached(params);
+        this.dateConditionFromComps[0].afterGuiAttached(params);
     }
 
     protected mapValuesFromModel(filterModel: DateFilterModel | null): Tuple<Date> {
@@ -169,9 +164,9 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected setParams(params: DateFilterParams): void {
-        super.setParams(params);
-
         this.dateFilterParams = params;
+
+        super.setParams(params);
 
         const yearParser = (param: keyof DateFilterParams, fallback: number) => {
             if (params[param] != null) {
@@ -191,29 +186,21 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
             console.warn(`AG Grid: DateFilter minValidYear should be <= maxValidYear`);
         }
 
-        this.createDateComponents();
         this.filterModelFormatter = new DateFilterModelFormatter(this.dateFilterParams, this.localeService, this.optionsFactory);
     }
 
-    private createDateComponents(): void {
-        const createDateCompWrapper = (element: HTMLElement) =>
-            new DateCompWrapper(
-                this.getContext(),
-                this.userComponentFactory,
-                {
-                    onDateChanged: () => this.onUiChanged(),
-                    filterParams: this.dateFilterParams
-                },
-                element);
-
-        this.dateCondition1FromComp = createDateCompWrapper(this.eCondition1PanelFrom);
-        this.dateCondition1ToComp = createDateCompWrapper(this.eCondition1PanelTo);
-        this.dateCondition2FromComp = createDateCompWrapper(this.eCondition2PanelFrom);
-        this.dateCondition2ToComp = createDateCompWrapper(this.eCondition2PanelTo);
-
-        this.addDestroyFunc(() => {
-            this.forEachInput((element) => element.destroy());
-        });
+    createDateCompWrapper(element: HTMLElement): DateCompWrapper {
+        const dateCompWrapper = new DateCompWrapper(
+            this.getContext(),
+            this.userComponentFactory,
+            {
+                onDateChanged: () => this.onUiChanged(),
+                filterParams: this.dateFilterParams
+            },
+            element
+        );
+        this.addDestroyFunc(() => dateCompWrapper.destroy());
+        return dateCompWrapper;
     }
 
     protected setElementValue(element: DateCompWrapper, value: Date | null, silent?: boolean): void {
@@ -232,14 +219,35 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return DateFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected createValueTemplate(position: number): string {
-        const pos = String(position + 1);
+    protected createValueElement(): HTMLElement {
+        const eCondition = document.createElement('div');
+        eCondition.classList.add('ag-filter-body');
 
-        return /* html */`
-            <div class="ag-filter-body" ref="eCondition${pos}Body">
-                <div class="ag-filter-from ag-filter-date-from" ref="eCondition${pos}PanelFrom"></div>
-                <div class="ag-filter-to ag-filter-date-to" ref="eCondition${pos}PanelTo"></div>
-            </div>`;
+        this.createFromToElement(eCondition, this.eConditionPanelsFrom, this.dateConditionFromComps, 'from');
+        this.createFromToElement(eCondition, this.eConditionPanelsTo, this.dateConditionToComps, 'to');
+
+        return eCondition;
+    }
+
+    private createFromToElement(eCondition: HTMLElement, eConditionPanels: HTMLElement[], dateConditionComps: DateCompWrapper[], fromTo: string): void {
+        const eConditionPanel = document.createElement('div');
+        eConditionPanel.classList.add(`ag-filter-${fromTo}`);
+        eConditionPanel.classList.add(`ag-filter-date-${fromTo}`);
+        eConditionPanels.push(eConditionPanel);
+        eCondition.appendChild(eConditionPanel);
+        dateConditionComps.push(this.createDateCompWrapper(eConditionPanel));
+    }
+
+    protected removeValueElements(startPosition: number): void {
+        this.removeDateComps(this.dateConditionFromComps, startPosition);
+        this.removeDateComps(this.dateConditionToComps, startPosition);
+        this.eConditionPanelsFrom.splice(startPosition);
+        this.eConditionPanelsTo.splice(startPosition);
+    }
+
+    protected removeDateComps(components: DateCompWrapper[], startPosition: number): void {
+        const removedComponents = components.splice(startPosition);
+        removedComponents.forEach(comp => comp.destroy());
     }
 
     protected isConditionUiComplete(position: number): boolean {
@@ -304,17 +312,17 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         });
     }
 
-    protected getInputs(): Tuple<DateCompWrapper>[] {
-        return [
-            [this.dateCondition1FromComp, this.dateCondition1ToComp],
-            [this.dateCondition2FromComp, this.dateCondition2ToComp],
-        ];
+    protected getInputs(position: number): Tuple<DateCompWrapper> {
+        if (position >= this.dateConditionFromComps.length) {
+            return [null, null];
+        }
+        return [this.dateConditionFromComps[position], this.dateConditionToComps[position]];
     }
 
     protected getValues(position: number): Tuple<Date> {
         const result: Tuple<Date> = [];
-        this.forEachInput((element, index, elPosition, numberOfInputs) => {
-            if (position === elPosition && index < numberOfInputs) {
+        this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
+            if (index < numberOfInputs) {
                 result.push(element.getDate());
             }
         });
