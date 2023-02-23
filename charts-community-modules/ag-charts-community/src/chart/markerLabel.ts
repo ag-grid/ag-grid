@@ -28,7 +28,7 @@ export class MarkerLabel extends Group {
     }
 
     @ProxyPropertyOnWrite('label')
-    text: string;
+    text?: string;
 
     @ProxyPropertyOnWrite('label')
     fontStyle?: FontStyle;
@@ -37,28 +37,28 @@ export class MarkerLabel extends Group {
     fontWeight?: FontWeight;
 
     @ProxyPropertyOnWrite('label')
-    fontSize: number;
+    fontSize?: number;
 
     @ProxyPropertyOnWrite('label')
-    fontFamily: string;
+    fontFamily?: string;
 
     @ProxyPropertyOnWrite('label')
-    color: string;
+    color?: string;
 
     @ProxyPropertyOnWrite('marker')
-    markerFill: string;
+    markerFill?: string;
 
     @ProxyPropertyOnWrite('marker')
-    markerStroke: string;
+    markerStroke?: string;
 
     @ProxyPropertyOnWrite('marker')
-    markerStrokeWidth: number;
+    markerStrokeWidth?: number;
 
     @ProxyPropertyOnWrite('marker')
-    markerFillOpacity: number;
+    markerFillOpacity?: number;
 
     @ProxyPropertyOnWrite('marker')
-    markerStrokeOpacity: number;
+    markerStrokeOpacity?: number;
 
     private _marker: Marker = new Square();
     set marker(value: Marker) {
