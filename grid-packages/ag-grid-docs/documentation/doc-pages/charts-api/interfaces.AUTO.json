@@ -1,8 +1,8 @@
 {
   "Tags": {
     "meta": { "isEnum": true },
-    "type": ["Tick", "GridLine"],
-    "docs": [null, null]
+    "type": ["TickLine", "TickLabel", "GridLine", "GridArc", "AxisLine"],
+    "docs": [null, null, null, null, null]
   },
   "AxisNodeDatum": {
     "meta": {},
@@ -3254,7 +3254,7 @@
     "meta": { "isEnum": true },
     "type": [
       "SERIES_BACKGROUND_ZINDEX = -10",
-      "AXIS_GRIDLINES_ZINDEX = 0",
+      "AXIS_GRID_ZINDEX = 0",
       "AXIS_ZINDEX = 20",
       "SERIES_CROSSLINE_RANGE_ZINDEX = 30",
       "SERIES_LAYER_ZINDEX = 500",

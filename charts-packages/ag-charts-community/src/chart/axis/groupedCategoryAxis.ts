@@ -37,7 +37,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         super(new BandScale<string | number>());
         this.includeInvisibleDomains = true;
 
-        const { axisGroup, gridlineGroup, tickScale, scale } = this;
+        const { linesGroup, labelsGroup, gridLineGroup, tickScale, scale } = this;
 
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
@@ -47,10 +47,10 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
 
-        this.gridLineSelection = Selection.select(gridlineGroup).selectAll<Line>();
-        this.axisLineSelection = Selection.select(axisGroup).selectAll<Line>();
-        this.separatorSelection = Selection.select(axisGroup).selectAll<Line>();
-        this.labelSelection = Selection.select(axisGroup).selectAll<Text>();
+        this.gridLineSelection = Selection.select(gridLineGroup).selectAll<Line>();
+        this.axisLineSelection = Selection.select(linesGroup).selectAll<Line>();
+        this.separatorSelection = Selection.select(linesGroup).selectAll<Line>();
+        this.labelSelection = Selection.select(labelsGroup).selectAll<Text>();
     }
 
     set range(value: number[]) {
@@ -360,7 +360,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
         const updateSeparators = this.separatorSelection.setData(separatorData);
         updateSeparators.exit.remove();
-        const enterSeparators = updateSeparators.enter.append(Line);
+        const enterSeparators = updateSeparators.enter.append(Line).each((node) => (node.tag = 5));
         const separatorSelection = updateSeparators.merge(enterSeparators);
         this.separatorSelection = separatorSelection;
 
