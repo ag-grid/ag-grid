@@ -267,7 +267,6 @@ export class ChartTheme {
             },
             tooltip: {
                 enabled: true,
-                tracking: undefined,
                 range: 'nearest' as AgChartInteractionRange,
                 delay: 0,
                 class: DEFAULT_TOOLTIP_CLASS,

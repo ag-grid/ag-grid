@@ -153,8 +153,8 @@ export class Tooltip {
     @Validate(NUMBER(0))
     delay: number = 0;
 
-    @DeprecatedAndRenamedTo('range')
-    tracking?: boolean = undefined;
+    @DeprecatedAndRenamedTo('range', (value) => (value ? 'nearest' : 'exact'))
+    tracking?: boolean;
 
     @Validate(INTERACTION_RANGE)
     range: AgChartInteractionRange = 'nearest';
