@@ -14,6 +14,10 @@ export const ICON_MAP = {
     creditCard: CarbonIcon.Purchase,
     lightBulb: CarbonIcon.Idea,
     enterprise: EnterpriseIcon,
+    github: CarbonIcon.LogoGithub,
+    twitter: CarbonIcon.LogoTwitter,
+    youtube: CarbonIcon.LogoYoutube,
+    linkedin: CarbonIcon.LogoLinkedin,
 };
 
 export type IconName = keyof typeof ICON_MAP;

@@ -1,4 +1,5 @@
 import { ColDef, Grid, GridOptions } from '@ag-grid-community/core'
+import { FlagContext } from './interfaces';
 import { CountryCellRenderer } from './countryCellRenderer_typescript'
 
 declare function createBase64FlagsFromResponse(response: any, countryCodes: any, base64flags: any): any;
@@ -61,7 +62,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     context: {
         base64flags: base64flags,
         countryCodes: countryCodes
-    },
+    } as FlagContext,
     onGridReady: params => {
         fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
             .then(data => createBase64FlagsFromResponse(data, countryCodes, base64flags))

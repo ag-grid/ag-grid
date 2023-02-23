@@ -3,8 +3,8 @@ import { withPrefix } from 'gatsby';
 import React, { useRef, useState } from 'react';
 import supportedFrameworks from 'utils/supported-frameworks.js';
 import LogoType from '../../images/inline-svgs/ag-grid-logotype.svg';
-import GithubLogo from '../../images/inline-svgs/github-logo.svg';
 import MenuIcon from '../../images/inline-svgs/menu-icon.svg';
+import { Icon } from '../Icon';
 import LogoMark from '../LogoMark';
 import styles from './SiteHeader.module.scss';
 
@@ -28,7 +28,7 @@ const links = [
     {
         name: 'Github',
         url: 'https://github.com/ag-grid/ag-grid',
-        icon: <GithubLogo />,
+        icon: <Icon name="github" />,
         cssClass: 'github-item',
     },
 ];

@@ -53,10 +53,10 @@ const getAllModules = () => {
             };
         });
 
-    const gridCommunityModules = mapModules('community-modules');
-    const gridEnterpriseModules = mapModules('enterprise-modules');
+    const gridCommunityModules = mapModules('grid-community-modules');
+    const gridEnterpriseModules = mapModules('grid-enterprise-modules');
 
-    const chartCommunityModules = mapModules('charts-packages');
+    const chartCommunityModules = mapModules('charts-community-modules');
 
     return { gridCommunityModules, gridEnterpriseModules, chartCommunityModules };
 };

@@ -282,7 +282,7 @@ export function getTypes(node: ts.Node) {
     let typesToInclude = []
     if (ts.isIdentifier(node)) {
         const typeName = node.getText();
-        if (!['HTMLElement', 'Function', 'Partial', 'TData'].includes(typeName)) {
+        if (!['HTMLElement', 'Function', 'Partial', 'TData', 'TContext', 'TValue'].includes(typeName)) {
             typesToInclude.push(typeName);
         }
     }
@@ -650,9 +650,7 @@ export function getModuleRegistration({ gridSettings, enterprise, exampleName })
 export function handleRowGenericInterface(fileTxt: string, tData: string): string {
     if (tData) {
         fileTxt = fileTxt
-        // Until we support this cleanly.
-            //.replace(/<TData>/g, `<${tData}>`)
-            .replace(/<TData>/g, '')
+            .replace(/<(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?>/g, '')
             .replace(/TData\[\]/g, `${tData}[]`);
     } else {
         fileTxt = fileTxt.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');

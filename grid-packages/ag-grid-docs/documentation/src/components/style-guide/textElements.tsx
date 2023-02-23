@@ -131,6 +131,21 @@ export const TextElements = () => {
                 </div>
             </div>
 
+            <div>
+                <p className="item-label">
+                    Preformatted text: <code>pre</code>
+                </p>
+                <pre>{`:root {
+    --font-size: 1rem;
+    --line-height: 1.5;
+    --font-weight: 400;
+    --font-weight-thin: 300;
+    --font-weight-normal: 400;
+    --font-weight-bold: 600;
+    --icon-size: 2em;
+}`}</pre>
+            </div>
+
             <p className="item-label">
                 Heading one: <code>h1</code>
             </p>
