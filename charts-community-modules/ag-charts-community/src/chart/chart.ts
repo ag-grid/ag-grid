@@ -916,7 +916,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             if (!match || distance == null) {
                 continue;
             }
-            if ((!result || result.distance > distance) && distance <= (maxDistance || Infinity)) {
+            if ((!result || result.distance > distance) && distance <= (maxDistance ?? Infinity)) {
                 result = { series, distance, datum: match };
             }
             if (distance === 0) {
@@ -970,12 +970,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         const isPixelRange = typeof range === 'number' && Number.isFinite(range);
-        const pick = this.pickSeriesNode(
-            { x: offsetX, y: offsetY },
-            range === 'exact',
-            // @ts-ignore Typescript doesn't recognise `range` must be a number here
-            isPixelRange ? range : undefined
-        );
+        let pixelRange;
+        // Typescript gets sad about using `isPixelRange` here :(
+        if (typeof range === 'number' && Number.isFinite(range)) {
+            pixelRange = range;
+        }
+        const pick = this.pickSeriesNode({ x: offsetX, y: offsetY }, range === 'exact', pixelRange);
 
         if (!pick) {
             disablePointer();
@@ -1034,12 +1034,16 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         // Then check for an exact match or within the given range
         const isPixelRange = typeof nodeClickRange === 'number' && Number.isFinite(nodeClickRange);
+        let pixelRange;
+        // Typescript gets sad about using `isPixelRange` here :(
+        if (typeof nodeClickRange === 'number' && Number.isFinite(nodeClickRange)) {
+            pixelRange = nodeClickRange;
+        }
 
         const pick = this.pickSeriesNode(
             { x: event.offsetX, y: event.offsetY },
             nodeClickRange === 'exact',
-            // @ts-ignore Typescript doesn't recognise `nodeClickRange` must be a number here
-            isPixelRange ? nodeClickRange : undefined
+            pixelRange
         );
 
         if (!pick) return false;
