@@ -2879,6 +2879,23 @@
       "type": "/** Event identifier */"
     }
   },
+  "FilterDestroyedEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "source": "'api' | 'columnChanged' | 'gridDestroyed'",
+      "column": "Column",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
   "SortChangedEvent": {
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {

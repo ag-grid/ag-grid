@@ -5,7 +5,7 @@ import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
 import { IRowModel } from '../interfaces/iRowModel';
-import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent } from '../events';
+import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FilterDestroyedEvent } from '../events';
 import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
 import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
@@ -681,7 +681,7 @@ export class FilterManager extends BeanStub {
             if (currentColumn) { return; }
 
             columns.push(wrapper.column);
-            this.disposeFilterWrapper(wrapper, 'filterDestroyed');
+            this.disposeFilterWrapper(wrapper, 'columnChanged');
         });
 
         if (columns.length > 0) {
@@ -758,8 +758,11 @@ export class FilterManager extends BeanStub {
         return filterComponent ? filterComponent.resolveNow(null, filter => filter && filter.getModel()) : null;
     }
 
-    // destroys the filter, so it not longer takes part
-    public destroyFilter(column: Column, source: ColumnEventType = 'api'): void {
+    // destroys the filter, so it no longer takes part
+    /**
+     * @param source if not calling this from the API, will need to add a new value
+     */
+    public destroyFilter(column: Column, source: 'api' = 'api'): void {
         const filterWrapper = this.allColumnFilters.get(column.getColId());
 
         if (filterWrapper) {
@@ -768,13 +771,21 @@ export class FilterManager extends BeanStub {
         }
     }
 
-    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: ColumnEventType): void {
+    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed'): void {
         filterWrapper.filterPromise!.then(filter => {
             (filter!.setModel(null) || AgPromise.resolve()).then(() => {
                 this.getContext().destroyBean(filter);
 
+                filterWrapper.column.setFilterActive(false, 'filterDestroyed');
+
                 this.allColumnFilters.delete(filterWrapper.column.getColId());
-                filterWrapper.column.setFilterActive(false, source);
+
+                const event: WithoutGridCommon<FilterDestroyedEvent> = {
+                    type: Events.EVENT_FILTER_DESTROYED,
+                    source,
+                    column: filterWrapper.column,
+                }
+                this.eventService.dispatchEvent(event);
             });
         });
     }
@@ -782,7 +793,7 @@ export class FilterManager extends BeanStub {
     @PreDestroy
     protected destroy() {
         super.destroy();
-        this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'filterDestroyed'));
+        this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'));
     }
 }
 
