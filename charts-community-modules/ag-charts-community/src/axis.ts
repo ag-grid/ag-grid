@@ -700,7 +700,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             const min = Math.floor(requestedRangeMin);
             const max = Math.ceil(requestedRangeMax);
             if (min === max) {
-                return false;
+                node.visible = false;
+                return;
             }
 
             // Fix an effect of rounding error
@@ -715,12 +716,12 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             if (visible) {
                 anyTickVisible = true;
             }
-            return visible;
+            node.visible = visible;
         };
 
         const { gridlineGroupSelection, tickGroupSelection } = this;
-        gridlineGroupSelection.attrFn('visible', visibleFn);
-        tickGroupSelection.attrFn('visible', visibleFn);
+        gridlineGroupSelection.each(visibleFn);
+        tickGroupSelection.each(visibleFn);
 
         this.tickGroup.visible = anyTickVisible;
         this.gridlineGroup.visible = anyTickVisible;
@@ -737,17 +738,15 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         this.updateTitle({ ticks });
 
-        tickGroupSelection
-            .selectByTag<Line>(Tags.Tick)
-            .each((line) => {
-                line.strokeWidth = tick.width;
-                line.stroke = tick.color;
-                line.visible = anyTickVisible;
-            })
-            .attr('x1', sideFlag * tick.size)
-            .attr('x2', 0)
-            .attr('y1', 0)
-            .attr('y2', 0);
+        tickGroupSelection.selectByTag<Line>(Tags.Tick).each((line) => {
+            line.strokeWidth = tick.width;
+            line.stroke = tick.color;
+            line.visible = anyTickVisible;
+            line.x1 = sideFlag * tick.size;
+            line.x2 = 0;
+            line.y1 = 0;
+            line.y2 = 0;
+        });
 
         return primaryTickCount;
     }
@@ -899,8 +898,9 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         // We need raw `translationY` values on `datum` for accurate label collision detection in axes.update()
         // But node `translationY` values must be rounded to get pixel grid alignment
-        gridlineGroupSelection.attrFn('translationY', (_, datum: any) => Math.round(datum.translationY));
-        tickGroupSelection.attrFn('translationY', (_, datum: any) => Math.round(datum.translationY));
+        const translationFn = (node: Group) => (node.translationY = Math.round(node.datum.translationY));
+        gridlineGroupSelection.each(translationFn);
+        tickGroupSelection.each(translationFn);
 
         this.tickGroupSelection = tickGroupSelection;
         this.gridlineGroupSelection = gridlineGroupSelection;

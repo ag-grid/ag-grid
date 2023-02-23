@@ -5425,7 +5425,6 @@
     }
   },
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },
-  "KeyFn": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
   "ArcType": {},
   "ShapeLineCap": {},
   "ShapeLineJoin": {},

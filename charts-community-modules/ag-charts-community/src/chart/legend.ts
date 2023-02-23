@@ -329,10 +329,7 @@ export class Legend {
         if (this.reverseOrder) {
             data.reverse();
         }
-        const updateSelection = this.itemSelection.setData(data, (_, datum) => {
-            const Marker = getMarker(markerShape || datum.marker.shape);
-            return datum.id + '-' + datum.itemId + '-' + Marker.name;
-        });
+        const updateSelection = this.itemSelection.setData(data);
         updateSelection.exit.remove();
 
         const enterSelection = updateSelection.enter.append(MarkerLabel).each((node, datum) => {

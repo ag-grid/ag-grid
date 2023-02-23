@@ -3825,10 +3825,6 @@
     "meta": { "isTypeAlias": true, "typeParams": ["P", "GDatum", "PDatum"] },
     "type": "(parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[]"
   },
-  "KeyFn": {
-    "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
-    "type": "(node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string"
-  },
   "ArcType": {
     "meta": { "isEnum": true },
     "type": ["Open", "Chord", "Round"],
