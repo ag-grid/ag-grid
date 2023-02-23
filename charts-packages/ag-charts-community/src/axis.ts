@@ -279,13 +279,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     );
     private readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
 
-    private readonly lineGroup = this.linesGroup.appendChild(new Group({ name: `${this.id}-Line` }));
     private readonly tickLineGroup = this.linesGroup.appendChild(new Group({ name: `${this.id}-Tick-lines` }));
     private readonly tickLabelGroup = this.labelsGroup.appendChild(new Group({ name: `${this.id}-Tick-labels` }));
-    private readonly titleGroup = this.labelsGroup.appendChild(new Group({ name: `${this.id}-Title` }));
     private tickLineGroupSelection = Selection.select(this.tickLineGroup).selectAll<Line>();
     private tickLabelGroupSelection = Selection.select(this.tickLabelGroup).selectAll<Text>();
-    private lineNode = this.lineGroup.appendChild(new Line());
+    private lineNode = this.linesGroup.appendChild(new Line());
 
     readonly axisGirdClipRect = this.axisGroup.appendChild(new ClipRect());
     protected readonly gridLineGroup = this.axisGirdClipRect.appendChild(
@@ -457,12 +455,12 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const oldTitle = this._title;
         if (oldTitle !== value) {
             if (oldTitle) {
-                this.titleGroup.removeChild(oldTitle.node);
+                this.labelsGroup.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.rotation = -Math.PI / 2;
-                this.titleGroup.appendChild(value.node);
+                this.labelsGroup.appendChild(value.node);
             }
 
             this._title = value;
@@ -1188,7 +1186,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     private updateTitle({ ticks }: { ticks: any[] }): void {
-        const { label, rotation, title, lineNode, requestedRange, tickLineGroup, tickLabelGroup, lineGroup } = this;
+        const { label, rotation, title, lineNode, linesGroup, requestedRange, tickLineGroup, tickLabelGroup } = this;
 
         if (!title) {
             return;
@@ -1208,7 +1206,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             titleNode.rotation = (titleRotationFlag * sideFlag * Math.PI) / 2;
             titleNode.x = Math.floor((titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1])) / 2);
 
-            const lineBBox = lineGroup.computeBBox();
+            const lineBBox = linesGroup.computeBBox();
             let bboxYDimension = rotation === 0 ? lineBBox.width : lineBBox.height;
             if (ticks?.length > 0) {
                 const tickBBox = this.computeBBoxForGroups(tickLineGroup, tickLabelGroup);
