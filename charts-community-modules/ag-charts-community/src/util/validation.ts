@@ -276,3 +276,9 @@ export const POSITION = predicateWithMessage(
     (v: any) => POSITIONS.includes(v),
     `expecting a position keyword such as 'top', 'right', 'bottom' or 'left`
 );
+
+const INTERACTION_RANGES = ['exact', 'nearest'];
+export const INTERACTION_RANGE = predicateWithMessage(
+    (v: any) => (typeof v === 'number' && Number.isFinite(v)) || INTERACTION_RANGES.includes(v),
+    `expecting an interaction range of 'exact', 'nearest' or a number`
+);
