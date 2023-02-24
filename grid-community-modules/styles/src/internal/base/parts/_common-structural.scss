@@ -1349,8 +1349,14 @@
         padding: 5px 0px;
     }
 
-    .ag-right-aligned-header .ag-cell-label-container {
-        flex-direction: row;
+    .ag-right-aligned-header {
+        .ag-cell-label-container {
+            flex-direction: row;
+        }
+
+        .ag-header-cell-text {
+            text-align: end;
+        }
     }
 
     // /**
