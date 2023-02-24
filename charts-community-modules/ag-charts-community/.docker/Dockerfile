@@ -20,6 +20,7 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | b
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  && \
     nvm i 16
 COPY launch.sh /root/launch.sh
+RUN /bin/bash -il -c "npm config set update-notifier false"
 
 ENTRYPOINT ["/root/launch.sh"]
 CMD ["bash", "-il"]
