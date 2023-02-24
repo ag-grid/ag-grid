@@ -969,9 +969,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             return;
         }
 
-        const isPixelRange = typeof range === 'number' && Number.isFinite(range);
         let pixelRange;
-        // Typescript gets sad about using `isPixelRange` here :(
         if (typeof range === 'number' && Number.isFinite(range)) {
             pixelRange = range;
         }
@@ -992,6 +990,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             lastPick.event = event.sourceEvent;
         }
 
+        const isPixelRange = pixelRange != null;
         const tooltipEnabled = this.tooltip.enabled && pick.series.tooltip.enabled;
         const exactlyMatched = range === 'exact' && pick.distance === 0;
         const rangeMatched = range === 'nearest' || isPixelRange || exactlyMatched;
@@ -1033,9 +1032,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         // Then check for an exact match or within the given range
-        const isPixelRange = typeof nodeClickRange === 'number' && Number.isFinite(nodeClickRange);
         let pixelRange;
-        // Typescript gets sad about using `isPixelRange` here :(
         if (typeof nodeClickRange === 'number' && Number.isFinite(nodeClickRange)) {
             pixelRange = nodeClickRange;
         }
@@ -1049,6 +1046,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (!pick) return false;
 
         // Then if we've picked a node within the pixel range, or exactly, fire the event
+        const isPixelRange = pixelRange != null;
         const exactlyMatched = nodeClickRange === 'exact' && pick.distance === 0;
 
         if (isPixelRange || exactlyMatched) {
