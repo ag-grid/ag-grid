@@ -25,6 +25,8 @@
     "test-debug": "export FONTCONFIG_PATH=$PWD/src/chart/test FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf PANGOCAIRO_BACKEND=fontconfig ; node --inspect-brk=0.0.0.0 node_modules/.bin/jest --watch --no-cache",
     "test-update": "export SNAPSHOT_FAILURE_THRESHOLD=0.001 ; npm run test:dev -- -u",
     "test-circular-deps": "npx madge --circular --extensions ts src/",
+    "predocker:init": "docker build -t charts:latest node_modules/ag-charts-community/.docker",
+    "docker:init": "node_modules/ag-charts-community/.docker/run.sh init",
     "docker:run": "node_modules/ag-charts-community/.docker/run.sh run",
     "docker:test-watch": "node_modules/ag-charts-community/.docker/run.sh run npm run test-watch",
     "docker:test-coverage": "node_modules/ag-charts-community/.docker/run.sh run npm run test-coverage",
