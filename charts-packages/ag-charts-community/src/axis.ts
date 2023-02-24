@@ -278,11 +278,12 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     );
     private readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
 
+    private lineNode = this.linesGroup.appendChild(new Line());
     private readonly tickLineGroup = this.linesGroup.appendChild(new Group({ name: `${this.id}-Tick-lines` }));
     private readonly tickLabelGroup = this.labelsGroup.appendChild(new Group({ name: `${this.id}-Tick-labels` }));
+
     private tickLineGroupSelection = Selection.select(this.tickLineGroup).selectAll<Line>();
     private tickLabelGroupSelection = Selection.select(this.tickLabelGroup).selectAll<Text>();
-    private lineNode = this.linesGroup.appendChild(new Line());
 
     readonly axisGirdClipRect = new Group({ name: `${this.id}-Axis-grid-clip-rect` });
     protected readonly gridLineGroup = this.axisGirdClipRect.appendChild(
