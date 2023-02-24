@@ -1,8 +1,4 @@
-import {
-  AgCartesianChartOptions,
-  AgChart,
-  AgChartInteractionRange,
-} from "ag-charts-community"
+import { AgCartesianChartOptions, AgChart } from "ag-charts-community"
 
 let options: AgCartesianChartOptions = {
   container: document.getElementById("myChart"),
@@ -60,23 +56,26 @@ let options: AgCartesianChartOptions = {
 
 var chart = AgChart.create(options)
 
-function updateRange(range: AgChartInteractionRange) {
-  if (options.tooltip) options.tooltip.range = range
+function nearest() {
   options.series = options.series?.map(s => ({
     ...s,
-    nodeClickRange: range,
+    nodeClickRange: "nearest",
   }))
   AgChart.update(chart, options)
 }
 
-function nearest() {
-  updateRange("nearest")
-}
-
 function exact() {
-  updateRange("exact")
+  options.series = options.series?.map(s => ({
+    ...s,
+    nodeClickRange: "exact",
+  }))
+  AgChart.update(chart, options)
 }
 
 function distance() {
-  updateRange(10)
+  options.series = options.series?.map(s => ({
+    ...s,
+    nodeClickRange: 10,
+  }))
+  AgChart.update(chart, options)
 }
