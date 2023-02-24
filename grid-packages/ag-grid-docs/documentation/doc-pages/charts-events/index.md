@@ -49,11 +49,11 @@ Unlike other series, the `nodeClick` event `datum` parameter for Histogram serie
 
 By default, the `nodeClick` event is only triggered when the user clicks exactly on a node. You can use the `nodeClickRange` option to instead define a range at which the event is triggered. This can be set to one of three values: `'nearest'`, `'exact'` or a number as a distance in pixels.
 
-<!-- <chart-example title='Exact' name='interaction-range-exact' type='generated'></chart-example> -->
+### Example: Interaction range variations
+
+This example shows the three different types of interaction range that are possible.
 
 <chart-example title='Interaction Ranges' name='interaction-ranges' type='generated'></chart-example>
-
-<!-- <chart-example title='Distance' name='interaction-range-distance' type='generated'></chart-example> -->
 
 ## Chart Event - seriesNodeClick
 
