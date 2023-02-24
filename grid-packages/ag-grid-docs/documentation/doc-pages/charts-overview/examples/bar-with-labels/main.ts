@@ -6,7 +6,7 @@ const options: AgChartOptions = {
   autoSize: true,
   data: getData(),
   title: {
-    text: 'Change in Number of Jobs in UK (June to September 2019)',
+    text: 'Change in Number of Jobs in UK\n(June to September 2019)',
     fontSize: 18,
   },
   subtitle: {

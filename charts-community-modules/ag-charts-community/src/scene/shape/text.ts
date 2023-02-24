@@ -64,64 +64,131 @@ export class Text extends Shape {
     @SceneChangeDetection({ redraw: RedrawType.MAJOR })
     textBaseline: CanvasTextBaseline = Text.defaultStyles.textBaseline;
 
-    // Multi-line text is complicated because:
-    // - Canvas does not support it natively, so we have to implement it manually
-    // - need to know the height of each line -> need to parse the font shorthand ->
-    //   generally impossible to do because font size may not be in pixels
-    // - so, need to measure the text instead, each line individually -> expensive
-    // - or make the user provide the line height manually for multi-line text
-    // - computeBBox should use the lineHeight for multi-line text but ignore it otherwise
-    // - textBaseline kind of loses its meaning for multi-line text
+    // TextMetrics are used if lineHeight is not defined.
     @SceneChangeDetection({ redraw: RedrawType.MAJOR })
-    lineHeight: number = 14;
+    lineHeight?: number = undefined;
 
     computeBBox(): BBox {
         return HdpiCanvas.has.textMetrics ? this.getPreciseBBox() : this.getApproximateBBox();
     }
 
     private getPreciseBBox(): BBox {
-        const metrics = HdpiCanvas.measureText(this.text, this.font, this.textBaseline, this.textAlign);
+        let left = 0;
+        let top = 0;
+        let width = 0;
+        let height = 0;
 
-        return new BBox(
-            this.x - metrics.actualBoundingBoxLeft,
-            this.y - metrics.actualBoundingBoxAscent,
-            metrics.width,
-            metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
-        );
+        // Distance between first and last base lines.
+        let baselineDistance = 0;
+
+        for (var i = 0; i < this.lines.length; i++) {
+            const metrics = HdpiCanvas.measureText(this.lines[i], this.font, this.textBaseline, this.textAlign);
+
+            left = Math.max(left, metrics.actualBoundingBoxLeft);
+            width = Math.max(width, metrics.width);
+
+            if (i == 0) {
+                top += metrics.actualBoundingBoxAscent;
+                height += metrics.actualBoundingBoxAscent;
+            } else {
+                baselineDistance += metrics.fontBoundingBoxAscent ?? metrics.emHeightAscent;
+            }
+
+            if (i == this.lines.length - 1) {
+                height += metrics.actualBoundingBoxDescent;
+            } else {
+                baselineDistance += metrics.fontBoundingBoxDescent ?? metrics.emHeightDescent;
+            }
+        }
+
+        if (this.lineHeight !== undefined) {
+            baselineDistance = (this.lines.length - 1) * this.lineHeight;
+        }
+        height += baselineDistance;
+
+        top += baselineDistance * this.getVerticalOffset();
+
+        return new BBox(this.x - left, this.y - top, width, height);
+    }
+
+    private getVerticalOffset(): number {
+        switch (this.textBaseline) {
+            case 'top':
+            case 'hanging':
+                return 0;
+            case 'bottom':
+            case 'alphabetic':
+            case 'ideographic':
+                return 1;
+            case 'middle':
+                return 0.5;
+        }
     }
 
     private getApproximateBBox(): BBox {
-        const size = HdpiCanvas.getTextSize(this.text, this.font);
+        let width = 0;
+        let firstLineHeight = 0;
+        // Distance between first and last base lines.
+        let baselineDistance = 0;
+
+        if (this.lines.length > 0) {
+            const lineSize = HdpiCanvas.getTextSize(this.lines[0], this.font);
+
+            width = lineSize.width;
+            firstLineHeight = lineSize.height;
+        }
+
+        for (let i = 1; i < this.lines.length; i++) {
+            const lineSize = HdpiCanvas.getTextSize(this.lines[i], this.font);
+
+            width = Math.max(width, lineSize.width);
+            baselineDistance += this.lineHeight ?? lineSize.height;
+        }
+
         let { x, y } = this;
 
         switch (this.textAlign) {
             case 'end':
             case 'right':
-                x -= size.width;
+                x -= width;
                 break;
             case 'center':
-                x -= size.width / 2;
+                x -= width / 2;
         }
 
         switch (this.textBaseline) {
             case 'alphabetic':
-                y -= size.height * 0.7;
+                y -= firstLineHeight * 0.7 + baselineDistance * 0.5;
                 break;
             case 'middle':
-                y -= size.height * 0.45;
+                y -= firstLineHeight * 0.45 + baselineDistance * 0.5;
                 break;
             case 'ideographic':
-                y -= size.height;
+                y -= firstLineHeight + baselineDistance;
                 break;
             case 'hanging':
-                y -= size.height * 0.2;
+                y -= firstLineHeight * 0.2 + baselineDistance * 0.5;
                 break;
             case 'bottom':
-                y -= size.height;
+                y -= firstLineHeight + baselineDistance;
                 break;
         }
 
-        return new BBox(x, y, size.width, size.height);
+        return new BBox(x, y, width, firstLineHeight + baselineDistance);
+    }
+
+    private getLineHeight(line: string): number {
+        if (this.lineHeight) return this.lineHeight;
+
+        if (HdpiCanvas.has.textMetrics) {
+            const metrics = HdpiCanvas.measureText(line, this.font, this.textBaseline, this.textAlign);
+
+            return (
+                (metrics.fontBoundingBoxAscent ?? metrics.emHeightAscent) +
+                (metrics.fontBoundingBoxDescent ?? metrics.emHeightDescent)
+            );
+        }
+        return HdpiCanvas.getTextSize(line, this.font).height;
     }
 
     isPointInPath(x: number, y: number): boolean {
@@ -160,7 +227,7 @@ export class Text extends Shape {
             ctx.fillStyle = fill;
             ctx.globalAlpha = globalAlpha * this.opacity * this.fillOpacity;
 
-            const { fillShadow, text, x, y } = this;
+            const { fillShadow } = this;
 
             if (fillShadow && fillShadow.enabled) {
                 ctx.shadowColor = fillShadow.color;
@@ -169,7 +236,7 @@ export class Text extends Shape {
                 ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
 
-            ctx.fillText(text, x, y);
+            this.renderLines((line, x, y) => ctx.fillText(line, x, y));
         }
 
         if (stroke && strokeWidth) {
@@ -177,7 +244,7 @@ export class Text extends Shape {
             ctx.lineWidth = strokeWidth;
             ctx.globalAlpha = globalAlpha * this.opacity * this.strokeOpacity;
 
-            const { lineDash, lineDashOffset, lineCap, lineJoin, text, x, y } = this;
+            const { lineDash, lineDashOffset, lineCap, lineJoin } = this;
 
             if (lineDash) {
                 ctx.setLineDash(lineDash);
@@ -195,10 +262,23 @@ export class Text extends Shape {
                 ctx.lineJoin = lineJoin;
             }
 
-            ctx.strokeText(text, x, y);
+            this.renderLines((line, x, y) => ctx.strokeText(line, x, y));
         }
 
         super.render(renderCtx);
+    }
+
+    private renderLines(renderCallback: (line: string, x: number, y: number) => void): void {
+        const { lines, x, y } = this;
+        const lineHeights = this.lines.map((line) => this.getLineHeight(line));
+        const totalHeight = lineHeights.reduce((a, b) => a + b, 0);
+        let offsetY: number = -(totalHeight - lineHeights[0]) * this.getVerticalOffset();
+
+        for (let i = 0; i < lines.length; i++) {
+            renderCallback(lines[i], x, y + offsetY);
+
+            offsetY += lineHeights[i];
+        }
     }
 }
 

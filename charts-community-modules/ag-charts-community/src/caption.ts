@@ -48,6 +48,16 @@ export class Caption {
     @Validate(OPT_NUMBER(0))
     public spacing?: number = Caption.PADDING;
 
+    @Validate(OPT_NUMBER(0))
+    private _lineHeight: number | undefined = undefined;
+    get lineHeight(): number | undefined {
+        return this._lineHeight;
+    }
+    set lineHeight(value: number | undefined) {
+        this._lineHeight = value;
+        this.node.lineHeight = value;
+    }
+
     constructor() {
         const node = this.node;
         node.textAlign = 'center';

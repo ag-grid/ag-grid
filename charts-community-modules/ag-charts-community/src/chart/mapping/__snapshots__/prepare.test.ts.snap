@@ -3385,7 +3385,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
-    "text": "Source: Office for National Statistics",
+    "text": "Source: Office for\nNational Statistics",
   },
   "theme": Object {
     "overrides": Object {
@@ -3403,7 +3403,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Gross Weekly Earnings by Occupation (Q4 2019)",
+    "text": "Gross Weekly Earnings\nby Occupation (Q4 2019)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -3675,7 +3675,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Change in Number of Jobs in UK (June to September 2019)",
+    "text": "Change in Number of Jobs in UK\n(June to September 2019)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
