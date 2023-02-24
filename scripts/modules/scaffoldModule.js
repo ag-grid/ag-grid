@@ -115,8 +115,6 @@ const main = async () => {
         if (!force) {
             console.error(`${moduleDir} already exists - exiting.`);
             process.exit(1);
-        } else {
-            fs.rmSync(`./${moduleDir}`, { recursive: true });
         }
     }
 
@@ -132,8 +130,9 @@ const main = async () => {
         templatePackageJson.dependencies[grid ? '@ag-grid-enterprise/core' : 'ag-charts-enterprise'] = `~${packageVersionNumber}`;
     }
 
-    fs.mkdirSync(`./${moduleDir}`);
-    fs.mkdirSync(`./${moduleDir}/src`);
+    if (!fs.existsSync(`./${moduleDir}/src`)) {
+        fs.mkdirSync(`./${moduleDir}/src`, { recursive: true });
+    }
 
     const chartsPrefix = grid ? '' : 'charts-';
     fsExtra.copySync(path.resolve(__dirname, './.npmignore'), `./${moduleDir}/.npmignore`);
