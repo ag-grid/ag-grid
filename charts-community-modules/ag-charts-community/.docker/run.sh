@@ -3,16 +3,17 @@
 set -eu
 
 LOCAL_REPO_ROOT=$(git rev-parse --show-toplevel)
-BASE_PATH=/workspace/ag-grid
-CHARTS_PATH=${BASE_PATH}/charts-community-modules/ag-charts-community
-NODE_MODULES_PATH=${CHARTS_PATH}/node_modules
+MODULE_PATH=$(git rev-parse --show-prefix)
+DOCKER_REPO_ROOT=/workspace/ag-grid
+DOCKER_MODULE_PATH=${DOCKER_REPO_ROOT}/${MODULE_PATH}
+NODE_MODULES_PATH=${DOCKER_MODULE_PATH}/node_modules
 
 case $1 in
     init)
         docker run --rm -it \
-            -v ${LOCAL_REPO_ROOT}:${BASE_PATH}:ro \
+            -v ${LOCAL_REPO_ROOT}:${DOCKER_REPO_ROOT}:ro \
             -v charts-nm:${NODE_MODULES_PATH} \
-            -w ${CHARTS_PATH} \
+            -w ${DOCKER_MODULE_PATH} \
             charts:latest \
             npm i --no-package-lock
     ;;
@@ -20,10 +21,10 @@ case $1 in
     run)
         shift 1
         docker run --rm -it \
-            -v ${LOCAL_REPO_ROOT}:${BASE_PATH}:ro \
-            -v ${LOCAL_REPO_ROOT}/charts-community-modules/ag-charts-community:${CHARTS_PATH} \
+            -v ${LOCAL_REPO_ROOT}:${DOCKER_REPO_ROOT}:ro \
+            -v ${LOCAL_REPO_ROOT}/${MODULE_PATH}:${DOCKER_MODULE_PATH} \
             -v charts-nm:${NODE_MODULES_PATH} \
-            -w ${CHARTS_PATH} \
+            -w ${DOCKER_MODULE_PATH} \
             -p 3000:3000 \
             -p 9229:9229 \
             charts:latest \
