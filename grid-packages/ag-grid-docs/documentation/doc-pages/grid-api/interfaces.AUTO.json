@@ -6287,12 +6287,14 @@
     "type": {
       "container?": "ContainerType",
       "hidePopup?": "() => void",
-      "suppressFocus?": "boolean"
+      "suppressFocus?": "boolean",
+      "repositionPopup?": "() => void"
     },
     "docs": {
       "container?": "/** Where this component is attached to. */",
       "hidePopup?": "/** Call this to hide the popup. \n     * i.e useful if your component has an action button and you want to hide the popup after it is pressed.\n     */",
-      "suppressFocus?": "/** Set to `true` to not have the component focus its default item. */"
+      "suppressFocus?": "/** Set to `true` to not have the component focus its default item. */",
+      "repositionPopup?": "/** Call this to reposition the popup.\n     * Useful if your component has changed size and may require repositioning to remain within bounds.\n     */"
     }
   },
   "AgChartThemeOverrides": { "meta": {}, "type": {} },

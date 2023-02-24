@@ -10,4 +10,9 @@ export interface IAfterGuiAttachedParams {
     hidePopup?: () => void;
     /** Set to `true` to not have the component focus its default item. */
     suppressFocus?: boolean;
+    /**
+     * Call this to reposition the popup.
+     * Useful if your component has changed size and may require repositioning to remain within bounds.
+     */
+    repositionPopup?: () => void;
 }

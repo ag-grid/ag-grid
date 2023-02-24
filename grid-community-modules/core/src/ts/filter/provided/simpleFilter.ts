@@ -197,6 +197,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     private numAlwaysVisibleConditions: number;
     private defaultJoinOperator: JoinOperator | undefined;
     private filterPlaceholder: SimpleFilterParams['filterPlaceholder'];
+    private repositionPopup?: () => void;
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -544,6 +545,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     protected updateUiVisibility(): void {
+        let hasSizeIncreased = false;
         for (let position = 0; position < this.maxNumConditions; position++) {
             const visible = this.isConditionVisible(position);
 
@@ -553,6 +555,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                     this.createJoinOperatorPanel();
                 }
                 this.createOption();
+                hasSizeIncreased = true;
             } else if (!visible) {
                 if (position < this.eTypes.length) {
                     // need to remove all subsequent conditions
@@ -599,6 +602,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         });
 
         this.resetPlaceholder();
+
+        if (hasSizeIncreased) {
+            this.repositionPopup?.();
+        }
     }
 
     private removeConditionsAndOperators(startPosition: number): void {
@@ -626,6 +633,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams) {
         super.afterGuiAttached(params);
+
+        this.repositionPopup = params?.repositionPopup;
 
         this.resetPlaceholder();
 
