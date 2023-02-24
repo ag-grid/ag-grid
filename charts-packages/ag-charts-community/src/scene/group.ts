@@ -241,6 +241,7 @@ export class Group extends Node {
         this.computeTransformMatrix();
         this.matrix.toContext(ctx);
         clipBBox = clipBBox ? this.matrix.inverse().transformBBox(clipBBox) : undefined;
+        clipBBox = clip ? this.matrix.inverse().transformBBox(this.clipRect) : clipBBox;
 
         if (dirtyZIndex) {
             this.sortChildren();

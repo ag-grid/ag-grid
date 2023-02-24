@@ -269,37 +269,33 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     readonly axisGroup = new Group({ name: `${this.id}-axis`, zIndex: Layers.AXIS_ZINDEX });
 
-    readonly axisLinesClipRect = this.axisGroup.appendChild(new Group({ name: `${this.id}-Axis-lines-clip-rect` }));
-    protected readonly linesGroup = this.axisLinesClipRect.appendChild(
-        new Group({ name: `${this.id}-axis-lines`, zIndex: Layers.AXIS_ZINDEX })
+    private lineNode = this.axisGroup.appendChild(new Line());
+    protected readonly tickLineGroup = this.axisGroup.appendChild(
+        new Group({ name: `${this.id}-Axis-tick-lines`, zIndex: Layers.AXIS_ZINDEX })
     );
-    protected readonly labelsGroup = this.axisGroup.appendChild(
-        new Group({ name: `${this.id}-axis-labels`, zIndex: Layers.AXIS_ZINDEX })
+    protected readonly tickLabelGroup = this.axisGroup.appendChild(
+        new Group({ name: `${this.id}-Axis-tick-labels`, zIndex: Layers.AXIS_ZINDEX })
     );
     private readonly crossLineGroup: Group = new Group({ name: `${this.id}-CrossLines` });
 
-    private lineNode = this.linesGroup.appendChild(new Line());
-    private readonly tickLineGroup = this.linesGroup.appendChild(new Group({ name: `${this.id}-Tick-lines` }));
-    private readonly tickLabelGroup = this.labelsGroup.appendChild(new Group({ name: `${this.id}-Tick-labels` }));
-
-    private tickLineGroupSelection = Selection.select(this.tickLineGroup).selectAll<Line>();
-    private tickLabelGroupSelection = Selection.select(this.tickLabelGroup).selectAll<Text>();
-
-    readonly axisGirdClipRect = new Group({ name: `${this.id}-Axis-grid-clip-rect` });
-    protected readonly gridLineGroup = this.axisGirdClipRect.appendChild(
+    readonly gridGroup = new Group({ name: `${this.id}-Axis-grid` });
+    protected readonly gridLineGroup = this.gridGroup.appendChild(
         new Group({
             name: `${this.id}-gridLines`,
             zIndex: Layers.AXIS_GRID_ZINDEX,
         })
     );
-    private gridLineGroupSelection = Selection.select(this.gridLineGroup).selectAll<Line>();
 
-    protected readonly gridArcGroup = this.axisGirdClipRect.appendChild(
+    protected readonly gridArcGroup = this.gridGroup.appendChild(
         new Group({
             name: `${this.id}-gridArcs`,
             zIndex: Layers.AXIS_GRID_ZINDEX,
         })
     );
+
+    private tickLineGroupSelection = Selection.select(this.tickLineGroup).selectAll<Line>();
+    private tickLabelGroupSelection = Selection.select(this.tickLabelGroup).selectAll<Text>();
+    private gridLineGroupSelection = Selection.select(this.gridLineGroup).selectAll<Line>();
     private gridArcGroupSelection = Selection.select(this.gridArcGroup).selectAll<Arc>();
 
     private _crossLines?: CrossLine[] = [];
@@ -361,13 +357,13 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     attachAxis(node: Node, nextNode?: Node | null) {
-        node.insertBefore(this.axisGirdClipRect, nextNode);
+        node.insertBefore(this.gridGroup, nextNode);
         node.insertBefore(this.axisGroup, nextNode);
         node.insertBefore(this.crossLineGroup, nextNode);
     }
 
     detachAxis(node: Node) {
-        node.removeChild(this.axisGirdClipRect);
+        node.removeChild(this.gridGroup);
         node.removeChild(this.axisGroup);
         node.removeChild(this.crossLineGroup);
     }
@@ -457,12 +453,12 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const oldTitle = this._title;
         if (oldTitle !== value) {
             if (oldTitle) {
-                this.labelsGroup.removeChild(oldTitle.node);
+                this.axisGroup.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.rotation = -Math.PI / 2;
-                this.labelsGroup.appendChild(value.node);
+                this.axisGroup.appendChild(value.node);
             }
 
             this._title = value;
@@ -845,7 +841,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             label,
             crossLineGroup,
             axisGroup,
-            axisGirdClipRect,
+            gridGroup,
             translation,
             gridLineGroupSelection,
             gridPadding,
@@ -865,9 +861,9 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         axisGroup.translationY = translationY;
         axisGroup.rotation = rotation;
 
-        axisGirdClipRect.translationX = translationX;
-        axisGirdClipRect.translationY = translationY;
-        axisGirdClipRect.rotation = rotation;
+        gridGroup.translationX = translationX;
+        gridGroup.translationY = translationY;
+        gridGroup.rotation = rotation;
 
         gridLineGroupSelection.each((line) => {
             line.x1 = gridPadding;
@@ -1201,7 +1197,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     private updateTitle({ ticks }: { ticks: any[] }): void {
-        const { label, rotation, title, lineNode, linesGroup, requestedRange, tickLineGroup, tickLabelGroup } = this;
+        const { label, rotation, title, lineNode, requestedRange, tickLineGroup, tickLabelGroup } = this;
 
         if (!title) {
             return;
@@ -1221,8 +1217,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             titleNode.rotation = (titleRotationFlag * sideFlag * Math.PI) / 2;
             titleNode.x = Math.floor((titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1])) / 2);
 
-            const lineBBox = linesGroup.computeBBox();
-            let bboxYDimension = rotation === 0 ? lineBBox.width : lineBBox.height;
+            let bboxYDimension = 0;
             if (ticks?.length > 0) {
                 const tickBBox = this.computeBBoxForGroups(tickLineGroup, tickLabelGroup);
                 const tickWidth = rotation === 0 ? tickBBox.width : tickBBox.height;
