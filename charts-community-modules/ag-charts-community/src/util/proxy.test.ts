@@ -8,12 +8,14 @@ interface TestProxyObject {
     target?: string;
 
     proxiedProp?: string;
+    proxiedProp2?: string;
     child: {
         proxiedProp?: string;
+        otherProp?: string;
     };
 }
 
-describe('deprecation module', () => {
+describe('proxy module', () => {
     let test: TestProxyObject;
     const originalConsoleWarn = console.warn;
 
@@ -27,7 +29,9 @@ describe('deprecation module', () => {
 
             @ProxyPropertyOnWrite('child')
             proxiedProp?: string;
-            child: { proxiedProp?: string } = {};
+            @ProxyPropertyOnWrite('child', 'otherProp')
+            proxiedProp2?: string;
+            child: { proxiedProp?: string; otherProp?: string } = {};
         }
         console.warn = jest.fn();
         test = new TestProxy();
@@ -50,6 +54,14 @@ describe('deprecation module', () => {
             test.proxiedProp = 'test1234';
             expect(test.proxiedProp).toEqual('test1234');
             expect(test.child.proxiedProp).toEqual('test1234');
+            expect(test.child.otherProp).toBeUndefined();
+        });
+
+        it('should write value to child with different property key', () => {
+            test.proxiedProp2 = 'test1234';
+            expect(test.proxiedProp2).toEqual('test1234');
+            expect(test.child.proxiedProp).toBeUndefined();
+            expect(test.child.otherProp).toEqual('test1234');
         });
     });
 });

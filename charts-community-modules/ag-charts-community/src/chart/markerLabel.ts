@@ -42,22 +42,22 @@ export class MarkerLabel extends Group {
     @ProxyPropertyOnWrite('label')
     fontFamily?: string;
 
-    @ProxyPropertyOnWrite('label')
+    @ProxyPropertyOnWrite('label', 'fill')
     color?: string;
 
-    @ProxyPropertyOnWrite('marker')
+    @ProxyPropertyOnWrite('marker', 'fill')
     markerFill?: string;
 
-    @ProxyPropertyOnWrite('marker')
+    @ProxyPropertyOnWrite('marker', 'stroke')
     markerStroke?: string;
 
-    @ProxyPropertyOnWrite('marker')
+    @ProxyPropertyOnWrite('marker', 'strokeWidth')
     markerStrokeWidth?: number;
 
-    @ProxyPropertyOnWrite('marker')
+    @ProxyPropertyOnWrite('marker', 'fillOpacity')
     markerFillOpacity?: number;
 
-    @ProxyPropertyOnWrite('marker')
+    @ProxyPropertyOnWrite('marker', 'strokeOpacity')
     markerStrokeOpacity?: number;
 
     private _marker: Marker = new Square();

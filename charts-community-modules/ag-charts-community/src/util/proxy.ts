@@ -8,9 +8,9 @@ export function ProxyOnWrite(proxyProperty: string) {
     });
 }
 
-export function ProxyPropertyOnWrite(childPropertyName: string) {
+export function ProxyPropertyOnWrite(childName: string, childProperty?: string) {
     return addTransformToInstanceProperty((target, key, value) => {
-        target[childPropertyName][key] = value;
+        target[childName][childProperty ?? key] = value;
 
         return value;
     });
