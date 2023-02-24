@@ -42,7 +42,7 @@ export class Caption {
     fontFamily: string = 'sans-serif';
 
     @Validate(OPT_COLOR_STRING)
-    @ProxyPropertyOnWrite('node')
+    @ProxyPropertyOnWrite('node', 'fill')
     color: string | undefined;
 
     @Validate(OPT_NUMBER(0))
