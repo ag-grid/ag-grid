@@ -309,7 +309,7 @@ describe('Chart', () => {
                 angleKey: datasets.economy.valueKey,
                 sectorLabelKey: datasets.economy.categoryKey,
             },
-            getNodeData: (series) => series.sectorLabelSelection.groups[0],
+            getNodeData: (series) => series.sectorLabelSelection.nodes(),
             getNodePoint: (item) => [item.x, item.y],
             getDatumValues: (item, series) => {
                 const category = item.datum.datum[series.sectorLabelKey];

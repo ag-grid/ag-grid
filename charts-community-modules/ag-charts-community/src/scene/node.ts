@@ -69,10 +69,20 @@ export abstract class Node extends ChangeDetectable {
      */
     readonly id = createId(this);
 
+    protected _datum: any;
+
     /**
      * Some arbitrary data bound to the node.
      */
-    datum: any;
+    get datum() {
+        if (this._datum !== undefined) {
+            return this._datum;
+        }
+        return this._parent?.datum;
+    }
+    set datum(datum: any) {
+        this._datum = datum;
+    }
 
     /**
      * Some number to identify this node, typically within a `Group` node.

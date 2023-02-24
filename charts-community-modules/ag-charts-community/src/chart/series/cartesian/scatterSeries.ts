@@ -1,5 +1,4 @@
 import { Selection } from '../../../scene/selection';
-import { Group } from '../../../scene/group';
 import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { extent } from '../../../util/array';
 import { LegendDatum } from '../../legendDatum';
@@ -240,30 +239,33 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         return this.contextNodeData?.reduce((r, n) => r.concat(n.labelData), [] as PointLabelDatum[]);
     }
 
+    protected markerFactory() {
+        const {
+            marker: { shape },
+        } = this;
+        const MarkerShape = getMarker(shape);
+        return new MarkerShape();
+    }
+
     protected async updateMarkerSelection(opts: {
         nodeData: ScatterNodeDatum[];
-        markerSelection: Selection<Marker, Group, ScatterNodeDatum, any>;
+        markerSelection: Selection<Marker, ScatterNodeDatum>;
     }) {
         let { nodeData, markerSelection } = opts;
         const {
-            marker: { enabled, shape },
+            marker: { enabled },
         } = this;
-        const MarkerShape = getMarker(shape);
 
         if (this.marker.isDirty()) {
-            markerSelection = markerSelection.setData([]);
-            markerSelection.exit.remove();
+            markerSelection.clear();
         }
 
         const data = enabled ? nodeData : [];
-        const updateMarkers = markerSelection.setData(data);
-        updateMarkers.exit.remove();
-        const enterMarkers = updateMarkers.enter.append(MarkerShape);
-        return updateMarkers.merge(enterMarkers);
+        return markerSelection.update(data);
     }
 
     protected async updateMarkerNodes(opts: {
-        markerSelection: Selection<Marker, Group, ScatterNodeDatum, any>;
+        markerSelection: Selection<Marker, ScatterNodeDatum>;
         isHighlight: boolean;
     }) {
         const { markerSelection, isHighlight: isDatumHighlighted } = opts;
@@ -346,7 +348,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
     protected async updateLabelSelection(opts: {
         labelData: ScatterNodeDatum[];
-        labelSelection: Selection<Text, Group, ScatterNodeDatum, any>;
+        labelSelection: Selection<Text, ScatterNodeDatum>;
     }) {
         const { labelSelection } = opts;
         const {
@@ -365,13 +367,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 },
             })
         );
-        const updateLabels = labelSelection.setData(placedNodeDatum);
-        updateLabels.exit.remove();
-        const enterLabels = updateLabels.enter.append(Text);
-        return updateLabels.merge(enterLabels);
+        return labelSelection.update(placedNodeDatum);
     }
 
-    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, Group, ScatterNodeDatum, any> }) {
+    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, ScatterNodeDatum> }) {
         const { labelSelection } = opts;
         const { label } = this;
 

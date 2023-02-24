@@ -1,4 +1,3 @@
-import { Group } from '../../../scene/group';
 import { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
 import { Text } from '../../../scene/shape/text';
@@ -411,24 +410,24 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         return [{ itemId: this.yKey, nodeData, labelData: nodeData }];
     }
 
+    protected nodeFactory() {
+        return new Rect();
+    }
+
     protected async updateDatumSelection(opts: {
         nodeData: HistogramNodeDatum[];
-        datumSelection: Selection<Rect, Group, HistogramNodeDatum, any>;
+        datumSelection: Selection<Rect, HistogramNodeDatum>;
     }) {
         const { nodeData, datumSelection } = opts;
 
-        const updateRects = datumSelection.setData(nodeData);
-        updateRects.exit.remove();
-        const enterRects = updateRects.enter.append(Rect).each((rect) => {
+        return datumSelection.update(nodeData, (rect) => {
             rect.tag = HistogramSeriesNodeTag.Bin;
             rect.crisp = true;
         });
-
-        return updateRects.merge(enterRects);
     }
 
     protected async updateDatumNodes(opts: {
-        datumSelection: Selection<Rect, Group, HistogramNodeDatum, any>;
+        datumSelection: Selection<Rect, HistogramNodeDatum>;
         isHighlight: boolean;
     }) {
         const { datumSelection, isHighlight: isDatumHighlighted } = opts;
@@ -472,23 +471,19 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
     protected async updateLabelSelection(opts: {
         labelData: HistogramNodeDatum[];
-        labelSelection: Selection<Text, Group, HistogramNodeDatum, any>;
+        labelSelection: Selection<Text, HistogramNodeDatum>;
     }) {
         const { labelData, labelSelection } = opts;
 
-        const updateTexts = labelSelection.setData(labelData);
-        updateTexts.exit.remove();
-        const enterTexts = updateTexts.enter.append(Text).each((text) => {
+        return labelSelection.update(labelData, (text) => {
             text.tag = HistogramSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
             text.textAlign = 'center';
             text.textBaseline = 'middle';
         });
-
-        return updateTexts.merge(enterTexts);
     }
 
-    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, Group, HistogramNodeDatum, any> }) {
+    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, HistogramNodeDatum> }) {
         const { labelSelection } = opts;
         const labelEnabled = this.label.enabled;
 

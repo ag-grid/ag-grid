@@ -137,12 +137,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     static className = 'TreemapSeries';
     static type = 'treemap' as const;
 
-    private groupSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(
-        this.contentGroup
-    ).selectAll<Group>();
-    private highlightSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(
-        this.highlightGroup
-    ).selectAll<Group>();
+    private groupSelection: Selection<Group, TreemapNodeDatum> = Selection.select(this.contentGroup, Group);
+    private highlightSelection: Selection<Group, TreemapNodeDatum> = Selection.select(this.highlightGroup, Group);
 
     private dataRoot?: TreemapNodeDatum;
 
@@ -463,15 +459,17 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
         const { groupSelection, highlightSelection } = this;
         const update = (selection: typeof groupSelection) => {
-            const updateGroups = selection.setData(descendants);
-            updateGroups.exit.remove();
+            return selection.update(descendants, (group) => {
+                const rect = new Rect();
 
-            const enterGroups = updateGroups.enter.append(Group);
-            enterGroups.append(Rect);
-            enterGroups.append(Text).each((node: any) => (node.tag = TextNodeTag.Name));
-            enterGroups.append(Text).each((node: any) => (node.tag = TextNodeTag.Value));
+                const nameLabel = new Text();
+                nameLabel.tag = TextNodeTag.Name;
 
-            return updateGroups.merge(enterGroups) as any;
+                const valueLabel = new Text();
+                valueLabel.tag = TextNodeTag.Value;
+
+                group.append([rect, nameLabel, valueLabel]);
+            });
         };
 
         this.groupSelection = update(groupSelection);
@@ -598,13 +596,13 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 rect.clipPath.closePath();
             }
         };
-        this.groupSelection.selectByClass(Rect).each((rect, datum) => updateRectFn(rect, datum, false));
-        this.highlightSelection.selectByClass(Rect).each((rect, datum) => {
-            const isDatumHighlighted = this.isDatumHighlighted(datum);
+        this.groupSelection.selectByClass(Rect).forEach((rect) => updateRectFn(rect, rect.datum, false));
+        this.highlightSelection.selectByClass(Rect).forEach((rect) => {
+            const isDatumHighlighted = this.isDatumHighlighted(rect.datum);
 
             rect.visible = isDatumHighlighted;
             if (rect.visible) {
-                updateRectFn(rect, datum, isDatumHighlighted);
+                updateRectFn(rect, rect.datum, isDatumHighlighted);
             }
         });
 
@@ -631,25 +629,25 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         };
         this.groupSelection
             .selectByTag<Text>(TextNodeTag.Name)
-            .each((text, datum) => updateLabelFn(text, datum, false, 'label'));
-        this.highlightSelection.selectByTag<Text>(TextNodeTag.Name).each((text, datum) => {
-            const isDatumHighlighted = this.isDatumHighlighted(datum);
+            .forEach((text) => updateLabelFn(text, text.datum, false, 'label'));
+        this.highlightSelection.selectByTag<Text>(TextNodeTag.Name).forEach((text) => {
+            const isDatumHighlighted = this.isDatumHighlighted(text.datum);
 
             text.visible = isDatumHighlighted;
             if (text.visible) {
-                updateLabelFn(text, datum, isDatumHighlighted, 'label');
+                updateLabelFn(text, text.datum, isDatumHighlighted, 'label');
             }
         });
 
         this.groupSelection
             .selectByTag<Text>(TextNodeTag.Value)
-            .each((text, datum) => updateLabelFn(text, datum, false, 'value'));
-        this.highlightSelection.selectByTag<Text>(TextNodeTag.Value).each((text, datum) => {
-            const isDatumHighlighted = this.isDatumHighlighted(datum);
+            .forEach((text) => updateLabelFn(text, text.datum, false, 'value'));
+        this.highlightSelection.selectByTag<Text>(TextNodeTag.Value).forEach((text) => {
+            const isDatumHighlighted = this.isDatumHighlighted(text.datum);
 
             text.visible = isDatumHighlighted;
             if (text.visible) {
-                updateLabelFn(text, datum, isDatumHighlighted, 'value');
+                updateLabelFn(text, text.datum, isDatumHighlighted, 'value');
             }
         });
     }
