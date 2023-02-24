@@ -5,7 +5,6 @@
         "rootDir": "src",
         "noUnusedParameters": true,
         "noUnusedLocals": true
-        // "strict": true
     },
     "include": ["**/*.test.ts", "**/test/*.ts", "src/ts/**/mock.ts"]
 }
