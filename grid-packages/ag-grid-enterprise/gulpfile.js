@@ -57,7 +57,7 @@ const tscMainTask = () => {
         const split = m[1].split(',').map(i => i.trim()).filter(i => !!i);
         exports = [...exports, ...split]
     })
-    exports.sort();
+    exports.sort((a, b) => a.localeCompare(b));
 
     const newExports = `export { ${exports.join(',\n')} } from "ag-grid-community";`
 

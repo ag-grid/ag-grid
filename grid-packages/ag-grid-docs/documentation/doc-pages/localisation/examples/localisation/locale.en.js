@@ -99,6 +99,7 @@ const AG_GRID_LOCALE_EN = {
     collapseAll: 'Close All',
     copy: 'Copy',
     ctrlC: 'Ctrl+C',
+    ctrlX: 'Ctrl+X',
     copyWithHeaders: 'Copy With Headers',
     copyWithGroupHeaders: 'Copy with Group Headers',
     cut: 'Cut',

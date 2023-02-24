@@ -21,6 +21,7 @@
   "PixelSize": {},
   "Ratio": {},
   "DataValue": {},
+  "AgChartInteractionRange": {},
   "AgChartThemePalette": {
     "fills": {
       "description": "/** The array of fills to be used. */",
@@ -988,6 +989,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgHierarchySeriesTheme": {
@@ -1296,7 +1301,39 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
+  "AgChartLegendEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "seriesId": {
+      "description": "/** Series id */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "itemId": {
+      "description": "/** Legend item id - usually yKey value for cartesian series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "enabled": {
+      "description": "/** Whether the legend item is currently enabled or not. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "meta": { "typeParams": ["T extends string"] }
+  },
   "AgChartLegendClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "seriesId": {
+      "description": "/** Series id */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "itemId": {
+      "description": "/** Legend item id - usually yKey value for cartesian series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "enabled": {
+      "description": "/** Whether the legend item is currently enabled or not. */",
+      "type": { "returnType": "boolean", "optional": false }
+    }
+  },
+  "AgChartLegendDoubleClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
     "seriesId": {
       "description": "/** Series id */",
       "type": { "returnType": "string", "optional": false }
@@ -1315,6 +1352,14 @@
       "description": "/** The listener to call when a legend item is clicked. */",
       "type": {
         "arguments": { "event": "AgChartLegendClickEvent" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "legendItemDoubleClick": {
+      "description": "/** The listener to call when a legend item is double clicked. */",
+      "type": {
+        "arguments": { "event": "AgChartLegendDoubleClickEvent" },
         "returnType": "void",
         "optional": true
       }
@@ -1454,8 +1499,12 @@
       "type": { "returnType": "string", "optional": true }
     },
     "tracking": {
-      "description": "/** If true, for series with markers the tooltip will be shown to the closest marker. */",
-      "type": { "returnType": "boolean", "optional": true }
+      "description": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
+      "type": { "returnType": "boolean | undefined", "optional": true }
+    },
+    "range": {
+      "description": "/** Range from a point that triggers the tooltip to show. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     },
     "delay": {
       "description": "/** The time interval (in milliseconds) after which the tooltip is shown. */",
@@ -1536,6 +1585,10 @@
     "type": { "type": { "returnType": "T", "optional": false } },
     "event": { "type": { "returnType": "Event", "optional": false } }
   },
+  "AgChartDoubleClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "event": { "type": { "returnType": "Event", "optional": false } }
+  },
   "AgBaseChartListeners": {
     "seriesNodeClick": {
       "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
@@ -1549,6 +1602,14 @@
       "description": "/** The listener to call to signify a general click on the chart by the user. */",
       "type": {
         "arguments": { "event": "AgChartClickEvent" },
+        "returnType": "any",
+        "optional": true
+      }
+    },
+    "doubleClick": {
+      "description": "/** The listener to call to signify a double click on the chart by the user. */",
+      "type": {
+        "arguments": { "event": "AgChartDoubleClickEvent" },
         "returnType": "any",
         "optional": true
       }
@@ -2316,6 +2377,10 @@
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
     },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
+    },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgTooltipRendererResult": {
@@ -2809,6 +2874,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgScatterSeriesTooltip": {
@@ -2985,6 +3054,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgAreaSeriesTooltip": {
@@ -3102,6 +3175,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgBarSeriesLabelPlacement": {},
@@ -3277,6 +3354,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgHistogramSeriesLabelOptions": {
@@ -3484,6 +3565,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgPieSeriesLabelOptions": {
@@ -3902,6 +3987,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgPieSeriesTooltipRendererParams": {
@@ -4295,6 +4384,10 @@
     "cursor": {
       "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "type": { "returnType": "string", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgTreemapSeriesFormatterParams": {
@@ -5064,6 +5157,7 @@
   },
   "TextNodeTag": {},
   "TextMeta": {},
+  "LabelMeta": {},
   "PieNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "radius": { "type": { "returnType": "number", "optional": false } },

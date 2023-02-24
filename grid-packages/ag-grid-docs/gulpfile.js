@@ -33,19 +33,19 @@ const populateDevFolder = () => {
         .concat(chartCommunityModules)
         .map(module => createCopyTask(`${module.rootDir}/**/*.*`, `${module.rootDir}/`, module.publishedName));
 
-    const react = createCopyTask('../../community-modules/react/**/*.*', '../../community-modules/react/', '@ag-grid-community/react');
-    const angular = createCopyTask('../../community-modules/angular/dist/ag-grid-angular/**/*.*', '../../community-modules/angular/', '@ag-grid-community/angular');
-    const angularLegacy = createCopyTask('../../community-modules/angular-legacy/dist/ag-grid-angular-legacy/**/*.*', '../../community-modules/angular-legacy/', '@ag-grid-community/angular-legacy');
-    const vue = createCopyTask('../../community-modules/vue/**/*.*', '../../community-modules/vue/', '@ag-grid-community/vue');
-    const vue3 = createCopyTask('../../community-modules/vue3/**/*.*', '../../community-modules/vue3/', '@ag-grid-community/vue3');
+    const react = createCopyTask('../../grid-community-modules/react/**/*.*', '../../grid-community-modules/react/', '@ag-grid-community/react');
+    const angular = createCopyTask('../../grid-community-modules/angular/dist/ag-grid-angular/**/*.*', '../../grid-community-modules/angular/', '@ag-grid-community/angular');
+    const angularLegacy = createCopyTask('../../grid-community-modules/angular-legacy/dist/ag-grid-angular-legacy/**/*.*', '../../grid-community-modules/angular-legacy/', '@ag-grid-community/angular-legacy');
+    const vue = createCopyTask('../../grid-community-modules/vue/**/*.*', '../../grid-community-modules/vue/', '@ag-grid-community/vue');
+    const vue3 = createCopyTask('../../grid-community-modules/vue3/**/*.*', '../../grid-community-modules/vue3/', '@ag-grid-community/vue3');
 
-    const styles = createCopyTask('../../community-modules/styles/**/*.*', '../../community-modules/styles/', '@ag-grid-community/styles');
+    const styles = createCopyTask('../../grid-community-modules/styles/**/*.*', '../../grid-community-modules/styles/', '@ag-grid-community/styles');
 
-    const chartReact = createCopyTask('../../charts-packages/ag-charts-react/**/*.*', '../../charts-packages/ag-charts-react/', 'ag-charts-react');
-    const chartAngular = createCopyTask('../../charts-packages/ag-charts-angular/dist/ag-charts-angular/**/*.*', '../../charts-packages/ag-charts-angular/', 'ag-charts-angular');
-    const chartAngularLegacy = createCopyTask('../../charts-packages/ag-charts-angular-legacy/dist/ag-charts-angular-legacy/**/*.*', '../../charts-packages/ag-charts-angular-legacy/', 'ag-charts-angular-legacy');
-    const chartVue = createCopyTask('../../charts-packages/ag-charts-vue/**/*.*', '../../charts-packages/ag-charts-vue/', 'ag-charts-vue');
-    const chartVue3 = createCopyTask('../../charts-packages/ag-charts-vue3/**/*.*', '../../charts-packages/ag-charts-vue3/', 'ag-charts-vue3');
+    const chartReact = createCopyTask('../../charts-community-modules/ag-charts-react/**/*.*', '../../charts-community-modules/ag-charts-react/', 'ag-charts-react');
+    const chartAngular = createCopyTask('../../charts-community-modules/ag-charts-angular/dist/ag-charts-angular/**/*.*', '../../charts-community-modules/ag-charts-angular/', 'ag-charts-angular');
+    const chartAngularLegacy = createCopyTask('../../charts-community-modules/ag-charts-angular-legacy/dist/ag-charts-angular-legacy/**/*.*', '../../charts-community-modules/ag-charts-angular-legacy/', 'ag-charts-angular-legacy');
+    const chartVue = createCopyTask('../../charts-community-modules/ag-charts-vue/**/*.*', '../../charts-community-modules/ag-charts-vue/', 'ag-charts-vue');
+    const chartVue3 = createCopyTask('../../charts-community-modules/ag-charts-vue3/**/*.*', '../../charts-community-modules/ag-charts-vue3/', 'ag-charts-vue3');
 
     const packageCommunity = createCopyTask('../../grid-packages/ag-grid-community/**/*.*', '../../grid-packages/ag-grid-community/', 'ag-grid-community');
     const packageEnterprise = createCopyTask('../../grid-packages/ag-grid-enterprise/**/*.*', '../../grid-packages/ag-grid-enterprise/', 'ag-grid-enterprise');
@@ -104,9 +104,9 @@ const processSource = () => {
 };
 
 const copyFromDistFolder = () => merge(
-    gulp.src(['../../community-modules/all-modules/dist/ag-grid-community.js']).pipe(gulp.dest(`${distFolder}/@ag-grid-community/all-modules/dist/`)),
+    gulp.src(['../../grid-community-modules/all-modules/dist/ag-grid-community.js']).pipe(gulp.dest(`${distFolder}/@ag-grid-community/all-modules/dist/`)),
     gulp
-        .src(['../../enterprise-modules/all-modules/dist/ag-grid-enterprise.js', '../../enterprise-modules/all-modules/dist/ag-grid-enterprise.min.js'])
+        .src(['../../grid-enterprise-modules/all-modules/dist/ag-grid-enterprise.js', '../../grid-enterprise-modules/all-modules/dist/ag-grid-enterprise.min.js'])
         .pipe(gulp.dest(`${distFolder}/@ag-grid-enterprise/all-modules/dist/`))
 );
 

@@ -21,6 +21,10 @@ ol.list-style-none,
 
 pre {
     --font-family: #{$monospace-font-family};
+
+    background-color: var(--platinum-gray);
+    padding: $size-1 $size-2;
+    border-radius: var(--border-radius);
 }
 
 hr {

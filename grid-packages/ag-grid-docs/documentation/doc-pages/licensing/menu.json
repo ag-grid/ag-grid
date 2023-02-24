@@ -1895,6 +1895,11 @@
             "url": "/charts-getting-started/"
           },
           {
+            "title": "Enterprise Placeholder",
+            "url": "/charts-enterprise-placeholder",
+            "enterprise": "charts"
+          },
+          {
             "title": "API",
             "forceTopLevelSubItems": true,
             "items": [

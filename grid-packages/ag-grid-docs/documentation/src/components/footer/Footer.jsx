@@ -1,16 +1,16 @@
 import classnames from 'classnames';
 import DocumentationLink from 'components/DocumentationLink';
 import React from 'react';
+import { Icon } from '../Icon';
 import footerItems from './footer-items.json';
 import styles from './Footer.module.scss';
-import {hostPrefix} from "../../utils/consts";
 
 const MenuColumns = ({ framework = 'javascript' }) =>
     footerItems.map(({ title, links }) => (
         <div key={title} className={styles['menu-column']}>
             <h4 className="thin-text">{title}</h4>
             <ul className="list-style-none">
-                {links.map(({ name, url, newTab, iconUrl }) => (
+                {links.map(({ name, url, newTab, iconName }) => (
                     <li key={`${title}_${name}`}>
                         {url.indexOf('../') === 0 ? (
                             <DocumentationLink framework={framework} href={url.replace('../', '/')}>
@@ -18,7 +18,7 @@ const MenuColumns = ({ framework = 'javascript' }) =>
                             </DocumentationLink>
                         ) : (
                             <a href={url} {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}>
-                                {iconUrl && <img src={`${hostPrefix}${iconUrl}`} alt={name} />}
+                                {iconName && <Icon name={iconName} />}
                                 {name}
                             </a>
                         )}

@@ -95,7 +95,7 @@ const gridOptions = {
 
 If a formatter is provided, it will also need to handle [Missing Values](/filter-set-filter-list/#missing-values), which will have a `pathKey` of `null`. Without a formatter, these are displayed as `(Blanks)`.
 
-`filterParams.valueFormatter` is not used in the Filter List when `filterParams.treeList = true`. However, it is still used to format the values displayed in the Floating Filter. The value provided to the Value Formatter is the original value, e.g. a `Date` object for dates, the child value for Tree Data or Grouping, or the column value for a custom tree path.
+`filterParams.valueFormatter` is not used in the Filter List when `filterParams.treeList = true`. However, it is still used to format the values displayed in the Floating Filter. The value provided to the Value Formatter is the original value, e.g. a `Date` object for dates, the path for Tree Data or Grouping, or the column value for a custom tree path.
 
 The following example demonstrates formatting the Tree List. Note the following:
 

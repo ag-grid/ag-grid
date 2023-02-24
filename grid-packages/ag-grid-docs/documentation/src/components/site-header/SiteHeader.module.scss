@@ -139,6 +139,7 @@ $header-height: 64px;
 }
 
 .nav {
+    --text-color: var(--white);
     --link-color: var(--white);
     --link-hover-color: var(--white);
 
@@ -230,11 +231,13 @@ $header-height: 64px;
     }
 
     svg {
+        --icon-size: 30px;
+
+        display: block;
         position: absolute;
-        width: 26px;
-        top: 9px;
-        left: 14px;
-        border-radius: 13px;
+        top: 7px;
+        left: 13px;
+        border-radius: 50%;
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
@@ -246,7 +249,7 @@ $header-height: 64px;
 
         svg {
             position: relative;
-            top: 0;
+            top: 2px;
             left: 0;
             transition: box-shadow 0.25s ease-in-out;
         }

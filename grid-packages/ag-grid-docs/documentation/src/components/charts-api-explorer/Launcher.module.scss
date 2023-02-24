@@ -1,10 +1,12 @@
 .launcher {
     display: flex;
     justify-content: space-between;
-    padding: 0 10px;
+    align-items: center;
+    padding: 10px;
 
     &__heading {
-        padding-top: 5px;
+        flex: 1;
+
         h2 {
             margin: 0;
             font-size: 1.5rem;
@@ -14,5 +16,25 @@
     &__menu-item {
         padding: 8px;
         display: inline-block;
+    }
+
+    &__options {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        flex: 1 1 0;
+        justify-content: flex-end;
+        max-width: max-content;
+    }
+
+    &__framework-style {
+        &__select {
+            composes: form-control from global;
+
+            font-size: 0.9rem;
+            padding: 5px;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
     }
 }

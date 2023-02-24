@@ -8,7 +8,7 @@ table {
 }
 
 thead,
-tr:nth-child(even) {
+table:not(.no-zebra) tr:nth-child(even) {
     background-color: var(--table-odd-row-background-color);
 }
 
@@ -20,4 +20,14 @@ th,
 td {
     padding: $size-1 $size-2;
     text-align: left;
+}
+
+table.small-header th {
+    font-weight: $font-weight-normal;
+    padding-top: $size-half;
+    padding-bottom: $size-half;
+}
+
+table.stack {
+    @include stack-table();
 }

@@ -48,6 +48,10 @@
   "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
   "Ratio": { "meta": { "isTypeAlias": true }, "type": "number" },
   "DataValue": { "meta": { "isTypeAlias": true }, "type": "any" },
+  "AgChartInteractionRange": {
+    "meta": { "isTypeAlias": true },
+    "type": "PixelSize | 'exact' | 'nearest'"
+  },
   "AgChartThemePalette": {
     "meta": {},
     "type": { "fills": "string[]", "strokes": "string[]" },
@@ -535,7 +539,8 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "highlightStyle?": "AgSeriesHighlightStyle"
+      "highlightStyle?": "AgSeriesHighlightStyle",
+      "nodeClickRange?": "AgChartInteractionRange"
     },
     "docs": {
       "title?": "/** Configuration for the series title. */",
@@ -579,7 +584,8 @@
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
+      "nodeClickRange?": "/** Range from a node a click triggers the listener. */"
     }
   },
   "AgHierarchySeriesTheme": {
@@ -815,9 +821,42 @@
       "toggleSeriesVisible?": "/** Set to `false` to turn off toggling of the series visibility in the chart when the legend item is clicked. */"
     }
   },
+  "AgChartLegendEvent": {
+    "meta": { "typeParams": ["T extends string"] },
+    "type": {
+      "type": "T",
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean"
+    },
+    "docs": {
+      "seriesId": "/** Series id */",
+      "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
+      "enabled": "/** Whether the legend item is currently enabled or not. */"
+    }
+  },
   "AgChartLegendClickEvent": {
     "meta": {},
-    "type": { "seriesId": "string", "itemId": "string", "enabled": "boolean" },
+    "type": {
+      "type": "T",
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean"
+    },
+    "docs": {
+      "seriesId": "/** Series id */",
+      "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
+      "enabled": "/** Whether the legend item is currently enabled or not. */"
+    }
+  },
+  "AgChartLegendDoubleClickEvent": {
+    "meta": {},
+    "type": {
+      "type": "T",
+      "seriesId": "string",
+      "itemId": "string",
+      "enabled": "boolean"
+    },
     "docs": {
       "seriesId": "/** Series id */",
       "itemId": "/** Legend item id - usually yKey value for cartesian series. */",
@@ -826,9 +865,13 @@
   },
   "AgChartLegendListeners": {
     "meta": {},
-    "type": { "legendItemClick?": "(event: AgChartLegendClickEvent) => void" },
+    "type": {
+      "legendItemClick?": "(event: AgChartLegendClickEvent) => void",
+      "legendItemDoubleClick?": "(event: AgChartLegendDoubleClickEvent) => void"
+    },
     "docs": {
-      "legendItemClick?": "/** The listener to call when a legend item is clicked. */"
+      "legendItemClick?": "/** The listener to call when a legend item is clicked. */",
+      "legendItemDoubleClick?": "/** The listener to call when a legend item is double clicked. */"
     }
   },
   "AgChartLegendOptions": {
@@ -926,13 +969,15 @@
     "type": {
       "enabled?": "boolean",
       "class?": "string",
-      "tracking?": "boolean",
+      "tracking?": "boolean | undefined",
+      "range?": "AgChartInteractionRange",
       "delay?": "number"
     },
     "docs": {
       "enabled?": "/** Set to false to disable tooltips for all series in the chart. */",
       "class?": "/** A class name to be added to the tooltip element of the chart. */",
-      "tracking?": "/** If true, for series with markers the tooltip will be shown to the closest marker. */",
+      "tracking?": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
+      "range?": "/** Range from a point that triggers the tooltip to show. */",
       "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */"
     }
   },
@@ -986,15 +1031,21 @@
     "meta": {},
     "type": { "type": "T", "event": "Event" }
   },
+  "AgChartDoubleClickEvent": {
+    "meta": {},
+    "type": { "type": "T", "event": "Event" }
+  },
   "AgBaseChartListeners": {
     "meta": {},
     "type": {
       "seriesNodeClick?": "(event: AgNodeClickEvent) => any",
-      "click?": "(event: AgChartClickEvent) => any"
+      "click?": "(event: AgChartClickEvent) => any",
+      "doubleClick?": "(event: AgChartDoubleClickEvent) => any"
     },
     "docs": {
       "seriesNodeClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
-      "click?": "/** The listener to call to signify a general click on the chart by the user. */"
+      "click?": "/** The listener to call to signify a general click on the chart by the user. */",
+      "doubleClick?": "/** The listener to call to signify a double click on the chart by the user. */"
     }
   },
   "AgBaseChartOptions": {
@@ -1513,7 +1564,8 @@
       "showInLegend?": "boolean",
       "cursor?": "string",
       "listeners?": "AgSeriesListeners<DatumType>",
-      "highlightStyle?": "AgSeriesHighlightStyle"
+      "highlightStyle?": "AgSeriesHighlightStyle",
+      "nodeClickRange?": "AgChartInteractionRange"
     },
     "docs": {
       "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
@@ -1522,7 +1574,8 @@
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
+      "nodeClickRange?": "/** Range from a node a click triggers the listener. */"
     }
   },
   "AgTooltipRendererResult": {
@@ -1836,7 +1889,8 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "highlightStyle?": "AgSeriesHighlightStyle"
+      "highlightStyle?": "AgSeriesHighlightStyle",
+      "nodeClickRange?": "AgChartInteractionRange"
     },
     "docs": {
       "xKey?": "/** The key to use to retrieve x-values from the data. */",
@@ -1857,7 +1911,8 @@
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
+      "nodeClickRange?": "/** Range from a node a click triggers the listener. */"
     }
   },
   "AgScatterSeriesTooltip": {
@@ -1944,7 +1999,8 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "highlightStyle?": "AgSeriesHighlightStyle"
+      "highlightStyle?": "AgSeriesHighlightStyle",
+      "nodeClickRange?": "AgChartInteractionRange"
     },
     "docs": {
       "type?": "/** Configuration for the treemap series.  */",
@@ -1966,7 +2022,8 @@
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
+      "nodeClickRange?": "/** Range from a node a click triggers the listener. */"
     }
   },
   "AgAreaSeriesTooltip": {
@@ -2010,7 +2067,8 @@
       "showInLegend?": "boolean",
       "cursor?": "string",
       "listeners?": "AgSeriesListeners<DatumType>",
-      "highlightStyle?": "AgSeriesHighlightStyle"
+      "highlightStyle?": "AgSeriesHighlightStyle",
+      "nodeClickRange?": "AgChartInteractionRange"
     },
     "docs": {
       "marker?": "/** Configuration for the markers used in the series. */",
@@ -2035,7 +2093,8 @@
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
+      "nodeClickRange?": "/** Range from a node a click triggers the listener. */"
     }
   },
   "AgBarSeriesLabelPlacement": {
@@ -2129,7 +2188,8 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "highlightStyle?": "AgSeriesHighlightStyle"
+      "highlightStyle?": "AgSeriesHighlightStyle",
+      "nodeClickRange?": "AgChartInteractionRange"
     },
     "docs": {
       "grouped?": "/** Whether to show different y-values as separate bars (grouped) or not (stacked). */",
@@ -2155,7 +2215,8 @@
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
+      "nodeClickRange?": "/** Range from a node a click triggers the listener. */"
     }
   },
   "AgHistogramSeriesLabelOptions": {
@@ -2257,7 +2318,8 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "highlightStyle?": "AgSeriesHighlightStyle"
+      "highlightStyle?": "AgSeriesHighlightStyle",
+      "nodeClickRange?": "AgChartInteractionRange"
     },
     "docs": {
       "fill?": "/** The colour of the fill for the histogram bars. */",
@@ -2284,7 +2346,8 @@
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
+      "nodeClickRange?": "/** Range from a node a click triggers the listener. */"
     }
   },
   "AgPieSeriesLabelOptions": {
@@ -2504,7 +2567,8 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "highlightStyle?": "AgSeriesHighlightStyle"
+      "highlightStyle?": "AgSeriesHighlightStyle",
+      "nodeClickRange?": "AgChartInteractionRange"
     },
     "docs": {
       "title?": "/** Configuration for the series title. */",
@@ -2548,7 +2612,8 @@
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
       "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
+      "nodeClickRange?": "/** Range from a node a click triggers the listener. */"
     }
   },
   "AgPieSeriesTooltipRendererParams": {
@@ -2758,7 +2823,8 @@
       "data?": "DatumType[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
-      "cursor?": "string"
+      "cursor?": "string",
+      "nodeClickRange?": "AgChartInteractionRange"
     },
     "docs": {
       "title?": "/** The label configuration for the top-level tiles. */",
@@ -2787,7 +2853,8 @@
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
-      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */"
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "nodeClickRange?": "/** Range from a node a click triggers the listener. */"
     }
   },
   "AgTreemapSeriesFormatterParams": {
@@ -3166,11 +3233,11 @@
   },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
+    "type": "'click' | 'dblclick' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
+    "type": "'click' | 'dblclick' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
   },
   "InteractionEvent": {
     "meta": {
@@ -3528,6 +3595,10 @@
   "TextMeta": {
     "meta": { "isTypeAlias": true },
     "type": "{ text: string; style: Label; x: number; y: number; hAlign: CanvasTextAlign; vAlign: CanvasTextBaseline; }"
+  },
+  "LabelMeta": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ label?: TextMeta; value?: TextMeta; }"
   },
   "PieNodeDatum": {
     "meta": {},
