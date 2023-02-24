@@ -410,7 +410,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "line",
 }
@@ -830,7 +829,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "column",
 }
@@ -1480,7 +1478,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "line",
 }
@@ -1802,7 +1799,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "column",
 }
@@ -2061,7 +2057,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "scatter",
 }
@@ -2526,7 +2521,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "line",
 }
@@ -3135,7 +3129,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "area",
 }
@@ -3417,7 +3410,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "bar",
 }
@@ -3690,7 +3682,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "bar",
 }
@@ -3948,7 +3939,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "scatter",
 }
@@ -4213,7 +4203,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "scatter",
 }
@@ -4519,7 +4508,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "column",
 }
@@ -4828,7 +4816,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "bar",
 }
@@ -5152,7 +5139,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "column",
 }
@@ -5427,7 +5413,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "histogram",
 }
@@ -6623,7 +6608,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "line",
 }
@@ -6888,7 +6872,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "line",
 }
@@ -7088,7 +7071,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "treemap",
 }
@@ -7415,7 +7397,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "area",
 }
@@ -7729,7 +7710,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "bar",
 }
@@ -8062,7 +8042,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "column",
 }
@@ -8573,7 +8552,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "area",
 }
@@ -8846,7 +8824,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "column",
 }
@@ -9060,7 +9037,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "pie",
 }
@@ -9323,7 +9299,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "histogram",
 }
@@ -9665,7 +9640,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "line",
 }
@@ -9857,7 +9831,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "pie",
 }
@@ -10116,7 +10089,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "scatter",
 }
@@ -10464,7 +10436,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "area",
 }
@@ -10771,7 +10742,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "bar",
 }
@@ -11098,7 +11068,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "column",
 }
@@ -11373,7 +11342,6 @@ Object {
     "delay": 0,
     "enabled": true,
     "range": "nearest",
-    "tracking": undefined,
   },
   "type": "histogram",
 }
