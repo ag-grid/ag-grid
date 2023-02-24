@@ -100,7 +100,7 @@ const toLowerWithoutAccents = value =>
 - The **Athlete** column has only two filter options: `filterOptions = ['contains', 'notContains']`
 - The **Athlete** column has a text formatter, so if you search for 'o' it will find '&ouml;'. You can try this by searching the string `'Bjo'`.
 - The **Athlete** column has a debounce of 200ms (`debounceMs = 200`).
-- The **Athlete** column filter has the AND/OR additional filter suppressed (`suppressAndOrCondition = true`)
+- The **Athlete** column filter has only one Filter Condition allowed (`maxNumConditions = 1`)
 - The **Country** column has only one filter option: `filterOptions = ['contains']`
 - The **Country** column has a `textMatcher` so that aliases can be entered in the filter, e.g. if you filter using the text `'usa'` it will match `United States` or `'holland'` will match `'Netherlands'`
 - The **Country** column will trim the input when the filter is applied (`trimInput = true`)

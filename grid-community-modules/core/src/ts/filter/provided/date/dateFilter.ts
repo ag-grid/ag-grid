@@ -203,7 +203,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return dateCompWrapper;
     }
 
-    protected setElementValue(element: DateCompWrapper, value: Date | null, silent?: boolean): void {
+    protected setElementValue(element: DateCompWrapper, value: Date | null): void {
         element.setDate(value);
     }
 

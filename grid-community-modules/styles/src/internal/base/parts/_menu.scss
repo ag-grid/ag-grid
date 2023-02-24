@@ -170,6 +170,9 @@
     .ag-simple-filter-body-wrapper {
         overflow-y: auto;
         @include ag.vertical-widget-container();
+        .ag-resizer-wrapper {
+            margin: 0;
+        }
     }
 
     .ag-filter-no-matches {

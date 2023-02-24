@@ -23,9 +23,11 @@ The example below demonstrates all three Simple Filters working. Note the follow
 
 <grid-example title='Provided Simple' name='provided-simple' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
-## Simple Filter Parts
+## Simple Filter Conditions
 
-Each Simple Filter follows the same layout. The only layout difference is the type of input field presented to the user: for Text and Number Filters a text field is displayed, whereas for Date Filters a date picker field is displayed.
+Each Simple Filter follows the same layout. It consists of one or more Filter Conditions separated by zero or more Join Operators.
+
+The only layout difference is the type of input field presented to the user: for Text and Number Filters a text field is displayed, whereas for Date Filters a date picker field is displayed.
 
 <image-caption src="filter-provided-simple/resources/filter-panel-components.png" alt="Filter Panel Component" width="40rem" centered="true"></image-caption>
 
@@ -39,33 +41,33 @@ Each filter's default [Filter Options](#simple-filter-options) are listed below,
 
 Each filter option takes zero (a possibility with custom options), one (for most) or two (for 'in range') values. The value type depends on the filter type, e.g. the Date Filter takes Date values.
 
-### Condition 1 and Condition 2
+### Number of Conditions
 
-Each filter initially only displays Condition 1. When the user completes the Condition 1 section of the filter, Condition 2 becomes visible.
+By default each filter initially only displays one Filter Condition. When the user completes a Filter Condition, another Filter Condition becomes visible. Similarly, when a user clears a Filter Condition, the subsequent Filter Conditions are cleared and hidden.
+
+The maximum number of Filter Conditions can be controlled by setting the Filter Parameter `maxNumConditions` (the default value is two).
+
+It is also possible to always display a certain number of Filter Conditions by setting the Filter Parameter `numAlwaysVisibleConditions`. In this case, Filter Conditions will be disabled until the previous Filter Conditions have been entered.
+
+<interface-documentation interfaceName='ISimpleFilterParams' config='{"description":""}' names='["maxNumConditions", "numAlwaysVisibleConditions"]'></interface-documentation>
 
 ### Join Operator
 
-The Join Operator decides how Condition 1 and Condition 2 are joined, using either `AND` or `OR`.
+The Join Operator decides how the Filter Conditions are joined, using either `AND` or `OR`. All Join Operators have the same value, with only the first one being editable when there are multiple.
 
-## Simple Filters Parameters
+### Example: Simple Filter Conditions
 
-Simple Filters are configured though the `filterParams` attribute of the column definition:
+The following example demonstrates Filter Condition configuration that can be applied to any Simple Filter.
 
-<interface-documentation interfaceName='ISimpleFilterParams' config='{"description":""}' overrideSrc="filter-provided-simple/resources/simple-filters.json"></interface-documentation>
-
-Additional parameters are also available depending on the type of filter being used. See each type for the full list of parameters available: [Text](/filter-text/), [Number](/filter-number/), [Date](/filter-date/).
-
-### Example: Simple Filter Options
-
-The following example demonstrates those configuration options that can be applied to any Simple Filter.
-
-- The **Athlete** column shows a Text Filter with default behavior for all options.
+- The **Athlete** column shows a Text Filter with default behaviour for all options.
 
 - The **Country** column shows a Text Filter with `filterOptions` set to show a different list of available options, and `defaultOption` set to change the default option selected.
 
-- The **Age** column has a Number Filter with `alwaysShowBothConditions` set to `true` so that both condition are always shown. The `defaultJoinOperator` is also set to `'OR'` rather than the default (`'AND'`).
+- The **Sport** column shows a Text Filter with `maxNumConditions` set to `5` so that up to five conditions can be entered.
 
-- The **Date** column has a Date Filter with `suppressAndOrCondition` set to `true`, so that only the first condition is shown.
+- The **Age** column has a Number Filter with `numAlwaysVisibleConditions` set to `2` so that two conditions are always shown. The `defaultJoinOperator` is also set to `'OR'` rather than the default (`'AND'`).
+
+- The **Date** column has a Date Filter with `maxNumConditions` set to `1`, so that only the first condition is shown.
 
 <grid-example title='Simple Filter Options' name='simple-filter-options' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
@@ -101,6 +103,15 @@ Each of the three filter types has the following default options and default sel
 | Text     | Contains, Not Contains, Equals, Not Equals, Starts With, Ends With.                               | Contains                  |
 | Number   | Equals, Not Equals, Less Than, Less Than or Equal, Greater Than, Greater Than or Equal, In Range. | Equals                    |
 | Date     | Equals, Greater Than, Less Than, Not Equals, In Range.                                            | Equals                    |
+
+
+## Simple Filters Parameters
+
+Simple Filters are configured though the `filterParams` attribute of the column definition:
+
+<interface-documentation interfaceName='ISimpleFilterParams' config='{"description":""}' overrideSrc="filter-provided-simple/resources/simple-filters.json"></interface-documentation>
+
+Additional parameters are also available depending on the type of filter being used. See each type for the full list of parameters available: [Text](/filter-text/), [Number](/filter-number/), [Date](/filter-date/).
 
 ## Simple Filter Models
 
@@ -261,7 +272,7 @@ The following example demonstrates several custom filter options:
   - `Age 5 Years Ago` has one input; its predicate function is provided one value.
   - `Between (Exclusive)` has two inputs; its predicate function is provided two values.
   - `Choose One` is a built-in option and acts as an inactive filter option.
-  - The `suppressAndOrCondition=true` option is used to suppress the join operator panel and condition 2.
+  - The `maxNumConditions=§` option is used to only display one Filter Condition.
 - The **Date** column contains three custom filter options managed by a [Date Filter](/filter-date/):
   - `Equals (with Nulls)` has one inputs; its predicate function is provided one value.
   - `Leap Year` has no inputs; its predicate function is provided zero values.

@@ -1,7 +1,7 @@
 import { Grid, ColDef, GridOptions, IDateFilterParams, ITextFilterParams, INumberFilterParams } from '@ag-grid-community/core'
 
 var filterParams: IDateFilterParams = {
-  suppressAndOrCondition: true,
+  maxNumConditions: 1,
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var dateAsString = cellValue
     if (dateAsString == null) return -1
@@ -34,13 +34,19 @@ const columnDefs: ColDef[] = [
     filterParams: {
       filterOptions: ['contains', 'startsWith', 'endsWith'],
       defaultOption: 'startsWith',
-    }as ITextFilterParams,
+    } as ITextFilterParams,
+  },
+  {
+    field: 'sport',
+    filterParams: {
+      maxNumConditions: 5,
+    } as ITextFilterParams,
   },
   {
     field: 'age',
     filter: 'agNumberColumnFilter',
     filterParams: {
-      alwaysShowBothConditions: true,
+      numAlwaysVisibleConditions: 2,
       defaultJoinOperator: 'OR',
     } as INumberFilterParams,
     maxWidth: 100,

@@ -13,7 +13,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       filterParams: {
         buttons: ['reset'],
         debounceMs: 1000,
-        suppressAndOrCondition: true,
+        maxNumConditions: 1,
       },
     },
     { field: 'gold', type: 'number' },

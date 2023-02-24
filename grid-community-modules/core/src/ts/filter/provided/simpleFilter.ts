@@ -255,16 +255,16 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.onUiChanged(true);
     }
 
-    protected setTypeFromFloatingFilter(type?: string | null): void {
+    private setTypeFromFloatingFilter(type?: string | null): void {
         this.eTypes.forEach((eType, position) => {
             if (position === 0) {
-                eType.setValue(type);
+                eType.setValue(type, true);
             } else {
-                eType.setValue(this.optionsFactory.getDefaultOption());
+                eType.setValue(this.optionsFactory.getDefaultOption(), true);
             }
         });
         const eJoinOperators = this.isDefaultOperator('AND') ? this.eJoinOperatorsAnd : this.eJoinOperatorsOr;
-        eJoinOperators.forEach(eJoinOperator => eJoinOperator.setValue(true));
+        eJoinOperators.forEach(eJoinOperator => eJoinOperator.setValue(true, true));
     }
 
     public getModelFromUi(): M | ICombinedSimpleModel<M> | null {
@@ -361,11 +361,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             }
 
             const orChecked = combinedModel.operator === 'OR';
-            this.eJoinOperatorsAnd.forEach(eJoinOperatorAnd => eJoinOperatorAnd.setValue(!orChecked));
-            this.eJoinOperatorsOr.forEach(eJoinOperatorOr => eJoinOperatorOr.setValue(orChecked));
+            this.eJoinOperatorsAnd.forEach(eJoinOperatorAnd => eJoinOperatorAnd.setValue(!orChecked, true));
+            this.eJoinOperatorsOr.forEach(eJoinOperatorOr => eJoinOperatorOr.setValue(orChecked, true));
 
             combinedModel.conditions.forEach((condition, position) => {
-                this.eTypes[position].setValue(condition.type);
+                this.eTypes[position].setValue(condition.type, true);
                 this.setConditionIntoUi(condition, position);
             });
         } else {
@@ -375,9 +375,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 this.removeConditionsAndOperators(1);
             }
 
-            this.eTypes[0].setValue(simpleModel.type);
+            this.eTypes[0].setValue(simpleModel.type, true);
             this.setConditionIntoUi(simpleModel, 0);
         }
+
+        this.onUiChanged();
 
         return AgPromise.resolve();
     }
@@ -455,9 +457,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.eFilterBody.appendChild(eConditionBody);
 
         this.putOptionsIntoDropdown(eType);
-        this.resetType(eType, true);
+        this.resetType(eType);
         const position = this.eTypes.length - 1;
-        this.forEachPositionInput(position, (element) => this.resetInput(element, true));
+        this.forEachPositionInput(position, (element) => this.resetInput(element));
         this.addChangedListeners(eType, position);
     }
 
@@ -472,8 +474,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.eFilterBody.appendChild(eJoinOperatorPanel);
 
         const index = this.eJoinOperatorPanels.length - 1;
-        this.resetJoinOperatorAnd(eJoinOperatorAnd, index, true);
-        this.resetJoinOperatorOr(eJoinOperatorOr, index, true);
+        this.resetJoinOperatorAnd(eJoinOperatorAnd, index);
+        this.resetJoinOperatorOr(eJoinOperatorOr, index);
 
         if (!this.isReadOnly() && index === 0) {
             eJoinOperatorAnd.onValueChange(this.listener);
@@ -678,9 +680,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         });
     }
 
-    protected setElementValue(element: E, value: V | null, silent?: boolean): void {
+    protected setElementValue(element: E, value: V | null): void {
         if (element instanceof AgAbstractInputField) {
-            element.setValue(value != null ? String(value) : null, silent);
+            element.setValue(value != null ? String(value) : null, true);
         }
     }
 
@@ -772,51 +774,55 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
-        this.eTypes.forEach(eType => this.resetType(eType, silent));
+        this.eTypes.forEach(eType => this.resetType(eType));
 
-        this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd, index) => this.resetJoinOperatorAnd(eJoinOperatorAnd, index, silent));
+        this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd, index) => this.resetJoinOperatorAnd(eJoinOperatorAnd, index));
 
-        this.eJoinOperatorsOr.forEach((eJoinOperatorOr, index) => this.resetJoinOperatorOr(eJoinOperatorOr, index, silent));
+        this.eJoinOperatorsOr.forEach((eJoinOperatorOr, index) => this.resetJoinOperatorOr(eJoinOperatorOr, index));
 
-        this.forEachInput((element) => this.resetInput(element, silent));
+        this.forEachInput((element) => this.resetInput(element));
 
         this.resetPlaceholder();
+
+        if (!silent) {
+            this.onUiChanged();
+        }
 
         return AgPromise.resolve();
     }
 
-    private resetType(eType: AgSelect, silent?: boolean): void {
+    private resetType(eType: AgSelect): void {
         const translate = this.localeService.getLocaleTextFunc();
         const filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         eType
-            .setValue(this.optionsFactory.getDefaultOption(), silent)
+            .setValue(this.optionsFactory.getDefaultOption(), true)
             .setAriaLabel(filteringLabel)
             .setDisabled(this.isReadOnly());
     }
 
-    private resetJoinOperatorAnd(eJoinOperatorAnd: AgRadioButton, index: number, silent?: boolean): void {
-        this.resetJoinOperator(eJoinOperatorAnd, index, this.isDefaultOperator('AND'), this.translate('andCondition'), silent)
+    private resetJoinOperatorAnd(eJoinOperatorAnd: AgRadioButton, index: number): void {
+        this.resetJoinOperator(eJoinOperatorAnd, index, this.isDefaultOperator('AND'), this.translate('andCondition'));
     }
    
-    private resetJoinOperatorOr(eJoinOperatorOr: AgRadioButton, index: number, silent?: boolean): void {
-        this.resetJoinOperator(eJoinOperatorOr, index, this.isDefaultOperator('OR'), this.translate('orCondition'), silent)
+    private resetJoinOperatorOr(eJoinOperatorOr: AgRadioButton, index: number): void {
+        this.resetJoinOperator(eJoinOperatorOr, index, this.isDefaultOperator('OR'), this.translate('orCondition'));
     }
 
-    private resetJoinOperator(eJoinOperator: AgRadioButton, index: number, value: boolean, label: string, silent?: boolean): void {
+    private resetJoinOperator(eJoinOperator: AgRadioButton, index: number, value: boolean, label: string): void {
         eJoinOperator
-            .setValue(value, silent)
+            .setValue(value, true)
             .setName(`ag-simple-filter-and-or-${this.getCompId()}-${index}`)
             .setLabel(label)
             .setDisabled(this.isReadOnly() || index > 0);
     }
 
-    private resetInput(element: E, silent?: boolean): void {
-        this.setElementValue(element, null, silent);
+    private resetInput(element: E): void {
+        this.setElementValue(element, null);
         this.setElementDisabled(element, this.isReadOnly());
     }
 
     // puts model values into the UI
-    protected setConditionIntoUi(model: M | null, position: number): void {
+    private setConditionIntoUi(model: M | null, position: number): void {
         const values = this.mapValuesFromModel(model);
         this.forEachInput((element, index, elPosition, _) => {
             if (elPosition !== position) { return; }
@@ -827,7 +833,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     // after floating filter changes, this sets the 'value' section. this is implemented by the base class
     // (as that's where value is controlled), the 'type' part from the floating filter is dealt with in this class.
-    protected setValueFromFloatingFilter(value: V | null): void {
+    private setValueFromFloatingFilter(value: V | null): void {
         this.forEachInput((element, index, position, _) => {
             this.setElementValue(element, index === 0 && position === 0 ? value : null);
         });
