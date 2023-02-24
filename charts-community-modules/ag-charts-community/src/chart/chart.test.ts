@@ -238,7 +238,7 @@ describe('Chart', () => {
         });
     });
 
-    describe.skip(`Area Series Pointer Events`, () => {
+    describe(`Area Series Pointer Events`, () => {
         testPointerEvents({
             ...cartesianTestParams,
             seriesOptions: <AgAreaSeriesOptions>{

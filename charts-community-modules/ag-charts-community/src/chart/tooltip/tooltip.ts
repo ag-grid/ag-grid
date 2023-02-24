@@ -1,6 +1,7 @@
 import { BBox } from '../../scene/bbox';
-import { Validate, BOOLEAN, NUMBER, OPT_STRING } from '../../util/validation';
-import { AgTooltipRendererResult } from '../agChartOptions';
+import { DeprecatedAndRenamedTo } from '../../util/deprecation';
+import { Validate, BOOLEAN, NUMBER, OPT_STRING, INTERACTION_RANGE } from '../../util/validation';
+import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
 import { InteractionEvent } from '../interaction/interactionManager';
 
 export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
@@ -152,12 +153,11 @@ export class Tooltip {
     @Validate(NUMBER(0))
     delay: number = 0;
 
-    /**
-     * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
-     * Only has effect on series with markers.
-     */
-    @Validate(BOOLEAN)
-    tracking: boolean = true;
+    @DeprecatedAndRenamedTo('range', (value) => (value ? 'nearest' : 'exact'))
+    tracking?: boolean;
+
+    @Validate(INTERACTION_RANGE)
+    range: AgChartInteractionRange = 'nearest';
 
     constructor(canvasElement: HTMLCanvasElement, document: Document, container: HTMLElement) {
         this.tooltipRoot = container;
