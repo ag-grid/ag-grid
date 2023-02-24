@@ -1,16 +1,19 @@
 {
-  "name": "",
-  "version": "",
+  "name": "@ag-grid-community/client-side-row-model",
+  "version": "29.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
   "types": "./dist/cjs/es5/main.d.ts",
   "scripts": {
-    "build-cjs": "npx tsc -p tsconfig.json",
-    "build-esm": "npx tsc -p tsconfig.es6.json",
+    "clean": "rimraf dist .hash",
+    "build-cjs": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
+    "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
+    "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
+    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
     "package": "node ../../module-build/rollup/build.js",
     "build": "npm run build-cjs && npm run build-esm && npm run hash",
-    "test": "npx jest --passWithNoTests",
+    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
@@ -31,7 +34,7 @@
     "vuejs"
   ],
   "author": "Sean Landsman <sean@thelandsmans.com>",
-  "license": "Commercial",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ag-grid/ag-grid/issues"
   },
@@ -42,20 +45,15 @@
     "not ie_mob >= 0",
     "not blackberry > 0"
   ],
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~23.2.0",
-    "@ag-grid-enterprise/core": "~23.2.0"
+    "@ag-grid-community/core": ""
   },
   "devDependencies": {
-    "@types/jest": "^25.2.1",
-    "jest": "^25.4.0",
-    "ts-jest": "^25.4.0",
-    "typescript": "~4.0.8"
+    "typescript": "~4.0.8",
+    "rimraf": "3.0.2"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "private"
   }
 }
-
-
