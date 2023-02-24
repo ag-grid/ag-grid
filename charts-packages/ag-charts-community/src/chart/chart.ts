@@ -23,7 +23,6 @@ import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
-import { ClipRect } from '../scene/clipRect';
 import { Layers } from './layers';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
@@ -52,7 +51,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     readonly scene: Scene;
-    readonly seriesRoot = new ClipRect();
+    readonly seriesRoot = new Group({ name: `${this.id}-Series-root` });
     readonly background: Background = new Background();
     readonly legend: Legend;
     readonly tooltip: Tooltip;

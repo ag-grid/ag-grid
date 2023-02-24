@@ -8,8 +8,10 @@ import { compoundAscending, ascendingStringNumberUndefined } from '../util/compa
 export class Group extends Node {
     static className = 'Group';
 
-    protected layer?: HdpiCanvas | HdpiOffscreenCanvas;
+    clipRect: BBox = new BBox(0, 0, 0, 0);
+    clip?: Boolean = false;
     protected clipPath: Path2D = new Path2D();
+    protected layer?: HdpiCanvas | HdpiOffscreenCanvas;
     readonly name?: string;
 
     @SceneChangeDetection({
@@ -154,7 +156,7 @@ export class Group extends Node {
     render(renderCtx: RenderContext) {
         const { opts: { name = undefined } = {} } = this;
         const { _debug: { consoleLog = false } = {} } = this;
-        const { dirty, dirtyZIndex, clipPath, layer, children } = this;
+        const { dirty, dirtyZIndex, clipPath, layer, children, clipRect, clip } = this;
         let { ctx, forceRender, clipBBox, resized, stats } = renderCtx;
 
         const isDirty = dirty >= RedrawType.MINOR || dirtyZIndex || resized;
@@ -224,6 +226,15 @@ export class Group extends Node {
             ctx.globalAlpha *= this.opacity;
         }
 
+        if (clip) {
+            const { x, y, width, height } = clipRect;
+            ctx.save();
+            clipPath.clear();
+            clipPath.rect(x, y, width, height);
+            clipPath.draw(ctx);
+            ctx.clip();
+        }
+
         // A group can have `scaling`, `rotation`, `translation` properties
         // that are applied to the canvas context before children are rendered,
         // so all children can be transformed at once.
@@ -266,6 +277,10 @@ export class Group extends Node {
 
         // Render marks this node as clean - no need to explicitly markClean().
         super.render(renderCtx);
+
+        if (clip) {
+            ctx.restore();
+        }
 
         if (layer) {
             if (stats) stats.layersRendered++;

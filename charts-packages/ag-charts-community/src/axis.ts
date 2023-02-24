@@ -6,7 +6,6 @@ import { Line } from './scene/shape/line';
 import { Text } from './scene/shape/text';
 import { Arc } from './scene/shape/arc';
 import { BBox } from './scene/bbox';
-import { ClipRect } from './scene/clipRect';
 import { Caption } from './caption';
 import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
@@ -270,7 +269,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     readonly axisGroup = new Group({ name: `${this.id}-axis`, zIndex: Layers.AXIS_ZINDEX });
 
-    readonly axisLinesClipRect = this.axisGroup.appendChild(new ClipRect());
+    readonly axisLinesClipRect = this.axisGroup.appendChild(new Group({ name: `${this.id}-Axis-lines-clip-rect` }));
     protected readonly linesGroup = this.axisLinesClipRect.appendChild(
         new Group({ name: `${this.id}-axis-lines`, zIndex: Layers.AXIS_ZINDEX })
     );
@@ -285,7 +284,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     private tickLabelGroupSelection = Selection.select(this.tickLabelGroup).selectAll<Text>();
     private lineNode = this.linesGroup.appendChild(new Line());
 
-    readonly axisGirdClipRect = this.axisGroup.appendChild(new ClipRect());
+    readonly axisGirdClipRect = new Group({ name: `${this.id}-Axis-grid-clip-rect` });
     protected readonly gridLineGroup = this.axisGirdClipRect.appendChild(
         new Group({
             name: `${this.id}-gridLines`,
@@ -361,11 +360,13 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     attachAxis(node: Node, nextNode?: Node | null) {
+        node.insertBefore(this.axisGirdClipRect, nextNode);
         node.insertBefore(this.axisGroup, nextNode);
         node.insertBefore(this.crossLineGroup, nextNode);
     }
 
     detachAxis(node: Node) {
+        node.removeChild(this.axisGirdClipRect);
         node.removeChild(this.axisGroup);
         node.removeChild(this.crossLineGroup);
     }
@@ -839,7 +840,16 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     updatePosition() {
-        const { label, axisGroup, crossLineGroup, translation, gridLineGroupSelection, gridPadding, gridLength } = this;
+        const {
+            label,
+            crossLineGroup,
+            axisGroup,
+            axisGirdClipRect,
+            translation,
+            gridLineGroupSelection,
+            gridPadding,
+            gridLength,
+        } = this;
         const rotation = toRadians(this.rotation);
         const sideFlag = label.mirrored ? 1 : -1;
 
@@ -853,6 +863,10 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         axisGroup.translationX = translationX;
         axisGroup.translationY = translationY;
         axisGroup.rotation = rotation;
+
+        axisGirdClipRect.translationX = translationX;
+        axisGirdClipRect.translationY = translationY;
+        axisGirdClipRect.rotation = rotation;
 
         gridLineGroupSelection.each((line) => {
             line.x1 = gridPadding;

@@ -40,10 +40,12 @@ export class HierarchyChart extends Chart {
             series.update({ seriesRect: shrinkRect }); // this has to happen after the `updateAxes` call
         });
 
-        const { seriesRoot } = this;
-        seriesRoot.x = shrinkRect.x;
-        seriesRoot.y = shrinkRect.y;
-        seriesRoot.width = shrinkRect.width;
-        seriesRoot.height = shrinkRect.height;
+        const {
+            seriesRoot: { clipRect },
+        } = this;
+        clipRect.x = shrinkRect.x;
+        clipRect.y = shrinkRect.y;
+        clipRect.width = shrinkRect.width;
+        clipRect.height = shrinkRect.height;
     }
 }

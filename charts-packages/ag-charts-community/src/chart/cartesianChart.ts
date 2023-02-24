@@ -56,11 +56,13 @@ export class CartesianChart extends Chart {
             series: { rect: seriesRect, visible: visibility.series },
         });
 
-        const { seriesRoot } = this;
-        seriesRoot.x = seriesRect.x;
-        seriesRoot.y = seriesRect.y;
-        seriesRoot.width = seriesRect.width;
-        seriesRoot.height = seriesRect.height;
+        const {
+            seriesRoot: { clipRect },
+        } = this;
+        clipRect.x = seriesRect.x;
+        clipRect.y = seriesRect.y;
+        clipRect.width = seriesRect.width;
+        clipRect.height = seriesRect.height;
     }
 
     private _lastAxisWidths: Partial<Record<AgCartesianAxisPosition, number>> = {
@@ -143,7 +145,7 @@ export class CartesianChart extends Chart {
             }
         } while (!stableOutputs(lastPassAxisWidths, lastPassVisibility));
 
-        this.seriesRoot.enabled = clipSeries;
+        this.seriesRoot.clip = clipSeries;
 
         // update visibility of crosslines
         this.axes.forEach((axis) => {
