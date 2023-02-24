@@ -2434,6 +2434,10 @@
       "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "suppressCutToClipboard": {
+      "description": "/** Set to `true` to block **cut** operations within the grid */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "columnDefs": {
       "description": "/** Array of Column / Column Group definitions. */",
       "type": {
@@ -20826,6 +20830,10 @@
       "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "suppressCutToClipboard": {
+      "description": "/** Set to `true` to block **cut** operations within the grid */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "columnDefs": {
       "description": "/** Array of Column / Column Group definitions. */",
       "type": {
@@ -23622,6 +23630,10 @@
     },
     "suppressClipboardApi": {
       "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressCutToClipboard": {
+      "description": "/** Set to `true` to block **cut** operations within the grid */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "columnDefs": {
@@ -26426,6 +26438,10 @@
     },
     "suppressClipboardApi": {
       "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressCutToClipboard": {
+      "description": "/** Set to `true` to block **cut** operations within the grid */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "columnDefs": {

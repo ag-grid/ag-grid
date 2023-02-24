@@ -612,6 +612,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     public cutToClipboard(params: IClipboardCopyParams = {}): void {
+        if (this.gridOptionsService.is('suppressCutToClipboard')) { return; }
         this.copyOrCutToClipboard(params, true);
     }
 

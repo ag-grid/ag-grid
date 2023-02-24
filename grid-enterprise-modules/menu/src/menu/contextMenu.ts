@@ -51,7 +51,10 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         if (_.exists(node) && ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
-                defaultMenuOptions.push('cut', 'copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
+                if (!this.gridOptionsService.is('suppressCutToClipboard')) {
+                    defaultMenuOptions.push('cut');
+                }
+                defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
 

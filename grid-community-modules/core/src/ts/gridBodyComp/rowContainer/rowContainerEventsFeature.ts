@@ -308,7 +308,10 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndX(event: KeyboardEvent): void {
-        if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) { return; }
+        if (
+            !this.clipboardService ||
+            this.gridOptionsService.is('enableCellTextSelection') ||
+            this.gridOptionsService.is('suppressCutToClipboard')) { return; }
 
         this.clipboardService.cutToClipboard();
         event.preventDefault();

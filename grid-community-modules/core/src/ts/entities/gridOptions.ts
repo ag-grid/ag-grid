@@ -154,6 +154,8 @@ export interface GridOptions<TData = any> {
     suppressClipboardPaste?: boolean;
     /** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */
     suppressClipboardApi?: boolean;
+    /** Set to `true` to block **cut** operations within the grid */
+    suppressCutToClipboard?: boolean;
 
     // *** Columns *** //
     /** Array of Column / Column Group definitions. */

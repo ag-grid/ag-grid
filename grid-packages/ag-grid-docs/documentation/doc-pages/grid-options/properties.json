@@ -81,6 +81,7 @@
             "description": "Set to `true` to also include group headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> clipboard. Default: `false`"
         },
         "clipboardDelimiter": {},
+        "suppressCutToClipboard": {},
         "suppressCopyRowsToClipboard": {},
         "suppressCopySingleCellRanges": {},
         "suppressLastEmptyLineOnPaste": {},
