@@ -454,9 +454,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive()) { return; }
 
-            const { paddingTop, paddingBottom } = getElementSize(this.getGui());
+            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = getElementSize(this.getGui());
+            const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
+
             const wrapperHeight = wrapperElement.offsetHeight;
-            const autoHeight = wrapperHeight + paddingTop + paddingBottom;
+            const autoHeight = wrapperHeight + extraHeight;
 
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
