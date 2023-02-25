@@ -694,9 +694,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     protected markerFactory() {
-        const {
-            marker: { shape },
-        } = this;
+        const { shape } = this.marker;
         const MarkerShape = getMarker(shape);
         return new MarkerShape();
     }

@@ -326,9 +326,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     protected markerFactory() {
-        const {
-            marker: { shape },
-        } = this;
+        const { shape } = this.marker;
         const MarkerShape = getMarker(shape);
         return new MarkerShape();
     }
@@ -338,9 +336,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         markerSelection: Selection<Marker, LineNodeDatum>;
     }) {
         let { nodeData, markerSelection } = opts;
-        const {
-            marker: { shape, enabled },
-        } = this;
+        const { shape, enabled } = this.marker;
         nodeData = shape && enabled ? nodeData : [];
 
         if (this.marker.isDirty()) {
@@ -433,9 +429,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
         labelSelection: Selection<Text, LineNodeDatum>;
     }) {
         let { labelData, labelSelection } = opts;
-        const {
-            marker: { shape, enabled },
-        } = this;
+        const { shape, enabled } = this.marker;
         labelData = shape && enabled ? labelData : [];
 
         return labelSelection.update(labelData);
