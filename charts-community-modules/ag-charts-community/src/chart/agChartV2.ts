@@ -634,6 +634,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
     constructors: {
         title: Caption,
         subtitle: Caption,
+        footnote: Caption,
         shadow: DropShadow,
         innerCircle: DoughnutInnerCircle,
         'axes[].crossLines[]': CrossLine,

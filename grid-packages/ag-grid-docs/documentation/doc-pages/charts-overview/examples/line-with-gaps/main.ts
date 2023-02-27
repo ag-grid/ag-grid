@@ -65,7 +65,7 @@ const options: AgChartOptions = {
     text: `Imported Banana Prices (${year - 1})`,
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: "Source: Department for Environment, Food and Rural Affairs",
   },
   series: [

@@ -152,16 +152,23 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     padding = new Padding(20);
 
+    private removeCaptionIfPresents(caption: Caption | undefined) {
+        if (caption != null) {
+            this.scene.root?.removeChild(caption.node);
+        }
+    }
+
+    private addCaptionIfPresents(caption: Caption | undefined) {
+        if (caption != null) {
+            this.scene.root?.appendChild(caption.node);
+        }
+    }
+
     _title?: Caption = undefined;
     set title(caption: Caption | undefined) {
-        const { root } = this.scene;
-        if (this._title != null) {
-            root?.removeChild(this._title.node);
-        }
+        this.removeCaptionIfPresents(this._title);
         this._title = caption;
-        if (this._title != null) {
-            root?.appendChild(this._title.node);
-        }
+        this.addCaptionIfPresents(this._title);
     }
     get title() {
         return this._title;
@@ -169,17 +176,22 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     _subtitle?: Caption = undefined;
     set subtitle(caption: Caption | undefined) {
-        const { root } = this.scene;
-        if (this._subtitle != null) {
-            root?.removeChild(this._subtitle.node);
-        }
+        this.removeCaptionIfPresents(this._subtitle);
         this._subtitle = caption;
-        if (this._subtitle != null) {
-            root?.appendChild(this._subtitle.node);
-        }
+        this.addCaptionIfPresents(this._subtitle);
     }
     get subtitle() {
         return this._subtitle;
+    }
+
+    _footnote?: Caption = undefined;
+    set footnote(caption: Caption | undefined) {
+        this.removeCaptionIfPresents(this._footnote);
+        this._footnote = caption;
+        this.addCaptionIfPresents(this._footnote);
+    }
+    get footnote() {
+        return this._footnote;
     }
 
     @Validate(STRING_UNION('standalone', 'integrated'))
@@ -737,13 +749,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
     abstract performLayout(): Promise<void>;
 
     protected positionCaptions(shrinkRect: BBox): BBox {
-        const { _title: title, _subtitle: subtitle } = this;
+        const { _title: title, _subtitle: subtitle, _footnote: footnote } = this;
         const newShrinkRect = shrinkRect.clone();
 
-        const positionAndShrinkBBox = (caption: Caption) => {
+        const positionTopAndShrinkBBox = (caption: Caption) => {
             const baseY = newShrinkRect.y;
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
+            caption.node.textBaseline = 'top';
             const bbox = caption.node.computeBBox();
 
             // As the bbox (x,y) ends up at a different location than specified above, we need to
@@ -753,23 +766,37 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
             newShrinkRect.shrink(bboxHeight, 'top');
         };
+        const positionBottomAndShrinkBBox = (caption: Caption) => {
+            const baseY = newShrinkRect.y + newShrinkRect.height;
+            caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
+            caption.node.y = baseY;
+            caption.node.textBaseline = 'bottom';
+            const bbox = caption.node.computeBBox();
 
-        if (!title) {
-            return newShrinkRect;
+            const bboxHeight = Math.ceil(baseY - bbox.y + (caption.spacing ?? 0));
+
+            newShrinkRect.shrink(bboxHeight, 'bottom');
+        };
+
+        if (title) {
+            title.node.visible = title.enabled;
+            if (title.node.visible) {
+                positionTopAndShrinkBBox(title);
+            }
         }
 
-        title.node.visible = title.enabled;
-        if (title.enabled) {
-            positionAndShrinkBBox(title);
+        if (subtitle) {
+            subtitle.node.visible = title !== undefined && title.enabled && subtitle.enabled;
+            if (subtitle.node.visible) {
+                positionTopAndShrinkBBox(subtitle);
+            }
         }
 
-        if (!subtitle) {
-            return newShrinkRect;
-        }
-
-        subtitle.node.visible = title.enabled && subtitle.enabled;
-        if (title.enabled && subtitle.enabled) {
-            positionAndShrinkBBox(subtitle);
+        if (footnote) {
+            footnote.node.visible = footnote.enabled;
+            if (footnote.node.visible) {
+                positionBottomAndShrinkBBox(footnote);
+            }
         }
 
         return newShrinkRect;
