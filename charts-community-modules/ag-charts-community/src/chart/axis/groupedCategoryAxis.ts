@@ -1,4 +1,3 @@
-import { Group } from '../../scene/group';
 import { Selection } from '../../scene/selection';
 import { Line } from '../../scene/shape/line';
 import { normalizeAngle360, toRadians } from '../../util/angle';
@@ -27,10 +26,10 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     // We don't call is `labelScale` for consistency with other axes.
     readonly tickScale = new BandScale<string | number>();
 
-    private gridLineSelection: Selection<Line, Group, any, any>;
-    private axisLineSelection: Selection<Line, Group, any, any>;
-    private separatorSelection: Selection<Line, Group, any, any>;
-    private labelSelection: Selection<Text, Group, any, any>;
+    private gridLineSelection: Selection<Line, any>;
+    private axisLineSelection: Selection<Line, any>;
+    private separatorSelection: Selection<Line, any>;
+    private labelSelection: Selection<Text, any>;
     private tickTreeLayout?: TreeLayout;
 
     constructor() {
@@ -47,10 +46,10 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
 
-        this.gridLineSelection = Selection.select(gridlineGroup).selectAll<Line>();
-        this.axisLineSelection = Selection.select(axisGroup).selectAll<Line>();
-        this.separatorSelection = Selection.select(axisGroup).selectAll<Line>();
-        this.labelSelection = Selection.select(axisGroup).selectAll<Text>();
+        this.gridLineSelection = Selection.select(gridlineGroup, Line);
+        this.axisLineSelection = Selection.select(axisGroup, Line);
+        this.separatorSelection = Selection.select(axisGroup, Line);
+        this.labelSelection = Selection.select(axisGroup, Text);
     }
 
     set range(value: number[]) {
@@ -114,8 +113,8 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     set gridLength(value: number) {
         // Was visible and now invisible, or was invisible and now visible.
         if ((this._gridLength && !value) || (!this._gridLength && value)) {
-            this.gridLineSelection = this.gridLineSelection.remove().setData([]);
-            this.labelSelection = this.labelSelection.remove().setData([]);
+            this.gridLineSelection.clear();
+            this.labelSelection.clear();
         }
         this._gridLength = value;
     }
@@ -237,16 +236,8 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             parallelFlipRotation: normalizeAngle360(rotation),
         });
 
-        const updateGridLines = this.gridLineSelection.setData(this.gridLength ? ticks : []);
-        updateGridLines.exit.remove();
-        const enterGridLines = updateGridLines.enter.append(Line);
-        const gridLineSelection = updateGridLines.merge(enterGridLines);
-
-        const updateLabels = this.labelSelection.setData(treeLabels);
-        updateLabels.exit.remove();
-
-        const enterLabels = updateLabels.enter.append(Text);
-        const labelSelection = updateLabels.merge(enterLabels);
+        const gridLineSelection = this.gridLineSelection.update(this.gridLength ? ticks : []);
+        const labelSelection = this.labelSelection.update(treeLabels);
 
         const labelFormatter = label.formatter;
 
@@ -358,12 +349,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             toString: () => String(separatorData.length),
         });
 
-        const updateSeparators = this.separatorSelection.setData(separatorData);
-        updateSeparators.exit.remove();
-        const enterSeparators = updateSeparators.enter.append(Line);
-        const separatorSelection = updateSeparators.merge(enterSeparators);
-        this.separatorSelection = separatorSelection;
-
+        const separatorSelection = this.separatorSelection.update(separatorData);
         const epsilon = 0.0000001;
         separatorSelection.each((line, datum) => {
             line.x1 = datum.x1;
@@ -386,12 +372,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             lines.push(i);
         }
 
-        const updateAxisLines = this.axisLineSelection.setData(lines);
-        updateAxisLines.exit.remove();
-        const enterAxisLines = updateAxisLines.enter.append(Line);
-        const axisLineSelection = updateAxisLines.merge(enterAxisLines);
-        this.axisLineSelection = axisLineSelection;
-
+        const axisLineSelection = this.axisLineSelection.update(lines);
         axisLineSelection.each((line, _, index) => {
             const x = index > 0 ? -maxLeafLabelWidth - this.label.padding * 2 - (index - 1) * lineHeight : 0;
             line.x1 = x;

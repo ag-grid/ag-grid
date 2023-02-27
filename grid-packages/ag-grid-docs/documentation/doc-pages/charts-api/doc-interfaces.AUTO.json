@@ -5424,8 +5424,11 @@
       "type": { "returnType": "(string | RegExp)[]", "optional": false }
     }
   },
-  "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },
-  "KeyFn": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
+  "NodeConstructor": { "meta": { "typeParams": ["TNode extends Node"] } },
+  "NodeFactory": { "meta": { "typeParams": ["TNode extends Node", "TDatum"] } },
+  "NodeConstructorOrFactory": {
+    "meta": { "typeParams": ["TNode extends Node", "TDatum"] }
+  },
   "ArcType": {},
   "ShapeLineCap": {},
   "ShapeLineJoin": {},

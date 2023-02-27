@@ -27,18 +27,15 @@ import { jsonDiff } from '../../../util/json';
 import { BBox } from '../../../scene/bbox';
 import { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
 import { ChartAxisDirection } from '../../chartAxisDirection';
+import { getMarker } from '../../marker/util';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
-    Group,
-    ContextType['nodeData'][number],
-    any
+    ContextType['nodeData'][number]
 >;
 type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
-    Group,
-    ContextType['labelData'][number],
-    any
+    ContextType['labelData'][number]
 >;
 
 interface SubGroup<C extends SeriesNodeDataContext, SceneNodeType extends Node> {
@@ -75,7 +72,7 @@ export class CartesianSeriesNodeClickEvent<Datum extends { datum: any }> extends
 
 export abstract class CartesianSeries<
     C extends SeriesNodeDataContext<any, any>,
-    N extends Node = Marker
+    N extends Node = Group
 > extends Series<C> {
     private _contextNodeData: C[] = [];
     get contextNodeData(): C[] {
@@ -84,10 +81,10 @@ export abstract class CartesianSeries<
 
     private nodeDataDependencies: { seriesRectWidth?: number; seriesRectHeight?: number } = {};
 
-    private highlightSelection: NodeDataSelection<N, C> = Selection.select(this.highlightNode).selectAll<N>();
-    private highlightLabelSelection: LabelDataSelection<Text, C> = Selection.select(
-        this.highlightLabel
-    ).selectAll<Text>();
+    private highlightSelection = Selection.select(this.highlightNode, () =>
+        this.opts.hasMarkers ? this.markerFactory() : (this.nodeFactory() as any)
+    ) as NodeDataSelection<N, C>;
+    private highlightLabelSelection = Selection.select(this.highlightLabel, Text) as LabelDataSelection<Text, C>;
 
     private subGroups: SubGroup<C, any>[] = [];
     private subGroupId: number = 0;
@@ -219,6 +216,15 @@ export abstract class CartesianSeries<
         }
     }
 
+    protected nodeFactory(): Node {
+        return new Group();
+    }
+
+    protected markerFactory(): Marker {
+        const MarkerShape = getMarker();
+        return new MarkerShape();
+    }
+
     private async updateSeriesGroups() {
         const {
             _contextNodeData: contextNodeData,
@@ -291,9 +297,9 @@ export abstract class CartesianSeries<
                 dataNodeGroup,
                 markerGroup,
                 labelGroup,
-                labelSelection: Selection.select(labelGroup).selectAll<Text>(),
-                datumSelection: Selection.select(dataNodeGroup).selectAll<N>(),
-                markerSelection: markerGroup ? Selection.select(markerGroup).selectAll<Marker>() : undefined,
+                labelSelection: Selection.select(labelGroup, Text),
+                datumSelection: Selection.select(dataNodeGroup, () => this.nodeFactory()),
+                markerSelection: markerGroup ? Selection.select(markerGroup, () => this.markerFactory()) : undefined,
             });
         }
     }

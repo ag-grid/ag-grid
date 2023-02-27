@@ -45,6 +45,7 @@ class SparklineCrosshairs {
     };
 }
 
+
 export class LineSparkline extends Sparkline {
     static className = 'LineSparkline';
 
@@ -54,8 +55,8 @@ export class LineSparkline extends Sparkline {
 
     private lineSparklineGroup: _Scene.Group = new _Scene.Group();
     private markers: _Scene.Group = new _Scene.Group();
-    private markerSelection: _Scene.Selection<_Scene.Marker, _Scene.Group, LineNodeDatum, any> =
-        _Scene.Selection.select(this.markers).selectAll<_Scene.Marker>();
+    private markerSelection: _Scene.Selection<_Scene.Marker, LineNodeDatum> =
+        _Scene.Selection.select(this.markers, () => this.markerFactory());
     private markerSelectionData: LineNodeDatum[] = [];
 
     readonly marker = new SparklineMarker();
@@ -72,12 +73,17 @@ export class LineSparkline extends Sparkline {
         return this.markerSelectionData;
     }
 
+    protected markerFactory(): _Scene.Marker {
+        const { shape } = this.marker;
+        const MarkerShape = getMarker(shape);
+        return new MarkerShape();
+    }
+
     /**
      * If marker shape is changed, this method should be called to remove the previous marker nodes selection.
      */
     private onMarkerShapeChange() {
-        this.markerSelection = this.markerSelection.setData([]);
-        this.markerSelection.exit.remove();
+        this.markerSelection = this.markerSelection.clear();
         this.scheduleLayout();
     }
 
@@ -151,16 +157,7 @@ export class LineSparkline extends Sparkline {
     }
 
     private updateSelection(selectionData: LineNodeDatum[]): void {
-        const { marker } = this;
-
-        const shape = getMarker(marker.shape);
-
-        const updateMarkerSelection = this.markerSelection.setData(selectionData);
-        const enterMarkerSelection = updateMarkerSelection.enter.append(shape);
-
-        updateMarkerSelection.exit.remove();
-
-        this.markerSelection = updateMarkerSelection.merge(enterMarkerSelection);
+        this.markerSelection.update(selectionData);
     }
 
     protected updateNodes(): void {

@@ -1,4 +1,3 @@
-import { Group } from '../../../scene/group';
 import { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
 import { Text } from '../../../scene/shape/text';
@@ -695,24 +694,19 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return contexts.reduce((r, n) => r.concat(...n), []);
     }
 
-    protected async updateDatumSelection(opts: {
-        nodeData: BarNodeDatum[];
-        datumSelection: Selection<Rect, Group, BarNodeDatum, any>;
-    }) {
-        const { nodeData, datumSelection } = opts;
-
-        const updateRects = datumSelection.setData(nodeData);
-        updateRects.exit.remove();
-        const enterRects = updateRects.enter.append(Rect).each((rect) => {
-            rect.tag = BarSeriesNodeTag.Bar;
-        });
-        return updateRects.merge(enterRects);
+    protected nodeFactory() {
+        return new Rect();
     }
 
-    protected async updateDatumNodes(opts: {
-        datumSelection: Selection<Rect, Group, BarNodeDatum, any>;
-        isHighlight: boolean;
+    protected async updateDatumSelection(opts: {
+        nodeData: BarNodeDatum[];
+        datumSelection: Selection<Rect, BarNodeDatum>;
     }) {
+        const { nodeData, datumSelection } = opts;
+        return datumSelection.update(nodeData, (rect) => (rect.tag = BarSeriesNodeTag.Bar));
+    }
+
+    protected async updateDatumNodes(opts: { datumSelection: Selection<Rect, BarNodeDatum>; isHighlight: boolean }) {
         const { datumSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             fills,
@@ -786,23 +780,19 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     protected async updateLabelSelection(opts: {
         labelData: BarNodeDatum[];
-        labelSelection: Selection<Text, Group, BarNodeDatum, any>;
+        labelSelection: Selection<Text, BarNodeDatum>;
     }) {
         const { labelData, labelSelection } = opts;
         const { enabled } = this.label;
         const data = enabled ? labelData : [];
 
-        const updateLabels = labelSelection.setData(data);
-        updateLabels.exit.remove();
-        const enterLabels = updateLabels.enter.append(Text).each((text) => {
+        return labelSelection.update(data, (text) => {
             text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
         });
-
-        return updateLabels.merge(enterLabels);
     }
 
-    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, Group, BarNodeDatum, any> }) {
+    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, BarNodeDatum> }) {
         const { labelSelection } = opts;
         const {
             label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color },

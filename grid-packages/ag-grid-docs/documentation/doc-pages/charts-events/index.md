@@ -45,6 +45,20 @@ Unlike other series, the `nodeClick` event `datum` parameter for Histogram serie
 
 <interface-documentation interfaceName='AgHistogramBinDatum' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
 
+## Interaction Ranges
+
+By default, the `nodeClick` event is only triggered when the user clicks exactly on a node. You can use the `nodeClickRange` option to instead define a range at which the event is triggered. This can be set to one of three values: `'nearest'`, `'exact'` or a number as a distance in pixels.
+
+### Example: Interaction range variations
+
+This example shows the three different types of interaction range that are possible.
+
+- `'exact'` (default) will trigger the event if the user clicks exactly on a node
+- `'nearest'` will trigger the event for whichever node is nearest on the whole chart
+- given a number it will trigger the event when the click is made within that many pixels of a node
+
+<chart-example title='Interaction Ranges' name='interaction-ranges' type='generated'></chart-example>
+
 ## Chart Event - seriesNodeClick
 
 The `seriesNodeClick` event can be used to listen to `nodeClick` events of all series at once.

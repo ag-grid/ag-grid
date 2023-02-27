@@ -4,6 +4,7 @@ import {
     AgAreaSeriesOptions,
     AgBarSeriesOptions,
     AgCartesianChartOptions,
+    AgChartInteractionRange,
     AgLineSeriesOptions,
     AgPieSeriesOptions,
     AgPolarChartOptions,
@@ -84,7 +85,11 @@ describe('Chart', () => {
     }) => {
         const format = (...values: any[]) => values.join(': ');
 
-        const createChart = async (params: { hasTooltip: boolean; onNodeClick?: () => void }): Promise<Chart> => {
+        const createChart = async (params: {
+            hasTooltip: boolean;
+            onNodeClick?: () => void;
+            nodeClickRange?: AgChartInteractionRange;
+        }): Promise<Chart> => {
             const tooltip = params.hasTooltip
                 ? {
                       renderer: (params) => {
@@ -102,6 +107,8 @@ describe('Chart', () => {
                   }
                 : undefined;
 
+            const nodeClickRangeParams = params.nodeClickRange ? { nodeClickRange: params.nodeClickRange } : {};
+
             const options: AgCartesianChartOptions | AgPolarChartOptions = {
                 container: document.body,
                 autoSize: false,
@@ -116,6 +123,7 @@ describe('Chart', () => {
                             },
                         },
                         listeners,
+                        ...nodeClickRangeParams,
                         ...testParams.seriesOptions,
                     },
                 ],
@@ -152,10 +160,10 @@ describe('Chart', () => {
             });
         };
 
-        const checkNodeClick = async (chart: Chart, onNodeClick: () => void) => {
+        const checkNodeClick = async (chart: Chart, onNodeClick: () => void, offset?: { x: number; y: number }) => {
             await hoverChartNodes(chart, async ({ x, y }) => {
                 // Perform click
-                await clickAction(x, y)(chart);
+                await clickAction(x + (offset?.x ?? 0), y + (offset?.y ?? 0))(chart);
                 await waitForChartStability(chart);
             });
 
@@ -210,6 +218,18 @@ describe('Chart', () => {
             const onNodeClick = jest.fn();
             chart = await createChart({ hasTooltip: false, onNodeClick });
             await checkNodeClick(chart, onNodeClick);
+        });
+
+        it(`should handle nodeClick event with offset click when range is 'nearest'`, async () => {
+            const onNodeClick = jest.fn();
+            chart = await createChart({ hasTooltip: true, onNodeClick, nodeClickRange: 'nearest' });
+            await checkNodeClick(chart, onNodeClick, { x: 5, y: 5 });
+        });
+
+        it(`should handle nodeClick event with offset click when range is within pixel distance`, async () => {
+            const onNodeClick = jest.fn();
+            chart = await createChart({ hasTooltip: true, onNodeClick, nodeClickRange: 6 });
+            await checkNodeClick(chart, onNodeClick, { x: 0, y: 5 });
         });
     };
 
@@ -309,7 +329,7 @@ describe('Chart', () => {
                 angleKey: datasets.economy.valueKey,
                 sectorLabelKey: datasets.economy.categoryKey,
             },
-            getNodeData: (series) => series.sectorLabelSelection.groups[0],
+            getNodeData: (series) => series.sectorLabelSelection.nodes(),
             getNodePoint: (item) => [item.x, item.y],
             getDatumValues: (item, series) => {
                 const category = item.datum.datum[series.sectorLabelKey];

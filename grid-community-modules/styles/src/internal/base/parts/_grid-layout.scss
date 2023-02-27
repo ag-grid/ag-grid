@@ -191,7 +191,8 @@
     .ag-cell-inline-editing {
         @include ag.card();
         padding: 0;
-        height: var(--ag-row-height);
+        // do not add `height` here.
+        // height: (--ag-row-height) breaks gridOptions.rowHeight for the cellEditor 
         background-color: var(--ag-control-panel-background-color);
     }
 

@@ -62,12 +62,12 @@ export abstract class BarColumnSparkline extends Sparkline {
     private rectGroup: _Scene.Group = new _Scene.Group();
     private labelGroup: _Scene.Group = new _Scene.Group();
 
-    private rectSelection: _Scene.Selection<_Scene.Rect, _Scene.Group, RectNodeDatum, RectNodeDatum> = _Scene.Selection.select(
-        this.rectGroup
-    ).selectAll<_Scene.Rect>();
-    private labelSelection: _Scene.Selection<_Scene.Text, _Scene.Group, RectNodeDatum, RectNodeDatum> = _Scene.Selection.select(
-        this.labelGroup
-    ).selectAll<_Scene.Text>();
+    private rectSelection: _Scene.Selection<_Scene.Rect, RectNodeDatum> = _Scene.Selection.select(
+        this.rectGroup, _Scene.Rect
+    );
+    private labelSelection: _Scene.Selection<_Scene.Text, RectNodeDatum> = _Scene.Selection.select(
+        this.labelGroup, _Scene.Text
+    );
 
     private nodeSelectionData: RectNodeDatum[] = [];
 
@@ -166,13 +166,7 @@ export abstract class BarColumnSparkline extends Sparkline {
     }
 
     private updateRectSelection(selectionData: RectNodeDatum[]): void {
-        const updateRectSelection = this.rectSelection.setData(selectionData);
-
-        const enterRectSelection = updateRectSelection.enter.append(_Scene.Rect);
-
-        updateRectSelection.exit.remove();
-
-        this.rectSelection = updateRectSelection.merge(enterRectSelection);
+        this.rectSelection.update(selectionData);
     }
 
     protected updateRectNodes(): void {
@@ -231,15 +225,10 @@ export abstract class BarColumnSparkline extends Sparkline {
     }
 
     private updateLabelSelection(selectionData: RectNodeDatum[]): void {
-        const updateLabels = this.labelSelection.setData(selectionData);
-
-        const enterLabels = updateLabels.enter.append(_Scene.Text).each((text) => {
-            (text.tag = BarColumnNodeTag.Label), (text.pointerEvents = _Scene.PointerEvents.None);
+        this.labelSelection.update(selectionData, (text) => {
+            text.tag = BarColumnNodeTag.Label; 
+            text.pointerEvents = _Scene.PointerEvents.None;
         });
-
-        updateLabels.exit.remove();
-
-        this.labelSelection = updateLabels.merge(enterLabels);
     }
 
     private updateLabelNodes(): void {
