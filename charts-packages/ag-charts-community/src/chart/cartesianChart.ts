@@ -150,8 +150,6 @@ export class CartesianChart extends Chart {
             }
         } while (!stableOutputs(lastPassAxisWidths, lastPassVisibility));
 
-        this.seriesRoot.clip = clipSeries;
-
         // update visibility of crosslines
         this.axes.forEach((axis) => {
             axis.setCrossLinesVisible(visibility.crossLines);
