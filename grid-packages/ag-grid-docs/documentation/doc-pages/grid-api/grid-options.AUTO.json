@@ -79,6 +79,10 @@
     "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
     "type": { "returnType": "boolean" }
   },
+  "suppressCutToClipboard": {
+    "description": "/** Set to `true` to block **cut** operations within the grid */",
+    "type": { "returnType": "boolean" }
+  },
   "columnDefs": {
     "description": "/** Array of Column / Column Group definitions. */",
     "type": { "returnType": "(ColDef<TData> | ColGroupDef<TData>)[] | null" }

@@ -5,8 +5,28 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import Announcements from 'components/Announcements';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
-import menuData from '../../doc-pages/licensing/menu.json';
+import rawMenuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
+import { isProductionBuild } from '../utils/consts';
+
+function filterProductionMenuData(data) {
+    if (!isProductionBuild()) {
+        // No filtering needed for non-production builds.
+        return data;
+    }
+
+    return data
+        // Filter out Charts Enterprise pages outside development environments.
+        .filter((item) => item.enterprise !== 'charts')
+        // Recursively filter children.
+        .map((item) => {
+            if (item.items == null) return item;
+
+            return { ...item, items: filterProductionMenuData(item.items) };
+        });
+}
+
+const menuData = filterProductionMenuData(rawMenuData);
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
     return <li key={title} className={styles['menu__section']}>

@@ -7,7 +7,7 @@ const copyFromModuleSource = () => {
       "**/*",
       '!**/__tests__*/**/*',
       '!**/*Test*'
-    ], {cwd: '../../community-modules/solid/src'})
+    ], {cwd: '../../grid-community-modules/solid/src'})
     .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
     .pipe(gulp.dest("./src"), {cwd: '.'});
 };

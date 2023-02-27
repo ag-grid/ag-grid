@@ -73,11 +73,11 @@ const gridOptions = {
 
 For alternative ways to provide cell data, such as value getters, see the documentation on [Value Getters](/value-getters/).
 
+<grid-example title='Nested Row Data Example' name='column-fields' type='generated'></grid-example>
+
 ### Suppress Field Dot Notation
 
-If your row data objects have dots in their property names, that should not be treated as deep references, then set the grid property `suppressFieldDotNotation` to `true`. This prevents the dots being interpreted as deep references across all column definitions.
-
-<grid-example title='Nested Row Data Example' name='column-fields' type='generated'></grid-example>
+If your row data objects have dots in their property names, that should *not* be treated as deep references, then set the grid property `suppressFieldDotNotation` to `true`. This prevents the dots being interpreted as deep references across all column definitions.
 
 ## Custom Column Types {#default-column-definitions}
 

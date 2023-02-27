@@ -339,6 +339,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressClipboardPaste: boolean | undefined = undefined;
     /** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround.     */
     @Input() public suppressClipboardApi: boolean | undefined = undefined;
+    /** Set to `true` to block     **cut** operations within the grid     */
+    @Input() public suppressCutToClipboard: boolean | undefined = undefined;
     /** Array of Column / Column Group definitions.     */
     @Input() public columnDefs: (TColDef | ColGroupDef<TData>)[] | null | undefined = undefined;
     /** A default column definition. Items defined in the actual column definitions get precedence.     */
@@ -1280,6 +1282,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressServerSideInfiniteScroll: boolean | null | '';
     static ngAcceptInputType_rowGroupPanelSuppressSort: boolean | null | '';
     static ngAcceptInputType_allowShowChangeAfterFilter: boolean | null | '';
+    static ngAcceptInputType_suppressCutToClipboard: boolean | null | '';
     // @END@
 }
 

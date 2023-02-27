@@ -4,18 +4,18 @@ const merge = require('webpack-merge');
 const common = require('./webpack.common.beta.config.js');
 const glob = require('glob');
 
-const moduleDirectories = glob.sync('../../community-modules/*', {
+const moduleDirectories = glob.sync('../../grid-community-modules/*', {
     ignore: [
-        '../../community-modules/all-modules',
-        '../../community-modules/core',
-        '../../community-modules/angular',
-        '../../community-modules/react',
-        '../../community-modules/vue',
-        '../../community-modules/vue3',
-        '../../community-modules/polymer'
+        '../../grid-community-modules/all-modules',
+        '../../grid-community-modules/core',
+        '../../grid-community-modules/angular',
+        '../../grid-community-modules/react',
+        '../../grid-community-modules/vue',
+        '../../grid-community-modules/vue3',
+        '../../grid-community-modules/polymer'
     ]
 })
-    .concat(glob.sync('../../enterprise-modules/*', {ignore: '../../enterprise-modules/all-modules'}));
+    .concat(glob.sync('../../grid-enterprise-modules/*', {ignore: '../../grid-enterprise-modules/all-modules'}));
 
 const mapDirectory = directory => glob.sync(`${directory}/src/**/*.ts`, {
     nodir: true,
@@ -24,9 +24,9 @@ const mapDirectory = directory => glob.sync(`${directory}/src/**/*.ts`, {
 
 const flattenArray = array => [].concat.apply([], array);
 
-const moduleTsFiles = glob.sync("../../community-modules/core/src/ts/**/*.ts", {
+const moduleTsFiles = glob.sync("../../grid-community-modules/core/src/ts/**/*.ts", {
     nodir: true,
-    ignore: "../../community-modules/core/src/ts/**/*.test.ts"
+    ignore: "../../grid-community-modules/core/src/ts/**/*.test.ts"
 })
     .concat(flattenArray(moduleDirectories.map(mapDirectory)));
 

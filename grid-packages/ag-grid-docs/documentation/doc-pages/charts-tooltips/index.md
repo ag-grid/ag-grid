@@ -15,8 +15,8 @@ The default chart tooltip has the following template:
 
 ```html
 <div class="ag-chart-tooltip">
-    <div class="ag-chart-tooltip-title"></div>
-    <div class="ag-chart-tooltip-content"></div>
+  <div class="ag-chart-tooltip-title"></div>
+  <div class="ag-chart-tooltip-content"></div>
 </div>
 ```
 
@@ -33,15 +33,14 @@ To make the tooltip title visible you need to specify the series' `yName`, or `l
 
 In the sample data below the `value1` key is not descriptive, while `hats_made` is not very presentable:
 
-
 ```js
 data: [
-    {
-        month: 'Jun',
-        value1: 50,
-        hats_made: 40
-    },
-    // ...
+  {
+    month: "Jun",
+    value1: 50,
+    hats_made: 40,
+  },
+  // ...
 ]
 ```
 
@@ -59,26 +58,23 @@ Also note that for numeric values the tooltips show two digits after the decimal
 
 The default tooltip already uses `ag-chart-tooltip`, `ag-chart-tooltip-title` and `ag-chart-tooltip-content` CSS classes, but these classes are not meant to be used directly to add custom CSS rules to, unless you want to change the styling of all the tooltips in your app. Instead, users of the charting library should provide their own tooltip class name via the `chart.tooltip.class` config. This class name will be added to the class list of the tooltip element for only that particular chart instance.
 
-
 For example, if we wanted to set the tooltip's content `background-color` to `gold`, we'd add a custom class name to our chart in the code:
 
-
 ```js
-chart.tooltip.class = 'my-tooltip';
+chart.tooltip.class = "my-tooltip"
 ```
 
 And then in the CSS:
 
 ```css
 .my-tooltip .ag-chart-tooltip-content {
-    background-color: gold;
+  background-color: gold;
 }
 ```
 
 This limits the styling changes to this chart instance alone (or instances that use the same tooltip class). We could style the title element and the container element in the same manner.
 
 Note that your styles don't override the default tooltip styles but complement them.
-
 
 ### Example: Tooltip Styling
 
@@ -90,10 +86,9 @@ In this example we show how to change the content's background color and the col
 
 To control what goes into the title and content divs of the tooltip one can set up a tooltip renderer function (one per series) that receives values associated with the highlighted data point and returns an object with the `title` and `content` fields containing plain text or inner HTML that goes into the corresponding divs:
 
-
 ```ts
 tooltip: {
-    renderer?: (params: AgTooltipRendererParams) => AgTooltipRendererResult;
+    renderer?: (params: AgSeriesTooltipRendererParams) => AgTooltipRendererResult;
 }
 
 interface AgTooltipRendererResult {
@@ -102,38 +97,10 @@ interface AgTooltipRendererResult {
 }
 ```
 
-The actual type of the `params` object passed into the tooltip renderer will depend on the series type being used. For example, bar series' tooltip renderer params object will have the following structure:
-
-```ts
-interface AgTooltipRendererParams {
-    // the element of the series' data represented by the highlighted item
-    datum: any;
-    // the title of the series, if any
-    title?: string;
-    // the color of the series
-    color?: string;
-
-    // the xKey used to fetch the xValue from the datum, same as series xKey
-    xKey: string;
-    // the actual xValue used
-    xValue?: any;
-    // same as series.xName
-    xName?: string;
-
-    // the yKey used to fetch the yValue from the datum,
-    // equals to the value of `yKey` for one of the elements in the series,
-    // depending on which bar inside a stack/group is highlighted
-    yKey: string;
-    // the actuall yValue used
-    yValue?: any;
-    // equals to the value of `yName` for one of the elements in the series
-    yName?: string;
-}
-```
+The actual type of the `params` object passed into the tooltip renderer will depend on the series type being used. See the [tooltips API Reference](#api-reference) `renderer` function examples.
 
 Let's say we wanted to remove the digits after the decimal point from the values shown in tooltips.
 We could use the following tooltip renderer to achieve that:
-
 
 ```js
 tooltip: {
@@ -156,16 +123,23 @@ Instead of having the tooltip renderer return an object with title and content s
 
 Let's say we wanted to remove the digits after the decimal point from the values shown in tooltips (by default the tooltips show two digits after the decimal point for numeric values). We could use the following tooltip renderer to achieve that:
 
-
 ```js
-series: [{
-    type: 'column',
+series: [
+  {
+    type: "column",
     tooltip: {
-        renderer: function (params) {
-            return '<div class="ag-chart-tooltip-title" ' + 'style="background-color:' + params.color + '">' + params.xValue + '</div>' + '<div class="ag-chart-tooltip-content">' + params.yValue + '</div>';
-        }
-    }
-}]
+      renderer: function (params) {
+        return `
+            <div class="ag-chart-tooltip-title" style="background-color: ${params.color}">
+                ${params.xValue}
+            </div>
+            <div class="ag-chart-tooltip-content">
+                ${params.yValue}
+            </div>`
+      },
+    },
+  },
+]
 ```
 
 The tooltip renderer function receives the `params` object as a single parameter. Inside that object you get the `xValue` and `yValue` for the highlighted data point as well as the reference to the raw `datum` element from the `chart.data` or `series.data` array. You can then process the raw values however you like before using them as a part of the returned HTML string.
@@ -187,6 +161,20 @@ Notice that the tooltip renderer in the example below:
 
 <chart-example title='Column Series with Tooltip Renderer' name='tooltip-renderer' type='generated'></chart-example>
 
+## Tooltip Range
+
+By default, the tooltip of the nearest node is visible when the cursor is on the chart. However, this behaviour can be changed with the `chart.tooltip.range` property.
+
+### Example: Tooltip range variations
+
+The example below shows the three types of interaction range:
+
+- `'nearest'` (default) will show the tooltip of the nearest node anywhere on the chart
+- `'exact'` will show the tooltip if the user hovers over a node
+- given a number the tooltip will show if the cursor is within that distance in pixels of a node
+
+<chart-example title='Tooltip Range' name='interaction-range' type='generated'></chart-example>
+
 ## API Reference
 
 ### Bar/Column Tooltips
@@ -196,7 +184,6 @@ Notice that the tooltip renderer in the example below:
 ### Area Tooltips
 
 <interface-documentation interfaceName='AgAreaSeriesTooltip' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
 
 ### Line Tooltips
 
@@ -217,4 +204,3 @@ Notice that the tooltip renderer in the example below:
 ## Next Up
 
 Continue to the next section to learn about [axes](/charts-axes/).
-

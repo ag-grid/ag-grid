@@ -13,8 +13,8 @@ module.exports = {
         // favour cjs over es6 (docs only rebuilds cjs...)
         mainFields: ["main", "module"],
         alias: {
-            "@ag-grid-community/core": path.resolve(__dirname, "../../../community-modules/core/src/ts/main.ts"),
-            "ag-charts-community": path.resolve(__dirname, "../../../charts-packages/ag-charts-community/src/main.ts")
+            "@ag-grid-community/core": path.resolve(__dirname, "../../../grid-community-modules/core/src/ts/main.ts"),
+            "ag-charts-community": path.resolve(__dirname, "../../../charts-community-modules/ag-charts-community/src/main.ts")
         },
         extensions: [".ts", ".tsx", ".js"]
     },
