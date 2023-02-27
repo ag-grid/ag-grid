@@ -1,16 +1,13 @@
 import { Node, RedrawType, SceneChangeDetection, RenderContext, LayerManager } from './node';
 import { BBox } from './bbox';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
-import { Path2D } from './path2D';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { compoundAscending, ascendingStringNumberUndefined } from '../util/compare';
 
 export class Group extends Node {
     static className = 'Group';
 
-    clipRect: BBox = new BBox(0, 0, 0, 0);
-    clip?: Boolean = false;
-    protected clipPath: Path2D = new Path2D();
+    clipRect?: BBox;
     protected layer?: HdpiCanvas | HdpiOffscreenCanvas;
     readonly name?: string;
 
@@ -156,7 +153,7 @@ export class Group extends Node {
     render(renderCtx: RenderContext) {
         const { opts: { name = undefined } = {} } = this;
         const { _debug: { consoleLog = false } = {} } = this;
-        const { dirty, dirtyZIndex, clipPath, layer, children, clipRect, clip } = this;
+        const { dirty, dirtyZIndex, layer, children, clipRect } = this;
         let { ctx, forceRender, clipBBox, resized, stats } = renderCtx;
 
         const isDirty = dirty >= RedrawType.MINOR || dirtyZIndex || resized;
@@ -215,9 +212,7 @@ export class Group extends Node {
                     console.log({ name, clipBBox, ctxTransform: ctx.getTransform(), renderCtx, group: this });
                 }
 
-                clipPath.clear();
-                clipPath.rect(x, y, width, height);
-                clipPath.draw(ctx);
+                ctx.rect(x, y, width, height);
                 ctx.clip();
             }
         } else {
@@ -226,12 +221,10 @@ export class Group extends Node {
             ctx.globalAlpha *= this.opacity;
         }
 
-        if (clip) {
+        if (clipRect) {
             const { x, y, width, height } = clipRect;
             ctx.save();
-            clipPath.clear();
-            clipPath.rect(x, y, width, height);
-            clipPath.draw(ctx);
+            ctx.rect(x, y, width, height);
             ctx.clip();
         }
 
@@ -240,8 +233,12 @@ export class Group extends Node {
         // so all children can be transformed at once.
         this.computeTransformMatrix();
         this.matrix.toContext(ctx);
-        clipBBox = clipBBox ? this.matrix.inverse().transformBBox(clipBBox) : undefined;
-        clipBBox = clip ? this.matrix.inverse().transformBBox(this.clipRect) : clipBBox;
+
+        if (clipRect) {
+            clipBBox = this.matrix.inverse().transformBBox(clipRect);
+        } else if (clipBBox) {
+            clipBBox = this.matrix.inverse().transformBBox(clipBBox);
+        }
 
         if (dirtyZIndex) {
             this.sortChildren();
@@ -279,7 +276,7 @@ export class Group extends Node {
         // Render marks this node as clean - no need to explicitly markClean().
         super.render(renderCtx);
 
-        if (clip) {
+        if (clipRect) {
             ctx.restore();
         }
 

@@ -56,13 +56,18 @@ export class CartesianChart extends Chart {
             series: { rect: seriesRect, visible: visibility.series },
         });
 
-        const {
-            seriesRoot: { clipRect },
-        } = this;
-        clipRect.x = seriesRect.x;
-        clipRect.y = seriesRect.y;
-        clipRect.width = seriesRect.width;
-        clipRect.height = seriesRect.height;
+        if (clipSeries) {
+            const { seriesRoot } = this;
+            const { x, y, width, height } = seriesRect;
+            if (!seriesRoot.clipRect) {
+                seriesRoot.clipRect = new BBox(x, y, width, height);
+            } else {
+                seriesRoot.clipRect.x = x;
+                seriesRoot.clipRect.y = y;
+                seriesRoot.clipRect.width = width;
+                seriesRoot.clipRect.height = height;
+            }
+        }
     }
 
     private _lastAxisWidths: Partial<Record<AgCartesianAxisPosition, number>> = {
@@ -155,7 +160,7 @@ export class CartesianChart extends Chart {
         this._lastAxisWidths = axisWidths;
         this._lastVisibility = visibility;
 
-        return { seriesRect, visibility };
+        return { seriesRect, visibility, clipSeries };
     }
 
     private updateAxesPass(
