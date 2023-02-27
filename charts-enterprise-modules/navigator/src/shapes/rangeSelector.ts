@@ -1,10 +1,11 @@
-import { Group } from '../../scene/group';
+import { _Scene, _ModuleSupport } from 'ag-charts-community';
+
+const { RedrawType } = _Scene;
+
 import { RangeHandle } from './rangeHandle';
 import { RangeMask } from './rangeMask';
-import { BBox } from '../../scene/bbox';
-import { RedrawType, RenderContext } from '../../scene/node';
 
-export class RangeSelector extends Group {
+export class RangeSelector extends _Scene.Group {
     static className = 'Range';
 
     private static defaults = {
@@ -111,16 +112,16 @@ export class RangeSelector extends Group {
         minHandle.centerY = maxHandle.centerY = y + height / 2;
     }
 
-    computeBBox(): BBox {
+    computeBBox() {
         return this.mask.computeBBox();
     }
 
-    computeVisibleRangeBBox(): BBox {
+    computeVisibleRangeBBox() {
         return this.mask.computeVisibleRangeBBox();
     }
 
-    render(renderCtx: RenderContext) {
-        const { ctx, forceRender, stats } = renderCtx;
+    render(renderCtx: _Scene.RenderContext) {
+        let { ctx, forceRender, stats } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
             if (stats) stats.nodesSkipped++;

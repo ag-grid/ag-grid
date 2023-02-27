@@ -105,7 +105,7 @@
     "access": "public"
   },
   "lint-staged": {
-    "*.{ts,js,md,json}": "charts-community-modules/ag-charts-community/.lint-staged/run.sh prettier",
-    "*.ts": "charts-community-modules/ag-charts-community/.lint-staged/run.sh autodocs"
+    "*.{ts,js,md,json}": ".lint-staged/run.sh prettier",
+    "*.ts": ".lint-staged/run.sh autodocs"
   }
 }

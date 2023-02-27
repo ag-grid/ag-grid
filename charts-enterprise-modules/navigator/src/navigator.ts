@@ -1,17 +1,18 @@
-import { RangeSelector } from '../shapes/rangeSelector';
+import { _Scene, _ModuleSupport } from 'ag-charts-community';
+
+const { BBox } = _Scene;
+const { BOOLEAN, NUMBER, Validate } = _ModuleSupport;
+
+import { RangeSelector } from './shapes/rangeSelector';
 import { NavigatorMask } from './navigatorMask';
 import { NavigatorHandle } from './navigatorHandle';
-import { BaseModuleInstance, ModuleContext, ModuleInstance } from '../../util/module';
-import { BOOLEAN, NUMBER, Validate } from '../../util/validation';
-import { LayoutCompleteEvent, LayoutContext } from '../layout/layoutService';
-import { BBox } from '../../scene/bbox';
 
 interface Offset {
     offsetX: number;
     offsetY: number;
 }
 
-export class Navigator extends BaseModuleInstance implements ModuleInstance {
+export class Navigator extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     private readonly rs = new RangeSelector();
 
     // Wrappers to allow option application to the scene graph nodes.
@@ -78,11 +79,11 @@ export class Navigator extends BaseModuleInstance implements ModuleInstance {
         this.rs.visible = this.enabled && this.visible;
     }
 
-    constructor(private readonly ctx: ModuleContext) {
+    constructor(private readonly ctx: _ModuleSupport.ModuleContext) {
         super();
 
         this.rs.onRangeChange = () =>
-            this.ctx.zoomManager.updateZoom('navigator', { x: { min: this.rs.min, max: this.rs.max } });
+            ctx.zoomManager.updateZoom('navigator', { x: { min: this.rs.min, max: this.rs.max } });
 
         [
             ctx.interactionManager.addListener('drag-start', (event) => this.onDragStart(event)),
@@ -101,7 +102,7 @@ export class Navigator extends BaseModuleInstance implements ModuleInstance {
         this.updateGroupVisibility();
     }
 
-    private layout({ shrinkRect }: LayoutContext) {
+    private layout({ shrinkRect }: _ModuleSupport.LayoutContext) {
         if (this.enabled) {
             const navigatorTotalHeight = this.rs.height + this.margin;
             shrinkRect.shrink(navigatorTotalHeight, 'bottom');
@@ -111,7 +112,7 @@ export class Navigator extends BaseModuleInstance implements ModuleInstance {
         return { shrinkRect };
     }
 
-    private layoutComplete({ series: { rect, visible } }: LayoutCompleteEvent) {
+    private layoutComplete({ series: { rect, visible } }: _ModuleSupport.LayoutCompleteEvent) {
         if (this.enabled && visible) {
             this.rs.x = rect.x;
             this.rs.width = rect.width;

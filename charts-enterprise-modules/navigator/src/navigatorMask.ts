@@ -1,4 +1,4 @@
-import { RangeMask } from '../shapes/rangeMask';
+import { RangeMask } from './shapes/rangeMask';
 
 export class NavigatorMask {
     private readonly rm: RangeMask;

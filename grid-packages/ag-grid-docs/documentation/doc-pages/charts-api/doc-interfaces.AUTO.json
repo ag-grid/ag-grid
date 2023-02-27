@@ -4956,10 +4956,6 @@
   "SeriesTypes": {},
   "SeriesType": { "meta": { "typeParams": ["T extends SeriesTypes['type']"] } },
   "MarkerPathMove": {},
-  "Offset": {
-    "offsetX": { "type": { "returnType": "number", "optional": false } },
-    "offsetY": { "type": { "returnType": "number", "optional": false } }
-  },
   "FillSelectionDatum": {
     "itemId": { "type": { "returnType": "string", "optional": false } },
     "points": {

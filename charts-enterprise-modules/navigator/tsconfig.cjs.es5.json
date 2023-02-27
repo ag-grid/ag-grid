@@ -1,0 +1,13 @@
+{
+    "extends": "../../module-build/tsconfig.cjs.es5.json",
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "dist/cjs/es5",
+        "baseUrl": ".",
+        "paths": {
+            "@ag-*": ["node_modules/@ag-*/dist/cjs/es5/main"]
+        }
+    },
+    "include": ["src/**/*"],
+    "exclude": ["**/*.test.ts", "src/**/mock.ts"]
+}

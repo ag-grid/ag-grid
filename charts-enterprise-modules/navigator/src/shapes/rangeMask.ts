@@ -1,9 +1,9 @@
-import { Path } from '../../scene/shape/path';
-import { BBox } from '../../scene/bbox';
-import { ShapeLineCap } from '../../scene/shape/shape';
-import { LINE_CAP, NUMBER, COLOR_STRING, Validate } from '../../util/validation';
+import { _Scene, _ModuleSupport } from 'ag-charts-community';
 
-export class RangeMask extends Path {
+const { BBox } = _Scene;
+const { LINE_CAP, NUMBER, COLOR_STRING, Validate } = _ModuleSupport;
+
+export class RangeMask extends _Scene.Path {
     static className = 'RangeMask';
 
     @Validate(COLOR_STRING)
@@ -19,7 +19,7 @@ export class RangeMask extends Path {
     protected _fillOpacity = 0.2;
 
     @Validate(LINE_CAP)
-    protected _lineCap: ShapeLineCap = 'square';
+    protected _lineCap: _Scene.ShapeLineCap = 'square';
 
     protected _x: number = 0;
     set x(value: number) {
@@ -105,12 +105,12 @@ export class RangeMask extends Path {
 
     onRangeChange?: () => any;
 
-    computeBBox(): BBox {
+    computeBBox() {
         const { x, y, width, height } = this;
         return new BBox(x, y, width, height);
     }
 
-    computeVisibleRangeBBox(): BBox {
+    computeVisibleRangeBBox() {
         const { x, y, width, height, min, max } = this;
         const minX = x + width * min;
         const maxX = x + width * max;

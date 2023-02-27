@@ -1,6 +1,5 @@
 export * from './util/validation';
 export * from './util/module';
-export * from './util/navigator-module';
 
 export * from './chart/layout/layoutService';
 export * from './chart/interaction/cursorManager';

@@ -1,4 +1,4 @@
-import { RangeHandle } from '../shapes/rangeHandle';
+import { RangeHandle } from './shapes/rangeHandle';
 
 export class NavigatorHandle {
     private readonly rh: RangeHandle;

@@ -1,9 +1,9 @@
-import { Path } from '../../scene/shape/path';
-import { BBox } from '../../scene/bbox';
-import { ShapeLineCap } from '../../scene/shape/shape';
-import { LINE_CAP, NUMBER, COLOR_STRING, Validate } from '../../util/validation';
+import { _Scene, _ModuleSupport } from 'ag-charts-community';
 
-export class RangeHandle extends Path {
+const { BBox } = _Scene;
+const { LINE_CAP, NUMBER, COLOR_STRING, Validate } = _ModuleSupport;
+
+export class RangeHandle extends _Scene.Path {
     static className = 'RangeHandle';
 
     @Validate(COLOR_STRING)
@@ -16,7 +16,7 @@ export class RangeHandle extends Path {
     protected _strokeWidth = 1;
 
     @Validate(LINE_CAP)
-    protected _lineCap = 'square' as ShapeLineCap;
+    protected _lineCap = 'square' as _Scene.ShapeLineCap;
 
     protected _centerX: number = 0;
     set centerX(value: number) {
