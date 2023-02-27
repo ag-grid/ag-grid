@@ -788,34 +788,19 @@
             "showInCollapsed": false,
             "items": [
               {
-                "title": "Configuration",
-                "url": "/filter-column/"
+                "title": "Text Filter",
+                "url": "/filter-text/",
+                "showInCollapsed": true
               },
               {
-                "title": "Simple Filters",
-                "url": "/filter-provided-simple/",
-                "showInCollapsed": true,
-                "items": [
-                  {
-                    "title": "Text Filter",
-                    "url": "/filter-text/",
-                    "showInCollapsed": true
-                  },
-                  {
-                    "title": "Number Filter",
-                    "url": "/filter-number/",
-                    "showInCollapsed": true
-                  },
-                  {
-                    "title": "Date Filter",
-                    "url": "/filter-date/",
-                    "showInCollapsed": true
-                  },
-                  {
-                    "title": "Shared Configuration",
-                    "url": "/filter-simple-configuration/"
-                  }
-                ]
+                "title": "Number Filter",
+                "url": "/filter-number/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Date Filter",
+                "url": "/filter-date/",
+                "showInCollapsed": true
               },
               {
                 "title": "Set Filter",
@@ -857,14 +842,18 @@
                 ]
               },
               {
-                "title": "Applying Provided Filters",
-                "url": "/filter-provided/"
-              },
-              {
                 "title": "Multi Filter",
                 "url": "/filter-multi/",
                 "enterprise": true,
                 "showInCollapsed": true
+              },
+              {
+                "title": "Filter Conditions",
+                "url": "/filter-conditions/"
+              },
+              {
+                "title": "Applying Filters",
+                "url": "/filter-applying/"
               },
               {
                 "title": "Filter API",
@@ -873,10 +862,6 @@
               {
                 "title": "Floating Filters",
                 "url": "/floating-filters/"
-              },
-              {
-                "title": "Custom Filter",
-                "url": "/filter-custom/"
               }
             ]
           },

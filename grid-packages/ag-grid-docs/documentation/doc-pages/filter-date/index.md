@@ -4,7 +4,7 @@ title: "Date Filter"
 
 Date Filters allow you to filter date data. 
 
-<image-caption src="filter-provided-simple/resources/date-filter.png" alt="Date Filter" width="12.5rem" centered="true"></image-caption>
+<image-caption src="filter-date/resources/date-filter.png" alt="Date Filter" width="12.5rem" centered="true"></image-caption>
 
 ## Enabling Date Filters
 
@@ -38,20 +38,9 @@ The example below shows the Date Filter in action:
 
 <grid-example title='Date Picker' name='date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
 
-## Common Configuration
-
-The Date Filter is a type of [Simple Filter](/filter-provided-simple/) and shares some configuration, which is described in more detail in the following sections:
-
-- [Apply, Clear, Reset and Cancel Buttons](/filter-provided/#apply-clear-reset-and-cancel-buttons)
-- [Applying the UI Model](/filter-provided/#applying-the-ui-model)
-- [Simple Filter Parts](/filter-simple-configuration/#simple-filter-parts) (filter options and conditions)
-- [Blank Cells](/filter-simple-configuration/#blank-cells-date-and-number-filters)
-- [Data Updates](/filter-simple-configuration/#data-updates)
-- [Customising Filter Placeholder Text](/filter-simple-configuration/#customising-filter-placeholder-text)
-
 ## Date Filter Parameters
 
-[Filter Parameters](/filter-column/#filter-parameters) for Date Filters are configured though the `filterParams` attribute of the column definition (`IDateFilterParams` interface):
+Date Filters are configured though the `filterParams` attribute of the column definition (`IDateFilterParams` interface):
 
 <interface-documentation interfaceName='IDateFilterParams' config='{"description":"", "sortAlphabetically":"true"}'  overrideSrc="filter-date/resources/date-filter-params.json"></interface-documentation>
 
@@ -126,15 +115,51 @@ It should be noted that the Date Filter Model represents the Date as a string in
 
 ## Date Filter Model
 
-The [Filter Model](/filter-column/#filter-model) describes the current state of the applied Date Filter. This will either be a `DateFilterModel` or an `ICombinedSimpleModel<DateFilterModel>`.
+The Filter Model describes the current state of the applied Date Filter. If only one [Filter Condition](/filter-conditions/) is set, this will be a `DateFilterModel`:
 
-This is described in more detail in the [Simple Filter Models](/filter-simple-configuration/#simple-filter-models) section.
+<interface-documentation interfaceName='DateFilterModel' config='{"description":""}'></interface-documentation>
 
-<interface-documentation interfaceName='DateFilterModel'></interface-documentation>
+If more than one Filter Condition is set, then multiple instances of the model are created and wrapped inside a Combined Model (`ICombinedSimpleModel<DateFilterModel>`). A Combined Model looks as follows:
+
+
+```ts
+// A filter combining two conditions
+interface ICombinedSimpleModel<DateFilterModel> {
+    filterType: string;
+
+    operator: JoinOperator;
+
+    // two instances of the Filter Model
+    condition1: DateFilterModel;
+    condition2: DateFilterModel;
+}
+
+type JoinOperator = 'AND' | 'OR';
+```
+
+An example of a Filter Model with two conditions is as follows:
+
+```js
+// Date Filter with two conditions, both are equals type
+const dateEquals04OrEquals08 = {
+    filterType: 'date',
+    operator: 'OR',
+    condition1: {
+        filterType: 'date',
+        type: 'equals',
+        dateFrom: '2004-08-29'
+    },
+    condition2: {
+        filterType: 'date',
+        type: 'equals',
+        dateFrom: '2008-08-24'
+    }
+};
+```
 
 ## Date Filter Options
 
-The Date Filter presents a list of [Filter Options](/filter-simple-configuration/#filter-options) to the user.
+The Date Filter presents a list of [Filter Options](/filter-conditions/#filter-options) to the user.
 
 The list of options are as follows:
 
@@ -149,10 +174,47 @@ The list of options are as follows:
 | Not blank               | `notBlank`            | Yes                 |
 | Choose One              | `empty`               | No                  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-simple-configuration/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
 
-The default option for Date Filter is `equals`.
+The default option for the Date Filter is `equals`.
+
+## Date Filter Values
+
+By default, the values supplied to the Date Filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition. This is similar to using a [Value Getter](/value-getters), but is specific to the filter.
+
+<api-documentation source='column-properties/properties.json' section='filtering' names='["filterValueGetter"]'></api-documentation>
+
+## Applying the Date Filter
+
+Applying the Date Filter is described in more detail in the following sections:
+
+- [Apply, Clear, Reset and Cancel Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)
+- [Applying the UI Model](/filter-applying/#applying-the-ui-model)
+
+## Blank Cells
+
+If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range:
+
+```js
+const filterParams = {
+    includeBlanksInEquals: true,
+    includeBlanksInLessThan: false,
+    includeBlanksInGreaterThan: false,
+    includeBlanksInRange: false,
+};
+```
+
+In the following example you can filter by date and see how blank values are included. Note the following:
+
+- Column **Date** has both `null` and `undefined` values resulting in blank cells.
+- Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
+
+<grid-example title='Date Null Filtering' name='date-null-filtering' type='typescript' options='{ "exampleHeight": 310 }'></grid-example>
+
+## Data Updates
+
+The Date Filter is not affected by data changes. When the grid data is updated, the filter value will remain unchanged and the filter will be re-applied based on the updated data (e.g. the displayed rows will update if necessary).
 
 ## Next Up
 
-Continue to the next section to learn about [Shared Simple Filter Configuration](/filter-simple-configuration/).
+Continue to the next section to learn about [Set Filters](/filter-set/).

@@ -4,7 +4,7 @@ title: "Text Filter"
 
 Text Filters allow you to filter string data.
 
-<image-caption src="filter-provided-simple/resources/text-filter.png" alt="Text Filter" width="12.5rem" centered="true"></image-caption>
+<image-caption src="filter-text/resources/text-filter.png" alt="Text Filter" width="12.5rem" centered="true"></image-caption>
 
 ## Enabling Text Filters
 
@@ -53,19 +53,9 @@ The example below shows the Text Filter in action:
 
 <grid-example title='Text Filter' name='text-filter' type='generated' options='{ "exampleHeight": 555 }'></grid-example>
 
-## Common Configuration
-
-The Text Filter is a type of [Simple Filter](/filter-provided-simple/) and shares some configuration, which is described in more detail in the following sections:
-
-- [Apply, Clear, Reset and Cancel Buttons](/filter-provided/#apply-clear-reset-and-cancel-buttons)
-- [Applying the UI Model](/filter-provided/#applying-the-ui-model)
-- [Simple Filter Parts](/filter-simple-configuration/#simple-filter-parts) (filter options and conditions)
-- [Data Updates](/filter-simple-configuration/#data-updates)
-- [Customising Filter Placeholder Text](/filter-simple-configuration/#customising-filter-placeholder-text)
-
 ## Text Filter Parameters
 
-[Filter Parameters](/filter-column/#filter-parameters) for Text Filters are configured though the `filterParams` attribute of the column definition (`ITextFilterParams` interface):
+Text Filters are configured though the `filterParams` attribute of the column definition (`ITextFilterParams` interface):
 
 <interface-documentation interfaceName='ITextFilterParams' config='{"description":"", "sortAlphabetically":"true"}' overrideSrc="filter-text/resources/text-filter-params.json"></interface-documentation>
 
@@ -154,15 +144,50 @@ const toLowerWithoutAccents = value =>
 
 ## Text Filter Model
 
-The [Filter Model](/filter-column/#filter-model) describes the current state of the applied Text Filter. This will either be a `TextFilterModel` or an `ICombinedSimpleModel<TextFilterModel>`.
+The Filter Model describes the current state of the applied Number Filter. If only one [Filter Condition](/filter-conditions/) is set, this will be a `TextFilterModel`:
 
-This is described in more detail in the [Simple Filter Models](/filter-simple-configuration/#simple-filter-models) section.
+<interface-documentation interfaceName='TextFilterModel' config='{"description":""}'></interface-documentation>
 
-<interface-documentation interfaceName='TextFilterModel'></interface-documentation>
+If more than one Filter Condition is set, then multiple instances of the model are created and wrapped inside a Combined Model (`ICombinedSimpleModel<TextFilterModel>`). A Combined Model looks as follows:
+
+```ts
+// A filter combining two conditions
+interface ICombinedSimpleModel<TextFilterModel> {
+    filterType: string;
+
+    operator: JoinOperator;
+
+    // two instances of the Filter Model
+    condition1: TextFilterModel;
+    condition2: TextFilterModel;
+}
+
+type JoinOperator = 'AND' | 'OR';
+```
+
+An example of a Filter Model with two conditions is as follows:
+
+```js
+// Text Filter with two conditions, both are equals type
+const textEqualsSwimmingOrEqualsGymnastics = {
+    filterType: 'text',
+    operator: 'OR',
+    condition1: {
+        filterType: 'text',
+        type: 'equals',
+        filter: 'Swimming'
+    },
+    condition2: {
+        filterType: 'text',
+        type: 'equals',
+        filter: 'Gymnastics'
+    }
+};
+```
 
 ## Text Filter Options
 
-The Text Filter presents a list of [Filter Options](/filter-simple-configuration/#filter-options) to the user.
+The Text Filter presents a list of [Filter Options](/filter-conditions/#filter-options) to the user.
 
 The list of options are as follows:
 
@@ -178,10 +203,27 @@ The list of options are as follows:
 | Not blank               | `notBlank`            | Yes                 |
 | Choose One              | `empty`               | No                  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-simple-configuration/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
 
-The default option for Text Filter is `contains`.
+The default option for the Text Filter is `contains`.
+
+## Text Filter Values
+
+By default, the values supplied to the Text Filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition. This is similar to using a [Value Getter](/value-getters), but is specific to the filter.
+
+<api-documentation source='column-properties/properties.json' section='filtering' names='["filterValueGetter"]'></api-documentation>
+
+## Applying the Text Filter
+
+Applying the Text Filter is described in more detail in the following sections:
+
+- [Apply, Clear, Reset and Cancel Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)
+- [Applying the UI Model](/filter-applying/#applying-the-ui-model)
+
+## Data Updates
+
+The Text Filter is not affected by data changes. When the grid data is updated, the filter value will remain unchanged and the filter will be re-applied based on the updated data (e.g. the displayed rows will update if necessary).
 
 ## Next Up
 
-Continue to the next section to learn about the [Number Filter](/filter-number/).
+Continue to the next section to learn about [Number Filters](/filter-number/).

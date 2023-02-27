@@ -80,4 +80,4 @@ The following example demonstrates the difference in behaviour between `caseSens
 
 ## Next Up
 
-Continue to the next section to learn about [Applying Provided Filters](/filter-provided/).
+Continue to the next section to learn about [Multi Filters](/filter-multi/).

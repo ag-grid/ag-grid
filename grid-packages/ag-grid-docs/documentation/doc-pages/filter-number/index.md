@@ -4,7 +4,7 @@ title: "Number Filter"
 
 Number Filters allow you to filter number data.
 
-<image-caption src="filter-provided-simple/resources/number-filter.png" alt="Number Filter" width="12.5rem" centered="true"></image-caption>
+<image-caption src="filter-number/resources/number-filter.png" alt="Number Filter" width="12.5rem" centered="true"></image-caption>
 
 ## Enabling Number Filters
 
@@ -35,20 +35,9 @@ The example below shows the Number Filter in action:
 
 <grid-example title='Number Filter' name='number-filter' type='generated'></grid-example>
 
-## Common Configuration
-
-The Number Filter is a type of [Simple Filter](/filter-provided-simple/) and shares some configuration, which is described in more detail in the following sections:
-
-- [Apply, Clear, Reset and Cancel Buttons](/filter-provided/#apply-clear-reset-and-cancel-buttons)
-- [Applying the UI Model](/filter-provided/#applying-the-ui-model)
-- [Simple Filter Parts](/filter-simple-configuration/#simple-filter-parts) (filter options and conditions)
-- [Blank Cells](/filter-simple-configuration/#blank-cells-date-and-number-filters)
-- [Data Updates](/filter-simple-configuration/#data-updates)
-- [Customising Filter Placeholder Text](/filter-simple-configuration/#customising-filter-placeholder-text)
-
 ## Number Filter Parameters
 
-[Filter Parameters](/filter-column/#filter-parameters) for Number Filters are configured though the `filterParams` attribute of the column definition (`INumberFilterParams` interface):
+Number Filters are configured though the `filterParams` attribute of the column definition (`INumberFilterParams` interface):
 
 <interface-documentation interfaceName='INumberFilterParams' config='{"description":"", "sortAlphabetically":"true"}' overrideSrc="filter-number/resources/number-filter-params.json"></interface-documentation>
 
@@ -85,15 +74,50 @@ Custom number support can be seen in the [Number Filter Example](#example-number
 
 ## Number Filter Model
 
-The [Filter Model](/filter-column/#filter-model) describes the current state of the applied Number Filter. This will either be a `NumberFilterModel` or an `ICombinedSimpleModel<NumberFilterModel>`.
+The Filter Model describes the current state of the applied Number Filter. If only one [Filter Condition](/filter-conditions/) is set, this will be a `NumberFilterModel`:
 
-This is described in more detail in the [Simple Filter Models](/filter-simple-configuration/#simple-filter-models) section.
+<interface-documentation interfaceName='NumberFilterModel' config='{"description":""}'></interface-documentation>
 
-<interface-documentation interfaceName='NumberFilterModel'></interface-documentation>
+If more than one Filter Condition is set, then multiple instances of the model are created and wrapped inside a Combined Model (`ICombinedSimpleModel<NumberFilterModel>`). A Combined Model looks as follows:
+
+```ts
+// A filter combining two conditions
+interface ICombinedSimpleModel<NumberFilterModel> {
+    filterType: string;
+
+    operator: JoinOperator;
+
+    // two instances of the Filter Model
+    condition1: NumberFilterModel;
+    condition2: NumberFilterModel;
+}
+
+type JoinOperator = 'AND' | 'OR';
+```
+
+An example of a Filter Model with two conditions is as follows:
+
+```js
+// Number Filter with two conditions, both are equals type
+const numberEquals18OrEquals20 = {
+    filterType: 'number',
+    operator: 'OR',
+    condition1: {
+        filterType: 'number',
+        type: 'equals',
+        filter: 18
+    },
+    condition2: {
+        filterType: 'number',
+        type: 'equals',
+        filter: 20
+    }
+};
+```
 
 ## Number Filter Options
 
-The Number Filter presents a list of [Filter Options](/filter-simple-configuration/#filter-options) to the user.
+The Number Filter presents a list of [Filter Options](/filter-conditions/#filter-options) to the user.
 
 The list of options are as follows:
 
@@ -110,10 +134,47 @@ The list of options are as follows:
 | Not blank               | `notBlank`            | Yes                 |
 | Choose One              | `empty`               | No                  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-simple-configuration/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
 
 The default option for the Number Filter is `equals`.
 
+## Number Filter Values
+
+By default, the values supplied to the Number Filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition. This is similar to using a [Value Getter](/value-getters), but is specific to the filter.
+
+<api-documentation source='column-properties/properties.json' section='filtering' names='["filterValueGetter"]'></api-documentation>
+
+## Applying the Number Filter
+
+Applying the Number Filter is described in more detail in the following sections:
+
+- [Apply, Clear, Reset and Cancel Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)
+- [Applying the UI Model](/filter-applying/#applying-the-ui-model)
+
+## Blank Cells
+
+If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range:
+
+```js
+const filterParams = {
+    includeBlanksInEquals: true,
+    includeBlanksInLessThan: false,
+    includeBlanksInGreaterThan: false,
+    includeBlanksInRange: false,
+};
+```
+
+In the following example you can filter by age and see how blank values are included. Note the following:
+
+- Column **Age** has both `null` and `undefined` values resulting in blank cells.
+- Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
+
+<grid-example title='Number Null Filtering' name='number-null-filtering' type='typescript' options='{ "exampleHeight": 310 }'></grid-example>
+
+## Data Updates
+
+The Number Filter is not affected by data changes. When the grid data is updated, the filter value will remain unchanged and the filter will be re-applied based on the updated data (e.g. the displayed rows will update if necessary).
+
 ## Next Up
 
-Continue to the next section to learn about the [Date Filter](/filter-date/).
+Continue to the next section to learn about [Date Filters](/filter-date/).

@@ -42,4 +42,4 @@ The table below shows the differences in behaviour alongside the default behavio
 
 ## Next Up
 
-Continue to the next section: [API](/filter-set-api/).
+Continue to the next section to learn about the [Set Filter API](/filter-set-api/).

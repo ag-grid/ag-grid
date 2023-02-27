@@ -133,4 +133,4 @@ Additional property available on `ISetFilterTreeListTooltipParams`:
 
 ## Next Up
 
-Continue to the next section: [Mini Filter](/filter-set-mini-filter/).
+Continue to the next section to learn about the [Mini Filter](/filter-set-mini-filter/).

@@ -52,4 +52,4 @@ If no call is made to `filterInstance.applyModel()` then the filter UI will show
 
 ## Next Up
 
-Continue to the next section to learn about the [Multi Filter](/filter-multi/).
+Continue to the next section to learn about the [Filter API](/filter-api/).

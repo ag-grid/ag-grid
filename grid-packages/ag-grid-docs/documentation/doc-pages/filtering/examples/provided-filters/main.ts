@@ -35,7 +35,7 @@ const columnDefs: ColDef[] = [
     filterParams: filterParams,
   },
   { field: 'country', filter: 'agSetColumnFilter' },
-  { field: 'sport' },
+  { field: 'sport', filter: 'agMultiColumnFilter' },
   { field: 'gold', filter: 'agNumberColumnFilter' },
   { field: 'silver', filter: 'agNumberColumnFilter' },
   { field: 'bronze', filter: 'agNumberColumnFilter' },

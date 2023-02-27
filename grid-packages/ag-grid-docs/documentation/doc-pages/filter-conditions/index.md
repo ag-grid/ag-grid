@@ -1,16 +1,14 @@
 ---
-title: "Shared Simple Filter Configuration"
+title: "Filter Conditions"
 ---
 
-This section describes the configuration shared by the three Simple Filters provided by the grid - [Text Filter](/filter-text/), [Number Filter](/filter-number/) and [Date Filter](/filter-date/).
-
-## Simple Filter Parts
+This section describes the Filter Conditions shared by the three Simple Filters provided by the grid - [Text Filter](/filter-text/), [Number Filter](/filter-number/) and [Date Filter](/filter-date/).
 
 Each Simple Filter follows the same layout. The only layout difference is the type of input field presented to the user: for Text and Number Filters a text field is displayed, whereas for Date Filters a date picker field is displayed.
 
-<image-caption src="filter-simple-configuration/resources/filter-panel-components.png" alt="Filter Panel Component" width="40rem" centered="true"></image-caption>
+<image-caption src="filter-conditions/resources/filter-panel-components.png" alt="Filter Panel Component" width="40rem" centered="true"></image-caption>
 
-### Filter Options
+## Filter Options
 
 Each filter provides a dropdown list of filter options to select from. Each filter option represents a filtering strategy, e.g. 'equals', 'not equals', etc.
 
@@ -21,19 +19,19 @@ Each filter's default filter options can be found on their respective pages:
 
 Information on defining [Custom Filter Options](#custom-filter-options) can be found below.
 
-### Filter Value
+## Filter Value
 
 Each filter option takes zero (a possibility with custom options), one (for most) or two (for 'in range') values. The value type depends on the filter type, e.g. the Date Filter takes Date values.
 
-### Condition 1 and Condition 2
+## Condition 1 and Condition 2
 
 Each filter initially only displays Condition 1. When the user completes the Condition 1 section of the filter, Condition 2 becomes visible.
 
-### Join Operator
+## Join Operator
 
 The Join Operator decides how Condition 1 and Condition 2 are joined, using either `AND` or `OR`.
 
-### Example: Simple Filter Options
+## Example: Simple Filter Options
 
 The following example demonstrates those configuration options that can be applied to any Simple Filter.
 
@@ -47,7 +45,7 @@ The following example demonstrates those configuration options that can be appli
 
 <grid-example title='Simple Filter Options' name='simple-filter-options' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
-### Custom Filter Options
+## Custom Filter Options
 
 For applications that have bespoke filtering requirements, it is also possible to add new custom filtering options to the number, text and date filters. For example, a 'Not Equal (with Nulls)' filter option could be included alongside the built in 'Not Equal' option.
 
@@ -123,90 +121,6 @@ The following example demonstrates several custom filter options:
 
 <grid-example title='Custom Filter Options' name='custom-filter-options' type='generated'></grid-example>
 
-## Simple Filter Models
-
-All Simple Filters follow a similar [Filter Model](/filter-column/#filter-model) structure.
-
-When a single condition is set in the filter, then the model will consist of that Filter Model type:
-- [Text Filter Model](/filter-text/#text-filter-model)
-- [Number Filter Model](/filter-number/#number-filter-model)
-- [Date Filter Model](/filter-date/#date-filter-model)
-
-If the filter has both Condition 1 and Condition 2 set, then two instances of the model are created and wrapped inside a Combined Model. A combined model looks as follows:
-
-```ts
-// A filter combining two conditions
-// M is either TextFilterModel, NumberFilterModel or DateFilterModel
-interface ICombinedSimpleModel<M> {
-    // the filter type: date, number or text
-    filterType: string;
-
-    operator: JoinOperator;
-
-    // two instances of the Filter Model
-    condition1: M;
-    condition2: M;
-}
-
-type JoinOperator = 'AND' | 'OR';
-```
-
-An example of a Filter Model with two conditions is as follows:
-
-```js
-// Number Filter with two conditions, both are equals type
-const numberEquals18OrEquals20 = {
-    filterType: 'number',
-    operator: 'OR',
-    condition1: {
-        filterType: 'number',
-        type: 'equals',
-        filter: 18
-    },
-    condition2: {
-        filterType: 'number',
-        type: 'equals',
-        filter: 18
-    }
-};
-```
-## Blank Cells (Date and Number Filters)
-
-If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range:
-
-```js
-const filterParams = {
-    includeBlanksInEquals: true,
-    includeBlanksInLessThan: false,
-    includeBlanksInGreaterThan: false,
-    includeBlanksInRange: false,
-};
-```
-
-In the following example you can filter by age or date and see how blank values are included. Note the following:
-
-- Columns **Age** and **Date** have both `null` and `undefined` values resulting in blank cells.
-- Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
-
-<grid-example title='Null Filtering' name='null-filtering' type='typescript' options='{ "exampleHeight": 310 }'></grid-example>
-
-## Data Updates
-
-Grid data can be updated in a number of ways, including:
-- [Cell Editing](/cell-editing/).
-- [Updating Data](/data-update/).
-- [Clipboard Operations](/clipboard/).
-
-Simple filters are not affected by data changes, as is demonstrated by the following example:
-- Perform some filtering using the configured simple filters, such as filtering by **Age** equals
-  `24`.
-- Click the **Jumble Ages** button to update the grid data by jumbling values in the **Age** column
-  between rows.
-- Observe that filters remain unchanged, but the displayed rows change to those now assigned an age
-  of `24`.
-
-<grid-example title='Date Updates' name='simple-data-update' type='generated' options='{ "enterprise": false, "modules": ["clientside"] }'></grid-example>
-
 ## Customising Filter Placeholder Text
 
 Filter placeholder text can be customised on a per column basis using `filterParams.filterPlaceholder` within the grid option `columnDefs`. The placeholder can be either a string or a function as shown in the snippet below:
@@ -250,4 +164,4 @@ The following example shows the various ways of specifying filter placeholders. 
 
 ## Next Up
 
-Continue to the next section to learn about the [Set Filter](/filter-set/).
+Continue to the next section to learn about [Applying Filters](/filter-applying/).
