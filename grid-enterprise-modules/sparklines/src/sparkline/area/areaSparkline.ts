@@ -59,8 +59,8 @@ export class AreaSparkline extends Sparkline {
     private areaSparklineGroup: _Scene.Group = new _Scene.Group();
     private xAxisLine: _Scene.Line = new _Scene.Line();
     private markers: _Scene.Group = new _Scene.Group();
-    private markerSelection: _Scene.Selection<_Scene.Marker, _Scene.Group, AreaNodeDatum, any> =
-        _Scene.Selection.select(this.markers).selectAll<_Scene.Marker>();
+    private markerSelection: _Scene.Selection<_Scene.Marker, AreaNodeDatum> =
+        _Scene.Selection.select(this.markers, () => this.markerFactory());
     private markerSelectionData: AreaNodeDatum[] = [];
 
     readonly marker = new SparklineMarker();
@@ -78,6 +78,12 @@ export class AreaSparkline extends Sparkline {
             this.yCrosshairLine,
             this.markers,
         ]);
+    }
+
+    protected markerFactory(): _Scene.Marker {
+        const { shape } = this.marker;
+        const MarkerShape = getMarker(shape);
+        return new MarkerShape();
     }
 
     protected getNodeData(): AreaNodeDatum[] {
@@ -215,16 +221,7 @@ export class AreaSparkline extends Sparkline {
     }
 
     private updateSelection(selectionData: AreaNodeDatum[]): void {
-        const { marker } = this;
-
-        const shape = getMarker(marker.shape);
-
-        const updateMarkerSelection = this.markerSelection.setData(selectionData);
-        const enterMarkerSelection = updateMarkerSelection.enter.append(shape);
-
-        updateMarkerSelection.exit.remove();
-
-        this.markerSelection = updateMarkerSelection.merge(enterMarkerSelection);
+        this.markerSelection.update(selectionData);
     }
 
     protected updateNodes(): void {

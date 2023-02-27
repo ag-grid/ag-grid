@@ -3470,7 +3470,7 @@
         "ContextType extends SeriesNodeDataContext"
       ]
     },
-    "type": "Selection<N, Group, ContextType['nodeData'][number], any>"
+    "type": "Selection<N, ContextType['nodeData'][number]>"
   },
   "LabelDataSelection": {
     "meta": {
@@ -3480,7 +3480,7 @@
         "ContextType extends SeriesNodeDataContext"
       ]
     },
-    "type": "Selection<N, Group, ContextType['labelData'][number], any>"
+    "type": "Selection<N, ContextType['labelData'][number]>"
   },
   "SubGroup": {
     "meta": {
@@ -3821,13 +3821,23 @@
       "sceneNodeHighlight": "(string | RegExp)[]"
     }
   },
-  "ValueFn": {
-    "meta": { "isTypeAlias": true, "typeParams": ["P", "GDatum", "PDatum"] },
-    "type": "(parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[]"
+  "NodeConstructor": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TNode extends Node"] },
+    "type": "new () => TNode"
   },
-  "KeyFn": {
-    "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
-    "type": "(node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string"
+  "NodeFactory": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TNode extends Node", "TDatum"]
+    },
+    "type": "(datum: TDatum) => TNode"
+  },
+  "NodeConstructorOrFactory": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TNode extends Node", "TDatum"]
+    },
+    "type": "NodeConstructor<TNode> | NodeFactory<TNode, TDatum>"
   },
   "ArcType": {
     "meta": { "isEnum": true },

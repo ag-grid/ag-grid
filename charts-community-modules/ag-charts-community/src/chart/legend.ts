@@ -146,9 +146,7 @@ export class Legend {
 
     private readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
 
-    private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(
-        this.group
-    ).selectAll<MarkerLabel>();
+    private itemSelection: Selection<MarkerLabel, any> = Selection.select(this.group, MarkerLabel);
 
     private oldSize: [number, number] = [0, 0];
     private pages: Page[] = [];
@@ -258,8 +256,7 @@ export class Legend {
     }
 
     public onMarkerShapeChange() {
-        this.itemSelection = this.itemSelection.setData([]);
-        this.itemSelection.exit.remove();
+        this.itemSelection.clear();
         this.group.markDirty(this.group, RedrawType.MINOR);
     }
 
@@ -329,17 +326,11 @@ export class Legend {
         if (this.reverseOrder) {
             data.reverse();
         }
-        const updateSelection = this.itemSelection.setData(data, (_, datum) => {
-            const Marker = getMarker(markerShape || datum.marker.shape);
-            return datum.id + '-' + datum.itemId + '-' + Marker.name;
-        });
-        updateSelection.exit.remove();
-
-        const enterSelection = updateSelection.enter.append(MarkerLabel).each((node, datum) => {
+        this.itemSelection.update(data, (node) => {
+            const { datum } = node;
             const Marker = getMarker(markerShape || datum.marker.shape);
             node.marker = new Marker();
         });
-        const itemSelection = (this.itemSelection = updateSelection.merge(enterSelection));
 
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
@@ -350,7 +341,7 @@ export class Legend {
         const maxItemWidth = maxWidth ?? width * itemMaxWidthPercentage;
         const paddedMarkerWidth = markerSize + markerPadding + paddingX;
 
-        itemSelection.each((markerLabel, datum) => {
+        this.itemSelection.each((markerLabel, datum) => {
             markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;

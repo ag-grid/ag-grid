@@ -69,25 +69,26 @@ export abstract class Node extends ChangeDetectable {
      */
     readonly id = createId(this);
 
+    protected _datum: any;
+
     /**
      * Some arbitrary data bound to the node.
      */
-    datum: any;
+    get datum() {
+        if (this._datum !== undefined) {
+            return this._datum;
+        }
+        return this._parent?.datum;
+    }
+    set datum(datum: any) {
+        this._datum = datum;
+    }
 
     /**
      * Some number to identify this node, typically within a `Group` node.
      * Usually this will be some enum value used as a selector.
      */
     tag: number = NaN;
-
-    /**
-     * This is meaningfully faster than `instanceof` and should be the preferred way
-     * of checking inside loops.
-     * @param node
-     */
-    static isNode(node: any): node is Node {
-        return node ? (node as Node).matrix !== undefined : false;
-    }
 
     /**
      * To simplify the type system (especially in Selections) we don't have the `Parent` node
@@ -137,7 +138,7 @@ export abstract class Node extends ChangeDetectable {
     append(nodes: Node[] | Node) {
         // Passing a single parameter to an open-ended version of `append`
         // would be 30-35% slower than this.
-        if (Node.isNode(nodes)) {
+        if (!Array.isArray(nodes)) {
             nodes = [nodes];
         }
 
@@ -223,19 +224,6 @@ export abstract class Node extends ChangeDetectable {
         }
 
         return node;
-    }
-
-    get nextSibling(): Node | undefined {
-        const { parent } = this;
-
-        if (parent) {
-            const { children } = parent;
-            const index = children.indexOf(this);
-
-            if (index >= 0 && index <= children.length - 1) {
-                return children[index + 1];
-            }
-        }
     }
 
     // These matrices may need to have package level visibility

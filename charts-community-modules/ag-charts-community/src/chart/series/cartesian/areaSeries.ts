@@ -1,4 +1,3 @@
-import { Group } from '../../../scene/group';
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext } from '../series';
@@ -694,33 +693,33 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
     }
 
+    protected markerFactory() {
+        const { shape } = this.marker;
+        const MarkerShape = getMarker(shape);
+        return new MarkerShape();
+    }
+
     protected async updateMarkerSelection(opts: {
         nodeData: MarkerSelectionDatum[];
-        markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>;
+        markerSelection: Selection<Marker, MarkerSelectionDatum>;
     }) {
         let { nodeData, markerSelection } = opts;
         const {
-            marker: { enabled, shape },
+            marker: { enabled },
         } = this;
         const data = enabled && nodeData ? nodeData : [];
 
-        const MarkerShape = getMarker(shape);
-
         if (this.marker.isDirty()) {
-            markerSelection = markerSelection.setData([]);
-            markerSelection.exit.remove();
+            markerSelection.clear();
         }
 
-        const updateMarkerSelection = markerSelection.setData(data);
-        updateMarkerSelection.exit.remove();
-        const enterMarkers = updateMarkerSelection.enter.append(MarkerShape).each((marker) => {
+        return markerSelection.update(data, (marker) => {
             marker.tag = AreaSeriesTag.Marker;
         });
-        return updateMarkerSelection.merge(enterMarkers);
     }
 
     protected async updateMarkerNodes(opts: {
-        markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>;
+        markerSelection: Selection<Marker, MarkerSelectionDatum>;
         isHighlight: boolean;
     }) {
         const { markerSelection, isHighlight: isDatumHighlighted } = opts;
@@ -810,19 +809,16 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
     protected async updateLabelSelection(opts: {
         labelData: LabelSelectionDatum[];
-        labelSelection: Selection<Text, Group, LabelSelectionDatum, any>;
+        labelSelection: Selection<Text, LabelSelectionDatum>;
     }) {
         const { labelData, labelSelection } = opts;
 
-        const updateLabels = labelSelection.setData(labelData);
-        updateLabels.exit.remove();
-        const enterLabels = updateLabels.enter.append(Text).each((text) => {
+        return labelSelection.update(labelData, (text) => {
             text.tag = AreaSeriesTag.Label;
         });
-        return updateLabels.merge(enterLabels);
     }
 
-    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, Group, LabelSelectionDatum, any> }) {
+    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, LabelSelectionDatum> }) {
         const { labelSelection } = opts;
         const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
         labelSelection.each((text, datum) => {

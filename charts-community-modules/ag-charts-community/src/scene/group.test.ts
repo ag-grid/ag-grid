@@ -35,7 +35,8 @@ test('insertBefore', () => {
 
     // simulating insertAfter
 
-    group.insertBefore(node4, node3.nextSibling);
+    const nextSibling = group.children[group.children.indexOf(node3) + 1];
+    group.insertBefore(node4, nextSibling);
 
     {
         const children = group.children;
