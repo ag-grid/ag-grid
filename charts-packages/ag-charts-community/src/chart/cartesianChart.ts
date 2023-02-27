@@ -43,7 +43,7 @@ export class CartesianChart extends Chart {
 
         ({ shrinkRect } = this.layoutService.dispatchPerformLayout('before-series', { shrinkRect }));
 
-        const { seriesRect, visibility } = this.updateAxes(shrinkRect);
+        const { seriesRect, visibility, clipSeries } = this.updateAxes(shrinkRect);
         this.seriesRoot.visible = visibility.series;
         this.seriesRect = seriesRect;
         this.series.forEach((series) => {
