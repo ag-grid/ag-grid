@@ -88,7 +88,7 @@ To control what goes into the title and content divs of the tooltip one can set 
 
 ```ts
 tooltip: {
-    renderer?: (params: AgTooltipRendererParams) => AgTooltipRendererResult;
+    renderer?: (params: AgSeriesTooltipRendererParams) => AgTooltipRendererResult;
 }
 
 interface AgTooltipRendererResult {
@@ -97,34 +97,7 @@ interface AgTooltipRendererResult {
 }
 ```
 
-The actual type of the `params` object passed into the tooltip renderer will depend on the series type being used. For example, bar series' tooltip renderer params object will have the following structure:
-
-```ts
-interface AgTooltipRendererParams {
-  // the element of the series' data represented by the highlighted item
-  datum: any
-  // the title of the series, if any
-  title?: string
-  // the color of the series
-  color?: string
-
-  // the xKey used to fetch the xValue from the datum, same as series xKey
-  xKey: string
-  // the actual xValue used
-  xValue?: any
-  // same as series.xName
-  xName?: string
-
-  // the yKey used to fetch the yValue from the datum,
-  // equals to the value of `yKey` for one of the elements in the series,
-  // depending on which bar inside a stack/group is highlighted
-  yKey: string
-  // the actuall yValue used
-  yValue?: any
-  // equals to the value of `yName` for one of the elements in the series
-  yName?: string
-}
-```
+The actual type of the `params` object passed into the tooltip renderer will depend on the series type being used. See the [tooltips API Reference](#api-reference) `renderer` function examples.
 
 Let's say we wanted to remove the digits after the decimal point from the values shown in tooltips.
 We could use the following tooltip renderer to achieve that:
