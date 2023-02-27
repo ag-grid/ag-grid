@@ -757,16 +757,15 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         this.updateTitle({ ticks });
 
-        tickLineGroupSelection
-            .each((line) => {
-                line.strokeWidth = tick.width;
-                line.stroke = tick.color;
-                line.visible = anyTickVisible;
-                line.x1 = sideFlag * tick.size;
-                line.x2 = 0;
-                line.y1 = 0;
-                line.y2 = 0;
-            });
+        tickLineGroupSelection.each((line) => {
+            line.strokeWidth = tick.width;
+            line.stroke = tick.color;
+            line.visible = anyTickVisible;
+            line.x1 = sideFlag * tick.size;
+            line.x2 = 0;
+            line.y1 = 0;
+            line.y2 = 0;
+        });
 
         return primaryTickCount;
     }
@@ -886,25 +885,23 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const gridLineGroupSelection = this.radialGrid
             ? this.gridLineGroupSelection
             : this.gridLineGroupSelection.update(gridLength ? data : [], (group) => {
-                const node = new Line();
-                node.tag = Tags.GridLine;
-                group.append(node);
-            });
+                  const node = new Line();
+                  node.tag = Tags.GridLine;
+                  group.append(node);
+              });
         const gridArcGroupSelection = this.radialGrid
             ? this.gridArcGroupSelection.update(gridLength ? data : [], (group) => {
-                const node = new Arc();
-                node.tag = Tags.GridArc;
-                group.append(node);
-            })
+                  const node = new Arc();
+                  node.tag = Tags.GridArc;
+                  group.append(node);
+              })
             : this.gridArcGroupSelection;
-        const tickLineGroupSelection =
-        this.tickLineGroupSelection.update(data, (group) => {
+        const tickLineGroupSelection = this.tickLineGroupSelection.update(data, (group) => {
             const line = new Line();
             line.tag = Tags.TickLine;
             group.appendChild(line);
         });
-        const tickLabelGroupSelection =
-        this.tickLabelGroupSelection.update(data, (group) => {
+        const tickLabelGroupSelection = this.tickLabelGroupSelection.update(data, (group) => {
             const text = new Text();
             text.tag = Tags.TickLabel;
             group.appendChild(text);

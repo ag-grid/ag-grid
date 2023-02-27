@@ -4,10 +4,6 @@
     "type": ["TickLine", "TickLabel", "GridLine", "GridArc", "AxisLine"],
     "docs": [null, null, null, null, null]
   },
-  "AxisNodeDatum": {
-    "meta": {},
-    "type": { "tick": "any", "translationY": "number" }
-  },
   "TickCount": {
     "meta": { "isTypeAlias": true, "typeParams": ["S"] },
     "type": "S extends TimeScale ? number | TimeInterval : number"
