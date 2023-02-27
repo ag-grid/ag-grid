@@ -5443,13 +5443,21 @@
     "docs": { "type?": "/** One of the filter options, e.g. `'equals'` */" }
   },
   "ICombinedSimpleModel": {
-    "meta": { "typeParams": ["M extends ISimpleFilterModel"] },
+    "meta": {
+      "typeParams": ["M extends ISimpleFilterModel"],
+      "doc": "/** Old combined models prior to v29.2 only supported two conditions, which were defined using `condition1` and `condition2`.\n * New combined models allow more than two conditions using `conditions`.\n * When supplying combined models to the grid:\n * - `conditions` will be used if present.\n * - If `conditions` is not present, `condition1` and `condition2` will be used (deprecated).\n * \n * When receiving combined models from the grid:\n * - `conditions` will be populated with all the conditions (including the first and second conditions).\n * - `condition1` and `condition2` will be populated with the first and second conditions (deprecated).\n */"
+    },
     "type": {
       "operator": "JoinOperator",
       "condition1": "M",
       "condition2": "M",
       "conditions?": "M[]",
       "filterType?": "string"
+    },
+    "docs": {
+      "condition1": "/** @deprecated As of v29.2, supply as the first element of `conditions`. */",
+      "condition2": "/** @deprecated As of v29.2, supply as the second element of `conditions`. */",
+      "conditions?": "/** Will be mandatory in a future release. */"
     }
   },
   "Tuple": {

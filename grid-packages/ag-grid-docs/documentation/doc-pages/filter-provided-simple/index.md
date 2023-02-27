@@ -170,10 +170,10 @@ const numberBetween35And40 = {
 [[note]]
 | The `filterType` is not used by the grid when you call `setFilterModel()`. It is provided for information purposes only when you get the filter model. This is useful if you are doing server-side filtering, where the filter type may be used in building back-end queries.
 
-If the filter has both Condition 1 and Condition 2 set, then two instances of the model are created and wrapped inside a Combined Model. A combined model looks as follows:
+If more than one Filter Condition is set, then multiple instances of the model are created and wrapped inside a Combined Model. A combined model looks as follows:
 
 ```ts
-// A filter combining two conditions
+// A filter combining multiple conditions
 // M is either TextFilterModel, NumberFilterModel or DateFilterModel
 interface ICombinedSimpleModel<M> {
     // the filter type: date, number or text
@@ -181,13 +181,14 @@ interface ICombinedSimpleModel<M> {
 
     operator: JoinOperator;
 
-    // two instances of the filter model
-    condition1: M;
-    condition2: M;
+    // multiple instances of the filter model
+    conditions: M[];
 }
 
 type JoinOperator = 'AND' | 'OR';
 ```
+
+Note that in AG Grid versions prior to 29.2, only two Filter Conditions were supported. These appeared in the Combined Model as properties `condition1` and `condition2`. The grid will still accept and supply models using these properties, but this behaviour is deprecated. The `conditions` property should be used instead.
 
 An example of a filter model with two conditions is as follows:
 
@@ -196,16 +197,18 @@ An example of a filter model with two conditions is as follows:
 const numberEquals18OrEquals20 = {
     filterType: 'number',
     operator: 'OR',
-    condition1: {
-        filterType: 'number',
-        type: 'equals',
-        filter: 18
-    },
-    condition2: {
-        filterType: 'number',
-        type: 'equals',
-        filter: 18
-    }
+    conditions: [
+        {
+            filterType: 'number',
+            type: 'equals',
+            filter: 18
+        },
+        {
+            filterType: 'number',
+            type: 'equals',
+            filter: 20
+        }
+    ]
 };
 ```
 

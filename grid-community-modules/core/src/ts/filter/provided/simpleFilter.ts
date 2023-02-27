@@ -108,10 +108,24 @@ export interface ISimpleFilterModel extends ProvidedFilterModel {
     type?: ISimpleFilterModelType | null;
 }
 
+/**
+ * Old combined models prior to v29.2 only supported two conditions, which were defined using `condition1` and `condition2`.
+ * New combined models allow more than two conditions using `conditions`.
+ * When supplying combined models to the grid:
+ * - `conditions` will be used if present.
+ * - If `conditions` is not present, `condition1` and `condition2` will be used (deprecated).
+ * 
+ * When receiving combined models from the grid:
+ * - `conditions` will be populated with all the conditions (including the first and second conditions).
+ * - `condition1` and `condition2` will be populated with the first and second conditions (deprecated).
+ */
 export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends ProvidedFilterModel {
     operator: JoinOperator;
+    /** @deprecated As of v29.2, supply as the first element of `conditions`. */
     condition1: M;
+    /** @deprecated As of v29.2, supply as the second element of `conditions`. */
     condition2: M;
+    /** Will be mandatory in a future release. */
     conditions?: M[];
 }
 
@@ -771,6 +785,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     // returns true if the UI represents a working filter, eg all parts are filled out.
     // eg if text filter and textfield blank then returns false.
     protected isConditionUiComplete(position: number): boolean {
+        if (position >= this.eTypes.length) { return false; } // Condition doesn't exist.
+
         const type = this.getConditionType(position);
 
         if (type === SimpleFilter.EMPTY) { return false; }

@@ -9583,9 +9583,18 @@
   },
   "ICombinedSimpleModel": {
     "operator": { "type": { "returnType": "JoinOperator", "optional": false } },
-    "condition1": { "type": { "returnType": "M", "optional": false } },
-    "condition2": { "type": { "returnType": "M", "optional": false } },
-    "conditions": { "type": { "returnType": "M[]", "optional": true } },
+    "condition1": {
+      "description": "/** @deprecated As of v29.2, supply as the first element of `conditions`. */",
+      "type": { "returnType": "M", "optional": false }
+    },
+    "condition2": {
+      "description": "/** @deprecated As of v29.2, supply as the second element of `conditions`. */",
+      "type": { "returnType": "M", "optional": false }
+    },
+    "conditions": {
+      "description": "/** Will be mandatory in a future release. */",
+      "type": { "returnType": "M[]", "optional": true }
+    },
     "meta": { "typeParams": ["M extends ISimpleFilterModel"] },
     "filterType": { "type": { "returnType": "string", "optional": true } }
   },
