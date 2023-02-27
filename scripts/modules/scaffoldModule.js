@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const inquirer = require('inquirer');
 const fsExtra = require('fs-extra');
+const { exec } = require('child_process');
 
 const moduleDirs = (grid, enterprise, packageName) => {
     const moduleName = `@ag-${grid ? 'grid' : 'charts'}-${enterprise ? 'enterprise' : 'community'}/${packageName}`;
@@ -144,6 +145,7 @@ const main = async () => {
     fsExtra.copySync(path.resolve(__dirname, './tsconfig.test.json'), `./${moduleDir}/tsconfig.test.json`);
     fsExtra.copySync(path.resolve(__dirname, `./${chartsPrefix}jest.config.js`), `./${moduleDir}/jest.config.js`);
     fsExtra.copySync(path.resolve(__dirname, './main.ts'), `./${moduleDir}/src/main.ts`);
+    fsExtra.copySync(path.resolve(__dirname, '../../grid-enterprise-modules/core/LICENSE.html'), `./${moduleDir}/LICENSE.html`);
 
     if (!grid) {
         fsExtra.copySync(path.resolve(__dirname, './.prettierrc'), `./${moduleDir}/.prettierrc`);
@@ -152,6 +154,10 @@ const main = async () => {
     }
 
     fs.writeFileSync(`./${moduleDir}/package.json`, JSON.stringify(templatePackageJson, null, 4), 'UTF-8');
+
+    if (!grid) {
+        exec(`npx prettier -w ./${moduleDir}/`);
+    }
 };
 
 main();
