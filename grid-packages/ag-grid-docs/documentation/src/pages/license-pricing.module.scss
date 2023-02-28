@@ -95,7 +95,7 @@
         }
 
         a {
-            font-size: $font-size-large !important; // !important for .ag-styles specificity
+            font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
         }
     }
 }
@@ -243,7 +243,7 @@
     }
 
     a {
-        font-size: $font-size-large !important; // !important for .ag-styles specificity
+        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
         display: inline-block;
     }
 }

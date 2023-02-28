@@ -17,17 +17,26 @@
     --font-family: #{$font-family};
     --monospace-font-family: #{$monospace-font-family};
 
-    --font-size: #{$font-size-medium};
-    --line-height: #{$line-height-normal};
-    --font-weight: #{$font-weight-normal};
+    --font-size-extra-small: #{$font-size-extra-small};
+    --font-size-small: #{$font-size-small};
+    --font-size-medium: #{$font-size-medium};
+    --font-size-large: #{$font-size-large};
+    --font-size-extra-large: #{$font-size-extra-large};
+    --font-size-massive: #{$font-size-massive};
+    --font-size-gigantic: #{$font-size-gigantic};
+    --font-size-gargantuan: #{$font-size-gargantuan};
+
+    --font-weight-thin: #{$font-weight-thin};
+    --font-weight-normal: #{$font-weight-normal};
+    --font-weight-bold: #{$font-weight-bold};
 
     --line-height-tight: #{$line-height-tight};
     --line-height-normal: #{$line-height-normal};
     --line-height-loose: #{$line-height-loose};
 
-    --font-weight-thin: #{$font-weight-thin};
-    --font-weight-normal: #{$font-weight-normal};
-    --font-weight-bold: #{$font-weight-bold};
+    --font-size: #{$font-size-medium};
+    --font-weight: #{$font-weight-normal};
+    --line-height: #{$line-height-normal};
 
     --icon-size: 2em;
 }

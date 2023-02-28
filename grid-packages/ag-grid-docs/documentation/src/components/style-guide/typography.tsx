@@ -97,6 +97,12 @@ export const Typography = () => {
                 <code>.font-size-gigantic</code>
             </p>
             <p className="font-size-gigantic ">Sunt velit sed et. Quo recusandae dolores error saepe dolores.</p>
+
+            <p className="item-label">
+                <span>font size gargantuan</span>
+                <code>.font-size-gargantuan</code>
+            </p>
+            <p className="font-size-gargantuan ">Sunt velit sed et. Quo recusandae dolores error saepe dolores.</p>
         </>
     );
 };

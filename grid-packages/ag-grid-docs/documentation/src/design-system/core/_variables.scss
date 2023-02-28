@@ -39,17 +39,18 @@ $font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica 
 
 $monospace-font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
 
-$font-weight-normal: 400;
-$font-weight-thin: 300;
-$font-weight-bold: 600;
-
 $font-size-extra-small: math.div(12rem, 16); // convert px values to rems
 $font-size-small: math.div(14rem, 16); // convert px values to rems
 $font-size-medium: math.div(16rem, 16); // convert px values to rems
-$font-size-large: math.div(24rem, 16); // convert px values to rems
-$font-size-extra-large: math.div(36rem, 16); // convert px values to rems
-$font-size-massive: math.div(54rem, 16); // convert px values to rems
-$font-size-gigantic: math.div(82rem, 16); // convert px values to rems
+$font-size-large: math.div(20rem, 16); // convert px values to rems
+$font-size-extra-large: math.div(26rem, 16); // convert px values to rems
+$font-size-massive: math.div(36rem, 16); // convert px values to rems
+$font-size-gigantic: math.div(48rem, 16); // convert px values to rems
+$font-size-gargantuan: math.div(66rem, 16); // convert px values to rems
+
+$font-weight-normal: 400;
+$font-weight-thin: 300;
+$font-weight-bold: 600;
 
 $line-height-tight: 1.25;
 $line-height-normal: 1.5;

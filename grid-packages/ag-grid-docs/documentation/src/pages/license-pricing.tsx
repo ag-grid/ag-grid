@@ -205,7 +205,7 @@ const LicensePricing = () => {
 
                 <div className={styles.videoExplainer} id="video-explainer">
                     <div>
-                        <h3 className="font-size-extra-large">Questions about our licenses? </h3>
+                        <h3 className="font-size-massive">Questions about our licenses? </h3>
                         <p>
                             Watch our short video for an in-depth look at exactly how each AG Grid license works. Learn
                             which license is right for you, how many licenses you need for you team, and exactly when
@@ -227,7 +227,7 @@ const LicensePricing = () => {
                 </div>
 
                 <div className={styles.licensesInDetail}>
-                    <h3 className="font-size-extra-large">Our Licenses in Depth</h3>
+                    <h3 className="font-size-massive">Our Licenses in Depth</h3>
 
                     <div
                         className={classnames(styles.singleApplicationLicense, 'ag-card', 'single-application')}

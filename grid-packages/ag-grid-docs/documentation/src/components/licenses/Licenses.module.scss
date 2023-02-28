@@ -94,7 +94,8 @@ p.name {
     }
 
     .bottom & {
-        font-size: $font-size-large !important; // !important for .ag-styles specificity
+        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
+
         line-height: 1 !important; // !important for .ag-styles specificity
         margin-top: $size-half !important; // !important for .ag-styles specificity
         margin-bottom: $size-half !important; // !important for .ag-styles specificity
