@@ -396,8 +396,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 line.y2 = y;
                 line.visible =
                     y >= requestedRange[0] &&
-                    y <= requestedRange[1] &&
-                    Math.abs(line.parent!.translationY - rangeStart) > 1;
+                    y <= requestedRange[1]
 
                 const style = styles[index % styleCount];
                 line.stroke = style.stroke;
