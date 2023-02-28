@@ -1089,8 +1089,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         }
 
         labelData = [];
-        labelSelection.each((label, index) => {
-            const { datum } = label;
+        labelSelection.each((label, datum, index) => {
             if (label.text === '' || label.text == undefined) {
                 label.visible = false; // hide empty labels
                 return;
