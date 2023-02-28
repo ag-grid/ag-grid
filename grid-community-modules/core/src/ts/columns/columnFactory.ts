@@ -40,7 +40,7 @@ export class ColumnFactory extends BeanStub {
             existingCols, columnKeyCreator, existingGroups);
         const treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
-        const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
+        const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator, existingGroups);
 
         const deptFirstCallback = (child: IProvidedColumn, parent: ProvidedColumnGroup) => {
             if (child instanceof ProvidedColumnGroup) {
@@ -128,7 +128,8 @@ export class ColumnFactory extends BeanStub {
         unbalancedTree: IProvidedColumn[],
         currentDept: number,
         columnDept: number,
-        columnKeyCreator: ColumnKeyCreator
+        columnKeyCreator: ColumnKeyCreator,
+        existingGroups: ProvidedColumnGroup[]
     ): IProvidedColumn[] {
 
         const result: IProvidedColumn[] = [];
@@ -141,7 +142,7 @@ export class ColumnFactory extends BeanStub {
                 // child is a group, all we do is go to the next level of recursion
                 const originalGroup = child;
                 const newChildren = this.balanceColumnTree(originalGroup.getChildren(),
-                    currentDept + 1, columnDept, columnKeyCreator);
+                    currentDept + 1, columnDept, columnKeyCreator, existingGroups);
                 originalGroup.setChildren(newChildren);
                 result.push(originalGroup);
             } else {
@@ -151,10 +152,17 @@ export class ColumnFactory extends BeanStub {
 
                 // this for loop will NOT run any loops if no padded column groups are needed
                 for (let j = columnDept - 1; j >= currentDept; j--) {
-                    const newColId = columnKeyCreator.getUniqueKey(null, null);
+                    const paddingId = child.getInstanceId() + '_' + j;
                     const colGroupDefMerged = this.createMergedColGroupDef(null);
 
-                    const paddedGroup = new ProvidedColumnGroup(colGroupDefMerged, newColId, true, currentDept);
+                    const existingPadding = existingGroups.find(g => g.getGroupId() === paddingId);
+                    let paddedGroup: ProvidedColumnGroup;
+                    if (existingPadding) {
+                        existingPadding.reset(colGroupDefMerged, j)
+                        paddedGroup = existingPadding;
+                    } else {
+                        paddedGroup = new ProvidedColumnGroup(colGroupDefMerged, paddingId, true, j);
+                    }
                     this.createBean(paddedGroup);
 
                     if (currentPaddedGroup) {
