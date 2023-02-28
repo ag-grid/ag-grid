@@ -34,9 +34,9 @@
     --line-height-normal: #{$line-height-normal};
     --line-height-loose: #{$line-height-loose};
 
-    --font-size: #{$font-size-medium};
-    --font-weight: #{$font-weight-normal};
-    --line-height: #{$line-height-normal};
+    --font-size: var(--font-size-medium);
+    --font-weight: var(--font-weight-normal);
+    --line-height: var(--line-height-normal);
 
     --icon-size: 2em;
 }

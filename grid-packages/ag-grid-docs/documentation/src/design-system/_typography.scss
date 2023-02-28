@@ -1,3 +1,4 @@
+@use "sass:math";
 @use "core" as *;
 
 html,
@@ -67,6 +68,19 @@ h1,
 .font-size-gigantic,
 .font-size-massive {
     --line-height: var(--line-height-tight);
+}
+
+.font-size-responsive {
+    @media screen and (min-width: $max-page-width) {
+        --font-size-extra-small: #{math.div(13rem, 16)}; // convert px values to rems
+        --font-size-small: #{math.div(15rem, 16)}; // convert px values to rems
+        --font-size-medium: #{math.div(18rem, 16)}; // convert px values to rems
+        --font-size-large: #{math.div(23rem, 16)}; // convert px values to rems
+        --font-size-extra-large: #{math.div(29rem, 16)}; // convert px values to rems
+        --font-size-massive: #{math.div(41rem, 16)}; // convert px values to rems
+        --font-size-gigantic: #{math.div(54rem, 16)}; // convert px values to rems
+        --font-size-gargantuan: #{math.div(74rem, 16)}; // convert px values to rems
+    }
 }
 
 h1,
