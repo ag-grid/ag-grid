@@ -19,7 +19,6 @@
     "build": "npm run build-cjs && npm run build-esm && npm run hash",
     "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash",
-    "fix": "npx prettier -w .",
     "test:ci": "export FONTCONFIG_PATH=$PWD/src/chart/test FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf PANGOCAIRO_BACKEND=fontconfig ; npx jest --runInBand",
     "test:dev": "npm run test:lint ; export FC_DEBUG=0 FONTCONFIG_PATH=$PWD/src/chart/test FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf PANGOCAIRO_BACKEND=fontconfig ; npx jest",
     "test:lint": "npm run test-circular-deps",
