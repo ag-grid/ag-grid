@@ -1,4 +1,4 @@
-import { _Scene, _ModuleSupport } from 'ag-charts-community';
+import { _Scene } from 'ag-charts-community';
 
 const { RedrawType } = _Scene;
 
@@ -121,7 +121,7 @@ export class RangeSelector extends _Scene.Group {
     }
 
     render(renderCtx: _Scene.RenderContext) {
-        let { ctx, forceRender, stats } = renderCtx;
+        const { ctx, forceRender, stats } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
             if (stats) stats.nodesSkipped++;

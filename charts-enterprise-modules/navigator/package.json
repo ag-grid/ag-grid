@@ -12,7 +12,9 @@
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
     "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
-    "fix": "npx prettier -w .",
+    "fix": "run-s fix:*",
+    "fix:prettier": "npx prettier -w .",
+    "fix:eslint": "npx eslint --fix src/ --ext .js,.ts",
     "watch-esm": "tsc -p tsconfig.esm.es5.json -w",
     "build": "npm run build-cjs && npm run build-esm && npm run hash",
     "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
@@ -71,15 +73,18 @@
     "@types/jest-image-snapshot": "^5.1.0",
     "@types/pixelmatch": "^5.2.4",
     "@types/pngjs": "^6.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
     "canvas": "^2.10.2",
-    "madge": "6.0.0",
-    "pixelmatch": "^5.2.1",
-    "prettier": "^2.8.3",
+    "eslint": "^8.35.0",
     "jest": "^27.5.1",
     "jest-canvas-mock": "^2.4.0",
     "jest-image-snapshot": "^6.0.0",
     "jest-runner": "^27.5.1",
     "jest-serial-runner": "^1.2.1",
+    "madge": "6.0.0",
+    "npm-run-all": "^4.1.5",
+    "pixelmatch": "^5.2.1",
+    "prettier": "^2.8.3",
     "rimraf": "3.0.2",
     "ts-jest": "^27.1.3",
     "typescript": "~4.0.8"
@@ -92,6 +97,7 @@
     "access": "private"
   },
   "lint-staged": {
-    "*.{ts,js,md,json}": "../../charts-community-modules/ag-charts-community/.lint-staged/run.sh prettier"
+    "*.{ts,js,md,json}": "../../charts-community-modules/ag-charts-community/.lint-staged/run.sh prettier",
+    "*.{ts,js}": "../../charts-community-modules/ag-charts-community/.lint-staged/run.sh eslint"
   }
 }
