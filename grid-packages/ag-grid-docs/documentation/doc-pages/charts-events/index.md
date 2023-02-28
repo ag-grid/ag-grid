@@ -91,7 +91,7 @@ This example demonstrates:
 
 ## Chart Event - click and doubleClick
 
-The `click` and `doubleClick` events are fired when any part of the chart is clicked or double clicked, respectively. The `doubleClick` event does not block the original `click` event from firing.
+The `click` and `doubleClick` events are fired when any part of the chart is clicked or double clicked, respectively. When a user double clicks the `click` event will be fired on the first lick, then the `doubleClick` will be fired on the second click.
 
 These events may be prevented by other clickable parts of the chart, such as series-nodes and legend items.
 
