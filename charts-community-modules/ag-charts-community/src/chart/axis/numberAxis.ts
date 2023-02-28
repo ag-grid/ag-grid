@@ -2,7 +2,6 @@ import { LinearScale } from '../../scale/linearScale';
 import { LogScale } from '../../scale/logScale';
 import { extent } from '../../util/array';
 import { ChartAxis } from '../chartAxis';
-import { doOnce } from '../../util/function';
 import { Validate, GREATER_THAN, AND, LESS_THAN, NUMBER_OR_NAN } from '../../util/validation';
 import { Default } from '../../util/default';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';

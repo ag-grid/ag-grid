@@ -8,7 +8,6 @@ import {
 } from '../series';
 import { ChartAxis } from '../../chartAxis';
 import { SeriesMarker } from '../seriesMarker';
-import { doOnce } from '../../../util/function';
 import { isContinuous, isDiscrete } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Path } from '../../../scene/shape/path';

@@ -16,7 +16,6 @@ import { jsonMerge, DELETE, jsonWalk, JsonMergeOptions } from '../../util/json';
 import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
-import { doOnce } from '../../util/function';
 import { Logger } from '../../util/logger';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];

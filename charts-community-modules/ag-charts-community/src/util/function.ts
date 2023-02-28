@@ -2,8 +2,6 @@ const doOnceFlags: { [key: string]: boolean } = {};
 
 /**
  * If the key was passed before, then doesn't execute the func
- * @param {Function} func
- * @param {string} key
  */
 export function doOnce(func: () => void, key: string) {
     if (doOnceFlags[key]) {
@@ -12,4 +10,11 @@ export function doOnce(func: () => void, key: string) {
 
     func();
     doOnceFlags[key] = true;
+}
+
+/** Clear doOnce() state (for test purposes). */
+export function clearDoOnceFlags() {
+    for (const key in doOnceFlags) {
+        delete doOnceFlags[key];
+    }
 }

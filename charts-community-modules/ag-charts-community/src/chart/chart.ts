@@ -19,7 +19,6 @@ import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
 import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
-import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';

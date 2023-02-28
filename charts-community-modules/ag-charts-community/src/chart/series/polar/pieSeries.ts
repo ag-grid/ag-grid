@@ -11,7 +11,6 @@ import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeClickEvent } 
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
-import { doOnce } from '../../../util/function';
 import { toFixed, mod } from '../../../util/number';
 import { Layers } from '../../layers';
 import { LegendDatum } from '../../legendDatum';

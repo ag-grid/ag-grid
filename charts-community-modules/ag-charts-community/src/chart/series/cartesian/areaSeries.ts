@@ -17,7 +17,6 @@ import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { checkDatum, isContinuous, isNumber } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
-import { doOnce } from '../../../util/function';
 import { Point, SizedPoint } from '../../../scene/point';
 import {
     BOOLEAN_ARRAY,

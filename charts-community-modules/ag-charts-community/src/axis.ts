@@ -9,7 +9,6 @@ import { BBox } from './scene/bbox';
 import { Caption } from './caption';
 import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
-import { doOnce } from './util/function';
 import { TimeInterval } from './util/time/interval';
 import { areArrayNumbersEqual } from './util/equal';
 import { CrossLine } from './chart/crossline/crossLine';

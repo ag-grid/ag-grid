@@ -15,7 +15,6 @@ import { toFixed } from '../../../util/number';
 import { Path2D } from '../../../scene/path2D';
 import { BBox } from '../../../scene/bbox';
 import { Color } from '../../../util/color';
-import { doOnce } from '../../../util/function';
 import {
     BOOLEAN,
     NUMBER,
