@@ -21,7 +21,7 @@
 
     td {
         padding: 0;
-        line-height: $line-height-tight;
+        line-height: var(--line-height-tight);
         font-weight: var(--font-weight-bold);
 
         &:not(:last-child) {

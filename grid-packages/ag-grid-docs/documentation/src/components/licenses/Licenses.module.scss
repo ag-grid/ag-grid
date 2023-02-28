@@ -73,8 +73,9 @@
     }
 
     .bottom & p:last-child {
+        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+
         max-width: 13em;
-        line-height: $line-height-tight;
     }
 }
 
@@ -110,8 +111,9 @@ p.name {
     }
 
     .bottom & p:last-child {
+        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+
         max-width: 13em;
-        line-height: $line-height-tight;
     }
 }
 

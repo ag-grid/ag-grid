@@ -20,6 +20,11 @@
     --font-size: #{$font-size-medium};
     --line-height: #{$line-height-normal};
     --font-weight: #{$font-weight-normal};
+
+    --line-height-tight: #{$line-height-tight};
+    --line-height-normal: #{$line-height-normal};
+    --line-height-loose: #{$line-height-loose};
+
     --font-weight-thin: #{$font-weight-thin};
     --font-weight-normal: #{$font-weight-normal};
     --font-weight-bold: #{$font-weight-bold};

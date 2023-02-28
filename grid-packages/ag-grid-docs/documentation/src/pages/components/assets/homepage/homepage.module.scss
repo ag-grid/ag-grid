@@ -40,7 +40,7 @@ body {
 
     h1,
     h2 {
-        --line-height: #{ds.$line-height-tight} !important; // !important for .ag-styles specificity
+        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
     }
 
     h1 {
@@ -200,7 +200,7 @@ body {
     }
 
     > div {
-        --line-height: #{ds.$line-height-tight} !important; // !important for .ag-styles specificity
+        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
 
         text-align: center;
         margin-bottom: ds.$size-5 !important; // !important for .ag-styles specificity

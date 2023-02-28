@@ -22,13 +22,13 @@ h6,
 
 .font-size-gigantic {
     --font-size: #{$font-size-gigantic};
-    --line-height: #{$line-height-tight};
+    --line-height: var(--line-height-tight);
 }
 
 h1,
 .font-size-massive {
     --font-size: #{$font-size-massive};
-    --line-height: #{$line-height-tight};
+    --line-height: var(--line-height-tight);
 }
 
 h2,

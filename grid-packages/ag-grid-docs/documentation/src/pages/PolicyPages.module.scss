@@ -30,7 +30,7 @@
 
         nav li:not(:last-child) {
             margin-bottom: ds.$size-1;
-            line-height: ds.$line-height-tight;
+            line-height: var(--line-height-tight);
         }
     }
 }
