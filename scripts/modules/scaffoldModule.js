@@ -150,6 +150,8 @@ const main = async () => {
     if (!grid) {
         fsExtra.copySync(path.resolve(__dirname, './.prettierrc'), `./${moduleDir}/.prettierrc`);
         fsExtra.copySync(path.resolve(__dirname, './.prettierignore'), `./${moduleDir}/.prettierignore`);
+        fsExtra.copySync(path.resolve(__dirname, './charts-eslintrc.js'), `./${moduleDir}/.eslintrc.js`);
+        fsExtra.copySync(path.resolve(__dirname, './charts-eslintignore'), `./${moduleDir}/.eslintignore`);
         fsExtra.copySync(path.resolve(__dirname, './charts-placeholder.test.ts'), `./${moduleDir}/src/placeholder.test.ts`);
     }
 
