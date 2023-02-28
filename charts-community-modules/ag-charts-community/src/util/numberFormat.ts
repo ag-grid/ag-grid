@@ -85,20 +85,8 @@ function parseFormatter(formatter: string): FormatterOptions {
 
 export function format(formatter: string | FormatterOptions) {
     const options = typeof formatter === 'string' ? parseFormatter(formatter) : formatter;
-    let {
-        fill,
-        align,
-        sign = '-',
-        symbol,
-        zero,
-        width,
-        comma,
-        precision,
-        trim,
-        type,
-        prefix = '',
-        suffix = '',
-    } = options;
+    const { fill, align, sign = '-', symbol, zero, width, comma, type, prefix = '', suffix = '' } = options;
+    let { precision, trim } = options;
 
     let formatBody: (n: number, f: number) => string;
     if (!type) {

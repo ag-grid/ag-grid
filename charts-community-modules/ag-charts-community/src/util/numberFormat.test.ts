@@ -43,7 +43,7 @@ describe('format', () => {
         expect(format('#x')(48879)).toBe('0xbeef');
     });
     test('grouped thousands with fixed point', () => {
-        expect(format(',.5f')(123456789.987654321)).toBe('123,456,789.98765');
+        expect(format(',.5f')(123456789.9876543)).toBe('123,456,789.98765');
     });
     test('number of significant digits', () => {
         expect(format(',.3r')(0.077)).toBe('0.0770');

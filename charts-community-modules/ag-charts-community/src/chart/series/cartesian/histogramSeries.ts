@@ -222,12 +222,11 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     private calculateNiceBins(domain: number[], binCount: number): [number, number][] {
-        let start = Math.floor(domain[0]);
+        const startGuess = Math.floor(domain[0]);
         const stop = domain[1];
-        let binSize;
 
         const segments = binCount || 1;
-        ({ start, binSize } = this.calculateNiceStart(start, stop, segments));
+        const { start, binSize } = this.calculateNiceStart(startGuess, stop, segments);
 
         return this.getBins(start, stop, binSize, segments);
     }

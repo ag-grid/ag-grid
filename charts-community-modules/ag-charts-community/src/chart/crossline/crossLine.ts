@@ -223,12 +223,10 @@ export class CrossLine {
         const clippedRangeClamper = (x: number) =>
             Math.max(Math.min(...clippedRange), Math.min(Math.max(...clippedRange), x));
 
-        let xStart, xEnd, yStart, yEnd, clampedYStart, clampedYEnd;
+        const [xStart, xEnd] = [0, sideFlag * gridLength];
+        let [yStart, yEnd] = this.getRange();
 
-        [xStart, xEnd] = [0, sideFlag * gridLength];
-        [yStart, yEnd] = this.getRange();
-
-        [clampedYStart, clampedYEnd] = [
+        let [clampedYStart, clampedYEnd] = [
             Number(scale.convert(yStart, { strict: false })),
             scale.convert(yEnd, { strict: false }) + bandwidth,
         ];

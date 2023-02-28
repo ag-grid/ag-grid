@@ -44,6 +44,7 @@ import { Pagination } from './pagination/pagination';
 import { TooltipManager } from './interaction/tooltipManager';
 import { toTooltipHtml } from './tooltip/tooltip';
 import { LegendDatum } from './legendDatum';
+import { Logger } from '../util/logger';
 
 const ORIENTATIONS = ['horizontal', 'vertical'];
 export const OPT_ORIENTATION = predicateWithMessage(
@@ -521,7 +522,7 @@ export class Legend {
 
         do {
             if (count++ > 10) {
-                console.warn('AG Charts - unable to find stable legend layout.');
+                Logger.warn('unable to find stable legend layout.');
                 break;
             }
 

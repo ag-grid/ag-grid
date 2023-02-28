@@ -3,6 +3,7 @@ import { BBox } from './bbox';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { compoundAscending, ascendingStringNumberUndefined } from '../util/compare';
+import { Logger } from '../util/logger';
 
 export class Group extends Node {
     static className = 'Group';
@@ -123,13 +124,14 @@ export class Group extends Node {
         const { opts: { name = undefined } = {} } = this;
         const { _debug: { consoleLog = false } = {} } = this;
         const { dirty, dirtyZIndex, layer, children, clipRect } = this;
-        let { ctx, forceRender, clipBBox, resized, stats } = renderCtx;
+        let { ctx, forceRender, clipBBox } = renderCtx;
+        const { resized, stats } = renderCtx;
 
         const isDirty = dirty >= RedrawType.MINOR || dirtyZIndex || resized;
         const isChildDirty = isDirty || children.some((n) => n.dirty >= RedrawType.TRIVIAL);
 
         if (name && consoleLog) {
-            console.log({ name, group: this, isDirty, isChildDirty, renderCtx, forceRender });
+            Logger.debug({ name, group: this, isDirty, isChildDirty, renderCtx, forceRender });
         }
 
         if (layer) {
@@ -150,7 +152,7 @@ export class Group extends Node {
         if (!isDirty && !isChildDirty && !forceRender) {
             if (name && consoleLog && stats) {
                 const counts = this.nodeCount;
-                console.log({ name, result: 'skipping', renderCtx, counts, group: this });
+                Logger.debug({ name, result: 'skipping', renderCtx, counts, group: this });
             }
 
             if (layer && stats) {
@@ -178,7 +180,7 @@ export class Group extends Node {
                 const { width, height, x, y } = clipBBox;
 
                 if (consoleLog) {
-                    console.log({ name, clipBBox, ctxTransform: ctx.getTransform(), renderCtx, group: this });
+                    Logger.debug({ name, clipBBox, ctxTransform: ctx.getTransform(), renderCtx, group: this });
                 }
 
                 ctx.rect(x, y, width, height);
@@ -257,7 +259,7 @@ export class Group extends Node {
 
         if (name && consoleLog && stats) {
             const counts = this.nodeCount;
-            console.log({ name, result: 'rendered', skipped, renderCtx, counts, group: this });
+            Logger.debug({ name, result: 'rendered', skipped, renderCtx, counts, group: this });
         }
     }
 

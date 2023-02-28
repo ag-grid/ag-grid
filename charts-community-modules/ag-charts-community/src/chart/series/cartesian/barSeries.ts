@@ -45,6 +45,7 @@ import {
     FontWeight,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
+import { Logger } from '../../../util/logger';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -312,7 +313,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.xData = data.map((datum) => {
             if (keysFound && !(xKey in datum)) {
                 keysFound = false;
-                console.warn(`The key '${xKey}' was not found in the data: `, datum);
+                Logger.warn(`the key '${xKey}' was not found in the data: `, datum);
             }
 
             const x = checkDatum(datum[xKey], isContinuousX);
@@ -331,7 +332,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 return stack.map((yKey) => {
                     if (keysFound && !(yKey in datum)) {
                         keysFound = false;
-                        console.warn(`The key '${yKey}' was not found in the data: `, datum);
+                        Logger.warn(`the key '${yKey}' was not found in the data: `, datum);
                     }
 
                     const yDatum = checkDatum(datum[yKey], isContinuousY);

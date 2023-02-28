@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { Logger } from '../../util/logger';
 
 import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
 import {
@@ -17,7 +18,7 @@ import {
 } from './data';
 
 export function loadExampleOptions(name: string, evalFn = 'options'): any {
-    const filters = [/.*AgChart\.(update|create)/, /.* container\: .*/, /.*setInterval.*/, /.*setTimeout.*/];
+    const filters = [/.*AgChart\.(update|create)/, /.* container: .*/, /.*setInterval.*/, /.*setTimeout.*/];
     const dataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/_gen/packages/vanilla/data.js`;
     const exampleFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/_gen/packages/vanilla/main.js`;
 
@@ -49,8 +50,8 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
     try {
         return eval(evalExpr);
     } catch (error) {
-        console.error(`AG Charts - unable to read example data for [${name}]; error: ${error.message}`);
-        console.log(evalExpr);
+        Logger.error(`unable to read example data for [${name}]; error: ${error.message}`);
+        Logger.debug(evalExpr);
         return [];
     }
 }

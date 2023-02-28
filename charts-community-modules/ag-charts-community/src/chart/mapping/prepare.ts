@@ -17,6 +17,7 @@ import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 import { doOnce } from '../../util/function';
+import { Logger } from '../../util/logger';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
@@ -34,10 +35,7 @@ export function isAgCartesianChartOptions(input: AgChartOptions): input is AgCar
     }
 
     if ((specifiedType as string) === 'cartesian') {
-        doOnce(
-            () => console.warn(`AG Charts - type '${specifiedType}' is deprecated, use a series type instead`),
-            `factory options type ${specifiedType}`
-        );
+        Logger.warnOnce(`type '${specifiedType}' is deprecated, use a series type instead`);
         return true;
     }
 
@@ -62,10 +60,7 @@ export function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHie
     }
 
     if ((specifiedType as string) === 'hierarchy') {
-        doOnce(
-            () => console.warn(`AG Charts - type '${specifiedType}' is deprecated, use a series type instead`),
-            `factory options type ${specifiedType}`
-        );
+        Logger.warnOnce(`type '${specifiedType}' is deprecated, use a series type instead`);
         return true;
     }
 
@@ -79,10 +74,7 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
     }
 
     if ((specifiedType as string) === 'polar') {
-        doOnce(
-            () => console.warn(`AG Charts - type '${specifiedType}' is deprecated, use a series type instead`),
-            `factory options type ${specifiedType}`
-        );
+        Logger.warnOnce(`type '${specifiedType}' is deprecated, use a series type instead`);
         return true;
     }
 
@@ -213,12 +205,8 @@ function sanityCheckOptions<T extends AgChartOptions>(options: T) {
     };
     Object.entries(deprecatedArrayProps).forEach(([oldProp, newProp]) => {
         if (options.series?.some((s: any) => s[oldProp] != null)) {
-            doOnce(
-                () =>
-                    console.warn(
-                        `AG Charts - Property [series.${oldProp}] is deprecated, please use [series.${newProp}] and multiple series instead.`
-                    ),
-                `deprecated series.${oldProp} array`
+            Logger.warnOnce(
+                `property [series.${oldProp}] is deprecated, please use [series.${newProp}] and multiple series instead.`
             );
         }
     });
@@ -281,7 +269,7 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
     switch (input.type) {
         case 'pie':
             colourCount = Math.max(fills.length, strokes.length);
-        // fall-through - only colourCount varies for `pie`.
+        // eslint-disable-next-line no-fallthrough
         case 'area':
         case 'bar':
         case 'column':
@@ -325,7 +313,7 @@ function prepareAxis<T extends AxesOptionsTypes>(
     // Special cross lines case where we have an arrays of cross line elements which need their own defaults.
     if (axis.crossLines) {
         if (!Array.isArray(axis.crossLines)) {
-            console.warn('AG Charts - axis[].crossLines should be an array.');
+            Logger.warn('axis[].crossLines should be an array.');
             axis.crossLines = [];
         }
 

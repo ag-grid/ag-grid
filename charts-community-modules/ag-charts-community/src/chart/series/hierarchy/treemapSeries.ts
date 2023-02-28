@@ -35,6 +35,7 @@ import {
     AgTreemapSeriesFormatterParams,
     AgTreemapSeriesFormat,
 } from '../../agChartOptions';
+import { Logger } from '../../../util/logger';
 
 type TreeDatum = {
     [prop: string]: any;
@@ -111,12 +112,8 @@ function getTextSize(text: string, style: Label) {
 function validateColor(color?: string): string | undefined {
     if (typeof color === 'string' && !Color.validColorString(color)) {
         const fallbackColor = 'black';
-        doOnce(
-            () =>
-                console.warn(
-                    `AG Charts - Invalid Treemap tile colour string "${color}". Affected treemap tiles will be coloured ${fallbackColor}.`
-                ),
-            'treemap node color invalid'
+        Logger.warnOnce(
+            `invalid Treemap tile colour string "${color}". Affected treemap tiles will be coloured ${fallbackColor}.`
         );
         return 'black';
     }

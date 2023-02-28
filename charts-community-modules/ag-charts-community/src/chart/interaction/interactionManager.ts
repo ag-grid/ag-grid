@@ -263,7 +263,8 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         pageX?: number;
         pageY?: number;
     }): InteractionEvent<(typeof opts)['type']> & { consumed: boolean } {
-        let { type, event, clientX, clientY, offsetX, offsetY, pageX, pageY } = opts;
+        const { type, event, clientX, clientY } = opts;
+        let { offsetX, offsetY, pageX, pageY } = opts;
 
         if (!isNumber(offsetX) || !isNumber(offsetY)) {
             const rect = this.element.getBoundingClientRect();

@@ -46,13 +46,13 @@ export class BBox {
         switch (position) {
             case 'top':
                 this.y += amount;
-            // Deliberate fall-through.
+            // eslint-disable-next-line no-fallthrough
             case 'bottom':
                 this.height -= amount;
                 break;
             case 'left':
                 this.x += amount;
-            // Deliberate fall-through.
+            // eslint-disable-next-line no-fallthrough
             case 'right':
                 this.width -= amount;
                 break;

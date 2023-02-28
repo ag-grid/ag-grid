@@ -335,7 +335,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
         nodeData: LineNodeDatum[];
         markerSelection: Selection<Marker, LineNodeDatum>;
     }) {
-        let { nodeData, markerSelection } = opts;
+        let { nodeData } = opts;
+        const { markerSelection } = opts;
         const { shape, enabled } = this.marker;
         nodeData = shape && enabled ? nodeData : [];
 
@@ -428,7 +429,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
         labelData: LineNodeDatum[];
         labelSelection: Selection<Text, LineNodeDatum>;
     }) {
-        let { labelData, labelSelection } = opts;
+        let { labelData } = opts;
+        const { labelSelection } = opts;
         const { shape, enabled } = this.marker;
         labelData = shape && enabled ? labelData : [];
 

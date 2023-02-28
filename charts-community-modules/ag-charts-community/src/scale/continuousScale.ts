@@ -1,3 +1,4 @@
+import { Logger } from '../util/logger';
 import { TimeInterval } from '../util/time/interval';
 import { Scale } from './scale';
 
@@ -146,8 +147,8 @@ export abstract class ContinuousScale<D extends number | Date, I = number> imple
         const step = typeof interval === 'number' ? interval : 1;
         count ??= domain / step;
         if (count >= availableRange) {
-            console.warn(
-                `AG Charts - the configured tick interval, ${JSON.stringify(
+            Logger.warn(
+                `the configured tick interval, ${JSON.stringify(
                     interval
                 )}, results in more than 1 tick per pixel, ignoring. Supply a larger tick interval or omit this configuration.`
             );

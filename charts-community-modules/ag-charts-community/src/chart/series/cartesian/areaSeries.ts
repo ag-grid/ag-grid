@@ -40,6 +40,7 @@ import {
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
+import { Logger } from '../../../util/logger';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -261,10 +262,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         for (const datum of data) {
             // X datum
             if (!(xKey in datum)) {
-                doOnce(
-                    () => console.warn(`AG Charts - The key '${xKey}' was not found in the data: `, datum),
-                    `${xKey} not found in data`
-                );
+                Logger.warnOnce(`the key '${xKey}' was not found in the data: `, datum);
                 continue;
             }
 
@@ -298,10 +296,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
         if (missingYKeys.size > 0) {
             const missingYKeysString = JSON.stringify([...missingYKeys]);
-            doOnce(
-                () => console.log(`AG Charts - yKeys ${missingYKeysString} were not found in the data.`),
-                `${missingYKeysString} not found in data.`
-            );
+            Logger.warnOnce(`yKeys ${missingYKeysString} were not found in the data.`);
         }
 
         const xyValid = this.validateXYData(
@@ -703,7 +698,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         nodeData: MarkerSelectionDatum[];
         markerSelection: Selection<Marker, MarkerSelectionDatum>;
     }) {
-        let { nodeData, markerSelection } = opts;
+        const { nodeData, markerSelection } = opts;
         const {
             marker: { enabled },
         } = this;

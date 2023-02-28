@@ -6,6 +6,7 @@ import { doOnce } from '../../util/function';
 import { Validate, GREATER_THAN, AND, LESS_THAN, NUMBER_OR_NAN } from '../../util/validation';
 import { Default } from '../../util/default';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
+import { Logger } from '../../util/logger';
 
 export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
     static className = 'NumberAxis';
@@ -47,12 +48,8 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
         if (typeof datum === 'number') {
             return datum.toFixed(2);
         } else {
-            doOnce(
-                () =>
-                    console.warn(
-                        'AG Charts - Data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.'
-                    ),
-                `number axis config used with Date objects`
+            Logger.warnOnce(
+                'data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.'
             );
             return String(datum);
         }

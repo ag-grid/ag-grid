@@ -52,7 +52,7 @@ export class ZoomManager extends BaseManager<'zoom-change', ZoomChangeEvent> {
 
     private applyStates() {
         const currentZoom = this.currentZoom;
-        let zoomToApply: AxisZoomState = {};
+        const zoomToApply: AxisZoomState = {};
 
         // Last added entry wins.
         for (const [_, { x, y }] of Object.entries(this.states)) {

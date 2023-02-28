@@ -249,7 +249,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         nodeData: ScatterNodeDatum[];
         markerSelection: Selection<Marker, ScatterNodeDatum>;
     }) {
-        let { nodeData, markerSelection } = opts;
+        const { nodeData, markerSelection } = opts;
         const {
             marker: { enabled },
         } = this;
