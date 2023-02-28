@@ -24,6 +24,7 @@ import { getHeaderTitle } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
 import LearningVideos from '../components/LearningVideos';
+import { AGStyles } from './ag-styles';
 import styles from './doc-page.module.scss';
 const lzString = require('lz-string');
 
@@ -99,6 +100,69 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
             'video-link': VideoLink,
             'chart-gallery': ChartGallery,
             'charts-api-explorer': (props) => ChartsApiExplorer({ ...props, framework, jsonData, exampleIndexData }),
+
+            // AG Styles wrapper - wrap markdown -> html elements with `.ag-styles` to apply the new design system.
+            // Can be removed when the new design system is applied to everything
+            h1: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <h1 {...otherProps}>{children}</h1>
+                </AGStyles>
+            ),
+            h2: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <h2 {...otherProps}>{children}</h2>
+                </AGStyles>
+            ),
+            h3: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <h3 {...otherProps}>{children}</h3>
+                </AGStyles>
+            ),
+            h4: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <h4 {...otherProps}>{children}</h4>
+                </AGStyles>
+            ),
+            h5: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <h5 {...otherProps}>{children}</h5>
+                </AGStyles>
+            ),
+            h6: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <h6 {...otherProps}>{children}</h6>
+                </AGStyles>
+            ),
+            p: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <p {...otherProps}>{children}</p>
+                </AGStyles>
+            ),
+            ul: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <ul {...otherProps}>{children}</ul>
+                </AGStyles>
+            ),
+            ol: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <ol {...otherProps}>{children}</ol>
+                </AGStyles>
+            ),
+            table: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <table {...otherProps}>{children}</table>
+                </AGStyles>
+            ),
+            pre: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <pre {...otherProps}>{children}</pre>
+                </AGStyles>
+            ),
+            hr: ({ children, ...otherProps }) => (
+                <AGStyles>
+                    <hr {...otherProps}>{children}</hr>
+                </AGStyles>
+            ),
         },
     }).Compiler;
 
@@ -133,14 +197,16 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
             >
                 {/*eslint-disable-next-line react/jsx-pascal-case*/}
                 <SEO title={title} description={description} framework={framework} pageName={pageName} />
-                <h1
-                    id="top"
-                    className={classnames(styles['doc-page__title'], {
-                        [styles['doc-page__title--enterprise']]: page.frontmatter.enterprise,
-                    })}
-                >
-                    {pageTitle}
-                </h1>
+                <AGStyles>
+                    <h1
+                        id="top"
+                        className={classnames(styles['doc-page__title'], {
+                            [styles['doc-page__title--enterprise']]: page.frontmatter.enterprise,
+                        })}
+                    >
+                        {pageTitle}
+                    </h1>
+                </AGStyles>
                 {renderAst(ast)}
             </div>
 
