@@ -1,4 +1,4 @@
-import { _Scene } from "ag-charts-community";
+import { _Scene } from 'ag-charts-community';
 
 export interface CreateColumnRectsParams {
     stacked: boolean;
@@ -37,7 +37,7 @@ export function createColumnRects(params: CreateColumnRectsParams) {
 
             return rect;
         });
-    }
+    };
 
     if (stacked) {
         return params.data.map((d: number[]) => createBars(d, xScale, yScale));
@@ -55,23 +55,22 @@ export function createLinePaths(root: _Scene.Group, data: number[][], size: numb
     yScale.domain = [0, 10];
     yScale.range = [size - padding, padding];
 
-    const lines: _Scene.Path[] = data.map(series => {
+    const lines: _Scene.Path[] = data.map((series) => {
         const line = new _Scene.Path();
         line.strokeWidth = 3;
-        line.lineCap = "round";
+        line.lineCap = 'round';
         line.fill = undefined;
         series.forEach((datum: number, i: number) => {
-            line.path[i > 0 ? "lineTo" : "moveTo"](xScale.convert(i), yScale.convert(datum));
+            line.path[i > 0 ? 'lineTo' : 'moveTo'](xScale.convert(i), yScale.convert(datum));
         });
 
         return line;
     });
 
-    const clipRect = new _Scene.ClipRect();
-    clipRect.x = clipRect.y = padding;
-    clipRect.width = clipRect.height = size - padding * 2;
-    clipRect.append(lines);
-    root.append(clipRect);
+    const linesGroup = new _Scene.Group();
+    linesGroup.clipRect = new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2);
+    linesGroup.append(lines);
+    root.append(linesGroup);
 
     return lines;
 }

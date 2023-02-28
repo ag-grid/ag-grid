@@ -43,7 +43,7 @@ export class CartesianChart extends Chart {
 
         ({ shrinkRect } = this.layoutService.dispatchPerformLayout('before-series', { shrinkRect }));
 
-        const { seriesRect, visibility } = this.updateAxes(shrinkRect);
+        const { seriesRect, visibility, clipSeries } = this.updateAxes(shrinkRect);
         this.seriesRoot.visible = visibility.series;
         this.seriesRect = seriesRect;
         this.series.forEach((series) => {
@@ -57,10 +57,12 @@ export class CartesianChart extends Chart {
         });
 
         const { seriesRoot } = this;
-        seriesRoot.x = seriesRect.x;
-        seriesRoot.y = seriesRect.y;
-        seriesRoot.width = seriesRect.width;
-        seriesRoot.height = seriesRect.height;
+        if (clipSeries) {
+            const { x, y, width, height } = seriesRect;
+            seriesRoot.clipRect = new BBox(x, y, width, height);
+        } else {
+            seriesRoot.clipRect = undefined;
+        }
     }
 
     private _lastAxisWidths: Partial<Record<AgCartesianAxisPosition, number>> = {
@@ -143,8 +145,6 @@ export class CartesianChart extends Chart {
             }
         } while (!stableOutputs(lastPassAxisWidths, lastPassVisibility));
 
-        this.seriesRoot.enabled = clipSeries;
-
         // update visibility of crosslines
         this.axes.forEach((axis) => {
             axis.setCrossLinesVisible(visibility.crossLines);
@@ -153,7 +153,7 @@ export class CartesianChart extends Chart {
         this._lastAxisWidths = axisWidths;
         this._lastVisibility = visibility;
 
-        return { seriesRect, visibility };
+        return { seriesRect, visibility, clipSeries };
     }
 
     private updateAxesPass(

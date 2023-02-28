@@ -1,15 +1,14 @@
 import { Node, RedrawType, SceneChangeDetection, RenderContext, LayerManager } from './node';
 import { BBox } from './bbox';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
-import { Path2D } from './path2D';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { compoundAscending, ascendingStringNumberUndefined } from '../util/compare';
 
 export class Group extends Node {
     static className = 'Group';
 
+    clipRect?: BBox;
     protected layer?: HdpiCanvas | HdpiOffscreenCanvas;
-    protected clipPath: Path2D = new Path2D();
     readonly name?: string;
 
     @SceneChangeDetection({
@@ -109,40 +108,9 @@ export class Group extends Node {
     }
 
     computeBBox(): BBox {
-        let left = Infinity;
-        let right = -Infinity;
-        let top = Infinity;
-        let bottom = -Infinity;
-
         this.computeTransformMatrix();
 
-        this.children.forEach((child) => {
-            if (!child.visible) {
-                return;
-            }
-            const bbox = child.computeTransformedBBox();
-            if (!bbox) {
-                return;
-            }
-
-            const x = bbox.x;
-            const y = bbox.y;
-
-            if (x < left) {
-                left = x;
-            }
-            if (y < top) {
-                top = y;
-            }
-            if (x + bbox.width > right) {
-                right = x + bbox.width;
-            }
-            if (y + bbox.height > bottom) {
-                bottom = y + bbox.height;
-            }
-        });
-
-        return new BBox(left, top, right - left, bottom - top);
+        return Group.computeBBox(this.children);
     }
 
     computeTransformedBBox(): BBox | undefined {
@@ -154,7 +122,7 @@ export class Group extends Node {
     render(renderCtx: RenderContext) {
         const { opts: { name = undefined } = {} } = this;
         const { _debug: { consoleLog = false } = {} } = this;
-        const { dirty, dirtyZIndex, clipPath, layer, children } = this;
+        const { dirty, dirtyZIndex, layer, children, clipRect } = this;
         let { ctx, forceRender, clipBBox, resized, stats } = renderCtx;
 
         const isDirty = dirty >= RedrawType.MINOR || dirtyZIndex || resized;
@@ -213,9 +181,7 @@ export class Group extends Node {
                     console.log({ name, clipBBox, ctxTransform: ctx.getTransform(), renderCtx, group: this });
                 }
 
-                clipPath.clear();
-                clipPath.rect(x, y, width, height);
-                clipPath.draw(ctx);
+                ctx.rect(x, y, width, height);
                 ctx.clip();
             }
         } else {
@@ -224,12 +190,24 @@ export class Group extends Node {
             ctx.globalAlpha *= this.opacity;
         }
 
+        if (clipRect) {
+            const { x, y, width, height } = clipRect;
+            ctx.save();
+            ctx.rect(x, y, width, height);
+            ctx.clip();
+        }
+
         // A group can have `scaling`, `rotation`, `translation` properties
         // that are applied to the canvas context before children are rendered,
         // so all children can be transformed at once.
         this.computeTransformMatrix();
         this.matrix.toContext(ctx);
-        clipBBox = clipBBox ? this.matrix.inverse().transformBBox(clipBBox) : undefined;
+
+        if (clipRect) {
+            clipBBox = this.matrix.inverse().transformBBox(clipRect);
+        } else if (clipBBox) {
+            clipBBox = this.matrix.inverse().transformBBox(clipBBox);
+        }
 
         if (dirtyZIndex) {
             this.sortChildren();
@@ -267,6 +245,10 @@ export class Group extends Node {
         // Render marks this node as clean - no need to explicitly markClean().
         super.render(renderCtx);
 
+        if (clipRect) {
+            ctx.restore();
+        }
+
         if (layer) {
             if (stats) stats.layersRendered++;
             ctx.restore();
@@ -288,5 +270,40 @@ export class Group extends Node {
                 ascendingStringNumberUndefined
             );
         });
+    }
+
+    static computeBBox(nodes: Node[]) {
+        let left = Infinity;
+        let right = -Infinity;
+        let top = Infinity;
+        let bottom = -Infinity;
+
+        nodes.forEach((n) => {
+            if (!n.visible) {
+                return;
+            }
+            const bbox = n.computeTransformedBBox();
+            if (!bbox) {
+                return;
+            }
+
+            const x = bbox.x;
+            const y = bbox.y;
+
+            if (x < left) {
+                left = x;
+            }
+            if (y < top) {
+                top = y;
+            }
+            if (x + bbox.width > right) {
+                right = x + bbox.width;
+            }
+            if (y + bbox.height > bottom) {
+                bottom = y + bbox.height;
+            }
+        });
+
+        return new BBox(left, top, right - left, bottom - top);
     }
 }

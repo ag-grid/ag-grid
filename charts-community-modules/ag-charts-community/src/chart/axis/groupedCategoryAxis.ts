@@ -36,7 +36,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         super(new BandScale<string | number>());
         this.includeInvisibleDomains = true;
 
-        const { axisGroup, gridlineGroup, tickScale, scale } = this;
+        const { tickLineGroup, tickLabelGroup, gridLineGroup, tickScale, scale } = this;
 
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
@@ -46,10 +46,10 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
 
-        this.gridLineSelection = Selection.select(gridlineGroup, Line);
-        this.axisLineSelection = Selection.select(axisGroup, Line);
-        this.separatorSelection = Selection.select(axisGroup, Line);
-        this.labelSelection = Selection.select(axisGroup, Text);
+        this.gridLineSelection = Selection.select(gridLineGroup, Line);
+        this.axisLineSelection = Selection.select(tickLineGroup, Line);
+        this.separatorSelection = Selection.select(tickLineGroup, Line);
+        this.labelSelection = Selection.select(tickLabelGroup, Text);
     }
 
     set range(value: number[]) {
@@ -396,8 +396,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 line.y2 = y;
                 line.visible =
                     y >= requestedRange[0] &&
-                    y <= requestedRange[1] &&
-                    Math.abs(line.parent!.translationY - rangeStart) > 1;
+                    y <= requestedRange[1]
 
                 const style = styles[index % styleCount];
                 line.stroke = style.stroke;

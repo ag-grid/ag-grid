@@ -1,10 +1,6 @@
 {
   "_config_": {},
   "Tags": {},
-  "AxisNodeDatum": {
-    "tick": { "type": { "returnType": "any", "optional": false } },
-    "translationY": { "type": { "returnType": "number", "optional": false } }
-  },
   "TickCount": { "meta": { "typeParams": ["S"] } },
   "TickInterval": { "meta": { "typeParams": ["S"] } },
   "Size": {},

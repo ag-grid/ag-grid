@@ -1,5 +1,4 @@
 export { Caption } from './caption';
-export { ClipRect } from './scene/clipRect';
 export { DropShadow } from './scene/dropShadow';
 export { Group } from './scene/group';
 export { Scene } from './scene/scene';
