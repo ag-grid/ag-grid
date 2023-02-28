@@ -19,7 +19,7 @@ const options: AgChartOptions = {
     fontSize: 18,
   },
   subtitle: {
-    text: 'Source: Office for\nNational Statistics',
+    text: 'Source: Office for National Statistics',
   },
   series: [
     {

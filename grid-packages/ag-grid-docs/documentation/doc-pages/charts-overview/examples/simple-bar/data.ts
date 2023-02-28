@@ -5,7 +5,7 @@ export function getData(): any[] {
         { type: 'Professional occupations', earnings: 844, },
         { type: 'Associate professional & technical', earnings: 699, },
         { type: 'Skilled trades', earnings: 503, },
-        { type: 'Process, plant &\nmachine\noperatives', earnings: 501, },
+        { type: 'Process, plant &\nmachine operatives', earnings: 501, },
         { type: 'Administrative & secretarial', earnings: 457, },
         { type: 'Sales & customer services', earnings: 407, },
         { type: 'Elementary occupations', earnings: 380, },
