@@ -5823,6 +5823,32 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "FilterDestroyedEvent": {
+    "source": {
+      "type": {
+        "returnType": "'api' | 'columnChanged' | 'gridDestroyed'",
+        "optional": false
+      }
+    },
+    "column": { "type": { "returnType": "Column", "optional": false } },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "SortChangedEvent": {
     "source": {
       "description": "/** Source of the sort change. */",
