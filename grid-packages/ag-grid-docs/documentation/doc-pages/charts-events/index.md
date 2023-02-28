@@ -91,15 +91,15 @@ This example demonstrates:
 
 ## Chart Event - click and doubleClick
 
-The `click` and `doubleClick` events are fired when any part of the chart is clicked or double clicked, respectively. When a user double clicks the `click` event will be fired on the first click, then the `doubleClick` will be fired on the second click.
+The `click` and `doubleClick` events are fired when any part of the chart is clicked or double clicked, respectively. When a user double clicks the `click` event will be fired on the first click, then both the `click` and `doubleClick` will be fired on the second click.
 
-These events may be prevented by other clickable parts of the chart, such as series-nodes and legend items.
+These events may be prevented by other clickable parts of the chart, such as series nodes and legend items.
 
 ### Example: Single & Double Click Events
 
 This example demonstrates:
 
-- when a chart is clicked, a message is logged to the console
-- when a chart is double clicked, a different message is logged to the console
+- when a blank area on a chart is clicked, a message is logged to the console
+- when a blank area on a chart is double clicked, a different message is logged to the console
 
 <chart-example title='Chart Single & Double Click Events' name='chart-click-event' type='generated'></chart-example>

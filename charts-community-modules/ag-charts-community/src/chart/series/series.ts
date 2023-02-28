@@ -80,6 +80,19 @@ export class SeriesNodeClickEvent<Datum extends { datum: any }> implements Typed
     }
 }
 
+export class SeriesNodeDoubleClickEvent<Datum extends { datum: any }> implements TypedEvent {
+    readonly type = 'nodeDoubleClick';
+    readonly datum: any;
+    readonly event: Event;
+    readonly seriesId: string;
+
+    constructor(nativeEvent: Event, datum: Datum, series: Series) {
+        this.event = nativeEvent;
+        this.datum = datum.datum;
+        this.seriesId = series.id;
+    }
+}
+
 class SeriesItemHighlightStyle {
     @Validate(OPT_COLOR_STRING)
     fill?: string = 'yellow';
@@ -463,8 +476,17 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         this.fireEvent(eventObject);
     }
 
+    fireNodeDoubleClickEvent(event: Event, _datum: C['nodeData'][number]): void {
+        const eventObject = this.getNodeDoubleClickEvent(event, _datum);
+        this.fireEvent(eventObject);
+    }
+
     protected getNodeClickEvent(event: Event, datum: SeriesNodeDatum): SeriesNodeClickEvent<any> {
         return new SeriesNodeClickEvent(event, datum, this);
+    }
+
+    protected getNodeDoubleClickEvent(event: Event, datum: SeriesNodeDatum): SeriesNodeDoubleClickEvent<any> {
+        return new SeriesNodeDoubleClickEvent(event, datum, this);
     }
 
     /**
