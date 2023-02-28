@@ -952,7 +952,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                     line.x2 = -sideFlag * gridLength + gridPadding;
                     line.y1 = 0;
                     line.y2 = 0;
-                    line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;
                 });
             }
 
@@ -1174,7 +1173,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
             let bboxYDimension = 0;
             if (ticks?.length > 0) {
-                const tickBBox = this.computeBBoxForGroups(tickLineGroup, tickLabelGroup);
+                const tickBBox = Group.computeBBox([tickLineGroup, tickLabelGroup]);
                 const tickWidth = rotation === 0 ? tickBBox.width : tickBBox.height;
                 if (Math.abs(tickWidth) < Infinity) {
                     bboxYDimension += tickWidth;
@@ -1216,41 +1215,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     @Validate(NUMBER(0))
     thickness: number = 0;
-
-    computeBBoxForGroups(...groups: Group[]) {
-        let left = Infinity;
-        let right = -Infinity;
-        let top = Infinity;
-        let bottom = -Infinity;
-
-        groups.forEach((g) => {
-            if (!g.visible) {
-                return;
-            }
-            const bbox = g.computeTransformedBBox();
-            if (!bbox) {
-                return;
-            }
-
-            const x = bbox.x;
-            const y = bbox.y;
-
-            if (x < left) {
-                left = x;
-            }
-            if (y < top) {
-                top = y;
-            }
-            if (x + bbox.width > right) {
-                right = x + bbox.width;
-            }
-            if (y + bbox.height > bottom) {
-                bottom = y + bbox.height;
-            }
-        });
-
-        return new BBox(left, top, right - left, bottom - top);
-    }
 
     computeBBox(): BBox {
         return this.axisGroup.computeBBox();

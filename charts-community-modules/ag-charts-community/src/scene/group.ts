@@ -108,40 +108,9 @@ export class Group extends Node {
     }
 
     computeBBox(): BBox {
-        let left = Infinity;
-        let right = -Infinity;
-        let top = Infinity;
-        let bottom = -Infinity;
-
         this.computeTransformMatrix();
 
-        this.children.forEach((child) => {
-            if (!child.visible) {
-                return;
-            }
-            const bbox = child.computeTransformedBBox();
-            if (!bbox) {
-                return;
-            }
-
-            const x = bbox.x;
-            const y = bbox.y;
-
-            if (x < left) {
-                left = x;
-            }
-            if (y < top) {
-                top = y;
-            }
-            if (x + bbox.width > right) {
-                right = x + bbox.width;
-            }
-            if (y + bbox.height > bottom) {
-                bottom = y + bbox.height;
-            }
-        });
-
-        return new BBox(left, top, right - left, bottom - top);
+        return Group.computeBBox(this.children);
     }
 
     computeTransformedBBox(): BBox | undefined {
@@ -301,5 +270,40 @@ export class Group extends Node {
                 ascendingStringNumberUndefined
             );
         });
+    }
+
+    static computeBBox(nodes: Node[]) {
+        let left = Infinity;
+        let right = -Infinity;
+        let top = Infinity;
+        let bottom = -Infinity;
+
+        nodes.forEach((n) => {
+            if (!n.visible) {
+                return;
+            }
+            const bbox = n.computeTransformedBBox();
+            if (!bbox) {
+                return;
+            }
+
+            const x = bbox.x;
+            const y = bbox.y;
+
+            if (x < left) {
+                left = x;
+            }
+            if (y < top) {
+                top = y;
+            }
+            if (x + bbox.width > right) {
+                right = x + bbox.width;
+            }
+            if (y + bbox.height > bottom) {
+                bottom = y + bbox.height;
+            }
+        });
+
+        return new BBox(left, top, right - left, bottom - top);
     }
 }

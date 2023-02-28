@@ -56,17 +56,12 @@ export class CartesianChart extends Chart {
             series: { rect: seriesRect, visible: visibility.series },
         });
 
+        const { seriesRoot } = this;
         if (clipSeries) {
-            const { seriesRoot } = this;
             const { x, y, width, height } = seriesRect;
-            if (!seriesRoot.clipRect) {
-                seriesRoot.clipRect = new BBox(x, y, width, height);
-            } else {
-                seriesRoot.clipRect.x = x;
-                seriesRoot.clipRect.y = y;
-                seriesRoot.clipRect.width = width;
-                seriesRoot.clipRect.height = height;
-            }
+            seriesRoot.clipRect = new BBox(x, y, width, height);
+        } else {
+            seriesRoot.clipRect = undefined;
         }
     }
 

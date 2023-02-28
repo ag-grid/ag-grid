@@ -41,13 +41,6 @@ export class HierarchyChart extends Chart {
         });
 
         const { seriesRoot } = this;
-        if (!seriesRoot.clipRect) {
-            seriesRoot.clipRect = new BBox(shrinkRect.x, shrinkRect.y, shrinkRect.width, shrinkRect.height);
-        } else {
-            seriesRoot.clipRect.x = shrinkRect.x;
-            seriesRoot.clipRect.y = shrinkRect.y;
-            seriesRoot.clipRect.width = shrinkRect.width;
-            seriesRoot.clipRect.height = shrinkRect.height;
-        }
+        seriesRoot.clipRect = new BBox(shrinkRect.x, shrinkRect.y, shrinkRect.width, shrinkRect.height);
     }
 }
