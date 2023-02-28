@@ -34,6 +34,11 @@ const columnDefs: ColDef[] = [
     filter: 'agDateColumnFilter',
     filterParams: filterParams,
   },
+  { field: 'country', filter: 'agSetColumnFilter' },
+  { field: 'sport', filter: 'agMultiColumnFilter' },
+  { field: 'gold', filter: 'agNumberColumnFilter' },
+  { field: 'silver', filter: 'agNumberColumnFilter' },
+  { field: 'bronze', filter: 'agNumberColumnFilter' },
   { field: 'total', filter: false },
 ]
 
@@ -42,7 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    filter: true,
+    filter: 'agTextColumnFilter',
   },
 }
 

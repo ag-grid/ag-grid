@@ -285,16 +285,16 @@
             }
         },
         "filter": {
-            "description": "Filter component to use for this column. <br/>Set to `true` to use the default filter. <br/>Set to the name of a [provided filter](/filtering/#provided-filters) or set to a `IFilterComp`.",
+            "description": "Filter component to use for this column. <br/>Set to `true` to use the default filter. <br/>Set to the name of a [Provided Filter](/filtering/#column-filter-types) or set to a `IFilterComp`.",
             "more": {
-                "name": "Configuring Filters",
-                "url": "/filtering/#configuring-filters-on-columns"
+                "name": "Column Filters",
+                "url": "/filtering/"
             }
         },
         "filterParams": {
             "more": {
                 "name": "Filter Parameters",
-                "url": "/filtering/#filter-parameters"
+                "url": "/filtering/"
             }
         },
         "filterValueGetter": {

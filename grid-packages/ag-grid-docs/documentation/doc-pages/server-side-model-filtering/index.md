@@ -57,8 +57,8 @@ The request object sent to the server contains filter metadata in the `filterMod
 
 Notice in the snippet above the `filterModel` object contains a `'text'` and `'number'` filter. This filter metadata is used by the server to perform the filtering.
 
-For more details on properties and values used in these filters see the section on
-[Simple Column Filters](/filter-provided-simple/).
+For more details on properties and values used in these filters see the sections on
+[Text Filter Model](/filter-text/#text-filter-model) and [Number Filter Model](/filter-number/#number-filter-model).
 
 The example below demonstrates filtering using Simple Column Filters, note the following:
 

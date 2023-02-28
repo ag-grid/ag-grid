@@ -51,3 +51,11 @@ Header Column Separators appear between every column, whereas Resize Handles onl
 ## Full List of Header Variables
 
 <api-documentation source='global-style-customisation-variables/resources/variables.json' section='variables' config='{"namePattern": "--ag-header", "maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>
+
+## Style Header on Filter
+
+Each time a [Column Filter](/filtering/) is applied to a column, the CSS class `ag-header-cell-filtered` is added to the header. This can be used for adding style to headers that are filtered.
+
+The example below adds some styling to `ag-header-cell-filtered`, so when you filter a column you will notice the column header change.
+
+<grid-example title='Style Header' name='style-header-on-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>

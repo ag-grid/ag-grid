@@ -1,47 +1,12 @@
 ---
-title: "Provided Filters"
+title: "Applying Provided Filters"
 ---
 
-This section describes the functionality common to all filters that are provided by the grid.
-
-The grid provides four filters out of the box: three [Simple Filters](/filter-provided-simple/) (Text, Number and Date), and an advanced [Set Filter](/filter-set/) which is available in the Enterprise version of the grid.
-
-Follow the links below to learn more about each specific filter:
-
-- [Text](/filter-text/)
-- [Number](/filter-number/)
-- [Date](/filter-date/)
-- [Set Filter](/filter-set/)<enterprise-icon></enterprise-icon>
-
-The rest of this section will cover concepts that are common to every provided filter.
-
-## Structure of Provided Filters
-
-The diagram below outlines the structure of the filters. Each box represents a filter type with the functions listed in it. For example, all provided filters have button logic, but only the Date filter has a Date Comparator or a Date Picker.
-
-<image-caption src="filter-provided/resources/provided-filters.png" alt="Provided Filters" width="52rem" centered="true" constrained="true"></image-caption>
-
-## Provided Filter UI
-
-Each provided filter is displayed in a UI with optional buttons at the bottom.
-
-<image-caption src="filter-provided/resources/filter-content.png" alt="Filter Content" width="18rem" centered="true"></image-caption>
-
-## Provided Filter Params
-
-All the provided filters have the following parameters:
-
-<interface-documentation interfaceName='IProvidedFilterParams' config='{"description":""}' overrideSrc="filter-provided/resources/provided-filters.json"></interface-documentation>
-
-## Provided Filter API
-
-Provided Filters provide the following methods:
-
-<interface-documentation interfaceName='IProvidedFilter' names='["isFilterActive","getModel","setModel","getModelFromUi","applyModel"]'  config='{"description":""}'></interface-documentation>
+This section describes the different ways to apply the four filters provided by the grid - [Text Filter](/filter-text/), [Number Filter](/filter-number/), [Date Filter](/filter-date/) and [Set Filter](/filter-set/).
 
 ## Apply, Clear, Reset and Cancel Buttons
 
-Each of the provided filters can optionally include Apply, Clear, Reset and Cancel buttons.
+Each of the Provided Filters can optionally include Apply, Clear, Reset and Cancel buttons.
 
 When the Apply button is used, the filter is only applied once the Apply button is pressed. This is useful if the filtering operation will take a long time because the dataset is large, or if using server-side filtering (thus preventing unnecessary calls to the server). Pressing <kbd>Enter</kbd> is equivalent to pressing the Apply button.
 
@@ -66,7 +31,7 @@ The example below demonstrates using the different buttons. It also demonstrates
 
 ## Applying the UI Model
 
-Provided filters maintain a separate model representing what is shown in the UI, which might change without having yet been applied, for example when an Apply button is present and the user has made changes in the UI but not yet clicked Apply. Calling `getModelFromUi()` will always return a model representing the current UI, whereas `getModel()` will return the applied model that is currently being used for filtering.
+Provided Filters maintain a separate model representing what is shown in the UI, which might change without having yet been applied, for example when an Apply button is present and the user has made changes in the UI but not yet clicked Apply. Calling `getModelFromUi()` will always return a model representing the current UI, whereas `getModel()` will return the applied model that is currently being used for filtering.
 
 If any changes are made in the UI when the Apply button is active, or via other API methods whether the Apply button is active or not, you must call `filterInstance.applyModel()` if you want to ensure the UI is applied.
 
@@ -84,3 +49,7 @@ Applying the model is then typically followed by calling `gridApi.onFilterChange
 </snippet>
 
 If no call is made to `filterInstance.applyModel()` then the filter UI will show any changes that have been made, but they won't be reflected in the filter model and therefore won't be reflected in the filtering. This will appear as if the user never hit the Apply button (regardless of whether the Apply button is active or not).
+
+## Next Up
+
+Continue to the next section to learn about the [Filter API](/filter-api/).

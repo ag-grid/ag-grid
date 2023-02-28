@@ -2,9 +2,56 @@
 title: "Text Filter"
 ---
 
-Text filters allow you to filter string data.
+Text Filters allow you to filter string data.
 
-The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the Text Filter that are the same as the other Provided Filters. This page builds on that and explains some details that are specific to the Text Filter.
+<image-caption src="filter-text/resources/text-filter.png" alt="Text Filter" width="12.5rem" centered="true"></image-caption>
+
+## Enabling Text Filters
+
+The Text Filter is the default filter used in AG Grid Community, but it can also be explicitly configured as shown below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            // Text Filter is used by default in Community version
+            filter: true,
+            filterParams: {
+                // pass in additional parameters to the Text Filter
+            },
+        },
+        {
+            field: 'country',
+            // explicitly configure column to use the Text Filter
+            filter: 'agTextColumnFilter',
+            filterParams: {
+                // pass in additional parameters to the Text Filter
+            },
+        },
+    ],
+}
+</snippet>
+
+## Example: Text Filter
+
+The example below shows the Text Filter in action:
+
+- For the **Athlete** column:
+    - There are only two [Filter Options](#text-filter-options): `filterOptions = ['contains', 'notContains']`
+    - There is a [Text Formatter](#text-formatter), so if you search for 'o' it will find '&ouml;'. You can try this by searching the string `'Bjo'`.
+    - The filter has a debounce of 200ms (`debounceMs = 200`).
+    - The AND/OR additional filter is suppressed (`suppressAndOrCondition = true`)
+- For the **Country** column:
+    - There is only one [Filter Option](#text-filter-options): `filterOptions = ['contains']`
+    - There is a [Custom Matcher](#text-custom-matcher) so that aliases can be entered in the filter, e.g. if you filter using the text `'usa'` it will match `United States` or `'holland'` will match `'Netherlands'`
+    - The filter input will be trimmed when the filter is applied (`trimInput = true`)
+    - There is a debounce of 1000ms (`debounceMs = 1000`)
+- For the **Sport** column:
+    - There is a different default [Filter Option](#text-filter-options) (`defaultOption = 'startsWith'`)
+    - The filter is case-sensitive (`caseSensitive = true`)
+
+<grid-example title='Text Filter' name='text-filter' type='generated' options='{ "exampleHeight": 555 }'></grid-example>
 
 ## Text Filter Parameters
 
@@ -95,17 +142,88 @@ const toLowerWithoutAccents = value =>
         .replace(/[ýÿ]/g, 'y');
 ```
 
-## Example: Text Filter
+## Text Filter Model
 
-- The **Athlete** column has only two filter options: `filterOptions = ['contains', 'notContains']`
-- The **Athlete** column has a text formatter, so if you search for 'o' it will find '&ouml;'. You can try this by searching the string `'Bjo'`.
-- The **Athlete** column has a debounce of 200ms (`debounceMs = 200`).
-- The **Athlete** column filter has the AND/OR additional filter suppressed (`suppressAndOrCondition = true`)
-- The **Country** column has only one filter option: `filterOptions = ['contains']`
-- The **Country** column has a `textMatcher` so that aliases can be entered in the filter, e.g. if you filter using the text `'usa'` it will match `United States` or `'holland'` will match `'Netherlands'`
-- The **Country** column will trim the input when the filter is applied (`trimInput = true`)
-- The **Country** column filter has a debounce of 1000ms (`debounceMs = 1000`)
-- The **Sport** column has a different default option (`defaultOption = 'startsWith'`)
-- The **Sport** column filter is case-sensitive (`caseSensitive = true`)
+The Filter Model describes the current state of the applied Number Filter. If only one [Filter Condition](/filter-conditions/) is set, this will be a `TextFilterModel`:
 
-<grid-example title='Text Filter' name='text-filter' type='generated' options='{ "exampleHeight": 555 }'></grid-example>
+<interface-documentation interfaceName='TextFilterModel' config='{"description":""}'></interface-documentation>
+
+If more than one Filter Condition is set, then multiple instances of the model are created and wrapped inside a Combined Model (`ICombinedSimpleModel<TextFilterModel>`). A Combined Model looks as follows:
+
+```ts
+// A filter combining two conditions
+interface ICombinedSimpleModel<TextFilterModel> {
+    filterType: string;
+
+    operator: JoinOperator;
+
+    // two instances of the Filter Model
+    condition1: TextFilterModel;
+    condition2: TextFilterModel;
+}
+
+type JoinOperator = 'AND' | 'OR';
+```
+
+An example of a Filter Model with two conditions is as follows:
+
+```js
+// Text Filter with two conditions, both are equals type
+const textEqualsSwimmingOrEqualsGymnastics = {
+    filterType: 'text',
+    operator: 'OR',
+    condition1: {
+        filterType: 'text',
+        type: 'equals',
+        filter: 'Swimming'
+    },
+    condition2: {
+        filterType: 'text',
+        type: 'equals',
+        filter: 'Gymnastics'
+    }
+};
+```
+
+## Text Filter Options
+
+The Text Filter presents a list of [Filter Options](/filter-conditions/#filter-options) to the user.
+
+The list of options are as follows:
+
+| Option Name             | Option Key            | Included by Default |
+| ----------------------- | --------------------- | ------------------- |
+| Contains                | `contains`            | Yes                 |
+| Not contains            | `notContains`         | Yes                 |
+| Equals                  | `equals`              | Yes                 |
+| Not equal               | `notEqual`            | Yes                 |
+| Starts with             | `startsWith`          | Yes                 |
+| Ends with               | `endsWith`            | Yes                 |
+| Blank                   | `blank`               | Yes                 |
+| Not blank               | `notBlank`            | Yes                 |
+| Choose One              | `empty`               | No                  |
+
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+
+The default option for the Text Filter is `contains`.
+
+## Text Filter Values
+
+By default, the values supplied to the Text Filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition. This is similar to using a [Value Getter](/value-getters), but is specific to the filter.
+
+<api-documentation source='column-properties/properties.json' section='filtering' names='["filterValueGetter"]'></api-documentation>
+
+## Applying the Text Filter
+
+Applying the Text Filter is described in more detail in the following sections:
+
+- [Apply, Clear, Reset and Cancel Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)
+- [Applying the UI Model](/filter-applying/#applying-the-ui-model)
+
+## Data Updates
+
+The Text Filter is not affected by data changes. When the grid data is updated, the filter value will remain unchanged and the filter will be re-applied based on the updated data (e.g. the displayed rows will update if necessary).
+
+## Next Up
+
+Continue to the next section to learn about [Number Filters](/filter-number/).

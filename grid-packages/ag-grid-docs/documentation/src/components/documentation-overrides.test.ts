@@ -21,7 +21,6 @@ const OVERRIDES_TO_TEST = [
     'component-date/resources/dateParams.json',
     'filter-date/resources/date-filter-params.json',
     'filter-number/resources/number-filter-params.json',
-    'filter-provided/resources/provided-filters.json',
     'filter-text/resources/text-filter-params.json',
     'filter-multi/resources/multi-filter.json',
     'filter-set-api/resources/iSetFilter.json',

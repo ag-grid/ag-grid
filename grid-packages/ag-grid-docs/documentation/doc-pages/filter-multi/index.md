@@ -3,7 +3,7 @@ title: "Multi Filter"
 enterprise: true
 ---
 
-The Multi Filter allows multiple [Provided Filters](/filter-provided/) or [Custom Filters](/component-filter/) to be used on the same column. This provides greater flexibility when filtering data in the grid.
+The Multi Filter allows multiple [Provided Filters](/filtering/#column-filter-types) or [Custom Filters](/component-filter/) to be used on the same column. This provides greater flexibility when filtering data in the grid.
 
 <image-caption src="filter-multi/resources/multi-filter.png" alt="Multi Filter" width="34rem" centered="true"></image-caption>
 
@@ -85,7 +85,7 @@ The following example demonstrates the different display styles.
 
 ## Custom Filters
 
-You can use your own [Custom Filters](/filter-custom/) with the Multi Filter.
+You can use your own [Custom Filters](/component-filter/) with the Multi Filter.
 
 The example below shows a Custom Filter in use on the **Year** column, used alongside the grid-provided [Number Filter](/filter-number/).
 
@@ -142,3 +142,7 @@ The example below shows how you can access child filter instances and call metho
 ## Multi Filter API
 
 <interface-documentation interfaceName='IMultiFilterComp' overrideSrc='filter-multi/resources/multi-filter.json' ></interface-documentation>
+
+## Next Up
+
+Continue to the next section to learn about [Filter Conditions](/filter-conditions/).

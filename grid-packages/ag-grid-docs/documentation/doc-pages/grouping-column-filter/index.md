@@ -7,7 +7,7 @@ This section shows how the Group Column Filter can be used when row groups are d
 
 <image-caption src="grouping-column-filter/resources/group-filter.png" alt="Group Column Filter" width="28rem" centered="true"></image-caption>
 
-The Group Column Filter contains the [Provided Filters](/filter-provided/) or [Custom Filters](/component-filter/) 
+The Group Column Filter contains the [Column Filters](/filtering/) (Provided Filters or [Custom Filters](/component-filter/))
 defined on the underlying columns directly in the group columns. When there are multiple underlying columns in the group 
 column, a dropdown is provided to switch between the different column filters.
 
@@ -45,7 +45,7 @@ The following example shows the Group Column Filter with a [Single Group Column]
     - The filter shows as active if any of the underlying filters are active.
     - Multiple underlying filters can be active at the same time.
 - The floating filter for the **Group** column is read-only. If you set a value against both the **Country** and **Year** filters, the floating filter will display the filter value for the field selected in the Group Column Filter dropdown.
-- The other columns demonstrate the different provided filters, and can be added to the group column by dragging them into the [Row Group Panel](/grouping-group-panel/) at the top.
+- The other columns demonstrate the different Provided Filters, and can be added to the group column by dragging them into the [Row Group Panel](/grouping-group-panel/) at the top.
 - If you remove all the columns from the grouping except for the **Athlete** column, the option to show the filter in the **Group** column will be hidden as there is no valid filter to display.
 
 <grid-example title='Group Column Filter - Single Group Column' name='group-filter-single' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "rowgrouping", "menu", "filterpanel", "setfilter", "multifilter"] }'></grid-example>

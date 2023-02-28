@@ -129,7 +129,11 @@ The following example shows how Set Filter values are rendered using a Cell Rend
 
 ## Supplying Filter Values
 
-The Set Filter will obtain the filter values from the row data by default. However it is also possible to provide values, either synchronously or asynchronously, for the Filter List.
+The Set Filter will obtain the filter values from the row data by default. These are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition. This is similar to using a [Value Getter](/value-getters), but is specific to the filter.
+
+<api-documentation source='column-properties/properties.json' section='filtering' names='["filterValueGetter"]'></api-documentation>
+
+It is also possible to provide values for the Filter List. This is necessary when using the [Server-Side Row Model](/server-side-model/). This can be done either synchronously or asynchronously as described below.
 
 ### Synchronous Values
 
@@ -414,5 +418,5 @@ The following example demonstrates tooltips in the Set Filter. Note the followin
 
 ## Next Up
 
-Continue to the next section: [Data Updates](/filter-set-data-updates/).
+Continue to the next section to learn about [Data Updates](/filter-set-data-updates/).
 
