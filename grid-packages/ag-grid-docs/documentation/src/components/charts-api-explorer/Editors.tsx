@@ -175,10 +175,28 @@ export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty, key: strin
     }
 
     if (desc.tsType.indexOf(' | ') >= 0) {
-        const options = desc.tsType
-            .split(' | ')
-            .filter((v) => v.startsWith("'") && v.endsWith("'"))
-            .map((v) => v.substring(1, v.length - 1));
+        let options = desc.tsType.split(' | ');
+
+        const validUnionTypes = [
+            'CssColor',
+            'PixelSize',
+            'Opacity',
+            'Ratio',
+            'FontFamily',
+            'FontStyle',
+            'FontWeight',
+            'DataValue',
+            'number',
+            'string',
+            'boolean',
+        ];
+
+        if (options.some((o) => validUnionTypes.includes(o))) {
+            options = options.filter((o) => validUnionTypes.includes(o));
+            return { editor: CoercedEditor, editorProps: meta };
+        }
+
+        options = options.filter((v) => v.startsWith("'") && v.endsWith("'")).map((v) => v.substring(1, v.length - 1));
 
         if (options.length > 0 && options.every((v) => /^[a-z-]*$/.test(v))) {
             return { editor: PresetEditor, editorProps: { ...meta, options } };
@@ -305,6 +323,20 @@ export const JsonEditor = (props) => (
         {...props}
     />
 );
+
+export const CoercedEditor = (props) => {
+    return (
+        <StringEditor
+            fromStringValue={(value) => {
+                if (value.toLowerCase() === 'false') return false;
+                if (value.toLowerCase() === 'true') return true;
+                if (!isNaN(value) && !isNaN(parseInt(value))) return parseInt(value);
+                return value;
+            }}
+            {...props}
+        />
+    );
+};
 
 export const BooleanEditor = ({ value, onChange }) => (
     <PresetEditor options={[false, true]} value={value} onChange={onChange} />
