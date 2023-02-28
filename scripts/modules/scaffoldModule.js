@@ -153,6 +153,13 @@ const main = async () => {
         fsExtra.copySync(path.resolve(__dirname, './charts-eslintrc.js'), `./${moduleDir}/.eslintrc.js`);
         fsExtra.copySync(path.resolve(__dirname, './charts-eslintignore'), `./${moduleDir}/.eslintignore`);
         fsExtra.copySync(path.resolve(__dirname, './charts-placeholder.test.ts'), `./${moduleDir}/src/placeholder.test.ts`);
+
+        for (const tsconfig of fs.readdirSync(`./${moduleDir}/`).filter(p => p.startsWith('tsconfig.'))) {
+            const filename = `./${moduleDir}/${tsconfig}`;
+            const config = JSON.parse(fs.readFileSync(filename).toString());
+            config.compilerOptions.strict = true;
+            fs.writeFileSync(filename, JSON.stringify(config));
+        }
     }
 
     fs.writeFileSync(`./${moduleDir}/package.json`, JSON.stringify(templatePackageJson, null, 4), 'UTF-8');

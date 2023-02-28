@@ -7,5 +7,5 @@
   "include": [
     "**/*.test.ts",
     "src/**/mock.ts"
-  ],
+  ]
 }
