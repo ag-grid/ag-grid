@@ -5,11 +5,11 @@ import { AgChartOptions } from 'ag-charts-community';
 import {Component} from "@angular/core";
 
 const DATA_UK_LABOUR_MARKET_FEB_2020 = [
-    { type: 'Managers, directors & senior officials', earnings: 954 },
+    { type: 'Managers, directors &\nsenior officials', earnings: 954 },
     { type: 'Professional occupations', earnings: 844 },
     { type: 'Associate professional & technical', earnings: 699 },
     { type: 'Skilled trades', earnings: 503 },
-    { type: 'Process, plant & machine operatives', earnings: 501 },
+    { type: 'Process, plant &\nmachine operatives', earnings: 501 },
     { type: 'Administrative & secretarial', earnings: 457 },
     { type: 'Sales & customer services', earnings: 407 },
     { type: 'Elementary occupations', earnings: 380 },
@@ -47,11 +47,11 @@ describe('AgChartsAngularComponent', () => {
             autoSize: true,
             data: DATA_UK_LABOUR_MARKET_FEB_2020,
             title: {
-                text: 'Gross Weekly Earnings by Occupation (Q4 2019)',
+                text: 'Gross Weekly Earnings\nby Occupation (Q4 2019)',
                 fontSize: 18,
             },
             subtitle: {
-                text: 'Source: Office for National Statistics',
+                text: 'Source: Office for\nNational Statistics',
             },
             series: [
                 {

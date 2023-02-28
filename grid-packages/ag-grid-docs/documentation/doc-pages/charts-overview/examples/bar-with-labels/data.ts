@@ -10,7 +10,7 @@ export function getData(): any[] {
         { job: 'Agriculture forestry and fishing', change: 17 },
         { job: 'Arts & recreation', change: 13 },
         { job: 'Transport & storage', change: -20 },
-        { job: 'Wholesale and retail trade: repair of motor vehicles', change: -36 },
+        { job: 'Wholesale and retail trade:\nrepair of motor vehicles', change: -36 },
         { job: 'Construction', change: -42 },
     ];
 }
