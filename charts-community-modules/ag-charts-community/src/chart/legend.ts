@@ -351,8 +351,12 @@ export class Legend {
             markerLabel.fontFamily = fontFamily;
 
             const id = datum.itemId || datum.id;
-            const text = datum.label.text ?? '<unknown>';
-            markerLabel.text = this.truncate(text, maxLength, maxItemWidth, paddedMarkerWidth, font, id);
+
+            const text = (datum.label.text ?? '<unknown>')
+                .split(/\r?\n/g)
+                .map((line: string) => this.truncate(line, maxLength, maxItemWidth, paddedMarkerWidth, font, id))
+                .join('\n');
+            markerLabel.text = text;
 
             bboxes.push(markerLabel.computeBBox());
         });
@@ -572,15 +576,12 @@ export class Legend {
 
         const { columns, startIndex: visibleStart, endIndex: visibleEnd } = pages[pageNumber];
 
-        // Position legend items using the layout computed above.
-        let x = 0;
-        let y = 0;
+        // Y-coordinate of legend items per column using the layout computed above.
+        const y = columns.map(() => 0);
 
         const columnCount = columns.length;
         const rowCount = columns[0].indices.length;
         const horizontal = this.getOrientation() === 'horizontal';
-
-        const itemHeight = columns[0].bboxes[0].height + paddingY;
 
         const rowSumColumnWidths: number[] = [];
 
@@ -608,14 +609,20 @@ export class Legend {
                 return;
             }
 
-            y = itemHeight * rowIndex;
-            x = rowSumColumnWidths[rowIndex] ?? 0;
+            const x = rowSumColumnWidths[rowIndex] ?? 0;
+            const itemHeight = columns[columnIndex].bboxes[rowIndex].height + paddingY;
+
+            if (rowIndex > 0) {
+                y[columnIndex] += itemHeight / 2;
+            }
 
             rowSumColumnWidths[rowIndex] = (rowSumColumnWidths[rowIndex] ?? 0) + column.columnWidth;
 
             // Round off for pixel grid alignment to work properly.
             markerLabel.translationX = Math.floor(x);
-            markerLabel.translationY = Math.floor(y);
+            markerLabel.translationY = Math.floor(y[columnIndex]);
+
+            y[columnIndex] += itemHeight / 2;
         });
     }
 

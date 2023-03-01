@@ -103,4 +103,50 @@ describe('Legend', () => {
             await compare(chart);
         });
     });
+
+    describe('Multiline chart labels', () => {
+        const positions = ['right', 'bottom'];
+
+        it.each(positions)('should render legend correctly at position [%s]', async (position) => {
+            const makeName = (originalName: string) => 'A\n' + originalName;
+
+            const options = {
+                ...OPTIONS,
+                autoSize: false,
+                width: CANVAS_WIDTH,
+                height: CANVAS_HEIGHT,
+                legend: {
+                    position,
+                },
+                series: SERIES.map((s) => ({ ...s, yName: makeName(s.yName) })),
+            };
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+            await compare(chart);
+        });
+
+        it('mixed line heights', async () => {
+            const makeName = (originalName: string) => {
+                switch (parseInt(originalName) % 3) {
+                    case 0:
+                        return originalName;
+                    case 1:
+                        return 'First line\n' + originalName;
+                    case 2:
+                        return 'First line\nVery long second line which should be truncated\n' + originalName;
+                }
+            };
+
+            const options = {
+                ...OPTIONS,
+                autoSize: false,
+                width: CANVAS_WIDTH,
+                height: CANVAS_HEIGHT,
+                series: SERIES.map((s) => ({ ...s, yName: makeName(s.yName) })),
+            };
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+            await compare(chart);
+        });
+    });
 });
