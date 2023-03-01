@@ -155,7 +155,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     protected getDefaultDebounceMs(): number {
         return 500;
     }
-    
+
     protected setParams(params: TextFilterParams): void {
         this.textFilterParams = params;
 

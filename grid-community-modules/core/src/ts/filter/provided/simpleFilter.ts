@@ -510,7 +510,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     private getDefaultJoinOperator(defaultJoinOperator?: JoinOperator): JoinOperator {
-        return defaultJoinOperator === 'AND' || defaultJoinOperator == 'OR' ? defaultJoinOperator : 'AND';
+        return defaultJoinOperator === 'AND' || defaultJoinOperator === 'OR' ? defaultJoinOperator : 'AND';
     }
 
     private putOptionsIntoDropdown(eType: AgSelect): void {
