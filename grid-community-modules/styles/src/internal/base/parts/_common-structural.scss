@@ -400,6 +400,10 @@
         overflow: hidden; // so when floating filters are height 0px, the contents don't spill out
     }
 
+    .ag-header.ag-header-allow-overflow .ag-header-row {
+        overflow: visible;
+    }
+
     .ag-header-cell {
         display: inline-flex;
         align-items: center;
@@ -1336,6 +1340,10 @@
         align-items: center;
         height: 100%;
         position: absolute;
+    }
+
+    .ag-header-group-cell-no-group.ag-header-span-height .ag-header-cell-resize {
+        display: none;
     }
 
     .ag-cell-label-container {

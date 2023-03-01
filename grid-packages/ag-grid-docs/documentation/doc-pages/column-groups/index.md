@@ -141,3 +141,40 @@ The example above shows adding and removing groups. It is also possible to add a
 - When you move from **Normal Cols** to **Extra Cols**, three new columns are added to the list. Two belong to the **Athlete Details** group, the other belongs to no group.
 
 <grid-example title='Group Changes 2' name='group-changes-2' type='generated'></grid-example>
+
+## Span Header Height
+
+By default the Grid will balance the heather groups with different number of levels with "dummy" padding heather elements, as shown in the example below, note the following:
+
+- The **age** column has padding above it (shown with red borders).
+
+<grid-example title='Padded Header' name='padded-header' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
+
+Using the **Column Property** `spanHeaderHeight` will allow the header cell to span the whole height of the header container instead of using padding.
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            spanHeaderHeight: true
+        },
+        {
+            headerName: 'Athlete Details',
+            children: [
+                { field: 'country' },
+                { field: 'age' },
+            ],
+        },
+    ]
+}
+</snippet>
+
+In the example below, not the following: 
+
+- The **name** column is not under a group, but spans the height of the header container.
+
+<grid-example title='Span Header Height' name='span-header-height' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
+
+[[warning]]
+| The property `spanHeaderHeight`  does not work with `autoHeaderHeight`.

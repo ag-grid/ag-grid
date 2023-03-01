@@ -2,12 +2,13 @@
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
     "search.exclude": {
-        "**/node_modules": true,
+        "**/ag-grid-docs/_dev/**": true,
+        "**/ag-grid-docs/.cache/**": true,
+        "**/ag-grid-docs/public/**": true,
         "**/build": true,
         "**/dist": true,
-        "**/ag-grid-docs/_dev/**": true,
-        "**/ag-grid-docs/public/**": true,
-        "**/ag-grid-docs/.cache/**": true
+        "**/node_modules": true,
+        "**/typings": true
     },
     "typescript.tsdk": "node_modules/typescript/lib",
     "[typescript]": {

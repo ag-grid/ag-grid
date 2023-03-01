@@ -157,6 +157,12 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGridEv
     eGui: HTMLElement;
 }
 
+// internal event
+export interface FilterDestroyedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: 'api' | 'columnChanged' | 'gridDestroyed';
+    column: Column;
+}
+
 export interface SortChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** Source of the sort change. */
     source: string;

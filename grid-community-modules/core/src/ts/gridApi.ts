@@ -907,7 +907,7 @@ export class GridApi<TData = any> {
     public destroyFilter(key: string | Column) {
         const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.destroyFilter(column, "filterDestroyed");
+            return this.filterManager.destroyFilter(column, 'api');
         }
     }
 

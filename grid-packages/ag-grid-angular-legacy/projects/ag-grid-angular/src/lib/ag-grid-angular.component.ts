@@ -335,11 +335,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressCopySingleCellRanges: boolean | undefined = undefined;
     /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false`     */
     @Input() public suppressLastEmptyLineOnPaste: boolean | undefined = undefined;
-    /** Set to `true` to turn off paste operations within the grid.     */
+    /** Set to `true` to turn off paste operations within the grid. Default: `false`     */
     @Input() public suppressClipboardPaste: boolean | undefined = undefined;
-    /** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround.     */
+    /** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. Default: `false`     */
     @Input() public suppressClipboardApi: boolean | undefined = undefined;
-    /** Set to `true` to block     **cut** operations within the grid     */
+    /** Set to `true` to block     **cut** operations within the grid. Default: `false`     */
     @Input() public suppressCutToClipboard: boolean | undefined = undefined;
     /** Array of Column / Column Group definitions.     */
     @Input() public columnDefs: (TColDef | ColGroupDef<TData>)[] | null | undefined = undefined;
@@ -431,8 +431,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public quickFilterText: string | undefined = undefined;
     /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false`     */
     @Input() public cacheQuickFilter: boolean | undefined = undefined;
-    /** 
-         * Set to `true` to exclude hidden columns from being checked by the Quick Filter.
+    /** Set to `true` to exclude hidden columns from being checked by the Quick Filter.
          * This can give a significant performance improvement when there are a large number of hidden columns,
          * and you are only interested in filtering on what's visible. Default: `false`
          */
@@ -763,7 +762,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
-    /** 
+    /**
          * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
          * Default: `false`
          */

@@ -605,7 +605,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "tooltipComponent": {
-      "description": "/** \n    * Provide your own tooltip component for the column.\n    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.\n    */",
+      "description": "/** Provide your own tooltip component for the column.\n    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.\n    */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentFramework": {
@@ -699,7 +699,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "tooltipComponent": {
-      "description": "/** \n    * Provide your own tooltip component for the column.\n    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.\n    */",
+      "description": "/** Provide your own tooltip component for the column.\n    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.\n    */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentFramework": {
@@ -803,7 +803,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "field": {
-      "description": "/** \n     * The field of the row object to get the cell's data from.\n     * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.\n     */",
+      "description": "/** The field of the row object to get the cell's data from.\n     * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "type": {
@@ -1139,7 +1139,7 @@
       "type": { "returnType": "CellClassRules<TData>", "optional": true }
     },
     "cellRenderer": {
-      "description": "/** \n    * Provide your own cell Renderer component for this column's cells.\n    * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.\n    */",
+      "description": "/** Provide your own cell Renderer component for this column's cells.\n    * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.\n    */",
       "type": { "returnType": "any", "optional": true }
     },
     "cellRendererFramework": {
@@ -1275,7 +1275,7 @@
       "type": { "returnType": "(SortDirection)[]", "optional": true }
     },
     "comparator": {
-      "description": "/** Override the default sorting order by providing a custom sort comparator. \n     * \n     * - `valueA`, `valueB` are the values to compare.\n     * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.\n     * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.\n     * \n     * Return:\n     *  - `0`  valueA is the same as valueB\n     *  - `> 0` Sort valueA after valueB \n     *  - `< 0` Sort valueA before valueB\n     */",
+      "description": "/** Override the default sorting order by providing a custom sort comparator.\n     *\n     * - `valueA`, `valueB` are the values to compare.\n     * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.\n     * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.\n     *\n     * Return:\n     *  - `0`  valueA is the same as valueB\n     *  - `> 0` Sort valueA after valueB\n     *  - `< 0` Sort valueA before valueB\n     */",
       "type": {
         "arguments": {
           "valueA": "any",
@@ -1352,6 +1352,10 @@
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "string[]", "optional": true }
     },
+    "spanHeaderHeight": {
+      "description": "/** Set to `true` if you want this column header for this column to span the whole height of the header container. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "headerName": {
       "description": "/** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */",
@@ -1397,7 +1401,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "tooltipComponent": {
-      "description": "/** \n    * Provide your own tooltip component for the column.\n    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.\n    */",
+      "description": "/** Provide your own tooltip component for the column.\n    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.\n    */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentFramework": {
@@ -2427,15 +2431,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardPaste": {
-      "description": "/** Set to `true` to turn off paste operations within the grid. */",
+      "description": "/** Set to `true` to turn off paste operations within the grid. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardApi": {
-      "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
+      "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressCutToClipboard": {
-      "description": "/** Set to `true` to block **cut** operations within the grid */",
+      "description": "/** Set to `true` to block **cut** operations within the grid. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "columnDefs": {
@@ -2612,7 +2616,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeHiddenColumnsFromQuickFilter": {
-      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
+      "description": "/** Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -3161,7 +3165,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
+      "description": "/**\n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
@@ -5805,6 +5809,32 @@
       "description": "/** Parent element of the filter */",
       "type": { "returnType": "HTMLElement", "optional": false }
     },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "FilterDestroyedEvent": {
+    "source": {
+      "type": {
+        "returnType": "'api' | 'columnChanged' | 'gridDestroyed'",
+        "optional": false
+      }
+    },
+    "column": { "type": { "returnType": "Column", "optional": false } },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -20823,15 +20853,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardPaste": {
-      "description": "/** Set to `true` to turn off paste operations within the grid. */",
+      "description": "/** Set to `true` to turn off paste operations within the grid. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardApi": {
-      "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
+      "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressCutToClipboard": {
-      "description": "/** Set to `true` to block **cut** operations within the grid */",
+      "description": "/** Set to `true` to block **cut** operations within the grid. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "columnDefs": {
@@ -21008,7 +21038,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeHiddenColumnsFromQuickFilter": {
-      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
+      "description": "/** Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -21557,7 +21587,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
+      "description": "/**\n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
@@ -23625,15 +23655,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardPaste": {
-      "description": "/** Set to `true` to turn off paste operations within the grid. */",
+      "description": "/** Set to `true` to turn off paste operations within the grid. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardApi": {
-      "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
+      "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressCutToClipboard": {
-      "description": "/** Set to `true` to block **cut** operations within the grid */",
+      "description": "/** Set to `true` to block **cut** operations within the grid. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "columnDefs": {
@@ -23810,7 +23840,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeHiddenColumnsFromQuickFilter": {
-      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
+      "description": "/** Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -24359,7 +24389,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
+      "description": "/**\n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
@@ -26433,15 +26463,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardPaste": {
-      "description": "/** Set to `true` to turn off paste operations within the grid. */",
+      "description": "/** Set to `true` to turn off paste operations within the grid. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardApi": {
-      "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
+      "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressCutToClipboard": {
-      "description": "/** Set to `true` to block **cut** operations within the grid */",
+      "description": "/** Set to `true` to block **cut** operations within the grid. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "columnDefs": {
@@ -26618,7 +26648,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeHiddenColumnsFromQuickFilter": {
-      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
+      "description": "/** Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -27167,7 +27197,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortOnServer": {
-      "description": "/** \n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
+      "description": "/**\n     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {

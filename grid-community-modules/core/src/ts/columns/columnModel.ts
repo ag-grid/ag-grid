@@ -100,20 +100,20 @@ export interface ApplyColumnStateParams {
 
 export interface ISizeColumnsToFitParams {
     /** Defines a default minimum width for every column (does not override the column minimum width) */
-    defaultMinWidth?: number,
+    defaultMinWidth?: number;
     /** Defines a default maximum width for every column (does not override the column maximum width) */
-    defaultMaxWidth?: number,
+    defaultMaxWidth?: number;
     /** Provides a minimum and/or maximum width to specific columns */
-    columnLimits?: IColumnLimit[]
+    columnLimits?: IColumnLimit[];
 }
 
 export interface IColumnLimit {
     /** Selector for the column to which these dimension limits will apply */
-    key: Column | string,
+    key: Column | string;
     /** Defines a minimum width for this column (does not override the column minimum width) */
-    minWidth?: number,
+    minWidth?: number;
     /** Defines a maximum width for this column (does not override the column maximum width) */
-    maxWidth?: number
+    maxWidth?: number;
 }
 
 export interface ColDefPropertyChangedEvent extends PropertyChangedEvent {
@@ -318,7 +318,7 @@ export class ColumnModel extends BeanStub {
         }
 
         // what's left can be destroyed
-        const colsToDestroy = Object.values(oldObjectsById).filter( item => item != null);
+        const colsToDestroy = Object.values(oldObjectsById).filter(item => item != null);
         this.destroyBeans(colsToDestroy);
     }
 
@@ -3175,7 +3175,6 @@ export class ColumnModel extends BeanStub {
     }
 
     private processSecondaryColumnDefinitions(colDefs: (ColDef | ColGroupDef)[] | null) {
-
         const columnCallback = this.gridOptionsService.get('processPivotResultColDef') || this.gridOptionsService.get('processSecondaryColDef');
         const groupCallback = this.gridOptionsService.get('processPivotResultColGroupDef') || this.gridOptionsService.get('processSecondaryColGroupDef');
 
@@ -3213,7 +3212,7 @@ export class ColumnModel extends BeanStub {
             this.lastSecondaryOrder = this.gridColumns;
         }
 
-        let sortOrderToRecover: Column[] | undefined = undefined;
+        let sortOrderToRecover: Column[] | undefined;
 
         if (this.secondaryColumns && this.secondaryBalancedTree) {
             const hasSameColumns = this.secondaryColumns.every((col) => {
@@ -3223,7 +3222,6 @@ export class ColumnModel extends BeanStub {
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
             this.gridColumns = this.secondaryColumns.slice();
             this.gridColsArePrimary = false;
-
 
             // If the current columns are the same or a subset of the previous
             // we keep the previous order, otherwise we go back to the order the pivot
@@ -3243,7 +3241,6 @@ export class ColumnModel extends BeanStub {
             sortOrderToRecover = this.lastPrimaryOrder;
         }
 
-
         // create the new auto columns
         const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
         // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
@@ -3256,7 +3253,6 @@ export class ColumnModel extends BeanStub {
         }
         this.addAutoGroupToGridColumns();
         this.orderGridColsLike(sortOrderToRecover);
-
 
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
         this.refreshQuickFilterColumns();
@@ -3399,10 +3395,10 @@ export class ColumnModel extends BeanStub {
 
     private addAutoGroupToGridColumns(): void {
 
-        if (missing(this.groupAutoColumns)) { 
+        if (missing(this.groupAutoColumns)) {
             this.destroyOldColumns(this.groupAutoColsBalancedTree);
             this.groupAutoColsBalancedTree = null;
-            return; 
+            return;
         }
 
         this.gridColumns = this.groupAutoColumns ? this.groupAutoColumns.concat(this.gridColumns) : this.gridColumns;
@@ -3980,11 +3976,11 @@ export class ColumnModel extends BeanStub {
     }
 
     public isGroupSuppressAutoColumn() {
-        const groupDisplayType = this.gridOptionsService.get('groupDisplayType')
+        const groupDisplayType = this.gridOptionsService.get('groupDisplayType');
         const isCustomRowGroups = groupDisplayType ? matchesGroupDisplayType('custom', groupDisplayType) : false;
 
         if (isCustomRowGroups) { return true; }
-        const treeDataDisplayType = this.gridOptionsService.get('treeDataDisplayType')
+        const treeDataDisplayType = this.gridOptionsService.get('treeDataDisplayType');
         return treeDataDisplayType ? matchesTreeDataDisplayType('custom', treeDataDisplayType) : false;
     }
 
