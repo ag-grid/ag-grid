@@ -456,11 +456,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private setupSpanHeaderHeight(eGui: HTMLElement) {
         if (!this.column.getColDef().spanHeaderHeight) { return; }
 
-        const multiplier = this.getNumberOfPaddedParents() + 1;
+        const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
+
+        const multiplier = numberOfParents + 1;
 
         this.comp.addOrRemoveCssClass('ag-header-span-height', multiplier > 1);
 
         if (multiplier === 1) { return; }
+
+        this.comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
 
         const headerHeight = this.environment.getFromTheme(48, 'headerHeight');
 
@@ -468,13 +472,23 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         eGui.style.setProperty('height', `${headerHeight * multiplier}px`);
     }
 
-    private getNumberOfPaddedParents(): number {
-        const parent = this.column.getParent();
+    private getColumnGroupPaddingInfo(): { numberOfParents: number, isSpanningTotal: boolean } {
+        let parent = this.column.getParent();
 
-        if (!parent || !parent.isPadding()) { return 0; }
+        if (!parent || !parent.isPadding()) { return { numberOfParents: 0, isSpanningTotal: false }; }
 
-        return parent.getPaddingLevel() + 1;
+        const numberOfParents = parent.getPaddingLevel() + 1;
+        let isSpanningTotal = true;
 
+        while (parent) {
+            if (!parent.isPadding()) {
+                isSpanningTotal = false;
+                break;
+            }
+            parent = parent.getParent();
+        }
+
+        return { numberOfParents, isSpanningTotal };
     }
 
     private setupAutoHeight(wrapperElement: HTMLElement) {
