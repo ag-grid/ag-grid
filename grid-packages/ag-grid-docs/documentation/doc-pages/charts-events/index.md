@@ -45,6 +45,22 @@ Unlike other series, the `nodeClick` event `datum` parameter for Histogram serie
 
 <interface-documentation interfaceName='AgHistogramBinDatum' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
 
+## Series Event - nodeDoubleClick
+
+Fired when this series' node is double clicked.
+
+Every `nodeDoubleClick` event contains:
+
+- the `series` the node belongs to
+- the piece of chart data or `datum`
+- the specific keys in that `datum` that were used to fetch the values represented by the clicked node
+
+### Example: nodeDoubleClick Event
+
+This example shows how the `nodeDoubleClick` event listener can be used to listen to column double clicks.
+
+<chart-example title='Node Double Click Event' name='node-double-click-event' type='generated'></chart-example>
+
 ## Interaction Ranges
 
 By default, the `nodeClick` event is only triggered when the user clicks exactly on a node. You can use the `nodeClickRange` option to instead define a range at which the event is triggered. This can be set to one of three values: `'nearest'`, `'exact'` or a number as a distance in pixels.

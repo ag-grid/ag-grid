@@ -6,7 +6,7 @@ const options: AgChartOptions = {
     text: "Number of Cars Sold",
   },
   subtitle: {
-    text: "(click a column for details)",
+    text: "(double click a column for details)",
   },
   data: [
     { month: "March", units: 25, brands: { BMW: 10, Toyota: 15 } },
@@ -19,7 +19,7 @@ const options: AgChartOptions = {
       xKey: "month",
       yKey: "units",
       listeners: {
-        nodeClick: (event: any) => {
+        nodeDoubleClick: (event: any) => {
           var datum = event.datum
           window.alert(
             "Cars sold in " +
