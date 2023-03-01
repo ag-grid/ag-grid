@@ -75,6 +75,7 @@ export class CartesianSeriesNodeClickEvent<
 > extends CartesianSeriesNodeBaseClickEvent<Datum> {
     readonly type = 'nodeClick';
 }
+
 export class CartesianSeriesNodeDoubleClickEvent<
     Datum extends { datum: any }
 > extends CartesianSeriesNodeBaseClickEvent<Datum> {

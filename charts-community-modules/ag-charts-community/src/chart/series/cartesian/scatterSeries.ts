@@ -45,6 +45,7 @@ class ScatterSeriesNodeBaseClickEvent extends CartesianSeriesNodeBaseClickEvent<
 export class ScatterSeriesNodeClickEvent extends ScatterSeriesNodeBaseClickEvent {
     readonly type = 'nodeClick';
 }
+
 export class ScatterSeriesNodeDoubleClickEvent extends ScatterSeriesNodeBaseClickEvent {
     readonly type = 'nodeDoubleClick';
 }

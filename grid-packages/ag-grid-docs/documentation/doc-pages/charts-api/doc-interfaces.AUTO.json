@@ -1522,7 +1522,7 @@
     "event": { "type": { "returnType": "Event", "optional": false } },
     "meta": { "typeParams": ["T extends string"] }
   },
-  "AgNodeAnyClickEvent": {
+  "AgNodeBaseClickEvent": {
     "type": {
       "description": "/** Event type. */",
       "type": { "returnType": "T", "optional": false }

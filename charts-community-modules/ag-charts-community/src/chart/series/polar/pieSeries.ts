@@ -69,6 +69,7 @@ class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
 class PieSeriesNodeClickEvent extends PieSeriesNodeBaseClickEvent {
     readonly type = 'nodeClick';
 }
+
 class PieSeriesNodeDoubleClickEvent extends PieSeriesNodeBaseClickEvent {
     readonly type = 'nodeDoubleClick';
 }

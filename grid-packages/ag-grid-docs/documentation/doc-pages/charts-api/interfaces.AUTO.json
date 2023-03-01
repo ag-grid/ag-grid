@@ -989,7 +989,7 @@
     "meta": { "typeParams": ["T extends string"] },
     "type": { "type": "T", "event": "Event" }
   },
-  "AgNodeAnyClickEvent": {
+  "AgNodeBaseClickEvent": {
     "meta": { "typeParams": ["T extends string"] },
     "type": {
       "type": "T",

@@ -81,6 +81,7 @@ export class SeriesNodeBaseClickEvent<Datum extends { datum: any }> implements T
 }
 
 export class SeriesNodeClickEvent<Datum extends { datum: any }> extends SeriesNodeBaseClickEvent<Datum> {}
+
 export class SeriesNodeDoubleClickEvent<Datum extends { datum: any }> extends SeriesNodeBaseClickEvent<Datum> {
     readonly type = 'nodeDoubleClick';
 }
