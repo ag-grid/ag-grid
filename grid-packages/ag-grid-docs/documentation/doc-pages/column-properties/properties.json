@@ -443,6 +443,7 @@
         "toolPanelClass": {},
         "suppressColumnsToolPanel": {},
         "suppressFiltersToolPanel": {},
+        "spanHeaderHeight": {},
         "tooltipComponent": {
             "description": "Provide your own tooltip component for the column group.",
             "more": {
