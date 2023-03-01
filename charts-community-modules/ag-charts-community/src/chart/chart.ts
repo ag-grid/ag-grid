@@ -1095,11 +1095,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
             ...event,
             type: 'seriesNodeDoubleClick',
         };
-        Object.defineProperty(seriesNodeDoubleClick, 'series', {
-            enumerable: false,
-            // Should display the deprecation warning
-            get: () => (event as any).series,
-        });
         this.fireEvent(seriesNodeDoubleClick);
     };
 

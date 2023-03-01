@@ -7,7 +7,7 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
-import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeClickEvent } from './../series';
+import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent } from './../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
@@ -41,7 +41,7 @@ import {
     AgPieSeriesFormatterParams,
 } from '../../agChartOptions';
 
-class PieSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
+class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
     @DeprecatedAndRenamedTo('calloutLabelKey')
     readonly labelKey?: string;
@@ -64,6 +64,13 @@ class PieSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
         this.sectorLabelKey = sectorLabelKey;
         this.radiusKey = radiusKey;
     }
+}
+
+class PieSeriesNodeClickEvent extends PieSeriesNodeBaseClickEvent {
+    readonly type = 'nodeClick';
+}
+class PieSeriesNodeDoubleClickEvent extends PieSeriesNodeBaseClickEvent {
+    readonly type = 'nodeDoubleClick';
 }
 
 interface PieNodeDatum extends SeriesNodeDatum {
@@ -1071,6 +1078,18 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     protected getNodeClickEvent(event: MouseEvent, datum: PieNodeDatum): PieSeriesNodeClickEvent {
         return new PieSeriesNodeClickEvent(
+            this.angleKey,
+            this.calloutLabelKey,
+            this.sectorLabelKey,
+            this.radiusKey,
+            event,
+            datum,
+            this
+        );
+    }
+
+    protected getNodeDoubleClickEvent(event: MouseEvent, datum: PieNodeDatum): PieSeriesNodeDoubleClickEvent {
+        return new PieSeriesNodeDoubleClickEvent(
             this.angleKey,
             this.calloutLabelKey,
             this.sectorLabelKey,

@@ -7,7 +7,7 @@ import { SeriesNodeDatum, SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMo
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legendDatum';
-import { CartesianSeries, CartesianSeriesNodeClickEvent } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
 import { ChartAxis, flipChartAxisDirection } from '../../chartAxis';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
@@ -465,6 +465,13 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     protected getNodeClickEvent(event: MouseEvent, datum: BarNodeDatum): CartesianSeriesNodeClickEvent<any> {
         return new CartesianSeriesNodeClickEvent(this.xKey, datum.yKey, event, datum, this);
+    }
+
+    protected getNodeDoubleClickEvent(
+        event: MouseEvent,
+        datum: BarNodeDatum
+    ): CartesianSeriesNodeDoubleClickEvent<any> {
+        return new CartesianSeriesNodeDoubleClickEvent(this.xKey, datum.yKey, event, datum, this);
     }
 
     private getCategoryAxis(): ChartAxis<Scale<any, number>> | undefined {

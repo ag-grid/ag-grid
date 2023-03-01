@@ -59,8 +59,8 @@ export type SeriesNodePickMatch = {
 const warnDeprecated = createDeprecationWarning();
 const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get the series ID');
 
-export class SeriesNodeClickEvent<Datum extends { datum: any }> implements TypedEvent {
-    readonly type = 'nodeClick';
+export class SeriesNodeBaseClickEvent<Datum extends { datum: any }> implements TypedEvent {
+    readonly type: 'nodeClick' | 'nodeDoubleClick' = 'nodeClick';
     readonly datum: any;
     readonly event: Event;
     readonly seriesId: string;
@@ -80,17 +80,9 @@ export class SeriesNodeClickEvent<Datum extends { datum: any }> implements Typed
     }
 }
 
-export class SeriesNodeDoubleClickEvent<Datum extends { datum: any }> implements TypedEvent {
+export class SeriesNodeClickEvent<Datum extends { datum: any }> extends SeriesNodeBaseClickEvent<Datum> {}
+export class SeriesNodeDoubleClickEvent<Datum extends { datum: any }> extends SeriesNodeBaseClickEvent<Datum> {
     readonly type = 'nodeDoubleClick';
-    readonly datum: any;
-    readonly event: Event;
-    readonly seriesId: string;
-
-    constructor(nativeEvent: Event, datum: Datum, series: Series) {
-        this.event = nativeEvent;
-        this.datum = datum.datum;
-        this.seriesId = series.id;
-    }
 }
 
 class SeriesItemHighlightStyle {
