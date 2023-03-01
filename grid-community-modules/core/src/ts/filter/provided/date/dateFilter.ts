@@ -238,15 +238,15 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         dateConditionComps.push(this.createDateCompWrapper(eConditionPanel));
     }
 
-    protected removeValueElements(startPosition: number): void {
-        this.removeDateComps(this.dateConditionFromComps, startPosition);
-        this.removeDateComps(this.dateConditionToComps, startPosition);
-        this.eConditionPanelsFrom.splice(startPosition);
-        this.eConditionPanelsTo.splice(startPosition);
+    protected removeValueElements(startPosition: number, deleteCount?: number): void {
+        this.removeDateComps(this.dateConditionFromComps, startPosition, deleteCount);
+        this.removeDateComps(this.dateConditionToComps, startPosition, deleteCount);
+        this.removeItems(this.eConditionPanelsFrom, startPosition, deleteCount);
+        this.removeItems(this.eConditionPanelsTo, startPosition, deleteCount);
     }
 
-    protected removeDateComps(components: DateCompWrapper[], startPosition: number): void {
-        const removedComponents = components.splice(startPosition);
+    protected removeDateComps(components: DateCompWrapper[], startPosition: number, deleteCount?: number): void {
+        const removedComponents = this.removeItems(components, startPosition, deleteCount);
         removedComponents.forEach(comp => comp.destroy());
     }
 

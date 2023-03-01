@@ -249,9 +249,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         eCondition.appendChild(eValue.getGui());
     }
 
-    protected removeValueElements(startPosition: number): void {
-        this.removeComponents(this.eValuesFrom, startPosition);
-        this.removeComponents(this.eValuesTo, startPosition);
+    protected removeValueElements(startPosition: number, deleteCount?: number): void {
+        this.removeComponents(this.eValuesFrom, startPosition, deleteCount);
+        this.removeComponents(this.eValuesTo, startPosition, deleteCount);
     }
 
     protected mapValuesFromModel(filterModel: TextFilterModel | null): Tuple<string> {

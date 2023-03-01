@@ -136,9 +136,9 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         eCondition.appendChild(eValue.getGui());
     }
 
-    protected removeValueElements(startPosition: number): void {
-        this.removeComponents(this.eValuesFrom, startPosition);
-        this.removeComponents(this.eValuesTo, startPosition);
+    protected removeValueElements(startPosition: number, deleteCount?: number): void {
+        this.removeComponents(this.eValuesFrom, startPosition, deleteCount);
+        this.removeComponents(this.eValuesTo, startPosition, deleteCount);
     }
 
     protected getValues(position: number): Tuple<number> {
