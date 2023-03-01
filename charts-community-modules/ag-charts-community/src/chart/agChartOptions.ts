@@ -491,7 +491,7 @@ interface AgChartEvent<T extends string> {
     event: Event;
 }
 
-export interface AgNodeAnyClickEvent<T extends string> extends AgChartEvent<T> {
+export interface AgNodeBaseClickEvent<T extends string> extends AgChartEvent<T> {
     /** Event type. */
     type: T;
     /** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */
@@ -520,8 +520,8 @@ export interface AgNodeAnyClickEvent<T extends string> extends AgChartEvent<T> {
     radiusKey?: string;
 }
 
-export interface AgNodeClickEvent extends AgNodeAnyClickEvent<'seriesNodeClick'> {}
-export interface AgNodeDoubleClickEvent extends AgNodeAnyClickEvent<'seriesNodeDoubleClick'> {}
+export interface AgNodeClickEvent extends AgNodeBaseClickEvent<'seriesNodeClick'> {}
+export interface AgNodeDoubleClickEvent extends AgNodeBaseClickEvent<'seriesNodeDoubleClick'> {}
 
 export interface AgChartClickEvent extends AgChartEvent<'click'> {}
 export interface AgChartDoubleClickEvent extends AgChartEvent<'doubleClick'> {}

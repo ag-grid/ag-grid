@@ -80,6 +80,7 @@ class TreemapSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
 class TreemapSeriesNodeClickEvent extends TreemapSeriesNodeBaseClickEvent {
     readonly type = 'nodeClick';
 }
+
 class TreemapSeriesNodeDoubleClickEvent extends TreemapSeriesNodeBaseClickEvent {
     readonly type = 'nodeDoubleClick';
 }
