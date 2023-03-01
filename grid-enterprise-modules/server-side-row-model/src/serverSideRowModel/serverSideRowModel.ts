@@ -186,6 +186,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         if (resetRequired) {
             this.resetRootStore();
+        } else {
+            // cols may have changed even if we didn't do a reset. storeParams ref will be provided when getRows
+            // is called, so it's important to keep it up to date.
+            const newParams = this.createStoreParams();
+            this.storeParams.rowGroupCols = newParams.rowGroupCols;
+            this.storeParams.pivotCols = newParams.pivotCols;
+            this.storeParams.valueCols = newParams.valueCols;
         }
     }
 
