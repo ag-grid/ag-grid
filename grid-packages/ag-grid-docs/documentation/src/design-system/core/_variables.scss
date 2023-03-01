@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "utils" as *;
 
 // Configuration
 // =============
@@ -39,14 +40,14 @@ $font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica 
 
 $monospace-font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
 
-$font-size-extra-small: math.div(12rem, 16); // convert px values to rems
-$font-size-small: math.div(14rem, 16); // convert px values to rems
-$font-size-medium: math.div(16rem, 16); // convert px values to rems
-$font-size-large: math.div(20rem, 16); // convert px values to rems
-$font-size-extra-large: math.div(26rem, 16); // convert px values to rems
-$font-size-massive: math.div(36rem, 16); // convert px values to rems
-$font-size-gigantic: math.div(48rem, 16); // convert px values to rems
-$font-size-gargantuan: math.div(66rem, 16); // convert px values to rems
+$font-size-extra-small: px-to-rem(12); // convert px values to rems
+$font-size-small: px-to-rem(14); // convert px values to rems
+$font-size-medium: px-to-rem(16); // convert px values to rems
+$font-size-large: px-to-rem(20); // convert px values to rems
+$font-size-extra-large: px-to-rem(26); // convert px values to rems
+$font-size-massive: px-to-rem(36); // convert px values to rems
+$font-size-gigantic: px-to-rem(48); // convert px values to rems
+$font-size-gargantuan: px-to-rem(66); // convert px values to rems
 
 $font-weight-normal: 400;
 $font-weight-thin: 300;
