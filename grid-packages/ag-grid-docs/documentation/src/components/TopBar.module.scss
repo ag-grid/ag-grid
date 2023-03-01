@@ -13,9 +13,9 @@
 }
 
 .topBarNavButton {
-}
-
-.topBarNavIcon {
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        display: none !important; // !important for .ag-styles specificity
+    }
 }
 
 // .top-bar {

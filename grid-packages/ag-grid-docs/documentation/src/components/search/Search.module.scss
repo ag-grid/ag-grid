@@ -1,3 +1,10 @@
-.search-form {
-    composes: flex-grow-1 form-group mb-0 from global;
+@use '../../design-system' as *;
+
+.searchForm {
+    flex-grow: 1;
+    margin-right: auto !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        max-width: 380px;
+    }
 }

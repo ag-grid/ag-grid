@@ -54,6 +54,10 @@
 
 .frameworkSelector.showSelected {
     border: 2px solid var(--border-color);
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        width: auto;
+    }
 }
 
 .frameworkSelector.showSelected .option {
