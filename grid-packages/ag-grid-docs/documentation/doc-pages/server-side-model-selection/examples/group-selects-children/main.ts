@@ -1,7 +1,8 @@
-import { Grid, GridOptions, GetRowIdParams, IServerSideDatasource, IRowNode } from '@ag-grid-community/core'
+import { Grid, GridOptions, GetRowIdParams, IsServerSideGroupOpenByDefaultParams, IServerSideDatasource, IRowNode } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
+    { field: 'country', rowGroup: true, hide: true },
     { field: 'year', rowGroup: true, hide: true },
     { field: 'athlete', hide: true },
     { field: 'sport', checkboxSelection: true },
@@ -16,15 +17,21 @@ const gridOptions: GridOptions<IOlympicData> = {
     sortable: true,
   },
   getRowId: (params: GetRowIdParams) => {
-    var data = params.data;
-    // use year for group level ids, or the id we assigned for leaf level
-    return data.id != null ? ('id-' + data.id) : ('year-' + data.year);
+    if (params.data.id != null) {
+      return (params.parentKeys || []).join('-') + params.data.id;
+    }
+    const rowGroupCols = params.columnApi.getRowGroupColumns();
+    const thisGroupCol = rowGroupCols[params.level];
+    return (params.parentKeys || []).join('-') + params.data[thisGroupCol.getColDef().field!];
+  },
+  isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
+    return params.rowNode.key === 'United States' || String(params.rowNode.key) === '2004';
   },
   autoGroupColumnDef: {
+    headerCheckboxSelection: true,
     field: 'athlete',
     flex: 1,
     minWidth: 240,
-    // headerCheckboxSelection: true, // not supported for Enterprise Model
     cellRendererParams: {
       checkbox: true,
     },
@@ -36,15 +43,10 @@ const gridOptions: GridOptions<IOlympicData> = {
   // allow multiple row selections
   rowSelection: 'multiple',
 
-  // restrict selections to leaf rows
-  isRowSelectable: (rowNode: IRowNode) => {
-    return rowNode.data.year > 2004;
-  },
-
   // restrict row selections via checkbox selection
   suppressRowClickSelection: true,
 
-  // groupSelectsChildren: true, // not supported for Server Side Row Model
+  groupSelectsChildren: true,
 
   animateRows: true,
   suppressAggFuncInHeader: true,

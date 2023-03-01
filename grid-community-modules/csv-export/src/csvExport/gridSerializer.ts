@@ -17,10 +17,8 @@ import {
     PinnedRowModel,
     ProcessGroupHeaderForExportParams,
     RowNode,
-    SelectionService,
+    ISelectionService,
     ShouldRowBeSkippedParams,
-    RowPositionUtils,
-    SortedRowNode,
     RowNodeSorter,
     SortController
 } from "@ag-grid-community/core";
@@ -37,8 +35,7 @@ export class GridSerializer extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('selectionService') private selectionService: SelectionService;
-    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
+    @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
 

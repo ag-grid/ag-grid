@@ -14,7 +14,7 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
-    SelectionService,
+    ISelectionService,
     SortController,
     IInfiniteRowModel,
     WithoutGridCommon,
@@ -27,7 +27,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('selectionService') private readonly selectionService: SelectionService;
+    @Autowired('selectionService') private readonly selectionService: ISelectionService;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
 

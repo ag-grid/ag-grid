@@ -776,6 +776,18 @@
                 "url": "/server-side-model-updating-transactions/#asynchronous-updates"
             }
         },
+        "getServerSideSelectionState": {
+            "more": {
+                "name": "Selection",
+                "url": "/server-side-model-selection/#api-selection"
+            }
+        },
+        "setServerSideSelectionState": {
+            "more": {
+                "name": "Selection",
+                "url": "/server-side-model-selection/#api-selection"
+            }
+        },
         "getCacheBlockState": {
             "more": {
                 "name": "Cache Block State",
