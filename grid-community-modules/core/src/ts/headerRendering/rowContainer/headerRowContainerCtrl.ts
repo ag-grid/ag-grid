@@ -263,4 +263,20 @@ export class HeaderRowContainerCtrl extends BeanStub {
     public getRowCount(): number {
         return this.getAllCtrls().length;
     }
+
+    protected destroy(): void {
+        if (this.filtersRowCtrl) {
+            this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
+        }
+
+        if (this.columnsRowCtrl) {
+            this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
+        }
+
+        if (this.groupsRowCtrls && this.groupsRowCtrls.length) {
+            this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
+        }
+
+        super.destroy();
+    }
 }

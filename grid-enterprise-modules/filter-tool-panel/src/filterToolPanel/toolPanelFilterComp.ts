@@ -11,7 +11,7 @@ import {
     KeyCode,
     PostConstruct,
     RefSelector,
-    ColumnEvent
+    FilterDestroyedEvent
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
@@ -77,6 +77,7 @@ export class ToolPanelFilterComp extends Component {
         }
 
         this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_DESTROYED, this.onFilterDestroyed.bind(this));
     }
 
     public getColumn(): Column {
@@ -102,19 +103,22 @@ export class ToolPanelFilterComp extends Component {
         return this.filterManager.isFilterActive(this.column);
     }
 
-    private onFilterChanged(event: ColumnEvent): void {
+    private onFilterChanged(): void {
         _.setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
+        this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
+    }
+
+    private onFilterDestroyed(event: FilterDestroyedEvent): void {
         if (
             this.expanded &&
-            event.source === 'filterDestroyed' &&
-            event.columns?.some((col) => col.getId() === this.column.getId()) &&
+            event.source === 'api' &&
+            event.column.getId() === this.column.getId() &&
             this.columnModel.getPrimaryColumn(this.column)
         ) {
-            // filter was visible and is now destroyed. If the column still exists, need to recreate UI component
+            // filter was visible and has been destroyed by the API. If the column still exists, need to recreate UI component
             this.removeFilterElement();
             this.addFilterElement();
         }
-        this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }
 
     public toggleExpanded(): void {

@@ -3,5 +3,5 @@
 .detailCellRenderer {
     white-space: normal;
     padding: $size-3;
-    font-size: $font-size-medium;
+    font-size: var(--font-size-medium);
 }

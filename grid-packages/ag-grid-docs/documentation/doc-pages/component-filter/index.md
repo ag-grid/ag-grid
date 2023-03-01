@@ -3,11 +3,11 @@ title: "Filter Component"
 ---
 
 [[only-javascript-or-angular-or-vue]]
-|Filter components allow you to add your own filter types to AG Grid. Use them when the provided filters do not meet your requirements.
+|Filter components allow you to add your own filter types to AG Grid. Use them when the Provided Filters do not meet your requirements.
 
 [[only-react]]
 |<video-section id="yO3_nTyDv6o" title="React Custom Filters" header="true">
-|Filter components allow you to add your own filter types to AG Grid. Use them when the provided filters do not meet your requirements.
+|Filter components allow you to add your own filter types to AG Grid. Use them when the Provided Filters do not meet your requirements.
 |</video-section>
 
 ## Simple Filter

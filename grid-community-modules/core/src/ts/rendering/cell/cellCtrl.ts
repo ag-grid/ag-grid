@@ -265,9 +265,11 @@ export class CellCtrl extends BeanStub {
             // the rows life.
             if (!this.isAlive()) { return; }
 
-            const { paddingTop, paddingBottom } = getElementSize(eParentCell);
+            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = getElementSize(eParentCell);
+            const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
+
             const wrapperHeight = eCellWrapper!.offsetHeight;
-            const autoHeight = wrapperHeight + paddingTop + paddingBottom;
+            const autoHeight = wrapperHeight + extraHeight;
 
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,

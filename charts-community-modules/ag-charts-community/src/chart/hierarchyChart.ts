@@ -41,9 +41,6 @@ export class HierarchyChart extends Chart {
         });
 
         const { seriesRoot } = this;
-        seriesRoot.x = shrinkRect.x;
-        seriesRoot.y = shrinkRect.y;
-        seriesRoot.width = shrinkRect.width;
-        seriesRoot.height = shrinkRect.height;
+        seriesRoot.clipRect = new BBox(shrinkRect.x, shrinkRect.y, shrinkRect.width, shrinkRect.height);
     }
 }

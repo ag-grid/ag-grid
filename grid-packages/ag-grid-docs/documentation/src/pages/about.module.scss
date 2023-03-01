@@ -10,7 +10,7 @@
 }
 
 .team {
-    --line-height: #{$line-height-tight};
+    --line-height: var(--line-height-tight);
 
     display: flex;
     flex-wrap: wrap;

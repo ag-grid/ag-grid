@@ -185,7 +185,15 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
-        classes.push(this.columnGroup.isPadding() ? `ag-header-group-cell-no-group` : `ag-header-group-cell-with-group`);
+        if (this.columnGroup.isPadding()) {
+            classes.push('ag-header-group-cell-no-group');
+            const leafCols = this.columnGroup.getLeafColumns();
+            if (leafCols.every(col => col.getColDef().spanHeaderHeight)) {
+                classes.push('ag-header-span-height');
+            }
+        } else {
+            classes.push('ag-header-group-cell-with-group');
+        }
 
         classes.forEach(c => this.comp.addOrRemoveCssClass(c, true));
     }

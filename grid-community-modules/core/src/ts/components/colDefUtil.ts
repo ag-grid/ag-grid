@@ -138,6 +138,7 @@ export class ColDefUtil {
         tooltipValueGetter: undefined,
         cellRendererSelector: undefined,
         cellEditorSelector: undefined,
+        spanHeaderHeight: undefined
     };
 
     public static ALL_PROPERTIES: ColKey[] = Object.keys(ColDefUtil.ColDefPropertyMap) as ColKey[];

@@ -187,15 +187,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     static type = 'pie' as const;
 
     private radiusScale: LinearScale = new LinearScale();
-    private groupSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(
-        this.contentGroup
-    ).selectAll<Group>();
-    private highlightSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(
-        this.highlightGroup
-    ).selectAll<Group>();
-    private calloutLabelSelection: Selection<Group, Group, PieNodeDatum, any>;
-    private sectorLabelSelection: Selection<Text, Group, PieNodeDatum, any>;
-    private innerLabelsSelection: Selection<Text, Group, DoughnutInnerLabel, any>;
+    private groupSelection: Selection<Group, PieNodeDatum> = Selection.select(this.contentGroup, Group);
+    private highlightSelection: Selection<Group, PieNodeDatum> = Selection.select(this.highlightGroup, Group);
+    private calloutLabelSelection: Selection<Group, PieNodeDatum>;
+    private sectorLabelSelection: Selection<Text, PieNodeDatum>;
+    private innerLabelsSelection: Selection<Text, DoughnutInnerLabel>;
 
     // The group node that contains the background graphics.
     readonly backgroundGroup: Group;
@@ -398,9 +394,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.labelGroup!.append(pieCalloutLabels);
         this.labelGroup!.append(pieSectorLabels);
         this.labelGroup!.append(innerLabels);
-        this.calloutLabelSelection = Selection.select(pieCalloutLabels).selectAll<Group>();
-        this.sectorLabelSelection = Selection.select(pieSectorLabels).selectAll<Text>();
-        this.innerLabelsSelection = Selection.select(innerLabels).selectAll<Text>();
+        this.calloutLabelSelection = Selection.select(pieCalloutLabels, Group);
+        this.sectorLabelSelection = Selection.select(pieSectorLabels, Text);
+        this.innerLabelsSelection = Selection.select(innerLabels, Text);
     }
 
     visibleChanged() {
@@ -712,47 +708,35 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         } = this;
 
         const update = (selection: typeof groupSelection) => {
-            const updateGroups = selection.setData(this.groupSelectionData);
-            updateGroups.exit.remove();
-
-            const enterGroups = updateGroups.enter.append(Group);
-            enterGroups.append(Sector).each((node) => (node.tag = PieNodeTag.Sector));
-
-            return updateGroups.merge(enterGroups);
+            return selection.update(this.groupSelectionData, (group) => {
+                const sector = new Sector();
+                sector.tag = PieNodeTag.Sector;
+                group.appendChild(sector);
+            });
         };
 
         this.groupSelection = update(groupSelection);
         this.highlightSelection = update(highlightSelection);
 
-        const updateCalloutLabels = calloutLabelSelection.setData(this.groupSelectionData);
-        updateCalloutLabels.exit.remove();
+        calloutLabelSelection.update(this.groupSelectionData, (group) => {
+            const line = new Line();
+            line.tag = PieNodeTag.Callout;
+            line.pointerEvents = PointerEvents.None;
+            group.appendChild(line);
 
-        const enterCalloutLabels = updateCalloutLabels.enter.append(Group);
-        enterCalloutLabels.append(Line).each((node) => {
-            node.tag = PieNodeTag.Callout;
-            node.pointerEvents = PointerEvents.None;
+            const text = new Text();
+            text.tag = PieNodeTag.Label;
+            text.pointerEvents = PointerEvents.None;
+            group.appendChild(text);
         });
-        enterCalloutLabels.append(Text).each((node) => {
-            node.tag = PieNodeTag.Label;
-            node.pointerEvents = PointerEvents.None;
-        });
-        this.calloutLabelSelection = updateCalloutLabels.merge(enterCalloutLabels);
 
-        const updateSectorLabels = sectorLabelSelection.setData(this.groupSelectionData);
-        updateSectorLabels.exit.remove();
-        const enterSectorLabels = updateSectorLabels.enter.append(Text);
-        enterSectorLabels.each((node) => {
+        sectorLabelSelection.update(this.groupSelectionData, (node) => {
             node.pointerEvents = PointerEvents.None;
         });
-        this.sectorLabelSelection = updateSectorLabels.merge(enterSectorLabels);
 
-        const updateInnerLabels = innerLabelsSelection.setData(this.innerLabels);
-        updateInnerLabels.exit.remove();
-        const enterInnerLabels = updateInnerLabels.enter.append(Text);
-        enterInnerLabels.each((node) => {
+        innerLabelsSelection.update(this.innerLabels, (node) => {
             node.pointerEvents = PointerEvents.None;
         });
-        this.innerLabelsSelection = updateInnerLabels.merge(enterInnerLabels);
     }
 
     private datumSectorRefs = new WeakMap<PieNodeDatum, Sector>();
@@ -807,13 +791,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         this.groupSelection
             .selectByTag<Sector>(PieNodeTag.Sector)
-            .each((node, datum, index) => updateSectorFn(node, datum, index, false));
-        this.highlightSelection.selectByTag<Sector>(PieNodeTag.Sector).each((node, datum, index) => {
-            const isDatumHighlighted = highlightedDatum?.series === this && datum.itemId === highlightedDatum.itemId;
+            .forEach((node, index) => updateSectorFn(node, node.datum, index, false));
+        this.highlightSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node, index) => {
+            const isDatumHighlighted =
+                highlightedDatum?.series === this && node.datum.itemId === highlightedDatum.itemId;
 
             node.visible = isDatumHighlighted;
             if (node.visible) {
-                updateSectorFn(node, datum, index, isDatumHighlighted);
+                updateSectorFn(node, node.datum, index, isDatumHighlighted);
             }
         });
 
@@ -828,7 +813,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const calloutLength = calloutLine.length;
         const calloutStrokeWidth = calloutLine.strokeWidth;
         const calloutColors = calloutLine.colors || this.strokes;
-        this.calloutLabelSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
+        this.calloutLabelSelection.selectByTag<Line>(PieNodeTag.Callout).forEach((line, index) => {
+            const { datum } = line;
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
@@ -872,7 +858,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const tempTextNode = new Text();
 
-        this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum) => {
+        this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).forEach((text) => {
+            const { datum } = text;
             const label = datum.calloutLabel;
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);

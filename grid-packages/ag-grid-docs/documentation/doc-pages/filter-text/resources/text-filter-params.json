@@ -3,7 +3,7 @@
     "ITextFilterParams": {
         "filterOptions": {
             "more": {
-                "url": "/filter-provided-simple/#simple-filter-options",
+                "url": "/filter-text/#text-filter-options",
                 "name": "Filter Options"
             }
         },

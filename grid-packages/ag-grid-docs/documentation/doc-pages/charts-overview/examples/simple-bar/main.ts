@@ -15,7 +15,7 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: 'Gross Weekly Earnings by Occupation (Q4 2019)',
+    text: 'Gross Weekly Earnings\nby Occupation (Q4 2019)',
     fontSize: 18,
   },
   subtitle: {

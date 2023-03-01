@@ -37,6 +37,10 @@
         }
     }
 
+    .ag-header-cell.ag-header-span-height {
+        border-top: transparent !important;
+    }
+
     @include ag.keyboard-focus((ag-header-cell, ag-header-group-cell), 4px);
 
     .ag-header-icon {

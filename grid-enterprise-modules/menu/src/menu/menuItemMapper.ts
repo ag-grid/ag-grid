@@ -183,7 +183,7 @@ export class MenuItemMapper extends BeanStub {
                         name: localeTextFunc('cut', 'Cut'),
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
                         icon: _.createIconNoSpan('clipboardCut', this.gridOptionsService, null),
-                        disabled: !isEditable,
+                        disabled: !isEditable || this.gridOptionsService.is('suppressCutToClipboard'),
                         action: () => this.clipboardService.cutToClipboard()
                     };
                 } else {

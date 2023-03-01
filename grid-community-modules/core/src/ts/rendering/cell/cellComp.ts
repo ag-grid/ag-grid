@@ -10,7 +10,7 @@ import { RowDragComp } from "./../row/rowDragComp";
 import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { DndSourceComp } from "./../dndSourceComp";
 import { TooltipParentComp } from "../../widgets/customTooltipFeature";
-import { setAriaDescribedBy, setAriaRole } from "../../utils/aria";
+import { setAriaRole } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
 import { addStylesToElement, clearElement, loadTemplate, removeFromParent } from "../../utils/dom";
@@ -177,7 +177,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const putWrapperIn = usingWrapper && this.eCellWrapper == null;
         if (putWrapperIn) {
-            this.eCellWrapper = loadTemplate(/* html */`<div class="ag-cell-wrapper" role="presentation" aria-hidden="true"></div>`);
+            this.eCellWrapper = loadTemplate(/* html */`<div class="ag-cell-wrapper" role="presentation"></div>`);
             this.getGui().appendChild(this.eCellWrapper);
         }
         const takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
@@ -210,9 +210,6 @@ export class CellComp extends Component implements TooltipParentComp {
             if (providingControls) {
                 this.addControls();
             }
-            if (usingWrapper) {
-                this.refreshAriaProperties();
-            }
         }
 
         return templateChanged;
@@ -243,18 +240,6 @@ export class CellComp extends Component implements TooltipParentComp {
                 this.eCellWrapper!.insertBefore(this.checkboxSelectionComp.getGui(), this.eCellValue!);
             }
         }
-    }
-
-    private refreshAriaProperties(): void {
-        const id = this.eCellValue!.id = `cell-${this.getCompId()}`;
-        const describedByIds: string[] = [];
-
-        if (this.includeSelection && this.checkboxSelectionComp) {
-            describedByIds.push(this.checkboxSelectionComp.getCheckboxId());
-        }
-
-        describedByIds.push(id);
-        setAriaDescribedBy(this.getGui(), describedByIds.join(' '));
     }
 
     private createCellEditorInstance(compDetails: UserCompDetails, popup?: boolean, position?: 'over' | 'under'): void {

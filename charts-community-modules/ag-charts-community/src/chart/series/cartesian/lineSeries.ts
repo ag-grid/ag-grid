@@ -1,7 +1,6 @@
 import { Path } from '../../../scene/shape/path';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Selection } from '../../../scene/selection';
-import { Group } from '../../../scene/group';
 import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
@@ -326,30 +325,29 @@ export class LineSeries extends CartesianSeries<LineContext> {
         lineNode.lineDashOffset = this.lineDashOffset;
     }
 
+    protected markerFactory() {
+        const { shape } = this.marker;
+        const MarkerShape = getMarker(shape);
+        return new MarkerShape();
+    }
+
     protected async updateMarkerSelection(opts: {
         nodeData: LineNodeDatum[];
-        markerSelection: Selection<Marker, Group, LineNodeDatum, any>;
+        markerSelection: Selection<Marker, LineNodeDatum>;
     }) {
         let { nodeData, markerSelection } = opts;
-        const {
-            marker: { shape, enabled },
-        } = this;
+        const { shape, enabled } = this.marker;
         nodeData = shape && enabled ? nodeData : [];
-        const MarkerShape = getMarker(shape);
 
         if (this.marker.isDirty()) {
-            markerSelection = markerSelection.setData([]);
-            markerSelection.exit.remove();
+            markerSelection.clear();
         }
 
-        const updateMarkerSelection = markerSelection.setData(nodeData);
-        updateMarkerSelection.exit.remove();
-        const enterDatumSelection = updateMarkerSelection.enter.append(MarkerShape);
-        return updateMarkerSelection.merge(enterDatumSelection);
+        return markerSelection.update(nodeData);
     }
 
     protected async updateMarkerNodes(opts: {
-        markerSelection: Selection<Marker, Group, LineNodeDatum, any>;
+        markerSelection: Selection<Marker, LineNodeDatum>;
         isHighlight: boolean;
     }) {
         const { markerSelection, isHighlight: isDatumHighlighted } = opts;
@@ -428,21 +426,16 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
     protected async updateLabelSelection(opts: {
         labelData: LineNodeDatum[];
-        labelSelection: Selection<Text, Group, LineNodeDatum, any>;
+        labelSelection: Selection<Text, LineNodeDatum>;
     }) {
         let { labelData, labelSelection } = opts;
-        const {
-            marker: { shape, enabled },
-        } = this;
+        const { shape, enabled } = this.marker;
         labelData = shape && enabled ? labelData : [];
 
-        const updateTextSelection = labelSelection.setData(labelData);
-        updateTextSelection.exit.remove();
-        const enterTextSelection = updateTextSelection.enter.append(Text);
-        return updateTextSelection.merge(enterTextSelection);
+        return labelSelection.update(labelData);
     }
 
-    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, Group, LineNodeDatum, any> }) {
+    protected async updateLabelNodes(opts: { labelSelection: Selection<Text, LineNodeDatum> }) {
         const { labelSelection } = opts;
         const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
 

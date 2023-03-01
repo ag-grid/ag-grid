@@ -27,9 +27,11 @@ main {
 
 .top-bar {
     composes: px-2 px-md-3 from global;
+
     position: relative;
     background-color: var(--bright-blue-gray);
     border-bottom: 1px solid $ag-light-grey;
+    z-index: 999;
 
     @supports (backdrop-filter: none) {
         background-color: rgba(#dbe5f0, 0.7);

@@ -235,14 +235,6 @@ export class HeaderRowCtrl extends BeanStub {
         this.comp.setHeaderCtrls(ctrlsToDisplay);
     }
 
-    @PreDestroy
-    private destroyCtrls(): void {
-        iterateObject(this.headerCellCtrls, (key, ctrl) => {
-            this.destroyBean(ctrl);
-        });
-        this.headerCellCtrls = {};
-    }
-
     private getColumnsInViewport(): IHeaderColumn[] {
         const printLayout = this.gridOptionsService.isDomLayout('print');
         return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
@@ -280,5 +272,14 @@ export class HeaderRowCtrl extends BeanStub {
         ctrl.focus(event);
 
         return true;
+    }
+
+    protected destroy(): void {
+        iterateObject(this.headerCellCtrls, (key, ctrl) => {
+            this.destroyBean(ctrl);
+        });
+        this.headerCellCtrls = {};
+
+        super.destroy();
     }
 }

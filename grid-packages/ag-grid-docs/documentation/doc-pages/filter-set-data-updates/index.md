@@ -97,5 +97,5 @@ The following example demonstrates how `api.setRowData(data)` affects filter sel
 
 ## Next Up
 
-Continue to the next section: [Tree List](/filter-set-tree-list/).
+Continue to the next section to learn about the [Tree List](/filter-set-tree-list/).
 

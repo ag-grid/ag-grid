@@ -43,14 +43,10 @@ export class MiniBubble extends MiniChartWithAxes {
         this.points = points;
         this.updateColors(fills, strokes);
 
-        const clipRect = new _Scene.ClipRect();
-        clipRect.x = padding;
-        clipRect.y = padding;
-        clipRect.width = size - padding * 2;
-        clipRect.height = size - padding * 2;
-
-        clipRect.append(this.points);
-        this.root.append(clipRect);
+        const pointsGroup = new _Scene.Group();
+        pointsGroup.clipRect = new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2);
+        pointsGroup.append(this.points);
+        this.root.append(pointsGroup);
     }
 
     updateColors(fills: string[], strokes: string[]) {

@@ -12,6 +12,7 @@ import {
     AgHierarchyThemeOptions,
     AgCartesianSeriesTheme,
     AgHierarchySeriesTheme,
+    AgChartInteractionRange,
 } from '../agChartOptions';
 import { DEFAULT_TOOLTIP_CLASS } from '../tooltip/tooltip';
 
@@ -126,6 +127,7 @@ export class ChartTheme {
                     color: 'black',
                 },
             },
+            nodeClickRange: 'exact' as AgChartInteractionRange,
         };
     }
 
@@ -169,6 +171,14 @@ export class ChartTheme {
                 ...seriesDefaults.tooltip,
                 format: undefined,
             },
+        };
+    }
+
+    private static getAreaSeriesDefaults() {
+        const seriesDefaults = this.getSeriesDefaults();
+        return {
+            ...seriesDefaults,
+            nodeClickRange: 'nearest' as AgChartInteractionRange,
         };
     }
 
@@ -257,7 +267,7 @@ export class ChartTheme {
             },
             tooltip: {
                 enabled: true,
-                tracking: true,
+                range: 'nearest' as AgChartInteractionRange,
                 delay: 0,
                 class: DEFAULT_TOOLTIP_CLASS,
             },
@@ -349,7 +359,7 @@ export class ChartTheme {
                 },
             },
             area: {
-                ...ChartTheme.getSeriesDefaults(),
+                ...ChartTheme.getAreaSeriesDefaults(),
                 xKey: '',
                 xName: '',
                 normalizedTo: undefined,

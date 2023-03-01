@@ -62,7 +62,7 @@ input[type='text'],
 input[type='search'],
 input[type='email'] {
     padding: math.div(6em, 16) math.div(12em, 16);
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
     border-radius: var(--border-radius);
     background-color: var(--input-background-color);
     border: 2px solid var(--border-color);
@@ -164,7 +164,7 @@ select {
     appearance: none;
     padding: math.div(6em, 16) math.div(36em, 16) math.div(6em, 16) math.div(12em, 16);
     font-size: 1rem;
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
     border-radius: var(--border-radius);
     background-color: var(--input-background-color);
     background-image: $svg-chevron-down;

@@ -3,6 +3,14 @@ import { SortDirection } from '../main';
 export type ColumnSortState = 'ascending' | 'descending' | 'other' | 'none';
 
 // ARIA HELPER FUNCTIONS
+function toggleAriaAttribute(element: HTMLElement, attribute: string, value?: number | boolean | string | null) {
+    if (value == null || value == '') {
+        removeAriaAttribute(element, attribute);
+    } else {
+        setAriaAttribute(element, attribute, value);
+    }
+}
+
 function setAriaAttribute(element: HTMLElement, attribute: string, value: number | boolean | string): void {
     element.setAttribute(ariaAttributeName(attribute), value.toString());
 }
@@ -54,56 +62,35 @@ export function getAriaDescribedBy(element: HTMLElement): string {
 
 // ARIA ATTRIBUTE SETTERS
 export function setAriaLabel(element: HTMLElement, label?: string | null): void {
-    const key = 'label';
-    if (label != null && label !== '') {
-        setAriaAttribute(element, key, label);
-    } else {
-        removeAriaAttribute(element, key);
-    }
+    toggleAriaAttribute(element, 'label', label);
 }
 
 export function setAriaLabelledBy(element: HTMLElement, labelledBy: string): void {
-    const key = 'labelledby';
-    if (labelledBy) {
-        setAriaAttribute(element, key, labelledBy);
-    } else {
-        removeAriaAttribute(element, key);
-    }
+    toggleAriaAttribute(element, 'labelledby', labelledBy);
 }
 
 export function setAriaDescription(element: HTMLElement, description?: string) {
-    const key = 'description';
-
-    if (description) {
-        setAriaAttribute(element, key, description);
-    } else {
-        removeAriaAttribute(element, key);
-    }
+    toggleAriaAttribute(element, 'description', description);
 }
 
-export function setAriaDescribedBy(element: HTMLElement, describedby: string | undefined): void {
-    const key = 'describedby';
-    if (describedby) {
-        setAriaAttribute(element, key, describedby);
-    } else {
-        removeAriaAttribute(element, key);
-    }
+export function setAriaDescribedBy(element: HTMLElement, describedby?: string): void {
+    toggleAriaAttribute(element, 'describedby', describedby);
+}
+
+export function setAriaLive(element: HTMLElement, live?: 'polite' | 'assertive' | 'off' | null) {
+    toggleAriaAttribute(element, 'live', live);
 }
 
 export function setAriaLevel(element: HTMLElement, level: number): void {
-    setAriaAttribute(element, 'level', level);
+    toggleAriaAttribute(element, 'level', level);
 }
 
 export function setAriaDisabled(element: HTMLElement, disabled: boolean): void {
-    setAriaAttribute(element, 'disabled', disabled);
+    toggleAriaAttribute(element, 'disabled', disabled);
 }
 
 export function setAriaHidden(element: HTMLElement, hidden: boolean): void {
-    if (hidden) {
-        setAriaAttribute(element, 'hidden', true);
-    } else {
-        removeAriaAttribute(element, 'hidden');
-    }
+    toggleAriaAttribute(element, 'hidden', hidden);
 }
 
 export function setAriaExpanded(element: HTMLElement, expanded: boolean): void {
@@ -154,14 +141,8 @@ export function removeAriaSort(element: HTMLElement): void {
     removeAriaAttribute(element, 'sort');
 }
 
-export function setAriaSelected(element: HTMLElement, selected: boolean | undefined): void {
-    const attributeName = 'selected';
-
-    if (selected) {
-        setAriaAttribute(element, attributeName, selected);
-    } else {
-        removeAriaAttribute(element, attributeName);
-    }
+export function setAriaSelected(element: HTMLElement, selected?: boolean): void {
+    toggleAriaAttribute(element, 'selected', selected);
 }
 
 export function setAriaChecked(element: HTMLElement, checked?: boolean) {

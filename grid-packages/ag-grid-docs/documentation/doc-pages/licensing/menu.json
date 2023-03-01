@@ -788,29 +788,19 @@
             "showInCollapsed": false,
             "items": [
               {
-                "title": "Provided Column Filters",
-                "url": "/filter-provided/"
+                "title": "Text Filter",
+                "url": "/filter-text/",
+                "showInCollapsed": true
               },
               {
-                "title": "Simple Column Filters",
-                "url": "/filter-provided-simple/",
-                "items": [
-                  {
-                    "title": "Text Filter",
-                    "url": "/filter-text/",
-                    "showInCollapsed": true
-                  },
-                  {
-                    "title": "Number Filter",
-                    "url": "/filter-number/",
-                    "showInCollapsed": true
-                  },
-                  {
-                    "title": "Date Filter",
-                    "url": "/filter-date/",
-                    "showInCollapsed": true
-                  }
-                ]
+                "title": "Number Filter",
+                "url": "/filter-number/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Date Filter",
+                "url": "/filter-date/",
+                "showInCollapsed": true
               },
               {
                 "title": "Set Filter",
@@ -858,16 +848,20 @@
                 "showInCollapsed": true
               },
               {
+                "title": "Filter Conditions",
+                "url": "/filter-conditions/"
+              },
+              {
+                "title": "Applying Filters",
+                "url": "/filter-applying/"
+              },
+              {
                 "title": "Filter API",
                 "url": "/filter-api/"
               },
               {
                 "title": "Floating Filters",
                 "url": "/floating-filters/"
-              },
-              {
-                "title": "Custom Filter",
-                "url": "/filter-custom/"
               }
             ]
           },

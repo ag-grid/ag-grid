@@ -229,5 +229,7 @@ export class Events {
 
     public static EVENT_STORE_UPDATED: 'storeUpdated' = 'storeUpdated';
 
+    public static EVENT_FILTER_DESTROYED: 'filterDestroyed' = 'filterDestroyed';
+
     /*****************************  INTERNAL EVENTS: END ******************************************* */
 }

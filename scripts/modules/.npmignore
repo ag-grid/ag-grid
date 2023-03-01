@@ -1,8 +1,13 @@
 src
 node_modules
 tsconfig.json
-tsconfig.es6.json
-tsconfig.json
+tsconfig.cjs.es5.docs.json
+tsconfig.cjs.es5.json
+tsconfig.cjs.es6.json
+tsconfig.esm.es5.json
+tsconfig.esm.es6.json
+tsconfig.generics.json
+tsconfig.test.json
 .npmignore
 jest.config.js
 tslint.json

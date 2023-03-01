@@ -88,19 +88,6 @@ const CellComp = (props: {
 
     const cellInstanceId = cellCtrl.getInstanceId();
 
-    const ariaDescribedBy = createMemo(() => {
-        const cellId = `cell-${cellInstanceId}`;
-        const describedByIds: string[] = [];
-
-        if (includeSelection() && selectionCheckboxId()) {
-            describedByIds.push(selectionCheckboxId()!);
-        }
-        
-        describedByIds.push(cellId);
-
-        return describedByIds.join(' ')
-    });
-
     onMount( () => {
         if (!cellCtrl) { return; }
 
@@ -232,10 +219,10 @@ const CellComp = (props: {
             role={ role() as 'gridcell'} //fixme - why not hard code role to gridcell?
             col-id={ colId() }
             title={ title() }
-            aria-describedby={ ariaDescribedBy() }> {
-                showCellWrapper()
+        > {
+            showCellWrapper()
                 ? (
-                    <div class="ag-cell-wrapper" role="presentation" aria-hidden="true" ref={ eCellWrapper! }>
+                    <div class="ag-cell-wrapper" role="presentation" ref={ eCellWrapper! }>
                         { bodyJsxFunc() }
                     </div>
                 )

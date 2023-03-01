@@ -7,26 +7,26 @@ import Announcements from 'components/Announcements';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import rawMenuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
+import { isProductionBuild } from '../utils/consts';
 
-export const getHostName = () => {
-    if (typeof window !== 'undefined') {
-        return window?.location?.hostname || document?.location?.hostname;
+function filterProductionMenuData(data) {
+    if (!isProductionBuild()) {
+        // No filtering needed for non-production builds.
+        return data;
     }
-}
-const isDevelopment = ['localhost', 'build.ag-grid.com'].includes(getHostName());
-function filterMenuData(data) {
+
     return data
         // Filter out Charts Enterprise pages outside development environments.
-        .filter((item) => item.enterprise !== 'charts' || isDevelopment)
+        .filter((item) => item.enterprise !== 'charts')
         // Recursively filter children.
         .map((item) => {
             if (item.items == null) return item;
 
-            return { ...item, items: filterMenuData(item.items) };
+            return { ...item, items: filterProductionMenuData(item.items) };
         });
 }
 
-const menuData = filterMenuData(rawMenuData);
+const menuData = filterProductionMenuData(rawMenuData);
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
     return <li key={title} className={styles['menu__section']}>

@@ -57,7 +57,7 @@ See the [Column Tool Panel Example](/tool-panel-columns/#column-tool-panel-examp
 
 ### Filter Value Getters
 
-See [Filter Values](/filtering/#filter-values) for more information on Filter Value Getters.
+By default, the values supplied to the filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition as shown below. This is similar to using a normal Value Getter, but is specific to the filter.
 
 <api-documentation source='column-properties/properties.json' section="filtering" names='["filterValueGetter"]' ></api-documentation>
 

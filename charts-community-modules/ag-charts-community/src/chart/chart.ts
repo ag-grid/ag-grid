@@ -23,7 +23,6 @@ import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
-import { ClipRect } from '../scene/clipRect';
 import { Layers } from './layers';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
@@ -52,7 +51,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     readonly scene: Scene;
-    readonly seriesRoot = new ClipRect();
+    readonly seriesRoot = new Group({ name: `${this.id}-Series-root` });
     readonly background: Background = new Background();
     readonly legend: Legend;
     readonly tooltip: Tooltip;
@@ -889,7 +888,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
     private pickSeriesNode(
         point: Point,
-        exactMatchOnly: boolean
+        exactMatchOnly: boolean,
+        maxDistance?: number
     ):
         | {
               series: Series<any>;
@@ -899,7 +899,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         | undefined {
         const start = performance.now();
 
-        // Disable 'nearest match' options if tooltip.tracking is enabled.
+        // Disable 'nearest match' options if looking for exact matches only
         const pickModes = exactMatchOnly ? [SeriesNodePickMode.EXACT_SHAPE_MATCH] : undefined;
 
         // Iterate through series in reverse, as later declared series appears on top of earlier
@@ -915,7 +915,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             if (!match || distance == null) {
                 continue;
             }
-            if (!result || result.distance > distance) {
+            if ((!result || result.distance > distance) && distance <= (maxDistance ?? Infinity)) {
                 result = { series, distance, datum: match };
             }
             if (distance === 0) {
@@ -952,7 +952,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.lastInteractionEvent = undefined;
     });
     protected handlePointer(event: InteractionEvent<'hover'>) {
-        const { lastPick } = this;
+        const { lastPick, tooltip } = this;
+        const { range } = tooltip;
         const { pageX, pageY, offsetX, offsetY } = event;
 
         const disablePointer = () => {
@@ -967,23 +968,37 @@ export abstract class Chart extends Observable implements AgChartInstance {
             return;
         }
 
-        const pick = this.pickSeriesNode({ x: offsetX, y: offsetY }, !this.tooltip.tracking);
+        let pixelRange;
+        if (typeof range === 'number' && Number.isFinite(range)) {
+            pixelRange = range;
+        }
+        const pick = this.pickSeriesNode({ x: offsetX, y: offsetY }, range === 'exact', pixelRange);
 
         if (!pick) {
             disablePointer();
             return;
         }
 
-        const meta = { pageX, pageY, offsetX, offsetY, event: event };
-        if (!lastPick || lastPick.datum !== pick.datum) {
-            this.onSeriesDatumPick(meta, pick.datum);
-            return;
+        const isNewDatum = !lastPick || lastPick.datum !== pick.datum;
+        let html;
+
+        if (isNewDatum) {
+            this.highlightManager.updateHighlight(this.id, pick.datum);
+            html = pick.series.getTooltipHtml(pick.datum);
+        } else if (lastPick) {
+            lastPick.event = event.sourceEvent;
         }
 
-        lastPick.event = event.sourceEvent;
+        const isPixelRange = pixelRange != null;
+        const tooltipEnabled = this.tooltip.enabled && pick.series.tooltip.enabled;
+        const exactlyMatched = range === 'exact' && pick.distance === 0;
+        const rangeMatched = range === 'nearest' || isPixelRange || exactlyMatched;
+        const shouldUpdateTooltip = tooltipEnabled && rangeMatched && (!isNewDatum || html !== undefined);
 
-        if (this.tooltip.enabled && pick.series.tooltip.enabled) {
-            this.tooltipManager.updateTooltip(this.id, this.mergePointerDatum(meta, pick.datum));
+        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event }, pick.datum);
+
+        if (shouldUpdateTooltip) {
+            this.tooltipManager.updateTooltip(this.id, meta, html);
         }
     }
 
@@ -1006,9 +1021,34 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
-        const pick = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, true);
+        const datum = this.lastPick?.datum;
+        const nodeClickRange = datum?.series.nodeClickRange;
 
-        if (pick) {
+        // First check if we should fire the event based on nearest node
+        if (datum && nodeClickRange === 'nearest') {
+            datum.series.fireNodeClickEvent(event.sourceEvent, datum);
+            return true;
+        }
+
+        // Then check for an exact match or within the given range
+        let pixelRange;
+        if (typeof nodeClickRange === 'number' && Number.isFinite(nodeClickRange)) {
+            pixelRange = nodeClickRange;
+        }
+
+        const pick = this.pickSeriesNode(
+            { x: event.offsetX, y: event.offsetY },
+            nodeClickRange === 'exact',
+            pixelRange
+        );
+
+        if (!pick) return false;
+
+        // Then if we've picked a node within the pixel range, or exactly, fire the event
+        const isPixelRange = pixelRange != null;
+        const exactlyMatched = nodeClickRange === 'exact' && pick.distance === 0;
+
+        if (isPixelRange || exactlyMatched) {
             pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
             return true;
         }
@@ -1028,27 +1068,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         });
         this.fireEvent(seriesNodeClickEvent);
     };
-
-    private onSeriesDatumPick(meta: PointerMeta, datum: SeriesNodeDatum) {
-        const { lastPick } = this;
-        if (lastPick) {
-            if (lastPick.datum === datum) {
-                return;
-            }
-        }
-
-        this.highlightManager.updateHighlight(this.id, datum);
-
-        if (datum) {
-            meta = this.mergePointerDatum(meta, datum);
-        }
-
-        const tooltipEnabled = this.tooltip.enabled && datum.series.tooltip.enabled;
-        const html = tooltipEnabled && datum.series.getTooltipHtml(datum);
-        if (html) {
-            this.tooltipManager.updateTooltip(this.id, meta, html);
-        }
-    }
 
     private mergePointerDatum(meta: PointerMeta, datum: SeriesNodeDatum): PointerMeta {
         if (datum.point) {

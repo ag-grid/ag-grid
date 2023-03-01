@@ -144,7 +144,6 @@ const CellComp = (props: {
     const [userStyles, setUserStyles] = useState<CellStyle>();
 
     const [tabIndex, setTabIndex] = useState<number>();
-    const [ariaDescribedBy, setAriaDescribedBy] = useState<string | undefined>();
     const [role, setRole] = useState<string>();
     const [colId, setColId] = useState<string>();
     const [title, setTitle] = useState<string | undefined>();
@@ -284,11 +283,6 @@ const CellComp = (props: {
     useEffect(() => {
         if (!cellCtrl || !context) { return; }
 
-        const cellId = `cell-${cellCtrl.getInstanceId()}`;
-        const describedByIds: string[] = [];
-
-        describedByIds.push(cellId);
-
         if (!eCellWrapper.current || !showCellWrapper) { return; }
 
         const destroyFuncs: (() => void)[] = [];
@@ -307,7 +301,6 @@ const CellComp = (props: {
 
         if (includeSelection) {
             const checkboxSelectionComp = cellCtrl.createSelectionCheckbox();
-            describedByIds.push(checkboxSelectionComp.getCheckboxId());
             addComp(checkboxSelectionComp);
         }
 
@@ -318,8 +311,6 @@ const CellComp = (props: {
         if (includeRowDrag) {
             addComp(cellCtrl.createRowDragComp());
         }
-
-        setAriaDescribedBy(describedByIds.join(' '));
 
         return () => destroyFuncs.forEach(f => f());
 
@@ -432,11 +423,10 @@ const CellComp = (props: {
             role={ role }
             col-id={ colId }
             title={ title }
-            aria-describedby={ ariaDescribedBy }
         >
             { showCellWrapper
                 ? (
-                    <div className="ag-cell-wrapper" role="presentation" aria-hidden="true" ref={ setCellWrapperRef }>
+                    <div className="ag-cell-wrapper" role="presentation" ref={ setCellWrapperRef }>
                         { showContents() }
                     </div>
                 )

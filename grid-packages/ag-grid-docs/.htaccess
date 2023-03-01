@@ -324,13 +324,13 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/export/ /angular-data-grid/excel-export/
     Redirect 301 /documentation/angular/expressions-and-context/ /angular-data-grid/expressions-and-context/
     Redirect 301 /documentation/angular/filter-api/ /angular-data-grid/filter-api/
-    Redirect 301 /documentation/angular/filter-custom/ /angular-data-grid/filter-custom/
+    Redirect 301 /documentation/angular/filter-custom/ /angular-data-grid/component-filter/
     Redirect 301 /documentation/angular/filter-date/ /angular-data-grid/filter-date/
     Redirect 301 /documentation/angular/filter-external/ /angular-data-grid/filter-external/
     Redirect 301 /documentation/angular/filter-multi/ /angular-data-grid/filter-multi/
     Redirect 301 /documentation/angular/filter-number/ /angular-data-grid/filter-number/
-    Redirect 301 /documentation/angular/filter-provided-simple/ /angular-data-grid/filter-provided-simple/
-    Redirect 301 /documentation/angular/filter-provided/ /angular-data-grid/filter-provided/
+    Redirect 301 /documentation/angular/filter-provided-simple/ /angular-data-grid/filtering/
+    Redirect 301 /documentation/angular/filter-provided/ /angular-data-grid/filtering/
     Redirect 301 /documentation/angular/filter-quick/ /angular-data-grid/filter-quick/
     Redirect 301 /documentation/angular/filter-set-api/ /angular-data-grid/filter-set-api/
     Redirect 301 /documentation/angular/filter-set-data-updates/ /angular-data-grid/filter-set-data-updates/
@@ -580,13 +580,13 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/export/ /javascript-data-grid/excel-export/
     Redirect 301 /documentation/javascript/expressions-and-context/ /javascript-data-grid/expressions-and-context/
     Redirect 301 /documentation/javascript/filter-api/ /javascript-data-grid/filter-api/
-    Redirect 301 /documentation/javascript/filter-custom/ /javascript-data-grid/filter-custom/
+    Redirect 301 /documentation/javascript/filter-custom/ /javascript-data-grid/component-filter/
     Redirect 301 /documentation/javascript/filter-date/ /javascript-data-grid/filter-date/
     Redirect 301 /documentation/javascript/filter-external/ /javascript-data-grid/filter-external/
     Redirect 301 /documentation/javascript/filter-multi/ /javascript-data-grid/filter-multi/
     Redirect 301 /documentation/javascript/filter-number/ /javascript-data-grid/filter-number/
-    Redirect 301 /documentation/javascript/filter-provided-simple/ /javascript-data-grid/filter-provided-simple/
-    Redirect 301 /documentation/javascript/filter-provided/ /javascript-data-grid/filter-provided/
+    Redirect 301 /documentation/javascript/filter-provided-simple/ /javascript-data-grid/filtering/
+    Redirect 301 /documentation/javascript/filter-provided/ /javascript-data-grid/filtering/
     Redirect 301 /documentation/javascript/filter-quick/ /javascript-data-grid/filter-quick/
     Redirect 301 /documentation/javascript/filter-set-api/ /javascript-data-grid/filter-set-api/
     Redirect 301 /documentation/javascript/filter-set-data-updates/ /javascript-data-grid/filter-set-data-updates/
@@ -825,13 +825,13 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/export/ /react-data-grid/excel-export/
     Redirect 301 /documentation/react/expressions-and-context/ /react-data-grid/expressions-and-context/
     Redirect 301 /documentation/react/filter-api/ /react-data-grid/filter-api/
-    Redirect 301 /documentation/react/filter-custom/ /react-data-grid/filter-custom/
+    Redirect 301 /documentation/react/filter-custom/ /react-data-grid/component-filter/
     Redirect 301 /documentation/react/filter-date/ /react-data-grid/filter-date/
     Redirect 301 /documentation/react/filter-external/ /react-data-grid/filter-external/
     Redirect 301 /documentation/react/filter-multi/ /react-data-grid/filter-multi/
     Redirect 301 /documentation/react/filter-number/ /react-data-grid/filter-number/
-    Redirect 301 /documentation/react/filter-provided-simple/ /react-data-grid/filter-provided-simple/
-    Redirect 301 /documentation/react/filter-provided/ /react-data-grid/filter-provided/
+    Redirect 301 /documentation/react/filter-provided-simple/ /react-data-grid/filtering/
+    Redirect 301 /documentation/react/filter-provided/ /react-data-grid/filtering/
     Redirect 301 /documentation/react/filter-quick/ /react-data-grid/filter-quick/
     Redirect 301 /documentation/react/filter-set-api/ /react-data-grid/filter-set-api/
     Redirect 301 /documentation/react/filter-set-data-updates/ /react-data-grid/filter-set-data-updates/
@@ -1074,13 +1074,13 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/export/ /vue-data-grid/excel-export/
     Redirect 301 /documentation/vue/expressions-and-context/ /vue-data-grid/expressions-and-context/
     Redirect 301 /documentation/vue/filter-api/ /vue-data-grid/filter-api/
-    Redirect 301 /documentation/vue/filter-custom/ /vue-data-grid/filter-custom/
+    Redirect 301 /documentation/vue/filter-custom/ /vue-data-grid/component-filter/
     Redirect 301 /documentation/vue/filter-date/ /vue-data-grid/filter-date/
     Redirect 301 /documentation/vue/filter-external/ /vue-data-grid/filter-external/
     Redirect 301 /documentation/vue/filter-multi/ /vue-data-grid/filter-multi/
     Redirect 301 /documentation/vue/filter-number/ /vue-data-grid/filter-number/
-    Redirect 301 /documentation/vue/filter-provided-simple/ /vue-data-grid/filter-provided-simple/
-    Redirect 301 /documentation/vue/filter-provided/ /vue-data-grid/filter-provided/
+    Redirect 301 /documentation/vue/filter-provided-simple/ /vue-data-grid/filtering/
+    Redirect 301 /documentation/vue/filter-provided/ /vue-data-grid/filtering/
     Redirect 301 /documentation/vue/filter-quick/ /vue-data-grid/filter-quick/
     Redirect 301 /documentation/vue/filter-set-api/ /vue-data-grid/filter-set-api/
     Redirect 301 /documentation/vue/filter-set-data-updates/ /vue-data-grid/filter-set-data-updates/
@@ -1315,13 +1315,13 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-features/ /javascript-data-grid/grid-features/
     Redirect 301 /javascript-grid-filter-api/ /javascript-data-grid/filter-api/
     Redirect 301 /javascript-grid-filter-component/ /javascript-data-grid/component-filter/
-    Redirect 301 /javascript-grid-filter-custom/ /javascript-data-grid/filter-custom/
+    Redirect 301 /javascript-grid-filter-custom/ /javascript-data-grid/component-filter/
     Redirect 301 /javascript-grid-filter-date/ /javascript-data-grid/filter-date/
     Redirect 301 /javascript-grid-filter-external/ /javascript-data-grid/filter-external/
     Redirect 301 /javascript-grid-filter-multi/ /javascript-data-grid/filter-multi/
     Redirect 301 /javascript-grid-filter-number/ /javascript-data-grid/filter-number/
-    Redirect 301 /javascript-grid-filter-provided-simple/ /javascript-data-grid/filter-provided-simple/
-    Redirect 301 /javascript-grid-filter-provided/ /javascript-data-grid/filter-provided/
+    Redirect 301 /javascript-grid-filter-provided-simple/ /javascript-data-grid/filtering/
+    Redirect 301 /javascript-grid-filter-provided/ /javascript-data-grid/filtering/
     Redirect 301 /javascript-grid-filter-quick/ /javascript-data-grid/filter-quick/
     Redirect 301 /javascript-grid-filter-set-api/ /javascript-data-grid/filter-set-api/
     Redirect 301 /javascript-grid-filter-set-data-updates/ /javascript-data-grid/filter-set-data-updates/
@@ -1512,13 +1512,13 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/excel-import/ /javascript-data-grid/excel-import/
     Redirect 301 /javascript-grid/expressions-and-context/ /javascript-data-grid/expressions-and-context/
     Redirect 301 /javascript-grid/filter-api/ /javascript-data-grid/filter-api/
-    Redirect 301 /javascript-grid/filter-custom/ /javascript-data-grid/filter-custom/
+    Redirect 301 /javascript-grid/filter-custom/ /javascript-data-grid/component-filter/
     Redirect 301 /javascript-grid/filter-date/ /javascript-data-grid/filter-date/
     Redirect 301 /javascript-grid/filter-external/ /javascript-data-grid/filter-external/
     Redirect 301 /javascript-grid/filter-multi/ /javascript-data-grid/filter-multi/
     Redirect 301 /javascript-grid/filter-number/ /javascript-data-grid/filter-number/
-    Redirect 301 /javascript-grid/filter-provided/ /javascript-data-grid/filter-provided/
-    Redirect 301 /javascript-grid/filter-provided-simple/ /javascript-data-grid/filter-provided-simple/
+    Redirect 301 /javascript-grid/filter-provided/ /javascript-data-grid/filtering/
+    Redirect 301 /javascript-grid/filter-provided-simple/ /javascript-data-grid/filtering/
     Redirect 301 /javascript-grid/filter-quick/ /javascript-data-grid/filter-quick/
     Redirect 301 /javascript-grid/filter-set/ /javascript-data-grid/filter-set/
     Redirect 301 /javascript-grid/filter-set-api/ /javascript-data-grid/filter-set-api/
@@ -1709,13 +1709,13 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/excel-import/ /angular-data-grid/excel-import/
     Redirect 301 /angular-grid/expressions-and-context/ /angular-data-grid/expressions-and-context/
     Redirect 301 /angular-grid/filter-api/ /angular-data-grid/filter-api/
-    Redirect 301 /angular-grid/filter-custom/ /angular-data-grid/filter-custom/
+    Redirect 301 /angular-grid/filter-custom/ /angular-data-grid/component-filter/
     Redirect 301 /angular-grid/filter-date/ /angular-data-grid/filter-date/
     Redirect 301 /angular-grid/filter-external/ /angular-data-grid/filter-external/
     Redirect 301 /angular-grid/filter-multi/ /angular-data-grid/filter-multi/
     Redirect 301 /angular-grid/filter-number/ /angular-data-grid/filter-number/
-    Redirect 301 /angular-grid/filter-provided/ /angular-data-grid/filter-provided/
-    Redirect 301 /angular-grid/filter-provided-simple/ /angular-data-grid/filter-provided-simple/
+    Redirect 301 /angular-grid/filter-provided/ /angular-data-grid/filtering/
+    Redirect 301 /angular-grid/filter-provided-simple/ /angular-data-grid/filtering/
     Redirect 301 /angular-grid/filter-quick/ /angular-data-grid/filter-quick/
     Redirect 301 /angular-grid/filter-set/ /angular-data-grid/filter-set/
     Redirect 301 /angular-grid/filter-set-api/ /angular-data-grid/filter-set-api/
@@ -1908,13 +1908,13 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/excel-import/ /react-data-grid/excel-import/
     Redirect 301 /react-grid/expressions-and-context/ /react-data-grid/expressions-and-context/
     Redirect 301 /react-grid/filter-api/ /react-data-grid/filter-api/
-    Redirect 301 /react-grid/filter-custom/ /react-data-grid/filter-custom/
+    Redirect 301 /react-grid/filter-custom/ /react-data-grid/component-filter/
     Redirect 301 /react-grid/filter-date/ /react-data-grid/filter-date/
     Redirect 301 /react-grid/filter-external/ /react-data-grid/filter-external/
     Redirect 301 /react-grid/filter-multi/ /react-data-grid/filter-multi/
     Redirect 301 /react-grid/filter-number/ /react-data-grid/filter-number/
-    Redirect 301 /react-grid/filter-provided/ /react-data-grid/filter-provided/
-    Redirect 301 /react-grid/filter-provided-simple/ /react-data-grid/filter-provided-simple/
+    Redirect 301 /react-grid/filter-provided/ /react-data-grid/filtering/
+    Redirect 301 /react-grid/filter-provided-simple/ /react-data-grid/filtering/
     Redirect 301 /react-grid/filter-quick/ /react-data-grid/filter-quick/
     Redirect 301 /react-grid/filter-set/ /react-data-grid/filter-set/
     Redirect 301 /react-grid/filter-set-api/ /react-data-grid/filter-set-api/
@@ -2111,13 +2111,13 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/excel-import/ /vue-data-grid/excel-import/
     Redirect 301 /vue-grid/expressions-and-context/ /vue-data-grid/expressions-and-context/
     Redirect 301 /vue-grid/filter-api/ /vue-data-grid/filter-api/
-    Redirect 301 /vue-grid/filter-custom/ /vue-data-grid/filter-custom/
+    Redirect 301 /vue-grid/filter-custom/ /vue-data-grid/component-filter/
     Redirect 301 /vue-grid/filter-date/ /vue-data-grid/filter-date/
     Redirect 301 /vue-grid/filter-external/ /vue-data-grid/filter-external/
     Redirect 301 /vue-grid/filter-multi/ /vue-data-grid/filter-multi/
     Redirect 301 /vue-grid/filter-number/ /vue-data-grid/filter-number/
-    Redirect 301 /vue-grid/filter-provided/ /vue-data-grid/filter-provided/
-    Redirect 301 /vue-grid/filter-provided-simple/ /vue-data-grid/filter-provided-simple/
+    Redirect 301 /vue-grid/filter-provided/ /vue-data-grid/filtering/
+    Redirect 301 /vue-grid/filter-provided-simple/ /vue-data-grid/filtering/
     Redirect 301 /vue-grid/filter-quick/ /vue-data-grid/filter-quick/
     Redirect 301 /vue-grid/filter-set/ /vue-data-grid/filter-set/
     Redirect 301 /vue-grid/filter-set-api/ /vue-data-grid/filter-set-api/
@@ -2293,6 +2293,21 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-data-grid/rxjs/ /vue-data-grid/data-update/
 
     Redirect 301 /angular-data-grid/angular-rxjs/ /angular-data-grid/data-update/
+
+    Redirect 301 /javascript-data-grid/filter-provided/ /javascript-data-grid/filtering/
+    Redirect 301 /angular-data-grid/filter-provided/ /angular-data-grid/filtering/
+    Redirect 301 /react-data-grid/filter-provided/ /react-data-grid/filtering/
+    Redirect 301 /vue-data-grid/filter-provided/ /vue-data-grid/filtering/
+
+    Redirect 301 /javascript-data-grid/filter-provided-simple/ /javascript-data-grid/filtering/
+    Redirect 301 /angular-data-grid/filter-provided-simple/ /angular-data-grid/filtering/
+    Redirect 301 /react-data-grid/filter-provided-simple/ /react-data-grid/filtering/
+    Redirect 301 /vue-data-grid/filter-provided-simple/ /vue-data-grid/filtering/
+
+    Redirect 301 /javascript-data-grid/filter-custom/ /javascript-data-grid/component-filter/
+    Redirect 301 /angular-data-grid/filter-custom/ /angular-data-grid/component-filter/
+    Redirect 301 /react-data-grid/filter-custom/ /react-data-grid/component-filter/
+    Redirect 301 /vue-data-grid/filter-custom/ /vue-data-grid/component-filter/
 
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy

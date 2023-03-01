@@ -45,6 +45,20 @@ Unlike other series, the `nodeClick` event `datum` parameter for Histogram serie
 
 <interface-documentation interfaceName='AgHistogramBinDatum' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
 
+## Interaction Ranges
+
+By default, the `nodeClick` event is only triggered when the user clicks exactly on a node. You can use the `nodeClickRange` option to instead define a range at which the event is triggered. This can be set to one of three values: `'nearest'`, `'exact'` or a number as a distance in pixels.
+
+### Example: Interaction range variations
+
+This example shows the three different types of interaction range that are possible.
+
+- `'exact'` (default) will trigger the event if the user clicks exactly on a node
+- `'nearest'` will trigger the event for whichever node is nearest on the whole chart
+- given a number it will trigger the event when the click is made within that many pixels of a node
+
+<chart-example title='Interaction Ranges' name='interaction-ranges' type='generated'></chart-example>
+
 ## Chart Event - seriesNodeClick
 
 The `seriesNodeClick` event can be used to listen to `nodeClick` events of all series at once.
@@ -77,7 +91,7 @@ This example demonstrates:
 
 ## Chart Event - click and doubleClick
 
-The `click` and `doubleClick` events are fired when any part of the chart is clicked or double clicked, respectively. The `doubleClick` event does not block the original `click` event from firing.
+The `click` and `doubleClick` events are fired when any part of the chart is clicked or double clicked, respectively. When a user double clicks the `click` event will be fired on the first click, then the `doubleClick` will be fired on the second click.
 
 These events may be prevented by other clickable parts of the chart, such as series-nodes and legend items.
 

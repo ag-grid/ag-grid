@@ -2,7 +2,41 @@
 title: "Date Filter"
 ---
 
-Date filters allow you to filter date data. The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the date filter that are the same as the other provided filters. This page builds on that and explains some details that are specific to the date filter.
+Date Filters allow you to filter date data. 
+
+<image-caption src="filter-date/resources/date-filter.png" alt="Date Filter" width="12.5rem" centered="true"></image-caption>
+
+## Enabling Date Filters
+
+The Date Filter can be configured as shown below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            // configure column to use the Date Filter
+            filter: 'agDateColumnFilter',
+            filterParams: {
+                // pass in additional parameters to the Date Filter
+            },
+        },
+    ],
+}
+</snippet>
+
+## Example: Date Filter
+
+The example below shows the Date Filter in action:
+
+- The **Date** column is using a Date Filter.
+- A [Date Filter Comparator](#date-filter-comparator) is provided to parse the data and allow date comparisons to be made.
+- The minimum valid year is set to `2000`, and maximum valid year is `2021`. Dates outside this range will be considered invalid, and will:
+  - Deactivate the column filter. This avoids the filter getting applied as the user is typing a year - for example suppose the user is typing the year `2008`, the filter doesn't execute for values `2`, `20` or `200` (as the text `2008` is partially typed).
+  - Be highlighted with a red border (default theme) or other theme-appropriate highlight.
+- the `inRangeFloatingFilterDateFormat` property has been set to define a custom date format, this is only shown in the floating filter panel when an in-range filter has been applied.
+
+<grid-example title='Date Picker' name='date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
 
 ## Date Filter Parameters
 
@@ -79,16 +113,111 @@ Once the date comparator callback is provided, then the Date Filter is able to p
 
 It should be noted that the Date Filter Model represents the Date as a string in format `'YYYY-MM-DD'`, however when doing comparisons the date is provided as a JavaScript `Date` object as that's what date pickers typically work with. The model uses string representation to make it easier to save and avoid any timezone issues.
 
-## Example: Date Filter
+## Date Filter Model
 
-The example below shows the date filter in action, using some of the configuration options discussed above:
+The Filter Model describes the current state of the applied Date Filter. If only one [Filter Condition](/filter-conditions/) is set, this will be a `DateFilterModel`:
 
-- The **Date** column is using a Date Filter.
-- A custom `comparator` is provided to parse the data and allow date comparisons to be made.
-- The native date picker is forced to be used in every browser.
-- The minimum valid year is set to `2000`, and maximum valid year is `2021`. Dates outside this range will be considered invalid, and will:
-  - Deactivate the column filter. This avoids the filter getting applied as the user is typing a year - for example suppose the user is typing the year `2008`, the filter doesn't execute for values `2`, `20` or `200` (as the text `2008` is partially typed).
-  - Be highlighted with a red border (default theme) or other theme-appropriate highlight.
-- the `inRangeFloatingFilterDateFormat` property has been set to define a custom date format, this is only shown in the floating filter panel when an in-range filter has been applied.
+<interface-documentation interfaceName='DateFilterModel' config='{"description":""}'></interface-documentation>
 
-<grid-example title='Date Picker' name='date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
+If more than one Filter Condition is set, then multiple instances of the model are created and wrapped inside a Combined Model (`ICombinedSimpleModel<DateFilterModel>`). A Combined Model looks as follows:
+
+
+```ts
+// A filter combining multiple conditions
+interface ICombinedSimpleModel<DateFilterModel> {
+    filterType: string;
+
+    operator: JoinOperator;
+
+    // multiple instances of the Filter Model
+    conditions: DateFilterModel[];
+}
+
+type JoinOperator = 'AND' | 'OR';
+```
+
+Note that in AG Grid versions prior to 29.2, only two Filter Conditions were supported. These appeared in the Combined Model as properties `condition1` and `condition2`. The grid will still accept and supply models using these properties, but this behaviour is deprecated. The `conditions` property should be used instead.
+
+An example of a Filter Model with two conditions is as follows:
+
+```js
+// Date Filter with two conditions, both are equals type
+const dateEquals04OrEquals08 = {
+    filterType: 'date',
+    operator: 'OR',
+    conditions: [
+        {
+            filterType: 'date',
+            type: 'equals',
+            dateFrom: '2004-08-29'
+        },
+        {
+            filterType: 'date',
+            type: 'equals',
+            dateFrom: '2008-08-24'
+        }
+    ]
+};
+```
+
+## Date Filter Options
+
+The Date Filter presents a list of [Filter Options](/filter-conditions/#filter-options) to the user.
+
+The list of options are as follows:
+
+| Option Name             | Option Key            | Included by Default |
+| ----------------------- | --------------------- | ------------------- |
+| Equals                  | `equals`              | Yes                 |
+| Greater than            | `greaterThan`         | Yes                 |
+| Less than               | `lessThan`            | Yes                 |
+| Not equal               | `notEqual`            | Yes                 |
+| In range                | `inRange`             | Yes                 |
+| Blank                   | `blank`               | Yes                 |
+| Not blank               | `notBlank`            | Yes                 |
+| Choose One              | `empty`               | No                  |
+
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+
+The default option for the Date Filter is `equals`.
+
+## Date Filter Values
+
+By default, the values supplied to the Date Filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition. This is similar to using a [Value Getter](/value-getters), but is specific to the filter.
+
+<api-documentation source='column-properties/properties.json' section='filtering' names='["filterValueGetter"]'></api-documentation>
+
+## Applying the Date Filter
+
+Applying the Date Filter is described in more detail in the following sections:
+
+- [Apply, Clear, Reset and Cancel Buttons](/filter-applying/#apply-clear-reset-and-cancel-buttons)
+- [Applying the UI Model](/filter-applying/#applying-the-ui-model)
+
+## Blank Cells
+
+If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range:
+
+```js
+const filterParams = {
+    includeBlanksInEquals: true,
+    includeBlanksInLessThan: false,
+    includeBlanksInGreaterThan: false,
+    includeBlanksInRange: false,
+};
+```
+
+In the following example you can filter by date and see how blank values are included. Note the following:
+
+- Column **Date** has both `null` and `undefined` values resulting in blank cells.
+- Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
+
+<grid-example title='Date Null Filtering' name='date-null-filtering' type='typescript' options='{ "exampleHeight": 310 }'></grid-example>
+
+## Data Updates
+
+The Date Filter is not affected by data changes. When the grid data is updated, the filter value will remain unchanged and the filter will be re-applied based on the updated data (e.g. the displayed rows will update if necessary).
+
+## Next Up
+
+Continue to the next section to learn about [Set Filters](/filter-set/).

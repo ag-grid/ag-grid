@@ -45,6 +45,13 @@ export type Ratio = number;
 /** Alias to denote that a value is a data value. */
 export type DataValue = any;
 
+/** Define a range within which an interaction can trigger on a point with one of:
+ * - A distance in pixels from a point within which the event can be triggered.
+ * - `'exact'` triggers when the event occurs directly over a point.
+ * - `'nearest'` always tracks the nearest point anywhere on the chart.
+ */
+export type AgChartInteractionRange = PixelSize | 'exact' | 'nearest';
+
 export interface AgChartThemePalette {
     /** The array of fills to be used. */
     fills: string[];
@@ -464,8 +471,10 @@ export interface AgChartTooltipOptions {
     enabled?: boolean;
     /** A class name to be added to the tooltip element of the chart. */
     class?: string;
-    /** If true, for series with markers the tooltip will be shown to the closest marker. */
-    tracking?: boolean;
+    /** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */
+    tracking?: boolean | undefined;
+    /** Range from a point that triggers the tooltip to show. */
+    range?: AgChartInteractionRange;
     /** The time interval (in milliseconds) after which the tooltip is shown. */
     delay?: number;
 }
@@ -891,6 +900,8 @@ export interface AgBaseSeriesOptions<DatumType> {
     listeners?: AgSeriesListeners<DatumType>;
     /** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */
     highlightStyle?: AgSeriesHighlightStyle;
+    /** Range from a node a click triggers the listener. */
+    nodeClickRange?: AgChartInteractionRange;
 }
 
 export interface AgTooltipRendererResult {

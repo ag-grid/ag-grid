@@ -149,8 +149,8 @@ const gridOptions = {
 }
 </snippet>
 
-The following example demonstrates all of the provided filters with `readOnly: true` enabled:
-- [Simple Column Filters](/filter-provided-simple/) have a read-only display with no buttons; if there is no 2nd condition set then the join operator and 2nd condition are hidden:
+The following example demonstrates all of the Provided Filters with `readOnly: true` enabled:
+- Simple Filters have a read-only display with no buttons; if there is no 2nd condition set then the join operator and 2nd condition are hidden:
     - `athlete` column demonstrates [Text Filter](/filter-text/).
     - `age` and `year` columns demonstrate [Number Filter](/filter-number/).
     - `date` column demonstrates [Date Filter](/filter-date/).
@@ -162,3 +162,13 @@ The following example demonstrates all of the provided filters with `readOnly: t
 - Buttons above the grid provide API interactions to configure the filters.
 
 <grid-example title='Read-only Filter UI' name='filter-api-readonly' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel", "multifilter"] }'></grid-example>
+
+## Filter Events
+
+Filtering causes the following events to be emitted:
+
+<api-documentation source='grid-events/events.json' section='filter'></api-documentation>
+
+## Next Up
+
+Continue to the next section to learn about [Floating Filters](/floating-filters/).

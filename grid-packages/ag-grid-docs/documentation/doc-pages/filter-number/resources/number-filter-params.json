@@ -3,7 +3,7 @@
     "INumberFilterParams": {
         "filterOptions": {
             "more": {
-                "url": "/filter-provided-simple/#simple-filter-options",
+                "url": "/filter-number/#number-filter-options",
                 "name": "Filter Options"
             }
         },

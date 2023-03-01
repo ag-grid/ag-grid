@@ -8,9 +8,9 @@ interface BBox { x: number; y: number; width: number; height: number }
 
 export class TitleEdit extends Component {
     private static TEMPLATE = /* html */
-        `<input
-            class="ag-chart-title-edit"
-            style="padding:0; border:none; border-radius: 0; min-height: 0; text-align: center;" />
+        `<textarea
+             class="ag-chart-title-edit"
+             style="padding:0; border:none; border-radius: 0; min-height: 0; text-align: center; resize: none;" />
         `;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
@@ -27,8 +27,14 @@ export class TitleEdit extends Component {
     @PostConstruct
     public init(): void {
         this.addManagedListener(this.getGui(), 'keypress', (e: KeyboardEvent) => {
-            if (this.editing && e.key === 'Enter') {
+            if (this.editing && e.key === 'Enter' && !e.shiftKey) {
                 this.handleEndEditing();
+                e.preventDefault();
+            }
+        });
+        this.addManagedListener(this.getGui(), 'input', () => {
+            if (this.editing) {
+                this.updateHeight();
             }
         });
         this.addManagedListener(this.getGui(), 'blur', () => this.endEditing());
@@ -96,10 +102,10 @@ export class TitleEdit extends Component {
         const maximumInputWidth: number = this.chartController.getChartProxy().getChart().width;
         const inputWidth = Math.max(Math.min(titleBBox.width + 20, maximumInputWidth), minimumTargetInputWidth);
 
-        const inputElement = this.getGui() as HTMLInputElement;
+        const element = this.getGui() as HTMLTextAreaElement;
 
-        inputElement.classList.add('currently-editing');
-        const inputStyle = inputElement.style;
+        element.classList.add('currently-editing');
+        const inputStyle = element.style;
 
         // match style of input to title that we're editing
         inputStyle.fontFamily = this.chartOptionsService.getChartOption('title.fontFamily');
@@ -111,15 +117,35 @@ export class TitleEdit extends Component {
         // populate the input with the title, unless the title is the placeholder:
         const oldTitle = this.chartOptionsService.getChartOption('title.text');
         const isTitlePlaceholder = oldTitle === this.chartTranslationService.translate('titlePlaceholder');
-        inputElement.value = isTitlePlaceholder ? '' : oldTitle;
+        element.value = isTitlePlaceholder ? '' : oldTitle;
 
-        const inputRect = inputElement.getBoundingClientRect();
+        const oldTitleLines = oldTitle.split(/\r?\n/g).length;
 
-        inputStyle.left = Math.round(titleBBox.x + titleBBox.width / 2 - inputWidth / 2) + 'px';
-        inputStyle.top = Math.round(titleBBox.y + titleBBox.height / 2 - inputRect.height / 2) + 'px';
+        inputStyle.left = Math.round(titleBBox.x + titleBBox.width / 2 - inputWidth / 2 - 1) + 'px';
+        inputStyle.top = Math.round(titleBBox.y + titleBBox.height / 2 - (oldTitleLines * this.getLineHeight()) / 2 - 2) + 'px';
         inputStyle.width = Math.round(inputWidth) + 'px';
+        inputStyle.lineHeight = this.getLineHeight() + 'px';
+        this.updateHeight();
 
-        inputElement.focus();
+        element.focus();
+    }
+
+    private updateHeight() {
+        const element = this.getGui() as HTMLTextAreaElement;
+
+        // The element should cover the title and provide enough space for the new one.
+        const oldTitleLines = this.chartOptionsService.getChartOption('title.text').split(/\r?\n/g).length;
+        const currentTitleLines = element.value.split(/\r?\n/g).length;
+
+        element.style.height = (Math.round(Math.max(oldTitleLines, currentTitleLines) * this.getLineHeight()) + 4) + 'px';
+    }
+
+    private getLineHeight() : number {
+        const fixedLineHeight = this.chartOptionsService.getChartOption('title.lineHeight');
+        if (fixedLineHeight) {
+            return parseInt(fixedLineHeight);
+        }
+        return Math.round(parseInt(this.chartOptionsService.getChartOption('title.fontSize')) * 1.2);
     }
 
     private handleEndEditing() {
@@ -147,7 +173,7 @@ export class TitleEdit extends Component {
         }
         this.editing = false;
 
-        const value = (this.getGui() as HTMLInputElement).value;
+        const value = (this.getGui() as HTMLTextAreaElement).value;
         if (value && value.trim() !== '') {
             this.chartOptionsService.setChartOption('title.text', value);
             this.chartOptionsService.setChartOption('title.enabled', true);

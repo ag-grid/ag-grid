@@ -63,7 +63,7 @@
         grid-template-areas:
             'avatar name'
             'avatar orgContainer';
-        line-height: 1;
+        line-height: var(--line-height-ultra-tight);
     }
 
     @media screen and (max-width: $breakpoint-quotes-large) {

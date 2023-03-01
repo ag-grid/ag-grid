@@ -24,14 +24,14 @@ export function Deprecated(message?: string, opts?: { default?: any }) {
     });
 }
 
-export function DeprecatedAndRenamedTo(newPropName: any) {
+export function DeprecatedAndRenamedTo(newPropName: any, mapValue?: (value: any) => any) {
     const warnDeprecated = createDeprecationWarning();
 
     return addTransformToInstanceProperty(
         (target, key, value) => {
             if (value !== target[newPropName]) {
                 warnDeprecated(key.toString(), `Use [${newPropName}] instead.`);
-                target[newPropName] = value;
+                target[newPropName] = mapValue ? mapValue(value) : value;
             }
             return BREAK_TRANSFORM_CHAIN;
         },

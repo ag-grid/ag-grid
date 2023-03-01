@@ -144,4 +144,4 @@ The following example demonstrates hiding the mini filter. Note the following:
 
 ## Next Up
 
-Continue to the next section: [Excel Mode](/filter-set-excel-mode/).
+Continue to the next section to learn about [Excel Mode](/filter-set-excel-mode/).

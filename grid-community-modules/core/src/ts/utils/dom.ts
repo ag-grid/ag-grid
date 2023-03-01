@@ -100,6 +100,10 @@ export function isElementChildOfClass(
 export function getElementSize(el: HTMLElement): {
     height: number,
     width: number,
+    borderTopWidth: number,
+    borderRightWidth: number,
+    borderBottomWidth: number,
+    borderLeftWidth: number,
     paddingTop: number,
     paddingRight: number,
     paddingBottom: number,
@@ -113,6 +117,10 @@ export function getElementSize(el: HTMLElement): {
     const {
         height,
         width,
+        borderTopWidth,
+        borderRightWidth,
+        borderBottomWidth,
+        borderLeftWidth,
         paddingTop,
         paddingRight,
         paddingBottom,
@@ -127,6 +135,10 @@ export function getElementSize(el: HTMLElement): {
     return {
         height: parseFloat(height!),
         width: parseFloat(width!),
+        borderTopWidth: parseFloat(borderTopWidth!),
+        borderRightWidth: parseFloat(borderRightWidth!),
+        borderBottomWidth: parseFloat(borderBottomWidth!),
+        borderLeftWidth: parseFloat(borderLeftWidth!),
         paddingTop: parseFloat(paddingTop!),
         paddingRight: parseFloat(paddingRight!),
         paddingBottom: parseFloat(paddingBottom!),

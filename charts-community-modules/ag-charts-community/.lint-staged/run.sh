@@ -24,6 +24,14 @@ case $TYPE in
     fi
   ;;
 
+  eslint)
+    if [ "$MODE" == "verify" ] ; then
+        exec npx eslint "$@"
+    elif [ "$MODE" == "fix" ] ; then
+        exec npx eslint --fix "$@"
+    fi
+  ;;
+
   autodocs)
     if [ "$MODE" == "verify" ] ; then
         exec npx lerna run --scope @ag-grid-community/all-modules generate-doc-files -- -- --check

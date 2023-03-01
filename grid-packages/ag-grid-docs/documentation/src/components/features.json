@@ -77,7 +77,7 @@
         "description": "Create your own Custom Filter to match your own business requirements.",
         "snippet": "colDef = {\n    field: 'name',\n    filter: MyCustomFilter\n}",
         "level": 1,
-        "url": "/filter-custom/"
+        "url": "/component-filter/"
     },
     {
         "title": "Quick Filter",

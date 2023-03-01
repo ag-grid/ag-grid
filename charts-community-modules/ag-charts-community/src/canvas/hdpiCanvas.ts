@@ -272,7 +272,7 @@ export class HdpiCanvas {
                 this.textMeasuringContext.measureText('test').actualBoundingBoxDescent !== undefined &&
                 // Firefox implemented advanced TextMetrics object in v74:
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=1102584
-                // but it's buggy, so we'll keed using the SVG for text measurement in Firefox for now.
+                // but it's buggy, so we'll keep using the SVG for text measurement in Firefox for now.
                 !isFirefox &&
                 !isSafari,
             getTransform: this.textMeasuringContext.getTransform !== undefined,

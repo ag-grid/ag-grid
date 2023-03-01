@@ -3,9 +3,9 @@ import { ValueService } from '../valueService/valueService';
 import { ColumnModel } from '../columns/columnModel';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
-import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
+import { Autowired, Bean, PostConstruct } from '../context/context';
 import { IRowModel } from '../interfaces/iRowModel';
-import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent } from '../events';
+import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FilterDestroyedEvent } from '../events';
 import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
 import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
@@ -225,7 +225,6 @@ export class FilterManager extends BeanStub {
         const groupFilterEnabled = !!this.gridOptionsService.getGroupAggFiltering();
 
         const isAggFilter = (column: Column) => {
-
             const isSecondary = !column.isPrimary();
             // the only filters that can appear on secondary columns are groupAgg filters
             if (isSecondary) { return true; }
@@ -235,16 +234,15 @@ export class FilterManager extends BeanStub {
 
             // primary columns are only ever groupAgg filters if a) value is active and b) showing primary columns
             if (!isValueActive || !isShowingPrimaryColumns) { return false; }
-            
+
             // from here on we know: isPrimary=true, isValueActive=true, isShowingPrimaryColumns=true
-            if (this.columnModel.isPivotMode()) { 
+            if (this.columnModel.isPivotMode()) {
                 // primary column is pretending to be a pivot column, ie pivotMode=true, but we are
                 // still showing primary columns
-                return true; 
-            } else {
-                // we are not pivoting, so we groupFilter when it's an agg column
-                return groupFilterEnabled;
+                return true;
             }
+            // we are not pivoting, so we groupFilter when it's an agg column
+            return groupFilterEnabled;
         };
 
         this.allColumnFilters.forEach(filterWrapper => {
@@ -681,7 +679,7 @@ export class FilterManager extends BeanStub {
             if (currentColumn) { return; }
 
             columns.push(wrapper.column);
-            this.disposeFilterWrapper(wrapper, 'filterDestroyed');
+            this.disposeFilterWrapper(wrapper, 'columnChanged');
         });
 
         if (columns.length > 0) {
@@ -732,13 +730,13 @@ export class FilterManager extends BeanStub {
 
         const parentFilterInstance = (callback: IFloatingFilterParentCallback<IFilter>) => {
             const filterComponent = this.getFilterComponent(column, 'NO_UI');
-    
+
             if (filterComponent == null) { return; }
-    
+
             filterComponent.then(instance => {
                 callback(unwrapUserComp(instance!));
             });
-        }
+        };
 
         const params: WithoutGridCommon<IFloatingFilterParams<IFilter>> = {
             column: column,
@@ -758,8 +756,11 @@ export class FilterManager extends BeanStub {
         return filterComponent ? filterComponent.resolveNow(null, filter => filter && filter.getModel()) : null;
     }
 
-    // destroys the filter, so it not longer takes part
-    public destroyFilter(column: Column, source: ColumnEventType = 'api'): void {
+    // destroys the filter, so it no longer takes part
+    /**
+     * @param source if not calling this from the API, will need to add a new value
+     */
+    public destroyFilter(column: Column, source: 'api' = 'api'): void {
         const filterWrapper = this.allColumnFilters.get(column.getColId());
 
         if (filterWrapper) {
@@ -768,21 +769,28 @@ export class FilterManager extends BeanStub {
         }
     }
 
-    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: ColumnEventType): void {
+    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed'): void {
         filterWrapper.filterPromise!.then(filter => {
             (filter!.setModel(null) || AgPromise.resolve()).then(() => {
                 this.getContext().destroyBean(filter);
 
+                filterWrapper.column.setFilterActive(false, 'filterDestroyed');
+
                 this.allColumnFilters.delete(filterWrapper.column.getColId());
-                filterWrapper.column.setFilterActive(false, source);
+
+                const event: WithoutGridCommon<FilterDestroyedEvent> = {
+                    type: Events.EVENT_FILTER_DESTROYED,
+                    source,
+                    column: filterWrapper.column,
+                };
+                this.eventService.dispatchEvent(event);
             });
         });
     }
 
-    @PreDestroy
     protected destroy() {
         super.destroy();
-        this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'filterDestroyed'));
+        this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'));
     }
 }
 

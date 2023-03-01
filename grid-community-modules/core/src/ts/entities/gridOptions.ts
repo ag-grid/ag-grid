@@ -150,10 +150,12 @@ export interface GridOptions<TData = any> {
     suppressCopySingleCellRanges?: boolean;
     /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */
     suppressLastEmptyLineOnPaste?: boolean;
-    /** Set to `true` to turn off paste operations within the grid. */
+    /** Set to `true` to turn off paste operations within the grid. Default: `false` */
     suppressClipboardPaste?: boolean;
-    /** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */
+    /** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. Default: `false` */
     suppressClipboardApi?: boolean;
+    /** Set to `true` to block **cut** operations within the grid. Default: `false` */
+    suppressCutToClipboard?: boolean;
 
     // *** Columns *** //
     /** Array of Column / Column Group definitions. */
@@ -274,7 +276,7 @@ export interface GridOptions<TData = any> {
     quickFilterText?: string;
     /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */
     cacheQuickFilter?: boolean;
-    /** 
+    /**
      * Set to `true` to exclude hidden columns from being checked by the Quick Filter.
      * This can give a significant performance improvement when there are a large number of hidden columns,
      * and you are only interested in filtering on what's visible. Default: `false`
@@ -590,7 +592,6 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */
     treeData?: boolean;
 
-
     /** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`. */
     rowGroupPanelSuppressSort?: boolean;
 
@@ -677,7 +678,7 @@ export interface GridOptions<TData = any> {
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
     serverSideFilterAllLevels?: boolean;
     /**
-     * 
+     *
      * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * Default: `false`
      */

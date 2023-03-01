@@ -209,6 +209,9 @@ export class LazyBlockLoader extends BeanStub {
             const [startRowString, endRow] = this.nextBlockToLoad;
             const startRow = Number(startRowString);
             this.loaderTimeout = window.setTimeout(() => {
+                if (!this.cache.isAlive()) {
+                    return;
+                }
                 this.loaderTimeout = undefined;
                 this.attemptLoad(startRow, endRow);
                 this.nextBlockToLoad = undefined;
