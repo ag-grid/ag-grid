@@ -1792,7 +1792,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "WEEE Collected in UK (2019)",
+    "text": "WEEE Collected in UK (2022)",
   },
   "tooltip": Object {
     "class": "my-tooltip",
@@ -2050,7 +2050,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Worldwide Earthquakes (first week of February 2020)",
+    "text": "Worldwide Earthquakes (first week of February 2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -2514,7 +2514,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Earthquake Magnitudes by Source (January 2020)",
+    "text": "Earthquake Magnitudes by Source (January 2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -3122,7 +3122,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Changes in UK Energy Stock (2018)",
+    "text": "Changes in UK Energy Stock (2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -3404,7 +3404,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Gross Weekly Earnings
-by Occupation (Q4 2019)",
+by Occupation (Q4 2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -3677,7 +3677,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Change in Number of Jobs in UK
-(June to September 2019)",
+(June to September 2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -4198,7 +4198,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Most Populous Cities (2019)",
+    "text": "Most Populous Cities (2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -4503,7 +4503,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Changes in Prison Population (2019)",
+    "text": "Changes in Prison Population (2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -4811,7 +4811,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Annual Growth in Pay (2018-2019)",
+    "text": "Annual Growth in Pay (2021-2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -6603,7 +6603,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Imported Banana Prices (2019)",
+    "text": "Imported Banana Prices (2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -7392,7 +7392,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "UK Energy Sources (2018)",
+    "text": "UK Energy Sources (2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -7705,7 +7705,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Internet Users by Geographical Location (2019)",
+    "text": "Internet Users by Geographical Location (2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -8037,7 +8037,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Ethnic Diversity of School Pupils (2019)",
+    "text": "Ethnic Diversity of School Pupils (2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -8891,7 +8891,7 @@ Object {
   },
   "series": Array [
     Object {
-      "angleKey": "2018/19",
+      "angleKey": "count",
       "angleName": "",
       "calloutLabel": Object {
         "color": "rgb(70, 70, 70)",
@@ -8977,7 +8977,7 @@ Object {
         "positionOffset": 0,
         "positionRatio": 0.5,
       },
-      "sectorLabelKey": "2018/19",
+      "sectorLabelKey": "count",
       "sectorLabelName": undefined,
       "shadow": Object {
         "blur": 5,
@@ -9006,7 +9006,7 @@ Object {
         "fontSize": 14,
         "fontStyle": undefined,
         "fontWeight": "bold",
-        "text": "2018/19",
+        "text": "2022",
       },
       "tooltip": Object {
         "enabled": true,
@@ -9635,7 +9635,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Road fuel prices (2019)",
+    "text": "Road fuel prices (2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -9826,7 +9826,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Religions of London Population (2016)",
+    "text": "Religions of London Population (2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -10431,7 +10431,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Total Visitors to Science Museums (2019)",
+    "text": "Total Visitors to Science Museums (2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -10737,7 +10737,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "UK Housing Stock (2016)",
+    "text": "UK Housing Stock (2022)",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
