@@ -4,6 +4,7 @@ import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { compoundAscending, ascendingStringNumberUndefined } from '../util/compare';
 import { Logger } from '../util/logger';
+import { Matrix } from './matrix';
 
 export class Group extends Node {
     static className = 'Group';
@@ -127,6 +128,8 @@ export class Group extends Node {
         let { ctx, forceRender, clipBBox } = renderCtx;
         const { resized, stats } = renderCtx;
 
+        const canvasCtxTransform = ctx.getTransform();
+
         const isDirty = dirty >= RedrawType.MINOR || dirtyZIndex || resized;
         const isChildDirty = isDirty || children.some((n) => n.dirty >= RedrawType.TRIVIAL);
 
@@ -171,7 +174,7 @@ export class Group extends Node {
             // Switch context to the canvas layer we use for this group.
             ctx = layer.context;
             ctx.save();
-            ctx.setTransform(renderCtx.ctx.getTransform());
+            ctx.resetTransform();
 
             forceRender = true;
             layer.clear();
@@ -186,17 +189,12 @@ export class Group extends Node {
                 ctx.rect(x, y, width, height);
                 ctx.clip();
             }
+
+            ctx.setTransform(canvasCtxTransform);
         } else {
             // Only apply opacity if this isn't a distinct layer - opacity will be applied
             // at composition time.
             ctx.globalAlpha *= this.opacity;
-        }
-
-        if (clipRect) {
-            const { x, y, width, height } = clipRect;
-            ctx.save();
-            ctx.rect(x, y, width, height);
-            ctx.clip();
         }
 
         // A group can have `scaling`, `rotation`, `translation` properties
@@ -206,9 +204,12 @@ export class Group extends Node {
         this.matrix.toContext(ctx);
 
         if (clipRect) {
-            clipBBox = this.matrix.inverse().transformBBox(clipRect);
-        } else if (clipBBox) {
-            clipBBox = this.matrix.inverse().transformBBox(clipBBox);
+            const { x, y, width, height } = clipRect;
+            ctx.save();
+            ctx.rect(x, y, width, height);
+            ctx.clip();
+
+            clipBBox = Matrix.fromContext(ctx).transformBBox(clipRect);
         }
 
         if (dirtyZIndex) {

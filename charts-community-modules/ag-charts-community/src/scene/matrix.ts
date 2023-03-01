@@ -361,4 +361,9 @@ export class Matrix {
 
         return matrix;
     }
+
+    static fromContext(ctx: CanvasTransform) {
+        const domMatrix = ctx.getTransform();
+        return new Matrix([domMatrix.a, domMatrix.b, domMatrix.c, domMatrix.d, domMatrix.e, domMatrix.f]);
+    }
 }
