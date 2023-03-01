@@ -1,12 +1,13 @@
 import { AgChart, AgChartOptions } from 'ag-charts-community';
 import { getData } from "./data";
 
+const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   autoSize: true,
   data: getData(),
   title: {
-    text: 'Change in Number of Jobs in UK\n(June to September 2019)',
+    text: `Change in Number of Jobs in UK\n(June to September ${year - 1})`,
     fontSize: 18,
   },
   subtitle: {

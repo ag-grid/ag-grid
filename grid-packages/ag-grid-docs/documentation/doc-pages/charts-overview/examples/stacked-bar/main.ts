@@ -10,6 +10,7 @@ function getTotal(datum: any) {
   )
 }
 
+const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
@@ -32,7 +33,7 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: "UK Housing Stock (2016)",
+    text: `UK Housing Stock (${year - 1})`,
     fontSize: 18,
   },
   subtitle: {

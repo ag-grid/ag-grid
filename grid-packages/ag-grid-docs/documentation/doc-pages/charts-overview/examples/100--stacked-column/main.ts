@@ -1,6 +1,7 @@
 import { AgChart, AgChartOptions } from "ag-charts-community";
 import { getData } from "./data";
 
+const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
@@ -31,7 +32,7 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: "Ethnic Diversity of School Pupils (2019)",
+    text: `Ethnic Diversity of School Pupils (${year - 1})`,
     fontSize: 18,
   },
   subtitle: {

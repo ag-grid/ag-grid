@@ -23,6 +23,7 @@ function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
   return tooltipHtml.join("\n")
 }
 
+const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
@@ -40,7 +41,7 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: "WEEE Collected in UK (2019)",
+    text: `WEEE Collected in UK (${year - 1})`,
     fontSize: 18,
   },
   subtitle: {

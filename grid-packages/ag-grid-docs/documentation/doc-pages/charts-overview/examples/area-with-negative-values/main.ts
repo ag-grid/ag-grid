@@ -1,6 +1,7 @@
 import { AgChart, AgChartOptions } from "ag-charts-community";
 import { getData } from "./data";
 
+const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
@@ -25,7 +26,7 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: "Changes in UK Energy Stock (2018)",
+    text: `Changes in UK Energy Stock (${year - 1})`,
     fontSize: 18,
   },
   subtitle: {
