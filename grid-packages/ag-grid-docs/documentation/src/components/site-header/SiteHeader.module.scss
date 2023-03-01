@@ -17,20 +17,6 @@ $header-height: 64px;
     padding-left: 0 !important; // !important needed because of .ag-styles specificity
     padding-right: 0 !important; // !important needed because of .ag-styles specificity
 
-    // @media screen and (max-width: $breakpoint-site-header-small) {
-    //     padding-left: 0 !important; // !important needed because of .ag-styles specificity
-    //     padding-right: 0 !important; // !important needed because of .ag-styles specificity
-    // }
-
-    // @media screen and (min-width: $breakpoint-page-margin-padding) and (max-width: $breakpoint-site-header-small) {
-    //     padding-left: calc(
-    //         var(--horizontal-margin) - $size-2
-    //     ) !important; // !important needed because of .ag-styles specificity
-    //     padding-right: calc(
-    //         var(--horizontal-margin) - $size-2
-    //     ) !important; // !important needed because of .ag-styles specificity
-    // }
-
     @media screen and (min-width: $breakpoint-site-header-small) {
         flex-wrap: unset;
     }
@@ -45,10 +31,6 @@ $header-height: 64px;
             var(--horizontal-margin) - 16px
         ) !important; // !important needed because of .ag-styles specificity
     }
-
-    // @media screen and (min-width: $breakpoint-site-header-small) {
-    //     margin-left: -$size-2 !important; // !important needed because of .ag-styles specificity
-    // }
 }
 
 .mobileMenuButton {
@@ -169,7 +151,7 @@ $header-height: 64px;
     background-color: var(--site-nav-background);
 
     @media screen and (min-width: $breakpoint-site-header-small) {
-        margin-right: calc(var(--horizontal-margin) - 19px) !important; // !important for .ag-styles specificity
+        margin-right: calc(var(--horizontal-margin) - 17px) !important; // !important for .ag-styles specificity
         width: unset;
         background-color: unset;
     }

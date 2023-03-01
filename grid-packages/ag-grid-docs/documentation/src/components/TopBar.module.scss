@@ -2,9 +2,11 @@
 
 .topBar {
     background-color: var(--toolbar-background);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .topBarInner {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     gap: $size-1;

@@ -17,29 +17,31 @@ export const TopBar = ({ frameworks, currentFramework, path }) => {
     return (
         <div className="ag-styles">
             <div className={styles.topBar}>
-                <div className={classNames(styles.topBarInner, 'page-margin')}>
-                    <button
-                        className={classNames(styles.topBarNavButton, 'button-input')}
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#side-nav"
-                        aria-controls="side-nav"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                    >
-                        <span>Docs</span>
-                        <Icon name="collapseCategories" />
-                    </button>
+                <div className="page-margin">
+                    <div className={styles.topBarInner}>
+                        <button
+                            className={classNames(styles.topBarNavButton, 'button-input')}
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#side-nav"
+                            aria-controls="side-nav"
+                            aria-expanded="false"
+                            aria-label="Toggle navigation"
+                        >
+                            <span>Docs</span>
+                            <Icon name="collapseCategories" />
+                        </button>
 
-                    <Search currentFramework={currentFramework} />
+                        <Search currentFramework={currentFramework} />
 
-                    {currentFramework && (
-                        <FrameworkSelector
-                            data={frameworksData}
-                            currentFramework={currentFramework}
-                            showSelectedFramework
-                        />
-                    )}
+                        {currentFramework && (
+                            <FrameworkSelector
+                                data={frameworksData}
+                                currentFramework={currentFramework}
+                                showSelectedFramework
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

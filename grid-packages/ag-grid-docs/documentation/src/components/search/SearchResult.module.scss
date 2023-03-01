@@ -1,7 +1,9 @@
-@import "~bootstrap/scss/card";
-@import "~bootstrap/scss/list-group";
-@import "~bootstrap/scss/utilities/display";
-@import "~bootstrap/scss/utilities/spacing";
+@use '../../design-system' as *;
+
+@import '~bootstrap/scss/card';
+@import '~bootstrap/scss/list-group';
+@import '~bootstrap/scss/utilities/display';
+@import '~bootstrap/scss/utilities/spacing';
 
 .search-result {
     composes: card from global;
@@ -9,6 +11,9 @@
     position: absolute !important;
     z-index: 99999;
     width: 600px;
+    max-width: calc(100vw - $size-4);
+    top: 50px;
+    left: 0;
     margin-top: 0.4rem;
     display: none !important;
 
@@ -104,7 +109,7 @@
 
 :global(.ais-InfiniteHits-loadMore--disabled) {
     &::before {
-        content: "No more results";
+        content: 'No more results';
         font-size: 0.8rem;
     }
 
