@@ -572,11 +572,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
             series.data = this.data;
         }
         series.addEventListener('nodeClick', this.onSeriesNodeClick);
+        series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
     }
 
     protected freeSeries(series: Series<any>) {
         series.chart = undefined;
         series.removeEventListener('nodeClick', this.onSeriesNodeClick);
+        series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
     }
 
     removeAllSeries(): void {
@@ -1005,6 +1007,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     protected onDoubleClick(event: InteractionEvent<'dblclick'>) {
+        if (this.checkSeriesNodeDoubleClick(event)) {
+            this.update(ChartUpdateType.SERIES_UPDATE);
+            return;
+        }
         this.fireEvent<AgChartDoubleClickEvent>({
             type: 'doubleClick',
             event: event.sourceEvent,
@@ -1012,12 +1018,27 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
+        return this.checkSeriesNodeAnyClick(event, (series: Series, datum: any) =>
+            series.fireNodeClickEvent(event.sourceEvent, datum)
+        );
+    }
+
+    private checkSeriesNodeDoubleClick(event: InteractionEvent<'dblclick'>): boolean {
+        return this.checkSeriesNodeAnyClick(event, (series: Series, datum: any) =>
+            series.fireNodeDoubleClickEvent(event.sourceEvent, datum)
+        );
+    }
+
+    private checkSeriesNodeAnyClick(
+        event: InteractionEvent<'click' | 'dblclick'>,
+        fireEventFn: (series: Series, datum: any) => void
+    ): boolean {
         const datum = this.lastPick?.datum;
         const nodeClickRange = datum?.series.nodeClickRange;
 
         // First check if we should fire the event based on nearest node
         if (datum && nodeClickRange === 'nearest') {
-            datum.series.fireNodeClickEvent(event.sourceEvent, datum);
+            fireEventFn(datum.series, datum);
             return true;
         }
 
@@ -1040,7 +1061,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const exactlyMatched = nodeClickRange === 'exact' && pick.distance === 0;
 
         if (isPixelRange || exactlyMatched) {
-            pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
+            fireEventFn(pick.series, pick.datum);
             return true;
         }
 
@@ -1058,6 +1079,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
             get: () => (event as any).series,
         });
         this.fireEvent(seriesNodeClickEvent);
+    };
+
+    private onSeriesNodeDoubleClick = (event: TypedEvent) => {
+        const seriesNodeDoubleClick = {
+            ...event,
+            type: 'seriesNodeDoubleClick',
+        };
+        this.fireEvent(seriesNodeDoubleClick);
     };
 
     private mergePointerDatum(meta: PointerMeta, datum: SeriesNodeDatum): PointerMeta {

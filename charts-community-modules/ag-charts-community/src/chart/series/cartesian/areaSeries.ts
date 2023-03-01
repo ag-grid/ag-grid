@@ -5,7 +5,12 @@ import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legendDatum';
 import { Path } from '../../../scene/shape/path';
 import { Marker } from '../../marker/marker';
-import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent } from './cartesianSeries';
+import {
+    CartesianSeries,
+    CartesianSeriesMarker,
+    CartesianSeriesNodeClickEvent,
+    CartesianSeriesNodeDoubleClickEvent,
+} from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
@@ -838,6 +843,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
     protected getNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): CartesianSeriesNodeClickEvent<any> {
         return new CartesianSeriesNodeClickEvent(this.xKey, datum.yKey, event, datum, this);
+    }
+
+    protected getNodeDoubleClickEvent(
+        event: MouseEvent,
+        datum: MarkerSelectionDatum
+    ): CartesianSeriesNodeDoubleClickEvent<any> {
+        return new CartesianSeriesNodeDoubleClickEvent(this.xKey, datum.yKey, event, datum, this);
     }
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {

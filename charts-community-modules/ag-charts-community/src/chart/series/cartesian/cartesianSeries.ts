@@ -4,7 +4,7 @@ import {
     SeriesNodeDatum,
     SeriesNodePickMode,
     SeriesNodePickMatch,
-    SeriesNodeClickEvent,
+    SeriesNodeBaseClickEvent,
 } from '../series';
 import { ChartAxis } from '../../chartAxis';
 import { SeriesMarker } from '../seriesMarker';
@@ -59,7 +59,7 @@ const DEFAULT_DIRECTION_KEYS: { [key in ChartAxisDirection]?: string[] } = {
     [ChartAxisDirection.Y]: ['yKey'],
 };
 
-export class CartesianSeriesNodeClickEvent<Datum extends { datum: any }> extends SeriesNodeClickEvent<Datum> {
+export class CartesianSeriesNodeBaseClickEvent<Datum extends { datum: any }> extends SeriesNodeBaseClickEvent<Datum> {
     readonly xKey: string;
     readonly yKey: string;
 
@@ -70,6 +70,17 @@ export class CartesianSeriesNodeClickEvent<Datum extends { datum: any }> extends
     }
 }
 
+export class CartesianSeriesNodeClickEvent<
+    Datum extends { datum: any }
+> extends CartesianSeriesNodeBaseClickEvent<Datum> {
+    readonly type = 'nodeClick';
+}
+
+export class CartesianSeriesNodeDoubleClickEvent<
+    Datum extends { datum: any }
+> extends CartesianSeriesNodeBaseClickEvent<Datum> {
+    readonly type = 'nodeDoubleClick';
+}
 export abstract class CartesianSeries<
     C extends SeriesNodeDataContext<any, any>,
     N extends Node = Group

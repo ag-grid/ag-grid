@@ -45,6 +45,22 @@ Unlike other series, the `nodeClick` event `datum` parameter for Histogram serie
 
 <interface-documentation interfaceName='AgHistogramBinDatum' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
 
+## Series Event - nodeDoubleClick
+
+Fired when this series' node is double clicked.
+
+Every `nodeDoubleClick` event contains:
+
+- the `series` the node belongs to
+- the piece of chart data or `datum`
+- the specific keys in that `datum` that were used to fetch the values represented by the clicked node
+
+### Example: nodeDoubleClick Event
+
+This example shows how the `nodeDoubleClick` event listener can be used to listen to column double clicks.
+
+<chart-example title='Node Double Click Event' name='node-double-click-event' type='generated'></chart-example>
+
 ## Interaction Ranges
 
 By default, the `nodeClick` event is only triggered when the user clicks exactly on a node. You can use the `nodeClickRange` option to instead define a range at which the event is triggered. This can be set to one of three values: `'nearest'`, `'exact'` or a number as a distance in pixels.
@@ -91,15 +107,15 @@ This example demonstrates:
 
 ## Chart Event - click and doubleClick
 
-The `click` and `doubleClick` events are fired when any part of the chart is clicked or double clicked, respectively. When a user double clicks the `click` event will be fired on the first click, then the `doubleClick` will be fired on the second click.
+The `click` and `doubleClick` events are fired when any part of the chart is clicked or double clicked, respectively. When a user double clicks the `click` event will be fired on the first click, then both the `click` and `doubleClick` will be fired on the second click.
 
-These events may be prevented by other clickable parts of the chart, such as series-nodes and legend items.
+These events may be prevented by other clickable parts of the chart, such as series nodes and legend items.
 
 ### Example: Single & Double Click Events
 
 This example demonstrates:
 
-- when a chart is clicked, a message is logged to the console
-- when a chart is double clicked, a different message is logged to the console
+- when a blank area on a chart is clicked, a message is logged to the console
+- when a blank area on a chart is double clicked, a different message is logged to the console
 
 <chart-example title='Chart Single & Double Click Events' name='chart-click-event' type='generated'></chart-example>
