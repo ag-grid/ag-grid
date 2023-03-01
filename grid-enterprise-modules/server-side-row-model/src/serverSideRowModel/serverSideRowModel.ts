@@ -186,10 +186,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         if (resetRequired) {
             this.resetRootStore();
-        } else {
-            // reset root store already does this, but regardless of whether resetting params should be updated
-            // as something has changed
-            this.storeParams = this.createStoreParams();
         }
     }
 
