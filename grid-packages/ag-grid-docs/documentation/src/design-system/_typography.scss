@@ -1,3 +1,4 @@
+@use "sass:math";
 @use "core" as *;
 
 html,
@@ -7,6 +8,7 @@ h3,
 h4,
 h5,
 h6,
+.font-size-gargantuan,
 .font-size-gigantic,
 .font-size-massive,
 .font-size-extra-large,
@@ -20,40 +22,65 @@ h6,
     font-weight: var(--font-weight);
 }
 
-.font-size-gigantic {
-    --font-size: #{$font-size-gigantic};
-    --line-height: #{$line-height-tight};
+.font-size-gargantuan {
+    --font-size: var(--font-size-gargantuan);
+    --line-height: var(--line-height-tight);
 }
 
 h1,
-.font-size-massive {
-    --font-size: #{$font-size-massive};
-    --line-height: #{$line-height-tight};
+.font-size-gigantic {
+    --font-size: var(--font-size-gigantic);
+    --line-height: var(--line-height-tight);
 }
 
 h2,
-.font-size-extra-large {
-    --font-size: #{$font-size-extra-large};
+.font-size-massive {
+    --font-size: var(--font-size-massive);
+    --line-height: var(--line-height-tight);
 }
 
 h3,
+.font-size-extra-large {
+    --font-size: var(--font-size-extra-large);
+}
+
 .font-size-large {
-    --font-size: #{$font-size-large};
+    --font-size: var(--font-size-large);
 }
 
 h4,
 .font-size-medium {
-    --font-size: #{$font-size-medium};
+    --font-size: var(--font-size-medium);
 }
 
 h5,
 .font-size-small {
-    --font-size: #{$font-size-small};
+    --font-size: var(--font-size-small);
 }
 
 h6,
 .font-size-extra-small {
-    --font-size: #{$font-size-extra-small};
+    --font-size: var(--font-size-extra-small);
+}
+
+h1,
+.font-size-gargantuan,
+.font-size-gigantic,
+.font-size-massive {
+    --line-height: var(--line-height-tight);
+}
+
+.font-size-responsive {
+    @media screen and (min-width: $max-page-width) {
+        --font-size-extra-small: #{$large-font-size-extra-small};
+        --font-size-small: #{$large-font-size-small};
+        --font-size-medium: #{$large-font-size-medium};
+        --font-size-large: #{$large-font-size-large};
+        --font-size-extra-large: #{$large-font-size-extra-large};
+        --font-size-massive: #{$large-font-size-massive};
+        --font-size-gigantic: #{$large-font-size-gigantic};
+        --font-size-gargantuan: #{$large-font-size-gargantuan};
+    }
 }
 
 h1,

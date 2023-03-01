@@ -37,7 +37,9 @@ const QuoteItems = ({ quotes }: { quotes: QuotesDataItem[] }) => {
                             </blockquote>
                             <figcaption>
                                 <img className={styles.avatar} title={name} src={avatarUrl} alt={name} />
-                                <span className={classNames(styles.name, 'font-size-large', 'bold-text')}>{name}</span>
+                                <span className={classNames(styles.name, 'font-size-extra-large', 'bold-text')}>
+                                    {name}
+                                </span>
                                 <div className={styles.orgContainer}>
                                     <span className="font-size-extra-small text-secondary">{orgRole}</span>
                                     <img className={styles.orgIcon} title={orgName} src={orgIconUrl} alt={orgName} />

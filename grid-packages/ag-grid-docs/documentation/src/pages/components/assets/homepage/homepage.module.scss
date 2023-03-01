@@ -40,7 +40,7 @@ body {
 
     h1,
     h2 {
-        --line-height: #{ds.$line-height-tight} !important; // !important for .ag-styles specificity
+        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
     }
 
     h1 {
@@ -48,7 +48,7 @@ body {
         --font-weight: #{ds.$font-weight-bold}; // needed to deal with .ag-styles `
 
         @media screen and (min-width: ds.$breakpoint-hero-small) {
-            --font-size: #{ds.$font-size-extra-large} !important; // !important for .ag-styles specificity
+            --font-size: var(--font-size-massive) !important; // !important for .ag-styles specificity
         }
 
         @media screen and (min-width: ds.$breakpoint-hero-large) {
@@ -130,7 +130,7 @@ body {
     font-weight: var(--font-weight); // needed to deal with .ag-styles
 
     @media screen and (min-width: 1020px) {
-        --font-size: #{ds.$font-size-large} !important; // !important for .ag-styles specificity
+        --font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
         --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
     }
 }
@@ -200,7 +200,7 @@ body {
     }
 
     > div {
-        --line-height: #{ds.$line-height-tight} !important; // !important for .ag-styles specificity
+        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
 
         text-align: center;
         margin-bottom: ds.$size-5 !important; // !important for .ag-styles specificity

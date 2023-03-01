@@ -1,4 +1,5 @@
 @forward "variables";
 @forward "breakpoints" as breakpoint-*;
 
+@forward "utils";
 @forward "mixins/table-mixins";

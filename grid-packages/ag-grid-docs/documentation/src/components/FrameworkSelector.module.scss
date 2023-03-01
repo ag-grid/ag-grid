@@ -124,7 +124,7 @@
     @media screen and (min-width: $breakpoint-fw-selector-full-width-large) {
         --height: #{$size-7};
         --icon-size: #{$size-5} !important; // !important for .ag-styles specificity
-        --font-size: #{$font-size-large};
+        --font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
         --x-padding: 20px;
     }
 }

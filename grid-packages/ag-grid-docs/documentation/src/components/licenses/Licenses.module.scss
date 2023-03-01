@@ -73,15 +73,16 @@
     }
 
     .bottom & p:last-child {
+        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+
         max-width: 13em;
-        line-height: $line-height-tight;
     }
 }
 
 p.name {
     .top & {
         font-size: 46px !important; // !important for .ag-styles specificity
-        line-height: 1 !important; // !important for .ag-styles specificity
+        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity
         margin-top: $size-half !important; // !important for .ag-styles specificity
         margin-bottom: $size-1 !important; // !important for .ag-styles specificity
 
@@ -93,8 +94,9 @@ p.name {
     }
 
     .bottom & {
-        font-size: $font-size-large !important; // !important for .ag-styles specificity
-        line-height: 1 !important; // !important for .ag-styles specificity
+        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
+
+        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity
         margin-top: $size-half !important; // !important for .ag-styles specificity
         margin-bottom: $size-half !important; // !important for .ag-styles specificity
     }
@@ -110,13 +112,14 @@ p.name {
     }
 
     .bottom & p:last-child {
+        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+
         max-width: 13em;
-        line-height: $line-height-tight;
     }
 }
 
 p.priceFullDollars {
-    line-height: 1.25 !important; // !important for .ag-styles specificity
+    line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
     letter-spacing: -0.05em;
 
     &::before {
