@@ -458,6 +458,9 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
     pivotValueColumn?: Column | null;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];
+
+    /** Set to `true` if you want this column header for this column to span the whole height of the header container. Default: `false` */
+    spanHeaderHeight?: boolean;
 }
 export interface ColumnFunctionCallbackParams<TData = any> extends AgGridCommon<TData, any> {
     /** Row node for the given row */

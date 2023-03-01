@@ -40,6 +40,7 @@ export class GridHeaderCtrl extends BeanStub {
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
 
         this.onPivotModeChanged();
         this.setupHeaderHeight();
@@ -109,6 +110,13 @@ export class GridHeaderCtrl extends BeanStub {
 
         this.comp.addOrRemoveCssClass('ag-pivot-on', pivotMode);
         this.comp.addOrRemoveCssClass('ag-pivot-off', !pivotMode);
+    }
+
+    private onDisplayedColumnsChanged(): void {
+        const columns = this.columnModel.getAllDisplayedColumns();
+        const shouldAllowOverflow = columns.some(col => col.getColDef().spanHeaderHeight);
+
+        this.comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {

@@ -24,6 +24,8 @@ import { SelectAllFeature } from "./selectAllFeature";
 import { getElementSize } from "../../../utils/dom";
 import { ResizeObserverService } from "../../../misc/resizeObserverService";
 import { SortDirection } from "../../../entities/colDef";
+import { doOnce } from "../../../utils/function";
+
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -81,6 +83,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupMenuClass();
         this.setupSortableClass();
         this.setupWrapTextClass();
+        this.setupSpanHeaderHeight(eGui);
         this.setupAutoHeight(eHeaderCompWrapper);
         this.addColumnHoverListener();
         this.setupFilterCss();
@@ -450,6 +453,30 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addRefreshFunction(listener);
     }
 
+    private setupSpanHeaderHeight(eGui: HTMLElement) {
+        if (!this.column.getColDef().spanHeaderHeight) { return; }
+
+        const multiplier = this.getNumberOfPaddedParents() + 1;
+
+        this.comp.addOrRemoveCssClass('ag-header-span-height', multiplier > 1);
+
+        if (multiplier === 1) { return; }
+
+        const headerHeight = this.environment.getFromTheme(48, 'headerHeight');
+
+        eGui.style.setProperty('top', `${headerHeight * -(multiplier - 1)}px`);
+        eGui.style.setProperty('height', `${headerHeight * multiplier}px`);
+    }
+
+    private getNumberOfPaddedParents(): number {
+        const parent = this.column.getParent();
+
+        if (!parent || !parent.isPadding()) { return 0; }
+
+        return parent.getPaddingLevel() + 1;
+
+    }
+
     private setupAutoHeight(wrapperElement: HTMLElement) {
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive()) { return; }
@@ -482,7 +509,18 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         let stopResizeObserver: (() => void) | undefined;
 
         const checkMeasuring = () => {
+            const isSpanHeaderHeight = this.column.getColDef().spanHeaderHeight;
             const newValue = this.column.isAutoHeaderHeight();
+
+            if (isSpanHeaderHeight) {
+                stopMeasuring();
+                if (newValue) {
+                    const message = "AG Grid: The properties `spanHeaderHeight` and `autoHeaderHeight` cannot be used together.";
+                    doOnce(() => console.warn(message), 'HeaderCellCtrl.spanHeaderHeightAndAutoHeaderHeight');
+                }
+                return;
+            }
+
             if (newValue && !isMeasuring) {
                 startMeasuring();
             }
