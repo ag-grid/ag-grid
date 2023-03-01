@@ -322,7 +322,7 @@ export class GroupCellRendererCtrl extends BeanStub {
                 const localeTextFunc = this.localeService.getLocaleTextFunc();
                 valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
             } else {
-                valueWhenNoRenderer = value;
+                valueWhenNoRenderer = value ?? null;
             }
         }
 
