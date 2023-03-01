@@ -1,26 +1,22 @@
-.search-box {
-    position: relative;
+@use '../../design-system' as *;
+
+.searchBox {
     display: flex;
     align-items: center;
+    position: relative;
 
-    &__input {
-        composes: form-control from global;
-
-        padding-left: 2rem !important;
-
-        &:focus + .search-box__icon {
-            color: $primary;
-        }
+    input {
+        width: 100%;
+        padding-top: 0.4375em !important; // !important for .ag-styles specificity
+        padding-bottom: 0.4375em !important; // !important for .ag-styles specificity
+        padding-left: 2em !important; // !important for .ag-styles specificity;
     }
 
-    &__icon {
-        composes: ml-2 from global;
-
-        @media all and (-ms-high-contrast:none) { // IE 11 
-            top: 0.75rem;
-            left: 0px;
-        }
+    :global(.icon) {
+        --icon-size: 1.25em;
+        --text-color: var(--secondary-text-color);
 
         position: absolute;
+        left: 0.625em;
     }
 }
