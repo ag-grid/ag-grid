@@ -72,14 +72,14 @@ h1,
 
 .font-size-responsive {
     @media screen and (min-width: $max-page-width) {
-        --font-size-extra-small: #{math.div(13rem, 16)}; // convert px values to rems
-        --font-size-small: #{math.div(15rem, 16)}; // convert px values to rems
-        --font-size-medium: #{math.div(18rem, 16)}; // convert px values to rems
-        --font-size-large: #{math.div(23rem, 16)}; // convert px values to rems
-        --font-size-extra-large: #{math.div(29rem, 16)}; // convert px values to rems
-        --font-size-massive: #{math.div(41rem, 16)}; // convert px values to rems
-        --font-size-gigantic: #{math.div(54rem, 16)}; // convert px values to rems
-        --font-size-gargantuan: #{math.div(74rem, 16)}; // convert px values to rems
+        --font-size-extra-small: #{$large-font-size-extra-small};
+        --font-size-small: #{$large-font-size-small};
+        --font-size-medium: #{$large-font-size-medium};
+        --font-size-large: #{$large-font-size-large};
+        --font-size-extra-large: #{$large-font-size-extra-large};
+        --font-size-massive: #{$large-font-size-massive};
+        --font-size-gigantic: #{$large-font-size-gigantic};
+        --font-size-gargantuan: #{$large-font-size-gargantuan};
     }
 }
 
