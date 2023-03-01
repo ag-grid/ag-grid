@@ -19,7 +19,7 @@ export const TopBar = ({ frameworks, currentFramework, path }) => {
             <div className={styles.topBar}>
                 <div className={classNames(styles.topBarInner, 'page-margin')}>
                     <button
-                        className={styles.topBarNavButton}
+                        className={classNames(styles.topBarNavButton, 'button-input')}
                         type="button"
                         data-toggle="collapse"
                         data-target="#side-nav"
@@ -28,7 +28,6 @@ export const TopBar = ({ frameworks, currentFramework, path }) => {
                         aria-label="Toggle navigation"
                     >
                         <span>Docs</span>
-
                         <Icon name="collapseCategories" />
                     </button>
 
