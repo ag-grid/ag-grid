@@ -1,6 +1,8 @@
+import classNames from 'classnames';
 import React from 'react';
 import supportedFrameworks from '../utils/supported-frameworks';
 import FrameworkSelector from './FrameworkSelector';
+import { Icon } from './Icon';
 import Search from './search/Search';
 import styles from './TopBar.module.scss';
 
@@ -13,11 +15,11 @@ export const TopBar = ({ frameworks, currentFramework, path }) => {
         }));
 
     return (
-        <div className={styles['top-bar']}>
-            <div className={styles['top-bar__wrapper']}>
-                <div className={styles['top-bar__search']}>
+        <div className="ag-styles">
+            <div className={styles.topBar}>
+                <div className={classNames(styles.topBarInner, 'page-margin')}>
                     <button
-                        className={styles['top-bar__nav-button']}
+                        className={styles.topBarNavButton}
                         type="button"
                         data-toggle="collapse"
                         data-target="#side-nav"
@@ -25,21 +27,21 @@ export const TopBar = ({ frameworks, currentFramework, path }) => {
                         aria-expanded="false"
                         aria-label="Toggle navigation"
                     >
-                        <span className={styles['top-bar__nav-button-icon']}></span>
+                        <span>Docs</span>
+
+                        <Icon name="collapseCategories" />
                     </button>
 
                     <Search currentFramework={currentFramework} />
-                </div>
 
-                {currentFramework && (
-                    <div className={styles['top-bar__framework-selector']}>
+                    {currentFramework && (
                         <FrameworkSelector
                             data={frameworksData}
                             currentFramework={currentFramework}
                             showSelectedFramework
                         />
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </div>
     );
