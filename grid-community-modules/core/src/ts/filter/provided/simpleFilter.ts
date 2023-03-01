@@ -4,7 +4,7 @@ import { IProvidedFilter, IProvidedFilterParams, ProvidedFilter } from './provid
 import { AgPromise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
-import { areEqual, includes } from '../../utils/array';
+import { areEqual } from '../../utils/array';
 import { setDisplayed, setDisabled, removeFromParent } from '../../utils/dom';
 import { IFilterLocaleText } from '../filterLocaleText';
 import { AgInputTextField } from '../../widgets/agInputTextField';
@@ -209,7 +209,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     private maxNumConditions: number;
     private numAlwaysVisibleConditions: number;
-    private defaultJoinOperator: JoinOperator | undefined;
+    private defaultJoinOperator: JoinOperator;
     private filterPlaceholder: SimpleFilterParams['filterPlaceholder'];
     private repositionPopup?: () => void;
     private lastUiCompletePosition: number | null = null;
@@ -280,8 +280,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 eType.setValue(this.optionsFactory.getDefaultOption(), true);
             }
         });
-        const eJoinOperators = this.isDefaultOperator('AND') ? this.eJoinOperatorsAnd : this.eJoinOperatorsOr;
-        eJoinOperators.forEach(eJoinOperator => eJoinOperator.setValue(true, true));
     }
 
     public getModelFromUi(): M | ICombinedSimpleModel<M> | null {
@@ -312,7 +310,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     protected getJoinOperator(): JoinOperator {
-        return this.eJoinOperatorsOr.length > 0 && this.eJoinOperatorsOr[0].getValue() === true ? 'OR' : 'AND';
+        if (this.eJoinOperatorsOr.length === 0) {
+            return this.defaultJoinOperator;
+        }
+        return this.eJoinOperatorsOr[0].getValue() === true ? 'OR' : 'AND';
     }
 
     protected areModelsEqual(a: M | ICombinedSimpleModel<M>, b: M | ICombinedSimpleModel<M>): boolean {
@@ -508,8 +509,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return eJoinOperator;
     }
 
-    private getDefaultJoinOperator(defaultJoinOperator?: JoinOperator): JoinOperator | undefined {
-        return includes(['AND', 'OR'], defaultJoinOperator) ? defaultJoinOperator : 'AND';
+    private getDefaultJoinOperator(defaultJoinOperator?: JoinOperator): JoinOperator {
+        return defaultJoinOperator === 'AND' || defaultJoinOperator == 'OR' ? defaultJoinOperator : 'AND';
     }
 
     private putOptionsIntoDropdown(eType: AgSelect): void {
@@ -560,10 +561,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     protected updateUiVisibility(): void {
+        const joinOperator = this.getJoinOperator();
         const hasSizeIncreased = this.updateNumConditions();
 
         // from here, the number of elements in all the collections is correct, so can just update the values/statuses
-        this.updateConditionStatusesAndValues(this.lastUiCompletePosition!);
+        this.updateConditionStatusesAndValues(this.lastUiCompletePosition!, joinOperator);
 
         if (hasSizeIncreased) {
             this.repositionPopup?.();
@@ -603,7 +605,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return hasSizeIncreased;
     }
 
-    private updateConditionStatusesAndValues(lastUiCompletePosition: number): void {
+    private updateConditionStatusesAndValues(lastUiCompletePosition: number, joinOperator?: JoinOperator): void {
         this.eTypes.forEach((eType, position) => {
             const disabled = this.isConditionDisabled(position, lastUiCompletePosition);
 
@@ -621,16 +623,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             setDisplayed(element, this.isConditionBodyVisible(index));
         });
 
-        const orChecked = this.getJoinOperator() === 'OR';
+        const orChecked = (joinOperator ?? this.getJoinOperator()) === 'OR';
         this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd, index) => {
-            if (index > 0) {
-                eJoinOperatorAnd.setValue(!orChecked, true);
-            }
+            eJoinOperatorAnd.setValue(!orChecked, true);
         });
         this.eJoinOperatorsOr.forEach((eJoinOperatorOr, index) => {
-            if (index > 0) {
-                eJoinOperatorOr.setValue(orChecked, true);
-            }
+            eJoinOperatorOr.setValue(orChecked, true);
         });
 
         this.forEachInput((element, index, position, numberOfInputs) => {
@@ -697,6 +695,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         let lastUiCompletePosition = -1;
         // as we remove incomplete positions, the last UI complete position will change
         let updatedLastUiCompletePosition = -1;
+        const joinOperator = this.getJoinOperator();
         for (let position = this.getNumConditions() - 1; position >= 0; position--) {
             if (this.isConditionUiComplete(position)) {
                 if (lastUiCompletePosition === -1) {
@@ -726,7 +725,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             shouldUpdateConditionStatusesAndValues = true;
         }
         if (shouldUpdateConditionStatusesAndValues) {
-            this.updateConditionStatusesAndValues(updatedLastUiCompletePosition);
+            this.updateConditionStatusesAndValues(updatedLastUiCompletePosition, joinOperator);
         }
         this.lastUiCompletePosition = updatedLastUiCompletePosition;
     }
