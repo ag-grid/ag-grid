@@ -30,9 +30,9 @@
     --font-weight-normal: #{$font-weight-normal};
     --font-weight-bold: #{$font-weight-bold};
 
-    --line-height-tight: #{$line-height-tight};
     --line-height-normal: #{$line-height-normal};
-    --line-height-loose: #{$line-height-loose};
+    --line-height-tight: #{$line-height-tight};
+    --line-height-ultra-tight: #{$line-height-ultra-tight};
 
     --font-size: var(--font-size-medium);
     --font-weight: var(--font-weight-normal);

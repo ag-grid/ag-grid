@@ -114,7 +114,7 @@
 
     div > span {
         display: block;
-        line-height: 1.125;
+        line-height: var(--line-height-tight);
         text-align: left;
     }
 }
