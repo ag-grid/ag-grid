@@ -25,13 +25,13 @@ Information on defining [Custom Filter Options](#custom-filter-options) can be f
 
 Each filter option takes zero (a possibility with custom options), one (for most) or two (for 'in range') values. The value type depends on the filter type, e.g. the Date Filter takes Date values.
 
-### Number of Conditions
+## Number of Conditions
 
-By default each filter initially only displays one Filter Condition. When the user completes a Filter Condition, another Filter Condition becomes visible. Similarly, when a user clears a Filter Condition, the subsequent Filter Conditions are cleared and hidden.
+By default each filter initially only displays one Filter Condition. When the user completes all the visible Filter Conditions, another Filter Condition becomes visible. When the user clears the last completed Filter Condition, any empty Filter Conditions on either side are hidden if required. Additionally, when the filter is closed, any empty Filter Conditions not at the end are removed if required.
 
 The maximum number of Filter Conditions can be controlled by setting the Filter Parameter `maxNumConditions` (the default value is two).
 
-It is also possible to always display a certain number of Filter Conditions by setting the Filter Parameter `numAlwaysVisibleConditions`. In this case, Filter Conditions will be disabled until the previous Filter Conditions have been entered.
+It is also possible to always display a certain number of Filter Conditions by setting the Filter Parameter `numAlwaysVisibleConditions`. In this case, Filter Conditions at the end will be disabled until the previous Filter Condition has been completed.
 
 <interface-documentation interfaceName='ISimpleFilterParams' config='{"description":""}' names='["maxNumConditions", "numAlwaysVisibleConditions"]'></interface-documentation>
 
