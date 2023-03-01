@@ -1,7 +1,15 @@
+@use '../design-system' as *;
+
 .topBar {
+    background-color: var(--toolbar-background);
 }
 
 .topBarInner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-1;
+    padding-top: $size-1;
+    padding-bottom: $size-1;
 }
 
 .topBarNavButton {
