@@ -34,7 +34,7 @@ export interface AbstractColDef<TData = any> {
     /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */
     suppressFiltersToolPanel?: boolean;
 
-    /** 
+    /**
     * Provide your own tooltip component for the column.
     * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.
     */
@@ -109,7 +109,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
      *  If both field and colId are missing, a unique ID will be generated.
      *  This ID is used to identify the column in the API for sorting, filtering etc. */
     colId?: string;
-    /** 
+    /**
      * The field of the row object to get the cell's data from.
      * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.
      */
@@ -313,7 +313,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
     /** Rules which can be applied to include certain CSS classes. */
     cellClassRules?: CellClassRules<TData>;
 
-    /** 
+    /**
     * Provide your own cell Renderer component for this column's cells.
     * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.
     */
@@ -411,15 +411,15 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
     /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */
     sortingOrder?: (SortDirection)[];
     /**
-     * Override the default sorting order by providing a custom sort comparator. 
-     * 
+     * Override the default sorting order by providing a custom sort comparator.
+     *
      * - `valueA`, `valueB` are the values to compare.
      * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.
      * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.
-     * 
+     *
      * Return:
      *  - `0`  valueA is the same as valueB
-     *  - `> 0` Sort valueA after valueB 
+     *  - `> 0` Sort valueA after valueB
      *  - `< 0` Sort valueA before valueB
      */
     comparator?: (valueA: any, valueB: any, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number;

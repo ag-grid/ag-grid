@@ -39,7 +39,7 @@
     "type": { "returnType": "boolean" }
   },
   "tooltipComponent": {
-    "description": "/** \n    * Provide your own tooltip component for the column.\n    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.\n    */",
+    "description": "/** Provide your own tooltip component for the column.\n    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
   "tooltipComponentFramework": {
@@ -87,7 +87,7 @@
     "type": { "returnType": "string" }
   },
   "field": {
-    "description": "/** \n     * The field of the row object to get the cell's data from.\n     * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.\n     */",
+    "description": "/** The field of the row object to get the cell's data from.\n     * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.\n     */",
     "type": { "returnType": "string" }
   },
   "type": {
@@ -365,7 +365,7 @@
     "type": { "returnType": "CellClassRules<TData>" }
   },
   "cellRenderer": {
-    "description": "/** \n    * Provide your own cell Renderer component for this column's cells.\n    * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.\n    */",
+    "description": "/** Provide your own cell Renderer component for this column's cells.\n    * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
   "cellRendererFramework": {
@@ -487,7 +487,7 @@
     "type": { "returnType": "(SortDirection)[]" }
   },
   "comparator": {
-    "description": "/** Override the default sorting order by providing a custom sort comparator. \n     * \n     * - `valueA`, `valueB` are the values to compare.\n     * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.\n     * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.\n     * \n     * Return:\n     *  - `0`  valueA is the same as valueB\n     *  - `> 0` Sort valueA after valueB \n     *  - `< 0` Sort valueA before valueB\n     */",
+    "description": "/** Override the default sorting order by providing a custom sort comparator.\n     *\n     * - `valueA`, `valueB` are the values to compare.\n     * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.\n     * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.\n     *\n     * Return:\n     *  - `0`  valueA is the same as valueB\n     *  - `> 0` Sort valueA after valueB\n     *  - `< 0` Sort valueA before valueB\n     */",
     "type": {
       "arguments": {
         "valueA": "any",

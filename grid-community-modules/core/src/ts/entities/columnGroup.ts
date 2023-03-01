@@ -274,7 +274,7 @@ export class ColumnGroup implements IHeaderColumn {
 
     /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
     public getOriginalColumnGroup(): ProvidedColumnGroup {
-        logDeprecation<ColumnGroup>('27', 'getOriginalColumnGroup', 'getProvidedColumnGroup')
+        logDeprecation<ColumnGroup>('27', 'getOriginalColumnGroup', 'getProvidedColumnGroup');
         return this.getProvidedColumnGroup();
     }
 
