@@ -19,7 +19,6 @@ import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
 import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
-import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
@@ -32,6 +31,7 @@ import { ZoomManager } from './interaction/zoomManager';
 import { LayoutService } from './layout/layoutService';
 import { ChartUpdateType } from './chartUpdateType';
 import { LegendDatum } from './legendDatum';
+import { Logger } from '../util/logger';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -364,7 +364,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     log(opts: any) {
         if (this.debug) {
-            console.log(opts);
+            Logger.debug(opts);
         }
     }
 
@@ -403,7 +403,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             try {
                 await callbacks[0]();
             } catch (e) {
-                console.error(e);
+                Logger.error('update error', e);
             }
 
             callbacks.shift();
@@ -430,8 +430,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         try {
             await this.performUpdate(count);
         } catch (error) {
-            this._lastPerformUpdateError = error;
-            console.error(error);
+            this._lastPerformUpdateError = error as Error;
+            Logger.error('update error', error);
         }
     });
     public async awaitUpdateCompletion() {
@@ -466,7 +466,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 await this.processData();
                 this.disablePointer(true);
                 splits.push(performance.now());
-            // Fall-through to next pipeline stage.
+            // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (this._autoSize && !this._lastAutoSize) {
                     const count = this._performUpdateNoRenderCount++;
@@ -487,7 +487,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 await this.performLayout();
                 splits.push(performance.now());
 
-            // Fall-through to next pipeline stage.
+            // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.SERIES_UPDATE:
                 const { seriesRect } = this;
                 const seriesUpdates = [...this.seriesToUpdate].map((series) => series.update({ seriesRect }));
@@ -495,18 +495,18 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 await Promise.all(seriesUpdates);
 
                 splits.push(performance.now());
-            // Fall-through to next pipeline stage.
+            // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.TOOLTIP_RECALCULATION:
                 const tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
                 if (performUpdateType < ChartUpdateType.SERIES_UPDATE && tooltipMeta?.event?.type === 'hover') {
                     this.handlePointer(tooltipMeta.event as InteractionEvent<'hover'>);
                 }
 
-            // Fall-through to next pipeline stage.
+            // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.SCENE_RENDER:
                 await this.scene.render({ debugSplitTimes: splits, extraDebugStats });
                 this.extraDebugStats = {};
-            // Fall-through to next pipeline stage.
+            // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.NONE:
                 // Do nothing.
                 this._performUpdateType = ChartUpdateType.NONE;
@@ -615,17 +615,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
                 const directionAxes = directionToAxesMap[direction];
                 if (!directionAxes) {
-                    console.warn(
-                        `AG Charts - no available axis for direction [${direction}]; check series and axes configuration.`
-                    );
+                    Logger.warn(`no available axis for direction [${direction}]; check series and axes configuration.`);
                     return;
                 }
 
                 const seriesKeys = series.getKeys(direction);
                 const newAxis = this.findMatchingAxis(directionAxes, series.getKeys(direction));
                 if (!newAxis) {
-                    console.warn(
-                        `AG Charts - no matching axis for direction [${direction}] and keys [${seriesKeys}]; check series and axes configuration.`
+                    Logger.warn(
+                        `no matching axis for direction [${direction}] and keys [${seriesKeys}]; check series and axes configuration.`
                     );
                     return;
                 }
@@ -721,14 +719,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 (datum) =>
                     (datum.label.text = formatter({
                         get id() {
-                            doOnce(
-                                () =>
-                                    console.warn(
-                                        `AG Charts - LegendLabelFormatterParams.id is deprecated, use seriesId instead`,
-                                        datum
-                                    ),
-                                `LegendLabelFormatterParams.id deprecated`
-                            );
+                            Logger.warnOnce(`LegendLabelFormatterParams.id is deprecated, use seriesId instead`);
                             return datum.seriesId;
                         },
                         itemId: datum.itemId,

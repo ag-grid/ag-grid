@@ -1,3 +1,4 @@
+import { Logger } from '../../util/logger';
 import { AgCartesianSeriesOptions, AgPolarSeriesOptions, AgHierarchySeriesOptions } from '../agChartOptions';
 
 export type SeriesOptions = AgCartesianSeriesOptions | AgPolarSeriesOptions | AgHierarchySeriesOptions;
@@ -166,7 +167,7 @@ export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
             case 'line':
             default:
                 if (series.length > 1) {
-                    console.warn('AG Charts - unexpected grouping of series type: ' + series[0].type);
+                    Logger.warn('unexpected grouping of series type: ' + series[0].type);
                 }
                 result.push(series[0]);
                 break;

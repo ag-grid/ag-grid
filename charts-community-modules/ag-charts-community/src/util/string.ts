@@ -16,8 +16,8 @@ export function interpolate(
     values: { [key in string]: any },
     formats?: { [key in string]: ValueFormat }
 ): string {
-    return input.replace(interpolatePattern, function () {
-        const name = arguments[2];
+    return input.replace(interpolatePattern, function (...args) {
+        const name = args[2];
         const [valueName, formatName] = name.split(':');
         const value = values[valueName];
 

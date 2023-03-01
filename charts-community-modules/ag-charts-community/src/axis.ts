@@ -9,7 +9,6 @@ import { BBox } from './scene/bbox';
 import { Caption } from './caption';
 import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
-import { doOnce } from './util/function';
 import { TimeInterval } from './util/time/interval';
 import { areArrayNumbersEqual } from './util/equal';
 import { CrossLine } from './chart/crossline/crossLine';
@@ -45,6 +44,7 @@ import { Deprecated } from './util/deprecation';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
 import { calculateLabelRotation } from './chart/label';
+import { Logger } from './util/logger';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -431,13 +431,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 });
             } catch (e) {
                 this.labelFormatter = defaultLabelFormatter;
-                doOnce(
-                    () =>
-                        console.warn(
-                            `AG Charts - the axis label format string ${format} is invalid. No formatting will be applied`
-                        ),
-                    `invalid axis label format string ${format}`
-                );
+                Logger.warnOnce(`the axis label format string ${format} is invalid. No formatting will be applied`);
             }
         } else {
             this.labelFormatter = defaultLabelFormatter;

@@ -1,5 +1,6 @@
 import { describe, expect, it, jest, beforeEach, afterEach } from '@jest/globals';
 import { Deprecated, DeprecatedAndRenamedTo } from './deprecation';
+import { clearDoOnceFlags } from './function';
 
 interface TestDeprecationObject {
     usualProp: number;
@@ -15,6 +16,8 @@ describe('deprecation module', () => {
     const originalConsoleWarn = console.warn;
 
     beforeEach(() => {
+        clearDoOnceFlags();
+
         class TestDeprecation implements TestDeprecationObject {
             usualProp = 7;
 

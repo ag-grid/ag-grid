@@ -7,7 +7,7 @@ type NodeConstructorOrFactory<TNode extends Node, TDatum> = NodeConstructor<TNod
 export class Selection<TChild extends Node = Node, TDatum = any> {
     constructor(parent: Node, classOrFactory: NodeConstructorOrFactory<TChild, TDatum>) {
         this._parent = parent;
-        this._factory = Node.isPrototypeOf(classOrFactory)
+        this._factory = Object.prototype.isPrototypeOf.call(Node, classOrFactory)
             ? () => new (classOrFactory as NodeConstructor<TChild>)()
             : (classOrFactory as NodeFactory<TChild, TDatum>);
     }

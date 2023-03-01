@@ -49,6 +49,7 @@ import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
 import { REGISTERED_MODULES } from '../module-support';
 import { Module } from '../util/module';
+import { Logger } from '../util/logger';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -99,7 +100,7 @@ function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian
         return 'hierarchy';
     }
 
-    throw new Error('AG Chart - unknown type of chart for options with type: ' + options.type);
+    throw new Error(`AG Chart - unknown type of chart for options with type: ${options!.type}`);
 }
 
 type DeepPartialDepth = [never, 0, 1, 2, 3, 4, 5, 6]; // DeepPartial recursion limit type.
@@ -394,7 +395,7 @@ abstract class AgChartInternal {
 
 function debug(message?: any, ...optionalParams: any[]): void {
     if ([true, 'opts'].includes(AgChartInternal.DEBUG())) {
-        console.log(message, ...optionalParams);
+        Logger.debug(message, ...optionalParams);
     }
 }
 
@@ -410,7 +411,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         // Use defaults.
     } else {
         throw new Error(
-            `AG Charts - couldn\'t apply configuration, check type of options and chart: ${processedOptions['type']}`
+            `AG Charts - couldn't apply configuration, check type of options and chart: ${processedOptions['type']}`
         );
     }
 

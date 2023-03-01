@@ -5,6 +5,7 @@ import { ChartAxis } from './chartAxis';
 import { ChartAxisDirection } from './chartAxisDirection';
 import { BBox } from '../scene/bbox';
 import { AgCartesianAxisPosition } from './agChartOptions';
+import { Logger } from '../util/logger';
 
 type VisibilityMap = { crossLines: boolean; series: boolean };
 
@@ -140,7 +141,7 @@ export class CartesianChart extends Chart {
             seriesRect = result.seriesRect;
 
             if (count++ > 10) {
-                console.warn('AG Charts - unable to find stable axis layout.');
+                Logger.warn('unable to find stable axis layout.');
                 break;
             }
         } while (!stableOutputs(lastPassAxisWidths, lastPassVisibility));
@@ -322,7 +323,7 @@ export class CartesianChart extends Chart {
         }
 
         const zoom = this.zoomManager.getZoom()?.[axis.direction];
-        let { min = 0, max = 1 } = zoom ?? {};
+        const { min = 0, max = 1 } = zoom ?? {};
         axis.visibleRange = [min, max];
 
         if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {

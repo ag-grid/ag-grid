@@ -85,7 +85,10 @@ export abstract class Shape extends Node {
         const protoStyles = Object.getPrototypeOf(styles);
 
         for (const property in styles) {
-            if (styles.hasOwnProperty(property) && protoStyles.hasOwnProperty(property)) {
+            if (
+                Object.prototype.hasOwnProperty.call(styles, property) &&
+                Object.prototype.hasOwnProperty.call(protoStyles, property)
+            ) {
                 (this as any)[property] = styles[property];
             }
         }

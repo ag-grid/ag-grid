@@ -8,7 +8,6 @@ import {
 } from '../series';
 import { ChartAxis } from '../../chartAxis';
 import { SeriesMarker } from '../seriesMarker';
-import { doOnce } from '../../../util/function';
 import { isContinuous, isDiscrete } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Path } from '../../../scene/shape/path';
@@ -28,6 +27,7 @@ import { BBox } from '../../../scene/bbox';
 import { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat } from '../../agChartOptions';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
+import { Logger } from '../../../util/logger';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -617,17 +617,11 @@ export abstract class CartesianSeries<
 
         let validationResult = true;
         if (isContinuousX && !hasNumber(xData)) {
-            doOnce(
-                () => console.warn(`AG Charts - The number axis has no numeric data supplied for xKey: [${xKey}].`),
-                'series has no numeric data on number axis - ' + xKey
-            );
+            Logger.warnOnce(`the number axis has no numeric data supplied for xKey: [${xKey}].`);
             validationResult = false;
         }
         if (isContinuousY && !hasNumber(yData, 0, yDepth - 1)) {
-            doOnce(
-                () => console.warn(`AG Charts - The number axis has no numeric data supplied for yKey: [${yKey}].`),
-                'series has no numeric data on number axis - ' + yKey
-            );
+            Logger.warnOnce(`the number axis has no numeric data supplied for yKey: [${yKey}].`);
             validationResult = false;
         }
 
