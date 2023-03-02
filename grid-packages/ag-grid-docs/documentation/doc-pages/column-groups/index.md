@@ -144,9 +144,9 @@ The example above shows adding and removing groups. It is also possible to add a
 
 ## Span Header Height
 
-By default the Grid will balance the heather groups with different number of levels with "dummy" padding heather elements, as shown in the example below, note the following:
+By default the Grid will balance the column headers with different number of levels with an empty column group header cell, as shown in the example below. Note the following:
 
-- The **age** column has padding above it (shown with red borders).
+- The **Age** column has an empty column group header cell above it (shown with red borders).
 
 <grid-example title='Padded Header' name='padded-header' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
 
@@ -172,7 +172,7 @@ const gridOptions = {
 
 In the example below, not the following: 
 
-- The **name** column is not under a group, but spans the height of the header container.
+- The **Athlete** column header cell is not under a column group cell, but spans the entire height of the header container.
 
 <grid-example title='Span Header Height' name='span-header-height' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
 
