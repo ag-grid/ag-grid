@@ -83,7 +83,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupMenuClass();
         this.setupSortableClass();
         this.setupWrapTextClass();
-        this.setupSpanHeaderHeight(eGui);
+        this.refreshSpanHeaderHeight(eGui);
         this.setupAutoHeight(eHeaderCompWrapper);
         this.addColumnHoverListener();
         this.setupFilterCss();
@@ -113,6 +113,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, () => this.refreshSpanHeaderHeight(eGui));
     }
 
     private setupUserComp(): void {
@@ -453,7 +454,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addRefreshFunction(listener);
     }
 
-    private setupSpanHeaderHeight(eGui: HTMLElement) {
+    private refreshSpanHeaderHeight(eGui: HTMLElement) {
         const { column, comp, columnModel, gridOptionsService } = this;
         if (!column.getColDef().spanHeaderHeight) { return; }
 

@@ -170,7 +170,7 @@ const gridOptions = {
 }
 </snippet>
 
-In the example below, not the following: 
+In the example below, note the following: 
 
 - The **Athlete** column header cell is not under a column group cell, but spans the entire height of the header container.
 
