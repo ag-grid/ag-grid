@@ -8139,7 +8139,7 @@
       "agStackComponents?": "ComponentMeta[]",
       "controllers?": "ControllerMeta[]",
       "userComponents?": "{ componentName: string; componentClass: any; }[]",
-      "rowModels?": "{ [name: string]: { new (): IRowModel; }; }",
+      "rowModel?": "RowModelType",
       "dependantModules?": "Module[]"
     },
     "docs": {

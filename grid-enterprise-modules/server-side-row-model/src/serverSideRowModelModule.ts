@@ -16,8 +16,8 @@ import { VERSION } from "./version";
 export const ServerSideRowModelModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.ServerSideRowModelModule,
-    rowModels: { serverSide: ServerSideRowModel },
-    beans: [ExpandListener, SortListener, StoreUtils, BlockUtils, NodeManager, TransactionManager,
+    rowModel: 'serverSide',
+    beans: [ServerSideRowModel, ExpandListener, SortListener, StoreUtils, BlockUtils, NodeManager, TransactionManager,
         FilterListener, StoreFactory, ListenerUtils, ServerSideSelectionService],
     dependantModules: [
         EnterpriseCoreModule

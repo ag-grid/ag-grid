@@ -11,6 +11,6 @@ import { VERSION } from "./version";
 export const ClientSideRowModelModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.ClientSideRowModelModule,
-    beans: [FilterStage, SortStage, FlattenStage, SortService, FilterService, ImmutableService],
-    rowModels: {clientSide: ClientSideRowModel}
+    rowModel: 'clientSide',
+    beans: [ClientSideRowModel, FilterStage, SortStage, FlattenStage, SortService, FilterService, ImmutableService],
 };
