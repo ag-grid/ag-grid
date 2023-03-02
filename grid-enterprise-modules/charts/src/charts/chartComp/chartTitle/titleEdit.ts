@@ -15,7 +15,7 @@ export class TitleEdit extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    private destroyableChartListeners: (() => void)[];
+    private destroyableChartListeners: (() => void)[] = [];
     private chartController: ChartController;
     private chartOptionsService: ChartOptionsService;
     private editing: boolean = false;
@@ -45,14 +45,12 @@ export class TitleEdit extends Component {
         this.chartController = chartController;
         this.chartOptionsService = chartOptionsService;
 
-        const chartProxy = this.chartController.getChartProxy();
-        if (chartProxy) {
-            for (let i = 0; i++; i < this.destroyableChartListeners.length) {
-                this.destroyableChartListeners[i]();
-            }
-            this.destroyableChartListeners = [];
+        for (const destroyFn of this.destroyableChartListeners) {
+            destroyFn();
         }
-
+        this.destroyableChartListeners = [];
+        
+        const chartProxy = this.chartController.getChartProxy();
         const chart = chartProxy.getChart();
         const canvas = chart.scene.canvas.element;
 
