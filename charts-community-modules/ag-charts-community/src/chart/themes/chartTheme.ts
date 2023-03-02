@@ -223,6 +223,15 @@ export class ChartTheme {
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
             },
+            footnote: {
+                enabled: false,
+                text: 'Footnote',
+                fontStyle: undefined,
+                fontWeight: undefined,
+                fontSize: 12,
+                fontFamily: this.fontFamily,
+                color: 'rgb(140, 140, 140)',
+            },
             legend: {
                 enabled: true,
                 position: RIGHT,

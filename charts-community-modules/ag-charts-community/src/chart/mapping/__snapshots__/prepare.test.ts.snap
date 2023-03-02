@@ -113,6 +113,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -566,6 +575,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -934,6 +952,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -1583,6 +1610,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -1903,6 +1939,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -2161,6 +2206,15 @@ Object {
     "visible": true,
   },
   "container": Any<HTMLElement>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -2626,6 +2680,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -3234,6 +3297,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -3516,6 +3588,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -3787,6 +3868,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -4051,6 +4141,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -4310,6 +4409,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -4615,6 +4723,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -4923,6 +5040,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -5245,6 +5371,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -5523,6 +5658,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": true,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Source: Department for Environment, Food and Rural Affairs",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -6532,12 +6676,12 @@ Object {
   ],
   "subtitle": Object {
     "color": "rgb(140, 140, 140)",
-    "enabled": true,
+    "enabled": false,
     "fontFamily": "Verdana, sans-serif",
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
-    "text": "Source: Department for Environment, Food and Rural Affairs",
+    "text": "Subtitle",
   },
   "theme": Object {
     "overrides": Object {
@@ -6715,6 +6859,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -6887,6 +7040,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Object>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -7179,6 +7341,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -7505,6 +7676,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -7818,6 +7998,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -8148,6 +8337,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -8659,6 +8857,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -8840,6 +9047,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -9144,6 +9360,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -9410,6 +9635,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -9655,6 +9889,15 @@ Object {
     "visible": true,
   },
   "container": Any<HTMLElement>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -9937,6 +10180,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -10201,6 +10453,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -10544,6 +10805,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -10849,6 +11119,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -11174,6 +11453,15 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
+  "footnote": Object {
+    "color": "rgb(140, 140, 140)",
+    "enabled": false,
+    "fontFamily": "Verdana, sans-serif",
+    "fontSize": 12,
+    "fontStyle": undefined,
+    "fontWeight": undefined,
+    "text": "Footnote",
+  },
   "legend": Object {
     "enabled": false,
     "item": Object {
