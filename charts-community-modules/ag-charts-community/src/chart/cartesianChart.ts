@@ -60,9 +60,9 @@ export class CartesianChart extends Chart {
         const { seriesRoot } = this;
         if (clipSeries) {
             const { x, y, width, height } = seriesRect;
-            seriesRoot.clipRect = new BBox(x, y, width, height);
+            seriesRoot.setClipRectInGroupCoordinateSystem(new BBox(x, y, width, height));
         } else {
-            seriesRoot.clipRect = undefined;
+            seriesRoot.setClipRectInGroupCoordinateSystem(undefined);
         }
     }
 
