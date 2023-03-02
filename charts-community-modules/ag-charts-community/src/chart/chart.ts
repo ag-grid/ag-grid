@@ -32,6 +32,7 @@ import { LayoutService } from './layout/layoutService';
 import { ChartUpdateType } from './chartUpdateType';
 import { LegendDatum } from './legendDatum';
 import { Logger } from '../util/logger';
+import { ActionOnWrite } from '../util/proxy';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -56,14 +57,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly legend: Legend;
     readonly tooltip: Tooltip;
 
-    private _debug = false;
-    set debug(value: boolean) {
-        this._debug = value;
+    @ActionOnWrite<Chart>(function (value) {
         this.scene.debug.consoleLog = value;
-    }
-    get debug() {
-        return this._debug;
-    }
+    })
+    public debug;
 
     private extraDebugStats: Record<string, number> = {};
 
@@ -87,45 +84,31 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._container;
     }
 
-    protected _data: any = [];
-    set data(data: any) {
-        this._data = data;
-        this.series.forEach((series) => (series.data = data));
-    }
-    get data(): any {
-        return this._data;
-    }
+    @ActionOnWrite<Chart>(function (value) {
+        this.series?.forEach((series) => (series.data = value));
+    })
+    public data: any = [];
 
-    set width(value: number) {
+    @ActionOnWrite<Chart>(function (value) {
         this.autoSize = false;
-        if (this.width !== value) {
-            this.resize(value, this.height);
-        }
-    }
-    get width(): number {
-        return this.scene.width;
-    }
+        this.resize(value, this.scene.height);
+    })
+    width?: number;
 
-    set height(value: number) {
+    @ActionOnWrite<Chart>(function (value) {
         this.autoSize = false;
-        if (this.height !== value) {
-            this.resize(this.width, value);
-        }
-    }
-    get height(): number {
-        return this.scene.height;
-    }
+        this.resize(this.scene.width, value);
+    })
+    height?: number;
 
-    private _lastAutoSize?: [number, number];
+    @ActionOnWrite<Chart>(function (value) {
+        this.autoSizeChanged(value);
+    })
     @Validate(BOOLEAN)
-    protected _autoSize = false;
-    set autoSize(value: boolean) {
-        if (this._autoSize === value) {
-            return;
-        }
+    public autoSize;
+    private _lastAutoSize?: [number, number];
 
-        this._autoSize = value;
-
+    private autoSizeChanged(value: boolean) {
         const { style } = this.element;
         if (value) {
             style.display = 'block';
@@ -142,9 +125,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
             style.height = 'auto';
         }
     }
-    get autoSize(): boolean {
-        return this._autoSize;
-    }
 
     download(fileName?: string, fileFormat?: string) {
         this.scene.download(fileName, fileFormat);
@@ -152,35 +132,25 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     padding = new Padding(20);
 
-    _title?: Caption = undefined;
-    set title(caption: Caption | undefined) {
-        const { root } = this.scene;
-        if (this._title != null) {
-            root?.removeChild(this._title.node);
+    @ActionOnWrite<Chart>(
+        function (value) {
+            this.scene.root?.appendChild(value.node);
+        },
+        function (oldValue) {
+            this.scene.root?.removeChild(oldValue.node);
         }
-        this._title = caption;
-        if (this._title != null) {
-            root?.appendChild(this._title.node);
-        }
-    }
-    get title() {
-        return this._title;
-    }
+    )
+    public title?: Caption = undefined;
 
-    _subtitle?: Caption = undefined;
-    set subtitle(caption: Caption | undefined) {
-        const { root } = this.scene;
-        if (this._subtitle != null) {
-            root?.removeChild(this._subtitle.node);
+    @ActionOnWrite<Chart>(
+        function (value) {
+            this.scene.root?.appendChild(value.node);
+        },
+        function (oldValue) {
+            this.scene.root?.removeChild(oldValue.node);
         }
-        this._subtitle = caption;
-        if (this._subtitle != null) {
-            root?.appendChild(this._subtitle.node);
-        }
-    }
-    get subtitle() {
-        return this._subtitle;
-    }
+    )
+    public subtitle?: Caption = undefined;
 
     @Validate(STRING_UNION('standalone', 'integrated'))
     mode: 'standalone' | 'integrated' = 'standalone';
@@ -228,7 +198,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         element.style.position = 'relative';
 
         this.scene = scene ?? new Scene({ document, overrideDevicePixelRatio });
-        this.scene.debug.consoleLog = this._debug;
+        this.debug = false;
+        this.scene.debug.consoleLog = false;
         this.scene.root = root;
         this.scene.container = element;
         this.autoSize = true;
@@ -468,7 +439,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 splits.push(performance.now());
             // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.PERFORM_LAYOUT:
-                if (this._autoSize && !this._lastAutoSize) {
+                if (this.autoSize && !this._lastAutoSize) {
                     const count = this._performUpdateNoRenderCount++;
 
                     if (count < 5) {
@@ -661,8 +632,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     private resize(width: number, height: number) {
         if (this.scene.resize(width, height)) {
-            this.background.width = this.width;
-            this.background.height = this.height;
+            this.background.width = width;
+            this.background.height = height;
 
             this.disablePointer();
             this.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
@@ -737,7 +708,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     abstract performLayout(): Promise<void>;
 
     protected positionCaptions(shrinkRect: BBox): BBox {
-        const { _title: title, _subtitle: subtitle } = this;
+        const { title, subtitle } = this;
         const newShrinkRect = shrinkRect.clone();
 
         const positionAndShrinkBBox = (caption: Caption) => {
