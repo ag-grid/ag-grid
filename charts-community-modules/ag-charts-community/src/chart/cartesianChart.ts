@@ -149,6 +149,22 @@ export class CartesianChart extends Chart {
         // update visibility of crosslines
         this.axes.forEach((axis) => {
             axis.setCrossLinesVisible(visibility.crossLines);
+            if (!seriesRect) {
+                return;
+            }
+
+            axis.clipGrid(seriesRect.x, seriesRect.y, seriesRect.width, seriesRect.height);
+
+            switch (axis.position) {
+                case 'left':
+                case 'right':
+                    axis.clipTickLines(inputShrinkRect.x, seriesRect.y, inputShrinkRect.width, seriesRect.height);
+                    break;
+                case 'top':
+                case 'bottom':
+                    axis.clipTickLines(seriesRect.x, inputShrinkRect.y, seriesRect.width, inputShrinkRect.height);
+                    break;
+            }
         });
 
         this._lastAxisWidths = axisWidths;
