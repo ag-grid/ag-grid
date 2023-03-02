@@ -1,11 +1,5 @@
 import { addTransformToInstanceProperty } from './decorator';
 
-/**
- * Wraps the target property with a set method that will write assigned value into a nested object with the same
- * property key.
- *
- * @param proxyProperty property name of this, which has the child object to receive values.
- */
 export function ProxyOnWrite(proxyProperty: string) {
     return addTransformToInstanceProperty((target, _, value) => {
         target[proxyProperty] = value;
@@ -14,13 +8,6 @@ export function ProxyOnWrite(proxyProperty: string) {
     });
 }
 
-/**
- * Wraps the target property with a set method that will write assigned value into a nested object with a specified
- * property key.
- *
- * @param childName property name of this, which has the child object to receive values.
- * @param childProperty property key of the child object to receive values.
- */
 export function ProxyPropertyOnWrite(childName: string, childProperty?: string) {
     return addTransformToInstanceProperty((target, key, value) => {
         target[childName][childProperty ?? key] = value;
@@ -30,12 +17,12 @@ export function ProxyPropertyOnWrite(childName: string, childProperty?: string) 
 }
 
 /**
- * Allows side-effects to be triggered on property write. Exactly one callback is invoked on every
- * write, provided the assigned value changes.
+ * Allows side-effects to be triggered on property write.
  *
- * @param opts.addFn called when a new value is set
- * @param opts.removeFn called with the old value when a new value is set
- * @param opts.changeFn called on any change to the value
+ * @param opts.add called when a new value is set - never called for undefined values.
+ * @param opts.remove called with the old value when a new value is set - never called for undefined
+ *                    values.
+ * @param opts.change called on any change to the value - always called.
  */
 export function ActionOnWrite<T>(opts: {
     add?: (this: T, newValue: any) => void;
