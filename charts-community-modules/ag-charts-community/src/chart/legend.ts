@@ -351,7 +351,7 @@ export class Legend {
             markerLabel.fontFamily = fontFamily;
 
             const id = datum.itemId || datum.id;
-            const text = datum.label.text ?? '<unknown>';
+            const text = (datum.label.text ?? '<unknown>').replace(/\r?\n/g, ' ');
             markerLabel.text = this.truncate(text, maxLength, maxItemWidth, paddedMarkerWidth, font, id);
 
             bboxes.push(markerLabel.computeBBox());
