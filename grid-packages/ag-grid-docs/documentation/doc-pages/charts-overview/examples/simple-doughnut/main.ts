@@ -3,8 +3,9 @@ import { getData } from './data';
 
 const data = getData();
 const numFormatter = new Intl.NumberFormat('en-US');
-const total = data.reduce((sum, d) => sum + d['2018/19'], 0);
+const total = data.reduce((sum, d) => sum + d['count'], 0);
 
+const year = new Date().getFullYear();
 const options: AgChartOptions = {
     container: document.getElementById('myChart'),
     autoSize: true,
@@ -22,8 +23,8 @@ const options: AgChartOptions = {
             calloutLabelKey: 'type',
             fillOpacity: 0.9,
             strokeWidth: 0,
-            angleKey: '2018/19',
-            sectorLabelKey: '2018/19',
+            angleKey: 'count',
+            sectorLabelKey: 'count',
             calloutLabel: {
                 enabled: false,
             },
@@ -36,7 +37,7 @@ const options: AgChartOptions = {
                 }
             },
             title: {
-                text: '2018/19',
+                text: `${year - 1}`,
             },
             fills: [
                 '#fb7451',

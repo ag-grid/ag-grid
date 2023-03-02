@@ -3,11 +3,12 @@ import { getData } from './data';
 
 const numFormatter = new Intl.NumberFormat('en-US');
 
+const year = new Date().getFullYear();
 const options: AgChartOptions = {
     container: document.getElementById('myChart'),
     autoSize: true,
     title: {
-        text: 'Religions of London Population (2016)',
+        text: `Religions of London Population (${year - 1})`,
         fontSize: 18,
     },
     subtitle: {

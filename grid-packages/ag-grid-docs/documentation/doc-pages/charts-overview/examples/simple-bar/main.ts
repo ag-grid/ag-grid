@@ -1,6 +1,7 @@
 import { AgChart, AgChartOptions } from 'ag-charts-community';
 import { getData } from "./data";
 
+const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   autoSize: true,
@@ -15,7 +16,7 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: 'Gross Weekly Earnings\nby Occupation (Q4 2019)',
+    text: `Gross Weekly Earnings\nby Occupation (Q4 ${year - 1})`,
     fontSize: 18,
   },
   subtitle: {
