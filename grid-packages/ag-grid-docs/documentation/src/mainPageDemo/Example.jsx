@@ -588,6 +588,7 @@ const desktopDefaultCols = [
         cellRenderer: 'ratingRenderer',
         cellClass: 'vAlign',
         // floatCell: true,
+        spanHeaderHeight: true,
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
