@@ -191,6 +191,22 @@ const EXAMPLES_TICK_SPACING: Record<string, TestCase> = {
     },
 };
 
+const EXAMPLES_CLIPPING: Record<string, TestCase> = {
+    ...mixinDerivedCases({
+        GRDILINE_TICKLINE_CLIPPING: {
+            options: axesExamples.GRDILINE_TICKLINE_CLIPPING,
+            assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['bar'] }),
+        },
+        GROUPED_CATEGORY_AXIS_GRDILINE_TICKLINE_CLIPPING: {
+            options: axesExamples.GROUPED_CATEGORY_AXIS_GRDILINE_TICKLINE_CLIPPING,
+            assertions: cartesianChartAssertions({
+                axisTypes: ['groupedCategory', 'number'],
+                seriesTypes: ['bar'],
+            }),
+        },
+    }),
+};
+
 function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, TestCase> {
     const result = { ...baseCases };
 
@@ -417,6 +433,39 @@ describe('Axis Examples', () => {
 
     describe('configured tick spacing cases', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_TICK_SPACING)) {
+            it(`for ${exampleName} it should create chart instance as expected`, async () => {
+                const options: AgChartOptions = example.options;
+                chart = deproxy(AgChart.create(options)) as Chart;
+                await waitForChartStability(chart);
+                await example.assertions(chart);
+            });
+
+            it(`for ${exampleName} it should render to canvas as expected`, async () => {
+                const compare = async () => {
+                    await waitForChartStability(chart);
+
+                    const newImageData = extractImageData({ ...ctx });
+                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+                };
+
+                const options: AgChartOptions = { ...example.options };
+                options.autoSize = false;
+                options.width = CANVAS_WIDTH;
+                options.height = CANVAS_HEIGHT;
+
+                chart = deproxy(AgChart.create(options)) as Chart;
+                await compare();
+
+                if (example.extraScreenshotActions) {
+                    await example.extraScreenshotActions(chart);
+                    await compare();
+                }
+            });
+        }
+    });
+
+    describe('grid and tick line clipping cases', () => {
+        for (const [exampleName, example] of Object.entries(EXAMPLES_CLIPPING)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
                 chart = deproxy(AgChart.create(options)) as Chart;
