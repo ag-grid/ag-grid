@@ -454,22 +454,29 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupSpanHeaderHeight(eGui: HTMLElement) {
-        if (!this.column.getColDef().spanHeaderHeight) { return; }
+        const { column, comp, columnModel, gridOptionsService } = this;
+        if (!column.getColDef().spanHeaderHeight) { return; }
 
         const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
 
         const multiplier = numberOfParents + 1;
 
-        this.comp.addOrRemoveCssClass('ag-header-span-height', multiplier > 1);
+        comp.addOrRemoveCssClass('ag-header-span-height', multiplier > 0);
 
-        if (multiplier === 1) { return; }
+        if (multiplier === 0) { return; }
 
-        this.comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
+        comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
 
-        const headerHeight = this.environment.getFromTheme(48, 'headerHeight');
+        const pivotMode = gridOptionsService.is('pivotMode');
+        const groupHeaderHeight = pivotMode
+            ? columnModel.getPivotGroupHeaderHeight()
+            : columnModel.getGroupHeaderHeight();
 
-        eGui.style.setProperty('top', `${headerHeight * -(multiplier - 1)}px`);
-        eGui.style.setProperty('height', `${headerHeight * multiplier}px`);
+        const headerHeight = columnModel.getHeaderHeight();
+        const extraHeight = numberOfParents * groupHeaderHeight;
+
+        eGui.style.setProperty('top', `${-extraHeight}px`);
+        eGui.style.setProperty('height', `${headerHeight + extraHeight}px`);
     }
 
     private getColumnGroupPaddingInfo(): { numberOfParents: number, isSpanningTotal: boolean } {
