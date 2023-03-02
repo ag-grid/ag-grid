@@ -116,6 +116,8 @@ All series event options have similar interface contracts. See the series-specif
 
 <interface-documentation interfaceName='AgSeriesListeners' names='["nodeClick", "nodeDoubleClick"]' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
 
+<interface-documentation interfaceName='AgBaseSeriesOptions' names='["nodeClickRange"]' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
+
 ### Legend Events
 
 <interface-documentation interfaceName='AgChartLegendListeners' names='["legendItemClick", "legendItemDoubleClick"]' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
