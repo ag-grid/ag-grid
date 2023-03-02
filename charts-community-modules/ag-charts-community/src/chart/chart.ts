@@ -57,8 +57,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly legend: Legend;
     readonly tooltip: Tooltip;
 
-    @ActionOnWrite<Chart>(function (value) {
-        this.scene.debug.consoleLog = value;
+    @ActionOnWrite<Chart>({
+        add(value) {
+            this.scene.debug.consoleLog = value;
+        },
     })
     public debug;
 
@@ -84,25 +86,33 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._container;
     }
 
-    @ActionOnWrite<Chart>(function (value) {
-        this.series?.forEach((series) => (series.data = value));
+    @ActionOnWrite<Chart>({
+        add(value) {
+            this.series?.forEach((series) => (series.data = value));
+        },
     })
     public data: any = [];
 
-    @ActionOnWrite<Chart>(function (value) {
-        this.autoSize = false;
-        this.resize(value, this.scene.height);
+    @ActionOnWrite<Chart>({
+        add(value) {
+            this.autoSize = false;
+            this.resize(value, this.scene.height);
+        },
     })
     width?: number;
 
-    @ActionOnWrite<Chart>(function (value) {
-        this.autoSize = false;
-        this.resize(this.scene.width, value);
+    @ActionOnWrite<Chart>({
+        add(value) {
+            this.autoSize = false;
+            this.resize(this.scene.width, value);
+        },
     })
     height?: number;
 
-    @ActionOnWrite<Chart>(function (value) {
-        this.autoSizeChanged(value);
+    @ActionOnWrite<Chart>({
+        change(value) {
+            this.autoSizeChanged(value);
+        },
     })
     @Validate(BOOLEAN)
     public autoSize;
@@ -132,24 +142,24 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     padding = new Padding(20);
 
-    @ActionOnWrite<Chart>(
-        function (value) {
+    @ActionOnWrite<Chart>({
+        add(value) {
             this.scene.root?.appendChild(value.node);
         },
-        function (oldValue) {
+        remove(oldValue) {
             this.scene.root?.removeChild(oldValue.node);
-        }
-    )
+        },
+    })
     public title?: Caption = undefined;
 
-    @ActionOnWrite<Chart>(
-        function (value) {
+    @ActionOnWrite<Chart>({
+        add(value) {
             this.scene.root?.appendChild(value.node);
         },
-        function (oldValue) {
+        remove(oldValue) {
             this.scene.root?.removeChild(oldValue.node);
-        }
-    )
+        },
+    })
     public subtitle?: Caption = undefined;
 
     @Validate(STRING_UNION('standalone', 'integrated'))

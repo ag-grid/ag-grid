@@ -33,39 +33,28 @@ export function ProxyPropertyOnWrite(childName: string, childProperty?: string) 
  * Allows side-effects to be triggered on property write. Exactly one callback is invoked on every
  * write, provided the assigned value changes.
  *
- * If `change` is unspecified, `remove` then `add` will be invoked on value changes.
- * If `change` is specified, `add` and `remove` will only be invoked when moving from/to `undefined` respectively.
- *
- * @param addFn called when a new value is set
- * @param removeFn called with the old value when a new value is set
- * @param changeFn called on any change to the value
+ * @param opts.addFn called when a new value is set
+ * @param opts.removeFn called with the old value when a new value is set
+ * @param opts.changeFn called on any change to the value
  */
-export function ActionOnWrite<T>(
-    addFn: (this: T, newValue: any) => void,
-    removeFn: (this: T, oldValue: any) => void = () => undefined,
-    changeFn?: (this: T, oldValue?: any, newValue?: any) => void
-) {
+export function ActionOnWrite<T>(opts: {
+    add?: (this: T, newValue: any) => void;
+    remove?: (this: T, oldValue: any) => void;
+    change?: (this: T, newValue?: any, oldValue?: any) => void;
+}) {
+    const { add: addFn, remove: removeFn, change: changeFn } = opts;
     return addTransformToInstanceProperty((target, __, newValue, oldValue) => {
         if (newValue === oldValue) {
             return newValue;
         }
 
-        if (changeFn) {
-            if (oldValue === undefined) {
-                addFn.call(target, newValue);
-            } else if (newValue === undefined) {
-                removeFn.call(target, oldValue);
-            } else {
-                changeFn.call(target, oldValue, newValue);
-            }
-        } else {
-            if (oldValue !== undefined) {
-                removeFn.call(target, oldValue);
-            }
-            if (newValue !== undefined) {
-                addFn.call(target, newValue);
-            }
+        if (oldValue !== undefined) {
+            removeFn?.call(target, oldValue);
         }
+        if (newValue !== undefined) {
+            addFn?.call(target, newValue);
+        }
+        changeFn?.call(target, newValue, oldValue);
 
         return newValue;
     });
