@@ -112,7 +112,7 @@ const License = (props: LicenseData) => {
                 </div>
 
                 <div className={styles.licenseActions}>
-                    <a className="button button-secondary" href={buyLink}>
+                    <a className="button button-secondary" href={buyLink} target="_blank">
                         <Icon name="creditCard" />
                         Pay with card
                     </a>
