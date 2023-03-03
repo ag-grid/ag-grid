@@ -58,6 +58,7 @@ const Search = ({ currentFramework }) => {
 const SearchComponents = connectSearchBox(({ indices, query, refine }) => {
     const rootRef = createRef();
     const [hasFocus, setFocus] = useState(false);
+    const showResults = query && query.length > 0 && hasFocus;
     const onResultClicked = () => {
         setFocus(false);
         refine('');
@@ -67,12 +68,9 @@ const SearchComponents = connectSearchBox(({ indices, query, refine }) => {
 
     return (
         <div className={styles.searchForm} ref={rootRef}>
-            <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} delay={250} />
-            <SearchResult
-                show={query && query.length > 0 && hasFocus}
-                indices={indices}
-                onResultClicked={onResultClicked}
-            />
+            <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} delay={250} resultsOpen={showResults} />
+
+            <SearchResult show={showResults} indices={indices} onResultClicked={onResultClicked} />
         </div>
     );
 });

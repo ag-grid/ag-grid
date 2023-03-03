@@ -5,6 +5,7 @@
     margin-right: auto !important; // !important for .ag-styles specificity
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
-        max-width: 380px;
+        position: relative;
+        max-width: 32rem;
     }
 }

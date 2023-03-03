@@ -4,12 +4,25 @@
     display: flex;
     align-items: center;
     position: relative;
+    max-width: calc(100vw - 143px);
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        max-width: unset;
+    }
+
+    &:global('.results-open') {
+        background-color: red;
+    }
 
     input {
         width: 100%;
         padding-top: 0.4375em !important; // !important for .ag-styles specificity
         padding-bottom: 0.4375em !important; // !important for .ag-styles specificity
         padding-left: 2em !important; // !important for .ag-styles specificity;
+
+        @media screen and (min-width: $breakpoint-docs-search-medium) {
+            padding-right: 80px !important; // !important for .ag-styles specificity;
+        }
     }
 
     :global(.icon) {
@@ -19,4 +32,9 @@
         position: absolute;
         left: 0.625em;
     }
+}
+
+.resultsOpen {
+    border-bottom-right-radius: 0 !important; // !important for .ag-styles specificity
+    border-bottom-left-radius: 0 !important; // !important for .ag-styles specificity
 }

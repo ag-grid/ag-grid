@@ -5,120 +5,132 @@
 @import '~bootstrap/scss/utilities/display';
 @import '~bootstrap/scss/utilities/spacing';
 
-.search-result {
-    composes: card from global;
-
-    position: absolute !important;
-    z-index: 99999;
-    width: 600px;
+.searchResults {
+    display: none;
+    position: absolute;
+    width: 100%;
     max-width: calc(100vw - $size-4);
-    top: 50px;
+    max-height: 24rem;
+    top: 48px;
     left: 0;
-    margin-top: 0.4rem;
-    display: none !important;
+    border-bottom-right-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+    background-color: var(--white);
+    border-top: 2px solid var(--border-color);
+    overflow-y: auto;
+    z-index: 999;
+    box-shadow: inset 0 -2px 0 0 var(--border-color);
 
-    &__hit-wrapper {
-        composes: card-header p-1 pb-2 pr-2 from global;
-
-        text-align: end;
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        top: 42px;
+        border-top: none;
     }
 
-    &__hit-count {
-        composes: badge badge-pill badge-primary from global;
+    li {
+        line-height: var(--line-height-tight);
+        margin-bottom: -2px;
     }
 
-    &--show {
-        display: block !important;
+    li:first-child a {
+        border-top: none;
     }
 
-    &__hit-item {
-        &__breadcrumb {
-            composes: mb-1 from global;
-            opacity: 0.8;
-            font-size: 0.8rem;
+    a,
+    .resultsMessage,
+    :global(.ais-InfiniteHits-loadMore) {
+        position: relative;
+        display: block;
+        padding: $size-2;
+        border: 2px solid var(--border-color);
+        background-color: transparent !important; // !important needed because of .ag-styles specificity
+        outline: none !important; // !important needed because of .ag-styles specificity
+        transition: color $default-transition-timing, background-color $default-transition-timing,
+            border-color $default-transition-timing;
+
+        &:focus,
+        &:focus-visible {
+            position: relative;
+            border-color: var(--input-focus-border-color);
+            background-color: var(--bright-blue-gray) !important; // !important needed because of .ag-styles specificity
+            z-index: 1002;
         }
     }
-
-    &__message {
-        composes: p-2 from global;
-    }
-}
-
-:global(.ais-InfiniteHits-list) {
-    @extend .list-group, .list-group-flush;
-}
-
-:global(.ais-InfiniteHits-item) {
-    @extend .list-group-item, .list-group-item-action, .p-0;
-    overflow: hidden;
 
     a {
-        outline: none;
-        color: $dark;
-        font-size: 0.85rem;
-        @extend .d-block, .p-3;
-
-        &:hover,
-        &:focus {
-            background-color: $primary;
-            text-decoration: none;
-            color: $light;
-
-            mark {
-                color: $light;
-            }
-        }
-    }
-
-    .ais-Snippet {
-        white-space: normal;
-        font-size: 0.9rem;
-    }
-
-    mark {
-        @extend .p-0;
-        background-color: transparent;
-        color: $primary;
-        font-weight: bold;
+        color: var(--text-color) !important; // !important needed because of .ag-styles specificity
     }
 
     h4 {
-        font-size: 1rem;
-        font-weight: bold;
+        margin-bottom: $size-half !important; // !important needed because of .ag-styles specificity
+        font-weight: var(--font-weight-bold) !important; // !important needed because of .ag-styles specificity
+    }
+
+    a:hover h4,
+    a:hover .breadcrumb {
+        color: var(--link-color);
+    }
+
+    mark {
+        background-color: transparent;
+        padding: 0;
+    }
+
+    &.isOpen {
+        display: block;
     }
 }
 
-:global(.ais-InfiniteHits-loadMore) {
-    @extend .card-footer;
+.breadcrumb {
+    color: var(--secondary-text-color);
+}
 
-    font-size: 0.8rem;
+:global(.ais-InfiniteHits-list) {
+    margin-bottom: 0 !important; // !important needed because of .ag-styles specificity
+    padding-left: 0 !important; // !important needed because of .ag-styles specificity
+    list-style: none;
+}
+
+:global(.ais-Highlight-highlighted),
+:global(.ais-Snippet-highlighted) {
+    color: var(--link-color);
+    font-weight: var(--font-weight-bold);
+}
+
+button:global(.ais-InfiniteHits-loadMore) {
     width: 100%;
-    text-align: center;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
+    padding: $size-half !important; // !important for .ag-styles specificity
+    margin-bottom: -2px !important; // !important for .ag-styles specificity
+    border-top-right-radius: 0 !important; // !important for .ag-styles specifici!important; // !important for .ag-styles specificityy
+    border-top-left-radius: 0 !important; // !important for .ag-styles specificity
+    font-weight: var(--font-weight-normal) !important; // !important for .ag-styles specificity
+    box-shadow: none !important; // !important needed because of .ag-styles specificity
+    color: var(--link-color) !important; // !important for .ag-styles specificity
 
-    &:not(:global(.ais-InfiniteHits-loadMore--disabled)) {
-        &:hover,
-        &:focus {
-            background-color: $primary;
-            color: $light;
-        }
+    &:hover {
+        background-color: var(--bright-blue-gray) !important; // !important needed because of .ag-styles specificity
     }
 }
 
-:global(.ais-InfiniteHits-loadMore--disabled) {
-    &::before {
-        content: 'No more results';
-        font-size: 0.8rem;
+.hitCount {
+    position: absolute;
+    display: none;
+    top: 2px;
+    right: 2px;
+    padding: 8px 8px 9px 8px;
+    font-size: var(--font-size-small);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.33s ease-in-out;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        display: inline-block;
     }
 
-    font-size: 0;
+    &.hasResults {
+        opacity: 1;
+    }
 }
 
-:global {
-    .ais-InfiniteHits {
-        max-height: 400px;
-        overflow-y: auto;
-    }
+.resultsMessage {
+    border-top: none !important;
 }
