@@ -52,6 +52,7 @@ function FakeServer(allData) {
         var groupKeys = request.groupKeys;
         var whereParts = [];
 
+
         if (groupKeys) {
             groupKeys.forEach(function(key, i) {
                 var value = typeof key === 'string' ? "'" + key + "'" : key;
@@ -60,11 +61,90 @@ function FakeServer(allData) {
             });
         }
 
+        var filterModel = request.filterModel;
+
+        if (filterModel) {
+            Object.keys(filterModel).forEach(function(key) {
+                var item = filterModel[key];
+
+                switch (item.filterType) {
+                    case 'text':
+                        whereParts.push(createFilterSql(textFilterMapper, key, item));
+                        break;
+                    case 'number':
+                        whereParts.push(createFilterSql(numberFilterMapper, key, item));
+                        break;
+                    default:
+                        console.log('unknown filter type: ' + item.filterType);
+                        break;
+                }
+            });
+        }
+
         if (whereParts.length > 0) {
             return ' WHERE ' + whereParts.join(' AND ');
         }
 
         return '';
+    }
+
+    function createFilterSql(mapper, key, item) {
+        if (item.operator) {
+            var condition1 = mapper(key, item.condition1);
+            var condition2 = mapper(key, item.condition2);
+
+            return '(' + condition1 + ' ' + item.operator + ' ' + condition2 + ')';
+        }
+
+        return mapper(key, item);
+    }
+
+    function textFilterMapper(key, item) {
+        switch (item.type) {
+            case 'equals':
+                return key + " = '" + item.filter + "'";
+            case 'notEqual':
+                return key + "' != '" + item.filter + "'";
+            case 'contains':
+                return key + " LIKE '%" + item.filter + "%'";
+            case 'notContains':
+                return key + " NOT LIKE '%" + item.filter + "%'";
+            case 'startsWith':
+                return key + " LIKE '" + item.filter + "%'";
+            case 'endsWith':
+                return key + " LIKE '%" + item.filter + "'";
+            case 'blank':
+                return key + " IS NULL or " + key + " = ''";
+            case 'notBlank':
+                return key + " IS NOT NULL and " + key + " != ''";
+            default:
+                console.log('unknown text filter type: ' + item.type);
+        }
+    }
+
+    function numberFilterMapper(key, item) {
+        switch (item.type) {
+            case 'equals':
+                return key + ' = ' + item.filter;
+            case 'notEqual':
+                return key + ' != ' + item.filter;
+            case 'greaterThan':
+                return key + ' > ' + item.filter;
+            case 'greaterThanOrEqual':
+                return key + ' >= ' + item.filter;
+            case 'lessThan':
+                return key + ' < ' + item.filter;
+            case 'lessThanOrEqual':
+                return key + ' <= ' + item.filter;
+            case 'inRange':
+                return '(' + key + ' >= ' + item.filter + ' and ' + key + ' <= ' + item.filterTo + ')';
+            case 'blank':
+                return key + " IS NULL";
+            case 'notBlank':
+                return key + " IS NOT NULL";
+            default:
+                console.log('unknown number filter type: ' + item.type);
+        }
     }
 
     function groupBySql(request) {

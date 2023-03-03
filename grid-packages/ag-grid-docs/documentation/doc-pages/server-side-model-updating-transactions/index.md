@@ -5,7 +5,7 @@ enterprise: true
 This section show how rows can be added, removed and updated using the Server-Side Transaction API.
 
 [[note]]
-| Server-Side Transactions require row ID's to be supplied to grid via [getRowId()](/row-ids/#application-assigned-ids/).
+| Server-Side Transactions require [Row ID's](/server-side-model-configuration/#providing-row-ids) to be supplied to grid.
 
 ##Transaction API
 

@@ -2,11 +2,12 @@ import { Grid, GridOptions, GetRowIdParams, IServerSideDatasource } from '@ag-gr
 declare var FakeServer: any;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    { field: 'country', rowGroup: true, hide: true },
-    { field: 'sport' },
-    { field: 'gold', aggFunc: 'sum' },
-    { field: 'silver', aggFunc: 'sum' },
-    { field: 'bronze', aggFunc: 'sum' },
+    { field: 'athlete', filter: 'agTextColumnFilter' },
+    { field: 'country', filter: 'agTextColumnFilter' },
+    { field: 'sport', filter: 'agTextColumnFilter' },
+    { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+    { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+    { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,
@@ -18,11 +19,13 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 180,
   },
-
   getRowId: (params: GetRowIdParams) => {
-    // use country for group level ids, or the id we assigned for leaf level
-    var data = params.data;
-    return data.id!=null ? data.id : data.country;
+    if (params.data.id != null) {
+      return (params.parentKeys || []).join('-') + params.data.id;
+    }
+    const rowGroupCols = params.columnApi.getRowGroupColumns();
+    const thisGroupCol = rowGroupCols[params.level];
+    return (params.parentKeys || []).join('-') + params.data[thisGroupCol.getColDef().field!];
   },
 
   // use the server-side row model

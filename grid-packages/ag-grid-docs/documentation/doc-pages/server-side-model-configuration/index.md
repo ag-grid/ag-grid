@@ -60,6 +60,44 @@ This is demonstrated in the example below, note the following:
 
 <grid-example title='Initial Scroll Position' name='initial-scroll-position' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
 
+## Providing Row IDs
+
+Some features of the server-side row model require Row IDs in order to be enabled or to enhance their behaviour, these features include [Row Selection](/server-side-model-selection/),
+[Transactions](/server-side-model-updating-transactions/) and [Refreshing Data](/server-side-model-updating-refresh/).
+
+The server-side row model requires unique Row IDs in order to identify rows after new data loads. For example, if a sort or filter is applied which results in new rows being loaded, the grid needs
+to be able to identify the previously known rows.
+
+Row IDs are provided by the application using the `getRowId()` callback:
+
+<api-documentation source='grid-options/properties.json' section='rowModels' names='["getRowId"]' ></api-documentation>
+
+When implementing `getRowId()` you must ensure the rows have unique Row IDs across the entire data set. Using an ID that
+is provided in the data such as a database Primary Key is recommended.
+
+### Supplying Unique Group IDs
+
+When grouping there may not be an easy way to get unique Row IDs from the data for group levels. This is because a group
+row doesn't always correspond to one Row in the store. 
+
+To handle this scenario, the grid provides `parentKeys` and `level` properties in the `GetRowIdParams` supplied to `getRowId()`.
+
+These can be used to create unique group id's as shown below:
+
+<snippet>
+|const gridOptions = {
+|   getRowId: params => {
+|       const parentKeysJoined = (params.parentKeys || []).join('-');
+|       if (params.data.id != null) {
+|           parentKeysJoined + params.data.id;
+|       }
+|       const rowGroupCols = params.columnApi.getRowGroupColumns();
+|       const thisGroupCol = rowGroupCols[params.level];
+|       parentKeysJoined + params.data[thisGroupCol.getColDef().field];
+|    }
+|}
+</snippet>
+
 ## Debug Info
 
 When using the server-side row model it can be helpful to gather the state of each block. This can be gathered by using `api.getCacheBlockState()` or alternatively you can enable `debug: true` in the grid properties to see this output logged to the console whenever blocks are loaded. 
