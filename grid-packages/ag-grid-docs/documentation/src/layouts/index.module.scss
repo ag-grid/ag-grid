@@ -25,65 +25,6 @@ main {
     composes: d-flex flex-column flex-lg-row flex-grow-1 from global;
 }
 
-.top-bar {
-    composes: px-2 px-md-3 from global;
-
-    position: relative;
-    background-color: var(--bright-blue-gray);
-    border-bottom: 1px solid $ag-light-grey;
-    z-index: 999;
-
-    @supports (backdrop-filter: none) {
-        background-color: rgba(#dbe5f0, 0.7);
-        backdrop-filter: blur(20px);
-    }
-
-    @include media-breakpoint-up(lg) {
-        @supports (position: sticky) {
-            position: sticky;
-            top: 0;
-            z-index: 3;
-        }
-    }
-
-    &__wrapper {
-        composes: d-flex w-100 justify-content-end justify-content-lg-between flex-wrap container-lg px-0 from global;
-
-        gap: 0 16px;
-    }
-
-    &__search {
-        composes: py-2 px-0 navbar navbar-expand-lg flex-nowrap navbar-light from global;
-
-        width: 290px;
-        margin: auto 0;
-
-        @include media-breakpoint-down(md) {
-            flex: 1 1 auto;
-        }
-    }
-
-    &__nav-button {
-        composes: navbar-toggler mr-2 from global;
-
-        &-icon {
-            composes: navbar-toggler-icon from global;
-        }
-    }
-
-    &__framework-selector {
-        display: flex;
-        flex-grow: 1;
-        align-items: center;
-        padding-top: 8px;
-        padding-bottom: 8px;
-
-        @media screen and (min-width: 880px) {
-            flex-grow: unset;
-        }
-    }
-}
-
 .main-menu {
     composes: d-flex from global;
 
@@ -91,9 +32,6 @@ main {
     top: 0;
     flex: none;
     width: auto;
-    border-width: 1px;
-    border-color: $ag-light-grey;
-    border-bottom-style: solid;
     background-color: $white;
 }
 

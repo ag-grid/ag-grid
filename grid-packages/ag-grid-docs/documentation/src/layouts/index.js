@@ -1,56 +1,13 @@
 import Footer from 'components/footer/Footer';
-import FrameworkSelector from 'components/FrameworkSelector';
 import { GlobalContextProvider } from 'components/GlobalContext';
 import Menu from 'components/Menu';
-import Search from 'components/search/Search';
 import { SiteHeader } from 'components/site-header/SiteHeader';
+import { TopBar } from 'components/TopBar';
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import supportedFrameworks from 'utils/supported-frameworks';
 import favIcons from '../images/favicons';
 import styles from './index.module.scss';
 import './mailchimp.css';
-
-const TopBar = ({ frameworks, currentFramework, path }) => {
-    const frameworksData = supportedFrameworks
-        .filter((f) => !frameworks || frameworks.includes(f))
-        .map((framework) => ({
-            name: framework,
-            url: path.replace(`/${currentFramework}-`, `/${framework}-`),
-        }));
-
-    return (
-        <div className={styles['top-bar']}>
-            <div className={styles['top-bar__wrapper']}>
-                <div className={styles['top-bar__search']}>
-                    <button
-                        className={styles['top-bar__nav-button']}
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#side-nav"
-                        aria-controls="side-nav"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                    >
-                        <span className={styles['top-bar__nav-button-icon']}></span>
-                    </button>
-
-                    <Search currentFramework={currentFramework} />
-                </div>
-
-                {currentFramework && (
-                    <div className={styles['top-bar__framework-selector']}>
-                        <FrameworkSelector
-                            data={frameworksData}
-                            currentFramework={currentFramework}
-                            showSelectedFramework
-                        />
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-};
 
 // export const getScreenLayout = path => {
 //     // order is important here
@@ -75,17 +32,18 @@ export const Layout = ({
 }) => {
     // spl todo: refactor next week!
     // set in gatsby-node.js
-    let fullScreenPage = false, fullScreenWithFooter = false;
+    let fullScreenPage = false,
+        fullScreenWithFooter = false;
     if (layout === 'bare') {
         // only for on the fly example runner
         return children;
-    } else if(layout === 'fullScreenPage') {
+    } else if (layout === 'fullScreenPage') {
         fullScreenPage = true;
-    } else if(layout === 'fullScreenPageWithFooter') {
+    } else if (layout === 'fullScreenPageWithFooter') {
         fullScreenWithFooter = true;
     }
 
-    const fullScreen = (fullScreenPage || fullScreenWithFooter);
+    const fullScreen = fullScreenPage || fullScreenWithFooter;
 
     return (
         <GlobalContextProvider>
@@ -97,9 +55,7 @@ export const Layout = ({
                 <Helmet htmlAttributes={{ lang: 'en' }} />
                 <SiteHeader path={path} />
 
-                {!fullScreen && (
-                    <TopBar frameworks={frameworks} currentFramework={framework} path={path} />
-                )}
+                {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} />}
                 <div className={styles['content-viewport']}>
                     {!fullScreen && (
                         <aside className={`${styles['main-menu']}`}>
