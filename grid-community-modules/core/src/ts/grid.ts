@@ -290,15 +290,31 @@ export class GridCoreCreator {
         return components;
     }
 
-    private createBeansList(rowModelType: RowModelType | undefined, registeredModules: Module[]): any[] | undefined {
-        const rowModelClass = this.getRowModelClass(rowModelType, registeredModules);
+    private createBeansList(rowModelType: RowModelType | undefined = 'clientSide', registeredModules: Module[]): any[] | undefined {
+        // only load beans matching the required row model
+        const rowModelModules = registeredModules.filter(module => !module.rowModel || module.rowModel === rowModelType);
 
-        if (!rowModelClass) { return; }
+
+        // assert that the relevant module has been loaded
+        const rowModelModuleNames: Record<RowModelType, ModuleNames> = {
+            clientSide: ModuleNames.ClientSideRowModelModule,
+            infinite: ModuleNames.InfiniteRowModelModule,
+            serverSide: ModuleNames.ServerSideRowModelModule,
+            viewport: ModuleNames.ViewportRowModelModule
+        };
+
+        if (!rowModelModuleNames[rowModelType]) {
+            console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
+            return;
+        }
+
+        if(!ModuleRegistry.assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`)) {
+            return;
+        }
 
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
-
         const beans = [
-            rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
+            Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, HorizontalResizeService, LocaleService, GridOptionsValidator,
@@ -315,7 +331,7 @@ export class GridCoreCreator {
             PinnedWidthService, RowNodeEventThrottle, CtrlsFactory
         ];
 
-        const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);
+        const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
         beans.push(...moduleBeans);
 
         // check for duplicates, as different modules could include the same beans that
@@ -345,40 +361,6 @@ export class GridCoreCreator {
             type: Events.EVENT_GRID_READY,
         };
         beans.eventService.dispatchEvent(readyEvent);
-    }
-
-    private getRowModelClass(rowModelType: RowModelType | undefined, registeredModules: Module[]): any {
-
-        // default to client side
-        if (!rowModelType) {
-            rowModelType = 'clientSide';
-        }
-
-        const rowModelClasses: { [name: string]: { new(): IRowModel; }; } = {};
-        registeredModules.forEach(module => {
-            iterateObject(module.rowModels, (key: string, value: { new(): IRowModel; }) => {
-                rowModelClasses[key] = value;
-            });
-        });
-
-        const rowModelClass = rowModelClasses[rowModelType];
-
-        if (exists(rowModelClass)) { return rowModelClass; }
-
-
-        let missingModules: Record<RowModelType, ModuleNames> = {
-            clientSide: ModuleNames.ClientSideRowModelModule,
-            infinite: ModuleNames.InfiniteRowModelModule,
-            serverSide: ModuleNames.ServerSideRowModelModule,
-            viewport: ModuleNames.ViewportRowModelModule
-        };
-
-        if (missingModules[rowModelType]) {
-            ModuleRegistry.assertRegistered(missingModules[rowModelType], `rowModelType = '${rowModelType}'`)
-        } else {
-            console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
-        }
-
     }
 
 }

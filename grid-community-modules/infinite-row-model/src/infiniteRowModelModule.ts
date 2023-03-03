@@ -5,5 +5,6 @@ import { VERSION } from "./version";
 export const InfiniteRowModelModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.InfiniteRowModelModule,
-    rowModels: {infinite: InfiniteRowModel}
+    rowModel: 'infinite',
+    beans: [InfiniteRowModel],
 };
