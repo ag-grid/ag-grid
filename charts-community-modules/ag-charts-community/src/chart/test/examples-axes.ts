@@ -288,3 +288,50 @@ export const AREA_CHART_STACKED_NORMALISED_NO_SERIES: AgChartOptions = {
     ...examples.ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE,
     series: examples.ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE.series?.map((s) => ({ ...s, visible: false })),
 };
+
+const extremeAxisConfig = {
+    title: {
+        text: 'Axis title',
+    },
+    line: {
+        color: 'yellow',
+        width: 20,
+    },
+    tick: {
+        color: 'blue',
+        size: 20,
+        width: 400,
+    },
+};
+
+export const GRDILINE_TICKLINE_CLIPPING: AgChartOptions = {
+    ...CATEGORY_AXIS_BASIC_EXAMPLE,
+    axes: [
+        {
+            type: 'category',
+            position: 'bottom',
+            ...extremeAxisConfig,
+        },
+        {
+            type: 'number',
+            position: 'left',
+            ...extremeAxisConfig,
+        },
+    ],
+};
+
+export const GROUPED_CATEGORY_AXIS_GRDILINE_TICKLINE_CLIPPING: AgCartesianChartOptions = {
+    ...(examples.GROUPED_CATEGORY_AXIS_EXAMPLE as AgCartesianChartOptions),
+    axes: [
+        {
+            type: 'groupedCategory',
+            position: 'bottom',
+            ...extremeAxisConfig,
+        },
+        {
+            type: 'number',
+            position: 'left',
+            ...extremeAxisConfig,
+        },
+    ],
+};

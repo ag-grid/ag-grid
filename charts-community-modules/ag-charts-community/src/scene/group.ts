@@ -6,10 +6,12 @@ import { compoundAscending, ascendingStringNumberUndefined } from '../util/compa
 import { Logger } from '../util/logger';
 import { Matrix } from './matrix';
 
+type OffscreenCanvasRenderingContext2D = any;
+
 export class Group extends Node {
     static className = 'Group';
 
-    clipRect?: BBox;
+    private clipRect?: BBox;
     protected layer?: HdpiCanvas | HdpiOffscreenCanvas;
     readonly name?: string;
 
@@ -180,14 +182,14 @@ export class Group extends Node {
             layer.clear();
 
             if (clipBBox) {
+                // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
                 const { width, height, x, y } = clipBBox;
 
                 if (consoleLog) {
                     Logger.debug({ name, clipBBox, ctxTransform: ctx.getTransform(), renderCtx, group: this });
                 }
 
-                ctx.rect(x, y, width, height);
-                ctx.clip();
+                this.clipCtx(ctx, x, y, width, height);
             }
 
             ctx.setTransform(canvasCtxTransform);
@@ -204,11 +206,17 @@ export class Group extends Node {
         this.matrix.toContext(ctx);
 
         if (clipRect) {
+            // clipRect is in the group's coordinate space
             const { x, y, width, height } = clipRect;
             ctx.save();
-            ctx.rect(x, y, width, height);
-            ctx.clip();
 
+            if (consoleLog) {
+                Logger.debug({ name, clipRect, ctxTransform: ctx.getTransform(), renderCtx, group: this });
+            }
+
+            this.clipCtx(ctx, x, y, width, height);
+
+            // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
             clipBBox = Matrix.fromContext(ctx).transformBBox(clipRect);
         }
 
@@ -275,6 +283,22 @@ export class Group extends Node {
         });
     }
 
+    private clipCtx(
+        ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+        x: number,
+        y: number,
+        width: number,
+        height: number
+    ) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + width, y);
+        ctx.lineTo(x + width, y + height);
+        ctx.lineTo(x, y + height);
+        ctx.closePath();
+        ctx.clip();
+    }
+
     static computeBBox(nodes: Node[]) {
         let left = Infinity;
         let right = -Infinity;
@@ -308,5 +332,14 @@ export class Group extends Node {
         });
 
         return new BBox(left, top, right - left, bottom - top);
+    }
+
+    /**
+     * Transforms bbox given in the canvas coordinate space to bbox in this group's coordinate space and
+     * sets this group's clipRect to the transformed bbox.
+     * @param bbox clipRect bbox in the canvas coordinate space.
+     */
+    setClipRectInGroupCoordinateSpace(bbox?: BBox) {
+        this.clipRect = bbox ? this.transformBBox(bbox) : undefined;
     }
 }

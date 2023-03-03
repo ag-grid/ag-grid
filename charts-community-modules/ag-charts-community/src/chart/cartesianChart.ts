@@ -60,9 +60,9 @@ export class CartesianChart extends Chart {
         const { seriesRoot } = this;
         if (clipSeries) {
             const { x, y, width, height } = seriesRect;
-            seriesRoot.clipRect = new BBox(x, y, width, height);
+            seriesRoot.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
         } else {
-            seriesRoot.clipRect = undefined;
+            seriesRoot.setClipRectInGroupCoordinateSpace(undefined);
         }
     }
 
@@ -146,9 +146,27 @@ export class CartesianChart extends Chart {
             }
         } while (!stableOutputs(lastPassAxisWidths, lastPassVisibility));
 
-        // update visibility of crosslines
+        const clipRectPadding = 5;
         this.axes.forEach((axis) => {
+            // update visibility of crosslines
             axis.setCrossLinesVisible(visibility.crossLines);
+
+            if (!seriesRect) {
+                return;
+            }
+
+            axis.clipGrid(seriesRect.x, seriesRect.y, seriesRect.width + clipRectPadding, seriesRect.height + clipRectPadding);
+
+            switch (axis.position) {
+                case 'left':
+                case 'right':
+                    axis.clipTickLines(inputShrinkRect.x, seriesRect.y, inputShrinkRect.width + clipRectPadding, seriesRect.height + clipRectPadding);
+                    break;
+                case 'top':
+                case 'bottom':
+                    axis.clipTickLines(seriesRect.x, inputShrinkRect.y, seriesRect.width + clipRectPadding, inputShrinkRect.height + clipRectPadding);
+                    break;
+            }
         });
 
         this._lastAxisWidths = axisWidths;
