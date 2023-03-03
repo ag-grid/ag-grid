@@ -2,7 +2,7 @@
 
 set -eu
 
-if (! git diff-index --quiet HEAD --) ; then 
+if (! git diff-index --quiet HEAD -- .) ; then 
     echo "Local file modifications found." >&2
     exit 1
 fi
