@@ -32,9 +32,9 @@ const Version: FunctionComponent<Props> = ({ date, version, blogUrl, highlights 
 
             {highlights && (
                 <ul className="list-style-none">
-                    {highlights.map((highlight) => {
+                    {highlights.map((highlight, i) => {
                         return (
-                            <li>
+                            <li key={i}>
                                 <a href={highlight.url}>{highlight.text}</a>
                             </li>
                         );
