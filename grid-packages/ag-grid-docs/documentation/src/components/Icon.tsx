@@ -20,6 +20,10 @@ export const ICON_MAP = {
     linkedin: CarbonIcon.LogoLinkedin,
     collapseCategories: CarbonIcon.CollapseCategories,
     search: CarbonIcon.Search,
+    arrowUp: CarbonIcon.ArrowUp,
+    arrowRight: CarbonIcon.ArrowRight,
+    arrowDown: CarbonIcon.ArrowDown,
+    arrowLeft: CarbonIcon.ArrowLeft,
 };
 
 export type IconName = keyof typeof ICON_MAP;

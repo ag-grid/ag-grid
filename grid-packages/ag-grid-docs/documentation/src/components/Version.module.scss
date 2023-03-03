@@ -1,0 +1,36 @@
+@use '../design-system' as *;
+
+.version {
+    padding: $size-1;
+    border-radius: var(--border-radius);
+    background-color: var(--bright-blue-gray);
+
+    header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0 $size-2;
+
+        b {
+            font-weight: var(--font-weight-bold) !important; // only needed for .ag-styles specificity
+        }
+
+        span {
+            font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
+            margin-right: $size-6;
+        }
+    }
+
+    p {
+        margin-top: $size-1;
+        margin-bottom: $size-half !important; // !important for .ag-styles specificity
+    }
+
+    ul {
+        margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+
+        a::before {
+            content: '- ';
+        }
+    }
+}

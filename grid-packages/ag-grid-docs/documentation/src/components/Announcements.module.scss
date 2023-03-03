@@ -1,5 +1,10 @@
+@use '../design-system' as *;
+
 .announcements {
-    composes: p-2 from global;
+}
+
+.versions > div {
+    margin-bottom: $size-2;
 }
 
 .announcement {

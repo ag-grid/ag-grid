@@ -161,6 +161,7 @@ const Menu = ({ currentFramework, currentPage }) => {
                             />
                         );
                     })}
+
                     <Announcements framework={currentFramework} />
                 </ul>
             </div>
