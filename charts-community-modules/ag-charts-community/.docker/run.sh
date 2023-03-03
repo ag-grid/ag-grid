@@ -62,6 +62,7 @@ case $1 in
             -w ${DOCKER_MODULE_PATH} \
             -p 3000:3000 \
             -p 9229:9229 \
+            --name ${MODULE_NAME}-test \
             charts:latest \
             $@
     ;;

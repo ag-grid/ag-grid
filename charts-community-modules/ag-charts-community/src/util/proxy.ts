@@ -30,7 +30,7 @@ export function ActionOnWrite<T>(opts: {
     change?: (this: T, newValue?: any, oldValue?: any) => void;
 }) {
     const { add: addFn, remove: removeFn, change: changeFn } = opts;
-    return addTransformToInstanceProperty((target, __, newValue, oldValue) => {
+    return addTransformToInstanceProperty((target, _, newValue, oldValue) => {
         if (newValue === oldValue) {
             return newValue;
         }
