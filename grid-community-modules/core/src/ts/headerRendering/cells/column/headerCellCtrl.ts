@@ -460,11 +460,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
 
-        const multiplier = numberOfParents + 1;
+        comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
 
-        comp.addOrRemoveCssClass('ag-header-span-height', multiplier > 0);
-
-        if (multiplier === 0) { return; }
+        if (numberOfParents === 0) { return; }
 
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
 
