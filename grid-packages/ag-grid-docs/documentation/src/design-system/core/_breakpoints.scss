@@ -2,11 +2,11 @@
 // E.g. @media screen and (min-width: $breakpoint-site-header-small) {}
 $page-margin-padding: 520px;
 
-$site-header-small: 740px;
-$size-header-medium: 860px;
+$site-header-small: 820px;
+$size-header-medium: 980px;
 
 $site-footer-two-column: 480px;
-$site-footer-four-column: 840px;
+$site-footer-four-column: 20px;
 
 $hero-small: 620px;
 $hero-large: 1020px;
@@ -18,6 +18,10 @@ $sponsorship-large: 840px;
 
 $fw-selector-full-width-medium: 740px;
 $fw-selector-full-width-large: 1020px;
+
+$docs-search-medium: 720px;
+$docs-nav-medium: 992px;
+
 $fw-selector-show-selected-medium: 880px;
 
 $about-small: 660px;

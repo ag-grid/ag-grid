@@ -67,3 +67,25 @@ input[type='submit'],
     --button-text-color: var(--ag-grid-dark-blue);
     --button-focus-box-shadow-color: var(--light-water-blue);
 }
+
+.button-input {
+    --button-color: var(--white);
+    --button-hover-color: var(--white);
+    --button-active-color: var(--white);
+    --button-text-color: var(--text-color);
+    --button-focus-box-shadow-color: var(--light-water-blue);
+
+    border: 2px solid var(--border-color);
+    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
+
+    &:hover:not(:disabled):not([readonly]),
+    &:focus:not(:disabled):not([readonly]),
+    &:focus-visible:not(:disabled):not([readonly]) {
+        border-color: var(--input-focus-border-color);
+    }
+
+    &:focus:not(:disabled):not([readonly]),
+    &:focus-visible:not(:disabled):not([readonly]) {
+        box-shadow: 0 0 0 3px var(--input-focus-box-shadow-color);
+    }
+}

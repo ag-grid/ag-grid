@@ -14,10 +14,8 @@ $header-height: 64px;
     display: flex;
     flex-wrap: wrap;
 
-    @media screen and (max-width: $breakpoint-site-header-small) {
-        padding-left: 0 !important; // !important needed because of .ag-styles specificity
-        padding-right: 0 !important; // !important needed because of .ag-styles specificity
-    }
+    padding-left: 0 !important; // !important needed because of .ag-styles specificity
+    padding-right: 0 !important; // !important needed because of .ag-styles specificity
 
     @media screen and (min-width: $breakpoint-site-header-small) {
         flex-wrap: unset;
@@ -26,10 +24,12 @@ $header-height: 64px;
 
 .headerLogo {
     display: block;
-    padding: $size-1;
+    padding: $size-1 10px;
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
-        margin-left: -$size-2 !important; // !important needed because of .ag-styles specificity
+    @media screen and (min-width: $breakpoint-page-margin-padding) {
+        margin-left: calc(
+            var(--horizontal-margin) - 16px
+        ) !important; // !important needed because of .ag-styles specificity
     }
 }
 
@@ -42,10 +42,9 @@ $header-height: 64px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: $header-height;
     height: $header-height;
     margin-left: auto !important; // !important for .ag-styles specificity
-    padding: 0 !important; // !important for .ag-styles specificity
+    padding: 0 16px 0 14px !important; // !important for .ag-styles specificity
     border: none !important; // !important for .ag-styles specificity
     transition: background-color 0.4s ease-in-out;
 
@@ -57,6 +56,10 @@ $header-height: 64px;
     svg {
         position: relative;
         left: 1px;
+    }
+
+    @media screen and (min-width: $breakpoint-page-margin-padding) {
+        padding-right: calc(var(--horizontal-margin)) !important; // !important needed because of .ag-styles specificity
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
@@ -148,9 +151,13 @@ $header-height: 64px;
     background-color: var(--site-nav-background);
 
     @media screen and (min-width: $breakpoint-site-header-small) {
-        margin-right: -$size-3 !important; // !important for .ag-styles specificity
+        margin-right: calc(var(--horizontal-margin) - 17px) !important; // !important for .ag-styles specificity
         width: unset;
         background-color: unset;
+    }
+
+    @media screen and (min-width: $breakpoint-size-header-medium) {
+        margin-right: calc(var(--horizontal-margin) - 27px) !important; // !important for .ag-styles specificity
     }
 }
 

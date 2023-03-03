@@ -1,7 +1,7 @@
 @use '../design-system' as *;
 
 .frameworkSelector {
-    --height: 36px; // Match input height
+    --height: 38px; // Match button height
     --icon-size: #{$size-3} !important; // !important for .ag-styles specificity
     --x-padding: 10px;
 
@@ -53,7 +53,11 @@
 }
 
 .frameworkSelector.showSelected {
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-color);
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        width: auto;
+    }
 }
 
 .frameworkSelector.showSelected .option {
@@ -110,7 +114,7 @@
 }
 
 .frameworkSelector.fullWidth {
-    --height: #{$size-5};
+    --height: #{$size-6};
 
     min-width: 220px;
     max-width: 420px;
