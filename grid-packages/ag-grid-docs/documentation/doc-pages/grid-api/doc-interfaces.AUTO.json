@@ -14394,12 +14394,7 @@
         "optional": true
       }
     },
-    "rowModels": {
-      "type": {
-        "returnType": "{[name: string]: { new(): IRowModel }}",
-        "optional": true
-      }
-    },
+    "rowModel": { "type": { "returnType": "RowModelType", "optional": true } },
     "dependantModules": {
       "type": { "returnType": "Module[]", "optional": true }
     }

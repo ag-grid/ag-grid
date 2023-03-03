@@ -231,28 +231,38 @@ export abstract class Node extends ChangeDetectable {
     matrix = new Matrix();
     protected inverseMatrix = new Matrix();
 
-    transformPoint(x: number, y: number) {
+    private calculateCumulativeMatrix() {
+        this.computeTransformMatrix();
         const matrix = Matrix.flyweight(this.matrix);
 
         let parent = this.parent;
         while (parent) {
+            parent.computeTransformMatrix();
             matrix.preMultiplySelf(parent.matrix);
             parent = parent.parent;
         }
 
+        return matrix;
+    }
+
+    transformPoint(x: number, y: number) {
+        const matrix = this.calculateCumulativeMatrix();
         return matrix.invertSelf().transformPoint(x, y);
     }
 
     inverseTransformPoint(x: number, y: number) {
-        const matrix = Matrix.flyweight(this.matrix);
-
-        let parent = this.parent;
-        while (parent) {
-            matrix.preMultiplySelf(parent.matrix);
-            parent = parent.parent;
-        }
-
+        const matrix = this.calculateCumulativeMatrix();
         return matrix.transformPoint(x, y);
+    }
+
+    transformBBox(bbox: BBox): BBox {
+        const matrix = this.calculateCumulativeMatrix();
+        return matrix.invertSelf().transformBBox(bbox);
+    }
+
+    inverseTransformBBox(bbox: BBox): BBox {
+        const matrix = this.calculateCumulativeMatrix();
+        return matrix.transformBBox(bbox);
     }
 
     private _dirtyTransform = false;
