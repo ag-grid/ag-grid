@@ -32,7 +32,7 @@ import { LayoutService } from './layout/layoutService';
 import { ChartUpdateType } from './chartUpdateType';
 import { LegendDatum } from './legendDatum';
 import { Logger } from '../util/logger';
-import { ActionOnWrite } from '../util/proxy';
+import { ActionOnSet } from '../util/proxy';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -57,8 +57,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly legend: Legend;
     readonly tooltip: Tooltip;
 
-    @ActionOnWrite<Chart>({
-        add(value) {
+    @ActionOnSet<Chart>({
+        newValue(value) {
             this.scene.debug.consoleLog = value;
         },
     })
@@ -86,31 +86,31 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._container;
     }
 
-    @ActionOnWrite<Chart>({
-        add(value) {
+    @ActionOnSet<Chart>({
+        newValue(value) {
             this.series?.forEach((series) => (series.data = value));
         },
     })
     public data: any = [];
 
-    @ActionOnWrite<Chart>({
-        add(value) {
+    @ActionOnSet<Chart>({
+        newValue(value) {
             this.autoSize = false;
-            this.resize(value, this.scene.height);
+            this.resize(value, this.height);
         },
     })
     width?: number;
 
-    @ActionOnWrite<Chart>({
-        add(value) {
+    @ActionOnSet<Chart>({
+        newValue(value) {
             this.autoSize = false;
-            this.resize(this.scene.width, value);
+            this.resize(this.width, value);
         },
     })
     height?: number;
 
-    @ActionOnWrite<Chart>({
-        change(value) {
+    @ActionOnSet<Chart>({
+        changeValue(value) {
             this.autoSizeChanged(value);
         },
     })
@@ -142,31 +142,31 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     padding = new Padding(20);
 
-    @ActionOnWrite<Chart>({
-        add(value) {
+    @ActionOnSet<Chart>({
+        newValue(value) {
             this.scene.root?.appendChild(value.node);
         },
-        remove(oldValue) {
+        oldValue(oldValue) {
             this.scene.root?.removeChild(oldValue.node);
         },
     })
     public title?: Caption = undefined;
 
-    @ActionOnWrite<Chart>({
-        add(value) {
+    @ActionOnSet<Chart>({
+        newValue(value) {
             this.scene.root?.appendChild(value.node);
         },
-        remove(oldValue) {
+        oldValue(oldValue) {
             this.scene.root?.removeChild(oldValue.node);
         },
     })
     public subtitle?: Caption = undefined;
 
-    @ActionOnWrite<Chart>({
-        add(value) {
+    @ActionOnSet<Chart>({
+        newValue(value) {
             this.scene.root?.appendChild(value.node);
         },
-        remove(oldValue) {
+        oldValue(oldValue) {
             this.scene.root?.removeChild(oldValue.node);
         },
     })
@@ -650,7 +650,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
     }
 
-    private resize(width: number, height: number) {
+    private resize(width?: number, height?: number) {
+        if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height)) return;
+
         if (this.scene.resize(width, height)) {
             this.background.width = width;
             this.background.height = height;
