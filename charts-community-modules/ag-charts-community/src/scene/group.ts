@@ -335,11 +335,11 @@ export class Group extends Node {
     }
 
     /**
-     * Transforms bbox given in the canvas coordinate system to bbox in this group's coordinate system and
+     * Transforms bbox given in the canvas coordinate space to bbox in this group's coordinate space and
      * sets this group's clipRect to the transformed bbox.
-     * @param bbox clipRect bbox in the canvas coordinate system.
+     * @param bbox clipRect bbox in the canvas coordinate space.
      */
-    setClipRectInGroupCoordinateSystem(bbox?: BBox) {
+    setClipRectInGroupCoordinateSpace(bbox?: BBox) {
         this.clipRect = bbox ? this.transformBBox(bbox) : undefined;
     }
 }

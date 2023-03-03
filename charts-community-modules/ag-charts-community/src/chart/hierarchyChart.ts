@@ -41,7 +41,7 @@ export class HierarchyChart extends Chart {
         });
 
         const { seriesRoot } = this;
-        seriesRoot.setClipRectInGroupCoordinateSystem(
+        seriesRoot.setClipRectInGroupCoordinateSpace(
             new BBox(shrinkRect.x, shrinkRect.y, shrinkRect.width, shrinkRect.height)
         );
     }

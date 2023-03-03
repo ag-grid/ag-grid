@@ -1224,10 +1224,10 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     clipTickLines(x: number, y: number, width: number, height: number) {
-        this.tickLineGroup.setClipRectInGroupCoordinateSystem(new BBox(x, y, width, height));
+        this.tickLineGroup.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
     }
 
     clipGrid(x: number, y: number, width: number, height: number) {
-        this.gridGroup.setClipRectInGroupCoordinateSystem(new BBox(x, y, width, height));
+        this.gridGroup.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
     }
 }
