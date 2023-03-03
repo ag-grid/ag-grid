@@ -57,11 +57,8 @@ export const Layout = ({
 
                 {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} />}
                 <div className={styles['content-viewport']}>
-                    {!fullScreen && (
-                        <aside className={`${styles['main-menu']}`}>
-                            <Menu currentFramework={framework} currentPage={pageName} />
-                        </aside>
-                    )}
+                    {!fullScreen && <Menu currentFramework={framework} currentPage={pageName} />}
+
                     <main is="div" className={styles['content']}>
                         {children}
                     </main>
