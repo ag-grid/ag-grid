@@ -2,19 +2,21 @@
 @use "sass:map";
 
 a {
-    --text-color: var(--link-color);
-
     text-decoration: none;
     color: var(--link-color);
 
     &:hover {
-        --text-color: var(--link-hover-color);
-
         color: var(--link-hover-color);
+
+        .icon {
+            fill: var(--link-hover-color);
+        }
     }
 
     .icon {
         --icon-size: 1em;
+
+        fill: var(--link-color);
     }
 }
 

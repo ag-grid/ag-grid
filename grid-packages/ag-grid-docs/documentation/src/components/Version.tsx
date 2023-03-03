@@ -11,6 +11,7 @@ const Version: FunctionComponent<Props> = ({ date, version, blogUrl, highlights 
         minor: parseInt(version.split('.')[1]),
         patch: parseInt(version.split('.')[2]),
     };
+    const isMajorVersion = !parsedVersion.minor;
     const blogHref = blogUrl
         ? blogUrl
         : `https://blog.ag-grid.com/whats-new-in-ag-grid-${
@@ -25,13 +26,11 @@ const Version: FunctionComponent<Props> = ({ date, version, blogUrl, highlights 
                 <a href={blogHref}>What's new in AG Grid {version}?</a>
             </header>
 
-            {!parsedVersion.minor ? (
-                <p className="font-size-small">Major release with new features and bug fixes.</p>
-            ) : (
-                <p className="font-size-small">Minor release with new features and bug fixes.</p>
-            )}
+            <p className="font-size-small">
+                {isMajorVersion ? 'Major' : 'Minor'} release with new features and bug fixes.
+            </p>
 
-            {highlights ? (
+            {highlights && (
                 <ul className="list-style-none">
                     {highlights.map((highlight) => {
                         return (
@@ -41,7 +40,7 @@ const Version: FunctionComponent<Props> = ({ date, version, blogUrl, highlights 
                         );
                     })}
                 </ul>
-            ) : null}
+            )}
 
             <a href={`/changelog/?fixVersion=${version}`} target="_blank" rel="noreferrer">
                 {version} change log <Icon name="arrowRight" />
