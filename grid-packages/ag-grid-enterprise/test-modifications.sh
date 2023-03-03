@@ -2,8 +2,9 @@
 
 set -eu
 
-if (! git diff-index --quiet HEAD -- .) ; then 
+if (! git diff-index HEAD --quiet -- .) ; then
     echo "Local file modifications found for ag-grid-enterprise." >&2
+    git diff-index HEAD -- . >&2
     exit 1
 fi
 
