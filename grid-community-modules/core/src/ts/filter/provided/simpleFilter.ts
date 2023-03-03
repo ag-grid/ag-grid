@@ -211,7 +211,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     private numAlwaysVisibleConditions: number;
     private defaultJoinOperator: JoinOperator;
     private filterPlaceholder: SimpleFilterParams['filterPlaceholder'];
-    private repositionPopup?: () => void;
     private lastUiCompletePosition: number | null = null;
     private joinOperatorId = 0;
 
@@ -562,17 +561,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected updateUiVisibility(): void {
         const joinOperator = this.getJoinOperator();
-        const hasSizeIncreased = this.updateNumConditions();
+        this.updateNumConditions();
 
         // from here, the number of elements in all the collections is correct, so can just update the values/statuses
         this.updateConditionStatusesAndValues(this.lastUiCompletePosition!, joinOperator);
-
-        if (hasSizeIncreased) {
-            this.repositionPopup?.();
-        }
     }
 
-    private updateNumConditions(): boolean {
+    private updateNumConditions(): void {
         // Collection sizes are already correct if updated via API, so only need to handle UI updates here
         let lastUiCompletePosition = -1;
         let areAllConditionsUiComplete = true;
@@ -583,11 +578,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 areAllConditionsUiComplete = false;
             }
         }
-        let hasSizeIncreased = false;
         if (this.shouldAddNewConditionAtEnd(areAllConditionsUiComplete)) {
             this.createJoinOperatorPanel();
             this.createOption();
-            hasSizeIncreased = true;
         } else {
             const activePosition = this.lastUiCompletePosition ?? this.getNumConditions() - 2;
             if (lastUiCompletePosition < activePosition) {
@@ -602,7 +595,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             }
         }
         this.lastUiCompletePosition = lastUiCompletePosition;
-        return hasSizeIncreased;
     }
 
     private updateConditionStatusesAndValues(lastUiCompletePosition: number, joinOperator?: JoinOperator): void {
@@ -675,8 +667,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams) {
         super.afterGuiAttached(params);
-
-        this.repositionPopup = params?.repositionPopup;
 
         this.resetPlaceholder();
 

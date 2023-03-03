@@ -66,6 +66,10 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 mouseEvent,
                 ePopup
             });
+
+            if (defaultTab) {
+                menu.showTab(defaultTab);
+            }
         }, 'columnMenu', defaultTab, undefined, mouseEvent.target as HTMLElement);
     }
 
@@ -90,8 +94,13 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 nudgeX: 9 * multiplier,
                 nudgeY: -23,
                 position: 'under',
-                keepWithinBounds: true
+                keepWithinBounds: true,
+                shouldSetMaxHeight: true
             });
+
+            if (defaultTab) {
+                menu.showTab(defaultTab);
+            }
         }, containerType, defaultTab, restrictToTabs, eventSource);
     }
 
@@ -121,13 +130,10 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             closedCallback: (e?: Event) => { // menu closed callback
                 closedFuncs.forEach(f => f(e));
             },
-            afterGuiAttached: params => menu.afterGuiAttached(Object.assign({}, { container: containerType, repositionPopup: () => positionCallback(menu) }, params)),
+            afterGuiAttached: params => menu.afterGuiAttached(Object.assign({}, { container: containerType }, params)),
             // if defaultTab is not present, positionCallback will be called
             // after `showTabBasedOnPreviousSelection` is called.
-            positionCallback: defaultTab ? () => {
-                positionCallback(menu);
-                menu.showTab(defaultTab);
-            } : undefined,
+            positionCallback: !!defaultTab ? () => positionCallback(menu) : undefined,
             anchorToElement,
             ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
         });
@@ -590,9 +596,9 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
-        const { container, hidePopup, repositionPopup } = params;
+        const { container, hidePopup } = params;
 
-        this.tabbedLayout.setAfterAttachedParams({ container, hidePopup, repositionPopup });
+        this.tabbedLayout.setAfterAttachedParams({ container, hidePopup });
 
         if (hidePopup) {
             this.hidePopupFunc = hidePopup;

@@ -11163,10 +11163,6 @@
     "suppressFocus": {
       "description": "/** Set to `true` to not have the component focus its default item. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "repositionPopup": {
-      "description": "/** Call this to reposition the popup.\n     * Useful if your component has changed size and may require repositioning to remain within bounds.\n     */",
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "AgChartThemeOverrides": {},
@@ -19902,6 +19898,9 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipObserver": { "type": { "returnType": "boolean", "optional": true } },
+    "shouldSetMaxHeight": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "updatePosition": {
       "type": {
         "arguments": {},

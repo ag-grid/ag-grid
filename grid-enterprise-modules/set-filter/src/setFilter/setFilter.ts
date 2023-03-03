@@ -14,7 +14,6 @@ import {
     AgPromise,
     KeyCode,
     KeyCreatorParams,
-    ResizableStructure,
     _,
     ISetFilter,
     SetFilterModel,
@@ -1065,17 +1064,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     protected getPositionableElement(): HTMLElement {
         return this.eSetFilterList;
-    }
-
-    protected getResizableStructure(): ResizableStructure {
-        let resizableObject: ResizableStructure;
-
-        if (this.gridOptionsService.is('enableRtl')) {
-            resizableObject = { bottom: true, bottomLeft: true, left: true };
-        } else {
-            resizableObject = { bottom: true, bottomRight: true, right: true };
-        }
-        return resizableObject;
     }
 }
 

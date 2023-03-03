@@ -12,7 +12,7 @@ import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
 import { IRowNode } from '../../interfaces/iRowNode';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import { PositionableFeature, ResizableStructure } from '../../rendering/features/positionableFeature';
+import { PositionableFeature } from '../../rendering/features/positionableFeature';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -386,7 +386,11 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         if (params?.container === 'floatingFilter') {
             this.positionableFeature.restoreLastSize();
-            this.positionableFeature.setResizable(this.getResizableStructure());
+            this.positionableFeature.setResizable(
+                this.gridOptionsService.is('enableRtl')
+                    ? { bottom: true, bottomLeft: true, left: true }
+                    : { bottom: true, bottomRight: true, right: true }
+            );
         } else {
             this.positionableFeature.removeSizeFromEl();
             this.positionableFeature.setResizable(false);
@@ -448,12 +452,5 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     // override to control positionable feature
     protected getPositionableElement(): HTMLElement {
         return this.eFilterBody;
-    }
-    
-    // override to control positionable feature
-    protected getResizableStructure(): ResizableStructure {
-        return {
-            bottom: true
-        };
     }
 }

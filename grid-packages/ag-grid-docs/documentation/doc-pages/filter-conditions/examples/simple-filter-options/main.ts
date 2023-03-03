@@ -39,7 +39,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'sport',
     filterParams: {
-      maxNumConditions: 5,
+      maxNumConditions: 10,
     } as ITextFilterParams,
   },
   {

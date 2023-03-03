@@ -36,7 +36,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 mouseEvent,
                 ePopup: eMenu
             });
-        }, mouseEvent.target as HTMLElement);
+        }, 'columnMenu', mouseEvent.target as HTMLElement);
     }
 
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType): void {
@@ -47,12 +47,13 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 ePopup: eMenu,
                 keepWithinBounds: true,
                 position: 'under',
-                column
+                column,
+                shouldSetMaxHeight: true
             });
-        }, eventSource);
+        }, containerType, eventSource);
     }
 
-    public showPopup(column: Column, positionCallback: (eMenu: HTMLElement) => void, eventSource: HTMLElement): void {
+    private showPopup(column: Column, positionCallback: (eMenu: HTMLElement) => void, containerType: ContainerType, eventSource: HTMLElement): void {
         const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
         if (!filterWrapper) {
             throw new Error('AG Grid - unable to show popup filter, filter instantiation failed');
@@ -110,7 +111,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             positionCallback(eMenu);
 
             if (filter!.afterGuiAttached) {
-                filter!.afterGuiAttached({ container: 'columnMenu', hidePopup, repositionPopup: () => positionCallback(eMenu) });
+                filter!.afterGuiAttached({ container: containerType, hidePopup });
             }
         });
 

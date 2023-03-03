@@ -45,7 +45,7 @@ The following example demonstrates Filter Condition configuration that can be ap
 
 - The **Athlete** column shows a Text Filter with default behaviour for all options.
 - The **Country** column shows a Text Filter with `filterOptions` set to show a different list of available options, and `defaultOption` set to change the default option selected.
-- The **Sport** column shows a Text Filter with `maxNumConditions` set to `5` so that up to five conditions can be entered.
+- The **Sport** column shows a Text Filter with `maxNumConditions` set to `10` so that up to ten conditions can be entered.
 - The **Age** column has a Number Filter with `numAlwaysVisibleConditions` set to `2` so that two conditions are always shown. The `defaultJoinOperator` is also set to `'OR'` rather than the default (`'AND'`).
 - The **Date** column has a Date Filter with `maxNumConditions` set to `1`, so that only the first condition is shown.
 
