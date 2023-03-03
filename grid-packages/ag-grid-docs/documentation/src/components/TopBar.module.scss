@@ -21,6 +21,13 @@
 }
 
 .topBarNavButton {
+    --icon-size: 1.25em;
+
+    :global(.icon) {
+        margin-right: -0.25em !important; // !important for .ag-styles specificity
+        margin-left: 0.625em !important; // !important for .ag-styles specificity
+    }
+
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         display: none !important; // !important for .ag-styles specificity
     }

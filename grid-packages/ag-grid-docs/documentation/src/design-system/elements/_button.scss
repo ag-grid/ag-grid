@@ -52,22 +52,11 @@ input[type='submit'],
     }
 
     .icon {
-        --icon-size: 1.25em;
-
         display: inline-block;
         position: relative;
         bottom: 0.05em;
         margin: -1em 0.125em -1em 0;
         fill: var(--button-text-color);
-
-        &:first-child {
-            margin-right: 0.625em;
-        }
-
-        &:last-child {
-            margin-right: -0.25em;
-            margin-left: 0.625em;
-        }
     }
 }
 
