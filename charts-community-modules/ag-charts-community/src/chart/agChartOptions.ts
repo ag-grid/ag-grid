@@ -557,6 +557,8 @@ export interface AgBaseChartOptions {
     title?: AgChartCaptionOptions;
     /** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */
     subtitle?: AgChartCaptionOptions;
+    /** Configuration for the footnote shown at the bottom of the chart. */
+    footnote?: AgChartCaptionOptions;
     /** Global configuration that applies to all tooltips in the chart. */
     tooltip?: AgChartTooltipOptions;
     /** Configuration for the chart legend. */

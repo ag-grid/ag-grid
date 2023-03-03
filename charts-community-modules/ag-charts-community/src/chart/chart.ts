@@ -162,6 +162,16 @@ export abstract class Chart extends Observable implements AgChartInstance {
     })
     public subtitle?: Caption = undefined;
 
+    @ActionOnWrite<Chart>({
+        add(value) {
+            this.scene.root?.appendChild(value.node);
+        },
+        remove(oldValue) {
+            this.scene.root?.removeChild(oldValue.node);
+        },
+    })
+    public footnote?: Caption = undefined;
+
     @Validate(STRING_UNION('standalone', 'integrated'))
     mode: 'standalone' | 'integrated' = 'standalone';
 
@@ -718,13 +728,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
     abstract performLayout(): Promise<void>;
 
     protected positionCaptions(shrinkRect: BBox): BBox {
-        const { title, subtitle } = this;
+        const { title, subtitle, footnote } = this;
         const newShrinkRect = shrinkRect.clone();
 
-        const positionAndShrinkBBox = (caption: Caption) => {
+        const positionTopAndShrinkBBox = (caption: Caption) => {
             const baseY = newShrinkRect.y;
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
+            caption.node.textBaseline = 'top';
             const bbox = caption.node.computeBBox();
 
             // As the bbox (x,y) ends up at a different location than specified above, we need to
@@ -734,23 +745,37 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
             newShrinkRect.shrink(bboxHeight, 'top');
         };
+        const positionBottomAndShrinkBBox = (caption: Caption) => {
+            const baseY = newShrinkRect.y + newShrinkRect.height;
+            caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
+            caption.node.y = baseY;
+            caption.node.textBaseline = 'bottom';
+            const bbox = caption.node.computeBBox();
 
-        if (!title) {
-            return newShrinkRect;
+            const bboxHeight = Math.ceil(baseY - bbox.y + (caption.spacing ?? 0));
+
+            newShrinkRect.shrink(bboxHeight, 'bottom');
+        };
+
+        if (title) {
+            title.node.visible = title.enabled;
+            if (title.node.visible) {
+                positionTopAndShrinkBBox(title);
+            }
         }
 
-        title.node.visible = title.enabled;
-        if (title.enabled) {
-            positionAndShrinkBBox(title);
+        if (subtitle) {
+            subtitle.node.visible = title !== undefined && title.enabled && subtitle.enabled;
+            if (subtitle.node.visible) {
+                positionTopAndShrinkBBox(subtitle);
+            }
         }
 
-        if (!subtitle) {
-            return newShrinkRect;
-        }
-
-        subtitle.node.visible = title.enabled && subtitle.enabled;
-        if (title.enabled && subtitle.enabled) {
-            positionAndShrinkBBox(subtitle);
+        if (footnote) {
+            footnote.node.visible = footnote.enabled;
+            if (footnote.node.visible) {
+                positionBottomAndShrinkBBox(footnote);
+            }
         }
 
         return newShrinkRect;

@@ -217,6 +217,10 @@
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
@@ -276,6 +280,10 @@
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
@@ -333,6 +341,10 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "tooltip": {
@@ -1765,6 +1777,10 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "tooltip": {
@@ -4657,6 +4673,10 @@
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
@@ -4719,6 +4739,10 @@
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
@@ -4776,6 +4800,10 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "tooltip": {
