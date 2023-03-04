@@ -606,16 +606,22 @@ export class RowRenderer extends BeanStub {
     }
 
     public getAllCellCtrls(): CellCtrl[] {
-        let res: CellCtrl[] = [];
-        this.getAllRowCtrls().forEach(rowCtrl => res = res.concat(rowCtrl.getAllCellCtrls()));
+        const res: CellCtrl[] = [];
+        const all = this.getAllRowCtrls()
+        for (const rowCtrl of all) {
+            for (const cell of rowCtrl.getAllCellCtrls()){
+                res.push(cell)
+            }
+        }
         return res;
     }
 
     private getAllRowCtrls(): RowCtrl[] {
         const stickyRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyRowCtrls()) || [];
         const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyRowCtrls];
-
-        Object.keys(this.rowCtrlsByRowIndex).forEach(key => res.push(this.rowCtrlsByRowIndex[key]));
+        for (const key in this.rowCtrlsByRowIndex){
+            res.push(this.rowCtrlsByRowIndex[key])
+        }
         return res;
     }
 
