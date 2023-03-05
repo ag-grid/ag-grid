@@ -682,7 +682,7 @@ const watchAutoDocFiles = async () => {
         '../../grid-community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts',
         '../../grid-community-modules/react/src/shared/**/*.ts',
         '../../charts-community-modules/ag-charts-community/src/**/*.ts',
-        '../../charts-enterprise-modules/ag-charts-enterprise/src/**/*.ts',
+        '../../charts-enterprise-modules/core/src/**/*.ts',
     ];
 
     const ignoredFolders = [...defaultIgnoreFolders];

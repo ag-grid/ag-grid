@@ -94,7 +94,7 @@
   },
   "dependencies": {
     "ag-charts-community": "~7.1.0",
-    "ag-charts-enterprise": "~7.1.0"
+    "@ag-charts-enterprise/core": "~7.1.0"
   },
   "publishConfig": {
     "access": "private"

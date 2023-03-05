@@ -6,7 +6,7 @@ LOCAL_REPO_ROOT=$(git rev-parse --show-toplevel)
 MODULE_PATH=$(git rev-parse --show-prefix)
 MODULE_NAME=$(basename $MODULE_PATH)
 CHARTS_PATH=charts-community-modules/ag-charts-community
-ENTERPRISE_PATH=charts-enterprise-modules/ag-charts-enterprise
+ENTERPRISE_PATH=charts-enterprise-modules/core
 
 DOCKER_REPO_ROOT=/workspace/ag-grid
 DOCKER_MODULE_PATH=${DOCKER_REPO_ROOT}/${MODULE_PATH}

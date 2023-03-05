@@ -69,7 +69,7 @@ git reset charts-community-modules/ag-charts-vue/lib
 git reset charts-community-modules/ag-charts-vue/dist
 git reset charts-community-modules/ag-charts-vue3/lib
 git reset charts-community-modules/ag-charts-vue3/dist
-git reset charts-enterprise-modules/ag-charts-enterprise/dist
+git reset charts-enterprise-modules/core/dist
 git reset grid-community-modules/vue/lib
 
 git reset grid-community-modules/all-modules/styles

@@ -2,7 +2,7 @@
   "extends": "./module-build/tsconfig.cjs.es5.json",
   "references": [
     { "path" :  "charts-community-modules/ag-charts-community/tsconfig.cjs.es5.docs.json" },
-    { "path" :  "charts-enterprise-modules/ag-charts-enterprise/tsconfig.cjs.es5.docs.json" },
+    { "path" :  "charts-enterprise-modules/core/tsconfig.cjs.es5.docs.json" },
     { "path" :  "grid-community-modules/core/tsconfig.cjs.es5.docs.json" },
     { "path" :  "grid-community-modules/client-side-row-model/tsconfig.cjs.es5.docs.json" },
     { "path" :  "grid-community-modules/csv-export/tsconfig.cjs.es5.docs.json" },
