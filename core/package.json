@@ -1,5 +1,5 @@
 {
-  "name": "ag-charts-enterprise",
+  "name": "@ag-charts-enterprise/core",
   "version": "7.1.0",
   "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
