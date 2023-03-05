@@ -119,7 +119,7 @@ const main = async () => {
         }
     }
 
-    const sourceVersionModule = `${grid ? 'core' : enterprise ? '@ag-charts-enterprise/core' : 'ag-charts-community'}`
+    const sourceVersionModule = `${grid ? 'core' : enterprise ? 'core' : 'ag-charts-community'}`
     const packageVersionNumber = JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../${moduleDirRoot}/${sourceVersionModule}/package.json`), 'UTF-8')).version;
     const templatePackageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, path.resolve(__dirname, `./${grid ? 'grid' : 'charts'}-template.json`)), 'UTF-8'));
 
