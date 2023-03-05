@@ -61,9 +61,6 @@
 [submodule "grid-examples/ag-grid-solid-package-example"]
 	path = grid-examples/ag-grid-solid-package-example
 	url = https://github.com/ag-grid/ag-grid-solid-package-example.git
-[submodule "charts-enterprise-modules/ag-charts-enterprise"]
-	path = charts-enterprise-modules/ag-charts-enterprise
-	url = https://github.com/ag-grid/ag-charts-enterprise.git
 [submodule "charts-examples/ag-charts-enterprise-example"]
 	path = charts-examples/ag-charts-enterprise-example
 	url = https://github.com/ag-grid/ag-charts-enterprise-example.git
